@@ -34,6 +34,9 @@ public final class MoneyNetwork {
 
 
     public static void sync(ServerPlayer player, MoneyBalance balance) {
+        if (player.connection == null) {
+            return;
+        }
         CHANNEL.send(
                 PacketDistributor.PLAYER.with(() -> player),
                 new MoneySyncPacket(balance.coinMinorUnits(), balance.gem())

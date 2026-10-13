@@ -5,29 +5,24 @@ import java.util.regex.Pattern;
 
 
 public enum MoneyCurrency {
-    COIN("coin", Pattern.compile("(?:0|[1-9][0-9]*)(?:\\.[0-9]{1,2})?")),
-    GEM("gem", Pattern.compile("(?:0|[1-9][0-9]*)")),
+    COIN("coin", Pattern.compile("(?:0|[1-9][0-9]*)(?:\\.[0-9]{1,2})?")), GEM("gem", Pattern.compile("(?:0|[1-9][0-9]*)")),
     ;
 
     private final String id;
     private final Pattern amountPattern;
-
 
     MoneyCurrency(String id, Pattern amountPattern) {
         this.id = id;
         this.amountPattern = amountPattern;
     }
 
-
     public String id() {
         return id;
     }
 
-
     public String translationKey() {
         return "currency.geg." + id;
     }
-
 
     public long parseAmount(String text, boolean allowZero) {
         if (text.length() > 30 || !amountPattern.matcher(text).matches()) {
@@ -35,9 +30,7 @@ public enum MoneyCurrency {
         }
 
         try {
-            long amount = this == COIN
-                    ? new BigDecimal(text).movePointRight(2).longValueExact()
-                    : Long.parseLong(text);
+            long amount = this == COIN ? new BigDecimal(text).movePointRight(2).longValueExact() : Long.parseLong(text);
             if (amount < 0L || (!allowZero && amount == 0L)) {
                 throw new IllegalArgumentException("Amount must be positive");
             }
@@ -47,10 +40,7 @@ public enum MoneyCurrency {
         }
     }
 
-
     public String format(long amount) {
-        return this == COIN
-                ? BigDecimal.valueOf(amount, 2).toPlainString()
-                : Long.toString(amount);
+        return this == COIN ? BigDecimal.valueOf(amount, 2).toPlainString() : Long.toString(amount);
     }
 }

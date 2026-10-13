@@ -1,5 +1,6 @@
 package io.github.luyingyilong.geg.money;
 
+import io.github.luyingyilong.geg.market.MarketState;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -10,14 +11,15 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
 
 
-final class MoneySavedData extends SavedData {
+public final class MoneySavedData extends SavedData {
     private static final String DATA_NAME = "geg_money";
     private static final String WALLETS_KEY = "wallets";
 
     private final Map<UUID, MoneyBalance> wallets = new HashMap<>();
+    private MarketState market = new MarketState();
 
 
-    static MoneySavedData get(MinecraftServer server) {
+    public static MoneySavedData get(MinecraftServer server) {
         return server.overworld().getDataStorage().computeIfAbsent(
                 MoneySavedData::load,
                 MoneySavedData::new,
@@ -45,21 +47,35 @@ final class MoneySavedData extends SavedData {
             data.wallets.put(entry.getUUID("uuid"), new MoneyBalance(coinMinorUnits, gem));
         }
 
+        if (root.contains("market", Tag.TAG_COMPOUND)) {
+            data.market = MarketState.load(root.getCompound("market"));
+        }
+
         return data;
     }
 
 
-    MoneyBalance balance(UUID playerId) {
+    public MoneyBalance balance(UUID playerId) {
         return wallets.getOrDefault(playerId, MoneyBalance.ZERO);
     }
 
 
-    void put(UUID playerId, MoneyBalance balance) {
+    public void put(UUID playerId, MoneyBalance balance) {
         if (balance.equals(MoneyBalance.ZERO)) {
             wallets.remove(playerId);
         } else {
             wallets.put(playerId, balance);
         }
+        setDirty();
+    }
+
+
+    public MarketState market() {
+        return market;
+    }
+
+
+    public void markChanged() {
         setDirty();
     }
 
@@ -75,6 +91,7 @@ final class MoneySavedData extends SavedData {
             entries.add(entry);
         });
         root.put(WALLETS_KEY, entries);
+        root.put("market", market.save());
         return root;
     }
 }

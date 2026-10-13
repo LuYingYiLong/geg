@@ -29,6 +29,8 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
+            // ModularUI's published refmap targets SRG names; this dev run uses official names.
+            property 'mixin.env.disableRefMap', 'true'
 
             mods {
                 "${mod_id}" {
@@ -59,8 +61,17 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+repositories {
+    maven {
+        url = 'https://www.cursemaven.com'
+        content { includeGroup 'curse.maven' }
+    }
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    implementation fg.deobf('curse.maven:modularui-624243:8339410')
+    implementation fg.deobf('curse.maven:curios-309927:6418456')
 }
 
 def modMetadata = [
