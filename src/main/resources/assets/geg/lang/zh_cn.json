@@ -1,0 +1,20 @@
+{
+  "currency.geg.coin": "金币",
+  "currency.geg.gem": "宝石",
+  "commands.geg.money.balance": "%s 的余额：金币 %s，宝石 %s",
+  "commands.geg.money.pay.self": "不能给自己转账",
+  "commands.geg.money.insufficient": "余额不足",
+  "commands.geg.money.pay.recipient_overflow": "收款账户余额将超出上限",
+  "commands.geg.money.pay.sent": "已向 %s 转账 %s %s",
+  "commands.geg.money.pay.received": "收到来自 %s 的转账：%s %s",
+  "commands.geg.money.admin.insufficient": "目标账户余额不足",
+  "commands.geg.money.overflow": "操作后余额将超出支持的范围",
+  "commands.geg.money.admin.add": "已更新 %s：增加 %s %s",
+  "commands.geg.money.admin.take": "已更新 %s：扣除 %s %s",
+  "commands.geg.money.admin.set": "已更新 %s：设定余额为 %s %s",
+  "commands.geg.money.admin.target": "你的 %s 余额现为 %s",
+  "commands.geg.money.invalid.coin.positive": "金币金额必须大于 0，最多两位小数，且不能超过允许的上限",
+  "commands.geg.money.invalid.coin.nonnegative": "金币金额不能为负，最多两位小数，且不能超过允许的上限",
+  "commands.geg.money.invalid.gem.positive": "宝石金额必须是大于 0 的整数，且不能超过允许的上限",
+  "commands.geg.money.invalid.gem.nonnegative": "宝石金额必须是非负整数，且不能超过允许的上限"
+}

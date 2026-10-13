@@ -1,0 +1,20 @@
+{
+  "currency.geg.coin": "coin",
+  "currency.geg.gem": "gem",
+  "commands.geg.money.balance": "%s's balance: coin %s, gem %s",
+  "commands.geg.money.pay.self": "You cannot pay yourself.",
+  "commands.geg.money.insufficient": "Insufficient balance.",
+  "commands.geg.money.pay.recipient_overflow": "The recipient's balance would exceed the limit.",
+  "commands.geg.money.pay.sent": "Paid %s %s %s.",
+  "commands.geg.money.pay.received": "%s sent you %s %s.",
+  "commands.geg.money.admin.insufficient": "The target account has insufficient balance.",
+  "commands.geg.money.overflow": "The resulting balance would exceed the supported range.",
+  "commands.geg.money.admin.add": "Updated %s: added %s %s.",
+  "commands.geg.money.admin.take": "Updated %s: removed %s %s.",
+  "commands.geg.money.admin.set": "Updated %s: set balance to %s %s.",
+  "commands.geg.money.admin.target": "Your %s balance is now %s.",
+  "commands.geg.money.invalid.coin.positive": "Coin must be greater than 0, have at most two decimal places, and stay within the allowed limit.",
+  "commands.geg.money.invalid.coin.nonnegative": "Coin must be nonnegative, have at most two decimal places, and stay within the allowed limit.",
+  "commands.geg.money.invalid.gem.positive": "Gem must be a positive whole number within the allowed limit.",
+  "commands.geg.money.invalid.gem.nonnegative": "Gem must be a nonnegative whole number within the allowed limit."
+}
