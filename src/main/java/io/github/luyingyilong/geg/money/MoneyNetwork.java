@@ -7,7 +7,6 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
-
 public final class MoneyNetwork {
     private static final String PROTOCOL_VERSION = "1";
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
@@ -17,10 +16,8 @@ public final class MoneyNetwork {
             PROTOCOL_VERSION::equals
     );
 
-
     private MoneyNetwork() {
     }
-
 
     public static void register() {
         CHANNEL.registerMessage(
@@ -31,7 +28,6 @@ public final class MoneyNetwork {
                 MoneySyncPacket::handle
         );
     }
-
 
     public static void sync(ServerPlayer player, MoneyBalance balance) {
         if (player.connection == null) {

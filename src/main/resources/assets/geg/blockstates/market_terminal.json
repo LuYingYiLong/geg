@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "geg:block/market_terminal" }
+  }
+}

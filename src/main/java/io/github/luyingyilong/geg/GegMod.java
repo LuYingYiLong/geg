@@ -10,11 +10,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-
 @Mod(GegMod.MODID)
 public final class GegMod {
     public static final String MODID = "geg";
-
 
     public GegMod() {
         MarketBlocks.register(FMLJavaModLoadingContext.get().getModEventBus());
