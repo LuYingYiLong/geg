@@ -1,6 +1,7 @@
 package io.github.luyingyilong.geg.market;
 
 import java.util.function.Supplier;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,6 +12,7 @@ import net.minecraftforge.network.NetworkEvent;
 public record MarketActionPacket(Action action, long id, long version, long price,
                                  int quantity, int slot, ItemStack expectedItem) {
     public enum Action {
+        OPEN,
         REQUEST,
         DETAIL,
         CLOSE,
@@ -31,6 +33,11 @@ public record MarketActionPacket(Action action, long id, long version, long pric
 
     public static MarketActionPacket request() {
         return new MarketActionPacket(Action.REQUEST, 0L, 0L, 0L, 0, 0, ItemStack.EMPTY);
+    }
+
+
+    public static MarketActionPacket open(BlockPos pos) {
+        return new MarketActionPacket(Action.OPEN, pos.asLong(), 0L, 0L, 0, 0, ItemStack.EMPTY);
     }
 
 
@@ -55,7 +62,19 @@ public record MarketActionPacket(Action action, long id, long version, long pric
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
-            if (player == null || !MarketNetwork.isViewer(player)) {
+            if (player == null) {
+                return;
+            }
+            if (packet.action == Action.OPEN) {
+                BlockPos pos = BlockPos.of(packet.id);
+                if (player.distanceToSqr(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64.0D
+                        && player.level().getBlockState(pos).is(MarketBlocks.MARKET_TERMINAL.get())
+                        && !MarketNetwork.isViewer(player)) {
+                    MarketNetwork.open(player);
+                }
+                return;
+            }
+            if (!MarketNetwork.isViewer(player)) {
                 return;
             }
             if (packet.action == Action.CLOSE) {
@@ -86,7 +105,7 @@ public record MarketActionPacket(Action action, long id, long version, long pric
                         packet.price, packet.quantity);
                 case REPRICE_REQUEST -> MarketService.repriceRequest(player, packet.id, packet.version, packet.price);
                 case CANCEL_REQUEST -> MarketService.cancelRequest(player, packet.id, packet.version);
-                case REQUEST, DETAIL, CLOSE -> MarketResult.INVALID;
+                case OPEN, REQUEST, DETAIL, CLOSE -> MarketResult.INVALID;
             };
             player.sendSystemMessage(Component.translatable(result.translationKey()));
             if (result == MarketResult.STALE) {

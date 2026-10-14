@@ -3,12 +3,14 @@ package io.github.luyingyilong.geg.money;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import io.github.luyingyilong.geg.money.integration.LightmansMigrationCommands;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.fml.ModList;
 
 
 public final class MoneyCommands {
@@ -32,6 +34,10 @@ public final class MoneyCommands {
                         .requires(source -> source.hasPermission(2))
                         .then(adminBranch(MoneyCurrency.COIN))
                         .then(adminBranch(MoneyCurrency.GEM)));
+
+        if (ModList.get().isLoaded("lightmanscurrency")) {
+            root.then(LightmansMigrationCommands.branch());
+        }
 
         event.getDispatcher().register(root);
     }

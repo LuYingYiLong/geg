@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.market;
 
+import com.mojang.logging.LogUtils;
+import io.github.luyingyilong.geg.market.client.ClientMarketScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,9 +18,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
+import org.slf4j.Logger;
 
 
 public final class MarketTerminalBlock extends Block {
+    private static final Logger LOGGER = LogUtils.getLogger();
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
     public MarketTerminalBlock(Properties properties) {
@@ -53,8 +59,11 @@ public final class MarketTerminalBlock extends Block {
         if (hand != InteractionHand.MAIN_HAND) {
             return InteractionResult.PASS;
         }
+        LOGGER.debug("Market terminal used at {} on {}", pos, level.isClientSide ? "client" : "server");
         if (player instanceof ServerPlayer serverPlayer) {
             MarketNetwork.open(serverPlayer);
+        } else if (level.isClientSide) {
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientMarketScreen.openFromTerminal(pos));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

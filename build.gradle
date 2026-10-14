@@ -72,6 +72,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation fg.deobf('curse.maven:modularui-624243:8339410')
     implementation fg.deobf('curse.maven:curios-309927:6418456')
+    compileOnly fg.deobf('curse.maven:lightmans-currency-472521:9048567')
 }
 
 def modMetadata = [
@@ -105,6 +106,7 @@ tasks.named('jar', Jar).configure {
                 'Implementation-Title'    : project.name,
                 'Implementation-Version'  : project.version,
                 'Implementation-Vendor'   : mod_authors,
+                'MixinConfigs'            : 'geg.mixins.json',
         ])
     }
 

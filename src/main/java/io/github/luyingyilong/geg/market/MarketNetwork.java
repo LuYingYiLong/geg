@@ -1,5 +1,6 @@
 package io.github.luyingyilong.geg.market;
 
+import com.mojang.logging.LogUtils;
 import io.github.luyingyilong.geg.GegMod;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,10 +18,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
+import org.slf4j.Logger;
 
 
 public final class MarketNetwork {
-    private static final String PROTOCOL_VERSION = "2";
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final String PROTOCOL_VERSION = "3";
     private static final int CHUNK_SIZE = 8;
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.fromNamespaceAndPath(GegMod.MODID, "market"),
@@ -46,6 +49,7 @@ public final class MarketNetwork {
 
 
     public static void open(ServerPlayer player) {
+        LOGGER.debug("Opening market for {}", player.getGameProfile().getName());
         VIEWERS.add(player.getUUID());
         send(player, new MarketOpenPacket());
         sync(player);

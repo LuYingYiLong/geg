@@ -16,6 +16,7 @@ import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.widget.sizer.Unit;
 import io.github.luyingyilong.geg.market.MarketActionPacket;
 import io.github.luyingyilong.geg.market.MarketNetwork;
+import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -42,6 +43,9 @@ public final class ClientMarketScreen {
     }
 
     public static void open() {
+        if (isOpen()) {
+            return;
+        }
         canvas = new MarketCanvasWidget();
         search = new Input(175.0F);
         search.setInputVisible(true);
@@ -97,6 +101,11 @@ public final class ClientMarketScreen {
             canvas = null;
         });
         ClientGUI.open(new ModularScreen("geg", panel).useTheme(OreTheme.NAME).pausesGame(false));
+    }
+
+    public static void openFromTerminal(BlockPos pos) {
+        open();
+        MarketNetwork.sendAction(MarketActionPacket.open(pos));
     }
 
     public static boolean isOpen() {
