@@ -17,13 +17,24 @@ public final class MoneyService {
 
 
     public static MoneyBalance set(MinecraftServer server, UUID playerId, MoneyCurrency currency, long amount) {
+        return setWithReason(server, playerId, currency, amount, "admin_set", "");
+    }
+
+    public static MoneyBalance setWithReason(MinecraftServer server, UUID playerId,
+                                             MoneyCurrency currency, long amount, String reason, String reference) {
         requireServerThread(server);
         if (amount < 0L) {
             throw new IllegalArgumentException("Balance cannot be negative");
         }
 
         MoneySavedData data = MoneySavedData.get(server);
+        long oldAmount = data.balance(playerId).amount(currency);
         MoneyBalance updated = data.balance(playerId).with(currency, amount);
+        if (amount > oldAmount) {
+            data.record(reason, currency, "system:mint", wallet(playerId), amount - oldAmount, reference);
+        } else if (amount < oldAmount) {
+            data.record(reason, currency, wallet(playerId), "system:sink", oldAmount - amount, reference);
+        }
         data.put(playerId, updated);
         syncIfOnline(server, playerId, updated);
         return updated;
@@ -31,11 +42,16 @@ public final class MoneyService {
 
 
     public static MoneyBalance add(MinecraftServer server, UUID playerId, MoneyCurrency currency, long amount) {
+        return addWithReason(server, playerId, currency, amount, "admin_add", "");
+    }
+
+    public static MoneyBalance addWithReason(MinecraftServer server, UUID playerId,
+                                             MoneyCurrency currency, long amount, String reason, String reference) {
         requireServerThread(server);
         requirePositive(amount);
         MoneyBalance current = balance(server, playerId);
         long updatedAmount = Math.addExact(current.amount(currency), amount);
-        return set(server, playerId, currency, updatedAmount);
+        return setWithReason(server, playerId, currency, updatedAmount, reason, reference);
     }
 
 
@@ -47,7 +63,7 @@ public final class MoneyService {
             return false;
         }
 
-        set(server, playerId, currency, current.amount(currency) - amount);
+        setWithReason(server, playerId, currency, current.amount(currency) - amount, "admin_take", "");
         return true;
     }
 
@@ -76,6 +92,7 @@ public final class MoneyService {
         MoneyBalance updatedSource = source.with(currency, source.amount(currency) - amount);
         MoneyBalance updatedDestination = destination.with(currency, destinationAmount);
 
+        data.record("player_pay", currency, wallet(fromPlayerId), wallet(toPlayerId), amount, "");
         data.put(fromPlayerId, updatedSource);
         data.put(toPlayerId, updatedDestination);
         syncIfOnline(server, fromPlayerId, updatedSource);
@@ -88,6 +105,22 @@ public final class MoneyService {
         if (amount <= 0L) {
             throw new IllegalArgumentException("Amount must be positive");
         }
+    }
+
+    public static String wallet(UUID playerId) {
+        return "wallet:" + playerId;
+    }
+
+    public static String escrow(UUID playerId, long orderId) {
+        return "escrow:" + playerId + ":" + orderId;
+    }
+
+    public static String pending(UUID playerId, long creditId) {
+        return "pending:" + playerId + ":" + creditId;
+    }
+
+    public static String questPending(UUID playerId, String creditKey) {
+        return "quest_pending:" + playerId + ":" + creditKey;
     }
 
 

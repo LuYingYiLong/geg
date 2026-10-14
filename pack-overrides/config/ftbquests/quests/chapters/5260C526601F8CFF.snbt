@@ -1,0 +1,260 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: "hexagon"
+	filename: "5260C526601F8CFF"
+	group: "50FDD722F8A8E4F8"
+	id: "5260C526601F8CFF"
+	images: [{
+		click: ""
+		color: 4354674
+		corner: false
+		dev: false
+		height: 8.0d
+		hover: [ ]
+		image: "kubejs:textures/aaaa/liujiaomofazhen.png"
+		rotation: 0.0d
+		width: 8.0d
+		x: -0.03d
+		y: 0.0d
+	}]
+	order_index: 2
+	quest_links: [ ]
+	quests: [
+		{
+			dependencies: ["6E0BB5ECD2544149"]
+			description: [
+				"&e按Ctrl+V主动触技能："
+				"&n&e使整个世界变得缓慢，同时给予使用者速度。"
+				""
+				"&n&e15s持续时间，15s冷却，可以做到无限续杯。"
+				""
+				"&d不稳定性残片由凋灵掉落："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"09B922F3D3E6AC11\" } }"
+				""
+				"&b宝藏碎片链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"01D71AFAB6F67EB3\" } }"
+			]
+			id: "61A025E04889D04F"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "2580672F044D0C8F"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					id: "2B4750EF943E7DFA"
+					type: "xp_levels"
+					xp_levels: 20
+				}
+			]
+			size: 1.2d
+			subtitle: "&6控制时间的流速"
+			tasks: [{
+				id: "0D75ECE585E05F2F"
+				item: "time_slow:time_slow"
+				type: "item"
+			}]
+			title: "&6时&d间&c的&e加&b护&a"
+			x: -2.8d
+			y: -1.6d
+		}
+		{
+			dependencies: ["6E0BB5ECD2544149"]
+			description: [
+				"&e被动：&n常驻抗性提升2，会拉取周围怪物仇恨&7（包括你的仆从"
+				""
+				"&e主动技，按Ctrl+V触发："
+				""
+				"&n&e【失去抗性提升】【获得力量】。持续5s，冷却8s"
+				""
+				"&7获取材料的地方："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2E15312E15561A47\" } }"
+			]
+			id: "22198848B3070FED"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "64FD1BC00C84434B"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					id: "2E3DEC0E859815A8"
+					type: "xp_levels"
+					xp_levels: 20
+				}
+			]
+			size: 1.2d
+			subtitle: "&3拥有转守为攻的力量"
+			tasks: [{
+				id: "2BCE81CC9759A6C7"
+				item: {
+					Count: 1b
+					id: "time_slow:knight_defence"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e骑&b士&d的&c加&e护"
+			x: 2.8d
+			y: -1.6d
+		}
+		{
+			dependencies: ["6E0BB5ECD2544149"]
+			description: [
+				"&e被动：&n无视所有负面BUFF，在地狱获得50%免伤"
+				""
+				"&e主动技能，按Ctrl+V使用：&n获得30秒飞行，在地狱使用，则获得15秒飞行与无敌。冷却50s。"
+				""
+				""
+				"&a纯净之星获取链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"0D3BCE314877E0A7\" } }"
+				""
+				"&c龙钢锭链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1303A35CC1DC0C45\" } }"
+			]
+			id: "25FD5E440476CF5C"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "0888D20FE1B1CBCC"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					id: "41995573BABC6D82"
+					type: "xp_levels"
+					xp_levels: 20
+				}
+			]
+			size: 1.2d
+			subtitle: "&e免疫DEBUFF，提供飞行能力和减伤"
+			tasks: [{
+				id: "72070BF6012C11AB"
+				item: "time_slow:god_defence"
+				type: "item"
+			}]
+			title: "&e神圣&b的&f加护"
+			x: 2.8d
+			y: 1.6d
+		}
+		{
+			dependencies: ["6E0BB5ECD2544149"]
+			description: [
+				"&e被动：&n玩家造成伤害提高30%，常驻抗性提升1"
+				""
+				"&e主动，按Ctrl+V释放：&n造成伤害提高至230%，获得抗性提升3"
+				""
+				"&e&n攻击时回复等同于造成20%的生命值，15%造成额外300%魔法伤害，持续15秒。冷却20秒。"
+				""
+				"&2若主动技期间未造成伤害，则会反噬（当场就屎啦）"
+				""
+				"&3（此加护可以用于枪械加伤）"
+			]
+			id: "7C2B5371D24B5C44"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "5A10E2471041F898"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					id: "65AC3ED8659579B6"
+					type: "xp_levels"
+					xp_levels: 20
+				}
+			]
+			size: 1.2d
+			subtitle: "提升攻击力"
+			tasks: [{
+				id: "4A816B8A28D03681"
+				item: "time_slow:power_defence"
+				type: "item"
+			}]
+			title: "&b力&c量&d的&b加&c护"
+			x: 0.0d
+			y: 3.2d
+		}
+		{
+			description: [
+				"&3此mod由b站：&b【小水滴的源头】&3和&a【我之战】提供"
+				""
+				" &3小水滴的源头b站链接：&nhttps://space.bilibili.com/512765707"
+				""
+				" &3             我之战b站链接：&nhttps://space.bilibili.com/693257920&3"
+			]
+			id: "6E0BB5ECD2544149"
+			shape: "circle"
+			size: 1.5d
+			subtitle: "&6由&b【小水滴的源头】&a【我之战】&6提供"
+			tasks: [{
+				id: "535435F899B97B9A"
+				title: "&e加护"
+				type: "checkmark"
+			}]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["6E0BB5ECD2544149"]
+			description: ["&e考虑到时间的加护是放慢整个世界，不适合在服务器里面用，所以玩服务器请禁用掉这个物品哦"]
+			id: "19FCB5FBD5D3B933"
+			rewards: [{
+				auto: "disabled"
+				exclude_from_claim_all: true
+				id: "3D527D9A4E793F28"
+				table_id: 6350227283530042984L
+				team_reward: false
+				type: "choice"
+			}]
+			size: 1.2d
+			subtitle: "&a你必须有OP/作弊权限才能执行此操作"
+			tasks: [{
+				id: "6295D5D54D7EDE01"
+				type: "checkmark"
+			}]
+			title: "&e禁用/启用·时间的加护"
+			x: 0.0d
+			y: -3.25d
+		}
+		{
+			dependencies: ["6E0BB5ECD2544149"]
+			description: [
+				"&e被动：&n自带生命回复1"
+				""
+				"&e主动技能，按Ctrl+V使用：&n治疗自己生命值到最大，且下一次攻击的目标血量将会回归至最大值，会将手中工具和穿戴护甲耐久一并修复到最大值。冷却600秒"
+				""
+				""
+				"&e塔罗牌：恋人链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"5D6DCBC5CB6DAD3D\" } }"
+			]
+			id: "170CABA62E1DC5D2"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "45335CFF6C3DE7FA"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					id: "2D4BA5C453F5D332"
+					type: "xp_levels"
+					xp_levels: 20
+				}
+			]
+			size: 1.2d
+			subtitle: "&d治愈自己和他人，拥有恢复耐久的能力"
+			tasks: [{
+				id: "0B4634B61157681D"
+				item: "time_slow:heal_defence"
+				type: "item"
+			}]
+			x: -2.8d
+			y: 1.6d
+		}
+	]
+	title: " 世界的加护"
+}

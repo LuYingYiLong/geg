@@ -1,0 +1,3808 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "6817F33A40BC26B3"
+	group: "50FDD722F8A8E4F8"
+	id: "6817F33A40BC26B3"
+	images: [
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 10.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/tarotcards.png"
+			rotation: 0.0d
+			width: 9.3d
+			x: -1.0d
+			y: -4.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 12.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/tarotcards.png"
+			rotation: 0.0d
+			width: 11.16d
+			x: 8.0d
+			y: -4.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 10.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/tarotcards.png"
+			rotation: 0.0d
+			width: 9.3d
+			x: 17.02d
+			y: -4.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 3.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/drhrynrn.png"
+			rotation: 0.0d
+			width: 23.52d
+			x: 8.0d
+			y: -11.0d
+		}
+	]
+	order_index: 0
+	quest_links: [ ]
+	quests: [
+		{
+			id: "714AAA02F1EF74F0"
+			rewards: [
+				{
+					id: "31843680FDF44D99"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "3B5743B8BF23CE5C"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&a由流浪者概率携带，或者探索获取"
+			tasks: [{
+				id: "644452882BA7076C"
+				item: "artifacts:snowshoes"
+				type: "item"
+			}]
+			x: -4.0d
+			y: -4.5d
+		}
+		{
+			id: "1A5DFA9B6F92037A"
+			rewards: [
+				{
+					id: "168CA0307141886B"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "343B0FBB01350624"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&a由流浪者概率携带，或者探索获取"
+			tasks: [{
+				id: "31988E358209308E"
+				item: "artifacts:steadfast_spikes"
+				type: "item"
+			}]
+			x: -3.0d
+			y: -4.5d
+		}
+		{
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"590B0C6107D11116\" } }"
+			]
+			id: "73176A7153B4EBE3"
+			rewards: [
+				{
+					id: "6EA8518B8AE0D2E1"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "5EC1D188D5E3E343"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&b溺尸掉落/任务获得"
+			tasks: [{
+				id: "505BE3200C3841E8"
+				item: "artifacts:flippers"
+				type: "item"
+			}]
+			x: -2.0d
+			y: -4.5d
+		}
+		{
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"217B64AF90110789\" } }"
+			]
+			id: "323D6E224A270D78"
+			rewards: [
+				{
+					id: "2BCDD33624CD55A9"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "704AF6819526AC6C"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得，或者使用自然水晶合成"
+			tasks: [{
+				id: "468D4B1F934AB5DC"
+				item: "artifacts:rooted_boots"
+				type: "item"
+			}]
+			x: -2.0d
+			y: -6.5d
+		}
+		{
+			id: "41F8B00B775A1CE0"
+			rewards: [
+				{
+					id: "213EA241D5530501"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "734DAA0AD17E02A5"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e由骷髅概率携带，或者探索获得"
+			tasks: [{
+				id: "38C01FD2D432B904"
+				item: "artifacts:night_vision_goggles"
+				type: "item"
+			}]
+			x: -2.0d
+			y: -5.5d
+		}
+		{
+			id: "7BE39047DCB981AF"
+			rewards: [
+				{
+					id: "5B9A0207575B742A"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "54AD917CE344F531"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获取"
+			tasks: [{
+				id: "7105B99798EC1B88"
+				item: "artifacts:cross_necklace"
+				type: "item"
+			}]
+			x: -2.0d
+			y: -3.5d
+		}
+		{
+			id: "27C95C8780B1F004"
+			rewards: [
+				{
+					id: "15052A72EB90AC24"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "3B02F9BE1AF16949"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获取"
+			tasks: [{
+				id: "433CAACD8B32041A"
+				item: "artifacts:panic_necklace"
+				type: "item"
+			}]
+			x: -1.0d
+			y: -3.5d
+		}
+		{
+			id: "687606C8D5788F8B"
+			rewards: [
+				{
+					id: "282C2A0072700A77"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "67C2A95F1212D96A"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获取"
+			tasks: [{
+				id: "5B8A36F1902A91D1"
+				item: "artifacts:shock_pendant"
+				type: "item"
+			}]
+			x: 0.0d
+			y: -3.5d
+		}
+		{
+			id: "2F808266290A9047"
+			rewards: [
+				{
+					id: "24F9EFEA6D166A0B"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "0A178510314266DC"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&a由僵尸概率携带，或者探索获取"
+			tasks: [{
+				id: "62C8E8F3A164C032"
+				item: "artifacts:flame_pendant"
+				type: "item"
+			}]
+			x: -1.0d
+			y: -6.5d
+		}
+		{
+			id: "1CAA07A54900EB6E"
+			rewards: [
+				{
+					id: "1FA13C5DA23A1FEE"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "292A25FBFA9A2C95"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&a由尸壳概率携带，或者探索获取"
+			tasks: [{
+				id: "4B9AEFF4D59D14E4"
+				item: "artifacts:thorn_pendant"
+				type: "item"
+			}]
+			x: -4.0d
+			y: -5.5d
+		}
+		{
+			id: "4D4F507229D14634"
+			rewards: [
+				{
+					id: "0A4074CC58763D2F"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "0038353BE17E7AB3"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获取"
+			tasks: [{
+				id: "688012B41130F859"
+				item: "artifacts:charm_of_sinking"
+				type: "item"
+			}]
+			x: 1.0d
+			y: -4.5d
+		}
+		{
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"311F715ECE5324CF\" } }"
+			]
+			id: "23249D9D48E4F92B"
+			rewards: [
+				{
+					id: "02E29054413271CF"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "73BC42A76A9C2750"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "可合成"
+			tasks: [{
+				id: "1032C4657598190C"
+				item: "artifacts:cloud_in_a_bottle"
+				type: "item"
+			}]
+			x: -4.0d
+			y: -6.5d
+		}
+		{
+			id: "3CDB35391C956AF7"
+			rewards: [
+				{
+					id: "096D8770E2FA2913"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "4098C4531F59D7CA"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&a由僵尸猪人概率携带，或者探索获取"
+			tasks: [{
+				id: "4372997E8FF548AA"
+				item: "artifacts:obsidian_skull"
+				type: "item"
+			}]
+			x: 2.0d
+			y: -5.5d
+		}
+		{
+			id: "641103467DE03975"
+			rewards: [
+				{
+					id: "1C138C609AFCE516"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "003E9ECC6759EB2D"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获取"
+			tasks: [{
+				id: "08C81B73B2FB07CF"
+				item: "artifacts:antidote_vessel"
+				type: "item"
+			}]
+			x: 0.0d
+			y: -4.5d
+		}
+		{
+			id: "731E9296879D004E"
+			rewards: [
+				{
+					id: "7711B6E63E3EA90E"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "6687FBB0BE21C250"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&a猪灵概率携带，或者探索获取"
+			tasks: [{
+				id: "3192B1A50C649442"
+				item: "artifacts:universal_attractor"
+				type: "item"
+			}]
+			x: -1.0d
+			y: -5.5d
+		}
+		{
+			id: "5170E6C6C7FCD5CC"
+			rewards: [
+				{
+					id: "1E122C29E0A61018"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "30B1A8F803C9FF2D"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获取"
+			tasks: [{
+				id: "6E8944078FD18490"
+				item: "artifacts:crystal_heart"
+				type: "item"
+			}]
+			x: -4.0d
+			y: -2.5d
+		}
+		{
+			id: "1C7E56D2133B9F2C"
+			rewards: [
+				{
+					id: "5C5075C9FE81FBF8"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "0B19AF29AEF709AC"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获取（不要和滑轮鞋一起使用）"
+			tasks: [{
+				id: "726CD3AD962DB5C6"
+				item: "artifacts:helium_flamingo"
+				type: "item"
+			}]
+			x: -3.0d
+			y: -2.5d
+		}
+		{
+			id: "085CE02E48C147E4"
+			rewards: [
+				{
+					id: "07EFF1F902415267"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "162A05818690E2C8"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获取"
+			tasks: [{
+				id: "7033B3E198B5EA06"
+				item: "artifacts:chorus_totem"
+				type: "item"
+			}]
+			x: -2.0d
+			y: -2.5d
+		}
+		{
+			id: "2F44571E40835CEE"
+			rewards: [
+				{
+					id: "750F6453BB4D4B88"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "5182F639DED4B3A7"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "可合成"
+			tasks: [{
+				id: "220F1C056E328B36"
+				item: "artifacts:digging_claws"
+				type: "item"
+			}]
+			x: -3.0d
+			y: -6.5d
+		}
+		{
+			id: "01940D51737187DE"
+			rewards: [
+				{
+					id: "76DC403761543CC3"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "6E620DD1A3FF5DFF"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获取"
+			tasks: [{
+				id: "584584D76C539396"
+				item: "artifacts:feral_claws"
+				type: "item"
+			}]
+			x: -4.0d
+			y: -3.5d
+		}
+		{
+			id: "122DCB808601A84C"
+			rewards: [
+				{
+					id: "1E6D474D81A5FC1C"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "58BD986DFAE20070"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获取"
+			tasks: [{
+				id: "63691690793B49EF"
+				item: "artifacts:power_glove"
+				type: "item"
+			}]
+			x: -3.0d
+			y: -3.5d
+		}
+		{
+			id: "33A83A8B1F822B8A"
+			rewards: [
+				{
+					id: "5B8116F1214B5262"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "4AB836740EBD0EE7"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&b由凋零骷髅概率携带，或者探索获取"
+			tasks: [{
+				id: "01A12CDD8E40171D"
+				item: "artifacts:fire_gauntlet"
+				type: "item"
+			}]
+			x: 2.0d
+			y: -6.5d
+		}
+		{
+			id: "08D0D6120EC48893"
+			rewards: [
+				{
+					id: "1439AE9D5E8FAE4B"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "5CE23C2748D7B931"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获取"
+			tasks: [{
+				id: "679C466F1D195C7A"
+				item: "artifacts:pocket_piston"
+				type: "item"
+			}]
+			x: 2.0d
+			y: -3.5d
+		}
+		{
+			id: "14E04200C559B5DC"
+			rewards: [
+				{
+					id: "52534E4C4E87ECE9"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "0EA62727ED49E314"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&a由尸壳概率携带，或者探索获取"
+			tasks: [{
+				id: "7709A5ACD0DD9703"
+				item: "artifacts:vampiric_glove"
+				type: "item"
+			}]
+			x: -3.0d
+			y: -5.5d
+		}
+		{
+			id: "46671DF74F0C4D19"
+			rewards: [
+				{
+					id: "197408B5069C23EE"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2B090847D778D7EA"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&a猪灵概率携带，或者探索获取"
+			tasks: [{
+				id: "66AE579A413F2A15"
+				item: "artifacts:golden_hook"
+				type: "item"
+			}]
+			x: 0.0d
+			y: -5.5d
+		}
+		{
+			id: "544F8994AB5110D2"
+			rewards: [
+				{
+					id: "0CFE0640E229F389"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2BE23AB9E88995DC"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&a猪灵蛮兵概率携带，或者探索获取"
+			tasks: [{
+				id: "0B817B3AAC1A95B7"
+				item: "artifacts:onion_ring"
+				type: "item"
+			}]
+			x: 1.0d
+			y: -5.5d
+		}
+		{
+			id: "7DB45EAD57B5F7E7"
+			rewards: [
+				{
+					id: "0D2D24A9633ED55B"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "26DE042F3A8E2795"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获取"
+			tasks: [{
+				id: "0DF45FC8BEE6DE46"
+				item: "artifacts:pickaxe_heater"
+				type: "item"
+			}]
+			x: -1.0d
+			y: -2.5d
+		}
+		{
+			id: "0BA2C19F75431D07"
+			rewards: [
+				{
+					id: "6491D15775FE2CAE"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "7141743448BF731A"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获取"
+			tasks: [{
+				id: "4CD9EDFD3F2ADC62"
+				item: "artifacts:aqua_dashers"
+				type: "item"
+			}]
+			x: 1.0d
+			y: -3.5d
+		}
+		{
+			id: "233ADDE6B2C64049"
+			rewards: [
+				{
+					id: "51D3F3C8CC34F638"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "17FFE9EC23DA3144"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e由僵尸概率携带,  或者探索获取"
+			tasks: [{
+				id: "338F890F914DFA39"
+				item: "artifacts:bunny_hoppers"
+				type: "item"
+			}]
+			x: 1.0d
+			y: -6.5d
+		}
+		{
+			id: "32587FBE8243EB18"
+			rewards: [
+				{
+					id: "2B4731578F404F5C"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "247D28728D4C51CE"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获取"
+			tasks: [{
+				id: "27EDD619ABB412DB"
+				item: "artifacts:kitty_slippers"
+				type: "item"
+			}]
+			x: 2.0d
+			y: -4.5d
+		}
+		{
+			description: ["{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"7AE1190313431642\" } }"]
+			id: "5D5180C2DB99C337"
+			rewards: [
+				{
+					id: "3608F47768BF0CD9"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "35212B09190A550D"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e任务/开箱获得"
+			tasks: [{
+				id: "7A5141ECD8B7A749"
+				item: "artifacts:running_shoes"
+				type: "item"
+			}]
+			x: -1.0d
+			y: -4.5d
+		}
+		{
+			id: "170DD0A7701C1D73"
+			rewards: [
+				{
+					id: "07DC5828F17706BE"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "584348DAA6C1D57C"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "1A91EF098C854D81"
+				item: {
+					Count: 1b
+					id: "ramcompat:frost_robe"
+					tag: {
+						abilities: {
+							freeze: {
+								points: 0
+								stats: {
+									chance: 0.13754d
+									duration: 0.80707d
+								}
+							}
+							icicle: {
+								points: 0
+								stats: {
+									amount: 4.49998d
+									chance: 0.47406d
+									cooldown: 6.24303d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 14.5d
+			y: -2.5d
+		}
+		{
+			id: "381BBDB50262B908"
+			rewards: [
+				{
+					id: "066DE96ED2FD65F6"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2C6556BAB2602FCA"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "75728A64EB056449"
+				item: {
+					Count: 1b
+					id: "ramcompat:stink_gland"
+					tag: {
+						abilities: {
+							dash: {
+								points: 0
+								stats: {
+									cooldown: 9.8751d
+									power: 1.50465d
+								}
+							}
+							defense: {
+								points: 0
+								stats: {
+									cooldown: 19.34047d
+									duration: 4.00872d
+									radius: 2.16196d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 18.5d
+			y: -2.5d
+		}
+		{
+			id: "6C0E510B5F93E44B"
+			rewards: [
+				{
+					id: "55DE8E30A47365E9"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "45B0027FD0FD7848"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "1F4E56FB181D1BB1"
+				item: {
+					Count: 1b
+					id: "ramcompat:tendon_lump"
+					tag: {
+						abilities: {
+							tendon: {
+								points: 0
+								stats: {
+									cooldown: 8.92901d
+									damage: 3.66813d
+									distance: 3.87311d
+								}
+								temp: {
+									ticking: 1b
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 19.5d
+			y: -3.5d
+		}
+		{
+			id: "0C3EAC6E3B8BA25F"
+			rewards: [
+				{
+					id: "543C2CC7E67CBE1A"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "19FC64296EB8374D"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "736090FCB14E5F7C"
+				item: {
+					Count: 1b
+					id: "relics:amphibian_boot"
+					tag: {
+						abilities: {
+							gills: {
+								points: 0
+								stats: {
+									chance: 0.07902d
+								}
+							}
+							slipping: {
+								points: 0
+								stats: {
+									duration: 15.29737d
+									speed: 0.00888d
+								}
+							}
+							swimming: {
+								points: 0
+								stats: {
+									duration: 30.68994d
+									speed: 0.00766d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 14.5d
+			y: -5.5d
+		}
+		{
+			id: "1A6C5E681836FC86"
+			rewards: [
+				{
+					id: "56156A0564D2D74F"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "1A2008D2940FA09B"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "01D2EB1A744A8692"
+				item: {
+					Count: 1b
+					id: "relics:aqua_walker"
+					tag: {
+						abilities: {
+							walking: {
+								points: 0
+								stats: {
+									time: 50.29197d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 15.5d
+			y: -5.5d
+		}
+		{
+			id: "38E1AD08CB6CBC5D"
+			rewards: [
+				{
+					id: "573FB27FCC5824BB"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "275BA15D1C6240E4"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "5AD559D40F1E1261"
+				item: {
+					Count: 1b
+					id: "relics:arrow_quiver"
+					tag: {
+						abilities: {
+							agility: {
+								points: 0
+								stats: {
+									modifier: 1.0d
+								}
+							}
+							leap: {
+								points: 0
+								stats: {
+									cooldown: 12.04098d
+									duration: 5.64381d
+									multiplier: 0.41584d
+								}
+							}
+							rain: {
+								points: 0
+								stats: {
+									delay: 0.80215d
+									duration: 12.34462d
+									radius: 4.61935d
+								}
+							}
+							receptacle: {
+								points: 0
+								stats: {
+									slots: 2.75801d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 16.5d
+			y: -2.5d
+		}
+		{
+			id: "5C73C17643D4ABD8"
+			rewards: [
+				{
+					id: "068ABB452747AAC0"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2B215F13777998AC"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "17889E805AD83969"
+				item: {
+					Count: 1b
+					id: "relics:bastion_ring"
+					tag: {
+						abilities: {
+							trade: {
+								points: 0
+								stats: {
+									rolls: 0.55464d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 17.5d
+			y: -4.5d
+		}
+		{
+			id: "63DE116E2AA26F9D"
+			rewards: [
+				{
+					id: "650720C153CA856C"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "107637029A79C98E"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "1D2ACFF20FA43EB8"
+				item: {
+					Count: 1b
+					id: "relics:blazing_flask"
+					tag: {
+						abilities: {
+							bonfire: {
+								points: 0
+								stats: {
+									height: 4.34158d
+									speed: 0.04921d
+									step: 2.47667d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 19.5d
+			y: -1.5d
+		}
+		{
+			id: "7A6B20B0748AF74D"
+			rewards: [
+				{
+					id: "67FBA97BEA36D21C"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "7EB632D7598A651D"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "63E3AB030091C43E"
+				item: {
+					Count: 1b
+					id: "relics:chorus_inhibitor"
+					tag: {
+						abilities: {
+							blink: {
+								points: 0
+								stats: {
+									cooldown: 5.94682d
+									distance: 16.93279d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 18.5d
+			y: -4.5d
+		}
+		{
+			id: "420DFFA657DCCC72"
+			rewards: [
+				{
+					id: "30A4D26B0D5A4993"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2254EA485D03A468"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "5FE9CCB13010E9EC"
+				item: {
+					Count: 1b
+					id: "relics:drowned_belt"
+					tag: {
+						abilities: {
+							anchor: {
+								points: 0
+								stats: {
+									sinking: 4.58989d
+									slowness: 0.35906d
+								}
+							}
+							pressure: {
+								points: 0
+								stats: {
+									damage: 1.95973d
+								}
+							}
+							riptide: {
+								points: 0
+								stats: {
+									cooldown: 8.6742d
+								}
+							}
+							slots: {
+								points: 0
+								stats: {
+									charm: 0.24804d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 14.5d
+			y: -3.5d
+		}
+		{
+			id: "1C03A748D58088A9"
+			rewards: [
+				{
+					id: "63C65A7ACBE90037"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "6613EF258AB18382"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得，使用煤炭右键此物品填充燃料"
+			tasks: [{
+				id: "648D41AAB1C50729"
+				item: {
+					Count: 1b
+					id: "relics:elytra_booster"
+					tag: {
+						abilities: {
+							boost: {
+								points: 0
+								stats: {
+									capacity: 75.67675d
+									speed: 1.21793d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 15.5d
+			y: -3.5d
+		}
+		{
+			id: "5C8F96107FFBDE24"
+			rewards: [
+				{
+					id: "6F81663C218E7792"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "31B5F286B8577F85"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "3619CD2292BFFD6C"
+				item: {
+					Count: 1b
+					id: "relics:enders_hand"
+					tag: {
+						abilities: {
+							swap: {
+								points: 0
+								stats: {
+									distance: 28.66456d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 16.5d
+			y: -3.5d
+		}
+		{
+			id: "46C9373DDBF7A51C"
+			rewards: [
+				{
+					id: "47B636D827825896"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "597D568A6B4EF5CE"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "48EFCB93A53F9D34"
+				item: {
+					Count: 1b
+					id: "relics:holy_locket"
+					tag: {
+						abilities: {
+							belief: {
+								points: 0
+								stats: {
+									amount: 0.19424d
+									capacity: 10.51705d
+									count: 1.35136d
+									radius: 4.82429d
+								}
+							}
+							blessing: {
+								points: 0
+								stats: {
+									consumption: 7.50408d
+								}
+								temp: {
+									ticking: 1b
+								}
+							}
+							repentance: {
+								points: 0
+								stats: {
+									damage: 0.12257d
+									radius: 4.16695d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 15.5d
+			y: -4.5d
+		}
+		{
+			id: "5F44351F2C94C7FA"
+			rewards: [
+				{
+					id: "5CF1ADF4C058DBBD"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "7616FB9F5210221A"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "56F2838B5295CE93"
+				item: {
+					Count: 1b
+					id: "relics:horse_flute"
+					tag: {
+						abilities: {
+							heal: {
+								points: 0
+								stats: {
+									amount: 0.02731d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 14.5d
+			y: -1.5d
+		}
+		{
+			id: "5B85A13816E11C6B"
+			rewards: [
+				{
+					id: "1F2D583893DF8C52"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "410B3C1FB1DC8F8B"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "3BF22B0C23306D4C"
+				item: {
+					Count: 1b
+					id: "relics:hunter_belt"
+					tag: {
+						abilities: {
+							slots: {
+								points: 0
+								stats: {
+									charm: 1.89494d
+								}
+							}
+							training: {
+								points: 0
+								stats: {
+									damage: 1.39174d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 17.5d
+			y: -3.5d
+		}
+		{
+			id: "21BC9CA7E1A5ABF6"
+			rewards: [
+				{
+					id: "18F31C664FF1DF2E"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "60F7EC4591CF0A6D"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "25D31BA4F7CECB57"
+				item: {
+					Count: 1b
+					id: "relics:ice_breaker"
+					tag: {
+						abilities: {
+							impact: {
+								points: 0
+								stats: {
+									damage: 3.97776d
+									size: 2.67378d
+								}
+							}
+							sustainability: {
+								points: 0
+								stats: {
+									modifier: 0.62047d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 18.5d
+			y: -5.5d
+		}
+		{
+			id: "739C0A71ED6C545B"
+			rewards: [
+				{
+					id: "67C6000933CCBE45"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "08B8E906C89C7C2E"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "6E5E92D24BD90746"
+				item: {
+					Count: 1b
+					id: "relics:ice_skates"
+					tag: {
+						abilities: {
+							ram: {
+								points: 0
+								stats: {
+									damage: 0.151d
+								}
+							}
+							skating: {
+								points: 0
+								stats: {
+									duration: 43.80497d
+									speed: 0.01724d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 19.5d
+			y: -5.5d
+		}
+		{
+			id: "2B310DBC2E4E579F"
+			rewards: [
+				{
+					id: "4A64B9BAD554FE7A"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "3978C10106BBB329"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "394B38E93E325B58"
+				item: {
+					Count: 1b
+					id: "relics:infinity_ham"
+					tag: {
+						abilities: {
+							autophagy: {
+								points: 0
+								stats: {
+									feed: 1.54864d
+								}
+							}
+							infusion: {
+								points: 0
+								stats: {
+									duration: 3.25912d
+								}
+							}
+						}
+						pieces: 10
+					}
+				}
+				type: "item"
+			}]
+			x: 15.5d
+			y: -1.5d
+		}
+		{
+			id: "2E07BA589760DB67"
+			rewards: [
+				{
+					id: "781A068D26EEE2BA"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "41D96C8DC2F0015A"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "661FB9E5DBA29FC1"
+				item: {
+					Count: 1b
+					id: "relics:magic_mirror"
+					tag: {
+						abilities: {
+							teleport: {
+								points: 0
+								stats: {
+									cooldown: 119.78548d
+									distance: 502.723d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 16.5d
+			y: -1.5d
+		}
+		{
+			id: "2E1F5F89BEF865EE"
+			rewards: [
+				{
+					id: "05E1E81AF12C7C5C"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "6ADD287150199784"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "10EC849C3CDE9A2A"
+				item: {
+					Count: 1b
+					id: "relics:shadow_glaive"
+					tag: {
+						abilities: {
+							glaive: {
+								points: 0
+								stats: {
+									bounces: 3.39857d
+									damage: 4.25302d
+									radius: 2.65555d
+									recharge: 14.48386d
+								}
+							}
+							saw: {
+								points: 0
+								stats: {
+									damage: 1.44279d
+									speed: 17.09923d
+								}
+							}
+						}
+						charges: 8
+					}
+				}
+				type: "item"
+			}]
+			x: 17.5d
+			y: -1.5d
+		}
+		{
+			id: "4E351F89564900A2"
+			rewards: [
+				{
+					id: "2A62AF86D5E38603"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "67BAAF52B92F3336"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "2C6122850B74DBEB"
+				item: {
+					Count: 1b
+					id: "relics:space_dissector"
+					tag: {
+						abilities: {
+							dissection: {
+								points: 0
+								stats: {
+									distance: 27.98788d
+									time: 7.27357d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 18.5d
+			y: -1.5d
+		}
+		{
+			id: "300E208EED0BE3DA"
+			rewards: [
+				{
+					id: "5F1FC8DD64F5A82E"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "45B56BC1F1A25D1B"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "0B5468F601BFE4A3"
+				item: {
+					Count: 1b
+					id: "relics:jellyfish_necklace"
+					tag: {
+						abilities: {
+							paralysis: {
+								points: 0
+								stats: {
+									duration: 0.67885d
+								}
+							}
+							shock: {
+								points: 0
+								stats: {
+									damage: 0.55863d
+								}
+								temp: {
+									ticking: 1b
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 16.5d
+			y: -4.5d
+		}
+		{
+			id: "5C573FDF5A83ECF1"
+			rewards: [
+				{
+					id: "6E74FAA9495A535D"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "4DDC514793C9B1F8"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "68713A591F592907"
+				item: {
+					Count: 1b
+					id: "relics:leather_belt"
+					tag: {
+						abilities: {
+							slots: {
+								points: 0
+								stats: {
+									charm: 1.04377d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 18.5d
+			y: -3.5d
+		}
+		{
+			id: "356F9B2611967792"
+			rewards: [
+				{
+					id: "06A34B67F5196B25"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2467B14508A260A4"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "087B9AB8CCEB4CF4"
+				item: {
+					Count: 1b
+					id: "relics:magma_walker"
+					tag: {
+						abilities: {
+							pace: {
+								points: 0
+								stats: {
+									time: 30.52935d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 16.5d
+			y: -5.5d
+		}
+		{
+			id: "66D74276286AF108"
+			rewards: [
+				{
+					id: "79BA5305F5094A17"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2BCFED71ABEE568B"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "15B1517D8704A852"
+				item: {
+					Count: 1b
+					id: "relics:midnight_robe"
+					tag: {
+						abilities: {
+							backstab: {
+								points: 0
+								stats: {
+									damage: 1.37239d
+									distance: 17.62493d
+								}
+							}
+							vanish: {
+								points: 0
+								stats: {
+									light: 1.59637d
+									speed: 0.14127d
+								}
+								temp: {
+									ticking: 1b
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 15.5d
+			y: -2.5d
+		}
+		{
+			id: "2AB9E93901745051"
+			rewards: [
+				{
+					id: "7279FB93CDFF74B4"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "12824B24D4B8B1CB"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "1FF6B2064BF9FB54"
+				item: {
+					Count: 1b
+					id: "relics:reflection_necklace"
+					tag: {
+						abilities: {
+							explode: {
+								points: 0
+								stats: {
+									capacity: 59.02425d
+									damage: 0.31347d
+									stun: 0.13273d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 14.5d
+			y: -4.5d
+		}
+		{
+			id: "654F1D3F89751AC0"
+			rewards: [
+				{
+					id: "57008732BF18B212"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "3058359474F52F7A"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "52C28605B6DE35DC"
+				item: {
+					Count: 1b
+					id: "relics:roller_skates"
+					tag: {
+						abilities: {
+							skating: {
+								points: 0
+								stats: {
+									duration: 15.96038d
+									speed: 0.00345d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 17.5d
+			y: -5.5d
+		}
+		{
+			id: "446AE9E1EF5FF76D"
+			rewards: [
+				{
+					id: "55095F55AA548709"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "7C5D526239D5E551"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "0BA8C1D2CFE85D18"
+				item: {
+					Count: 1b
+					id: "relics:spore_sack"
+					tag: {
+						abilities: {
+							buffer: {
+								points: 0
+								stats: {
+									capacity: 2.44366d
+									chance: 0.06183d
+								}
+							}
+							explosion: {
+								points: 0
+								stats: {
+									size: 0.10071d
+								}
+							}
+							multiplying: {
+								points: 0
+								stats: {
+									amount: 0.06676d
+									chance: 0.14395d
+									size: 0.07629d
+								}
+							}
+							spore: {
+								points: 0
+								stats: {
+									cooldown: 14.48623d
+									damage: 0.4877d
+									duration: 3.30237d
+									size: 0.4122d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 19.5d
+			y: -4.5d
+		}
+		{
+			id: "1721CC53F8743944"
+			rewards: [
+				{
+					id: "753891ADF0176CFF"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "44A23FB0AE254C24"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得（败者食尘）"
+			tasks: [{
+				id: "4EE0F1A03D271024"
+				item: {
+					Count: 1b
+					id: "relics:spatial_sign"
+					tag: {
+						abilities: {
+							seal: {
+								points: 0
+								stats: {
+									time: 3.83848d
+								}
+							}
+						}
+						pos: "[\"1418.4,64.0,1041.2\"]"
+						world: "minecraft:the_end"
+					}
+				}
+				type: "item"
+			}]
+			x: 19.5d
+			y: -2.5d
+		}
+		{
+			id: "7B8C435261FEC4E1"
+			rewards: [
+				{
+					id: "15EADAB945CE85F3"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "09E9A230C02DB13F"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e探索获得"
+			tasks: [{
+				id: "782BBE05505CA58F"
+				item: {
+					Count: 1b
+					id: "relics:wool_mitten"
+					tag: {
+						abilities: {
+							mold: {
+								points: 0
+								stats: {
+									damage: 0.07461d
+									freeze: 1.63739d
+									size: 12.2939d
+									stun: 0.04075d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 17.5d
+			y: -2.5d
+		}
+		{
+			id: "3B41FB6B454F0A94"
+			rewards: [
+				{
+					id: "4A9494BA4B25159D"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "133F7555AAC1B7EE"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "由骷髅概率携带"
+			tasks: [{
+				id: "5F987185C00B8FE9"
+				item: {
+					Count: 1b
+					id: "artifacts:plastic_drinking_hat"
+					tag: {
+						abilities: {
+							drinking: {
+								points: 0
+								stats: {
+									speed: 0.33239d
+								}
+							}
+							nutrition: {
+								points: 0
+								stats: {
+									hunger: 1.39704d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 17.5d
+			y: -6.5d
+		}
+		{
+			id: "7B64AEA2DB83B9CE"
+			rewards: [
+				{
+					id: "4BAA05FE82BDAD67"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "792E9EE96A2D8691"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "由骷髅概率携带"
+			tasks: [{
+				id: "2D2EF9FACCA198C4"
+				item: {
+					Count: 1b
+					id: "artifacts:novelty_drinking_hat"
+					tag: {
+						abilities: {
+							drinking: {
+								points: 0
+								stats: {
+									speed: 0.30725d
+								}
+							}
+							nutrition: {
+								points: 0
+								stats: {
+									hunger: 2.26642d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 18.5d
+			y: -6.5d
+		}
+		{
+			id: "42E8529AB49474FD"
+			rewards: [
+				{
+					id: "6FF63A5B6983EE69"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "574BABAFDAD59E14"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "由骷髅概率携带"
+			tasks: [{
+				id: "07DB2D76D17E027F"
+				item: {
+					Count: 1b
+					id: "artifacts:snorkel"
+					tag: {
+						abilities: {
+							diving: {
+								points: 0
+								stats: {
+									duration: 7.11331d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 19.5d
+			y: -6.5d
+		}
+		{
+			id: "4B5A92E0D14823F3"
+			rewards: [
+				{
+					id: "29CD4F9300138A19"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "6BD1C02E9A027D51"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "由僵尸概率携带（提供村庄声望，降低价格）"
+			tasks: [{
+				id: "2D962EC05DD839AA"
+				item: {
+					Count: 1b
+					id: "artifacts:villager_hat"
+					tag: {
+						abilities: {
+							discount: {
+								points: 0
+								stats: {
+									multiplier: 12.23305d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 14.5d
+			y: -6.5d
+		}
+		{
+			id: "4808E1423608B73A"
+			rewards: [
+				{
+					id: "7DA8A1AEE0B1100D"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "17F67E34599FECC9"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "由僵尸概率携带"
+			tasks: [{
+				id: "7F623E39A9657A14"
+				item: {
+					Count: 1b
+					id: "artifacts:superstitious_hat"
+					tag: {
+						abilities: {
+							looting: {
+								points: 0
+								stats: {
+									chance: 0.14958d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 15.5d
+			y: -6.5d
+		}
+		{
+			id: "6324CED9F141E2A1"
+			rewards: [
+				{
+					id: "6B3F725009A0DB59"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "7DFE8E316330CE17"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "由僵尸概率携带"
+			tasks: [{
+				id: "3CFF5458CD0584BA"
+				item: {
+					Count: 1b
+					id: "artifacts:anglers_hat"
+					tag: {
+						abilities: {
+							catch: {
+								points: 0
+								stats: {
+									chance: 0.16075d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: 16.5d
+			y: -6.5d
+		}
+		{
+			id: "4FD07D47B74186C2"
+			subtitle: "&e通过&d探索&e和&d击杀怪物&e获得"
+			tasks: [{
+				id: "677B885A63A58840"
+				title: "&6遗&d物"
+				type: "checkmark"
+			}]
+			x: -1.0d
+			y: -7.5d
+		}
+		{
+			description: ["{image:kubejs:textures/aaaa/yiwu.png width:195 height:230 align:1}"]
+			id: "281136D362277A9F"
+			subtitle: "&e通过&d探索&e和&d击杀怪物&e获得"
+			tasks: [{
+				id: "3879112D1F2138D6"
+				title: "&e成&6长&d型&c遗&9物"
+				type: "checkmark"
+			}]
+			x: 17.0d
+			y: -7.5d
+		}
+		{
+			id: "39837D46FF8EF5B6"
+			rewards: [
+				{
+					id: "13F85E4694AD24C4"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "57BF798683D4D2A2"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "22B1C62EDE47F5FC"
+				item: "celestial_artifacts:precious_bracelet"
+				type: "item"
+			}]
+			x: 7.0d
+			y: -5.0d
+		}
+		{
+			id: "6A563CA910B35507"
+			rewards: [
+				{
+					id: "5DEC60247B9611C5"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "26D19CB5F324C461"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&b探索获得"
+			tasks: [{
+				id: "4DF61F055393FADE"
+				item: "celestial_artifacts:red_ruby_bracelet"
+				type: "item"
+			}]
+			x: 6.0d
+			y: -1.0d
+		}
+		{
+			id: "634022B43FE8EE80"
+			rewards: [
+				{
+					id: "4B44BD0CEFED5D9B"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "5ED4AF2A591367F7"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&2这是哪个天才想出来的获取方式？"
+			tasks: [{
+				id: "58BBC55F83B93E56"
+				item: "celestial_artifacts:charming_bracelet"
+				type: "item"
+			}]
+			x: 9.0d
+			y: -4.0d
+		}
+		{
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1CD5E566CC3FD0FE\" } }"
+			]
+			id: "2655E43ACD9EE811"
+			rewards: [
+				{
+					id: "147B25303DB76875"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "387048C42F1606B9"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&b探索获得&c/&d任务获得"
+			tasks: [{
+				id: "6AE478FBDFD6950E"
+				item: "celestial_artifacts:spirit_bracelet"
+				type: "item"
+			}]
+			x: 5.0d
+			y: -4.0d
+		}
+		{
+			id: "27C804E26D833E19"
+			rewards: [
+				{
+					id: "0ED1EAA17EFC9A94"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "7E9ED5810B3DCC01"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&d击败凋零后可获得合成材料"
+			tasks: [{
+				id: "2CD935D2B8C4C5CF"
+				item: "celestial_artifacts:star_necklace"
+				type: "item"
+			}]
+			x: 8.0d
+			y: -3.0d
+		}
+		{
+			id: "233F714F84881D86"
+			rewards: [
+				{
+					id: "5F363455D48C6469"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "1FBDE0AC96BAA717"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "1FE4044E047E36DC"
+				item: "celestial_artifacts:cross_necklace"
+				type: "item"
+			}]
+			x: 6.0d
+			y: -7.0d
+		}
+		{
+			id: "3A5210C3C7259C3F"
+			rewards: [
+				{
+					id: "1550515EEE38BAC6"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "70DC8EBE0088DF0B"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&b探索获得重要物品后合成获得"
+			tasks: [{
+				id: "08F6B4862405835F"
+				item: "celestial_artifacts:gallop_necklace"
+				type: "item"
+			}]
+			x: 8.0d
+			y: -1.0d
+		}
+		{
+			id: "72516BF856DA597E"
+			rewards: [
+				{
+					id: "5A1D520590327264"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "305EE9C8DF2D7C33"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&b探索获得"
+			tasks: [{
+				id: "45841A056AF45CE1"
+				item: "celestial_artifacts:fang_necklace"
+				type: "item"
+			}]
+			x: 9.0d
+			y: -1.0d
+		}
+		{
+			id: "39E70002CF6A7719"
+			rewards: [
+				{
+					id: "1AC9F955B6930C3A"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "58543EA8C6C1F8A5"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "2DB8D795707B0338"
+				item: "celestial_artifacts:precious_necklace"
+				type: "item"
+			}]
+			x: 8.0d
+			y: -5.0d
+		}
+		{
+			id: "4796A2AC70862A05"
+			rewards: [
+				{
+					id: "5FF04D5059C59EEB"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2EFA8C434A177BEB"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "0701816F23D6409E"
+				item: "celestial_artifacts:gold_ring"
+				type: "item"
+			}]
+			x: 7.0d
+			y: -7.0d
+		}
+		{
+			dependencies: ["4796A2AC70862A05"]
+			id: "0E2B0DC7B18998CA"
+			rewards: [
+				{
+					id: "204400F828D0DFFF"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "3B4E676A40C238A7"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "66F0348727E1985C"
+				item: "celestial_artifacts:amethyst_ring"
+				type: "item"
+			}]
+			x: 7.0d
+			y: -6.0d
+		}
+		{
+			id: "2322B91CE16EA430"
+			rewards: [
+				{
+					id: "30322C5224543852"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "4755518E79784404"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "692E4A774A768182"
+				item: "celestial_artifacts:diamond_ring"
+				type: "item"
+			}]
+			x: 8.0d
+			y: -7.0d
+		}
+		{
+			id: "4D748DDB94880AE0"
+			rewards: [
+				{
+					id: "659E666598F8120B"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "5B3BC689A90E27FC"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "14031FC4B6B92DD9"
+				item: "celestial_artifacts:emerald_ring"
+				type: "item"
+			}]
+			x: 9.0d
+			y: -7.0d
+		}
+		{
+			id: "5E8451CB53708C31"
+			rewards: [
+				{
+					id: "5AD1F8934DEE604D"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "66AD96F8E0B6FBBB"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e由末地篇任务获取"
+			tasks: [{
+				id: "39B78C2915042151"
+				item: "celestial_artifacts:flight_ring"
+				type: "item"
+			}]
+			x: 5.0d
+			y: -1.0d
+		}
+		{
+			id: "2EBB81D26BA47E54"
+			rewards: [
+				{
+					id: "7C4EAD4C26E71137"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "61CD9F6748187AB2"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "2CC771571B7AE086"
+				item: "celestial_artifacts:netherite_ring"
+				type: "item"
+			}]
+			x: 10.0d
+			y: -7.0d
+		}
+		{
+			dependencies: ["4D748DDB94880AE0"]
+			id: "08BE9C40608866AA"
+			rewards: [
+				{
+					id: "5D64353650FF2B02"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "6D350C87E2F88321"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "67D65AC68CB3055E"
+				item: "celestial_artifacts:ring_of_life"
+				type: "item"
+			}]
+			x: 9.0d
+			y: -6.0d
+		}
+		{
+			id: "6C09126FB5AF68BD"
+			rewards: [
+				{
+					id: "44167E01F86FC70B"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "3684EED8CFA8FD54"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&b探索获得"
+			tasks: [{
+				id: "33BC34712348F415"
+				item: "celestial_artifacts:thunder_ring"
+				type: "item"
+			}]
+			x: 10.0d
+			y: -1.0d
+		}
+		{
+			dependencies: ["2EBB81D26BA47E54"]
+			id: "799F7F240BEB5B3B"
+			rewards: [
+				{
+					id: "51CE31321D63F1A8"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "264000E68C6DA626"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "160C0C7CEDE88762"
+				item: "celestial_artifacts:nether_fire"
+				type: "item"
+			}]
+			x: 10.0d
+			y: -6.0d
+		}
+		{
+			dependencies: ["2322B91CE16EA430"]
+			id: "03C22F8DA2C38A2F"
+			rewards: [
+				{
+					id: "5D1F93E36508376C"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "1F4CB5A6599A081E"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "0F37C8FB31285D5B"
+				item: "celestial_artifacts:freeze_ring"
+				type: "item"
+			}]
+			x: 8.0d
+			y: -6.0d
+		}
+		{
+			description: [
+				"&6推荐去刷独眼巨人（最大=800HP，正常血量＜200）"
+				""
+				"&6&n舍弃防御换取攻击力提升"
+			]
+			id: "5CAA43F7E1D8C2EE"
+			rewards: [
+				{
+					id: "7318D407769CF12F"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "193D0311CAB61361"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e利用凋零去杀死强大生物获得"
+			tasks: [{
+				id: "3C894E90D37B08B0"
+				item: "celestial_artifacts:destroyer_badge"
+				type: "item"
+			}]
+			x: 11.0d
+			y: 0.0d
+		}
+		{
+			id: "76ED01DA6510F0D1"
+			rewards: [
+				{
+					id: "1F82C51C823AE53F"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "7EEB69359101C5D8"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "78E3293611FDB793"
+				item: "celestial_artifacts:solar_magnet"
+				type: "item"
+			}]
+			x: 6.0d
+			y: -5.0d
+		}
+		{
+			id: "4B5524056A155F22"
+			rewards: [
+				{
+					id: "0D7F7978928080C9"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "24284ACC23C7FC06"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&2高空钓鱼获得（Y＞300格）（群系：海洋）"
+			tasks: [{
+				id: "15D33DF3FA4559C4"
+				item: "celestial_artifacts:magic_horseshoe"
+				type: "item"
+			}]
+			x: 10.0d
+			y: -4.0d
+		}
+		{
+			id: "5B8FE653F2145A4D"
+			rewards: [
+				{
+					id: "71C29C1FD453E284"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "179C254C8CD8D0CB"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&b探索获得&e【下界合金巨兽】掉落"
+			tasks: [{
+				id: "64CA15492EC14D01"
+				item: "celestial_artifacts:heart_of_revenge"
+				type: "item"
+			}]
+			x: 6.0d
+			y: 0.0d
+		}
+		{
+			id: "027892A68C621374"
+			rewards: [
+				{
+					id: "5368551227F2C3CE"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "7459C79EDA3D39AF"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&b探索获得"
+			tasks: [{
+				id: "37D83FC59B88AFE5"
+				item: "celestial_artifacts:traveler_scroll"
+				type: "item"
+			}]
+			x: 7.0d
+			y: -1.0d
+		}
+		{
+			id: "4C09216C352BD911"
+			rewards: [
+				{
+					id: "21C92EADA58836E9"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "608DEE0C056B5DF6"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&d稀有掉落物合成"
+			tasks: [{
+				id: "535A9B5CC3D2F268"
+				item: "celestial_artifacts:sea_god_scroll"
+				type: "item"
+			}]
+			x: 10.0d
+			y: -3.0d
+		}
+		{
+			id: "0E5AF1D814C9ACAC"
+			rewards: [
+				{
+					id: "48E5845D94AB9EAB"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "384FEFB76D49EF7D"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&d击败凋零后可获得合成材料"
+			tasks: [{
+				id: "56B78BE7EE66D7E6"
+				item: "celestial_artifacts:skywalker_scroll"
+				type: "item"
+			}]
+			x: 6.0d
+			y: -2.0d
+		}
+		{
+			id: "5F23F47A5D7ADFA4"
+			rewards: [
+				{
+					id: "5F63318EEFAF67C5"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "415BDA40422FAE87"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "2B0BE9F15BBCF5BA"
+				item: "celestial_artifacts:emerald_bracelet"
+				type: "item"
+			}]
+			x: 10.0d
+			y: -5.0d
+		}
+		{
+			id: "750FB4839439B511"
+			rewards: [
+				{
+					id: "6957EEB04E75D35D"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "70C9BFAE753C64AA"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "5CB87A5A9828CE9E"
+				item: "celestial_artifacts:life_bracelet"
+				type: "item"
+			}]
+			x: 11.0d
+			y: -5.0d
+		}
+		{
+			id: "391A3506C0BB80CB"
+			rewards: [
+				{
+					id: "1376A2FC8AF1837C"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "20A8E53C276154CE"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&d击败凋零后可获得合成材料"
+			tasks: [{
+				id: "6B35B83789AA415D"
+				item: "celestial_artifacts:holy_necklace"
+				type: "item"
+			}]
+			x: 9.0d
+			y: -3.0d
+		}
+		{
+			id: "0BF657BB7A131792"
+			rewards: [
+				{
+					id: "48C60923A0B08EEE"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "4F753D86375DD1BE"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "53AA1B2F2D010A35"
+				item: "celestial_artifacts:emerald_necklace"
+				type: "item"
+			}]
+			x: 9.0d
+			y: -5.0d
+		}
+		{
+			id: "108BB35E9A59B78F"
+			rewards: [
+				{
+					id: "6A0A0F26860978A9"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "3C4DF5F4A4067508"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&b探索获得"
+			tasks: [{
+				id: "41907989C2443AA0"
+				item: "celestial_artifacts:red_heart_necklace"
+				type: "item"
+			}]
+			x: 11.0d
+			y: -2.0d
+		}
+		{
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1CD5E566CC3FD0FE\" } }"
+			]
+			id: "7B424D1A846B6DBC"
+			rewards: [
+				{
+					id: "3649C0AE5B34F740"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "6C89ABA5ADCC102A"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&b探索获得&c/&d任务获得"
+			tasks: [{
+				id: "01246FCBF12C19D9"
+				item: "celestial_artifacts:spirit_necklace"
+				type: "item"
+			}]
+			x: 8.0d
+			y: -4.0d
+		}
+		{
+			id: "2C667DCB8395BC72"
+			rewards: [
+				{
+					id: "139AD3D6B2A5851F"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "59FA80349B822B50"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&d击败凋零后可获得合成材料"
+			tasks: [{
+				id: "2C54368F3C46A8BF"
+				item: "celestial_artifacts:forest_cloak"
+				type: "item"
+			}]
+			x: 8.0d
+			y: -2.0d
+		}
+		{
+			id: "08A2B3704F6C08B3"
+			rewards: [
+				{
+					id: "5E199F7F84EF6942"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "06EFDB7F4DC3D292"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&d稀有掉落物合成"
+			tasks: [{
+				id: "15FD03C7819E3E3F"
+				item: "celestial_artifacts:sea_god_crown"
+				type: "item"
+			}]
+			x: 11.0d
+			y: -3.0d
+		}
+		{
+			dependencies: ["233F714F84881D86"]
+			id: "5C5631F08FDCD15E"
+			rewards: [
+				{
+					id: "4ED595496AC67FD7"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "0BD44999A39904B2"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "48958F2C8A1A96AE"
+				item: "celestial_artifacts:prayer_crown"
+				type: "item"
+			}]
+			x: 6.0d
+			y: -6.0d
+		}
+		{
+			id: "5493F27DF00AC26A"
+			rewards: [
+				{
+					id: "733809769D30C7B2"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "3923CFA142FC2EA7"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&d击败凋零后可获得合成材料"
+			tasks: [{
+				id: "64FD0FBDDFE89472"
+				item: "celestial_artifacts:evil_eye"
+				type: "item"
+			}]
+			x: 7.0d
+			y: -2.0d
+		}
+		{
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1CD5E566CC3FD0FE\" } }"
+			]
+			id: "08A32FA1628D2A7B"
+			rewards: [
+				{
+					id: "262D04F93F4D179B"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "6AA21A539CE34594"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&b探索获得&c/&d任务获得"
+			tasks: [{
+				id: "3CF9EEBA13DAF230"
+				item: "celestial_artifacts:spirit_crown"
+				type: "item"
+			}]
+			x: 7.0d
+			y: -4.0d
+		}
+		{
+			id: "7E78BBF0B90DE96A"
+			rewards: [
+				{
+					id: "67EA89701B5DF4E9"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "6102AE44D7CA3502"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&d击败凋零后可获得合成材料"
+			tasks: [{
+				id: "4BB913D810D189AF"
+				item: "celestial_artifacts:sakura_hairpin"
+				type: "item"
+			}]
+			x: 7.0d
+			y: -3.0d
+		}
+		{
+			id: "367409381A106961"
+			rewards: [
+				{
+					id: "6F51C6C33458B9DF"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "3C38D18766DE86DE"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&d稀有掉落物合成"
+			tasks: [{
+				id: "45471FB80008C0BF"
+				item: "celestial_artifacts:yellow_duck"
+				type: "item"
+			}]
+			x: 5.0d
+			y: -2.0d
+		}
+		{
+			id: "514DD1E9E894F3B4"
+			rewards: [
+				{
+					id: "7DA5056703123D93"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "304D0339FB476858"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&d击败凋零后可获得合成材料"
+			tasks: [{
+				id: "5E2F4A673293D536"
+				item: "celestial_artifacts:angel_desire"
+				type: "item"
+			}]
+			x: 5.0d
+			y: 0.0d
+		}
+		{
+			id: "36C440808ACA5B0D"
+			rewards: [
+				{
+					id: "1F01D63414B145E8"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "6338308FFAA5EE78"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "5AD88AD980FA00EA"
+				item: "celestial_artifacts:magic_arrow_bag"
+				type: "item"
+			}]
+			x: 11.0d
+			y: -7.0d
+		}
+		{
+			dependencies: ["36C440808ACA5B0D"]
+			description: ["&6将射出箭变为火矢"]
+			id: "216338D5C53B775D"
+			rewards: [
+				{
+					id: "220371A51FF9F2DE"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "6A7EF99B079E02AF"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "789555B91A239E79"
+				item: "celestial_artifacts:flame_arrow_bag"
+				type: "item"
+			}]
+			x: 11.0d
+			y: -6.0d
+		}
+		{
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1CD5E566CC3FD0FE\" } }"
+			]
+			id: "25928B24577D8489"
+			rewards: [
+				{
+					id: "51E8BAAE155BD2DC"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "059807C166191AB8"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&b探索获得&c/&d任务获得"
+			tasks: [{
+				id: "62AD9DE264683288"
+				item: "celestial_artifacts:spirit_arrow_bag"
+				type: "item"
+			}]
+			x: 6.0d
+			y: -4.0d
+		}
+		{
+			id: "0B9175A61C637F29"
+			rewards: [
+				{
+					id: "5A5E50B4A88E45CA"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "3B486191A1227E91"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "08A898BDD905350A"
+				item: "celestial_artifacts:iron_scabbard"
+				type: "item"
+			}]
+			x: 11.0d
+			y: -4.0d
+		}
+		{
+			id: "6EAAF9F0CD353E72"
+			rewards: [
+				{
+					id: "79930A19201C7E29"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "442496E72BA184FE"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&b探索获得"
+			tasks: [{
+				id: "1CD8BA6D09BA9B3D"
+				item: "celestial_artifacts:leech_scabbard"
+				type: "item"
+			}]
+			x: 11.0d
+			y: -1.0d
+		}
+		{
+			id: "12C5A428D242CC5E"
+			rewards: [
+				{
+					id: "24D2980D2ED091AD"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "709B7A0DF8BAFC41"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&d击败凋零后可获得合成材料"
+			tasks: [{
+				id: "4257FA079F89F017"
+				item: "celestial_artifacts:titan_scabbard"
+				type: "item"
+			}]
+			x: 5.0d
+			y: -3.0d
+		}
+		{
+			id: "579DAD4EC5560DFA"
+			rewards: [{
+				id: "1CCB79EA3D5C1FCA"
+				item: "celestial_core:treasure_fragment"
+				type: "item"
+			}]
+			subtitle: "&e大部分遗物通过&d合成&e和&d探索&e获得"
+			tasks: [{
+				id: "4C6B6D6F58E33AB1"
+				title: "&e星&6月&d遗&9物"
+				type: "checkmark"
+			}]
+			x: 8.0d
+			y: -8.0d
+		}
+		{
+			id: "506A31D6637B0E1D"
+			rewards: [
+				{
+					id: "0049BEFA82C42EF9"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "6C1E836F48AB2387"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&d稀有掉落物合成"
+			tasks: [{
+				id: "1885D436210F698A"
+				item: "celestial_artifacts:bearing_stamen"
+				type: "item"
+			}]
+			x: 9.0d
+			y: -2.0d
+		}
+		{
+			id: "5B2ADE55DACF8308"
+			rewards: [
+				{
+					id: "129E612B7B07A86F"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "1C355BC693BA3068"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&d稀有掉落物合成"
+			tasks: [{
+				id: "2B907443310D943C"
+				item: "celestial_artifacts:gluttony_badge"
+				type: "item"
+			}]
+			x: 10.0d
+			y: -2.0d
+		}
+		{
+			id: "17CC8EAA78B2C06F"
+			rewards: [
+				{
+					id: "2D366E6C5ED14555"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "432579A5E93D234B"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e解锁灾厄之册后可制作"
+			tasks: [{
+				id: "71208BC4FB70E956"
+				item: "celestial_artifacts:knight_shelter"
+				type: "item"
+			}]
+			x: 10.0d
+			y: 0.0d
+		}
+		{
+			id: "0F8AE672C0906D4C"
+			rewards: [
+				{
+					id: "0C0B96B32F030BEA"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "30793E3E301BB324"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e解锁灾厄之册后可制作"
+			tasks: [{
+				id: "47C5FF8933467C2A"
+				item: "celestial_artifacts:angel_pearl"
+				type: "item"
+			}]
+			x: 9.0d
+			y: 0.0d
+		}
+		{
+			id: "3EC2833D88594E60"
+			rewards: [
+				{
+					id: "00FBE6002B53A6AD"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "301487BAB82AB552"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e解锁灾厄之册后可制作"
+			tasks: [{
+				id: "645DE8C3DB82A059"
+				item: "celestial_artifacts:angel_heart"
+				type: "item"
+			}]
+			x: 8.0d
+			y: 0.0d
+		}
+		{
+			id: "31150B9379D31EF0"
+			rewards: [
+				{
+					id: "068CC06A8158E92B"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "683A7AD733B77D5A"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&e解锁灾厄之册后可制作"
+			tasks: [{
+				id: "07C2ECABE750967E"
+				item: "celestial_artifacts:holy_sword"
+				type: "item"
+			}]
+			x: 7.0d
+			y: 0.0d
+		}
+		{
+			description: [
+				"&e由部分主世界BOSS掉落和末影人概率掉落"
+				"&eBOSS链接："
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"6500D72DC8974DAF\" } }"
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"633203BE60563FF5\" } }"
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"311F715ECE5324CF\" } }"
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"217B64AF90110789\" } }"
+			]
+			id: "01D71AFAB6F67EB3"
+			rewards: [{
+				id: "5201409C44B5076F"
+				type: "xp"
+				xp: 20
+			}]
+			subtitle: "&6用于&d合成&c一些&9基础&e饰品"
+			tasks: [{
+				id: "6199673D138F6554"
+				item: "celestial_core:treasure_fragment"
+				type: "item"
+			}]
+			title: "&6宝&c藏&9碎&d片"
+			x: 9.0d
+			y: -8.0d
+		}
+		{
+			description: [
+				"&6&b牛&a排&5相&d关&c连&9接&e："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"7564415DBD20EF0E\" } }"
+			]
+			id: "0D3BCE314877E0A7"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0F2253F4F4BA7A5F"
+				item: "touhou_little_maid_spell:wind_seeking_bell"
+				type: "item"
+			}]
+			subtitle: "&6永恒&c牛排&d+注&9药工&e作台&4可以&b一直&6提供&d药水&9效果&c哦"
+			tasks: [{
+				id: "7B9AF324E8827123"
+				item: "celestial_core:pure_nether_star"
+				type: "item"
+			}]
+			title: "&6纯&d净&c之&9星"
+			x: 7.0d
+			y: -8.0d
+		}
+		{
+			id: "462278D5C03B8104"
+			rewards: [
+				{
+					id: "7163CCA7E085AF1C"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "41BC0BC70060FB13"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&a由僵尸概率携带，或者探索获取"
+			tasks: [{
+				id: "1DEE6E13831AA3EA"
+				item: "artifacts:cowboy_hat"
+				type: "item"
+			}]
+			x: 0.0d
+			y: -6.5d
+		}
+		{
+			id: "21617B47889C5220"
+			subtitle: "&6合成获得&l&b牺牲暴击伤害提升暴击率的饰品"
+			tasks: [{
+				id: "7FB5CBBAAD089448"
+				item: "celestial_artifacts:nostalgic_butterfly_ring"
+				type: "item"
+			}]
+			x: 5.0d
+			y: -5.0d
+		}
+		{
+			id: "5CB5DBB2BA9D86A1"
+			subtitle: "&6合成获得"
+			tasks: [{
+				id: "52290460093B493C"
+				item: "celestial_artifacts:deers_mercy_amulet"
+				type: "item"
+			}]
+			x: 5.0d
+			y: -7.0d
+		}
+		{
+			dependencies: ["5CB5DBB2BA9D86A1"]
+			description: [
+				"&b风暴精华由BOSS斯库拉掉落，任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"66FBCC85A7D03552\" } }"
+			]
+			id: "5DC25E9148942629"
+			subtitle: "&6BOSS掉落物合成获得"
+			tasks: [{
+				id: "65EC8ACF1161610C"
+				item: "celestial_artifacts:deer_inscribed_amulet"
+				type: "item"
+			}]
+			x: 5.0d
+			y: -6.0d
+		}
+		{
+			id: "43A3955B3B33C6BC"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "6226DFD3B82311B0"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+				{
+					id: "736D15AC65A3A2E4"
+					type: "xp"
+					xp: 50
+				}
+			]
+			subtitle: "&b探索获得/在主世界篇完成沙漠任务获得"
+			tasks: [{
+				id: "3CB70312E0BA8D2B"
+				item: "celestial_artifacts:sands_talisman"
+				type: "item"
+			}]
+			x: 6.0d
+			y: -3.0d
+		}
+	]
+	title: "&d遗物"
+}

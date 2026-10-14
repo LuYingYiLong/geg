@@ -1,0 +1,20 @@
+{
+	id: "5D478850C534EB7D"
+	loot_size: 1
+	order_index: 5
+	rewards: [
+		{
+			command: "/gamerule keepInventory true"
+			elevate_perms: true
+			title: "开启死亡不掉落"
+			type: "command"
+		}
+		{
+			command: "/gamerule keepInventory false"
+			elevate_perms: true
+			title: "关闭死亡不掉落"
+			type: "command"
+		}
+	]
+	title: "是否死亡掉落？"
+}

@@ -1,0 +1,102 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "2"
+	group: "50FDD722F8A8E4F8"
+	id: "38729E6AE1FACAF1"
+	images: [{
+		click: ""
+		corner: false
+		dev: false
+		height: 8.0d
+		hover: [ ]
+		image: "kubejs:textures/aaaa/huangseshenshengmofazhen.png"
+		rotation: 0.0d
+		width: 8.0d
+		x: 0.0d
+		y: 0.0d
+	}]
+	order_index: 5
+	quest_links: [ ]
+	quests: [
+		{
+			dependencies: [
+				"25FD5E440476CF5C"
+				"7C2B5371D24B5C44"
+				"170CABA62E1DC5D2"
+				"61A025E04889D04F"
+				"22198848B3070FED"
+			]
+			dependency_requirement: "one_completed"
+			description: [
+				"&6注：此饰品和【&d终&5末&a之&e环&6】存在冲突！最好只配带其中一个"
+				""
+				"&c被动效果："
+				"&71.免疫一切负面，80%减伤，免疫摔落，拥有创造飞行权限，常驻生命回复5 饱和 力量5 造成伤害提高100% 移动速度提高50%"
+				""
+				"&72.血量低于玩家的生物会主动远离，受到致命伤回复满生命值，并无敌10s，冷却60s"
+				""
+				"&73.单次受到伤害不超过上限的25%"
+				""
+				"&74.免疫并吸收等同于自身生命上限20%以下的伤害"
+				""
+				"&75.任何弹射物攻击会在玩家面前停滞"
+				""
+				"&76.徒手获得下界合金镐挖掘等级"
+				""
+				"&6终结技能："
+				"&3长按左ALT15秒后继续按R即可释放，形成直径20x20的领域，消除所有可破坏方块，对所有领域内生物（包括自己）造成自身85%生命值的伤害"
+				"（不能连续使用，且无光影下才有完整特效）"
+				"（注！！！：死亡掉落模式下，使用终结技死亡，或者被终结技杀死会将墓碑也破坏掉，且不会有掉落）"
+				""
+				"{@pagebreak}"
+				"&c按下CTRL+R切换加护能力，按下CTRL+V使用主动技"
+				"&6时间加护：&7额外追加时间暂停能力（如果转动视角黑屏，请在视频设置中关闭晕影）"
+				""
+				"&6力量加护：&7极大提高伤害值，并造成真实伤害"
+				""
+				"&6骑士加护：&7周围所有玩家获得抗性4和力量10，延长玩家无敌帧，20%免疫受到的伤害"
+				""
+				"&6治愈加护:   &7恢复所有血量，清除负面效果，按住shift攻击目标永久扣除50%生命上限（对玩家不生效）"
+				""
+				"&6神圣加护：&7免疫99%的攻击种类"
+				""
+				"&6王者的加护：&7震慑周围生物30s，被震慑生物每秒受到5%生命上限的魔法伤害"
+				""
+				"&6因果的加护：&7标记当前记录，触发死亡会回到当前记录"
+			]
+			hide: true
+			id: "2BA016F63BA86763"
+			shape: "hexagon"
+			subtitle: "&e拥有并强化所有加护的能力"
+			tasks: [{
+				id: "711F1AF85F4ECF71"
+				item: "time_slow:savior_guardian"
+				type: "item"
+			}]
+			title: "&d救世主的加护"
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			can_repeat: true
+			icon: "commandsceptre:command_block_sceptre"
+			id: "1DAD67C45F37AFCA"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6F0382F245EB6442"
+				table_id: 8849317671647677124L
+				type: "choice"
+			}]
+			subtitle: "&e服务器推荐禁用。&6你必须拥有OP权限才能禁用和解禁！"
+			tasks: [{
+				id: "6E4F8BE5FD2F3B0C"
+				title: "禁用·救世主加护"
+				type: "checkmark"
+			}]
+			x: 3.5d
+			y: 0.0d
+		}
+	]
+	title: "世界的加护·救世主的加护"
+}

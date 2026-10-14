@@ -1,0 +1,1552 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: "hexagon"
+	filename: "2C86D27E5FB41A55"
+	group: "7212331F85A8A7A2"
+	icon: {
+		Count: 1b
+		id: "iceandfire:cyclops_eye"
+		tag: {
+			Damage: 0
+		}
+	}
+	id: "2C86D27E5FB41A55"
+	images: [
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 2.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/s.png"
+			rotation: 0.0d
+			width: 1.44d
+			x: 2.0d
+			y: 2.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 2.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/a.png"
+			rotation: 0.0d
+			width: 1.44d
+			x: 2.0d
+			y: -2.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 2.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/b.png"
+			rotation: 0.0d
+			width: 1.44d
+			x: 2.0d
+			y: -6.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 2.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/c.png"
+			rotation: 0.0d
+			width: 1.44d
+			x: 2.0d
+			y: -11.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 4.8d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/drhrynrn.png"
+			rotation: 0.0d
+			width: 37.632d
+			x: 15.5d
+			y: -16.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 10.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/jian.png"
+			order: 9
+			rotation: 0.0d
+			width: 10.0d
+			x: 30.5d
+			y: -9.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 3.5d
+			hover: [ ]
+			image: "alexscaves:textures/mob_effect/darkness_incarnate.png"
+			rotation: 0.0d
+			width: 3.5d
+			x: 25.5d
+			y: 0.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 3.0d
+			hover: [ ]
+			image: "alexscaves:textures/particle/tremorzilla_retro_lightning_4.png"
+			rotation: 0.0d
+			width: 3.0d
+			x: 10.5d
+			y: -2.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 2.0d
+			hover: [ ]
+			image: "minecraft:item/light"
+			rotation: 0.0d
+			width: 2.0d
+			x: 22.5d
+			y: -13.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 2.0d
+			hover: [ ]
+			image: "minecraft:item/light"
+			rotation: 90.0d
+			width: 2.0d
+			x: 10.5d
+			y: -9.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 3.0d
+			hover: [ ]
+			image: "bf1:textures/flash/ring.png"
+			rotation: 0.0d
+			width: 3.0d
+			x: 19.5d
+			y: -6.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 1.0d
+			hover: [ ]
+			image: "goety:textures/mob_effect/burn_hex.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: 25.5d
+			y: 2.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 1.0d
+			hover: [ ]
+			image: "alexscaves:item/dinosaur_train"
+			rotation: 0.0d
+			width: 0.014705882352941176d
+			x: 11.5d
+			y: 4.0d
+		}
+	]
+	order_index: 2
+	quest_links: [ ]
+	quests: [
+		{
+			dependencies: ["6FC361F84A189F44"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"102432CFE3159567\" } }"
+			]
+			icon: "cataclysm:flame_eye"
+			id: "30EE9B04F1837DA3"
+			size: 1.3d
+			subtitle: "&b掉落物可合成【焰魔套装】【炎葬】升级歼灭战锤和合成拔刀剑【真·阎魔刀】"
+			tasks: [{
+				entity: "cataclysm:ignis"
+				id: "636DD74E3EBAABBC"
+				type: "kill"
+				value: 1L
+			}]
+			x: 15.0d
+			y: 2.5d
+		}
+		{
+			dependencies: ["6FC361F84A189F44"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2D763D90223C9A51\" } }"
+			]
+			icon: "cataclysm:monstrous_eye"
+			id: "5A0F75F7981A3145"
+			size: 1.3d
+			subtitle: "&b掉落大量下界合金和【复仇之心】，【被隐匿的蓝图】"
+			tasks: [{
+				entity: "cataclysm:netherite_monstrosity"
+				id: "3F322B2F1D66EA24"
+				type: "kill"
+				value: 1L
+			}]
+			x: 16.5d
+			y: 2.5d
+		}
+		{
+			dependencies: ["6FC361F84A189F44"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"77E28508762F7BA2\" } }"
+			]
+			icon: "cataclysm:void_eye"
+			id: "4664C0F70AD960F4"
+			size: 1.3d
+			subtitle: "&b&b获得兑换飞仙戒指的材料之一，&b掉落【被隐匿的蓝图】&b掉落物可合成拔刀剑【菲比啾比】"
+			tasks: [{
+				entity: "cataclysm:ender_guardian"
+				id: "5A6757E76E290B3E"
+				type: "kill"
+				value: 1L
+			}]
+			x: 10.5d
+			y: 2.5d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"5DD1DFBC650A5E8D\" } }"
+			]
+			icon: "cataclysm:mech_eye"
+			id: "208360F9CF4FF6FD"
+			size: 1.3d
+			subtitle: "&b可获得合成【终极分形者】的材料和【机械融合砧】"
+			tasks: [{
+				entity: "cataclysm:the_harbinger"
+				id: "6530396DD770095E"
+				type: "kill"
+				value: 1L
+			}]
+			x: 16.55d
+			y: -2.0d
+		}
+		{
+			dependencies: ["6FC361F84A189F44"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"207E75ED048F0A4E\" } }"
+			]
+			icon: "cataclysm:abyss_eye"
+			id: "45A8FD4F56E42D00"
+			size: 1.3d
+			subtitle: "&e【神&b话&a中&d的&5B&6O&9S&cS】,&e于沉没之城召唤"
+			tasks: [{
+				entity: "cataclysm:the_leviathan"
+				id: "54DE13A285726766"
+				type: "kill"
+				value: 1L
+			}]
+			x: 21.0d
+			y: 2.5d
+		}
+		{
+			dependencies: ["6FC361F84A189F44"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2F91EFF54CA2999B\" } }"
+			]
+			icon: "cataclysm:desert_eye"
+			id: "0079FD198264AF5D"
+			size: 1.3d
+			subtitle: "&b掉落物可合成泰坦剑鞘和拔刀剑【菲比啾比】"
+			tasks: [{
+				entity: "cataclysm:ancient_remnant"
+				id: "7B64D568F48EE4CA"
+				type: "kill"
+				value: 1L
+			}]
+			x: 13.5d
+			y: 2.5d
+		}
+		{
+			dependencies: ["6FC361F84A189F44"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"51502B2D3955CA9F\" } }"
+			]
+			icon: "cataclysm:cursed_eye"
+			id: "2E4909A1613FEAED"
+			size: 1.3d
+			subtitle: "&b掉落物可合成大范围AOE武器【歼灭战锤】拔刀剑【幽蝶刀·彼岸】"
+			tasks: [{
+				entity: "cataclysm:maledictus"
+				id: "5D674192ADD0A368"
+				type: "kill"
+				value: 1L
+			}]
+			x: 12.0d
+			y: 2.5d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"6FD9928980FE2CD3\" } }"
+			]
+			icon: "alexsmobs:void_worm_eye"
+			id: "689B2F4EE1643468"
+			size: 1.3d
+			subtitle: "&b掉落物可合成拔刀剑【神·六芒星】，和用于召唤福尔图那女爵的道具"
+			tasks: [{
+				entity: "alexsmobs:void_worm"
+				id: "67F891AFFB8E7600"
+				type: "kill"
+				value: 1L
+			}]
+			x: 12.05d
+			y: -2.0d
+		}
+		{
+			dependencies: ["6FC361F84A189F44"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"3A6B3E30B7958D89\" } }"
+			]
+			icon: "alexscaves:tectonic_shard"
+			id: "55A7F9D9D264AD79"
+			size: 1.3d
+			subtitle: "&b掉落物可合成拔刀剑【始源之剑】【撼地斯拉蛋】【塔罗牌：命运之轮】"
+			tasks: [{
+				entity: "alexscaves:luxtructosaurus"
+				id: "113692840F80E89B"
+				type: "kill"
+				value: 1L
+			}]
+			x: 9.0d
+			y: 2.5d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"4D18EE537CA05E7B\" } }"
+			]
+			icon: "alexscaves:immortal_embryo"
+			id: "3D466B2C4911FA53"
+			size: 1.3d
+			subtitle: "&b掉落【永恒胚胎】合成：【鸦羽星·丁泽尔】【撼地斯拉蛋】【欲望刻蚀板】"
+			tasks: [{
+				entity: "alexscaves:hullbreaker"
+				id: "01AAC97F3ECC8349"
+				type: "kill"
+				value: 1L
+			}]
+			x: 18.05d
+			y: -2.0d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1E3F40C26EB02A38\" } }"
+			]
+			icon: "alexscaves:pure_darkness"
+			id: "13B2D6858835177E"
+			size: 1.3d
+			subtitle: "&b掉落塔罗牌：恶魔"
+			tasks: [{
+				entity: "alexscaves:forsaken"
+				id: "5435BFEA8BF60593"
+				type: "kill"
+				value: 1L
+			}]
+			x: 25.5d
+			y: -2.0d
+		}
+		{
+			dependencies: ["562E50C7BC17F15C"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"76B5F92F30F35132\" } }"
+			]
+			icon: "mowziesmobs:wrought_helmet"
+			id: "2F7B733226D23824"
+			size: 1.3d
+			subtitle: "&b掉落高额护甲头盔和斧头，可在后期合成&e塔罗牌：战车"
+			tasks: [{
+				entity: "mowziesmobs:ferrous_wroughtnaut"
+				id: "14A61D8485A0002D"
+				type: "kill"
+				value: 1L
+			}]
+			x: 22.5d
+			y: -11.0d
+		}
+		{
+			dependencies: ["562E50C7BC17F15C"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"46D6A6CF1224A6FA\" } }"
+			]
+			icon: "mowziesmobs:sol_visage"
+			id: "6E432FF75EB503D4"
+			size: 1.3d
+			subtitle: "&e固定掉落，塔罗牌：太阳"
+			tasks: [{
+				entity: "mowziesmobs:umvuthi"
+				id: "263F0EAF01D5564A"
+				type: "kill"
+				value: 1L
+			}]
+			x: 21.0d
+			y: -11.0d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"20E68AD2D8B98AE2\" } }"
+			]
+			icon: "legendary_monsters:eye_of_frost"
+			id: "52FB6EA24F5A7935"
+			size: 1.3d
+			subtitle: "&b掉落【霜之哀伤】和【冰冻之戒】掉落物可合成【卡利亚骑士剑】"
+			tasks: [{
+				entity: "mowziesmobs:frostmaw"
+				id: "6FFEA57B27F575C1"
+				type: "kill"
+				value: 1L
+			}]
+			x: 9.0d
+			y: -2.0d
+		}
+		{
+			dependencies: ["722E21877CBD6A71"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1AC858C2BE3027E6\" } }"
+			]
+			icon: "iceandfire:hydra_skull"
+			id: "05B14F4EF172834B"
+			size: 1.3d
+			subtitle: "&b小概率掉落【九头蛇心脏】，可获得强大的再生能力"
+			tasks: [{
+				entity: "iceandfire:hydra"
+				id: "2E4BFE630EFE5D8F"
+				type: "kill"
+				value: 1L
+			}]
+			x: 9.0d
+			y: -6.5d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"3D1E708CFA20E344\" } }"
+			]
+			icon: {
+				Count: 1b
+				id: "eeeabsmobs:guardian_axe"
+				tag: {
+					CodeAddFlag: 1b
+					Damage: 0
+					Unbreakable: 1b
+				}
+			}
+			id: "7B47DF5DE6C082F7"
+			size: 1.3d
+			subtitle: "&c掉落【守护者战斧】【守护者核心】可合成【虚无刻蚀板】和拔刀剑【菲比啾比】"
+			tasks: [{
+				entity: "eeeabsmobs:nameless_guardian"
+				id: "49894390B54881FE"
+				type: "kill"
+				value: 1L
+			}]
+			x: 15.05d
+			y: -2.0d
+		}
+		{
+			dependencies: ["722E21877CBD6A71"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"35AC7EC3827E2F5B\" } }"
+			]
+			icon: "eeeabsmobs:bloody_altar_eye"
+			id: "78D69FD18C586919"
+			size: 1.3d
+			subtitle: "&b掉落【唤魂项链】受到一定伤害召唤仆从，和【异教徒心脏】用于合成拔刀剑&c【千恋·万花】"
+			tasks: [{
+				entity: "eeeabsmobs:corpse_warlock"
+				id: "02700E9AC7F401F5"
+				type: "kill"
+				value: 1L
+			}]
+			x: 13.5d
+			y: -6.5d
+		}
+		{
+			dependencies: ["6FC361F84A189F44"]
+			description: [
+				"&6相关任务链接："
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"25E1136EAB7DC6F0\" } }"
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"40799A270DDA84C5\" } }"
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"6966E71245D95E88\" } }"
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"28AB2A9611BE5F3A\" } }"
+				""
+				"&e注意：双子BOSS，掉落物取决于，哪个boss最后死，最后就爆哪个boss的战利品"
+			]
+			icon: {
+				Count: 1b
+				id: "soulsweapons:dawnbreaker"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "44F7E0748D4C5A30"
+			size: 1.3d
+			subtitle: "&6由物品&c混&9沌&d宝&e珠&6召唤 &e【神&b话&a中&d的&5B&6O&9S&cS】"
+			tasks: [{
+				entity: "soulsweapons:day_stalker"
+				id: "0C026B31F01B316B"
+				type: "kill"
+				value: 1L
+			}]
+			x: 18.0d
+			y: 2.5d
+		}
+		{
+			dependencies: ["6FC361F84A189F44"]
+			description: [
+				"&6相关任务链接："
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"25E1136EAB7DC6F0\" } }"
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"40799A270DDA84C5\" } }"
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"6966E71245D95E88\" } }"
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"28AB2A9611BE5F3A\" } }"
+				""
+				"&e注意：双子BOSS，掉落物取决于，哪个boss最后死，最后就爆哪个boss的战利品"
+			]
+			icon: {
+				Count: 1b
+				id: "soulsweapons:forlorn_scythe"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "23B6359E821AE844"
+			size: 1.3d
+			subtitle: "&6由物品&c混&9沌&d宝&e珠&6召唤 &e【神&b话&a中&d的&5B&6O&9S&cS】"
+			tasks: [{
+				entity: "soulsweapons:night_prowler"
+				id: "101092ED596610C8"
+				type: "kill"
+				value: 1L
+			}]
+			x: 19.5d
+			y: 2.5d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"750588050C70B86E\" } }"
+			]
+			icon: {
+				Count: 1b
+				id: "soulsweapons:darkin_blade"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "28AB2A9611BE5F3A"
+			size: 1.3d
+			subtitle: "&b掉落物可合成拔刀剑【妖刀·红缨】和【混沌宝珠】"
+			tasks: [{
+				entity: "soulsweapons:accursed_lord_boss"
+				id: "6BB37720A0E1453D"
+				type: "kill"
+				value: 1L
+			}]
+			x: 19.55d
+			y: -2.0d
+		}
+		{
+			dependencies: ["722E21877CBD6A71"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"0D6C1396B2DB7C93\" } }"
+			]
+			icon: {
+				Count: 1b
+				id: "soulsweapons:draugr"
+				tag: {
+					Damage: 0
+					night: 0b
+				}
+			}
+			id: "6AA58FA8223EFA44"
+			size: 1.3d
+			subtitle: "&b可获得合成【祛魔台】【暗月长弓】和【德拉古尔】可在后期合成【终极分形者】"
+			tasks: [{
+				entity: "soulsweapons:draugr_boss"
+				id: "4353F045B28A66E6"
+				type: "kill"
+				value: 1L
+			}]
+			title: "击杀&6 【旧日冠军】&e和&d【狂乱幽影】"
+			x: 15.0d
+			y: -6.5d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"4F7E09B3EA4C166A\" } }"
+			]
+			icon: "soulsweapons:essence_of_luminescence"
+			id: "40799A270DDA84C5"
+			size: 1.3d
+			subtitle: "&b掉落物可合成【混沌宝珠】和拔刀剑【夜魂刃「邪星罗刹」】【魅影刃】"
+			tasks: [{
+				entity: "soulsweapons:moonknight"
+				id: "1CAEE70D17494B20"
+				type: "kill"
+				value: 1L
+			}]
+			x: 28.5d
+			y: -2.0d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"75BFD3A886FB7004\" } }"
+			]
+			icon: "soulsweapons:lord_soul_rose"
+			id: "6966E71245D95E88"
+			size: 1.3d
+			subtitle: "&b掉落物可合成拔刀剑【极日刀「耀蚀之日」】和【混沌宝珠】"
+			tasks: [{
+				entity: "soulsweapons:returning_knight"
+				id: "6CF53CBD8F9E9423"
+				type: "kill"
+				value: 1L
+			}]
+			x: 22.5d
+			y: -2.0d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"7823AA372E7CF0B5\" } }"
+			]
+			icon: "soulsweapons:lord_soul_void"
+			id: "25E1136EAB7DC6F0"
+			size: 1.3d
+			subtitle: "&b固定掉落两个下界合金锭，和合成拔刀剑【鸦羽星「丁泽尔」】的重要材料"
+			tasks: [{
+				entity: "soulsweapons:chaos_monarch"
+				id: "7297827EDA88FCA5"
+				type: "kill"
+				value: 1L
+			}]
+			x: 30.0d
+			y: -2.0d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"0CC3388E5FC0A71F\" } }"
+			]
+			icon: "bosses_of_mass_destruction:ancient_anima"
+			id: "51EB663D84DB73BF"
+			size: 1.3d
+			subtitle: "&b掉落物可合成【塔罗牌：女祭司】【镇压之杖】"
+			tasks: [{
+				entity: "bosses_of_mass_destruction:lich"
+				id: "0230AADCB90892E5"
+				type: "kill"
+				value: 1L
+			}]
+			x: 31.5d
+			y: -2.0d
+		}
+		{
+			dependencies: ["722E21877CBD6A71"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2C8347AC5E38C84E\" } }"
+			]
+			icon: "bosses_of_mass_destruction:void_thorn"
+			id: "549BE17C23DE035D"
+			size: 1.3d
+			subtitle: "&b掉落拔刀剑【颚门】。掉落物可合成拔刀剑【散花】【小菲比】和塔罗牌女祭司，掉落大量经验"
+			tasks: [{
+				entity: "bosses_of_mass_destruction:void_blossom"
+				id: "2CF4D534E34B7966"
+				type: "kill"
+				value: 1L
+			}]
+			x: 22.5d
+			y: -6.5d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"16D07A6119CA2D5A\" } }"
+			]
+			icon: "bosses_of_mass_destruction:obsidian_heart"
+			id: "32A9B85655F8E9C4"
+			size: 1.3d
+			subtitle: "&b&b获得兑换飞仙戒指的材料之一"
+			tasks: [{
+				entity: "bosses_of_mass_destruction:obsidilith"
+				id: "013730E21EC6E2C0"
+				type: "kill"
+				value: 1L
+			}]
+			x: 21.05d
+			y: -2.0d
+		}
+		{
+			dependencies: ["722E21877CBD6A71"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"432D90B9CD7D89EA\" } }"
+			]
+			icon: "bosses_of_mass_destruction:blazing_eye"
+			id: "4F835E1693C4FC4E"
+			size: 1.3d
+			subtitle: "&b掉落【烈焰之眼】用于合成2077工作台和拔刀剑【狱刀·似蛭】"
+			tasks: [{
+				entity: "bosses_of_mass_destruction:gauntlet"
+				id: "7FE100356502B0F4"
+				type: "kill"
+				value: 1L
+			}]
+			x: 18.0d
+			y: -6.5d
+		}
+		{
+			dependencies: ["6FC361F84A189F44"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2C0EAEB6DD706E3B\" } }"
+				""
+				"如果你不通过诡厄仪式的方法召唤使徒，可以合成此法术进行召唤"
+				"{image:kubejs:textures/aaaa/shituzhaohuanjuanzhou.png width:100 height:80 align:1}"
+				""
+				"{image:kubejs:textures/aaaa/shituzhaohuanjuanzhouhecheng.png width:100 height:50 align:1}"
+				""
+				"&c腾炎锭由焰魔掉落："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"102432CFE3159567\" } }"
+				""
+				"&3咒魂锭由咒翼灵骸掉落："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"51502B2D3955CA9F\" } }"
+				""
+				"&9潮汐利爪由利维坦掉落："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2E234A7111AC8092\" } }"
+				""
+				"&5夜陨由夜行者掉落物合成"
+				""
+				"&6炼狱锻锤由下界合金巨兽掉落："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2D763D90223C9A51\" } }"
+				""
+				"&a巫婆帽由巫婆掉落，女巫帽由女巫概率掉落"
+			]
+			icon: "goety:apostle_spawn_egg"
+			id: "6CCA59A8F72724FE"
+			size: 1.3d
+			subtitle: " &e【神&b话&a中&d的&5B&6O&9S&cS】&e，由安息仪式召唤  &a可选BOSS"
+			tasks: [{
+				advancement: "goety:goety/kill_a_apostle"
+				criterion: ""
+				id: "14ADCCC737304D1A"
+				title: "击杀1x.使徒"
+				type: "advancement"
+			}]
+			x: 22.750000000000004d
+			y: 2.5d
+		}
+		{
+			dependencies: ["6FC361F84A189F44"]
+			description: [
+				"&n&6在古代，一位君主于引导之下，制造的一种究极战争兵器，比任何傀儡更加强大，更加可怕......最终人们出于对傀儡暴走的恐惧，红石巨兽被放逐至极远之地。但它的制作方法被记录下来，藏在世界的某处....."
+				""
+				""
+				"&e困难模式袭击最后一波固定生成"
+			]
+			icon: "goety:redstone_monstrosity_head"
+			id: "011B0E60251ACA82"
+			size: 1.3d
+			subtitle: "&9袭击BOSS"
+			tasks: [{
+				entity: "goety:hostile_redstone_monstrosity"
+				id: "17DB13D68CC84BDF"
+				type: "kill"
+				value: 1L
+			}]
+			x: 7.5d
+			y: 2.5d
+		}
+		{
+			dependencies: ["722E21877CBD6A71"]
+			description: [
+				"&6生成于 【朽坏木屋】  结构中，右键结构中的水晶球召唤"
+				""
+				"&6水晶球可以被精准采集，使用【重生锚】即可【重置水晶球】，继续召唤boss"
+				"{image:kubejs:textures/aaaa/wupoxiaowu.png width:140 height:140 align:1}"
+			]
+			icon: "goety:crone_hat"
+			id: "02AB0AD6E50CCC40"
+			size: 1.3d
+			subtitle: "&b掉落【巫婆帽】获得药酿加成。是召唤使徒的必要道具"
+			tasks: [{
+				entity: "goety:crone"
+				id: "3A4820208CA46920"
+				type: "kill"
+				value: 1L
+			}]
+			x: 10.5d
+			y: -6.5d
+		}
+		{
+			dependencies: ["562E50C7BC17F15C"]
+			description: ["&e当你拥有大量灵魂能量（大概12500点）后。灾厄教父可能会伴随【灾厄猎杀队】或者【袭击】生成"]
+			icon: {
+				Count: 1b
+				id: "minecraft:white_banner"
+				tag: {
+					BlockEntityTag: {
+						Patterns: [
+							{
+								Color: 9
+								Pattern: "mr"
+							}
+							{
+								Color: 8
+								Pattern: "bs"
+							}
+							{
+								Color: 7
+								Pattern: "cs"
+							}
+							{
+								Color: 8
+								Pattern: "bo"
+							}
+							{
+								Color: 15
+								Pattern: "ms"
+							}
+							{
+								Color: 8
+								Pattern: "hh"
+							}
+							{
+								Color: 8
+								Pattern: "mc"
+							}
+							{
+								Color: 15
+								Pattern: "bo"
+							}
+						]
+						id: "minecraft:banner"
+					}
+					HideFlags: 32
+					display: {
+						Name: "{\"color\":\"gold\",\"translate\":\"block.minecraft.ominous_banner\"}"
+					}
+				}
+			}
+			id: "33258200E936A990"
+			size: 1.3d
+			subtitle: "&9袭击BOSS"
+			tasks: [{
+				entity: "goety:minister"
+				id: "17158B2AFF07D09C"
+				type: "kill"
+				value: 1L
+			}]
+			x: 19.5d
+			y: -11.0d
+		}
+		{
+			dependencies: ["722E21877CBD6A71"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"45A728B21FA2488C\" } }"
+			]
+			icon: "minecraft:skeleton_skull"
+			id: "2F0B4D754E3A60DE"
+			size: 1.3d
+			subtitle: "&b掉落【诅咒骑士套装】和部分【禁书残片】"
+			tasks: [{
+				advancement: "goety:goety/kill_a_skull_lord"
+				criterion: ""
+				id: "625FCE429ADE7FAC"
+				type: "advancement"
+			}]
+			title: "骷髅领主"
+			x: 16.5d
+			y: -6.5d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			icon: "goety:redstone_golem_skull"
+			id: "29AA56EDC7DE5515"
+			size: 1.3d
+			subtitle: "&b&9袭击BOSS"
+			tasks: [{
+				entity: "goety:hostile_redstone_golem"
+				id: "5C4984413C10F40B"
+				type: "kill"
+				value: 1L
+			}]
+			x: 7.5d
+			y: -1.9500000000000002d
+		}
+		{
+			dependencies: ["722E21877CBD6A71"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"09B922F3D3E6AC11\" } }"
+			]
+			icon: "minecraft:nether_star"
+			id: "47969D8247007128"
+			size: 1.3d
+			subtitle: "&e掉落非常多的重要材料，阶段性BOSS"
+			tasks: [{
+				entity: "minecraft:wither"
+				id: "69588B7D88C04B91"
+				type: "kill"
+				value: 1L
+			}]
+			x: 19.5d
+			y: -6.5d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"26E61D8A06FAB278\" } }"
+			]
+			icon: "minecraft:dragon_head"
+			id: "2A3F7094D9EB6029"
+			size: 1.3d
+			subtitle: "&b末地岛的守护者，掉落多种材料"
+			tasks: [{
+				entity: "minecraft:ender_dragon"
+				id: "4DAF61616526FCB6"
+				type: "kill"
+				value: 1L
+			}]
+			x: 10.55d
+			y: -2.0d
+		}
+		{
+			dependencies: ["562E50C7BC17F15C"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"4543315F837B1C75\" } }"
+			]
+			id: "00E412FC9D9A4D71"
+			size: 1.3d
+			subtitle: "&6由物品&c化石之饵&6召唤，掉落物用于合成实用饰品"
+			tasks: [{
+				entity: "meetyourfight:swampjaw"
+				icon: "meetyourfight:swampjaw_head"
+				id: "6772A9CC127A3FE9"
+				type: "kill"
+				value: 1L
+			}]
+			x: 24.0d
+			y: -11.0d
+		}
+		{
+			dependencies: ["722E21877CBD6A71"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"30FEDC2E5D2F49E3\" } }"
+			]
+			icon: "meetyourfight:violet_bloom"
+			id: "0FD7CE1E375CB96E"
+			size: 1.3d
+			subtitle: "&6由物品&c薄暮之钥&6召唤，可获得强力饰品"
+			tasks: [{
+				entity: "meetyourfight:rosalyne"
+				id: "66D5B07C06350F8C"
+				type: "kill"
+				value: 1L
+			}]
+			x: 27.0d
+			y: -6.5d
+		}
+		{
+			dependencies: ["722E21877CBD6A71"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1CB81A80A0FE0FB3\" } }"
+			]
+			id: "3F05FD5A0A5499B1"
+			size: 1.3d
+			subtitle: "&6由物品&c缠魂铃铛&6召唤，可获得强力饰品"
+			tasks: [{
+				entity: "meetyourfight:bellringer"
+				icon: "meetyourfight:haunted_bell"
+				id: "7B40097CCE6E4A06"
+				type: "kill"
+				value: 1L
+			}]
+			x: 12.0d
+			y: -6.5d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"3E74AD38FC8A9D4A\" } }"
+			]
+			icon: "meetyourfight:dame_fortuna_head"
+			id: "5B5D5B24AF715D12"
+			size: 1.3d
+			subtitle: "&6由物品&c魔鬼赌注&6召唤，可获得非常强力饰品"
+			tasks: [{
+				entity: "meetyourfight:dame_fortuna"
+				id: "7A81BB2E9C15FFF4"
+				type: "kill"
+				value: 1L
+			}]
+			x: 13.55d
+			y: -2.0d
+		}
+		{
+			dependencies: ["562E50C7BC17F15C"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"7CDAD4610501F81B\" } }"
+			]
+			icon: "legendary_monsters:lava_eater_spawn_egg"
+			id: "4EF2E41BFF3BF50E"
+			size: 1.3d
+			subtitle: "&b固定掉落熔岩食者之皮，用于合成拔刀剑【血刀·似蛭】"
+			tasks: [{
+				entity: "legendary_monsters:lava_eater"
+				id: "6602D13697D9461D"
+				type: "kill"
+				value: 1L
+			}]
+			x: 15.0d
+			y: -11.0d
+		}
+		{
+			dependencies: ["562E50C7BC17F15C"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"643864F09415C6C8\" } }"
+			]
+			icon: "legendary_monsters:withered_abomination_spawn_egg"
+			id: "770F53ED7847D5AD"
+			size: 1.3d
+			subtitle: "&b固定掉落凋灵骨，用于合成拔刀剑【血刀·似蛭】"
+			tasks: [{
+				entity: "legendary_monsters:withered_abomination"
+				id: "32F8F1CD5EABD65E"
+				type: "kill"
+				value: 1L
+			}]
+			x: 16.5d
+			y: -11.0d
+		}
+		{
+			dependencies: ["562E50C7BC17F15C"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"401F2F9B5CA4BD46\" } }"
+			]
+			icon: "legendary_monsters:skeletosaurus_spawn_egg"
+			id: "1CCCC54AA306BF03"
+			size: 1.3d
+			subtitle: "&b掉落可合成骨龙兽蛋，孵化后喂肉获得宠物【骷髅猛龙】"
+			tasks: [{
+				entity: "legendary_monsters:skeletosaurus"
+				id: "4C41F4E97B42A291"
+				type: "kill"
+				value: 1L
+			}]
+			x: 18.0d
+			y: -11.0d
+		}
+		{
+			dependencies: ["562E50C7BC17F15C"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"633203BE60563FF5\" } }"
+			]
+			icon: {
+				Count: 1b
+				id: "legendary_monsters:spiky_shield"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "46FC9925A1DC23CB"
+			size: 1.3d
+			subtitle: "&b固定掉落锚柄，可用于合成拔刀剑【幻魔炼金存】"
+			tasks: [{
+				entity: "legendary_monsters:ancient_guardian"
+				id: "5C589289766FA282"
+				type: "kill"
+				value: 1L
+			}]
+			x: 10.5d
+			y: -11.0d
+		}
+		{
+			dependencies: ["722E21877CBD6A71"]
+			description: [
+				"&b拥有70HP，超长无敌帧和伤害限制器。双阶段BOSS"
+				""
+				"&b二阶段会释放不可抵挡的雷电射线（无视护甲"
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"311F715ECE5324CF\" } }"
+			]
+			icon: "artifacts:cloud_in_a_bottle"
+			id: "505D1A9D6B54CF33"
+			size: 1.3d
+			subtitle: "&b可获得【二段跳·云朵瓶】"
+			tasks: [{
+				entity: "legendary_monsters:cloud_golem"
+				id: "5CDF795E1ADC786C"
+				type: "kill"
+				value: 1L
+			}]
+			x: 7.5d
+			y: -6.5d
+		}
+		{
+			dependencies: ["562E50C7BC17F15C"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"217B64AF90110789\" } }"
+			]
+			id: "2C3C5C264EC1E85D"
+			size: 1.3d
+			subtitle: "&b固定掉落自然水晶，用于合成拔刀剑【雪鸦】"
+			tasks: [{
+				entity: "legendary_monsters:overgrown_colossus"
+				icon: {
+					Count: 1b
+					id: "legendary_monsters:mossy_chestplate"
+					tag: {
+						Damage: 0
+					}
+				}
+				id: "60D41EDE3CF79F2F"
+				type: "kill"
+				value: 1L
+			}]
+			x: 9.0d
+			y: -11.0d
+		}
+		{
+			dependencies: ["562E50C7BC17F15C"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"6500D72DC8974DAF\" } }"
+			]
+			icon: {
+				Count: 1b
+				id: "legendary_monsters:knights_sword"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "0E354F00B56F2C63"
+			size: 1.3d
+			subtitle: "&b固定掉落腐化灵魂，可用于合成拔刀剑【幻魔炼金存】"
+			tasks: [{
+				entity: "legendary_monsters:posessed_paladin"
+				id: "0C9CA452D8ACD31B"
+				type: "kill"
+				value: 1L
+			}]
+			x: 13.5d
+			y: -11.0d
+		}
+		{
+			dependencies: ["722E21877CBD6A71"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"4AB36B0F64DF2EB0\" } }"
+			]
+			icon: "legendary_monsters:large_shulker_shell"
+			id: "2C1D22F50FBBC2AB"
+			size: 1.3d
+			subtitle: "&b获得兑换飞仙戒指的材料之一"
+			tasks: [{
+				entity: "legendary_monsters:shulker_mimic"
+				id: "4967C0883B47433F"
+				type: "kill"
+				value: 1L
+			}]
+			x: 24.0d
+			y: -6.5d
+		}
+		{
+			dependencies: ["722E21877CBD6A71"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"73CF07220BC6183D\" } }"
+			]
+			icon: "legendary_monsters:endersent_spawn_egg"
+			id: "1AFE72D56A13A154"
+			size: 1.3d
+			subtitle: "&b&b获得兑换飞仙戒指的材料之一"
+			tasks: [{
+				entity: "legendary_monsters:endersent"
+				id: "4FA75728E40B88EE"
+				type: "kill"
+				value: 1L
+			}]
+			x: 25.5d
+			y: -6.5d
+		}
+		{
+			dependencies: ["562E50C7BC17F15C"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"5D3AD288E7BC8376\" } }"
+			]
+			icon: {
+				Count: 1b
+				id: "legendary_monsters:sand_cannon"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "498D7D657D0C3DA3"
+			size: 1.3d
+			subtitle: "&b固定掉落两套【黑铁套装】，可合成最弱的一个（"
+			tasks: [{
+				entity: "legendary_monsters:dune_sentinel"
+				id: "090B331BB0BD0E06"
+				type: "kill"
+				value: 1L
+			}]
+			x: 7.5d
+			y: -11.0d
+		}
+		{
+			dependencies: ["6FC361F84A189F44"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"13326026494399C4\" } }"
+				""
+				"如果你不通过诡厄仪式的方法召唤使徒，可以合成此法术进行召唤"
+				""
+				"{image:kubejs:textures/aaaa/yabolunzhaohuanjuanzhou.png width:100 height:80 align:1}"
+				""
+				"&a注：此道具不同于使徒召唤卷轴，不可以重复使用，是一次性消耗道具"
+				""
+				"{image:kubejs:textures/aaaa/yabolunzhaohuanjuanzhouhecheng.png width:100 height:50 align:1}"
+				""
+				"&c不洁之血&7/&9暗夜信标&7由&a使徒&7掉落"
+				""
+				"&d虚空精华&7在末地开箱获得"
+				""
+				"&6龙钢&7获取方式："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1303A35CC1DC0C45\" } }"
+				""
+				"&e纯净之星&7获取方式"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"0D3BCE314877E0A7\" } }"
+			]
+			id: "090121B3A38BF6C7"
+			size: 1.3d
+			subtitle: " &e【神&b话&a中&d的&5B&6O&9S&cS】&e由安息仪式召唤 &a可选BOSS"
+			tasks: [{
+				advancement: "goety_revelation:kill_apollyon"
+				criterion: ""
+				icon: "goety_revelation:ascension_halo"
+				id: "05DE361E6B21ABC9"
+				title: "&5隐藏BOSS·亚波伦"
+				type: "advancement"
+			}]
+			x: 24.250000000000004d
+			y: 2.5d
+		}
+		{
+			description: [
+				"&e如何找boss"
+				"{image:kubejs:textures/aaaa/bosszhinan.png width:170 height:300 align:1}"
+			]
+			disable_toast: true
+			id: "562E50C7BC17F15C"
+			size: 4.0d
+			tasks: [{
+				disable_toast: true
+				id: "11B43591B69AFFCC"
+				stat: "minecraft:mob_kills"
+				title: "击杀任意生物"
+				type: "stat"
+				value: 1
+			}]
+			title: "入门级BOSS"
+			x: 4.5d
+			y: -11.0d
+		}
+		{
+			description: [
+				"&e如何找boss"
+				"{image:kubejs:textures/aaaa/bosszhinan.png width:180 height:260 align:1}"
+			]
+			disable_toast: true
+			id: "722E21877CBD6A71"
+			size: 4.0d
+			tasks: [{
+				disable_toast: true
+				icon: {
+					Count: 1b
+					id: "minecraft:golden_sword"
+					tag: {
+						Damage: 0
+					}
+				}
+				id: "04C3B44B86816EF0"
+				stat: "minecraft:mob_kills"
+				title: "击杀任意生物"
+				type: "stat"
+				value: 1
+			}]
+			title: "&b中级BOSS，进阶级boss"
+			x: 4.5d
+			y: -6.5d
+		}
+		{
+			description: [
+				"&e如何找boss"
+				"{image:kubejs:textures/aaaa/bosszhinan.png width:180 height:260 align:1}"
+			]
+			disable_toast: true
+			id: "42ACB25C7388B3DC"
+			size: 4.0d
+			tasks: [{
+				disable_toast: true
+				icon: {
+					Count: 1b
+					id: "minecraft:diamond_sword"
+					tag: {
+						Damage: 0
+					}
+				}
+				id: "6F8CB3ED2FF2312C"
+				stat: "minecraft:mob_kills"
+				title: "击杀任意生物"
+				type: "stat"
+				value: 1
+			}]
+			title: "&d高级BOSS"
+			x: 4.5d
+			y: -2.0d
+		}
+		{
+			description: [
+				"&e如何找boss"
+				"{image:kubejs:textures/aaaa/bosszhinan.png width:180 height:260 align:1}"
+			]
+			disable_toast: true
+			id: "6FC361F84A189F44"
+			size: 4.0d
+			tasks: [{
+				disable_toast: true
+				icon: {
+					Count: 1b
+					id: "minecraft:netherite_sword"
+					tag: {
+						Damage: 0
+					}
+				}
+				id: "61F2524194037234"
+				stat: "minecraft:mob_kills"
+				title: "击杀任意生物"
+				type: "stat"
+				value: 1
+			}]
+			title: "&e传说中的BOSS，&e【神&b话&a中&d的&5B&6O&9S&cS】"
+			x: 4.5d
+			y: 2.5d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2F21518108430D1E\" } }"
+			]
+			icon: {
+				Count: 1b
+				id: "cataclysm:ceraunus"
+				tag: { }
+			}
+			id: "76BC94756BCCD9E4"
+			size: 1.3d
+			subtitle: "&b其掉落物可合成【法术强化核心】提升女仆的实力和和拔刀剑【菲比啾比】"
+			tasks: [{
+				entity: "cataclysm:scylla"
+				id: "0E4D78F841B4B0CB"
+				type: "kill"
+				value: 1L
+			}]
+			x: 27.0d
+			y: -2.0d
+		}
+		{
+			dependencies: ["562E50C7BC17F15C"]
+			description: [
+				"任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"70F6ECB9BF6AD10A\" } }"
+			]
+			id: "4697E9CDF103979A"
+			size: 1.3d
+			subtitle: "&b入门级BOSS，固定掉落寒霜长袍，其掉落物可合成【东月之心】【冰霜魔杖】"
+			tasks: [{
+				entity: "legendary_monsters:frostbitten_golem"
+				icon: "legendary_monsters:primal_ice_shard"
+				id: "48D7E86481E40288"
+				type: "kill"
+				value: 1L
+			}]
+			x: 12.0d
+			y: -11.0d
+		}
+		{
+			dependencies: ["722E21877CBD6A71"]
+			description: [
+				"&7任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1DD5146C62E2450B\" } }"
+			]
+			icon: {
+				Count: 1b
+				id: "dodosmobs:amalgam_claws"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "0CA7490A31FA024C"
+			size: 1.3d
+			subtitle: "&6掉落部分矿石，其掉落物是武器&c【天顶剑】&6的合成材料"
+			tasks: [{
+				entity: "dodosmobs:bone_chimera"
+				id: "0BAE260AB6564278"
+				type: "kill"
+				value: 1L
+			}]
+			x: 21.0d
+			y: -6.5d
+		}
+		{
+			dependencies: ["562E50C7BC17F15C"]
+			description: [
+				"任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"54C622B036DC78A9\" } }"
+			]
+			icon: "minecraft:cobweb"
+			id: "1D063C4488E33891"
+			size: 1.3d
+			subtitle: "&6掉落物用于合成蜘蛛套装"
+			tasks: [{
+				entity: "goety:brood_mother"
+				id: "6E8775AF32BC9FF0"
+				type: "kill"
+				value: 1L
+			}]
+			x: 25.5d
+			y: -11.0d
+		}
+		{
+			dependencies: ["42ACB25C7388B3DC"]
+			description: [
+				"任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"4677ACC569C2F349\" } }"
+			]
+			icon: {
+				Count: 1b
+				id: "goety_revelation:ender_keeper_sword"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "569E341CA11D9FC9"
+			size: 1.3d
+			subtitle: "&b其掉落物可合成末影之刃,拔刀剑【睦子米】和星辰聚晶，虚砾聚晶"
+			tasks: [{
+				entity: "goety:ender_keeper"
+				id: "2BE2D0205B39A26A"
+				type: "kill"
+				value: 1L
+			}]
+			x: 24.0d
+			y: -2.0d
+		}
+		{
+			description: [
+				"&a召唤的材料偏贵，所以还是探险最好"
+				""
+				"&c可以在物品栏对着召唤祭坛按U查看配方"
+				""
+				"&d右键放入材料，最后放入核心材料即可召唤"
+				"{image:kubejs:textures/aaaa/zhaohuanjitan.png width:190 height:190 align:1}"
+			]
+			id: "2492D0A164A57C6B"
+			rewards: [{
+				id: "2CA651868B9A290E"
+				item: "smithstory:naiyin"
+				type: "item"
+			}]
+			size: 1.7d
+			subtitle: "&a可用于召唤没有复活方式的BOSS。"
+			tasks: [{
+				id: "403D25A19EA30D3B"
+				item: {
+					Count: 1b
+					id: "summoningrituals:altar"
+					tag: { }
+				}
+				type: "item"
+			}]
+			x: 30.5d
+			y: -4.5d
+		}
+	]
+	title: "&dBOSS挑战"
+}

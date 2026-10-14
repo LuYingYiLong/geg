@@ -12,6 +12,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.ModList;
 
 @Mod(GegMod.MODID)
 public final class GegMod {
@@ -24,6 +25,11 @@ public final class GegMod {
         MarketNetwork.register();
         MinecraftForge.EVENT_BUS.addListener(MoneyCommands::register);
         MinecraftForge.EVENT_BUS.addListener(MoneyEvents::onPlayerLogin);
+        MinecraftForge.EVENT_BUS.addListener(MoneyEvents::onServerTick);
+        MinecraftForge.EVENT_BUS.addListener(MoneyEvents::onServerStopping);
         MinecraftForge.EVENT_BUS.addListener(MarketEvents::onPlayerLogout);
+        if (ModList.get().isLoaded("ftbquests")) {
+            io.github.luyingyilong.geg.money.integration.FtbCoinIntegration.register();
+        }
     }
 }

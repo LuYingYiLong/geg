@@ -1,0 +1,11 @@
+{
+	id: "3A632D0463B0302A"
+	loot_size: 1
+	order_index: 13
+	rewards: [
+		{ count: 5, item: "dragonfinder:fire_dragon_eye" }
+		{ count: 5, item: "dragonfinder:ice_dragon_eye" }
+		{ count: 5, item: "dragonfinder:lightning_dragon_eye" }
+	]
+	title: "龙眼"
+}

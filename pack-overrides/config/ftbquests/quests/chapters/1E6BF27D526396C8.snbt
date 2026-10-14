@@ -1,0 +1,2308 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "1E6BF27D526396C8"
+	group: "3041B6EFACB9A615"
+	icon: {
+		Count: 1b
+		id: "irons_spellbooks:netherite_spell_book"
+		tag: {
+			ISB_Spells: {
+				data: [ ]
+				maxSpells: 12
+				mustEquip: 1b
+				spellWheel: 1b
+			}
+		}
+	}
+	id: "1E6BF27D526396C8"
+	images: [
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/shuijingqiu.png"
+			rotation: 0.0d
+			width: 5.0d
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 10.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/mofashaonv.png"
+			rotation: 0.0d
+			width: 5.2d
+			x: 12.0d
+			y: 0.5d
+		}
+	]
+	order_index: 0
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&n&6第一步：将&d卷轴&6写入&d魔法书&6中。"
+				""
+				"&n&6第二补：退出GUI，按住&dG选择魔法&6，&dX释放"
+				""
+				"&6（&dAlt+滚轮&6也可以选择魔法！）"
+				""
+				"{image:kubejs:textures/aaaa/fashuchaoxietai.png width:200 height:140 align:1}"
+			]
+			id: "73A813C84D3D04B6"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "5E431F1C31B0F9AB"
+				item: "irons_spellbooks:arcane_debris"
+				type: "item"
+			}]
+			size: 2.0d
+			tasks: [{
+				id: "4EDEF0341AAD1878"
+				item: "irons_spellbooks:inscription_table"
+				type: "item"
+			}]
+			title: "&6第二步！"
+			x: 0.5d
+			y: -3.5d
+		}
+		{
+			dependencies: ["63E945D9243816A1"]
+			description: [
+				"&d使用对应的材料合成卷轴"
+				"{image:kubejs:textures/aaaa/zuanxietai.png width:200 height:65 align:1}"
+			]
+			id: "4B49A189AD0E0EB8"
+			rewards: [
+				{
+					id: "76A3A8C824A8329A"
+					item: "irons_spellbooks:cinder_essence"
+					type: "item"
+				}
+				{
+					id: "5B6C8F193D50561C"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:scroll"
+						tag: {
+							ISB_Spells: {
+								data: [{
+									id: "irons_spellbooks:teleport"
+									index: 0
+									level: 3
+									locked: 1b
+								}]
+								maxSpells: 1
+								mustEquip: 0b
+								spellWheel: 0b
+							}
+						}
+					}
+					type: "item"
+				}
+			]
+			size: 2.0d
+			subtitle: "&6制作卷轴！"
+			tasks: [{
+				id: "5F4A444C45E283C8"
+				item: "irons_spellbooks:scroll_forge"
+				type: "item"
+			}]
+			title: "&6卷轴制作机"
+			x: -3.5d
+			y: -0.5d
+		}
+		{
+			description: [
+				"&6&n将&e武器&6与&e卷轴融合&6，融合后&e手持武器&6即可使用&e对应魔法  （小部分盔甲也可以）"
+				""
+				"&e升级法术卷轴等级"
+				"{image:kubejs:textures/aaaa/juanzhoudegji.png width:185 height:100 align:1}"
+				"&7升级前为1级"
+			]
+			hide_dependent_lines: true
+			id: "6DF8EECB39BD471B"
+			rewards: [
+				{
+					id: "44635EE543E09E2E"
+					item: "irons_spellbooks:upgrade_orb"
+					type: "item"
+				}
+				{
+					id: "73E61D1A4A66B9C9"
+					item: {
+						Count: 1b
+						id: "peyroscythe:captain_greg"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [{
+									id: "irons_spellbooks:frost_step"
+									index: 0
+									level: 3
+									locked: 1b
+								}]
+								maxSpells: 1
+								mustEquip: 0b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+			]
+			size: 2.0d
+			subtitle: "&b法师堆数值的必备道具！！"
+			tasks: [{
+				id: "65D1AAC554227EDA"
+				item: "irons_spellbooks:arcane_anvil"
+				type: "item"
+			}]
+			title: "&6大魔法师的进阶"
+			x: 2.0d
+			y: 4.0d
+		}
+		{
+			description: [
+				"&n&6根据&d配方&6放入&d对应物品&6，等待一下即可炼制。炼制完成后要用&d玻璃瓶&6来装哦（具体配方请看JEI）"
+				"{image:kubejs:textures/aaaa/lianyaoguo.png width:130 height:200 align:1}"
+			]
+			id: "396FA29DD00B1402"
+			rewards: [{
+				id: "00399774F63FABD2"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:hither_thither_wand"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "irons_spellbooks:portal"
+								index: 0
+								level: 1
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 1b
+						}
+					}
+				}
+				type: "item"
+			}]
+			size: 2.0d
+			subtitle: "&e回收卷轴，合成墨水，炼制药水"
+			tasks: [{
+				id: "2716FACF0E6F562D"
+				item: "irons_spellbooks:alchemist_cauldron"
+				type: "item"
+			}]
+			title: "&6炼金锅"
+			x: -3.0d
+			y: 2.0d
+		}
+		{
+			description: [
+				"&n&6将&c魔法书&6放入这个槽位才能使用哦，施法需要法力值，法力值会自然恢复，上限越高恢复越快"
+				""
+				"&n&6默认按&dG&6选择魔法，&dAlt+滚轮&6快速选择，&dX&6释放"
+				""
+				"{image:kubejs:textures/aaaa/mofashuweizhi.png width:180 height:100 align:1}"
+				""
+				"&7你可能不习惯这个按键。推荐佩戴一把魔法杖，放在副手可以快速施法"
+			]
+			id: "206690BB149FE86A"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "728BA73481005FAE"
+				item: "irons_spellbooks:graybeard_staff"
+				type: "item"
+			}]
+			size: 2.0d
+			subtitle: "&d存储魔法的容器"
+			tasks: [{
+				id: "6CF6F9DA3877064A"
+				item: {
+					Count: 1b
+					id: "itemfilters:tag"
+					tag: {
+						value: "curios:spellbook"
+					}
+				}
+				title: "获取任意一本魔法书"
+				type: "item"
+			}]
+			title: "&6第一步！"
+			x: -3.0d
+			y: -3.0d
+		}
+		{
+			id: "7452F68D5462F94A"
+			rewards: [{
+				count: 3
+				id: "7E38898D35CB516C"
+				item: "irons_spellbooks:protection_upgrade_orb"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "289CD666AC59F1C4"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:wandering_magician_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "2B90FC5710110B7A"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:wandering_magician_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5D20F6C3CEE3C3E6"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:wandering_magician_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "64505E7D79896AA0"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:wandering_magician_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "流浪法师"
+			x: 3.5d
+			y: -4.5d
+		}
+		{
+			id: "0DC284AEF9B38D8B"
+			rewards: [{
+				count: 3
+				id: "0D9F7DE23DD0ECC6"
+				item: "irons_spellbooks:cooldown_upgrade_orb"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "1E9ED706FF074D8B"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:pumpkin_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6580F38F927C3210"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:pumpkin_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "08FD9E7A1958FC04"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:pumpkin_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6CBABFDC2146BE5D"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:pumpkin_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "惊悚南瓜"
+			x: 4.5d
+			y: -4.5d
+		}
+		{
+			id: "796C78CF6E60B651"
+			rewards: [{
+				count: 3
+				id: "35B4C89382C77DF9"
+				item: "irons_spellbooks:fire_upgrade_orb"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "366810D61EBF3293"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:pyromancer_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "421722CA01C477C2"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:pyromancer_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "403D9B2B4EA268DA"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:pyromancer_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "2311A2729AC93F10"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:pyromancer_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "炽焰术士"
+			x: 3.5d
+			y: -3.5d
+		}
+		{
+			id: "303A1BC6CC53CA48"
+			rewards: [{
+				count: 3
+				id: "6534885B2EFFEE2C"
+				item: "irons_spellbooks:lightning_upgrade_orb"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "71B4899DBFA19B69"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:electromancer_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "586F4C4CA26E7117"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:electromancer_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "35EE4A1BA45563DA"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:electromancer_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "165F47C201704241"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:electromancer_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "雷霆术士"
+			x: 5.5d
+			y: -4.5d
+		}
+		{
+			id: "0E6D90A3F558DA54"
+			rewards: [{
+				count: 3
+				id: "32C02572C371C8EA"
+				item: "irons_spellbooks:evocation_upgrade_orb"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "140F748EB038643E"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:archevoker_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3F8B102D42E551B4"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:archevoker_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "108AAE46AA1A7094"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:archevoker_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0F0BEDAC4BA08F46"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:archevoker_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "高位唤魔者"
+			x: 5.5d
+			y: -3.5d
+		}
+		{
+			id: "20D7E26E9F71815E"
+			rewards: [{
+				count: 3
+				id: "4DF34D006231C153"
+				item: "irons_spellbooks:blood_upgrade_orb"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "367480062A9C95D1"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:cultist_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3CA4C1ECC7169EAF"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:cultist_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "499AFA263E9A4554"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:cultist_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6CC5CEF2193A6F7E"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:cultist_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "猩红教徒"
+			x: 6.5d
+			y: -4.5d
+		}
+		{
+			id: "691DD07DC2550C44"
+			rewards: [{
+				count: 3
+				id: "342520A0EC892DB5"
+				item: "irons_spellbooks:ice_upgrade_orb"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "6BC9253A763E09B9"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:cryomancer_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "39E9124FACE7BF3D"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:cryomancer_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3CA91FA09B38F078"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:cryomancer_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "2A2CAA11E903B2B0"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:cryomancer_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "冰霜术士"
+			x: 4.5d
+			y: -3.5d
+		}
+		{
+			id: "2382C6B2D12BF3BD"
+			rewards: [{
+				count: 3
+				id: "069EF2E7E8FF63A9"
+				item: "irons_spellbooks:ender_upgrade_orb"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "437FE174FE1BA59F"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:shadowwalker_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "37D18409F30027B6"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:shadowwalker_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "27428A017030D3E6"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:shadowwalker_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "72DD05B106BDED08"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:shadowwalker_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "暗影行者"
+			x: 6.5d
+			y: -3.5d
+		}
+		{
+			id: "6AFB448C3048990F"
+			rewards: [{
+				count: 3
+				id: "49DCA0A06467C227"
+				item: "irons_spellbooks:holy_upgrade_orb"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "2B52BAE543D59FCC"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:priest_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "700CB8771AC54A4D"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:priest_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "56204C3CAE75CE35"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:priest_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6B55A9419E93F8BE"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:priest_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "牧师"
+			x: 7.5d
+			y: -4.5d
+		}
+		{
+			id: "7AAA7256C8C914FA"
+			rewards: [{
+				count: 3
+				id: "1BB8302F2DE532BC"
+				item: "irons_spellbooks:nature_upgrade_orb"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "51C34470B0C75F00"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:plagued_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3C94AC8768D5B8E6"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:plagued_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5138DC83C4588017"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:plagued_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6ED4BD138E2AB230"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:plagued_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "瘟疫术士"
+			x: 7.5d
+			y: -3.5d
+		}
+		{
+			id: "5D10C88E185D212C"
+			rewards: [{
+				count: 9
+				id: "33C4BD1993211350"
+				item: "irons_spellbooks:cooldown_upgrade_orb"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "4E84716DB8B60354"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:netherite_mage_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "46A802C326008517"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:netherite_mage_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "57066D0162F7C14C"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:netherite_mage_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5B7EB3C10020B0CB"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:netherite_mage_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "下界合金战斗法师"
+			x: 8.5d
+			y: -4.5d
+		}
+		{
+			id: "65C478A0176872D4"
+			rewards: [{
+				count: 9
+				id: "22C7A989DC70ADF8"
+				item: "irons_spellbooks:fire_upgrade_orb"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "355715264549DBA5"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:fire_dragon_priest_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "1E45D09931B90038"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:fire_dragon_priest_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "64E92891B12962CF"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:fire_dragon_priest_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3E58034F43226DD6"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:fire_dragon_priest_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "龙炎祭司"
+			x: 9.5d
+			y: -4.5d
+		}
+		{
+			id: "70DA9F436B9FE4D6"
+			rewards: [{
+				count: 9
+				id: "6351A911AB425352"
+				item: "irons_spellbooks:ice_upgrade_orb"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "6EEF5181DBD163A5"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:ice_dragon_priest_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "4EE11B6B8BC9ED6B"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:ice_dragon_priest_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "50ED491903D232D6"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:ice_dragon_priest_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "186C4146396471CE"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:ice_dragon_priest_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "龙霜祭司"
+			x: 8.5d
+			y: -3.5d
+		}
+		{
+			id: "3968A8E3ADF0AA27"
+			rewards: [{
+				count: 9
+				id: "6A3259DB63CD8F30"
+				item: "irons_spellbooks:lightning_upgrade_orb"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "52A0F68DE2D1E4E2"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:lightning_dragon_priest_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "56B23A2C9B11DCDA"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:lightning_dragon_priest_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "4AFD9145DF57D1DA"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:lightning_dragon_priest_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "077A28DF49970C6E"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:lightning_dragon_priest_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "龙霆祭司"
+			x: 9.5d
+			y: -3.5d
+		}
+		{
+			dependencies: ["6DF8EECB39BD471B"]
+			description: [
+				"&l&6为魔法书扩展槽位"
+				"{image:kubejs:textures/aaaa/aoshutiezhen.png width:190 height:70 align:1}"
+				"&7&n（扩展前为5个法术槽位）"
+			]
+			id: "169ACF65DFD970FB"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "78AF141E6116DD3D"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			tasks: [{
+				id: "01C952BFEE3AF08C"
+				item: "irons_spellbooks:lesser_spell_slot_upgrade"
+				type: "item"
+			}]
+			title: "槽位扩展"
+			x: 1.0d
+			y: 3.0d
+		}
+		{
+			dependencies: ["6DF8EECB39BD471B"]
+			description: [
+				"&n&6强化任意装备/法杖/魔法书的魔法属性"
+				""
+				"{image:kubejs:textures/aaaa/faqiuxiajiehejin.png width:200 height:90 align:1}"
+			]
+			id: "7F769F6C9A9EEDD5"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "375D7D42FF3A6E81"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			tasks: [{
+				id: "61084407BA7CDE33"
+				item: "irons_spellbooks:upgrade_orb"
+				type: "item"
+			}]
+			title: "法球升级"
+			x: 0.5d
+			y: 5.0d
+		}
+		{
+			id: "382BB293CFFD2F70"
+			rewards: [{
+				id: "0BB7F64A7AC1FA39"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "peyroscythe:glacier"
+								index: 0
+								level: 6
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+						relicstack: {
+							"legendreliclib:combo_number_Stacks": 22
+							"legendreliclib:last_damage_Stacks": 15
+						}
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "增强魔法，右键快速释放。副手也可以生效哦"
+			tasks: [{
+				id: "5096941644448340"
+				item: "ice_and_fire_spellbooks:dragon_priest_staff"
+				type: "item"
+			}]
+			x: 4.5d
+			y: 1.0d
+		}
+		{
+			id: "24F802E57C92980C"
+			rewards: [{
+				id: "64E18249CAB2B82A"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "irons_spellbooks:fireball"
+								index: 0
+								level: 5
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+						relicstack: {
+							"legendreliclib:combo_number_Stacks": 2
+							"legendreliclib:last_damage_Stacks": 52
+						}
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "增强魔法，右键快速释放。副手也可以生效哦"
+			tasks: [{
+				id: "3B50BFA3400F389E"
+				item: "ice_and_fire_spellbooks:crimson_dragon_priest_staff"
+				type: "item"
+			}]
+			x: 8.5d
+			y: 1.0d
+		}
+		{
+			id: "1383FCD4D4AF996B"
+			rewards: [{
+				id: "4DAB8873E02852D8"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "peyroscythe:icy_comet_rain"
+								index: 0
+								level: 5
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "增强魔法，右键快速释放。副手也可以生效哦"
+			tasks: [{
+				id: "311AE965FDA36E52"
+				item: "ice_and_fire_spellbooks:silver_dragon_priest_staff"
+				type: "item"
+			}]
+			x: 6.5d
+			y: 1.0d
+		}
+		{
+			id: "11C1679AB9293E04"
+			rewards: [{
+				id: "1C580D529AD68A09"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "irons_spellbooks:thunderstorm"
+								index: 0
+								level: 7
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "增强魔法，右键快速释放。副手也可以生效哦"
+			tasks: [{
+				id: "50345A55829B94F0"
+				item: "ice_and_fire_spellbooks:thunderous_dragon_priest_staff"
+				type: "item"
+			}]
+			x: 7.5d
+			y: 1.0d
+		}
+		{
+			id: "224D2718F44DB495"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1FBFE7AB2583A7FD"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "出现在古城的宝箱中，用于合成远古巫术手稿"
+			tasks: [{
+				id: "7BD5DC19C622FE3A"
+				item: "irons_spellbooks:ancient_knowledge_fragment"
+				type: "item"
+			}]
+			x: 5.0d
+			y: 2.5d
+		}
+		{
+			dependencies: ["224D2718F44DB495"]
+			id: "4ED41E3F05F08864"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "20D013872C0A0F41"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "用于学习一些已经失传的强大魔法"
+			tasks: [{
+				id: "310A5A41039BCF59"
+				item: "irons_spellbooks:eldritch_manuscript"
+				type: "item"
+			}]
+			x: 6.0d
+			y: 2.5d
+		}
+		{
+			id: "63E945D9243816A1"
+			rewards: [{
+				id: "3E97488AB32B8D40"
+				item: "irons_spellbooks:mana_ring"
+				type: "item"
+			}]
+			subtitle: "&6通过&d开箱&6和&d击杀魔法怪物&6等各种渠道获得"
+			tasks: [{
+				id: "1D39711C3E5BDCD5"
+				item: {
+					Count: 1b
+					id: "itemfilters:or"
+					tag: {
+						items: [
+							{
+								Count: 1b
+								id: "irons_spellbooks:common_ink"
+							}
+							{
+								Count: 1b
+								id: "irons_spellbooks:uncommon_ink"
+							}
+							{
+								Count: 1b
+								id: "irons_spellbooks:rare_ink"
+							}
+							{
+								Count: 1b
+								id: "irons_spellbooks:epic_ink"
+							}
+							{
+								Count: 1b
+								id: "irons_spellbooks:legendary_ink"
+							}
+						]
+					}
+				}
+				title: "任意墨水"
+				type: "item"
+			}]
+			title: "墨水"
+			x: -2.0d
+			y: -1.5d
+		}
+		{
+			dependencies: ["6DF8EECB39BD471B"]
+			id: "77431C4433334466"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "7CAB8751AC813265"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "用于移除法球的升级"
+			tasks: [{
+				id: "6C181D95AEFB137C"
+				item: "irons_spellbooks:shriving_stone"
+				type: "item"
+			}]
+			x: 3.5d
+			y: 3.5d
+		}
+		{
+			id: "6D2A694BAFAB604B"
+			rewards: [{
+				id: "22D90CF30ECF1DE4"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "irons_spellbooks:lightning_lance"
+								index: 0
+								level: 6
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "增强魔法，右键快速释放。副手也可以生效哦"
+			tasks: [{
+				id: "3362454EB7344E89"
+				item: "irons_spellbooks:lightning_rod"
+				type: "item"
+			}]
+			x: 6.0d
+			y: 0.0d
+		}
+		{
+			id: "1196651B820D0F13"
+			rewards: [{
+				id: "68CC6D13DC182CCC"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "peyroscythe:nero_holy_ray"
+								index: 0
+								level: 4
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+						relicstack: {
+							"legendreliclib:combo_number_Stacks": 18
+							"legendreliclib:last_damage_Stacks": 10
+						}
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "增强魔法，右键快速释放。副手也可以生效哦"
+			tasks: [{
+				id: "4B48737F86F04256"
+				item: "irons_spellbooks:artificer_cane"
+				type: "item"
+			}]
+			x: 7.0d
+			y: 0.0d
+		}
+		{
+			description: [
+				"相关链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"4697E9CDF103979A\" } }"
+			]
+			id: "5395D06750BD8137"
+			rewards: [{
+				id: "29D71D12C7E0EE51"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "peyroscythe:the_frozen_world"
+								index: 0
+								level: 3
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "增强魔法，右键快速释放。副手也可以生效哦"
+			tasks: [{
+				id: "1575D7E64C10B789"
+				item: "irons_spellbooks:ice_staff"
+				type: "item"
+			}]
+			x: 8.0d
+			y: 0.0d
+		}
+		{
+			id: "357D4A905F1CEC40"
+			rewards: [{
+				id: "61CED4A0F1842FF4"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "irons_spellbooks:summon_horse"
+								index: 0
+								level: 3
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "增强魔法，右键快速释放。副手也可以生效哦"
+			tasks: [{
+				id: "43DF74011FADE3FD"
+				item: "irons_spellbooks:graybeard_staff"
+				type: "item"
+			}]
+			x: 5.0d
+			y: 0.0d
+		}
+		{
+			id: "59CEF6ED74B7AD6E"
+			rewards: [{
+				id: "67ED159765D4FFC5"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "irons_spellbooks:echoing_strikes"
+								index: 0
+								level: 2
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "增强魔法，右键快速释放。副手也可以生效哦"
+			tasks: [{
+				id: "48F853F070D36DD1"
+				item: "irons_spellbooks:blood_staff"
+				type: "item"
+			}]
+			x: 5.5d
+			y: 1.0d
+		}
+		{
+			can_repeat: true
+			id: "074A9D09364D75A4"
+			rewards: [{
+				id: "01C64D814C0B6524"
+				table_id: 2006233011676489970L
+				team_reward: false
+				type: "random"
+			}
+				{
+				coinMinorUnits: 500L
+				id: "1AADE73BAE76848B"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			size: 1.5d
+			tasks: [{
+				consume_items: true
+				id: "2E8ABF1ADA357CFE"
+				item: {
+					Count: 1b
+					id: "itemfilters:tag"
+					tag: {
+						value: "soulsweapons:lord_soul"
+					}
+				}
+				title: "提交任意“王的灵魂”"
+				type: "item"
+			}]
+			title: "抽取魔法书"
+			x: 6.5d
+			y: 5.0d
+		}
+		{
+			id: "799B013522251A0C"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "197F5E758F8F43B3"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "由寒霜魔像50％掉落"
+			tasks: [{
+				id: "09F3E23B7C9FCEFE"
+				item: "irons_spellbooks:permafrost_shard"
+				type: "item"
+			}]
+			x: 7.0d
+			y: 2.5d
+		}
+		{
+			id: "16624CDE351FB6B8"
+			rewards: [{
+				id: "55485E1F5EBC7D28"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "irons_spellbooks:fire_breath"
+								index: 0
+								level: 4
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "74A9C1B2E9D7CEA0"
+				item: "irons_spellbooks:mana_ring"
+				type: "item"
+			}]
+			x: 4.5d
+			y: -2.0d
+		}
+		{
+			id: "279E7E50E943B40D"
+			rewards: [{
+				id: "0AB71ED696F4E00C"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "peyroscythe:holy_lance"
+								index: 0
+								level: 7
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "609972E9BB9674F4"
+				item: "irons_spellbooks:cooldown_ring"
+				type: "item"
+			}]
+			x: 5.5d
+			y: -2.0d
+		}
+		{
+			id: "2555907CC7ED3DE5"
+			rewards: [{
+				id: "02AB9D7B73C3F89F"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "peyroscythe:made_in_heaven"
+								index: 0
+								level: 1
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "219196477A355E5D"
+				item: "irons_spellbooks:cast_time_ring"
+				type: "item"
+			}]
+			x: 6.5d
+			y: -2.0d
+		}
+		{
+			id: "336C392F7A6EF424"
+			rewards: [{
+				id: "280C9862D9611EC5"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "irons_spellbooks:healing_circle"
+								index: 0
+								level: 5
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "5EF60983556C8E98"
+				item: "irons_spellbooks:heavy_chain_necklace"
+				type: "item"
+			}]
+			x: 7.5d
+			y: -2.0d
+		}
+		{
+			id: "180F1136F6754840"
+			rewards: [{
+				id: "77EC94594F995FD9"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "irons_spellbooks:raise_dead"
+								index: 0
+								level: 4
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "6446A86222A156E9"
+				item: "irons_spellbooks:conjurers_talisman"
+				type: "item"
+			}]
+			x: 8.5d
+			y: -2.0d
+		}
+		{
+			id: "47194FB88BDEF95D"
+			rewards: [{
+				id: "38C0E38627520FD3"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "peyroscythe:holy_lance"
+								index: 0
+								level: 7
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "2E1B838231CA19EE"
+				item: "irons_spellbooks:amethyst_resonance_charm"
+				type: "item"
+			}]
+			x: 6.0d
+			y: -1.0d
+		}
+		{
+			id: "631C09E0026B4510"
+			rewards: [{
+				id: "1FD0E1FFFFA7B64F"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "irons_spellbooks:dragon_breath"
+								index: 0
+								level: 10
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "7D3D4CEE73BD7845"
+				item: "irons_spellbooks:concentration_amulet"
+				type: "item"
+			}]
+			x: 7.0d
+			y: -1.0d
+		}
+		{
+			id: "7F2F0C15DEF21390"
+			rewards: [{
+				id: "65433FBFDDF6AC3F"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "irons_spellbooks:greater_heal"
+								index: 0
+								level: 1
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "2500B592B718D7A6"
+				item: "irons_spellbooks:emerald_stoneplate_ring"
+				type: "item"
+			}]
+			x: 8.0d
+			y: -1.0d
+		}
+		{
+			id: "52C75FF6012D07DF"
+			rewards: [{
+				id: "2F7CEFFAF1E308AA"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "peyroscythe:sinfire_embrace"
+								index: 0
+								level: 2
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "31C29DA966D51E5F"
+				item: "irons_spellbooks:fireward_ring"
+				type: "item"
+			}]
+			x: 9.0d
+			y: -1.0d
+		}
+		{
+			id: "7F905AFFFFE80B70"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "553ADF82126C5BF2"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "主世界地下挖取，或熔炼魔法饰品"
+			tasks: [{
+				id: "3AE6F4A494604596"
+				item: "irons_spellbooks:arcane_debris"
+				type: "item"
+			}]
+			x: 8.0d
+			y: 2.5d
+		}
+		{
+			description: [
+				"&n&6远古骑士生成在&e下界&6古战场"
+				"&n&6（结构名：&eancient  battleground&6）"
+				""
+				"&6异教徒常常伴随黑曜石柱在主世界生成"
+				""
+				""
+				"{image:kubejs:textures/aaaa/yijiaotu.png width:130 height:100 align:1}"
+				""
+				"&7（正在进行仪式的异教徒）"
+			]
+			id: "2397D4FC00886BAB"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "4F173C6CFEC05333"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "由远古骑士和异教徒掉落"
+			tasks: [{
+				id: "7CD6ED70F2928D3F"
+				item: "irons_spellbooks:cinder_essence"
+				type: "item"
+			}]
+			x: 5.5d
+			y: 3.5d
+		}
+		{
+			id: "22F10F60E149C103"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6EE10C0456B94069"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "对【闪电苦力怕】使用【玻璃瓶】获得"
+			tasks: [{
+				id: "1E884B429FA62FDB"
+				item: "irons_spellbooks:lightning_bottle"
+				type: "item"
+			}]
+			x: 7.5d
+			y: 3.5d
+		}
+		{
+			id: "1FA2930D02B46F9A"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "21E98B2A01B68BDA"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "漂浮于末影龙死后的位置"
+			tasks: [{
+				id: "64AD676577D380D7"
+				item: { Count: 16b, id: "irons_spellbooks:dragonskin" }
+				type: "item"
+			}]
+			x: 6.5d
+			y: 3.5d
+		}
+		{
+			description: [
+				"&e右键大厅中的尸体召唤，死王之尸"
+				"{image:kubejs:textures/aaaa/siwangzhishi.png width:150 height:150 align:1}"
+			]
+			id: "37657EDCE3CF62B8"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1EDC7BF0AE09176F"
+				table_id: 5831387975330270708L
+				type: "choice"
+			}]
+			size: 2.0d
+			subtitle: "使用指南针搜索：地下墓穴  来寻找"
+			tasks: [{
+				id: "74C85F5BE71A9338"
+				item: {
+					Count: 1b
+					id: "itemfilters:or"
+					tag: {
+						items: [
+							{
+								Count: 1b
+								id: "irons_spellbooks:necronomicon_spell_book"
+								tag: {
+									ISBEnhance: "irons_spellbooks:raise_dead"
+									ISB_Spells: {
+										data: [
+											{
+												id: "irons_spellbooks:blood_slash"
+												index: 0
+												level: 5
+												locked: 1b
+											}
+											{
+												id: "irons_spellbooks:blood_step"
+												index: 1
+												level: 5
+												locked: 1b
+											}
+											{
+												id: "irons_spellbooks:ray_of_siphoning"
+												index: 2
+												level: 5
+												locked: 1b
+											}
+											{
+												id: "irons_spellbooks:blaze_storm"
+												index: 3
+												level: 5
+												locked: 1b
+											}
+										]
+										maxSpells: 10
+										mustEquip: 1b
+										spellWheel: 1b
+									}
+								}
+							}
+							{
+								Count: 1b
+								id: "irons_spellbooks:blood_staff"
+							}
+						]
+					}
+				}
+				title: "&7获得&c猩红神杖&7或&6亡灵律典"
+				type: "item"
+			}]
+			x: -1.5d
+			y: 4.0d
+		}
+		{
+			can_repeat: true
+			icon: {
+				Count: 1b
+				id: "irons_spellbooks:scroll"
+				tag: {
+					ISB_Spells: {
+						data: [{
+							id: "peyroscythe:chaos_cradle"
+							index: 0
+							level: 1
+							locked: 1b
+						}]
+						maxSpells: 1
+						mustEquip: 0b
+						spellWheel: 0b
+					}
+				}
+			}
+			id: "063829FBEAD5014A"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0B0DE7489D46A485"
+				table_id: 2972040990743583284L
+				type: "random"
+			}]
+			size: 1.7d
+			subtitle: "&e小提示：对着卷轴按R查看JEI就可以看效果了哦！"
+			tasks: [{
+				consume_items: true
+				count: 5L
+				id: "44EBF4D343BF3B46"
+				item: "goety:witch_hat"
+				type: "item"
+			}]
+			title: "&9抽取特殊卷轴"
+			x: 2.55d
+			y: -0.85d
+		}
+		{
+			description: [
+				"&e远古知识碎片在【远古城市】开箱获得"
+				""
+				"&e宝藏碎片链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"01D71AFAB6F67EB3\" } }"
+			]
+			id: "25841BD9F013043B"
+			rewards: [{
+				id: "0F3909B20C19333D"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "irons_spellbooks:root"
+								index: 0
+								level: 7
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "&d随往事一同被埋葬，少女再也没佩戴过它"
+			tasks: [{
+				id: "3BFFC79AA32CBD8A"
+				item: "peyroscythe:pontifical_knight_medal"
+				type: "item"
+			}]
+			x: 4.0d
+			y: -1.0d
+		}
+		{
+			description: [
+				"&e宝藏碎片链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"01D71AFAB6F67EB3\" } }"
+				""
+				"&9原始冰碎片链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"4697E9CDF103979A\" } }"
+			]
+			id: "33FBC4662A7F5827"
+			rewards: [{
+				id: "420E31F14BA6F6AA"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "peyroscythe:glacier"
+								index: 0
+								level: 6
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+						relicstack: {
+							"legendreliclib:combo_number_Stacks": 22
+							"legendreliclib:last_damage_Stacks": 15
+						}
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "&9冬之月家族传家宝"
+			tasks: [{
+				id: "685493160696E527"
+				item: "peyroscythe:wintermoon_heart"
+				type: "item"
+			}]
+			x: 5.0d
+			y: -1.0d
+		}
+		{
+			can_repeat: true
+			description: [
+				"&6如何使用法球？："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"7F769F6C9A9EEDD5\" } }"
+			]
+			hide_dependency_lines: true
+			icon: "irons_spellbooks:fire_upgrade_orb"
+			id: "4D53FD1069644AA7"
+			rewards: [{
+				id: "26B323CDC3FD7E3B"
+				table_id: 5831387975330270708L
+				team_reward: false
+				type: "random"
+			}]
+			size: 1.5d
+			subtitle: "使用绿宝石抽取！"
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "0B0B89B42A10A1EE"
+				item: "minecraft:emerald_block"
+				type: "item"
+			}]
+			title: "&b抽取法球"
+			x: 5.0d
+			y: 5.0d
+		}
+		{
+			can_repeat: true
+			description: [
+				"&6如何使用法球？："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"7F769F6C9A9EEDD5\" } }"
+			]
+			icon: "irons_spellbooks:evocation_upgrade_orb"
+			id: "054C23D6C8E487B2"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "350EFABAB261F2DA"
+				table_id: 5831387975330270708L
+				team_reward: false
+				type: "choice"
+			}]
+			size: 1.5d
+			subtitle: "使用河豚自选！"
+			tasks: [
+				{
+					consume_items: true
+					count: 4L
+					id: "5C8D436489D84BC4"
+					item: "minecraft:pufferfish"
+					type: "item"
+				}
+				{
+					consume_items: true
+					count: 3L
+					id: "3368040356656FC6"
+					item: "minecraft:diamond"
+					type: "item"
+				}
+			]
+			title: "&a自选法球"
+			x: 8.0d
+			y: 5.0d
+		}
+		{
+			dependencies: ["37657EDCE3CF62B8"]
+			description: [
+				"&d蜘蛛套由【育母蜘蛛】掉落物合成，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"54C622B036DC78A9\" } }"
+			]
+			id: "29CED20DA3933ABC"
+			subtitle: "&a综合能力十分优秀的法术套装"
+			tasks: [
+				{
+					id: "3BE288491C39CA49"
+					item: {
+						Count: 1b
+						id: "goety_revelation:spider_darkmage_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "53ADF57E1ABD81A7"
+					item: {
+						Count: 1b
+						id: "goety_revelation:spider_darkmage_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "493C8C4C3AC7AFD3"
+					item: {
+						Count: 1b
+						id: "goety_revelation:spider_darkmage_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "701DA520DAA2DC43"
+					item: {
+						Count: 1b
+						id: "goety_revelation:spider_darkmage_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&e合成神经刻蚀者黑魔法师套装"
+			x: -1.0d
+			y: 2.5d
+		}
+	]
+	title: "&d我是个法师！"
+}

@@ -1,0 +1,24 @@
+{
+	id: "1F9B34BB13B96934"
+	loot_size: 1
+	order_index: 21
+	rewards: [
+		{ item: "refinedstorage:white_creative_controller" }
+		{ item: "refinedstorage:orange_creative_controller" }
+		{ item: "refinedstorage:magenta_creative_controller" }
+		{ item: "refinedstorage:creative_controller", title: "淡蓝色 创造控制器" }
+		{ item: "refinedstorage:yellow_creative_controller" }
+		{ item: "refinedstorage:lime_creative_controller" }
+		{ item: "refinedstorage:pink_creative_controller" }
+		{ item: "refinedstorage:gray_creative_controller" }
+		{ item: "refinedstorage:light_gray_creative_controller" }
+		{ item: "refinedstorage:cyan_creative_controller" }
+		{ item: "refinedstorage:purple_creative_controller" }
+		{ item: "refinedstorage:blue_creative_controller" }
+		{ item: "refinedstorage:brown_creative_controller" }
+		{ item: "refinedstorage:green_creative_controller" }
+		{ item: "refinedstorage:red_creative_controller" }
+		{ item: "refinedstorage:black_creative_controller" }
+	]
+	title: "创造控制器"
+}

@@ -1,0 +1,542 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "50414E56188AC452"
+	group: "7916E3ED902C17A5"
+	icon: "goety:troop_focus"
+	id: "50414E56188AC452"
+	images: [{
+		click: ""
+		corner: false
+		dev: false
+		height: 10.0d
+		hover: [ ]
+		image: "kubejs:textures/aaaa/ba.png"
+		rotation: 0.0d
+		width: 5.2d
+		x: -1.5d
+		y: -2.5d
+	}]
+	order_index: 1
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&6&n默认按&dTAB&6键打开，或者&d物品栏左上角&6打开"
+				""
+				"&6&n一般完成任务需要，持有某个物品，达成什么成就，提交某个物品.....这些都很简单"
+				""
+				"&n&6进阶一点，选择一个任务，点击所需物品 按下&dR查看配方&6 按下&dB查看百科资料&6（当然，前提是百科有相关资料"
+				""
+				"&6麻烦一点.....遇到树苗和地图的话"
+				"{image:minecraft:block/oak_sapling width:20 height:20 align:1}"
+				"{image:minecraft:item/filled_map width:20 height:20 align:1}"
+				"&6&n分别代表要到达某个群系和结构，这些一般会有具体的提示，用对应的指南针&d搜：后面的英文&6即可查找"
+			]
+			id: "7A472F6A66062372"
+			rewards: [{
+				count: 2
+				id: "45F896C06D07FAD2"
+				item: "minecraft:compass"
+				type: "item"
+			}]
+			tasks: [{
+				id: "18BA5244E90EECAF"
+				title: "如何使用FTB任务系统"
+				type: "checkmark"
+			}]
+			x: -4.0d
+			y: -3.0d
+		}
+		{
+			description: [
+				"&6按下ALT+Y进入GUI，如果喜欢原版的外观，在右上角的扳手选择禁止玩家渲染自身就好了"
+				""
+				"{image:kubejs:textures/aaaa/ysm.png width:190 height:110 align:1}"
+				""
+				"&e点击文件夹可打开模型所在文件夹，把模型文件放入后，使用/ysm model reload指令或者重启游戏即可"
+			]
+			id: "59BB1FD8802DDABC"
+			rewards: [{
+				id: "66C37C94DBEBA6D1"
+				item: "alcocraftplus:digger_bitter"
+				type: "item"
+			}]
+			subtitle: "默认按下N键位播放动画哦"
+			tasks: [{
+				id: "07E3C214A4C0F4FD"
+				title: "关于YSM（是，史蒂夫模型模组）"
+				type: "checkmark"
+			}]
+			x: -6.0d
+			y: -3.0d
+		}
+		{
+			description: [
+				"&6&n将支持TACZ1.1.5+版本的枪包文件放置于.minecraft → tacz 目录下，进入游戏即可使用（刀包同理）"
+				""
+				"&n&6不要更新已有的枪包哦，会覆盖掉改动的内容"
+				""
+				"已经使用枪包："
+				"(都是非常优秀的枪包哦)"
+				""
+				"&c&n【CIB冲锋陷阵】"
+				""
+				"&6&n【启示录】"
+				""
+				"&c&n【曙光女神实验室】"
+				""
+				"&e&n【赛博军械师】"
+				""
+				"&9&n【光之剑枪包】"
+				""
+				"&b&n【鼠鼠的碧蓝档案】"
+				""
+				"&d&n【彩虹公司的冲击枪】"
+				""
+				"&9清晨一阵风的【蔚蓝战术】"
+				""
+				"已经使用刀包："
+				""
+				"&9&n【古刃道】"
+			]
+			id: "4BDBF3C32A0C4464"
+			rewards: [{
+				id: "268DC4EEC433F300"
+				item: "farmersdelight:dumplings"
+				type: "item"
+			}]
+			tasks: [{
+				id: "0096CEB86F0BC537"
+				title: "如何加入枪包？"
+				type: "checkmark"
+			}]
+			x: -4.0d
+			y: -1.0d
+		}
+		{
+			description: [
+				"&6本整合包由&d【末影蘸酱】&6制作"
+				""
+				"&d【禁止倒卖】&6和&d【禁止二次分发】&6是&d【免费整合包】"
+				""
+				"&6如果你花钱下到了这个整合包，那说明你被骗了"
+				""
+				"&a如果你需要自动备份功能，请移步DLC，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"6BF16BEB2E3176C8\" } }"
+				""
+				"{image:kubejs:textures/aaaa/xuedi.png width:160 height:110 align:1}"
+			]
+			id: "620E646DF33D919A"
+			rewards: [{
+				auto: "disabled"
+				exclude_from_claim_all: true
+				id: "0E021A240ACB655D"
+				item: {
+					Count: 1b
+					id: "minecraft:player_head"
+					tag: {
+						SkullOwner: {
+							Id: [I;
+								628042497
+								1771522872
+								-1924934123
+								-1239657158
+							]
+							Name: "moyingzhanjiang"
+							Properties: {
+								textures: [{
+									Signature: "NOJsYiUXDxu07z2z+jNiRg/vx+exNZMa5CObGJt67hg+2Gd9o8eUGUzcDmPPROmIqXf0TusTstGPJ5GlpArbIJh7AgsrQXgJnvxGKbFumgOeC0g6rO9dJyIfw1Y82BbPSka/3mgqk0kuTq7oAkgIG87QVjQgf9tbBTo7S+vcbCxlRspu80CNJDpyIszFm1b3atNhHWOck4dLWcwZXQhY9iAgsnLlbcFlP+XJfbUxKRp63now4t5CankPJN3U0eNF0WiNTuILTbwlbIvV0GazV0qqmGcLuNpnlAbw/7pT4DM/4Jle8GltUg3c29H+HuJexA83R5HiYD3s27ZXolToPKIGPzaCkvkoPIk5K6ojW1rJPGxDbD3SyOaOSxp5Re5rOPC9HYlBaWrbxbhD7zM0NDjWX+Dt9avromn7x2eod8udS2o4/V5PP02KR0avbsS2TN+cF041qZ7vOFs6wGzn32adDvmsVgT51jn72JwrR5//d5cPeYFoX387BDor0BUO1ys1h9NMeofTJFbqu+HQ4xkDwAjWZ9qWp3ev/QTqehBjJDDMvo3w7k1n43wcnZJPI9p3/1ob1X573SvMEKd+hXLGiPcJLC8QEqi176LgKjG4QIhVJhGW0KJBVTX6kUXpTVym8/8knzhB2J93XBmXJcI0pPEu7I7D60VcjZPW00g="
+									Value: "ewogICJ0aW1lc3RhbXAiIDogMTc3NDY3MzY3MzAwNSwKICAicHJvZmlsZUlkIiA6ICIyNTZmMmIwMTY5OTc0YjM4OGQ0M2Q2MTViNjFjNTUzYSIsCiAgInByb2ZpbGVOYW1lIiA6ICJtb3lpbmd6aGFuamlhbmciLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTVlOGE3YTZkNjc2NmFlZmRjNjhjNTFhNzM0YjBlMjM3MDRiNmJjNzdiNDgyZjdkMDlmMzEwNzI1NTVkODUwOSIsCiAgICAgICJtZXRhZGF0YSIgOiB7CiAgICAgICAgIm1vZGVsIiA6ICJzbGltIgogICAgICB9CiAgICB9CiAgfQp9"
+								}]
+							}
+						}
+					}
+				}
+				team_reward: false
+				title: "作者的头"
+				type: "item"
+			}]
+			subtitle: "&6都是些很基础的知识，很简单的。建议看一看"
+			tasks: [{
+				id: "6EC300189712C819"
+				title: "唔......"
+				type: "checkmark"
+			}]
+			x: -4.0d
+			y: -5.0d
+		}
+		{
+			can_repeat: false
+			icon: "commandsceptre:command_block_sceptre"
+			id: "50B9E20639293DAA"
+			tasks: [{
+				id: "687E14EF250B84AF"
+				title: "&c开启控制台"
+				type: "checkmark"
+			}]
+			title: "&c控制台"
+			x: 2.5d
+			y: -1.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["50B9E20639293DAA"]
+			id: "551704F7F4087B49"
+			rewards: [{
+				command: "/kill @e[type=minecraft:item]"
+				elevate_perms: true
+				id: "6DF33E39C1F6230B"
+				team_reward: false
+				type: "command"
+			}]
+			tasks: [{
+				id: "7BAB04D055C22242"
+				type: "checkmark"
+			}]
+			title: "清除掉落物"
+			x: 2.5d
+			y: -3.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["50B9E20639293DAA"]
+			id: "4FD905E013D06FE7"
+			rewards: [{
+				command: "/kill @p"
+				elevate_perms: true
+				id: "3569B31A8D15A414"
+				team_reward: false
+				type: "command"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 2L
+				id: "0E20D92135BA7C41"
+				item: "minecraft:rotten_flesh"
+				type: "item"
+			}]
+			title: "掉出这个世界"
+			x: 2.5d
+			y: 0.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["50B9E20639293DAA"]
+			id: "0716636E30FDB51A"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "687D8D5C854802AB"
+				table_id: 6663153385736412467L
+				team_reward: false
+				type: "choice"
+			}]
+			tasks: [{
+				consume_items: true
+				id: "708C002E1D1C4E10"
+				item: "minecraft:diamond"
+				type: "item"
+			}]
+			title: "修改时间"
+			x: 3.5d
+			y: -0.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["50B9E20639293DAA"]
+			description: [
+				"&b通过&6【天空仪式】&b可简单的召唤雷雨天"
+				""
+				"&b或者佩戴&6【海神饰品】"
+				"{image:kubejs:textures/aaaa/dengshenchangjie5.png width:200 height:180 align:1}"
+			]
+			id: "2C62D1176133896E"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "4759284C1A94FCA6"
+				table_id: 7716179479801923576L
+				team_reward: false
+				type: "choice"
+			}]
+			subtitle: "如何改成雷雨天！！！"
+			tasks: [{
+				consume_items: true
+				count: 4L
+				id: "1830A0DEFB0537FA"
+				item: "minecraft:gold_ingot"
+				type: "item"
+			}]
+			title: "调整天气"
+			x: 1.5d
+			y: -0.5d
+		}
+		{
+			can_repeat: true
+			hide_dependency_lines: false
+			icon: "butcher:skeletoncorpse"
+			id: "5D346E727793222E"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6D3120DB46B40EF0"
+				table_id: 6721490849361095549L
+				team_reward: false
+				type: "choice"
+			}]
+			size: 1.0d
+			tasks: [{
+				id: "09BC3F8132A54976"
+				title: "是否开启死亡掉落？"
+				type: "checkmark"
+			}]
+			x: 2.5d
+			y: -5.0d
+		}
+		{
+			description: [
+				"&n&6有很小一部分任务是这样的"
+				"{image:ftblibrary:item/missing_item width:40 height:40 align:1}"
+				"&n&6这是扩展内容哦，需要下载扩展内容的文件包，加入指定的模组后才可以使用"
+				""
+				"&d目前扩展内容：魔法使，RS精致存储，旅行火炮"
+				""
+				"扩展内容篇链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1C39C0AD40FEBA12\" } }"
+			]
+			id: "7EA92730E12DBFB9"
+			rewards: [{
+				id: "16B248CF59956E74"
+				item: {
+					Count: 1b
+					id: "minecraft:iron_axe"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "1E151E6969F30E77"
+				title: "扩展内容"
+				type: "checkmark"
+			}]
+			x: -4.0d
+			y: 1.0d
+		}
+		{
+			description: [
+				"&n&6鼠标对准物品，按&cR查看合成&6，按&cU查看用途&6，按&cB查看百科资料"
+				""
+				"&7（对工作台，熔炉类按U查看所有相关配方）"
+			]
+			id: "632449A4BB506B65"
+			rewards: [{
+				id: "7520A7C1D7F9A03D"
+				item: "minecraft:bucket"
+				type: "item"
+			}]
+			tasks: [{
+				id: "7F77699B891C2AE9"
+				title: "如何查找配方和百科资料"
+				type: "checkmark"
+			}]
+			x: -5.0d
+			y: -2.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["50B9E20639293DAA"]
+			id: "156AE531933FA775"
+			rewards: [{
+				command: "/tpmaster away 10000"
+				elevate_perms: true
+				exclude_from_claim_all: true
+				id: "78F3E8576D3B7BCF"
+				team_reward: false
+				type: "command"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 10L
+				id: "7470B3F1CC1B387E"
+				item: {
+					Count: 1b
+					id: "itemfilters:tag"
+					tag: {
+						value: "minecraft:logs"
+					}
+				}
+				title: "Any #minecraft:logs"
+				type: "item"
+			}]
+			title: "随机传送10000格"
+			x: 3.5d
+			y: -2.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["50B9E20639293DAA"]
+			id: "2A38976BBCC91790"
+			rewards: [{
+				command: "/tpmaster back"
+				elevate_perms: true
+				exclude_from_claim_all: true
+				id: "6765D069B203A8EC"
+				team_reward: false
+				type: "command"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 10L
+				id: "782B4A6CBCD83A8A"
+				item: "minecraft:dirt"
+				type: "item"
+			}]
+			title: "返回死亡点"
+			x: 1.5d
+			y: -2.5d
+		}
+		{
+			description: [
+				"&e问：为什么我的刀不能合成？"
+				""
+				"&6&n答：需要满足条件，具体见配方。需要耀魂值，杀敌数，精炼次数部分需要特殊附魔。"
+				""
+				"拔刀剑链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"66A9C2F4D827A7D8\" } }"
+				""
+				"&a拔刀剑是黑的怎么办？更新显卡驱动看看"
+				""
+				"&b我的【拔刀剑全透明】了怎么办？&b不要将图像设置的图像品质改为极佳，会导致渲染失效！"
+			]
+			id: "5D9466EA1D43F0BA"
+			rewards: [{
+				id: "28B6FDBA4BBCE8A5"
+				item: {
+					Count: 1b
+					id: "soulsweapons:chungus_disc"
+					tag: { }
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "398AF5AF2EBBACFE"
+				title: "关于拔刀剑的问题"
+				type: "checkmark"
+			}]
+			x: -6.0d
+			y: -1.0d
+		}
+		{
+			description: [
+				"&6&l1：不要在家里面使用&a【核弹】&e【救世主加护的终结技】&c【爆裂魔法杖】&6等大杀伤性武器"
+				""
+				"&62.有问题先看&a【任务书】&6，没有解决可以问我或者群友"
+				"&6，或者去发频道"
+				""
+				"&63.绝对&b【不要更新不熟悉的MOD】&6，这会导致很多问题"
+				""
+				"&64.开局&d【灾厄之册】&6消失是正常的，后期可以拿回来"
+				""
+				"&65.&6不要将&e【视频设置】→【质量】→【图像品质】&6设置为&e【极佳】&6会&e【导致一些渲染丢失】（比如拔刀剑变透明"
+				"{@pagebreak}"
+				"&66.因为&c【使用枪械】&6导致&c【内存崩溃】&6大概率是因为&b使用了与此版本【tacz】不兼容的光影&6，尽量使用兼容的光影，或者整合包自带光影"
+				""
+				"&67.这是一个&e免费整合包&6，不会以任何形式进行售卖，如果你是花钱玩上的，那你就是被骗了"
+				""
+				"&68.装了DLC的魔法使模组会有崩溃的风险，报错中并不会指出是魔法使的问题，如果你摸不着头脑，可以禁用魔法使mod"
+				""
+				"&69.&b【不要卸下专用材质包】&6，这会导致&b【汉化丢失】&6，&b【贴图错误】&6。"
+				""
+				"&610.&a帧数较低&6，按ESC在视频设置里面改一下设置，默认配置需求比较高&6（因为给了很远的实体渲染距离）"
+				""
+				"&611.如果你&3【进入存档就崩溃】&6，请把&3【视距和模拟距离拉到最低】&6，然后进入存档"
+				""
+				"&612.联机时，主机不要&b【改验证方式】&6，客机不要&b【切换账号】&6或者&b【正版离线】&6，这会导致&b【物品清空】"
+			]
+			id: "49BCCFBB375A53D0"
+			rewards: [{
+				id: "218AB03A1B8F32F5"
+				item: {
+					Count: 1b
+					id: "celestial_core:sakura_pickaxe"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "64025029F0597B2B"
+				title: "注意！！！"
+				type: "checkmark"
+			}]
+			x: -5.0d
+			y: -4.0d
+		}
+		{
+			description: [
+				"&e注意：区块常加载会占用性能，服务器不要搞"
+				""
+				"&6女仆携带&b【锚定核心】&6饰品后即可使区块保持加载。任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1E19C20A1B92CE0A\" } }"
+			]
+			id: "038E9DF2A071A00C"
+			rewards: [{
+				id: "4F2DDE65FE776E11"
+				item: {
+					Count: 1b
+					id: "immersive_melodies:lute"
+					tag: { }
+				}
+				type: "item"
+			}]
+			tasks: [{
+				id: "445E3296238D53A8"
+				title: "如何使区块常加载？"
+				type: "checkmark"
+			}]
+			x: -5.0d
+			y: 0.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["50B9E20639293DAA"]
+			id: "3C4808DA61912FE7"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6EFFF2243B320A3D"
+				table_id: 2168014045930567677L
+				type: "choice"
+			}]
+			tasks: [{
+				consume_items: true
+				id: "46B53BBA629BC269"
+				item: "minecraft:cake"
+				type: "item"
+			}]
+			title: "调整季节"
+			x: 4.0d
+			y: -1.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["50B9E20639293DAA"]
+			id: "504936407556389C"
+			rewards: [{
+				command: "/say 全体目光向我看齐，看我看我，我是个掠夺者！"
+				elevate_perms: true
+				id: "64E1F03921BD0AA1"
+				title: "发表独立宣言"
+				type: "command"
+			}]
+			tasks: [{
+				id: "7C3B6E402865B4BD"
+				title: "独立宣言！"
+				type: "checkmark"
+			}]
+			x: 1.0d
+			y: -1.5d
+		}
+	]
+	title: "&d关于整合包"
+}

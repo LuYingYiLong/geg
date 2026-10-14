@@ -1,0 +1,12 @@
+{
+	id: "16283D9FA9204D12"
+	loot_size: 1
+	order_index: 8
+	rewards: [
+		{ item: "celestial_artifacts:spirit_bracelet" }
+		{ item: "celestial_artifacts:spirit_necklace" }
+		{ item: "celestial_artifacts:spirit_crown" }
+		{ item: "celestial_artifacts:spirit_arrow_bag" }
+	]
+	title: "精灵的遗物"
+}

@@ -1,0 +1,13 @@
+{
+	id: "413BBA7BC5477A0A"
+	loot_size: 1
+	order_index: 9
+	rewards: [
+		{ item: "alexscaves:amber_curiosity" }
+		{ count: 8, item: "alexscaves:fiddlehead" }
+		{ count: 7, item: "alexscaves:cycad" }
+		{ count: 12, item: "alexscaves:tree_star" }
+		{ count: 6, item: "alexscaves:pine_nuts" }
+	]
+	title: "原始"
+}

@@ -1,0 +1,15 @@
+{
+	id: "0C7B5C413F4B1C57"
+	loot_size: 1
+	order_index: 0
+	rewards: [
+		{ count: 2, item: "mahoutsukai:powdered_diamond" }
+		{ count: 3, item: "mahoutsukai:powdered_ender" }
+		{ count: 2, item: "mahoutsukai:powdered_eye" }
+		{ count: 4, item: "mahoutsukai:powdered_gold" }
+		{ count: 6, item: "mahoutsukai:powdered_iron" }
+		{ count: 4, item: "mahoutsukai:powdered_quartz" }
+		{ item: "mahoutsukai:spell_cloth" }
+	]
+	title: "魔法材料"
+}

@@ -1,0 +1,2759 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: "square"
+	filename: "0068E1D8996FBC73"
+	group: "7916E3ED902C17A5"
+	icon: "minecraft:grass_block"
+	id: "0068E1D8996FBC73"
+	images: [
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 10.0d
+			hover: [ ]
+			image: "goety:item/sky_research_scroll"
+			order: 10
+			rotation: 0.0d
+			width: 10.0d
+			x: 28.0d
+			y: -15.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "goety:item/sky_research_scroll"
+			rotation: 0.0d
+			width: 5.0d
+			x: 21.5d
+			y: -21.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 22.5d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/kuangkuangkuang.png"
+			rotation: 0.0d
+			width: 15.0d
+			x: -1.5d
+			y: -19.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 22.5d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/kuangkuangkuang.png"
+			rotation: 0.0d
+			width: 15.0d
+			x: 10.0d
+			y: -19.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 22.5d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/kuangkuangkuang.png"
+			rotation: 0.0d
+			width: 15.0d
+			x: -1.5d
+			y: -5.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 22.5d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/kuangkuangkuang.png"
+			rotation: 0.0d
+			width: 15.0d
+			x: 10.0d
+			y: -5.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/jiangbei.png"
+			rotation: 0.0d
+			width: 5.0d
+			x: 27.5d
+			y: -21.35d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 0.2d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/heixian.png"
+			rotation: 0.0d
+			width: 8.5d
+			x: -1.65d
+			y: -21.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 0.2d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/heixian.png"
+			rotation: 0.0d
+			width: 8.5d
+			x: 10.0d
+			y: -7.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 0.2d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/heixian.png"
+			rotation: 0.0d
+			width: 8.5d
+			x: -1.65d
+			y: -7.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 0.2d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/heixian.png"
+			rotation: 0.0d
+			width: 8.5d
+			x: 9.75d
+			y: -21.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 0.2d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/heixian.png"
+			rotation: 0.0d
+			width: 8.5d
+			x: -1.5d
+			y: -18.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 0.2d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/heixian.png"
+			rotation: 0.0d
+			width: 8.5d
+			x: 9.75d
+			y: -18.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 0.2d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/heixian.png"
+			rotation: 0.0d
+			width: 8.5d
+			x: -1.65d
+			y: -4.6d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 0.2d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/heixian.png"
+			rotation: 0.0d
+			width: 8.5d
+			x: 10.0d
+			y: -4.6d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 15.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/muyue.png"
+			rotation: 0.0d
+			width: 11.25d
+			x: 20.0d
+			y: -11.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/bnrn.png"
+			rotation: 0.0d
+			width: 39.25d
+			x: 4.0d
+			y: -28.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 1.25d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/haqifeibi.png"
+			order: 99
+			rotation: 0.0d
+			width: 1.55d
+			x: 30.5d
+			y: -19.5d
+		}
+	]
+	order_index: 3
+	quest_links: [ ]
+	quests: [
+		{
+			id: "1BEF012E228A6963"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "337BE93BFDD64C9E"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【远古工厂】寻找。"
+			tasks: [{
+				id: "0A22A1C8C4333CFA"
+				structure: "cataclysm:ancient_factory"
+				type: "structure"
+			}]
+			title: "&6远古工厂"
+			x: 30.0d
+			y: -17.0d
+		}
+		{
+			dependencies: ["1BEF012E228A6963"]
+			description: [
+				"&6使用指南针搜【远古工厂】寻找。"
+				"{image:kubejs:textures/aaaa/xianquzhe.png width:100 height:100 align:1}"
+				""
+				"&6死亡后生成BOSS重生笼，使用机械之眼复活"
+			]
+			id: "5DD1DFBC650A5E8D"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "178AC13527267E76"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}
+				{
+				coinMinorUnits: 2500L
+				id: "98C18D0F9BF504C5"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			subtitle: "&d高级BOSS，需要放入【下界之星】唤醒"
+			tasks: [{
+				advancement: "cataclysm:kill_harbinger"
+				criterion: ""
+				id: "1F07FF06BA35BAD7"
+				type: "advancement"
+			}]
+			title: "&6在与【先驱者】的战斗中胜利"
+			x: 30.0d
+			y: -15.5d
+		}
+		{
+			description: [
+				"&6使用指南针搜【沉没之城】寻找。"
+				""
+				"沉没之城："
+				"{image:kubejs:textures/aaaa/chenmozhicheng.png width:140 height:100 align:1}"
+				""
+				"深渊祭坛："
+				"{image:kubejs:textures/aaaa/shenyuanjitan.png width:140 height:130 align:1}"
+			]
+			id: "207E75ED048F0A4E"
+			rewards: [{
+				id: "299EAAE418E5D209"
+				item: "artifacts:charm_of_sinking"
+				type: "item"
+			}]
+			subtitle: "使用&6【深渊祭品】&7右击最深处的祭坛召唤，记得关闭粒子特效打哦，不然很卡的"
+			tasks: [
+				{
+					id: "0E4A630B213C7C2A"
+					structure: "cataclysm:sunken_city"
+					type: "structure"
+				}
+				{
+					id: "4851AE16C7DA20B6"
+					item: "cataclysm:abyssal_sacrifice"
+					type: "item"
+				}
+			]
+			title: "&6抵达沉没之城"
+			x: 11.5d
+			y: -4.0d
+		}
+		{
+			dependencies: ["207E75ED048F0A4E"]
+			description: [
+				"&6使用指南针搜【沉没之城】寻找。"
+				"{image:kubejs:textures/aaaa/liweitan.png width:160 height:100 align:1}"
+				"&e记得关闭粒子特效打哦，不然很卡的"
+				""
+				"&6（袭击boss·红石傀儡也会掉落其召唤物）"
+			]
+			id: "2E234A7111AC8092"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "21A3AD169CBFA786"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}
+				{
+				coinMinorUnits: 5000L
+				id: "61C4C03CFA619D87"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			subtitle: "&e神&b话&a中&d的&5B&6O&9S&cS"
+			tasks: [{
+				advancement: "cataclysm:kill_leviathan"
+				criterion: ""
+				icon: "cataclysm:abyss_eye"
+				id: "281EFEF307EA9C96"
+				type: "advancement"
+			}]
+			title: "&a击败多维度掠食者，利维坦"
+			x: 11.5d
+			y: -2.5d
+		}
+		{
+			description: [
+				"&6在隐匿的房间中使用&e【刷子】&6刷取&e【沙漠项链】&6才能唤醒远古遗魂"
+				""
+				"&7使用指南针搜【诅咒金字塔】寻找。"
+				""
+				"隐匿房间入口："
+				"{image:kubejs:textures/aaaa/shamoxianglianfangjian.png width:100 height:100 align:1}"
+				""
+				"可疑的沙子"
+				"{image:kubejs:textures/aaaa/keyideshshaudawda.png width:150 height:150 align:1}"
+			]
+			id: "7A844580410F8201"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "5FD43EB66AC4996B"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+				{
+					id: "2BE7242933696AE4"
+					item: "cataclysm:sticky_gloves"
+					type: "item"
+				}
+			]
+			subtitle: "注意佩戴粘性手套哦，小心武器被小怪夺走"
+			tasks: [{
+				id: "193FFF053739A84B"
+				structure: "cataclysm:cursed_pyramid"
+				type: "structure"
+			}]
+			title: "&e抵达诅咒金字塔"
+			x: 11.0d
+			y: -17.5d
+		}
+		{
+			dependencies: ["7A844580410F8201"]
+			description: [
+				"&a使用指南针搜【诅咒金字塔】寻找。"
+				"{image:kubejs:textures/aaaa/yuanguyihun.png width:180 height:140 align:1}"
+				""
+				"&e死亡后生成BOSS重生笼，使用沙漠之眼复活"
+			]
+			id: "2F91EFF54CA2999B"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "3795CA081FC87F0E"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					id: "57AE0BB1A53C3372"
+					item: "goety_cataclysm:wadjet_spawn_egg"
+					type: "item"
+				}
+				{
+					id: "44C2FE82BD2FD4B9"
+					item: "goety_cataclysm:kobolediator_spawn_egg"
+					type: "item"
+				}
+			]
+			subtitle: "&e传说中的BOSS，使用沙漠项链唤醒"
+			tasks: [{
+				advancement: "cataclysm:kill_remnant"
+				criterion: ""
+				id: "1CD06D9EF744FA4D"
+				type: "advancement"
+			}]
+			title: "&e让苏醒的【远古遗魂】永远的沉睡"
+			x: 11.0d
+			y: -16.0d
+		}
+		{
+			description: [
+				"&b使用指南针搜【苦寒监牢】寻找。"
+				"&b击杀【冥行武奕】，获取【怪奇之钥】"
+				"&b打开最下方大门，挑战【咒翼灵骸】"
+				"{image:kubejs:textures/aaaa/mingxingwuyi.png width:150 height:150 align:1}"
+			]
+			id: "2BE48D5215B862A3"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6320192B394738BA"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【苦寒监牢】寻找。"
+			tasks: [{
+				id: "776A5155848184E6"
+				structure: "cataclysm:frosted_prison"
+				type: "structure"
+			}]
+			title: "&b抵达苦寒监牢"
+			x: -0.5d
+			y: -4.0d
+		}
+		{
+			dependencies: ["2BE48D5215B862A3"]
+			description: [
+				"&b使用指南针搜【苦寒监牢】寻找。BOSS死后会化为墓碑，有一分钟的复活冷却"
+				"{image:kubejs:textures/aaaa/zhouyilinghai.png width:100 height:100 align:1}"
+			]
+			id: "51502B2D3955CA9F"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "7AF8F19B578A593B"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&e传说中的BOSS"
+			tasks: [{
+				advancement: "cataclysm:kill_maledictus"
+				criterion: ""
+				id: "02BFBCE98E289104"
+				type: "advancement"
+			}]
+			title: "&e击败咒翼灵骸"
+			x: -0.5d
+			y: -2.5d
+		}
+		{
+			description: [
+				"&b在塔内四个【祭坛】处放置【灵魂之星】召唤【巫妖】"
+				"&b（灵魂之星也可用于寻找巫妖塔）"
+				"{image:kubejs:textures/aaaa/wuyaota.png width:100 height:170 align:1}"
+			]
+			id: "67D912B04189EC2D"
+			rewards: [
+				{
+					id: "5FFC8A5339AE7D30"
+					item: "bosses_of_mass_destruction:brimstone_nectar"
+					type: "item"
+				}
+				{
+					id: "42980A2CE9C5FA1E"
+					item: "bosses_of_mass_destruction:soul_star"
+					type: "item"
+				}
+			]
+			subtitle: "&7使用指南针搜&b【巫妖塔】&7寻找。此结构可被&e【硫磺花蜜】&7重置"
+			tasks: [{
+				id: "33378A053757EBE9"
+				structure: "bosses_of_mass_destruction:lich_tower"
+				type: "structure"
+			}]
+			title: "&9冰冻巫妖高塔"
+			x: -1.5d
+			y: -4.0d
+		}
+		{
+			id: "6E51C9E86EFAEDCE"
+			rewards: [{
+				id: "28B401E5CA7BB9AF"
+				item: "bosses_of_mass_destruction:brimstone_nectar"
+				type: "item"
+			}]
+			subtitle: "&7使用指南针搜&3【虚空之花巢穴】&7寻找。此结构可被&e【硫磺花蜜】&7重置"
+			tasks: [{
+				id: "0B7278F2487E1BC1"
+				structure: "bosses_of_mass_destruction:void_blossom"
+				type: "structure"
+			}]
+			title: "&2虚空之花巢穴"
+			x: 28.0d
+			y: -17.0d
+		}
+		{
+			dependencies: ["67D912B04189EC2D"]
+			description: [
+				"{image:kubejs:textures/aaaa/wuyao.png width:100 height:100 align:1}"
+				"&7使用指南针搜&b【巫妖塔】&7寻找。"
+			]
+			icon: "bosses_of_mass_destruction:ancient_anima"
+			id: "0CC3388E5FC0A71F"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "4775534E9BAC8C7B"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&d高级BOSS"
+			tasks: [{
+				advancement: "bosses_of_mass_destruction:adventure/night_lich_defeat"
+				criterion: ""
+				id: "52ECE27B5D20DD10"
+				type: "advancement"
+			}]
+			title: "击败巫妖"
+			x: -1.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["6E51C9E86EFAEDCE"]
+			description: [
+				"{image:kubejs:textures/aaaa/xukongzhihua.png width:100 height:100 align:1}"
+				"&7使用指南针搜&3【虚空之花巢穴】&7寻找。"
+			]
+			id: "2C8347AC5E38C84E"
+			rewards: [{
+				id: "6B8BDD5508C851D9"
+				item: {
+					Count: 1b
+					id: "minecraft:enchanted_book"
+					tag: {
+						StoredEnchantments: [{
+							id: "time_slow:armor_piercing"
+							lvl: 10s
+						}]
+					}
+				}
+				title: "破军10"
+				type: "item"
+			}]
+			subtitle: "&b进阶级boss，死后掉落大量经验"
+			tasks: [{
+				advancement: "bosses_of_mass_destruction:adventure/void_blossom_defeat"
+				criterion: ""
+				id: "5170AA7FBA1D6C41"
+				type: "advancement"
+			}]
+			title: "&e击杀&2虚空之花"
+			x: 28.0d
+			y: -15.5d
+		}
+		{
+			description: ["{image:kubejs:textures/aaaa/taiyangniao.png width:100 height:100 align:1}"]
+			id: "46D6A6CF1224A6FA"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "53A37A10BA7D4D0B"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					id: "0752B0D14361B9E5"
+					type: "xp_levels"
+					xp_levels: 20
+				}
+			]
+			subtitle: "&6使用探险家指南针搜索：&d乌姆塔纳聚落/umvuthana·乌姆塔纳，太阳鸟&6寻找  &e进阶级boss"
+			tasks: [{
+				advancement: "mowziesmobs:kill_umvuthi"
+				criterion: ""
+				id: "6A9AB535490DB3F4"
+				type: "advancement"
+			}]
+			title: "&6击杀太阳神鸟"
+			x: 22.0d
+			y: -21.5d
+		}
+		{
+			dependencies: ["5989C645C084EFE0"]
+			description: [
+				"&6使用指南针搜【锻造室】寻找。"
+				"&b不会受到伤害，只有在斧头卡住的时候攻击背部剑的位置才会受伤"
+				""
+				"{image:kubejs:textures/aaaa/gangtiehsouhuzhe.png width:120 height:140 align:1}"
+			]
+			id: "76B5F92F30F35132"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "64FC4964CED37FF9"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "入门级BOSS"
+			tasks: [{
+				advancement: "mowziesmobs:kill_ferrous_wroughtnaut"
+				criterion: ""
+				id: "4ADCDAD14301CA43"
+				type: "advancement"
+			}]
+			title: "&e击败钢铁守护者"
+			x: 26.0d
+			y: -15.5d
+		}
+		{
+			description: ["{image:kubejs:textures/aaaa/shuangdongjushou.png width:100 height:100 align:1}"]
+			id: "20E68AD2D8B98AE2"
+			rewards: [
+				{
+					id: "1AEF3E24C98ED328"
+					item: {
+						Count: 1b
+						id: "tacz:modern_kinetic_gun"
+						tag: {
+							GunCurrentAmmoCount: 5
+							GunFireMode: "SEMI"
+							GunId: "cib:cs_awp"
+							HasBulletInBarrel: 1b
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3E9AF125F4D2288D"
+					item: {
+						Count: 1b
+						id: "immersive_melodies:handpan"
+						tag: { }
+					}
+					type: "item"
+				}
+			]
+			shape: "hexagon"
+			subtitle: "&6指南针搜索：&d霜冻巨兽出生点&6寻找"
+			tasks: [{
+				advancement: "mowziesmobs:kill_frostmaw"
+				criterion: ""
+				id: "05B08AB13F2EDFEA"
+				type: "advancement"
+			}]
+			title: "&c击杀&e霜冻巨兽"
+			x: -1.5d
+			y: -6.0d
+		}
+		{
+			dependencies: ["7785FD2F3179D339"]
+			description: [
+				"🐵"
+				"🖐️🖐️"
+				"&8██"
+				"&8██ ██"
+				"&8██"
+				"&8██"
+				"&8██ ██"
+				"&8██"
+				"&8██"
+				"&8██ ██"
+				"&8██"
+				"&8██ ██"
+				"&8██ ██"
+				"&8██"
+				"&8██"
+			]
+			id: "5EE1B015C3D6B0D4"
+			subtitle: "进阶级boss。通臂大师死后，会掉落他的装备"
+			tasks: [{
+				entity: "mowziesmobs:sculptor"
+				icon: {
+					Count: 1b
+					id: "mowziesmobs:geomancer_beads"
+					tag: {
+						Damage: 0
+					}
+				}
+				id: "3C57B91BFA4E5784"
+				type: "kill"
+				value: 1L
+			}]
+			x: 1.5d
+			y: -14.5d
+		}
+		{
+			dependencies: ["6EB81900A9ABDF2B"]
+			description: [
+				"&6使用指南针搜【古陵/古代陵墓】寻找。"
+				"{image:kubejs:textures/aaaa/wumingshouhuzhe.png width:100 height:100 align:1}"
+			]
+			id: "3D1E708CFA20E344"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "66B46D9389BE774A"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					id: "75B0665EBDF93B46"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "time_slow:armor_piercing"
+								lvl: 10s
+							}]
+						}
+					}
+					title: "破军10"
+					type: "item"
+				}
+			]
+			subtitle: "&d高级BOSS"
+			tasks: [{
+				advancement: "eeeabsmobs:eeeabsmobs/kill_nameless_guardian"
+				criterion: ""
+				id: "44C78164A53BD98E"
+				type: "advancement"
+			}]
+			title: "&e战胜  【无名的守卫者】"
+			x: 29.0d
+			y: -15.5d
+		}
+		{
+			description: [
+				"生成于：&b海洋"
+				""
+				"&6喂食&b海带&6即可驯服，需要装备&b鞍。&6按&bX&6下潜。使用&b木棍&6切换行为模式"
+				""
+				"&7海晶砂粒繁殖"
+				""
+				"{image:kubejs:textures/aaaa/haima.png width:140 height:100 align:1}"
+			]
+			id: "07E946A08656DD0F"
+			rewards: [
+				{
+					id: "5138D55411CB55BE"
+					item: "minecraft:heart_of_the_sea"
+					type: "item"
+				}
+				{
+					id: "496DD9EBF202510D"
+					item: "minecraft:saddle"
+					type: "item"
+				}
+			]
+			shape: "hexagon"
+			subtitle: "在海洋探索的好伙伴"
+			tasks: [{
+				consume_items: true
+				count: 4L
+				id: "62A05192C864B864"
+				item: "minecraft:kelp"
+				type: "item"
+			}]
+			title: "如何驯服海马？"
+			x: 8.0d
+			y: -6.0d
+		}
+		{
+			description: [
+				"&6&n将&d兔子脚&6丢在地上，等待骏鹰来吃，食用一定量后驯服"
+				""
+				"&6&n骏鹰装备鞍后可骑乘 &d空格升起 &dX键下降。&6使用木棍调整状态"
+				""
+				"购买链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"7F1A2FFA98154AB5\" } }"
+				"{image:kubejs:textures/aaaa/junying.png width:120 height:100 align:1}"
+			]
+			icon: "icarus:white_feathered_wings"
+			id: "55166307F839214B"
+			rewards: [
+				{
+					id: "3FD536D4C08145A5"
+					type: "xp"
+					xp: 222
+				}
+				{
+					exclude_from_claim_all: true
+					id: "332E859DCA7CAB4D"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			shape: "hexagon"
+			subtitle: "可购买"
+			tasks: [{
+				advancement: "iceandfire:iceandfire/tame_hippogryph"
+				criterion: ""
+				id: "4D09E83BB023338D"
+				type: "advancement"
+			}]
+			title: "驯服骏鹰"
+			x: -1.0d
+			y: -20.0d
+		}
+		{
+			description: ["&6&n只有火焰才能真正杀死九头蛇，建议使用火焰附加武器或装备了燃烧弹的枪支持续点射"]
+			id: "1AC858C2BE3027E6"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "137DF1D174094451"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}
+				{
+				coinMinorUnits: 2500L
+				id: "35382E94EF10B9EE"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			subtitle: "生成于沼泽地区，拥有极强的恢复能力 &e中级BOSS"
+			tasks: [{
+				advancement: "iceandfire:iceandfire/kill_hydra"
+				criterion: ""
+				id: "0777167F606C1EBD"
+				type: "advancement"
+			}]
+			title: "&e斩杀 神话中的生物【九头蛇】"
+			x: 21.0d
+			y: -21.0d
+		}
+		{
+			id: "5989C645C084EFE0"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "15D4B272E4E39BFC"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【锻造室】寻找。"
+			tasks: [{
+				id: "2B521706B013A8E5"
+				structure: "mowziesmobs:wrought_chamber"
+				type: "structure"
+			}]
+			title: "&e锻造室"
+			x: 26.0d
+			y: -17.0d
+		}
+		{
+			description: ["{image:kubejs:textures/aaaa/simiao.png width:160 height:150 align:1}"]
+			id: "7785FD2F3179D339"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6EF5F47DC1ED7BD5"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【修道院/雕刻寺庙】寻找。需要打小怪获得【泥峭棒】"
+			tasks: [{
+				id: "5A41261EED675037"
+				structure: "mowziesmobs:monastery"
+				type: "structure"
+			}]
+			title: "抵达雕刻寺庙"
+			x: 1.5d
+			y: -17.5d
+		}
+		{
+			dependencies: ["7785FD2F3179D339"]
+			description: [
+				"&6使用指南针搜【修道院/雕刻寺庙】寻找。"
+				""
+				"&7&n右键提交泥峭棒进行跑酷挑战"
+				""
+				"&a&n无法挑战的话需要先清理周围的绿色方块"
+				""
+				"&7建议先拿&c【云朵瓶的二段跳】&7和&c【跳跃提升饰品】"
+				"云朵瓶链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"3FC58EAF533EF5F9\" } }"
+				""
+				"{image:kubejs:textures/aaaa/tongbidashi.png width:100 height:100 align:1}"
+			]
+			id: "742368670EE63E38"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "570A87CB0E3F28AB"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "完成通臂大师的挑战"
+			tasks: [{
+				advancement: "mowziesmobs:sculptor_challenge"
+				criterion: ""
+				id: "43092D92DB7EB046"
+				type: "advancement"
+			}]
+			title: "完成挑战，获得大地手套"
+			x: 1.5d
+			y: -16.0d
+		}
+		{
+			id: "6EB81900A9ABDF2B"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "555F75003F88947B"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【古陵/古代陵墓】寻找。"
+			tasks: [{
+				id: "7B6A2C86192D69EA"
+				structure: "eeeabsmobs:guling"
+				type: "structure"
+			}]
+			title: "&e古&6代&9陵&d墓"
+			x: 29.0d
+			y: -17.0d
+		}
+		{
+			description: ["{image:kubejs:textures/aaaa/yuanguchengshi.png width:150 height:150 align:1}"]
+			id: "29472958A6E98FAC"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6208DC206167F0B6"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【远古城市】寻找。"
+			tasks: [{
+				id: "246CBBCC94FF7D05"
+				structure: "minecraft:ancient_city"
+				type: "structure"
+			}]
+			title: "&e古城"
+			x: 27.0d
+			y: -17.0d
+		}
+		{
+			id: "2E15312E15561A47"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "2C94F6F782265FF2"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "埋葬战士的墓地....使用指南针搜【英灵墓地】寻找。"
+			tasks: [{
+				id: "142E9170925A8A2C"
+				structure: "legendary_monsters:abandoned_crypt"
+				type: "structure"
+			}]
+			title: "英灵墓地"
+			x: -1.5d
+			y: -17.5d
+		}
+		{
+			id: "491AB2B924588E57"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "05E60FD44AA0A5C1"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【古代滴水石堡】寻找。"
+			tasks: [{
+				id: "2EAB3ADF0F745DEA"
+				structure: "legendary_monsters:ancient_stronghold"
+				type: "structure"
+			}]
+			title: "古代滴水石堡"
+			x: -3.5d
+			y: -17.5d
+		}
+		{
+			id: "11DDF46A1C7D0581"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "12C6741324D378D4"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【浮云神殿】寻找。"
+			tasks: [{
+				id: "4B64AFBF65F64F3D"
+				structure: "legendary_monsters:cloudy_temple"
+				type: "structure"
+			}]
+			title: "浮云神殿"
+			x: -2.5d
+			y: -17.5d
+		}
+		{
+			id: "7429D2A7055C59BF"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "092855F4B44892CB"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【冰冻神庙】寻找。"
+			tasks: [{
+				id: "091CACC87E05B566"
+				structure: "legendary_monsters:frostbitten_temple"
+				type: "structure"
+			}]
+			title: "&9冰冻神庙"
+			x: -2.5d
+			y: -4.0d
+		}
+		{
+			id: "317B9DD2DFE42F01"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "7FBAB1DAF1BEFA68"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【青苔神庙】寻找。"
+			tasks: [{
+				id: "77D04A3254E878F2"
+				structure: "legendary_monsters:mossy_temple"
+				type: "structure"
+			}]
+			title: "青苔神庙"
+			x: -4.5d
+			y: -17.5d
+		}
+		{
+			id: "1700F338674F0324"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "4D6023643814B7A9"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【废弃金字塔】寻找。"
+			tasks: [{
+				id: "3AE3B7BFE921A6D9"
+				structure: "legendary_monsters:ruined_pyramid"
+				type: "structure"
+			}]
+			title: "废弃金字塔"
+			x: 9.0d
+			y: -17.5d
+		}
+		{
+			dependencies: ["2E15312E15561A47"]
+			description: [
+				"&6使用指南针搜【英灵墓地】寻找。"
+				"{image:kubejs:textures/aaaa/beifushendeqishi.png width:100 height:100 align:1}"
+				"&e位于英灵墓地地下"
+				"{image:kubejs:textures/aaaa/eguiqishi.png width:100 height:120 align:1}"
+				"二阶段（红温了"
+			]
+			id: "6500D72DC8974DAF"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0775CB7F22F30501"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "进阶级boss，双阶段"
+			tasks: [{
+				advancement: "legendary_monsters:defeat_posessed_paladin"
+				criterion: ""
+				id: "358F63D386A9CC04"
+				type: "advancement"
+			}]
+			title: "&6击败被恶魔附身骑士"
+			x: -1.5d
+			y: -16.0d
+		}
+		{
+			dependencies: ["491AB2B924588E57"]
+			description: [
+				"&e位于古代滴水石堡二层，使用指南针搜【古代滴水石堡】寻找。"
+				""
+				"{image:kubejs:textures/aaaa/gudaishouwei.png width:120 height:100 align:1}"
+			]
+			id: "633203BE60563FF5"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "0919A40747E90688"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					id: "5B94112B55D717B7"
+					item: {
+						Count: 1b
+						id: "immersive_melodies:piano"
+						tag: { }
+					}
+					type: "item"
+				}
+			]
+			subtitle: "入门级BOSS，双阶段"
+			tasks: [{
+				advancement: "legendary_monsters:defeat_the_ancient_guardian"
+				criterion: ""
+				id: "4F23B7C3E271F783"
+				type: "advancement"
+			}]
+			title: "&6击败古代守卫"
+			x: -3.5d
+			y: -16.0d
+		}
+		{
+			dependencies: ["11DDF46A1C7D0581"]
+			description: [
+				"&e位于【浮云神殿】的二层，使用指南针搜【浮云神殿】寻找。"
+				"{image:kubejs:textures/aaaa/yunkuilei.png width:100 height:100 align:1}"
+			]
+			id: "311F715ECE5324CF"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0B257B7043FB7730"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "进阶级boss，拥有超长无敌帧"
+			tasks: [{
+				id: "509DA298BC9E31F2"
+				item: "legendary_monsters:air_rune"
+				title: "获取空气符文"
+				type: "item"
+			}]
+			title: "&e击败云傀儡"
+			x: -2.5d
+			y: -16.0d
+		}
+		{
+			dependencies: ["7429D2A7055C59BF"]
+			description: [
+				"{image:kubejs:textures/aaaa/hanshaungmoxiang.png width:180 height:150 align:1}"
+				"使用指南针搜【冰冻神庙】寻找。"
+			]
+			id: "70F6ECB9BF6AD10A"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "5D90207DCA063DCC"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "入门级BOSS"
+			tasks: [{
+				advancement: "legendary_monsters:defeat_frostbitten_golem"
+				criterion: ""
+				id: "49DB3DDA258FA5A7"
+				type: "advancement"
+			}]
+			title: "击败寒霜魔像"
+			x: -2.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["317B9DD2DFE42F01"]
+			description: ["&e位于青苔神庙中，使用指南针搜【青苔神庙】寻找。"]
+			id: "217B64AF90110789"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1220B14C9F4699B2"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "入门级BOSS，注意走位很容易打"
+			tasks: [{
+				advancement: "legendary_monsters:defeat_overgrown_colossus"
+				criterion: ""
+				id: "3644F50254C6B3CC"
+				type: "advancement"
+			}]
+			title: "击败蔓石巨兽"
+			x: -4.5d
+			y: -16.0d
+		}
+		{
+			dependencies: ["1700F338674F0324"]
+			description: [
+				"&6使用指南针搜【废弃金字塔】寻找。"
+				"{image:kubejs:textures/aaaa/shaqiushaobing.png width:100 height:100 align:1}"
+			]
+			id: "5D3AD288E7BC8376"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1649D428E7BCECC2"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "入门级BOSS"
+			tasks: [{
+				advancement: "legendary_monsters:defeat_dune_sentinel"
+				criterion: ""
+				id: "4FC8937B7A78BF4C"
+				type: "advancement"
+			}]
+			title: "粉碎沙丘哨兵（豌豆投手"
+			x: 9.0d
+			y: -16.0d
+		}
+		{
+			description: [
+				"&6生成于：&2丛林生物群系（注：翼冉无法收纳进背包中）"
+				""
+				"&6驯服方式：&2&n使用弹射物击落翼蚺，推荐使用雪球。右键被击落的翼蚺，骑行一段时间后即可驯服。空格升空，按X下降。驯服后吹响龙歌长笛强制下降，可可豆回血，驯龙仗设置家，曲奇繁殖"
+				""
+				""
+				"&2&n（驯服期间翼蚺会攻击玩家，建议用盾牌抵挡）"
+				""
+				"{image:kubejs:textures/aaaa/yiran.png width:140 height:100 align:1}"
+			]
+			id: "7841A54A31029AB0"
+			rewards: [
+				{
+					id: "1DFF43C73CBA0D82"
+					type: "xp"
+					xp: 222
+				}
+				{
+					exclude_from_claim_all: true
+					id: "31FC3938E7B695AA"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			shape: "hexagon"
+			tasks: [{
+				advancement: "iceandfire:iceandfire/tame_amphithere"
+				criterion: ""
+				id: "10834464C58F094C"
+				type: "advancement"
+			}]
+			title: "驯服翼蚺"
+			x: -3.0d
+			y: -19.0d
+		}
+		{
+			description: ["&e沙海中恐怖的泳者，会袭击周围的一切生物。会主动吞噬以物品形式掉落的TNT，然后爆炸"]
+			id: "0ACA6B80C89FA2F7"
+			rewards: [{
+				id: "2DF6274D46858989"
+				item: "celestial_artifacts:nether_fire"
+				type: "item"
+			}]
+			shape: "hexagon"
+			tasks: [{
+				entity: "iceandfire:deathworm"
+				icon: "iceandfire:deathworm_egg_giant"
+				id: "283716A89DC4E2E0"
+				type: "kill"
+				value: 10L
+			}]
+			x: 9.0d
+			y: -19.5d
+		}
+		{
+			id: "590B0C6107D11116"
+			rewards: [{
+				id: "443E5207513E45A9"
+				item: "artifacts:flippers"
+				type: "item"
+			}]
+			shape: "hexagon"
+			tasks: [{
+				advancement: "iceandfire:iceandfire/kill_siren"
+				criterion: ""
+				id: "6657A7F15B02AF0F"
+				type: "advancement"
+			}]
+			title: "击杀塞壬"
+			x: 10.0d
+			y: -6.0d
+		}
+		{
+			id: "3C58FDE8CE1B4BEC"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "4D9DDBF7587A29CA"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			shape: "hexagon"
+			tasks: [{
+				advancement: "iceandfire:iceandfire/kill_sea_serpent"
+				criterion: ""
+				id: "743AA5E6B86EA96F"
+				type: "advancement"
+			}]
+			title: "斩杀海蟒"
+			x: 11.0d
+			y: -6.0d
+		}
+		{
+			id: "77E2868359348DF1"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "02AED75F20F600CA"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "召唤沼泽巨颌怪"
+			tasks: [{
+				id: "5CA79F56C9799AF5"
+				item: "meetyourfight:fossil_bait"
+				type: "item"
+			}]
+			x: 8.5d
+			y: -4.0d
+		}
+		{
+			dependencies: ["77E2868359348DF1"]
+			id: "4543315F837B1C75"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "127C4B12C228BEED"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "入门级BOSS。使用【化石之饵】召唤"
+			tasks: [{
+				advancement: "meetyourfight:main/swampjaw_kill"
+				criterion: ""
+				id: "4E8A55D9AEF71EDE"
+				type: "advancement"
+			}]
+			title: "杀死沼泽巨颌怪"
+			x: 8.5d
+			y: -2.5d
+		}
+		{
+			icon: "meetyourfight:dusk_key"
+			id: "3DC3D33BC2D50AA7"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "71D34C628B61A708"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "&e使用巨型死亡蠕虫卵合成"
+			tasks: [{
+				id: "2DD52379514C8498"
+				item: "meetyourfight:dusk_key"
+				type: "item"
+			}]
+			x: 10.0d
+			y: -17.5d
+		}
+		{
+			dependencies: ["3DC3D33BC2D50AA7"]
+			description: [
+				"&6使用&d【薄暮之钥】&6召唤。固定掉落&d【拔刀剑：暗鸦】"
+				"{image:kubejs:textures/aaaa/bomuzhifeng.png width:100 height:100 align:1}"
+				"&6要先攻击仆从，才能解除boss的无敌"
+			]
+			id: "30FEDC2E5D2F49E3"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "3BF5BB3AE9F0F612"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					id: "4188AD480C50E619"
+					item: {
+						Count: 1b
+						id: "immersive_melodies:flute"
+						tag: { }
+					}
+					type: "item"
+				}
+			]
+			subtitle: "&b中级BOSS"
+			tasks: [{
+				advancement: "meetyourfight:main/rosalyne_kill"
+				criterion: ""
+				id: "0C05F941E4F7E4A0"
+				type: "advancement"
+			}]
+			title: "击败罗莎琳"
+			x: 10.0d
+			y: -16.0d
+		}
+		{
+			description: ["{image:kubejs:textures/aaaa/qiaozhongren.png width:100 height:100 align:1}"]
+			id: "1CB81A80A0FE0FB3"
+			rewards: [
+				{
+					id: "1D469B9A27899B3B"
+					type: "xp_levels"
+					xp_levels: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "7A5FA74C179C45DA"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+				{
+					id: "769DC702DBABD27C"
+					item: {
+						Count: 1b
+						id: "tacz:attachment"
+						tag: {
+							AttachmentId: "tacz:extended_mag_3"
+						}
+					}
+					type: "item"
+				}
+			]
+			shape: "hexagon"
+			subtitle: "&b中级BOSS，&6使用&d【缠魂铃铛】&6召唤。"
+			tasks: [{
+				advancement: "meetyourfight:main/bellringer_summon"
+				criterion: ""
+				id: "2CE13D20FF968317"
+				type: "advancement"
+			}]
+			title: "&e击败敲钟人"
+			x: 0.0d
+			y: -19.0d
+		}
+		{
+			id: "5E9F443287DD8240"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "67883E03518505FD"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【海底神殿】寻找。"
+			tasks: [{
+				id: "14046C5781FAAA31"
+				structure: "minecraft:monument"
+				title: "minecraft:海底神殿"
+				type: "structure"
+			}]
+			title: "找到海底神殿"
+			x: 9.5d
+			y: -4.0d
+		}
+		{
+			dependencies: ["5E9F443287DD8240"]
+			id: "13614572243B3E4D"
+			rewards: [
+				{
+					id: "59188CB3D2D28F88"
+					item: "celestial_artifacts:sea_god_crown"
+					type: "item"
+				}
+				{
+					id: "154AEB597F6F9B4A"
+					item: "celestial_artifacts:sea_god_scroll"
+					type: "item"
+				}
+				{
+					id: "31271470BAE1E644"
+					item: {
+						Count: 1b
+						id: "iceandfire:tide_trident"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "35C4BC0C8CF0DE98"
+					item: "ringsofascension:ring_sponge"
+					type: "item"
+				}
+			]
+			subtitle: "入门级BOSS"
+			tasks: [{
+				entity: "minecraft:elder_guardian"
+				id: "3EFD7E38E653FCDA"
+				type: "kill"
+				value: 2L
+			}]
+			x: 9.5d
+			y: -2.5d
+		}
+		{
+			id: "6A032F7E20D314F1"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "5079D50EE94F3486"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			shape: "hexagon"
+			subtitle: "提升游泳速度，并提供水下呼吸"
+			tasks: [{
+				id: "4B426B72DD13C09A"
+				item: {
+					Count: 1b
+					id: "mermod:sea_necklace"
+					tag: {
+						necklace_modifiers: { }
+					}
+				}
+				type: "item"
+			}]
+			x: 9.0d
+			y: -6.0d
+		}
+		{
+			id: "747EB43D2875660E"
+			rewards: [
+				{
+					id: "1A7C8610540BE0F0"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					count: 30
+					id: "0EE38D99490BA50F"
+					item: "ice_and_fire_delight:ice_sausage"
+					type: "item"
+				}
+			]
+			shape: "hexagon"
+			tasks: [{
+				entity: "minecraft:stray"
+				id: "10CDFF176E49F914"
+				type: "kill"
+				value: 10L
+			}]
+			x: -2.5d
+			y: -6.0d
+		}
+		{
+			description: [
+				"生成于森林中"
+				"向灰熊丢【蜂蜜类物品】之后，再向其丢【鲑鱼】驯服。"
+				"{image:kubejs:textures/aaaa/huixiong.png width:100 height:100 align:1}"
+			]
+			id: "3D27F204FACEB6AA"
+			rewards: [{
+				id: "1931FE925E5B9A5C"
+				item: "farmersdelight:shepherds_pie"
+				type: "item"
+			}]
+			shape: "hexagon"
+			tasks: [{
+				advancement: "alexsmobs:alexsmobs/tame_grizzly_bear"
+				criterion: ""
+				id: "7D099DCCEC7B4DB0"
+				type: "advancement"
+			}]
+			title: "驯服灰熊"
+			x: -2.0d
+			y: -19.0d
+		}
+		{
+			description: [
+				"&6生成于【热带草原】，长牙大象无法驯服，只能驯服短牙大象生出的幼年长牙大象"
+				"{image:kubejs:textures/aaaa/daxiang.png width:100 height:100 align:1}"
+			]
+			id: "3244B6B2DA484525"
+			rewards: [
+				{
+					id: "34B2316E129BB206"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "094C6E3EA6D6EC87"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+				{
+					id: "02A4E7E0DF03B176"
+					item: {
+						Count: 1b
+						id: "immersive_melodies:bagpipe"
+						tag: { }
+					}
+					type: "item"
+				}
+			]
+			subtitle: "喂食短牙大象【金合欢花】驯服"
+			tasks: [{
+				advancement: "alexsmobs:alexsmobs/tame_elephant"
+				criterion: ""
+				id: "52808B3457175FC9"
+				type: "advancement"
+			}]
+			title: "大象，很厉害吧（"
+			x: 21.0d
+			y: -22.0d
+		}
+		{
+			description: [
+				"&2生成：在山地生物群系靠近水的地方"
+				""
+				"&6使用【猎鹰手套】可进行“遥控打击”"
+				""
+				"&6白头海雕戴有【猎鹰兜帽】则可以操控白头海雕戴进行“遥控打击”用剪刀回收帽子"
+				"&7（不要攻击自己，会崩）"
+			]
+			id: "190AE666BDF4A39C"
+			rewards: [
+				{
+					id: "2CB42D5E175560E4"
+					type: "xp"
+					xp: 222
+				}
+				{
+					exclude_from_claim_all: true
+					id: "4D1C61B473E87438"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			shape: "hexagon"
+			subtitle: "喂食【鱼油】 驯服"
+			tasks: [{
+				advancement: "alexsmobs:alexsmobs/tame_bald_eagle"
+				criterion: ""
+				id: "57D887BDFB4C689A"
+				type: "advancement"
+			}]
+			title: "驯服白头海雕"
+			x: -1.0d
+			y: -19.0d
+		}
+		{
+			description: [
+				"右击此方块召唤"
+				"{image:kubejs:textures/aaaa/zhaohuanlingzhufangkuai.png width:100 height:100 align:1}"
+				"{image:kubejs:textures/aaaa/muxue.png width:180 height:100 align:1}"
+			]
+			id: "4BCF86A7E7D99E1E"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "02D8CC1DDEB79531"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【墓穴】寻找。"
+			tasks: [{
+				id: "6E9B61C431B3C479"
+				structure: "goety:crypt"
+				type: "structure"
+			}]
+			title: "墓穴"
+			x: 0.5d
+			y: -17.5d
+		}
+		{
+			dependencies: ["311F715ECE5324CF"]
+			id: "3FC58EAF533EF5F9"
+			subtitle: "二段跳！"
+			tasks: [{
+				id: "2D035CEEDE680C08"
+				item: "artifacts:cloud_in_a_bottle"
+				type: "item"
+			}]
+			x: -2.5d
+			y: -14.5d
+		}
+		{
+			dependencies: ["4BCF86A7E7D99E1E"]
+			description: [
+				"使用指南针搜【墓穴】寻找。"
+				"{image:kubejs:textures/aaaa/shuanglingzhu.png width:100 height:100 align:1}"
+				"&e现版本骨头领主（身体）已经被ban了，只剩头了哦！"
+			]
+			id: "45A728B21FA2488C"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "46C13AC8E9FA2E00"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "进阶级boss，拥有秒杀性法伤，推荐佩戴女巫长袍"
+			tasks: [{
+				advancement: "goety:goety/kill_a_skull_lord"
+				criterion: ""
+				id: "73475B829ECBE2A9"
+				type: "advancement"
+			}]
+			title: "&e击败骨头领主"
+			x: 0.5d
+			y: -16.0d
+		}
+		{
+			id: "608E051B43036DBF"
+			size: 0.8d
+			subtitle: "&2沼泽  &6热带草原   &c蘑菇岛"
+			tasks: [{
+				id: "414520E723798F2E"
+				title: "热带草原和沼泽"
+				type: "checkmark"
+			}]
+			title: "&e特殊群系"
+			x: 21.5d
+			y: -23.0d
+		}
+		{
+			disable_toast: true
+			id: "7A7A670E8EFBADFB"
+			shape: "heart"
+			size: 2.0d
+			subtitle: "&b深水海洋&7/&b冷水海洋&7等地任务"
+			tasks: [{
+				dimension: "minecraft:overworld"
+				icon: "goety:sea_amulet"
+				id: "03637AE22696C600"
+				type: "dimension"
+			}]
+			title: "&b沧澜之海"
+			x: 10.0d
+			y: -9.0d
+		}
+		{
+			disable_toast: true
+			icon: "irons_spellbooks:ice_upgrade_orb"
+			id: "2F9922EBBAE9DE54"
+			shape: "heart"
+			size: 2.0d
+			subtitle: "&9雪原&7/&9覆雪森林&7等地任务"
+			tasks: [{
+				dimension: "minecraft:overworld"
+				icon: "irons_spellbooks:ice_upgrade_orb"
+				id: "35C1704E7A93FD05"
+				title: "&9瑞雪纷飞"
+				type: "dimension"
+			}]
+			x: -1.5d
+			y: -9.0d
+		}
+		{
+			id: "63DA410B31B65C75"
+			tasks: [{
+				id: "111494DB6C8B6B3B"
+				title: "洞穴"
+				type: "checkmark"
+			}]
+			x: 28.0d
+			y: -18.5d
+		}
+		{
+			disable_toast: true
+			icon: "cataclysm:desert_eye"
+			id: "3049B9B504AC21B6"
+			shape: "heart"
+			size: 2.0d
+			subtitle: "&6沙漠&7/&6恶地&7等地任务"
+			tasks: [{
+				dimension: "minecraft:overworld"
+				disable_toast: true
+				icon: "minecraft:sand"
+				id: "13B2F9355CDA2F6F"
+				title: "&e黄沙漫漫"
+				type: "dimension"
+			}]
+			x: 10.0d
+			y: -22.5d
+		}
+		{
+			disable_toast: true
+			icon: "minecraft:dark_oak_sapling"
+			id: "67AFE839D84530A7"
+			shape: "heart"
+			size: 2.0d
+			subtitle: "&2草地&7和&2森林&7的任务"
+			tasks: [{
+				dimension: "minecraft:overworld"
+				disable_toast: true
+				icon: "minecraft:grass_block"
+				id: "200D550BF11B9870"
+				title: "&a琪花瑶草"
+				type: "dimension"
+			}]
+			x: -1.5d
+			y: -22.5d
+		}
+		{
+			description: ["{image:kubejs:textures/aaaa/yeniu.png width:160 height:120 align:1}"]
+			icon: "alexsmobs:spawn_egg_bison"
+			id: "2B384C512C0C8D16"
+			rewards: [
+				{
+					id: "662D1FE69A6D505B"
+					item: {
+						Count: 1b
+						id: "iceandfire:dragonbone_sword_lightning"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6E2A3CF57712D2FC"
+					item: {
+						Count: 1b
+						id: "tacz:modern_kinetic_gun"
+						tag: {
+							GunCurrentAmmoCount: 20
+							GunFireMode: "AUTO"
+							GunId: "eos:eos_ar68_t2"
+							HasBulletInBarrel: 1b
+						}
+					}
+					type: "item"
+				}
+			]
+			shape: "hexagon"
+			subtitle: "生成在草原上"
+			tasks: [{
+				entity: "alexsmobs:bison"
+				icon: "alexsmobs:spawn_egg_bison"
+				id: "25410CB947A2E936"
+				type: "kill"
+				value: 70L
+			}]
+			x: 0.0d
+			y: -20.0d
+		}
+		{
+			id: "1F919A39CB7D13AF"
+			rewards: [
+				{
+					id: "69F133CD62342E3F"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:gold_spell_book"
+						tag: {
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 8
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "753AF38C583109CE"
+					item: {
+						Count: 1b
+						id: "goety:totem_of_souls"
+						tag: {
+							"Max Souls": 10000
+							Souls: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "225BDB984DB8CB85"
+					item: {
+						Count: 1b
+						id: "explorerscompass:explorerscompass"
+						tag: {
+							DisplayCoordinates: 1b
+							FoundX: -1024
+							FoundZ: -944
+							Samples: 1
+							SearchRadius: 0
+							State: 2
+							StructureKey: "irons_spellbooks:catacombs"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "055CBAE97231424F"
+					item: {
+						Count: 1b
+						id: "naturescompass:naturescompass"
+						tag: { }
+					}
+					type: "item"
+				}
+			]
+			shape: "hexagon"
+			tasks: [{
+				consume_items: true
+				count: 300L
+				id: "42DE5EEC74420DC2"
+				item: {
+					Count: 1b
+					id: "itemfilters:tag"
+					tag: {
+						value: "minecraft:logs"
+					}
+				}
+				title: "任意树木"
+				type: "item"
+			}]
+			title: "提交300块木头"
+			x: -3.0d
+			y: -20.0d
+		}
+		{
+			can_repeat: true
+			icon: "celestial_artifacts:spirit_bracelet"
+			id: "1CD5E566CC3FD0FE"
+			rewards: [{
+				id: "1E0C538E1905E731"
+				table_id: 1596593823849401618L
+				title: "&a精灵饰品"
+				type: "random"
+			}]
+			shape: "hexagon"
+			subtitle: "&e精灵饰品&a可大幅度提升&6弓箭类武器&a伤害"
+			tasks: [
+				{
+					consume_items: true
+					count: 80L
+					id: "27DD425AB803B6DC"
+					item: {
+						Count: 1b
+						id: "itemfilters:tag"
+						tag: {
+							value: "forge:flowers"
+						}
+					}
+					title: "提交花朵"
+					type: "item"
+				}
+				{
+					consume_items: true
+					count: 5L
+					id: "5A5BE50BF5CA8606"
+					item: "minecraft:diamond"
+					type: "item"
+				}
+			]
+			x: -2.0d
+			y: -20.0d
+		}
+		{
+			icon: "minecraft:cherry_sapling"
+			id: "636631A8FCDC6850"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "17E6DACAA687786E"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "4A79932CA74302B6"
+					item: {
+						Count: 1b
+						id: "tacz:modern_kinetic_gun"
+						tag: {
+							GunCurrentAmmoCount: 10
+							GunFireMode: "SEMI"
+							GunId: "tacz:sks_tactical"
+							HasBulletInBarrel: 1b
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0EC88AB7AF0C3E1C"
+					item: {
+						Count: 1b
+						id: "celestial_core:sakura_axe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			shape: "hexagon"
+			tasks: [{
+				biome: "minecraft:cherry_grove"
+				id: "16A3DEBBABF6A57F"
+				title: "&2访问生物群系：樱花森林"
+				type: "biome"
+			}]
+			title: "&d樱花森林"
+			x: -4.0d
+			y: -19.0d
+		}
+		{
+			id: "3AFCD6A7B808C8DA"
+			rewards: [{
+				count: 16
+				id: "03522A16F51662C4"
+				item: "minecraft:copper_block"
+				type: "item"
+			}]
+			shape: "hexagon"
+			subtitle: "遍布世界各地中"
+			tasks: [{
+				entity: "minecraft:pillager"
+				id: "5FD13B027BC95EB6"
+				type: "kill"
+				value: 100L
+			}]
+			x: 1.0d
+			y: -20.0d
+		}
+		{
+			id: "47434D923D32B150"
+			rewards: [
+				{
+					id: "7FA56085F51945E6"
+					item: {
+						Count: 1b
+						id: "minecraft:netherite_hoe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 2
+					id: "5A817B3B12B9EE77"
+					item: "ironchests:netherite_chest"
+					type: "item"
+				}
+			]
+			shape: "hexagon"
+			subtitle: "提交100个面包"
+			tasks: [{
+				consume_items: true
+				count: 100L
+				id: "2BD9D6642BB1FA19"
+				item: "minecraft:bread"
+				type: "item"
+			}]
+			x: -4.0d
+			y: -20.0d
+		}
+		{
+			id: "4DEC91AEF5E0B4EF"
+			rewards: [{
+				id: "3360FE3085269BA0"
+				item: "celestial_artifacts:sands_talisman"
+				type: "item"
+			}]
+			shape: "hexagon"
+			subtitle: "&e金沙护符：在炎热地区增加伤害"
+			tasks: [{
+				consume_items: true
+				count: 40L
+				id: "36E1F62517CE7F1F"
+				item: { Count: 4b, id: "minecraft:cactus" }
+				type: "item"
+			}]
+			x: 10.0d
+			y: -19.5d
+		}
+		{
+			icon: "cataclysm:deepling_brute_spawn_egg"
+			id: "211C9163394A2E9A"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "05635A824A68A873"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			shape: "hexagon"
+			tasks: [{
+				entity: "cataclysm:deepling"
+				id: "36DCB4A952E70979"
+				type: "kill"
+				value: 10L
+			}]
+			x: 12.0d
+			y: -6.0d
+		}
+		{
+			description: ["&e死亡蠕虫的体型是随机的哦"]
+			id: "6805267C206D48E3"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "60728C416E02F433"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			shape: "hexagon"
+			subtitle: "像砸鸡蛋一样砸出死亡蠕虫..."
+			tasks: [{
+				advancement: "iceandfire:iceandfire/deathworm_egg"
+				criterion: ""
+				id: "157EDF15A74BE048"
+				title: "&e获得死亡蠕虫卵"
+				type: "advancement"
+			}]
+			x: 11.0d
+			y: -19.5d
+		}
+		{
+			dependencies: ["217B64AF90110789"]
+			id: "7D40D5F934A7901C"
+			subtitle: "自然恢复饱食度！"
+			tasks: [{
+				id: "57ED29DC8C19F2D9"
+				item: "artifacts:rooted_boots"
+				type: "item"
+			}]
+			x: -4.5d
+			y: -14.5d
+		}
+		{
+			dependencies: ["633203BE60563FF5"]
+			id: "75B8D706E239BCA3"
+			subtitle: "眩晕：小范围硬控"
+			tasks: [{
+				id: "3487F5E0ECB3C8E0"
+				item: {
+					Count: 1b
+					id: "legendary_monsters:monstrous_anchor"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -3.5d
+			y: -14.5d
+		}
+		{
+			dependencies: ["6500D72DC8974DAF"]
+			id: "7D437744FBE123E2"
+			subtitle: "召唤骑士/守卫来看大门（"
+			tasks: [
+				{
+					id: "0FDCD64467B05AA0"
+					item: "legendary_monsters:knight_summoner"
+					type: "item"
+				}
+				{
+					id: "3C7F71C7D4354BB7"
+					item: "legendary_monsters:guard_summoner"
+					type: "item"
+				}
+			]
+			title: "召唤骑士/守卫"
+			x: -1.5d
+			y: -14.5d
+		}
+		{
+			dependencies: ["45A728B21FA2488C"]
+			id: "37CE2EA855EB82CB"
+			subtitle: "&a由骷髅领主直接掉落，全套额外提供4点护甲值"
+			tasks: [
+				{
+					id: "774C1A8721FD338A"
+					item: {
+						Count: 1b
+						id: "goety:cursed_paladin_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "4BF8DB9AC5899594"
+					item: {
+						Count: 1b
+						id: "goety:cursed_paladin_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "29BA34FDE0265A2D"
+					item: {
+						Count: 1b
+						id: "goety:cursed_paladin_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "602B8DE56F074DB5"
+					item: {
+						Count: 1b
+						id: "goety:cursed_paladin_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&6诅咒骑士套装"
+			x: 0.5d
+			y: -14.5d
+		}
+		{
+			dependencies: ["5D3AD288E7BC8376"]
+			id: "637F4A6D87E5620D"
+			subtitle: "手炮，蓄力后可发射范围爆炸炸弹"
+			tasks: [{
+				id: "7899CF4265CD3628"
+				item: {
+					Count: 1b
+					id: "legendary_monsters:sand_cannon"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 9.0d
+			y: -14.5d
+		}
+		{
+			dependencies: ["30FEDC2E5D2F49E3"]
+			id: "6866FDF7726A655A"
+			subtitle: "&6用防御换取攻击。可制作&e【塔罗牌：隐者】"
+			tasks: [{
+				id: "79D71C55381B957C"
+				item: "meetyourfight:wilted_ideals"
+				type: "item"
+			}]
+			x: 10.0d
+			y: -14.5d
+		}
+		{
+			description: ["{image:kubejs:textures/aaaa/tuolu.png width:100 height:100 align:1}"]
+			id: "2608F587DCA3A24C"
+			rewards: [{
+				id: "10019ADDB7D6D6F2"
+				item: "artifacts:snowshoes"
+				type: "item"
+			}]
+			shape: "hexagon"
+			subtitle: "生成于雪地中"
+			tasks: [{
+				entity: "alexsmobs:moose"
+				icon: "alexsmobs:moose_ribs"
+				id: "0E4D0D18E398923F"
+				type: "kill"
+				value: 30L
+			}]
+			x: -0.5d
+			y: -6.0d
+		}
+		{
+			dependencies: ["70F6ECB9BF6AD10A"]
+			id: "02561872313430CE"
+			subtitle: "&b背饰，拥有多种能力"
+			tasks: [{
+				id: "335E9FC418A64B43"
+				item: {
+					Count: 1b
+					id: "ramcompat:frost_robe"
+					tag: {
+						abilities: {
+							freeze: {
+								points: 0
+								stats: {
+									chance: 0.13231d
+									duration: 0.76158d
+								}
+							}
+							icicle: {
+								points: 0
+								stats: {
+									amount: 5.99535d
+									chance: 0.7061d
+									cooldown: 7.07041d
+								}
+							}
+						}
+					}
+				}
+				type: "item"
+			}]
+			x: -2.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["0CC3388E5FC0A71F"]
+			id: "29A6BE34788266E8"
+			subtitle: "&e半径64格内不会刷怪"
+			tasks: [{
+				id: "35E90E9D6A174333"
+				item: "bosses_of_mass_destruction:mob_ward"
+				type: "item"
+			}]
+			x: -1.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["13614572243B3E4D"]
+			id: "263E8A8D92D7E1AC"
+			subtitle: "&e特殊技能：召唤雷暴天启"
+			tasks: [
+				{
+					id: "7B730AA71EDCA94F"
+					item: "celestial_artifacts:sea_god_scroll"
+					type: "item"
+				}
+				{
+					id: "7141ADBE143A4808"
+					item: "celestial_artifacts:sea_god_crown"
+					type: "item"
+				}
+			]
+			x: 9.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["4543315F837B1C75"]
+			id: "62E95F47D85B0203"
+			subtitle: "前期很好用，可以减少致命伤害"
+			tasks: [{
+				id: "5705D70C4724FBFE"
+				item: "meetyourfight:caged_heart"
+				type: "item"
+			}]
+			x: 8.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["29472958A6E98FAC"]
+			description: ["{image:kubejs:textures/aaaa/jianshouzhe.png width:100 height:100 align:1}"]
+			id: "5401000619A57B22"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "4714FCC47F459228"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "入门级BOSS，但会生成很多"
+			tasks: [{
+				entity: "minecraft:warden"
+				id: "6CC158C38F09A301"
+				type: "kill"
+				value: 1L
+			}]
+			x: 27.0d
+			y: -15.5d
+		}
+		{
+			can_repeat: true
+			dependencies: [
+				"5401000619A57B22"
+				"3D1E708CFA20E344"
+				"5DD1DFBC650A5E8D"
+				"76B5F92F30F35132"
+				"2C8347AC5E38C84E"
+			]
+			dependency_requirement: "one_started"
+			icon: {
+				Count: 1b
+				id: "tacz:ammo_box"
+				tag: {
+					AllTypeCreative: 1b
+				}
+			}
+			id: "48518EC9C8C16D67"
+			rewards: [{
+				id: "07A59486103D698F"
+				item: {
+					Count: 1b
+					id: "tacz:ammo_box"
+					tag: {
+						AllTypeCreative: 1b
+					}
+				}
+				team_reward: false
+				title: "&5全类型创造弹药盒&e（非团队奖励，此任务可重复）"
+				type: "item"
+			}]
+			size: 2.0d
+			subtitle: "&e无限提供弹药"
+			tasks: [
+				{
+					consume_items: true
+					id: "6B087EF597917AAA"
+					item: "mowziesmobs:wrought_helmet"
+					type: "item"
+				}
+				{
+					consume_items: true
+					count: 8L
+					id: "3E03120733BD27E2"
+					item: "celestial_core:warden_sclerite"
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "06024833A8458D11"
+					item: "bosses_of_mass_destruction:void_thorn"
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "7FB73D32D87D223A"
+					item: {
+						Count: 1b
+						id: "eeeabsmobs:guardian_core"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "206A0EA19E3D41C1"
+					item: "cataclysm:witherite_ingot"
+					type: "item"
+				}
+			]
+			title: "&d全类型无限弹药箱"
+			x: 28.0d
+			y: -13.0d
+		}
+		{
+			dependencies: ["2F91EFF54CA2999B"]
+			id: "366E6F91433CB88C"
+			subtitle: "&e使用沙暴瓶合成（对BOSS宝具）"
+			tasks: [{
+				id: "3FA25984D4F8A0F7"
+				item: "celestial_artifacts:titan_scabbard"
+				type: "item"
+			}]
+			x: 11.0d
+			y: -14.5d
+		}
+		{
+			dependencies: ["51502B2D3955CA9F"]
+			id: "47B79BDA0A70D698"
+			subtitle: "&e双持进行大范围AOE打击（使用腾炎锭升级后范围更大）"
+			tasks: [{
+				id: "3CD817D3A7B0B10C"
+				item: "cataclysm:the_annihilator"
+				type: "item"
+			}]
+			x: -0.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["2E234A7111AC8092"]
+			id: "06C9CE80C8476016"
+			subtitle: "&e自动锁敌，大范围攻击"
+			tasks: [{
+				id: "673D5AF82A9DD44E"
+				item: "cataclysm:tidal_claws"
+				type: "item"
+			}]
+			x: 11.5d
+			y: -1.0d
+		}
+		{
+			description: [
+				"&b卫城，风暴女皇斯库拉与其追随者所栖身的圣地，生成于暖水海洋生物群系的宏伟建筑群"
+				"{image:kubejs:textures/aaaa/weicheng.png width:200 height:200 align:1}"
+				""
+				"&b右键最顶层的船锚召唤BOSS·斯库拉"
+				""
+				"{image:kubejs:textures/aaaa/weichengdemao.png width:170 height:170 align:1}"
+			]
+			id: "2F21518108430D1E"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "5D29AD89824AD8DD"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+				{
+					id: "3532D35474C57728"
+					item: "artifacts:aqua_dashers"
+					type: "item"
+				}
+			]
+			subtitle: "指南针搜索&b【卫城】&7寻找"
+			tasks: [{
+				id: "105AFD3C420F897C"
+				structure: "cataclysm:acropolis"
+				type: "structure"
+			}]
+			title: "&9抵达·卫城"
+			x: 10.5d
+			y: -4.0d
+		}
+		{
+			dependencies: ["2F21518108430D1E"]
+			description: [
+				"指南针搜索&b【卫城】&7寻找"
+				"{image:kubejs:textures/aaaa/sikula.png width:200 height:160 align:1}"
+				"&b死亡后生成BOSS重生笼，使用风暴之眼复活"
+			]
+			icon: {
+				Count: 1b
+				id: "cataclysm:ceraunus"
+				tag: { }
+			}
+			id: "66FBCC85A7D03552"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "0666A6A8F2DF945B"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					id: "11E85EC2BCD90057"
+					item: "goety_cataclysm:clawdian_spawn_egg"
+					type: "item"
+				}
+				{
+					id: "5F959D4D34F18B6D"
+					item: "goety_cataclysm:cindaria_servant_spawn_egg"
+					type: "item"
+				}
+				{
+					id: "3EA415CDB68A78B5"
+					item: "goety_cataclysm:hippocamptus_spawn_egg"
+					type: "item"
+				}
+				{
+					id: "1D40C14DEDC1CCB0"
+					item: {
+						Count: 1b
+						id: "relics:drowned_belt"
+						tag: {
+							abilities: {
+								anchor: {
+									points: 0
+									stats: {
+										sinking: 4.73571d
+										slowness: 0.42663d
+									}
+								}
+								pressure: {
+									points: 0
+									stats: {
+										damage: 1.61581d
+									}
+								}
+								riptide: {
+									points: 0
+									stats: {
+										cooldown: 5.03798d
+									}
+								}
+								slots: {
+									points: 0
+									stats: {
+										charm: 1.16815d
+									}
+								}
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 5
+					id: "2E1852FAC23F2BFD"
+					item: "minecraft:diamond_block"
+					type: "item"
+				}
+				{
+					id: "6E53A39D087DD8FD"
+					item: {
+						Count: 1b
+						id: "immersive_melodies:triangle"
+						tag: { }
+					}
+					type: "item"
+				}
+			]
+			tasks: [{
+				advancement: "cataclysm:kill_scylla"
+				criterion: ""
+				id: "0A517CAA34DE1572"
+				title: "&b击败【风暴的女王·斯库拉】"
+				type: "advancement"
+			}]
+			x: 10.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["66FBCC85A7D03552"]
+			description: [
+				"&e用于【同步玩家和女仆法术加成】的道具，玩家的魔法数值越高，女仆的魔法加成也就越高（适用于铁魔法）"
+				""
+				"&6关于，女仆的魔法模式："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"13903F40E40BCE20\" } }"
+			]
+			id: "1F19BF64C6D8D973"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "45A77110AC75EB1E"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "女仆法术核心道具"
+			tasks: [{
+				id: "3A2F69B9E89F0F84"
+				item: "touhou_little_maid_spell:spell_enhancement_core"
+				type: "item"
+			}]
+			x: 10.5d
+			y: -1.0d
+		}
+		{
+			description: [
+				"&2使用指南针搜索&d【丛林监狱】&2寻找"
+				"{image:kubejs:textures/aaaa/conglinjianyu.png width:100 height:100 align:1}"
+				""
+				"{image:kubejs:textures/aaaa/haigujulong.png width:100 height:100 align:1}"
+			]
+			id: "1DD5146C62E2450B"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "3E7E1F8BA3A812B7"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			shape: "hexagon"
+			subtitle: "&b中级BOSS，关押于丛林监狱的下层"
+			tasks: [{
+				id: "33D3BE5F0E601DEB"
+				item: "dodosmobs:chimera_claw"
+				title: "&7击杀&6骸骨巨龙&7，获得&6骸骨巨龙的利爪"
+				type: "item"
+			}]
+			x: 1.0d
+			y: -19.0d
+		}
+		{
+			description: [
+				"                                &n&b洞穴位于巨大的枯树下方"
+				""
+				"{image:kubejs:textures/aaaa/zhizhuchaoxue.png width:100 height:100 align:1}"
+			]
+			id: "2F508C409A9F3EF4"
+			subtitle: "使用指南针搜索【巨蛛巢穴】寻找。大型蜘蛛巢穴，有大量的蜘蛛和BOSS·育母蜘蛛"
+			tasks: [{
+				id: "3193AD666F3A9F11"
+				structure: "goety:spider_den"
+				title: "发现巨蛛巢穴"
+				type: "structure"
+			}]
+			x: -0.5d
+			y: -17.5d
+		}
+		{
+			dependencies: ["2F508C409A9F3EF4"]
+			description: [
+				"&2使用指南针搜索【巨蛛巢穴】寻找，破坏BOSS房中的（蜘蛛之母巢穴）方块召唤育母蜘蛛"
+				""
+				"{image:kubejs:textures/aaaa/zhumuchaoxue.png width:120 height:120 align:1}"
+				""
+				"                                    &2BOSS·育母蜘蛛"
+				""
+				"{image:kubejs:textures/aaaa/yumuzhizhu.png width:100 height:100 align:1}"
+			]
+			id: "54C622B036DC78A9"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "49333F0A1C882465"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "进阶级boss，位于巨蛛巢穴最深处的房间"
+			tasks: [{
+				advancement: "goety:goety/kill_a_brood_mother"
+				criterion: ""
+				id: "2583765F843558AD"
+				type: "advancement"
+			}]
+			title: "&e击败&l育母蜘蛛"
+			x: -0.5d
+			y: -16.0d
+		}
+		{
+			dependencies: ["54C622B036DC78A9"]
+			id: "591878BA33111143"
+			subtitle: "&a育母蜘蛛掉落物合成，全套提供抗性，并提供特殊能力"
+			tasks: [
+				{
+					id: "5C1BE93813B5219F"
+					item: {
+						Count: 1b
+						id: "goety_revelation:spider_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "486A30EF9458EF9A"
+					item: {
+						Count: 1b
+						id: "goety_revelation:spider_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5B605E6538FFEDCB"
+					item: {
+						Count: 1b
+						id: "goety_revelation:spider_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "036EAE5C68497FEB"
+					item: {
+						Count: 1b
+						id: "goety_revelation:spider_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			x: -0.5d
+			y: -14.5d
+		}
+	]
+	title: "&d主世界"
+}

@@ -1,0 +1,24 @@
+{
+	id: "7ACF178963258AC4"
+	loot_size: 1
+	order_index: 25
+	rewards: [
+		{
+			auto: "disabled"
+			command: "/itemblacklist ban time_slow:savior_guardian"
+			exclude_from_claim_all: true
+			team_reward: false
+			title: "禁用救世主加护"
+			type: "command"
+		}
+		{
+			auto: "disabled"
+			command: "/itemblacklist unban time_slow:savior_guardian"
+			exclude_from_claim_all: true
+			team_reward: false
+			title: "解禁救世主的加护"
+			type: "command"
+		}
+	]
+	title: "救世主加护"
+}

@@ -1,0 +1,744 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "17E2C3E88009ACC5"
+	group: "7916E3ED902C17A5"
+	icon: "minecraft:end_stone"
+	id: "17E2C3E88009ACC5"
+	images: [
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "relics:item/magic_mirror_3"
+			rotation: 0.0d
+			width: 5.0d
+			x: -1.0d
+			y: 14.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "goety:item/shadow_essence"
+			rotation: 0.0d
+			width: 5.0d
+			x: -5.0d
+			y: 11.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 1.0d
+			hover: [ ]
+			image: "alexscaves:block/purple_soda_still"
+			rotation: 0.0d
+			width: 0.020833333333333332d
+			x: 3.0d
+			y: 6.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "iceandfire:item/ectoplasm"
+			rotation: 0.0d
+			width: 5.0d
+			x: 3.0d
+			y: 11.0d
+		}
+	]
+	order_index: 5
+	quest_links: [ ]
+	quests: [
+		{
+			id: "28D68A77A793C60D"
+			size: 1.5d
+			subtitle: "&e末地传送门位于主世界的【要塞】结构中，使用【末影之眼激活】"
+			rewards: [
+				{
+				coinMinorUnits: 1000L
+				id: "9B82BB05E0ACF14C"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			tasks: [{
+				dimension: "minecraft:the_end"
+				id: "4E2E1BE898A8C9C7"
+				type: "dimension"
+			}]
+			title: "&d通过末地传送门抵达末地"
+			x: -1.0d
+			y: 14.5d
+		}
+		{
+			dependencies: ["7138598E20E2A619"]
+			id: "6249E92EA9464406"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "74F061CF16E09EDF"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【废弃堡垒】寻找。一座废弃的城堡..."
+			tasks: [{
+				id: "6FC03B48F0EEF165"
+				structure: "cataclysm:ruined_citadel"
+				type: "structure"
+			}]
+			title: "&d抵达废弃堡垒"
+			x: -3.5d
+			y: 6.5d
+		}
+		{
+			dependencies: ["6E068D0D28DE86BF"]
+			description: [
+				"&7指南针搜索&d废弃堡垒&7寻找"
+				"{image:kubejs:textures/aaaa/moyingshouhuzhe.png width:170 height:150 align:1}"
+				""
+				"&d死亡后生成BOSS重生笼，使用虚空之眼复活"
+			]
+			id: "77E28508762F7BA2"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "7F00997C4456AB47"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&e传说中的BOSS，拥有双阶段"
+			tasks: [{
+				advancement: "cataclysm:kill_ender_guardian"
+				criterion: ""
+				id: "0540CD05EB04EBAA"
+				type: "advancement"
+			}]
+			title: "&d击杀末影守卫"
+			x: -6.5d
+			y: 6.5d
+		}
+		{
+			dependencies: ["6249E92EA9464406"]
+			id: "6E068D0D28DE86BF"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "326D6C79F9B7F21D"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&b进阶BOSS，掉落虚空符文"
+			tasks: [{
+				advancement: "cataclysm:kill_ender_golem"
+				criterion: ""
+				id: "07B67E7A3A8D42D7"
+				type: "advancement"
+			}]
+			title: "&6击杀【末影傀儡】"
+			x: -5.0d
+			y: 6.5d
+		}
+		{
+			dependencies: ["69777282F33899E7"]
+			icon: "alexsmobs:void_worm_beak"
+			id: "6FD9928980FE2CD3"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "4445A51604237BEC"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&b进阶BOSS   &a注意！！！不要佩戴扭曲卷轴，否则会一直分裂"
+			tasks: [{
+				entity: "alexsmobs:void_worm"
+				id: "0DE7A7580ACCAC4B"
+				type: "kill"
+				value: 1L
+			}]
+			title: "&e击杀虚空蠕虫"
+			x: 2.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["7138598E20E2A619"]
+			description: ["&e将【绯红孑孓】放入【衣壳体】中获得【神秘蠕虫】"]
+			id: "69777282F33899E7"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "588CAD4B4A4BB5FF"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "&d将神秘蠕虫丢入末地的虚空中，引出【虚空蠕虫】&a注意！！！不要佩戴扭曲卷轴"
+			tasks: [{
+				id: "1509F37B67D53BA8"
+				item: "alexsmobs:mysterious_worm"
+				type: "item"
+			}]
+			x: 0.5d
+			y: 8.0d
+		}
+		{
+			dependencies: ["26E61D8A06FAB278"]
+			id: "0D391259C6B98A3C"
+			rewards: [{
+				id: "45530C339AFEA187"
+				item: {
+					Count: 1b
+					id: "tacz:modern_kinetic_gun"
+					tag: {
+						GunCurrentAmmoCount: 200
+						GunFireMode: "AUTO"
+						GunId: "bf1:mg0815"
+						HasBulletInBarrel: 1b
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "真的....结束了吗？"
+			tasks: [{
+				dimension: "minecraft:overworld"
+				icon: "minecraft:end_stone"
+				id: "2057F13BDB5CD3DA"
+				title: "&e回到主世界"
+				type: "dimension"
+			}]
+			title: "&e回到主世界"
+			x: -2.5d
+			y: 11.5d
+		}
+		{
+			dependencies: ["28D68A77A793C60D"]
+			id: "26E61D8A06FAB278"
+			rewards: [{
+				id: "3F5153F75AE57FCE"
+				item: {
+					Count: 1b
+					id: "tacz:modern_kinetic_gun"
+					tag: {
+						GunCurrentAmmoCount: 10
+						GunFireMode: "SEMI"
+						GunId: "tacz:m107"
+						HasBulletInBarrel: 1b
+					}
+				}
+				type: "item"
+			}
+				{
+				coinMinorUnits: 3000L
+				id: "46E6153FC357885C"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			subtitle: "&d高级BOSS"
+			tasks: [{
+				advancement: "minecraft:end/kill_dragon"
+				criterion: ""
+				id: "3A403CC840D0B7D1"
+				type: "advancement"
+			}]
+			title: "&d击败末影龙"
+			x: -1.0d
+			y: 11.5d
+		}
+		{
+			dependencies: ["28D68A77A793C60D"]
+			description: [
+				"{image:kubejs:textures/aaaa/zheyuechuansongmen.png width:100 height:100 align:1}"
+				"&e将末影珍珠投入其中，传送到达末地外岛"
+				""
+				""
+				"&b这片虚无之地曾经发生过一件奇怪的事情，所有潜影贝在一夜之间全部消失了........无论在哪里都找不到了。"
+			]
+			icon: "minecraft:end_stone"
+			id: "7138598E20E2A619"
+			rewards: [
+				{
+					count: 6
+					id: "5FDACD08675665CF"
+					item: "alexsmobs:mysterious_worm"
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "72CFC44E76FC4E5E"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+				{
+					id: "779A24C5C329F3E6"
+					item: {
+						Count: 1b
+						id: "immersive_melodies:vielle"
+						tag: { }
+					}
+					type: "item"
+				}
+			]
+			size: 2.0d
+			subtitle: "抵达末地外岛，无论通过什么方式...."
+			tasks: [{
+				biome: "minecraft:end_midlands"
+				id: "3114C29DF1F4924D"
+				optional_task: true
+				type: "biome"
+			}]
+			title: "&d探索末地外岛"
+			x: -1.0d
+			y: 6.5d
+		}
+		{
+			dependencies: [
+				"0AC897FF0593F328"
+				"77E28508762F7BA2"
+				"4AB36B0F64DF2EB0"
+				"73CF07220BC6183D"
+			]
+			icon: {
+				Count: 1b
+				id: "celestial_artifacts:flight_ring"
+				tag: { }
+			}
+			id: "1AD72679E4A2911C"
+			rewards: [
+				{
+					id: "776A06A26E950D9C"
+					item: {
+						Count: 1b
+						id: "celestial_artifacts:flight_ring"
+						tag: { }
+					}
+					type: "item"
+				}
+				{
+					id: "650CD9A328E197AB"
+					item: "celestial_artifacts:corrupt_badge"
+					type: "item"
+				}
+				{
+					id: "0E58C0DA2649DCBC"
+					item: "celestial_artifacts:war_dead_badge"
+					type: "item"
+				}
+			]
+			size: 2.0d
+			subtitle: "&e获得创造飞行能力"
+			tasks: [
+				{
+					consume_items: true
+					id: "094E8DF97053093C"
+					item: "cataclysm:gauntlet_of_guard"
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "164051FDD29BA0B7"
+					item: "legendary_monsters:large_shulker_shell"
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "58E798B5D06EADE3"
+					item: "legendary_monsters:chorus_crystal"
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "1684B28FA21C3940"
+					item: "bosses_of_mass_destruction:obsidian_heart"
+					type: "item"
+				}
+			]
+			title: "&e飞仙戒指和两个被诅咒的饰品..."
+			x: -1.0d
+			y: 1.0d
+		}
+		{
+			dependencies: ["7138598E20E2A619"]
+			description: [
+				"放入末影之眼召唤"
+				"{image:kubejs:textures/aaaa/heiyaoshizhujitan.png width:100 height:100 align:1}"
+			]
+			id: "42FCB5AD464D0FD3"
+			rewards: [
+				{
+					id: "08DB84071106923C"
+					item: "bosses_of_mass_destruction:brimstone_nectar"
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "23935C0F38D6393F"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "&7使用指南针搜【巨型黑曜石柱祭坛】寻找。此结构可被&e【硫磺花蜜】&7重置"
+			tasks: [{
+				id: "407D48C662484A92"
+				structure: "bosses_of_mass_destruction:obsidilith_arena"
+				type: "structure"
+			}]
+			title: "&6巨型黑曜石柱祭坛"
+			x: 1.5d
+			y: 6.5d
+		}
+		{
+			dependencies: ["42FCB5AD464D0FD3"]
+			description: [
+				"{image:kubejs:textures/aaaa/heiyaoshizhudadadad.png width:100 height:100 align:1}"
+				""
+				"&6受到一定伤害后进入无敌状态，挖掉周围的特殊黑曜石解除无敌状态 "
+				""
+				"&7使用指南针搜【巨型黑曜石柱祭坛】寻找。"
+			]
+			id: "16D07A6119CA2D5A"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "72F9AB222441279D"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&d高级BOSS，使用末影之眼对祭坛右键召唤"
+			tasks: [{
+				advancement: "bosses_of_mass_destruction:end/obsidilith_defeat"
+				criterion: ""
+				id: "0514DF914B24B833"
+				type: "advancement"
+			}]
+			x: 3.0d
+			y: 6.5d
+		}
+		{
+			dependencies: ["2A6B3B5507EBC50E"]
+			description: ["&6使用指南针搜【潜影高塔】寻找。"]
+			id: "4AB36B0F64DF2EB0"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "2CC16F767FE9EA78"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&d高级BOSS"
+			tasks: [{
+				advancement: "legendary_monsters:defeat_shulker_mimic"
+				criterion: ""
+				id: "7B001221092359BA"
+				type: "advancement"
+			}]
+			title: "突变潜影怪"
+			x: 0.0d
+			y: 3.5d
+		}
+		{
+			dependencies: ["7138598E20E2A619"]
+			id: "2A6B3B5507EBC50E"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6A397BD82ADEE7B5"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【潜影高塔】寻找。"
+			tasks: [{
+				id: "5E47D6113B4928C9"
+				structure: "legendary_monsters:shulker_tower"
+				type: "structure"
+			}]
+			title: "潜影高塔"
+			x: 0.5d
+			y: 5.0d
+		}
+		{
+			dependencies: ["7138598E20E2A619"]
+			id: "4C984B18671947D0"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "367B2156D8FAB7C1"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用指南针搜【古老高塔遗迹/古代塔遗迹】寻找。"
+			tasks: [{
+				id: "2973104140F5A09E"
+				structure: "legendary_monsters:ancient_tower_remains"
+				type: "structure"
+			}]
+			title: "古代塔遗迹"
+			x: -2.5d
+			y: 5.0d
+		}
+		{
+			dependencies: ["4C984B18671947D0"]
+			description: ["&e使用指南针搜【古老高塔遗迹/古代塔遗迹】寻找。"]
+			id: "73CF07220BC6183D"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "133DBE22F0B6A2D0"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&d高级BOSS"
+			tasks: [{
+				advancement: "legendary_monsters:defeat_endersent"
+				criterion: ""
+				id: "6EDE150462F7DB62"
+				type: "advancement"
+			}]
+			title: "击败末影使者"
+			x: -2.0d
+			y: 3.5d
+		}
+		{
+			dependencies: ["6FD9928980FE2CD3"]
+			description: ["&e受到一定伤害后无敌，玩家要进行猜谜才能继续攻击"]
+			id: "3E74AD38FC8A9D4A"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1C64111AE73DC903"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&6用于召唤&e特殊BOSS&d【福尔图娜女爵】&e，其掉落物可合成极强的饰品"
+			tasks: [{
+				id: "6CC3256022FF5279"
+				item: "meetyourfight:devils_ante"
+				type: "item"
+			}]
+			x: 3.5d
+			y: 8.0d
+		}
+		{
+			dependencies: ["0E2B9E56BB16960E"]
+			id: "6F4B8E3BE30A1E49"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1440E78859ACC35C"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "无限提供飞行动力的鞘翅"
+			tasks: [{
+				id: "65F9525E437A7DDD"
+				item: {
+					Count: 1b
+					id: "itemfilters:tag"
+					tag: {
+						value: "icarus:wings"
+					}
+				}
+				title: "Any #icarus:wings"
+				type: "item"
+			}]
+			title: "&e制作【翅膀】"
+			x: -4.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["26E61D8A06FAB278"]
+			description: [
+				"{image:kubejs:textures/aaaa/fuhuomoyinglong.png width:180 height:150 align:1}"
+				"&e注意：不需要龙蛋哦"
+			]
+			id: "49D7A07B580E939E"
+			rewards: [{
+				count: 2
+				id: "2C31C6230F3EE7EC"
+				item: {
+					Count: 1b
+					id: "tacz:attachment"
+					tag: {
+						AttachmentId: "cib:change"
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "&b在末地传送门的外围基岩中心上放【末地水晶】召唤"
+			tasks: [{
+				advancement: "minecraft:end/respawn_dragon"
+				criterion: ""
+				id: "4787741BDE18B183"
+				title: "复活末影龙"
+				type: "advancement"
+			}]
+			title: "&6复活末影龙"
+			x: 0.5d
+			y: 11.5d
+		}
+		{
+			dependencies: ["16D07A6119CA2D5A"]
+			id: "0AC897FF0593F328"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "2A85157BE435C34F"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			tasks: [{
+				id: "5796BA040809A850"
+				item: "bosses_of_mass_destruction:obsidian_heart"
+				type: "item"
+			}]
+			x: 4.5d
+			y: 6.5d
+		}
+		{
+			dependencies: ["7138598E20E2A619"]
+			description: ["{image:kubejs:textures/aaaa/modichuan.png width:130 height:100 align:1}"]
+			id: "0E2B9E56BB16960E"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "7C474C58600C1607"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "在末地船上获取"
+			tasks: [{
+				id: "7029B932C5750E10"
+				item: {
+					Count: 1b
+					id: "minecraft:elytra"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -2.5d
+			y: 8.0d
+		}
+		{
+			dependencies: ["6F4B8E3BE30A1E49"]
+			icon: {
+				Count: 1b
+				id: "irons_spellbooks:scroll"
+				tag: {
+					ISB_Spells: {
+						data: [{
+							id: "irons_spellbooks:burning_dash"
+							index: 0
+							level: 1
+							locked: 1b
+						}]
+						maxSpells: 1
+						mustEquip: 0b
+						spellWheel: 0b
+					}
+				}
+			}
+			id: "39F973775596D420"
+			rewards: [
+				{
+					id: "16091413512C3A78"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:scroll"
+						tag: {
+							ISB_Spells: {
+								data: [{
+									id: "irons_spellbooks:burning_dash"
+									index: 0
+									level: 1
+									locked: 1b
+								}]
+								maxSpells: 1
+								mustEquip: 0b
+								spellWheel: 0b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "771B0DF50F99DEFB"
+					item: {
+						Count: 1b
+						id: "alexscaves:ortholance"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "&e在飞行时，使用【烈焰冲锋】类物品可获得极大的推力"
+			tasks: [{
+				id: "554032FD92BE837D"
+				type: "checkmark"
+			}]
+			title: "&c高速飞行"
+			x: -5.5d
+			y: 8.0d
+		}
+		{
+			dependencies: ["28D68A77A793C60D"]
+			description: ["&7（此结构可能较为稀有）"]
+			id: "3418CCBB23C869AD"
+			subtitle: "&a使用指南针搜索【终末永狱】寻找"
+			tasks: [{
+				id: "12A41C86D6160EE7"
+				structure: "goety:final_terminal"
+				type: "structure"
+			}]
+			title: "&d抵达终末永狱"
+			x: -1.0d
+			y: 16.5d
+		}
+		{
+			dependencies: ["3418CCBB23C869AD"]
+			description: [
+				"&a使用指南针搜索【终末永狱】寻找"
+				""
+				"&e挑战结构中的虚空刷怪笼可获得【虚空钥匙】"
+				"&7（还有概率获得超级燃料，彩虹煤炭）"
+				""
+				"&e使用【虚空钥匙】可打开虚空宝库，也可以激活位于图中红圈的虚空屏障，召唤BOSS【末影遣使】"
+				""
+				"&e【末影遣使】会掉落虚空碎片，收集四个【虚空碎片】即可在中间的 虚空神龛 召唤【末影守望者】"
+				""
+				"{image:kubejs:textures/aaaa/zhongmoyongyu.png width:150 height:130 align:1}"
+				""
+				"{image:kubejs:textures/aaaa/moyingqianshi.png width:100 height:100 align:1}"
+			]
+			icon: {
+				Count: 1b
+				id: "goety_revelation:ender_keeper_sword"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "4677ACC569C2F349"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "3D753CEE41027165"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}
+				{
+				coinMinorUnits: 10000L
+				id: "55A798B797C683DF"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			subtitle: "&d高级BOSS"
+			tasks: [{
+				advancement: "goety:goety/kill_an_ender_keeper"
+				criterion: ""
+				id: "1409D5A2BF1A719D"
+				type: "advancement"
+			}]
+			title: "&d击败【末影守望者】"
+			x: -1.0d
+			y: 18.0d
+		}
+	]
+	title: "&d末地"
+}

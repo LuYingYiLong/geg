@@ -1,0 +1,19 @@
+{
+	id: "50ED4077B10B8DF4"
+	loot_size: 1
+	order_index: 26
+	rewards: [
+		{ item: "irons_spellbooks:fire_upgrade_orb" }
+		{ item: "irons_spellbooks:ice_upgrade_orb" }
+		{ item: "irons_spellbooks:lightning_upgrade_orb" }
+		{ item: "irons_spellbooks:holy_upgrade_orb" }
+		{ item: "irons_spellbooks:ender_upgrade_orb" }
+		{ item: "irons_spellbooks:blood_upgrade_orb" }
+		{ item: "irons_spellbooks:evocation_upgrade_orb" }
+		{ item: "irons_spellbooks:nature_upgrade_orb" }
+		{ item: "irons_spellbooks:mana_upgrade_orb", weight: 1.2f }
+		{ item: "irons_spellbooks:cooldown_upgrade_orb", weight: 1.2f }
+		{ item: "irons_spellbooks:protection_upgrade_orb" }
+	]
+	title: "法球"
+}

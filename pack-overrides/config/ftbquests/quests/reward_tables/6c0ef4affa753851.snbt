@@ -1,0 +1,11 @@
+{
+	id: "6C0EF4AFFA753851"
+	loot_size: 1
+	order_index: 14
+	rewards: [
+		{ count: 5, item: "slashblade:proudsoul_ingot" }
+		{ count: 4, item: "slashblade:proudsoul_sphere" }
+		{ count: 3, item: "slashblade:proudsoul_crystal" }
+	]
+	title: "耀魂"
+}

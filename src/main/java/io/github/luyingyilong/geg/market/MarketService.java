@@ -4,6 +4,7 @@ import io.github.luyingyilong.geg.money.MoneyBalance;
 import io.github.luyingyilong.geg.money.MoneyNetwork;
 import io.github.luyingyilong.geg.money.MoneySavedData;
 import io.github.luyingyilong.geg.money.MoneyCurrency;
+import io.github.luyingyilong.geg.money.MoneyService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -134,6 +135,8 @@ public final class MarketService {
         MarketCoinCredit credit = new MarketCoinCredit(state.nextId++, total);
         MarketPurchase purchase = new MarketPurchase(listing.item(), quantity, listing.unitPrice(),
                 listing.sellerName(), System.currentTimeMillis());
+        data.record("market_sale", MoneyCurrency.COIN, MoneyService.wallet(buyer.getUUID()),
+                MoneyService.pending(listing.seller(), credit.id()), total, "listing:" + listingId);
         data.put(buyer.getUUID(), balance.with(io.github.luyingyilong.geg.money.MoneyCurrency.COIN,
                 balance.coinMinorUnits() - total));
         MoneyNetwork.sync(buyer, data.balance(buyer.getUUID()));
@@ -245,6 +248,9 @@ public final class MarketService {
         long room = Long.MAX_VALUE - current.coinMinorUnits();
         if (room <= 0L) return MarketResult.OVERFLOW;
         long claimed = Math.min(room, credit.amount());
+        data.record("market_claim", MoneyCurrency.COIN,
+                MoneyService.pending(player.getUUID(), creditId), MoneyService.wallet(player.getUUID()),
+                claimed, "credit:" + creditId);
         data.put(player.getUUID(), current.with(MoneyCurrency.COIN, current.coinMinorUnits() + claimed));
         if (claimed == credit.amount()) credits.remove(credit);
         else credits.set(credits.indexOf(credit), credit.withAmount(credit.amount() - claimed));
@@ -319,6 +325,8 @@ public final class MarketService {
         MarketBuyOrder order = new MarketBuyOrder(state.nextId++, buyer.getUUID(),
                 buyer.getGameProfile().getName(), item, quantity, unitPrice, escrow, 1L,
                 System.currentTimeMillis());
+        data.record("market_escrow", MoneyCurrency.COIN, MoneyService.wallet(buyer.getUUID()),
+                MoneyService.escrow(buyer.getUUID(), order.id()), escrow, "order:" + order.id());
         data.put(buyer.getUUID(), balance.with(MoneyCurrency.COIN, balance.coinMinorUnits() - escrow));
         MoneyNetwork.sync(buyer, data.balance(buyer.getUUID()));
         state.buyOrders.put(order.id(), order);
@@ -346,6 +354,11 @@ public final class MarketService {
         if (state.nextId > Long.MAX_VALUE - 2L) return MarketResult.LIMIT;
         long total = Math.multiplyExact(order.unitPrice(), quantity);
         if (order.escrow() < total) return MarketResult.STALE;
+        long deliveryId = state.nextId++;
+        long creditId = state.nextId++;
+        MoneySavedData.get(server).record("market_fulfill", MoneyCurrency.COIN,
+                MoneyService.escrow(order.buyer(), orderId), MoneyService.pending(seller.getUUID(), creditId),
+                total, "order:" + orderId);
         int remaining = quantity;
         for (int slot = 0; slot < 36 && remaining > 0; slot++) {
             ItemStack stack = seller.getInventory().getItem(slot);
@@ -358,9 +371,9 @@ public final class MarketService {
         seller.getInventory().setChanged();
         seller.inventoryMenu.broadcastChanges();
         state.deliveries.computeIfAbsent(order.buyer(), ignored -> new ArrayList<>())
-                .add(new MarketDelivery(state.nextId++, order.item(), quantity));
+                .add(new MarketDelivery(deliveryId, order.item(), quantity));
         state.coinCredits.computeIfAbsent(seller.getUUID(), ignored -> new ArrayList<>())
-                .add(new MarketCoinCredit(state.nextId++, total));
+                .add(new MarketCoinCredit(creditId, total));
         List<MarketPurchase> records = state.history.computeIfAbsent(order.buyer(), ignored -> new ArrayList<>());
         records.add(0, new MarketPurchase(order.item(), quantity, order.unitPrice(),
                 seller.getGameProfile().getName(), System.currentTimeMillis()));
@@ -391,11 +404,16 @@ public final class MarketService {
         if (delta > 0 && balance.coinMinorUnits() < delta) return MarketResult.INSUFFICIENT;
         if (delta < 0 && state.nextId == Long.MAX_VALUE) return MarketResult.LIMIT;
         if (delta > 0) {
+            data.record("market_reprice", MoneyCurrency.COIN, MoneyService.wallet(buyer.getUUID()),
+                    MoneyService.escrow(buyer.getUUID(), orderId), delta, "order:" + orderId);
             data.put(buyer.getUUID(), balance.with(MoneyCurrency.COIN, balance.coinMinorUnits() - delta));
             MoneyNetwork.sync(buyer, data.balance(buyer.getUUID()));
         } else if (delta < 0) {
+            long creditId = state.nextId++;
+            data.record("market_reprice_refund", MoneyCurrency.COIN, MoneyService.escrow(buyer.getUUID(), orderId),
+                    MoneyService.pending(buyer.getUUID(), creditId), -delta, "order:" + orderId);
             state.coinCredits.computeIfAbsent(buyer.getUUID(), ignored -> new ArrayList<>())
-                    .add(new MarketCoinCredit(state.nextId++, -delta));
+                    .add(new MarketCoinCredit(creditId, -delta));
         }
         state.buyOrders.put(orderId, order.withPrice(price));
         updateFavorites(state, orderId);
@@ -412,8 +430,12 @@ public final class MarketService {
         if (order == null || order.version() != version) return MarketResult.STALE;
         if (!order.buyer().equals(buyer.getUUID())) return MarketResult.INVALID;
         if (state.nextId == Long.MAX_VALUE) return MarketResult.LIMIT;
+        long creditId = state.nextId++;
+        MoneySavedData.get(server).record("market_cancel_refund", MoneyCurrency.COIN,
+                MoneyService.escrow(buyer.getUUID(), orderId), MoneyService.pending(buyer.getUUID(), creditId),
+                order.escrow(), "order:" + orderId);
         state.coinCredits.computeIfAbsent(buyer.getUUID(), ignored -> new ArrayList<>())
-                .add(new MarketCoinCredit(state.nextId++, order.escrow()));
+                .add(new MarketCoinCredit(creditId, order.escrow()));
         state.buyOrders.remove(orderId);
         updateFavorites(state, orderId);
         changed(server, order.item());

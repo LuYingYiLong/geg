@@ -1,0 +1,32 @@
+{
+	id: "1E165549C3BFB7FD"
+	loot_size: 1
+	order_index: 20
+	rewards: [
+		{
+			command: "/ecliptic solar setTerm beginning_of_spring"
+			elevate_perms: true
+			title: "立春"
+			type: "command"
+		}
+		{
+			command: "/ecliptic solar setTerm beginning_of_summer"
+			elevate_perms: true
+			title: "立夏"
+			type: "command"
+		}
+		{
+			command: "/ecliptic solar setTerm beginning_of_autumn"
+			elevate_perms: true
+			title: "立秋"
+			type: "command"
+		}
+		{
+			command: "/ecliptic solar setTerm beginning_of_winter"
+			elevate_perms: true
+			title: "立冬"
+			type: "command"
+		}
+	]
+	title: "节气"
+}

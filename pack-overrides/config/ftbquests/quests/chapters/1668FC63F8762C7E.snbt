@@ -1,0 +1,685 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: "square"
+	filename: "1668FC63F8762C7E"
+	group: "50FDD722F8A8E4F8"
+	id: "1668FC63F8762C7E"
+	images: [{
+		click: ""
+		color: 16711909
+		corner: false
+		dev: false
+		height: 10.0d
+		hover: [ ]
+		image: "kubejs:textures/aaaa/mofazhen.png"
+		rotation: 0.0d
+		width: 10.0d
+		x: 0.0d
+		y: -0.4d
+	}]
+	order_index: 3
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&d被“龙”所封印的诅咒正在蠢蠢欲动，无时不刻都在等待着封印被解开"
+				"&c灾厄之册将带来多种负面效果，收集并佩戴刻蚀板，可以扭转这些效果，获得更强大的力量"
+				""
+				"&c异教徒心脏    链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"35AC7EC3827E2F5B\" } }"
+				""
+				"&7熔岩食者之皮链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"7CDAD4610501F81B\" } }"
+				""
+				"恐龙骨头链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"401F2F9B5CA4BD46\" } }"
+				""
+				"&8凋灵骨链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"643864F09415C6C8\" } }"
+				""
+				"&c如何获得村民尸体："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"542E3B606E1B6B5A\" } }"
+				""
+				"&6龙血链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"60A8BD339235D4C5\" } }"
+				""
+				"&e解开封印后带不上看看是不是灾厄之册 的专属格被占用了"
+			]
+			icon: "celestial_artifacts:catastrophe_scroll"
+			id: "315964E756BC5D6D"
+			rewards: [
+				{
+					command: "/itemblacklist unban celestial_artifacts:catastrophe_scroll"
+					elevate_perms: true
+					icon: "celestial_artifacts:catastrophe_scroll"
+					id: "20192186EEB14FF2"
+					team_reward: false
+					title: "&d解开封印"
+					type: "command"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "4BA355EB91809353"
+					item: "celestial_artifacts:catastrophe_scroll"
+					type: "item"
+				}
+				{
+					count: 16
+					id: "703A59D317674942"
+					item: "minecraft:pufferfish"
+					title: "大朗，该吃河豚了（"
+					type: "item"
+				}
+				{
+					id: "4761BC048BA970CD"
+					item: {
+						Count: 1b
+						id: "artifacts:eternal_steak"
+						tag: {
+							"add_potion:effects": [
+								{
+									Ambient: 0b
+									Amplifier: 0b
+									CurativeItems: [{
+										Count: 1b
+										id: "minecraft:milk_bucket"
+									}]
+									Duration: 1800
+									Id: 19
+									ShowIcon: 1b
+									ShowParticles: 1b
+									"add_potion:potion_type": "SPLASH"
+									"forge:id": "minecraft:poison"
+								}
+								{
+									Ambient: 0b
+									Amplifier: 3b
+									CurativeItems: [{
+										Count: 1b
+										id: "minecraft:milk_bucket"
+									}]
+									Duration: 800
+									Id: 2
+									ShowIcon: 1b
+									ShowParticles: 1b
+									"add_potion:potion_type": "SPLASH"
+									"forge:id": "minecraft:slowness"
+								}
+								{
+									Ambient: 0b
+									Amplifier: 2b
+									CurativeItems: [{
+										Count: 1b
+										id: "minecraft:milk_bucket"
+									}]
+									Duration: 800
+									Id: 11
+									ShowIcon: 1b
+									ShowParticles: 1b
+									"add_potion:potion_type": "SPLASH"
+									"forge:id": "minecraft:resistance"
+								}
+								{
+									Ambient: 0b
+									Amplifier: 0b
+									CurativeItems: [{
+										Count: 1b
+										id: "minecraft:milk_bucket"
+									}]
+									Duration: 4800
+									Id: 18
+									ShowIcon: 1b
+									ShowParticles: 1b
+									"add_potion:potion_type": "SPLASH"
+									"forge:id": "minecraft:weakness"
+								}
+								{
+									Ambient: 0b
+									Amplifier: 0b
+									CurativeItems: [{
+										Count: 1b
+										id: "minecraft:milk_bucket"
+									}]
+									Duration: 72000
+									Id: 103
+									ShowIcon: 1b
+									ShowParticles: 1b
+									"add_potion:potion_type": "SPLASH"
+									"forge:id": "alexsmobsinteraction:skreeching"
+								}
+								{
+									Ambient: 0b
+									Amplifier: 0b
+									CurativeItems: [{
+										Count: 1b
+										id: "minecraft:milk_bucket"
+									}]
+									Duration: 600
+									Id: 196
+									ShowIcon: 1b
+									ShowParticles: 1b
+									"add_potion:potion_type": "SPLASH"
+									"forge:id": "soulsweapons:disable_heal"
+								}
+								{
+									Ambient: 0b
+									Amplifier: 0b
+									CurativeItems: [{
+										Count: 1b
+										id: "minecraft:milk_bucket"
+									}]
+									Duration: 4800
+									Id: 2
+									ShowIcon: 1b
+									ShowParticles: 1b
+									"add_potion:potion_type": "SPLASH"
+									"forge:id": "minecraft:slowness"
+								}
+							]
+							"add_potion:owner": [I;
+								0
+								12294
+								-1718659749
+								337276351
+							]
+							display: {
+								Name: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"#FFFFFF\",\"text\":\"剧毒的牛排\"}"
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "633B94B230493362"
+					item: "celestial_artifacts:cursed_talisman"
+					type: "item"
+				}
+			]
+			size: 1.5d
+			subtitle: "&c全局解除封印，解除之后，所有人的灾厄之册不再消失"
+			tasks: [
+				{
+					consume_items: true
+					count: 15L
+					id: "5997F882B0DBD6EF"
+					item: "butcher:villager_corpse_item"
+					type: "item"
+				}
+				{
+					consume_items: true
+					count: 10L
+					id: "00712A344331F5B6"
+					item: "iceandfire:fire_dragon_blood"
+					type: "item"
+				}
+				{
+					consume_items: true
+					count: 10L
+					id: "1F58F33A15F83E4D"
+					item: "iceandfire:ice_dragon_blood"
+					type: "item"
+				}
+				{
+					consume_items: true
+					count: 10L
+					id: "566917B1F7525F1F"
+					item: "iceandfire:lightning_dragon_blood"
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "53F88983A5ECE0BD"
+					item: "eeeabsmobs:heart_of_pagan"
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "2B22C1E674A2A2D3"
+					item: "legendary_monsters:lava_eaters_skin"
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "1022BA9FD52DA124"
+					item: { Count: 4b, id: "legendary_monsters:dinosaur_bone" }
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "52F4FC2ACD983978"
+					item: "legendary_monsters:withered_bone"
+					type: "item"
+				}
+				{
+					id: "20F0A8A9A2F183EC"
+					points: false
+					type: "xp"
+					value: 50L
+				}
+			]
+			title: "&d解开灾厄之册的封印"
+			x: 0.0d
+			y: -0.5d
+		}
+		{
+			dependencies: ["315964E756BC5D6D"]
+			description: [
+				"&d推荐使用火箭筒 光之剑 榴弹等爆炸物枪械来打"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"09B922F3D3E6AC11\" } }"
+			]
+			id: "3897B028ABF627B9"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "532186B297021A7B"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "凋零被爆炸伤害杀死概率掉落"
+			tasks: [{
+				id: "25EC109F13B476FB"
+				item: "celestial_artifacts:chaotic_etching"
+				type: "item"
+			}]
+			x: 0.0d
+			y: -3.5d
+		}
+		{
+			dependencies: ["315964E756BC5D6D"]
+			description: [
+				"&d末影龙链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"26E61D8A06FAB278\" } }"
+				"&d飞仙之戒链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1AD72679E4A2911C\" } }"
+				""
+				"&a合成重要材料：【电浆花】：主世界采集（热度草原很多） "
+				"&a掠夺者尸体链接"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"542E3B606E1B6B5A\" } }"
+			]
+			id: "7705585D61F36B5E"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6CACFABF934D9A49"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&e在Y轴200格以上击杀末影龙概率掉落（人和龙都在200格以上）或者合成获得"
+			tasks: [{
+				id: "604C99C57A8C8C95"
+				item: "celestial_artifacts:origin_etching"
+				type: "item"
+			}]
+			x: -2.0d
+			y: -2.5d
+		}
+		{
+			dependencies: ["315964E756BC5D6D"]
+			id: "089E349EBB657BD5"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "42BB69D7F00F925F"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "击杀生命上限499点的以上生物概率掉落"
+			tasks: [{
+				id: "07AEFCA963E01B79"
+				item: "celestial_artifacts:life_etching"
+				type: "item"
+			}]
+			x: -3.0d
+			y: -0.5d
+		}
+		{
+			dependencies: ["315964E756BC5D6D"]
+			id: "20AB58010124A6C6"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "31C22C4C35B7353D"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "凋零被灾厄村民杀死概率掉落  或者合成"
+			tasks: [{
+				id: "059BCBDC55A5EBB1"
+				item: "celestial_artifacts:truth_etching"
+				type: "item"
+			}]
+			x: -2.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["315964E756BC5D6D"]
+			description: [
+				"&d永恒胚胎链接:"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"4D18EE537CA05E7B\" } }"
+			]
+			id: "6A99AA7DB9004C60"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "08615605C768CC4A"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&d合成获得"
+			tasks: [{
+				id: "5DF2DE7106BDB49F"
+				item: "celestial_artifacts:desire_etching"
+				type: "item"
+			}]
+			x: 2.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["315964E756BC5D6D"]
+			description: [
+				"&d守护者核心链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"3D1E708CFA20E344\" } }"
+				""
+				"&d银矿在主世界地下挖掘"
+			]
+			id: "36644E23E394F24C"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1C8A09E3023EF68D"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&d合成获得"
+			tasks: [{
+				id: "4ABF756766C65643"
+				item: "celestial_artifacts:nihility_etching"
+				type: "item"
+			}]
+			x: 3.0d
+			y: -0.5d
+		}
+		{
+			dependencies: ["315964E756BC5D6D"]
+			description: [
+				"&d链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"5401000619A57B22\" } }"
+			]
+			id: "1CE73B850A4F9003"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "31FD5E92C32FAB3E"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "携带9个以上负面效果击杀坚守者概率掉落 或者合成获得"
+			tasks: [{
+				id: "3724FFE42AB8D759"
+				item: "celestial_artifacts:end_etching"
+				type: "item"
+			}]
+			x: 2.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["315964E756BC5D6D"]
+			description: [
+				"&d链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"09B922F3D3E6AC11\" } }"
+			]
+			id: "5639D0A306FBD775"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "5D398DF57BC501DA"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&e达成获得刻蚀板条件&6但未掉落刻蚀板时掉落"
+			tasks: [{
+				id: "1C665E0A43122D08"
+				item: {
+					Count: 1b
+					id: "celestial_artifacts:nebula_cube"
+					tag: { }
+				}
+				type: "item"
+			}]
+			x: 0.0d
+			y: 2.5d
+		}
+		{
+			id: "76DBB03B2854F7F8"
+			size: 0.8d
+			subtitle: "&a合成获得"
+			tasks: [{
+				id: "2BECD28F5A9D66D0"
+				item: "celestial_artifacts:abyss_core"
+				type: "item"
+			}]
+			x: 0.0d
+			y: 5.0d
+		}
+		{
+			id: "40411D4F5AD0DE57"
+			size: 0.8d
+			subtitle: "&a合成获得"
+			tasks: [{
+				id: "0A23DC6C1D09207F"
+				item: "celestial_artifacts:ender_protector"
+				type: "item"
+			}]
+			x: 4.5d
+			y: -4.5d
+		}
+		{
+			id: "79748321B84757B8"
+			size: 0.8d
+			subtitle: "&a合成获得"
+			tasks: [{
+				id: "704E30E9D34D301A"
+				item: "celestial_artifacts:twisted_scroll"
+				type: "item"
+			}]
+			x: 2.0d
+			y: 4.5d
+		}
+		{
+			description: [
+				"&e凋零任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"09B922F3D3E6AC11\" } }"
+			]
+			id: "6FA009D1ECD1F927"
+			size: 0.8d
+			subtitle: "&a凋零击杀血量至少20的生物时概率掉落"
+			tasks: [{
+				id: "5E97C34B0C8FB689"
+				item: "celestial_artifacts:twisted_heart"
+				type: "item"
+			}]
+			x: 4.0d
+			y: 3.5d
+		}
+		{
+			description: [
+				"&e咒魂锭链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"51502B2D3955CA9F\" } }"
+				""
+				""
+				"&e塔罗牌：教皇链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"7DAD080FF4389273\" } }"
+			]
+			id: "222C615B525C5955"
+			size: 0.8d
+			subtitle: "&a合成获得"
+			tasks: [{
+				id: "18ADDC4ED4DC6E8C"
+				item: "celestial_artifacts:greedy_heart"
+				type: "item"
+			}]
+			x: 5.5d
+			y: -0.5d
+		}
+		{
+			id: "56B79311EA59D31E"
+			size: 0.8d
+			subtitle: "&a合成获得"
+			tasks: [{
+				id: "140A65D6B0E138F3"
+				item: "celestial_artifacts:sacrificial_object"
+				type: "item"
+			}]
+			x: -5.5d
+			y: -0.5d
+		}
+		{
+			description: [
+				"&e任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"43C13ADBB432155E\" } }"
+			]
+			id: "2A4026756C46722C"
+			size: 0.8d
+			subtitle: "&a【月光骑士】掉落"
+			tasks: [{
+				id: "224D9A0E1BE00142"
+				item: "celestial_artifacts:cursed_protector"
+				type: "item"
+			}]
+			x: -4.0d
+			y: 3.5d
+		}
+		{
+			description: [
+				"&b【塞壬】是海洋上生成的怪物，外表类似美人鱼，会用歌声迷惑玩家，靠近后将捕食玩家"
+				""
+				"&e【遗弃者】任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1E3F40C26EB02A38\" } }"
+			]
+			id: "15CEDEAD8953DE14"
+			size: 0.8d
+			subtitle: "&a【遗弃者】掉落，或者合成获得"
+			tasks: [{
+				id: "69D7BDFC15FB28C7"
+				item: "celestial_artifacts:cursed_totem"
+				type: "item"
+			}]
+			x: -2.0d
+			y: 4.5d
+		}
+		{
+			id: "58E55EE8BF66B644"
+			size: 0.8d
+			subtitle: "&e在古城开箱获得"
+			tasks: [{
+				id: "73EABC6785C16443"
+				item: "celestial_artifacts:demon_heart"
+				type: "item"
+			}]
+			x: -4.0d
+			y: -4.5d
+		}
+		{
+			id: "0593A66595535653"
+			size: 0.8d
+			subtitle: "&a合成获得"
+			tasks: [{
+				id: "10E548B1A8E88C6C"
+				item: "celestial_artifacts:undead_charm"
+				type: "item"
+			}]
+			x: -2.0d
+			y: -5.5d
+		}
+		{
+			description: [
+				"&b冰霜结晶由霜冻巨兽掉落，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"20E68AD2D8B98AE2\" } }"
+				""
+				"&6骸骨巨龙利爪链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1DD5146C62E2450B\" } }"
+			]
+			id: "45DFF3E15400BB89"
+			size: 0.8d
+			subtitle: "&a使用BOSS掉落物合成获得"
+			tasks: [{
+				id: "6C26FE5105845ACC"
+				item: "celestial_artifacts:scarlet_bracelet"
+				type: "item"
+			}]
+			x: -5.0d
+			y: 1.5d
+		}
+		{
+			description: ["&b增加附魔时的附魔等级，不能用于突破上限"]
+			id: "0478749DF045D195"
+			size: 0.8d
+			subtitle: "&a合成获得"
+			tasks: [{
+				id: "0DD14BA1049B7D67"
+				item: "celestial_artifacts:chaotic_pendant"
+				type: "item"
+			}]
+			x: 2.5d
+			y: -5.5d
+		}
+		{
+			description: [
+				"&6在与宝箱相对应的群系钓鱼大大提高钓上宝箱的概率&7（不佩戴饰品默认概率为2%，佩戴后增加50%概率）"
+				"{image:kubejs:textures/aaaa/diaoyuzhanlipin.png width:180 height:50 align:1}"
+			]
+			id: "179A4305E5A0C81D"
+			size: 0.8d
+			subtitle: "&a合成获得，提高钓鱼获得战利品箱概率"
+			tasks: [{
+				id: "089B891BC7B5B0D3"
+				item: "celestial_artifacts:treasure_hunter_necklace"
+				type: "item"
+			}]
+			x: 0.0d
+			y: -6.0d
+		}
+		{
+			id: "026C1C918E0994A9"
+			rewards: [
+				{
+					id: "5496946C3817393C"
+					type: "xp"
+					xp: 20
+				}
+				{
+					exclude_from_claim_all: true
+					id: "1BB1A8A05E878F8A"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			size: 0.8d
+			subtitle: "&d击杀远古守护者可获得"
+			tasks: [{
+				id: "5C822470FEE81269"
+				item: "celestial_artifacts:guardian_eye"
+				type: "item"
+			}]
+			x: 5.0d
+			y: -2.5d
+		}
+		{
+			id: "4C5A72E2014284B4"
+			size: 0.8d
+			subtitle: "&d击杀凋零后杀恼鬼概率获得"
+			tasks: [{
+				id: "3A9946DF9DF8936B"
+				item: "celestial_artifacts:demon_curse"
+				type: "item"
+			}]
+			x: 5.0d
+			y: 1.5d
+		}
+		{
+			id: "1D94E3C972C65050"
+			size: 0.8d
+			subtitle: "&a合成获得/完成解锁灾厄之册任务赠送"
+			tasks: [{
+				id: "04BC98B349CD77B2"
+				item: "celestial_artifacts:cursed_talisman"
+				type: "item"
+			}]
+			x: -5.0d
+			y: -2.5d
+		}
+	]
+	title: "&d世界的枷锁"
+}

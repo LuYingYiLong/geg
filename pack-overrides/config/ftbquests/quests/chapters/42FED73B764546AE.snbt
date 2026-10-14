@@ -1,0 +1,2287 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: "hexagon"
+	filename: "42FED73B764546AE"
+	group: "3041B6EFACB9A615"
+	icon: {
+		Count: 1b
+		id: "patchouli:guide_book"
+		tag: {
+			"patchouli:book": "goety:black_book"
+		}
+	}
+	id: "42FED73B764546AE"
+	images: [
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 8.0d
+			hover: [ ]
+			image: "goety:textures/entity/cultist/summon_apostle.png"
+			rotation: 0.0d
+			width: 8.0d
+			x: 17.0d
+			y: 0.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 10.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/hongshijushoutoushitu.png"
+			rotation: 0.0d
+			width: 10.0d
+			x: 27.0d
+			y: -6.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/goetylogo.png"
+			rotation: 0.0d
+			width: 13.5d
+			x: 16.0d
+			y: -14.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 1.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/maodie.png"
+			rotation: 0.0d
+			width: 0.75d
+			x: 20.8d
+			y: 0.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 1.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/huajuan.png"
+			rotation: 0.0d
+			width: 1.0d
+			x: 16.0d
+			y: -9.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/zaiezaixiang.png"
+			rotation: 0.0d
+			width: 2.5d
+			x: 8.4d
+			y: 0.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/diaolingsilingfashi.png"
+			rotation: 0.0d
+			width: 2.85d
+			x: 11.0d
+			y: -4.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 1.0d
+			hover: [ ]
+			image: "goety:item/howling_soul"
+			rotation: 0.0d
+			width: 1.0d
+			x: 17.0d
+			y: -5.0d
+		}
+	]
+	order_index: 1
+	progression_mode: "flexible"
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&6你可以在这本书里面学到各种黑暗的禁忌知识。"
+				""
+				"&6黑魔法要比正常的魔法更加强大，更加的&0【黑暗】"
+				""
+				"&n&6如召唤强大的傀儡，使用的黑魔法，进行各种转换仪式。"
+				""
+				"&7【注：本mod会对村民进行各种....不太好的行为，还会掉好感度提高交易价格，比较反感可以略过】"
+				"&7【且较为烧脑】"
+			]
+			id: "694F67E5E11ECB73"
+			size: 3.0d
+			subtitle: "禁忌知识！&e【诡厄线并非强制，不做也可以的】"
+			tasks: [{
+				id: "663F58DBAFC344C9"
+				item: {
+					Count: 1b
+					id: "patchouli:guide_book"
+					tag: {
+						"patchouli:book": "goety:black_book"
+					}
+				}
+				type: "item"
+			}]
+			title: "&0堕入黑暗之道..."
+			x: 12.5d
+			y: -9.5d
+		}
+		{
+			dependencies: ["694F67E5E11ECB73"]
+			description: [
+				"&e&n灵魂能量是进行仪式和释放法术所必需的"
+				""
+				"&e&n杀死生物可以获得灵魂能量，灵魂能量会储存至你的图腾或者方舟上"
+				""
+				"&7（小知识：坚守者拥有巨量灵魂能量）"
+				""
+				"&7&n如果你拥有大量（很多很多）的灵魂能量，将会被灾厄军队袭击"
+			]
+			id: "5F4632BDFFF94E95"
+			rewards: [
+				{
+					id: "05CC654F3A68574F"
+					item: "goety:dark_hat"
+					type: "item"
+				}
+				{
+					id: "5AC6D84BC6843F8F"
+					item: "goety:dark_robe"
+					type: "item"
+				}
+				{
+					id: "5A0C4639866E5676"
+					item: {
+						Count: 1b
+						ForgeCaps: {
+							Parent: {
+								Items: [ ]
+								Size: 1
+								slot: 0
+							}
+						}
+						id: "goety:dark_wand"
+					}
+					type: "item"
+				}
+				{
+					id: "564DF909E37B49CE"
+					item: "goety:soul_light_focus"
+					type: "item"
+				}
+			]
+			size: 1.3d
+			subtitle: "&a【灵魂能量】是最重要的魔力！"
+			tasks: [{
+				id: "0B57E9DFAAAB31F2"
+				item: {
+					Count: 1b
+					id: "itemfilters:tag"
+					tag: {
+						value: "goety:totems"
+					}
+				}
+				title: "获得任意一种图腾"
+				type: "item"
+			}]
+			title: "&c灵魂能量"
+			x: 17.0d
+			y: -9.5d
+		}
+		{
+			dependencies: ["694F67E5E11ECB73"]
+			description: [
+				"&6放置于【刷怪笼】上激活，放入对应物品进行转换"
+				""
+				"{image:kubejs:textures/aaaa/zuzhouzhuruq.png width:190 height:125 align:1}"
+			]
+			id: "1A17411DAC983AF4"
+			rewards: [{
+				count: 10
+				id: "57EEDCF63398A723"
+				item: "minecraft:iron_ingot"
+				type: "item"
+			}]
+			size: 1.3d
+			subtitle: "免费转换！获得一个诅咒注入器"
+			tasks: [{
+				id: "470CF05B69AC45E3"
+				item: "goety:cursed_infuser"
+				type: "item"
+			}]
+			title: "获得一个诅咒注入器"
+			x: 15.0d
+			y: -9.5d
+		}
+		{
+			dependencies: ["289F48DEB62D1448"]
+			id: "7FFDB8F30756C9F9"
+			rewards: [
+				{
+					count: 64
+					id: "546D583587026B59"
+					item: "goety:haunted_log"
+					type: "item"
+				}
+				{
+					id: "4CF425B8BC40213D"
+					item: "goety:shocking_focus"
+					type: "item"
+				}
+				{
+					id: "24EF02DD4C247715"
+					item: "goety:quaking_focus"
+					type: "item"
+				}
+			]
+			size: 1.3d
+			subtitle: "&e用于给多种方块功能，放入有能量【图腾】提供能量。"
+			tasks: [{
+				id: "42F7DFEDB9DCF64E"
+				item: "goety:cursed_cage"
+				type: "item"
+			}]
+			x: 17.0d
+			y: -6.5d
+		}
+		{
+			dependencies: [
+				"1A17411DAC983AF4"
+				"5F4632BDFFF94E95"
+			]
+			dependency_requirement: "one_completed"
+			id: "289F48DEB62D1448"
+			rewards: [{
+				id: "77057C432D5F7381"
+				item: "goety:ministrous_focus"
+				type: "item"
+			}]
+			size: 1.4d
+			subtitle: "重要的基础材料"
+			tasks: [{
+				id: "2710071106208124"
+				item: "goety:cursed_ingot"
+				type: "item"
+			}]
+			x: 16.0d
+			y: -8.0d
+		}
+		{
+			dependencies: ["7FFDB8F30756C9F9"]
+			description: [
+				"&c祭坛是举行各种仪式的基础！懒得搭建可以去找野生的，野生祭坛链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"12866ED71E591970\" } }"
+				""
+				"&n&6首先，放置&7黑暗祭坛&6，在&7黑暗祭坛&6下面放&7诅咒之笼&6，在周围放置&7祭坛基座"
+				""
+				"{image:kubejs:textures/aaaa/heianjitan.png width:130 height:110 align:1}"
+				"&6&n完成这一步后，打开&7黑暗秘典→仪式与你&6篇章，根据所需仪式条件搭建祭坛（注：祭坛&7半径8格&6内的方块可以&7随意摆放&6，没有形状限制）"
+				""
+				"{image:kubejs:textures/aaaa/tiaojian.png width:190 height:130 align:1}"
+				""
+				"成品的冰霜仪式祭坛"
+				""
+				"{image:kubejs:textures/aaaa/jinxingyishi.png width:180 height:130 align:1}"
+			]
+			icon: "goety:dark_altar"
+			id: "526C4C4236313FD2"
+			rewards: [
+				{
+					count: 4
+					id: "65E0C3B04C88997E"
+					item: "goety:freezing_lamp"
+					type: "item"
+				}
+				{
+					id: "0D8BD20725CD957B"
+					item: "goety:floral_scroll"
+					type: "item"
+				}
+			]
+			size: 1.0d
+			subtitle: "&6搭建魔法仪式祭坛"
+			tasks: [
+				{
+					id: "077F2EF7A65A9C0F"
+					item: "goety:dark_altar"
+					type: "item"
+				}
+				{
+					id: "18563A1060A50A1E"
+					item: "goety:pedestal"
+					type: "item"
+				}
+			]
+			title: "&d选择自己搭建祭坛"
+			x: 18.0d
+			y: -5.0d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			description: [
+				"&n&c在它上方放置试验假人，再使用红石启动，从而源源不断地获取灵魂能量"
+				"&7红石示范："
+				""
+				"{image:kubejs:textures/aaaa/hongshi.png width:150 height:100 align:1}"
+				""
+				"&7更高效率："
+				"{image:kubejs:textures/aaaa/shuaqulinghunnengliang.png width:160 height:160 align:1}"
+			]
+			id: "469C58EA581B5FC7"
+			rewards: [
+				{
+					id: "5F9503211F89E30F"
+					item: "minecraft:sticky_piston"
+					type: "item"
+				}
+				{
+					count: 64
+					id: "11E2C360ABD9E0E8"
+					item: "minecraft:redstone"
+					type: "item"
+				}
+				{
+					id: "29CCEB41130C76F3"
+					item: "goety:tidal_focus"
+					type: "item"
+				}
+			]
+			subtitle: "合成获得"
+			tasks: [{
+				id: "72C8D45D352FB73A"
+				item: "goety:ice_bouquet_trap"
+				type: "item"
+			}]
+			x: 18.1d
+			y: 3.2d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			description: [
+				"&e需要诅咒之笼供给能量"
+				""
+				"&e用于&n驱赶灾厄小队和灾厄猎杀队"
+			]
+			id: "29FA5946C9BC54F0"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "01BC225436B775E0"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					count: 6
+					id: "438690BE72808EF8"
+					item: "goety:dark_fabric"
+					type: "item"
+				}
+				{
+					count: 6
+					id: "0C1BE4EA143D1E1F"
+					item: "goety:cursed_ingot"
+					type: "item"
+				}
+				{
+					count: 5
+					id: "28520371ABC0793A"
+					item: "goety:empty_focus"
+					type: "item"
+				}
+				{
+					count: 4
+					id: "40946040B572FA13"
+					item: "goety:ectoplasm"
+					type: "item"
+				}
+			]
+			subtitle: "&e锻造仪式制作"
+			tasks: [{
+				id: "2C731B8891A0DEB4"
+				item: "goety:shriek_obelisk"
+				type: "item"
+			}]
+			x: 19.5d
+			y: 1.5d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			description: [
+				"{image:kubejs:textures/aaaa/dengshenchangjie5.png width:200 height:180 align:1}"
+				"&b（海神套装也可以直接召唤雷暴天气）"
+			]
+			icon: "irons_spellbooks:lightning_bottle"
+			id: "19B61DC773CB6DFE"
+			rewards: [{
+				id: "0F1A4D6A2A041A56"
+				item: "goety:hunting_focus"
+				type: "item"
+			}]
+			subtitle: "&e天空仪式可召唤雷暴天气，雷暴天气是【风暴仪式】的必须要求"
+			tasks: [{
+				consume_items: true
+				id: "49CF904B8E1CC335"
+				item: "goety:indented_gold"
+				type: "item"
+			}]
+			title: "关于雷暴天气"
+			x: 18.0d
+			y: -2.0d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			description: [
+				"&a只有放置在&2【深暗之域】&a群系中，且周围有点燃的灵魂烛火，亡灵火炉才能启动。"
+				""
+				"&c（注：必须先放置点燃的灵魂烛火再放入材料，否则你的材料将被吞噬）"
+				""
+				"&e将灵魂蜡烛放置在诅咒之笼上，诅咒之笼含有能量即可点燃亡灵蜡烛，进而点燃亡灵火炉"
+				"&7（点燃的灵魂蜡烛越多，制作速度越快）"
+				""
+				"{image:kubejs:textures/aaaa/wanglinghuolu.png width:190 height:110 align:1}"
+			]
+			id: "0132C7B797A21BB1"
+			rewards: [
+				{
+					id: "45616B31E552AD7A"
+					item: "goety:meteor_shower_focus"
+					type: "item"
+				}
+				{
+					count: 16
+					id: "0632FA137AA8BB80"
+					item: {
+						Count: 1b
+						id: "goety:cursed_cage"
+						tag: { }
+					}
+					type: "item"
+				}
+				{
+					count: 16
+					id: "4FF639A9A364AB2C"
+					item: "goety:soul_candlestick"
+					type: "item"
+				}
+				{
+					count: 16
+					id: "23C343A915EE4885"
+					item: "goety:soul_transfer"
+					type: "item"
+				}
+			]
+			subtitle: "&e锻造仪式制作【亡灵火炉】。用来合成【黑暗金属锭】"
+			tasks: [
+				{
+					id: "42268166B22AFDFC"
+					item: "goety:necro_brazier"
+					type: "item"
+				}
+				{
+					id: "203C3AA1F1D0E6A2"
+					item: "goety:soul_candlestick"
+					type: "item"
+				}
+			]
+			title: "如何制作黑暗金属锭"
+			x: 14.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			description: [
+				"&6举行此仪式需要大量的灵魂能量"
+				""
+				"&e不想搭建此仪式，可前往地狱基岩上层用指南针搜索名为&d【下界复合祭坛】&e的结构，有完整的仪式祭坛"
+				""
+				"&c在下界举行安息仪式将召唤更加强大的&d下界使徒&c额外掉落&d暗夜信标"
+				""
+				"&6使徒拥有极高机动性和极强的攻击力，会召唤大量实体，在挑战前要做好准备"
+			]
+			id: "190571F22A16F646"
+			rewards: [
+				{
+					id: "5F8E3DCF570C9D85"
+					type: "xp"
+					xp: 100
+				}
+				{
+					count: 3
+					id: "35F6458495524200"
+					item: "goety:warlock_sash"
+					type: "item"
+				}
+				{
+					count: 3
+					id: "052D531498EE85EA"
+					item: {
+						Count: 1b
+						id: "goety:infernal_tome"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "&6你听说过一个强大的存在潜伏在下界之中的传言。有传言说.........."
+			tasks: [
+				{
+					id: "4A20003208624A5C"
+					item: "minecraft:obsidian"
+					type: "item"
+				}
+				{
+					id: "69E90EB6C1B56B7E"
+					item: "minecraft:crying_obsidian"
+					type: "item"
+				}
+			]
+			title: "&d安息仪式"
+			x: 23.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["190571F22A16F646"]
+			description: [
+				"&6作为第一位冥教信徒亚玻伦的最亲密的追随者，这些可怕的生物在他们的主人身边传播圣火的信息，一些使徒曾经是国王、领主或贵族，而另一些使徒则从普通村民到最愚蠢的笨蛋都有。"
+				""
+				"&b祭坛召唤会消耗灵魂沙的火焰哦！必须有火焰才能召唤！"
+				""
+				"&a主世界使徒难度较低，下界使徒难度很高（下界使徒额外爆至纯之血和暗夜信标）"
+				""
+				"巫婆帽获取链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"02AB0AD6E50CCC40\" } }"
+				"{image:kubejs:textures/aaaa/nianghuashit.png width:130 height:150 align:1}"
+			]
+			icon: "soulsweapons:chaos_orb"
+			id: "2C0EAEB6DD706E3B"
+			rewards: [
+				{
+					count: 5
+					id: "21EE706B3C8827C9"
+					item: "ice_and_fire_delight:electric_pie_slice"
+					type: "item"
+				}
+				{
+					id: "1F93F3D1E15B5DF9"
+					item: {
+						Count: 1b
+						ForgeCaps: {
+							Parent: {
+								Items: [ ]
+								Size: 1
+								slot: 0
+							}
+						}
+						id: "goety_revelation:frostbloom_staff"
+						tag: {
+							"Cast Time": 0
+							Cooldown: 0
+							Duration: 0
+							Shots: 0
+							"Soul Cost": 0
+							"Soul Use": 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "17F0528FA8682875"
+					item: {
+						Count: 1b
+						id: "goety:stormlander"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "31C2D73CA7DAED61"
+					item: "goety:crone_hat"
+					type: "item"
+				}
+				{
+					count: 64
+					id: "6C0E558C2E77AAC8"
+					item: "iceandfire:chain"
+					type: "item"
+				}
+			]
+			size: 1.5d
+			subtitle: "当使徒出现在主世界时，他们周围的海洋都会为之沸腾，天空被黑暗笼罩...."
+			tasks: [{
+				advancement: "goety:goety/kill_a_apostle"
+				criterion: ""
+				id: "7F3CE561C7686200"
+				title: "&9击败&c&m使徒"
+				type: "advancement"
+			}]
+			title: "&c亚波伦的最亲密的追随者·使徒"
+			x: 24.5d
+			y: 0.5d
+		}
+		{
+			dependencies: ["2C0EAEB6DD706E3B"]
+			description: [
+				"&6合成万灵药需要&c大量灵魂能量，需要使用&c灵魂方舟，灵魂方舟链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1923ECF89A8EA970\" } }"
+				""
+				"&e注意要等到自然满月哦，暗夜信标会导致月亮消失"
+				""
+				"&b变成巫妖后你将变成亡灵生物哦，请慎重考虑"
+				""
+				"&b不洁之血由【使徒】掉落，也可使用至纯之血"
+			]
+			id: "5FBF74CF2B3F2AA2"
+			rewards: [{
+				id: "09B79FE675F9A685"
+				type: "xp_levels"
+				xp_levels: 10
+			}]
+			subtitle: "&e绑定【灵魂方舟后】在满月，副手持【不死图腾】喝下万灵药，将种族改变为【巫妖】"
+			tasks: [{
+				id: "19F8238544463CC1"
+				item: "goety:undeath_potion"
+				type: "item"
+			}]
+			title: "&d我不做人辣！"
+			x: 24.5d
+			y: 2.0d
+		}
+		{
+			dependencies: ["2C0EAEB6DD706E3B"]
+			description: ["&b暗夜信标由下界使徒掉落！"]
+			id: "63345EB082565B3B"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1C93B8A894ADFAEA"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "碰到....就会灰飞烟灭！"
+			tasks: [{
+				id: "08FA55519EF73A40"
+				item: "goety:corruption_focus"
+				type: "item"
+			}]
+			title: "&6制作最强聚晶·腐化聚晶"
+			x: 26.0d
+			y: -0.5d
+		}
+		{
+			dependencies: ["5F4632BDFFF94E95"]
+			description: [
+				"&n&6哦，对了。魔杖需要灵魂能量来释放聚晶中的魔法。"
+				""
+				"&6&n所以，开始杀杀杀！"
+				""
+				"&e手持魔杖【按X】进行聚晶替换"
+			]
+			id: "67636827EE84120B"
+			rewards: [
+				{
+					id: "32F6748F76985E3F"
+					item: "goety:crafting_focus"
+					type: "item"
+				}
+				{
+					id: "12E80290F3DB3305"
+					item: {
+						Count: 1b
+						id: "goety:fanged_dagger"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			size: 1.3d
+			subtitle: "成为一名黑暗魔法师，这些是你的基础装备"
+			tasks: [
+				{
+					id: "62323AAD79609629"
+					item: "goety:dark_hat"
+					type: "item"
+				}
+				{
+					id: "54A43D5D41AB4DA6"
+					item: "goety:dark_robe"
+					type: "item"
+				}
+				{
+					id: "0E1DF05A0E81EAC8"
+					item: {
+						Count: 1b
+						ForgeCaps: {
+							Parent: {
+								Items: [ ]
+								Size: 1
+								slot: 0
+							}
+						}
+						id: "goety:dark_wand"
+						tag: {
+							"Cast Time": 0
+							Cooldown: 0
+							Duration: 0
+							Shots: 0
+							"Soul Cost": 0
+							"Soul Use": 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "4B45845CDBC10433"
+					item: {
+						Count: 1b
+						ForgeCaps: {
+							Parent: {
+								Items: [ ]
+								Size: 11
+								slot: 0
+							}
+						}
+						id: "goety:focus_bag"
+					}
+					type: "item"
+				}
+			]
+			title: "&6我宣布个事！我是个掠夺者！"
+			x: 19.0d
+			y: -9.5d
+		}
+		{
+			dependencies: [
+				"526C4C4236313FD2"
+				"12866ED71E591970"
+			]
+			dependency_requirement: "one_completed"
+			description: [
+				"&n&6在&7探险的途中&6，你将发现各种各样的&7卷轴&6"
+				""
+				"&n&6阅读这些卷轴将解锁黑暗秘典中未知的知识"
+				""
+				"&a&n一些仪式需要对应卷轴来解锁，举个例子，图中所示：需要手持花纹卷轴右键阅读，才能解锁图中仪式"
+				"{image:kubejs:textures/aaaa/guiejuanzhou.png width:150 height:120 align:1}"
+			]
+			id: "57B4F2ABD874B5C1"
+			rewards: [
+				{
+					id: "3D2718C2F4879AC5"
+					type: "xp"
+					xp: 100
+				}
+				{
+					id: "133A755DDC1DF290"
+					item: "goety:spooky_focus"
+					type: "item"
+				}
+				{
+					id: "421653EC2AF5A091"
+					item: "goety:mistral_scroll"
+					type: "item"
+				}
+				{
+					id: "5BF571196345530D"
+					item: "goety:front_scroll"
+					type: "item"
+				}
+				{
+					id: "343D052F78F6A5CB"
+					item: "goety:ravaging_scroll"
+					type: "item"
+				}
+			]
+			subtitle: "&a卷轴对仪式的作用"
+			tasks: [{
+				id: "0B54301A97AC16CE"
+				type: "checkmark"
+			}]
+			title: "&6关于卷轴&e 【此任务只需完成一个前置即可】"
+			x: 17.0d
+			y: -3.5d
+		}
+		{
+			dependencies: ["0132C7B797A21BB1"]
+			id: "582052F6A2978360"
+			rewards: [{
+				id: "78B5940A45D41456"
+				item: "goety:flame_strike_focus"
+				type: "item"
+			}]
+			subtitle: "&6在&5亡灵火炉&6中制作"
+			tasks: [{
+				id: "0ACC0EFC7C473095"
+				item: "goety:dark_ingot"
+				type: "item"
+			}]
+			x: 12.5d
+			y: 0.5d
+		}
+		{
+			dependencies: ["582052F6A2978360"]
+			description: ["{image:kubejs:textures/aaaa/heiantaozhuang.png width:190 height:70 align:1}"]
+			id: "4CAA913F7D0F191F"
+			subtitle: "提供多种极高抗性，减少仪式所需灵魂能量"
+			tasks: [
+				{
+					id: "52AC7B09EC9BB0B4"
+					item: {
+						Count: 1b
+						id: "goety:dark_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "18750E871A8769D0"
+					item: {
+						Count: 1b
+						id: "goety:dark_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "495367C11E029DDF"
+					item: {
+						Count: 1b
+						id: "goety:dark_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0CE0914633221452"
+					item: {
+						Count: 1b
+						id: "goety:dark_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "综合性能极强的盔甲"
+			x: 11.5d
+			y: 1.0d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			description: [
+				"&e锻造仪式制作，可通过shift+右键快速拿取"
+				"灵魂方舟：&n&c&n用于存储灵魂能量，放置后将代替图腾储存灵魂能量。"
+				""
+				"&c&n灵魂能量等于或大于灵魂图腾的总量，会消耗灵魂能量进行奥术复活，使玩家能够在致命一击中幸存下来"
+				""
+				"链接宝石：&a&n用于调用灵魂方舟内的灵魂能量"
+				""
+				"&a&n放入诅咒之笼中，将消耗灵魂方舟内的能量向祭坛供能"
+			]
+			id: "1923ECF89A8EA970"
+			rewards: [
+				{
+					id: "57B6C26829FF2A30"
+					item: "goety:alarming_charm"
+					type: "item"
+				}
+				{
+					id: "6B2863A48BA768A5"
+					item: "goety_revelation:ice_focus"
+					type: "item"
+				}
+			]
+			subtitle: "&b【链接宝石】可代替【灵魂图腾】，直接调用灵魂方舟的能量"
+			tasks: [
+				{
+					id: "05CC12B83D3D620F"
+					item: "goety:arca"
+					type: "item"
+				}
+				{
+					id: "22D1A22B3BCD49C9"
+					item: "goety:soul_transfer"
+					type: "item"
+				}
+			]
+			title: "灵魂方舟与链接宝石"
+			x: 20.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["289F48DEB62D1448"]
+			description: [
+				"&e捕捉后对【诅咒之笼】右键，【诅咒之笼】就会变为【刷怪笼】"
+				""
+				"&b（刷怪笼可以被精准采集打包带走哦）"
+			]
+			id: "510F9340A4DEA209"
+			rewards: [
+				{
+					id: "2719993C390E4456"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					id: "03548FE66B43CFD7"
+					item: "goety:ignite_focus"
+					type: "item"
+				}
+			]
+			subtitle: "&e右击刷怪笼进行捕捉"
+			tasks: [{
+				id: "2BC276833B3ABBB9"
+				item: "goety:flame_capture"
+				type: "item"
+			}]
+			x: 15.0d
+			y: -6.5d
+		}
+		{
+			id: "38C6842CA9565927"
+			rewards: [{
+				id: "7A6ED7199B2C47E4"
+				item: "goety_cataclysm:death_laser_focus"
+				type: "item"
+			}]
+			subtitle: "&e概率生成在末地城或者由【下界合金巨兽】/【末影守卫】掉落"
+			tasks: [{
+				id: "22393653D702850F"
+				item: "goety:shrouded_blueprint"
+				type: "item"
+			}]
+			x: 24.5d
+			y: -4.0d
+		}
+		{
+			dependencies: ["38C6842CA9565927"]
+			description: [
+				"&e召唤祭坛详见黑暗秘典"
+				"&e&n战争卷轴提到了一种比红石傀儡还要强大的机械变体...还提到一些学者如何记录了仿制那种怪兽..."
+				""
+				"&c在古代，一位君王的引导下，制造的强大傀儡兵器【红石巨兽】远比任何傀儡更强大，更可怕，但出于未知原因【红石巨兽】被放逐到极远之地。它的建造过程被留了下来，被复制了多份......"
+				""
+				""
+				"&e【红石巨兽】：最强仆从之一。攻击造成百分比伤害，限制受到的伤害，血量高。使用红石块回血"
+				""
+				"{image:kubejs:textures/aaaa/hongshijushou.png width:180 height:150 align:1}"
+				""
+				""
+				"&6【下界合金巨兽】：高阶仆从之一"
+				"&6拥有6000点血量（无限制伤害，百分比伤害高于红石巨兽）其它方面与BOSS【下界合金巨兽】相同"
+				"{image:kubejs:textures/aaaa/xaijiehejinjushou.png width:100 height:100 align:1}"
+			]
+			id: "2D229AE206CD04AB"
+			rewards: [{
+				id: "48B5BB036E5D358A"
+				type: "xp_levels"
+				xp_levels: 50
+			}]
+			subtitle: "&e解锁召唤物，【红石巨兽】【下界合金巨兽】"
+			tasks: [{
+				id: "55801CD0D7280750"
+				item: "goety:terminus_scroll"
+				type: "item"
+			}]
+			x: 26.5d
+			y: -3.0d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			description: [
+				"&6你可以用DNA采集器&c死灵法师的DNA&6，并放到&c生物笼&6来自动生产禁书合成材料，&6教程链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"78494C2624BB0151\" } }"
+				"&7（死灵法师常见于结构【要塞（原版）】中，和竞技场在挑战中。同时，死灵法师还存在多种变体）"
+				""
+				"&6也可以通过击败&c困难模式袭击&6事件中的&c【红石巨兽】&6和&c【红石傀儡】&6来快速刷取合成材料，也可以在古城开箱获得合成材料"
+			]
+			id: "78209CB47033C397"
+			rewards: [{
+				id: "5319102BEACB5367"
+				type: "xp_levels"
+				xp_levels: 40
+			}]
+			subtitle: "&d通往不朽的奥秘"
+			tasks: [{
+				id: "3D1B94790C0DC9BF"
+				item: "goety:forbidden_scroll"
+				type: "item"
+			}]
+			x: 21.5d
+			y: 0.5d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			id: "43D71EE103809338"
+			rewards: [{
+				id: "5C9274FE600F4349"
+				item: "goety:slimy_focus"
+				type: "item"
+			}]
+			subtitle: "&e箭雨聚晶的升级版"
+			tasks: [{
+				id: "0558B3168937032D"
+				item: "goety:blizzard_focus"
+				type: "item"
+			}]
+			x: 14.5d
+			y: -0.5d
+		}
+		{
+			id: "673E1F38437DB0E3"
+			rewards: [{
+				id: "37FA7CE4B614E8E6"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e用炽焰号角来召唤【凋灵死灵法师】&e中级BOSS"
+			tasks: [{
+				id: "07EC2676F1B53AE6"
+				item: "goety:blazing_horn"
+				type: "item"
+			}]
+			title: "&a凋灵死灵法师"
+			x: 12.5d
+			y: -4.5d
+		}
+		{
+			id: "7BAA63E78F4904AD"
+			subtitle: "&d在林地府邸使用&f黑暗卷轴&d，召唤&c高级BOSS·灾厄宰相。击败后可获得灵魂红宝石"
+			tasks: [{
+				id: "3ABF1463BFDD9ACA"
+				item: "goety:dark_scroll"
+				type: "item"
+			}]
+			title: "&c灾厄宰相"
+			x: 9.5d
+			y: 0.5d
+		}
+		{
+			dependencies: ["67636827EE84120B"]
+			description: [
+				"&e使用任意诡厄的魔杖左击仆从更改模式"
+				""
+				"&cshift+左键杀死仆从"
+				""
+				"&b通过聚晶召唤的仆从大多有寿命限制"
+				""
+				"&a命令聚晶：&n将命令聚晶装在魔杖上，左击仆从进行选择，右键方块或者生物，仆从将移动至指定目标。shift+右键空气解除绑定"
+				""
+				"&e命令呼号：&n设置周围仆从模式，右键方块指挥仆从到指定的地方"
+				"&7（巡逻模式、已经被命令聚晶指定的仆从、或是已与坚守之书绑定的仆从不会听从命令呼号的指挥）"
+				""
+				"&6亲善之书/怨恨之书：可以使仆从不攻击/攻击特定目标"
+			]
+			id: "1A95C5BF8E95DAF7"
+			rewards: [
+				{
+					id: "30FC0E805FE9A080"
+					item: "goety:command_horn"
+					type: "item"
+				}
+				{
+					id: "02A5420982FE8B01"
+					item: "goety:grimoire_of_grudges"
+					type: "item"
+				}
+				{
+					id: "344A1CB1B77789DA"
+					item: "goety:grimoire_of_goodwill"
+					type: "item"
+				}
+				{
+					id: "0600AAA1B157A22B"
+					item: "goety:grimoire_of_grounding"
+					type: "item"
+				}
+			]
+			subtitle: "&a使用魔杖左键仆从，就可以调整模式哦！&cshift+左键杀死仆从"
+			tasks: [{
+				id: "372852C844B7FB56"
+				item: "goety:command_focus"
+				type: "item"
+			}]
+			title: "&f关于仆从"
+			x: 19.0d
+			y: -8.0d
+		}
+		{
+			dependencies: ["582052F6A2978360"]
+			id: "39E1E305D1DEB44F"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "50F81319B318AD13"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&d黑暗铁砧可以突破装备的魔法等级上限"
+			tasks: [{
+				id: "02D38380C7E2DA4E"
+				item: "goety:dark_anvil"
+				type: "item"
+			}]
+			x: 11.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			id: "2588A031BB443DE6"
+			rewards: [{
+				id: "41C8C19629CC92FC"
+				item: "goety:bombardment_focus"
+				type: "item"
+			}]
+			subtitle: "&e右键按住可以进行大范围照明（超有用！"
+			tasks: [{
+				id: "34DDE975384ECA00"
+				item: "goety:illuminate_focus"
+				type: "item"
+			}]
+			x: 15.0d
+			y: -1.5d
+		}
+		{
+			dependencies: ["2C0EAEB6DD706E3B"]
+			description: [
+				"&6合成&e破碎之环&6需要&c大量灵魂能量&6，需要使用&c灵魂方舟，灵魂方舟链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1923ECF89A8EA970\" } }"
+				""
+				"&e召唤隐藏BOSS&5冥教教主——无底坑之王亚波伦的核心道具"
+				""
+				"&b注意！&c于下界召唤的亚波伦&b会在&d【末日终极】&b阶段&d &l会没收玩家的盔甲&b死后将掉落回来&7（防止你的甲被射爆）"
+				""
+				"&e先打主亚哦！不能越级召唤下亚"
+				""
+				"&e于主世界召唤为【主亚】，难度较低"
+				"&e于下界召唤为【下亚】，难度极高"
+				""
+				"&b建议用【铁链】绑在墙上或别的固定住使徒，进行献祭"
+				"{image:kubejs:textures/aaaa/posuizhihuan.png width:200 height:170 align:1}"
+				"{image:kubejs:textures/aaaa/dengshenchangjie5.png width:200 height:180 align:1}"
+				"&b（海神套装也可以直接召唤雷暴天气）"
+			]
+			id: "7A52223246212E23"
+			subtitle: "&e使徒2.5％掉落，可合成，用于召唤&5？？？"
+			tasks: [{
+				id: "2794C76C58BC2917"
+				item: "goety_revelation:broken_halo"
+				type: "item"
+			}]
+			title: "&e破碎之环"
+			x: 27.5d
+			y: 0.5d
+		}
+		{
+			dependencies: ["7A52223246212E23"]
+			id: "5C8AA47F643AD613"
+			subtitle: "戴上它，你就是无敌的王"
+			tasks: [{
+				id: "242540CE85CAEB41"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:gold_crown"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "&e铁魔法的终极大杀器"
+			x: 27.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["7A52223246212E23"]
+			description: [
+				"&6极其强大的boss，拥有超高机动性和恢复能力，会召唤大量仆从，存在大量的特殊技能。"
+				""
+				"&e要先打主亚哦！不能越级通过仪式召唤下亚"
+				""
+				"{image:kubejs:textures/aaaa/nianghuayabolun.png width:150 height:150 align:1}"
+				"&e于主世界召唤为【主亚】，难度较低"
+				""
+				"&e于下界召唤为【下亚】，难度极高"
+				"&a推荐道具&e【神圣的加护】&a，在地狱可以获得15s无敌，且无视所有负面buff   &f任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"25FD5E440476CF5C\" } }"
+				""
+				"&e关于【下界·亚波伦】的最后阶段："
+				""
+				"【末日终极】：&6没收玩家的盔甲,  &7并强制还原玩家的数值，封锁右键（拔刀剑除外）。清除箭矢，药水这类实体。关闭自己的回血和召唤能力"
+				""
+				"&d同时发射无视无敌帧，2000伤害的机枪箭雨"
+				""
+				"【劲爆尾杀】：&c在三秒内展开可以秒杀一切的结界。需要玩家在三秒内远离亚波伦展开的结界。在结界消失后，挑战将结束"
+			]
+			hide: true
+			id: "13326026494399C4"
+			rewards: [{
+				count: 3
+				id: "11C413862E2F1787"
+				item: "goety_revelation:quietus_star"
+				type: "item"
+			}]
+			size: 1.5d
+			subtitle: "&b注意！&c于下界召唤的亚波伦&b会在&d【末日终极】&b阶段&d &l会没收玩家的盔甲&b死后将掉落回来&7（防止你的甲被射爆）"
+			tasks: [{
+				advancement: "goety_revelation:kill_apollyon"
+				criterion: ""
+				icon: "goety_revelation:ascension_halo"
+				id: "22C7CA1A3E55C4A1"
+				title: "&e隐藏BOSS&a·&5击败冥教教主——无底坑之王亚波伦"
+				type: "advancement"
+			}]
+			x: 29.5d
+			y: 0.5d
+		}
+		{
+			dependencies: ["13326026494399C4"]
+			id: "63B59C4401A6660A"
+			subtitle: "&e亚波伦同款秒杀结界"
+			tasks: [{
+				id: "67EF06C95AAE5C68"
+				item: "goety_revelation:revelation_focus"
+				type: "item"
+			}]
+			title: "&e隐藏任务·炼狱聚晶"
+			x: 29.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["13326026494399C4"]
+			description: ["&e注意：巫妖模式无法佩戴晋升之环，会直接吞掉"]
+			id: "0464D4DD2D426E50"
+			rewards: [
+				{
+					auto: "invisible"
+					command: "/title @p title {\"text\":\"登神阶梯已开启....\",\"color\":\"red\"}"
+					elevate_perms: true
+					exclude_from_claim_all: true
+					id: "225A746A01EA6F0F"
+					team_reward: false
+					type: "command"
+				}
+				{
+					id: "5FCA2D0241E2E4DC"
+					item: {
+						Count: 1b
+						id: "patchouli:guide_book"
+						tag: {
+							"patchouli:book": "goety:black_book"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "218B08388FC480B1"
+					item: "goety_revelation:god_forging_scroll"
+					type: "item"
+				}
+			]
+			subtitle: "成为新的使徒.....神的眷属"
+			tasks: [{
+				id: "2E4773139692CB78"
+				item: "goety_revelation:ascension_halo"
+				type: "item"
+			}]
+			title: "&e隐藏任务&a·&5新的使徒诞生了......"
+			x: 31.5d
+			y: 0.5d
+		}
+		{
+			dependencies: ["069AD958E1EC51BB"]
+			description: ["{image:kubejs:textures/aaaa/erbankuangkuang.png width:190 height:90 align:1}"]
+			id: "5B9D1C8BF2E2BCEA"
+			subtitle: "&e综合能力最强的护甲"
+			tasks: [
+				{
+					id: "6E35B3C1F4238846"
+					item: {
+						Count: 1b
+						id: "goety_revelation:apocalyptium_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "7778F634C3B8C649"
+					item: {
+						Count: 1b
+						id: "goety_revelation:apocalyptium_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "7AD0917ACFC291C5"
+					item: {
+						Count: 1b
+						id: "goety_revelation:apocalyptium_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "583D5BFDAED2EB13"
+					item: {
+						Count: 1b
+						id: "goety_revelation:apocalyptium_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&e隐藏任务·&e神灵金套装"
+			x: 35.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["0464D4DD2D426E50"]
+			id: "069AD958E1EC51BB"
+			subtitle: "&e神·金"
+			tasks: [{
+				id: "6906D8FC0B63C39E"
+				item: "goety_revelation:apocalyptium_ingot"
+				type: "item"
+			}]
+			title: "&e隐藏任务·&e神灵金属锭"
+			x: 33.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["7A52223246212E23"]
+			description: [
+				"&e佩戴&6【晋升之环】&e，将99%负面效果给予被射中的敌人"
+				""
+				"&e佩戴&b【终末之环】&e，将变为三发弓模式"
+				""
+				"&7&n潜行释放箭矢可以穿透远程防御和物理免疫。"
+			]
+			id: "6DAE76B5A1AC0B42"
+			subtitle: "&e右键拉弓可以全自动射击，蹲下即可半自动"
+			tasks: [{
+				id: "67900F782586B98A"
+				item: {
+					Count: 1b
+					id: "goety_revelation:bow_of_revelation"
+					tag: {
+						Damage: 0
+						Unbreakable: 1b
+					}
+				}
+				type: "item"
+			}]
+			title: "&e天启长弓"
+			x: 27.5d
+			y: 2.0d
+		}
+		{
+			dependencies: ["069AD958E1EC51BB"]
+			description: [
+				"&e&n北欧神话中奥丁的武器。右键可投掷虚影"
+				""
+				"&e&n被击中的敌人将获得【震撼buff（强控）】"
+				""
+				"&n&e潜行右键投掷本体，对命中范围内敌人给予震撼buff。并使用地狱之火灼烧"
+				""
+				"&b不洁之血由【使徒】掉落，也可使用至纯之血"
+			]
+			id: "64E00459503E25E3"
+			subtitle: "&e命运之矛"
+			tasks: [{
+				id: "746DD0A5067E00B4"
+				item: {
+					Count: 1b
+					id: "goety_revelation:gungnir"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "&e隐藏任务·神矛"
+			x: 34.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["13326026494399C4"]
+			id: "0058DF5FD508C91A"
+			subtitle: "&e拥有非常恐怖的免伤"
+			tasks: [{
+				id: "6C8ACC3DDD5B2369"
+				item: "goety_revelation:dimensional_will"
+				type: "item"
+			}]
+			title: "&e隐藏任务·维度意志"
+			x: 29.5d
+			y: 2.0d
+		}
+		{
+			dependencies: ["2C0EAEB6DD706E3B"]
+			description: [
+				"&e颓废之书在古城开箱获得，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"29472958A6E98FAC\" } }"
+				""
+				"&e潮汐利爪链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"207E75ED048F0A4E\" } }"
+				""
+				"&e炼狱锻锤链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2D763D90223C9A51\" } }"
+				""
+				"&e塔罗牌：塔楼链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"394EEACEFDEBC02E\" } }"
+				""
+				"&e千恋万花链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"303D0DA85C81013A\" } }"
+				""
+				"&e注意：耀魂碎片只能精炼到50次，之后要用更高级的耀魂材料"
+			]
+			id: "5A11ED1558BEDB4F"
+			rewards: [
+				{
+					count: 4
+					id: "772870186EF0AB42"
+					item: {
+						Count: 1b
+						id: "slashblade:proudsoul_sphere"
+						tag: {
+							SpecialAttackType: "yakumoblade:wither_attack"
+						}
+					}
+					title: "衰破·妖剑百幻"
+					type: "item"
+				}
+				{
+					id: "0C373D3B1B15E63F"
+					item: "celestial_artifacts:thunder_ring"
+					type: "item"
+				}
+				{
+					auto: "disabled"
+					exclude_from_claim_all: true
+					id: "577A6A761D289F88"
+					item: "goety:redstone_monstrosity_spawn_egg"
+					team_reward: false
+					type: "item"
+				}
+			]
+			subtitle: "&e可斩杀神明之剑"
+			tasks: [{
+				disable_toast: true
+				id: "13A5796D048CE8C2"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							AttackAmplifier: 0.0f
+							BladeUniqueId: [I;
+								192851891
+								2042905950
+								-1717901002
+								1180092458
+							]
+							ComboRoot: "slashblade:standby"
+							Damage: 0
+							ModelName: "slashblade:model/named/yasha/yasha_true.obj"
+							RepairCounter: 0
+							SpecialAttackType: "resonantisshelomoh:alloverex"
+							SpecialEffects: [
+								"yakumoblade:eternal"
+								"resonantisshelomoh:compassionfortorture"
+								"yakumoblade:highfrequency"
+							]
+							StandbyRenderType: 2b
+							SummonedSwordColor: -256
+							SummonedSwordColorInverse: 0b
+							TargetEntity: 0
+							TextureName: "yakumoblade:model/awolf/undead_slash.png"
+							_onClick: 0b
+							adjustXYZ: [
+								0.0d
+								0.0d
+								0.0d
+							]
+							baseAttackModifier: 26.0f
+							currentCombo: "slashblade:none"
+							fallDecreaseRate: 0.0f
+							isBroken: 0b
+							isDefaultBewitched: 1b
+							isSealed: 0b
+							killCount: 0
+							lastActionTime: 0L
+							maxDamage: 180
+							proudSoul: 0
+							translationKey: "item.yakumoblade.undead_slash"
+						}
+					}
+					id: "slashblade:slashblade"
+					tag: {
+						bladeState: {
+							TextureName: "yakumoblade:model/awolf/undead_slash.png"
+							translationKey: "item.yakumoblade.undead_slash"
+						}
+					}
+				}
+				match_nbt: true
+				type: "item"
+				weak_nbt_match: true
+			}]
+			x: 26.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["2C0EAEB6DD706E3B"]
+			icon: "goety_revelation:broken_halo"
+			id: "073BFEB8EB31DEE3"
+			rewards: [{
+				auto: "disabled"
+				exclude_from_claim_all: true
+				id: "7EB5BF46474BF939"
+				item: "goety_revelation:broken_halo"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "&e暗夜信标由下界使徒掉落"
+			tasks: [
+				{
+					consume_items: true
+					count: 2L
+					id: "72558D2F48BB3252"
+					item: { Count: 2b, id: "goety:unholy_blood" }
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "5F6000B7B301704C"
+					item: "goety:night_beacon"
+					type: "item"
+				}
+			]
+			title: "&e购买破碎之环"
+			x: 24.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["13326026494399C4"]
+			description: ["&e【下界·亚波伦】首次死亡固定掉落【天启七印】，之后并不会掉落，只能兑换"]
+			icon: {
+				Count: 1b
+				id: "goety_revelation:revelation"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "15464DDF56BCA9C7"
+			rewards: [{
+				id: "0A40DC6A33D36D10"
+				item: {
+					Count: 1b
+					id: "goety_revelation:revelation"
+					tag: {
+						Damage: 0
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "兑换天启七印"
+			tasks: [
+				{
+					consume_items: true
+					count: 10L
+					id: "6A5485D1858B0F56"
+					item: "goety_revelation:ascension_halo"
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "1856E72D4F9C39CC"
+					item: {
+						Count: 1b
+						id: "goety_revelation:the_needle"
+						tag: {
+							isRealNeedle: 1b
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&b&c天启七印"
+			x: 31.0d
+			y: -0.5d
+		}
+		{
+			dependencies: ["13326026494399C4"]
+			icon: {
+				Count: 1b
+				id: "goety_revelation:revelation"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "403A3933513870C2"
+			rewards: [{
+				id: "5B511D2CE3B3B58C"
+				item: {
+					Count: 1b
+					id: "goety_revelation:revelation"
+					tag: {
+						Damage: 0
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "你可以用耐久低的天启七印，来换一个满耐久的"
+			tasks: [
+				{
+					consume_items: true
+					id: "6FA538F128696BD6"
+					item: {
+						Count: 1b
+						id: "goety_revelation:revelation"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "1ED3724D50FDF52D"
+					item: "goety_revelation:ascension_halo"
+					type: "item"
+				}
+			]
+			x: 31.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["7FFDB8F30756C9F9"]
+			description: [
+				"祭坛是举行仪式的基础！"
+				""
+				"&a注意事项1：记得将刷怪笼中的链接宝石换掉使用哦。"
+				"&c注意事项2：安息仪式召唤会消耗灵魂沙火焰，没有火焰是无法召唤的"
+				"&3注意事项3：祭坛有水是因为深渊仪式的要求，可以用桶蹲下右键收起来"
+				""
+				"&2主世界祭坛：搜索【主世界复合祭坛】"
+				"{image:kubejs:textures/aaaa/zhushijiejitan.png width:100 height:100 align:1}"
+				"&c下界祭坛：搜索【下界复合祭坛】"
+				"&c（下界祭坛在基岩之上，可以用旅人之钟来穿越基岩）"
+				"{image:kubejs:textures/aaaa/xiajiejitan.png width:100 height:100 align:1}"
+				""
+				"&d末地祭坛：搜索【末地复合祭坛】"
+				"{image:kubejs:textures/aaaa/modifuheyishi.png width:100 height:100 align:1}"
+			]
+			id: "12866ED71E591970"
+			rewards: [
+				{
+					id: "5C315CCF5D5FD204"
+					item: "goety:command_focus"
+					type: "item"
+				}
+				{
+					id: "5191AA4BB2BE28B0"
+					item: "goety:floral_scroll"
+					type: "item"
+				}
+			]
+			subtitle: "&6指南针搜索&d【复合祭坛】&6即可寻找"
+			tasks: [{
+				id: "2A1EBADB195A1D62"
+				structure: "celestial_mooncake:composite_altar3"
+				type: "structure"
+			}]
+			title: "&a寻找野生的大型多种类祭坛"
+			x: 16.0d
+			y: -5.0d
+		}
+		{
+			dependencies: ["069AD958E1EC51BB"]
+			description: [
+				"&6&n断曜流光攻击可&c无视无敌标签&6，且该武器&c伤害无法被减免&7（除非它的防御代码更高级）"
+				""
+				"&n&6断曜流光攻击附带诅咒BUFF，&c令目标无法回血"
+				""
+				"&n&6断曜流光暴击时，概率降低对方3%当前生命和2%的最大生命&7（至多五次）"
+				""
+				"&b&n潜行左键可以进行突刺"
+				""
+				"&n&d被断曜流光击杀不会触发任意形式的复活和锁血&7（大部分复活和锁血都没办法）"
+			]
+			id: "5C1DA371834D958E"
+			subtitle: "&e【将目标导向命定的终末】"
+			tasks: [{
+				id: "625E9940CE1FBE37"
+				item: {
+					Count: 1b
+					id: "goety_revelation:valettein"
+					tag: {
+						Damage: 0
+						ISB_Spells: {
+							data: [
+								{
+									id: "irons_spellbooks:healing_circle"
+									index: 0
+									level: 10
+									locked: 1b
+								}
+								{
+									id: "irons_spellbooks:wall_of_fire"
+									index: 1
+									level: 5
+									locked: 1b
+								}
+								{
+									id: "irons_spellbooks:angel_wing"
+									index: 2
+									level: 5
+									locked: 1b
+								}
+							]
+							maxSpells: 3
+							mustEquip: 0b
+							spellWheel: 1b
+						}
+					}
+				}
+				type: "item"
+			}]
+			title: "&e隐藏任务：不可挡之刃"
+			x: 34.0d
+			y: -0.5d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			id: "38D8BAAEFF71DD5D"
+			rewards: [
+				{
+					id: "4D83F41023FC859F"
+					item: "goety:rotting_focus"
+					type: "item"
+				}
+				{
+					id: "08C5BDC65BF272F6"
+					item: "goety:osseous_focus"
+					type: "item"
+				}
+			]
+			subtitle: "&a必备道具！天空/大地仪式制作"
+			tasks: [
+				{
+					id: "1B07DA5616AEEA5A"
+					item: "goety_revelation:gold_feather"
+					type: "item"
+				}
+				{
+					id: "339BD67B94E4086F"
+					item: "goety:ominous_charm"
+					type: "item"
+				}
+				{
+					id: "63D7D7968BC4A9C2"
+					item: {
+						Count: 1b
+						id: "goety:iron_ice_axe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5801236927EB281C"
+					item: "goety:wayfarers_belt"
+					type: "item"
+				}
+			]
+			title: "好用的道具！"
+			x: 19.0d
+			y: -1.5d
+		}
+		{
+			dependencies: ["67636827EE84120B"]
+			description: [
+				"&e1.将仆从设置为不为跟随模式后，使用【指路石】shift+右键袭击者箱子进行绑定"
+				""
+				"&b2.使用绑定的指路石右键【囚徒】，即可指定囚徒使用绑定的袭击者箱子（囚徒可使用普通箱子里的镐）"
+				""
+				"&a3.将【镐子】右键交给囚徒，囚徒就会自己采集周围的矿石，在满包（8组）或者镐爆掉后放到箱子中"
+				""
+				"&6注意：&c&n囚徒每挥动五次获得一个对应的矿石，且囚徒采集不会破坏掉矿石，但不能越过镐子的等级进行采集（比如铁镐不能采集远古残骸）如果周围有危险，囚徒会停止采矿并逃离。如果囚徒变得傻傻的，用K键收到背包里，再放出来就好了"
+				""
+				"&e使用【木棍】右键仆从可以让仆从丢掉携带的物品"
+				""
+				"&e如果在挖矿，会缴纳所有的矿石（处于警戒模式会把矿石放到袭击者箱子里）"
+				""
+				"&e更改为跟随模式也会缴纳所有的矿石"
+				""
+				"&7（奴役村民会影响村民的好感，从而提高交易价格）"
+				"{image:kubejs:textures/aaaa/qiutu.png width:100 height:100 align:1}"
+			]
+			id: "35A98AA7CA631CFA"
+			rewards: [
+				{
+					id: "0D6AE8BBE4565FA3"
+					item: "goety:bouncy_bubble_focus"
+					type: "item"
+				}
+				{
+					id: "255D6256BBC4380E"
+					item: "goety:arrow_rain_focus"
+					type: "item"
+				}
+			]
+			subtitle: "&a使用【不祥镣铐】右键村民或流浪商人，即可将他们转化为【囚徒】"
+			tasks: [
+				{
+					id: "5CEA471FBF99AFBF"
+					item: "goety:ominous_shackles"
+					title: "不详镣铐（我真得控制你了）"
+					type: "item"
+				}
+				{
+					id: "2424297237F2EECF"
+					item: "goety:waystone"
+					type: "item"
+				}
+				{
+					id: "0B5FCFDC1BE263BC"
+					item: {
+						Count: 1b
+						id: "itemfilters:tag"
+						tag: {
+							value: "minecraft:pickaxes"
+						}
+					}
+					title: "囚徒可使用以下镐子"
+					type: "item"
+				}
+				{
+					id: "3C42B7D7E2CEB664"
+					item: "goety:raiding_chest"
+					type: "item"
+				}
+			]
+			title: "&eAAA奴役囚徒手册【勇敢的木~】"
+			x: 19.0d
+			y: -11.0d
+		}
+		{
+			dependencies: ["5F4632BDFFF94E95"]
+			id: "7F8A6966BA54D81B"
+			subtitle: "&a将【灵魂光聚晶】升级为【灵魂束聚晶】"
+			tasks: [{
+				id: "09BB6909A7B0FF04"
+				item: "goety:soul_bolt_focus"
+				type: "item"
+			}]
+			x: 17.0d
+			y: -11.0d
+		}
+		{
+			dependencies: ["67636827EE84120B"]
+			description: ["&e此类聚晶可被后续获得的【龙息戒指】强化"]
+			id: "70AF30763F284BCA"
+			rewards: [
+				{
+					count: 4
+					id: "78650CDF3FFE2326"
+					item: "goety:jade"
+					type: "item"
+				}
+				{
+					count: 6
+					id: "6D6F2380A9F9A8E8"
+					item: "minecraft:soul_sand"
+					type: "item"
+				}
+				{
+					count: 4
+					id: "56B5544907F87A1E"
+					item: "minecraft:quartz"
+					type: "item"
+				}
+			]
+			subtitle: "合成炎呼/炎呼聚晶"
+			tasks: [{
+				id: "4410401D44C298C3"
+				item: {
+					Count: 1b
+					id: "itemfilters:or"
+					tag: {
+						items: [
+							{
+								Count: 1b
+								id: "goety:fire_breath_focus"
+							}
+							{
+								Count: 1b
+								id: "goety:frost_breath_focus"
+							}
+						]
+					}
+				}
+				title: "任意一种"
+				type: "item"
+			}]
+			title: "合成呼吸类聚晶"
+			x: 20.5d
+			y: -9.5d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			id: "0961C9D3F49D2387"
+			rewards: [{
+				id: "3D3A1F3DFBBD367B"
+				item: "goety_cataclysm:storm_serpent_focus"
+				type: "item"
+			}]
+			subtitle: "&e灵魂束聚晶的升级版，命中后会持续伤害聚晶命中的位置"
+			tasks: [{
+				id: "209682651BA8A30C"
+				item: "goety:magic_bolt_focus"
+				type: "item"
+			}]
+			x: 16.0d
+			y: -2.0d
+		}
+		{
+			dependencies: ["67636827EE84120B"]
+			description: [
+				"&a铁皮聚晶&d可增加防御力"
+				""
+				"&2穿凿聚晶&7可用于远距离挖掘"
+				""
+				"&9&n冰刺    &c火球    &3水柱   &9水鞭&f用于输出"
+				""
+				"&6感应聚晶，&6可标记周围地面上的实体"
+			]
+			id: "2E4369171D15207B"
+			rewards: [
+				{
+					count: 2
+					id: "3FDF12F1AB0FF873"
+					item: {
+						Count: 1b
+						id: "goety:rampaging_axe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "47B3F46705251BD8"
+					item: "goety:ominous_charm"
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "01CB1E8AB3BAAAB2"
+				item: {
+					Count: 1b
+					id: "itemfilters:or"
+					tag: {
+						items: [
+							{
+								Count: 1b
+								id: "goety:fireball_focus"
+							}
+							{
+								Count: 1b
+								id: "goety:iron_hide_focus"
+							}
+							{
+								Count: 1b
+								id: "goety:ice_spike_focus"
+							}
+							{
+								Count: 1b
+								id: "goety:sensing_focus"
+							}
+							{
+								Count: 1b
+								id: "goety:burrowing_focus"
+							}
+							{
+								Count: 1b
+								id: "goety:updraft_focus"
+							}
+							{
+								Count: 1b
+								id: "goety:water_jet_focus"
+							}
+							{
+								Count: 1b
+								id: "goety:water_whip_focus"
+							}
+						]
+					}
+				}
+				title: "聚晶"
+				type: "item"
+			}]
+			title: "可合成的基础聚晶推荐"
+			x: 22.0d
+			y: -9.5d
+		}
+		{
+			dependencies: ["57B4F2ABD874B5C1"]
+			description: [
+				"&e注意：仪式被打断不会返还销毁的物品&7（比如能量不足又或举行亡灵仪式的时天亮了）"
+				""
+				"&n&l&e此任务将教你如何使用仪式合成物品，使用&c【原力聚晶】&e作为例子"
+				""
+				"&d1.&n第一步：&6寻找一处&e【复合祭坛】&6或者手动搭建&e【魔法仪式】&6祭坛"
+				""
+				"&d2.&n第二步：&6领取此任务的奖励，将领取的奖励摆放在仪式的基座方块上&7（可用JEI查看合成用途）"
+				""
+				"&d3.&n第三步：&6将含有灵魂能量的"
+				"&n&e【图腾/链接了灵魂方舟的链接宝石】&n&6放置于&e【诅咒之笼】&6中，为仪式提供能量（必须有能量）"
+				""
+				"&d4.第四步：&6&n使用核心材料右键祭坛开始仪式，等待&c【原力聚晶】&6合成完毕"
+				""
+				"{image:kubejs:textures/aaaa/yishijiaocheng.png width:190 height:110 align:1}"
+				"&7（注：魔法仪式只是众多仪式中的一种，教程选用了【原力聚晶】，原力聚晶需要魔法仪式来合成）"
+				""
+				"&d第五步：&6仪式成功进行"
+				""
+				"{image:kubejs:textures/aaaa/yishichenggonghecheng.png width:190 height:110 align:1}"
+				""
+				"🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖🐖"
+				""
+				"&a可视化GUI的使用方法："
+				""
+				"&e你也可以空手右键祭坛，打开祭坛gui"
+				""
+				"{image:kubejs:textures/aaaa/heijitangui.png width:140 height:100 align:1}"
+				""
+				"&e打开后在下方搜索你要合成的物品，点开，再点导入的+号"
+				""
+				"{image:kubejs:textures/aaaa/jeiliandongguil.png width:190 height:140 align:1}"
+				""
+				"&e就可以一键放置物品栏内物品。"
+				"&7（如果你装了精致存储DLC，可以一键放置无线终端内物品）"
+			]
+			id: "5424A80D9F8F7788"
+			rewards: [
+				{
+					id: "2DC2B764CF3D0003"
+					item: "minecraft:diamond"
+					type: "item"
+				}
+				{
+					id: "4CCC90E5E4077360"
+					item: "minecraft:gold_ingot"
+					type: "item"
+				}
+				{
+					id: "0FE1C3DEFF4E305B"
+					item: "minecraft:ender_pearl"
+					type: "item"
+				}
+				{
+					id: "025DB428EF89B234"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					count: 2
+					id: "34F5F027941AB4EE"
+					item: "minecraft:quartz"
+					type: "item"
+				}
+				{
+					id: "40A2488931381ACC"
+					item: "minecraft:lead"
+					type: "item"
+				}
+				{
+					id: "5393311BCE49BBCB"
+					item: "minecraft:oak_chest_boat"
+					type: "item"
+				}
+				{
+					id: "038F56985BA14098"
+					item: "goety:empty_focus"
+					type: "item"
+				}
+			]
+			size: 4.0d
+			subtitle: "&d尽情欢愉，堕落者。嘻嘻，又是一个堕落之人......"
+			tasks: [{
+				icon: "goety:dark_altar"
+				id: "370F07DCB1992C5D"
+				observe_type: 0
+				timer: 0L
+				title: "&d观察黑暗祭坛"
+				to_observe: "goety:dark_altar"
+				type: "observation"
+			}]
+			x: 17.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			icon: "goety:frostborn_focus"
+			id: "7E40E68377AF1DA6"
+			rewards: [{
+				id: "2DB7DF1602D6DEB3"
+				item: "goety_cataclysm:desert_raid_focus"
+				type: "item"
+			}]
+			subtitle: "&b可以召唤冰傀儡（物美价廉？！）"
+			tasks: [{
+				id: "2830B092859A0982"
+				item: "goety:frostborn_focus"
+				type: "item"
+			}]
+			title: "&c召唤冰傀儡的聚晶"
+			x: 17.0d
+			y: 3.5d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			id: "60BA0FF2346A46F9"
+			rewards: [{
+				id: "3B788E22A04E54C1"
+				item: "goety_cataclysm:kyria_focus"
+				type: "item"
+			}]
+			subtitle: "&e比较强力的进攻聚晶"
+			tasks: [{
+				id: "0522020368E8FA89"
+				item: "goety:razor_wind_focus"
+				type: "item"
+			}]
+			x: 14.5d
+			y: 1.5d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			id: "2F490EA29DBB3750"
+			rewards: [{
+				id: "2E05745827B00252"
+				item: "goety:ring_of_the_dragon"
+				type: "item"
+			}]
+			subtitle: "&e最好用的跑图聚晶"
+			tasks: [{
+				id: "74BCE5A46AC1575C"
+				item: "goety:launch_focus"
+				type: "item"
+			}]
+			x: 15.0d
+			y: 2.5d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			id: "019A5F1DF15AB36D"
+			rewards: [{
+				id: "24A0CEBBDBE43B19"
+				item: {
+					Count: 1b
+					id: "goety_cataclysm:extinct_flame_focus"
+					tag: { }
+				}
+				type: "item"
+			}]
+			subtitle: "&e将一定范围生物聚集到一起并造成伤害"
+			tasks: [{
+				id: "198178B45CC7CD9A"
+				item: "goety:rupture_focus"
+				type: "item"
+			}]
+			x: 16.0d
+			y: 3.2d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			description: ["&7（可以使用对应类型法杖强化仆从聚晶）"]
+			id: "51648F32C63683E5"
+			rewards: [{
+				id: "369D64336CD7770D"
+				item: "goety_cataclysm:ashen_breath_focus"
+				type: "item"
+			}]
+			subtitle: "&e使用骨质/腐化聚晶升级获得"
+			tasks: [
+				{
+					id: "191FED34FF7AC3DA"
+					item: "goety:vanguard_focus"
+					type: "item"
+				}
+				{
+					id: "1758AA8F960B2B26"
+					item: "goety:blackguard_focus"
+					type: "item"
+				}
+			]
+			title: "&e两大仆从聚晶"
+			x: 19.5d
+			y: -0.5d
+		}
+		{
+			dependencies: ["5424A80D9F8F7788"]
+			id: "179352848D51824A"
+			rewards: [{
+				id: "3C4AC958B92E253F"
+				item: "goety:prisma_beam_focus"
+				type: "item"
+			}]
+			subtitle: "&e便捷末影箱和瞬间移动"
+			tasks: [
+				{
+					id: "2C539865794FEAA3"
+					item: "goety:ender_chest_focus"
+					type: "item"
+				}
+				{
+					id: "176DF19B7E8D5965"
+					item: "goety:blink_focus"
+					type: "item"
+				}
+			]
+			title: "推荐聚晶之，末影聚晶篇"
+			x: 19.0d
+			y: 2.5d
+		}
+	]
+	title: "&d我是个唤魔者！"
+}

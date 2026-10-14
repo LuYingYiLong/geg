@@ -1,0 +1,26 @@
+{
+	id: "5C7846B390C29D33"
+	loot_size: 1
+	order_index: 3
+	rewards: [
+		{
+			command: "/time set 12000"
+			elevate_perms: true
+			title: "傍晚"
+			type: "command"
+		}
+		{
+			command: "/time set 1"
+			elevate_perms: true
+			title: "清晨"
+			type: "command"
+		}
+		{
+			command: "/time set 5000"
+			elevate_perms: true
+			title: "中午"
+			type: "command"
+		}
+	]
+	title: "时间"
+}

@@ -1,0 +1,623 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "d_2"
+	group: "5DFEC790B7E6DAC6"
+	id: "3327453CA400BCD8"
+	images: [{
+		click: ""
+		corner: false
+		dev: false
+		height: 8.0d
+		hover: [ ]
+		image: "kubejs:textures/aaaa/chushuirufu.png"
+		order: -100
+		rotation: 0.0d
+		width: 8.0d
+		x: 0.0d
+		y: 0.0d
+	}]
+	order_index: 3
+	quest_links: [ ]
+	quests: [
+		{
+			id: "20EFD068B5621091"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "2350214F9D6E172A"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "？？？"
+			tasks: [{
+				id: "6A0670C3A5ECB6D6"
+				item: "zunpet:zunpet"
+				type: "item"
+			}]
+			x: 5.0d
+			y: 2.0d
+		}
+		{
+			description: ["{image:kubejs:textures/aaaa/hongsefeiji.png width:150 height:150 align:1}"]
+			id: "2C042634115957C7"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "2CC1C0790DAE5DCF"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "飞行较快的飞机"
+			tasks: [{
+				id: "3F45A324D99BB294"
+				item: "man_of_many_planes:scarlet_biplane"
+				type: "item"
+			}]
+			x: 6.0d
+			y: -1.0d
+		}
+		{
+			description: ["{image:kubejs:textures/aaaa/jienengfeiji.png width:160 height:120 align:1}"]
+			id: "3F5DE6B047430FDF"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "632F45A1686B0FAC"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "节省燃料的飞机"
+			tasks: [{
+				id: "1452721E7DA31607"
+				item: "man_of_many_planes:economy_plane"
+				type: "item"
+			}]
+			x: 7.0d
+			y: -1.0d
+		}
+		{
+			description: [
+				""
+				"{image:kubejs:textures/aaaa/chuanqiangzhizao.png width:100 height:100 align:1}"
+			]
+			id: "5CC700324751F45D"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "097EB30011B8D5C3"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "使方块短暂的消失(穿墙"
+			tasks: [{
+				id: "11860126425119A8"
+				item: "portablehole:portable_hole"
+				type: "item"
+			}]
+			x: 5.5d
+			y: 0.5d
+		}
+		{
+			dependencies: ["7564415DBD20EF0E"]
+			description: [
+				"&7内有三个槽。&6顶端药水槽，&c侧端物品槽，&d底部输出槽"
+				""
+				"                  &7&n演示："
+				""
+				"{image:kubejs:textures/aaaa/zhuyaogongchang.png width:130 height:200 align:1}"
+				"&e需要红石来驱动哦"
+			]
+			id: "2B61B81C3341E5F0"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "7AACBC5654A7E4FF"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "配合红石实现自动化注药（升级版）"
+			tasks: [{
+				id: "2041B8447C7BAA43"
+				item: "add_potion:potion_factory"
+				type: "item"
+			}]
+			x: 2.5d
+			y: -4.5d
+		}
+		{
+			description: [
+				"&7（将剧毒药水注入到食物中，再喂给你的好朋友）"
+				""
+				"&a你可以为永恒牛排注入药水，在食用永恒牛排后不会消耗药水"
+				""
+				"{image:kubejs:textures/aaaa/yonghengniupai.png width:110 height:200 align:1}"
+				"&7(仅作演示，不建议带沙风效果)"
+				""
+				"永恒牛排链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"03CE9BF5AF2DDEC1\" } }"
+			]
+			id: "7564415DBD20EF0E"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "22F42054868A6099"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.3d
+			subtitle: "将药水注入到食物中"
+			tasks: [{
+				id: "55E6CFF7219AD869"
+				item: "add_potion:potion_table"
+				type: "item"
+			}]
+			x: 0.5d
+			y: -5.0d
+		}
+		{
+			description: ["越高级的眼镜，可以看到的矿物种类越多"]
+			id: "623CD2AAAC067B70"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "4744961590B3FFEF"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "矿透眼镜，按下H使用。"
+			tasks: [{
+				id: "626EC1AC6E7D7DBD"
+				item: {
+					Count: 1b
+					id: "minersglasses:coal_glasses"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 6.0d
+			y: 2.0d
+		}
+		{
+			description: [
+				"&e扫帚的升级版，单人无限飞行"
+				""
+				"&b龙首在末地船挖取获得，或者解剖末影龙实体获得"
+				""
+				"{image:kubejs:textures/aaaa/yileinasaozhu.png width:100 height:100 align:1}"
+				"&7（大东北...）"
+			]
+			id: "2DCBB891AA5D79C3"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6E662CA0BD9C5682"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 2.0d
+			subtitle: "飞起来！"
+			tasks: [{
+				id: "5C1C72330E6B134D"
+				item: "elainabroom:elaina_broom"
+				type: "item"
+			}]
+			x: -6.0d
+			y: -2.25d
+		}
+		{
+			description: [
+				"购买颜料链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2FF162A13E0A943D\" } }"
+				""
+				"&6放下画架，并放上画布和调色板"
+				"{image:kubejs:textures/aaaa/yishujia.png width:200 height:130 align:1}"
+				""
+				"&e艺术家工作台可以将多幅画合成一幅画"
+				""
+				"{image:kubejs:textures/aaaa/yishujiagongzuotai.png width:200 height:100 align:1}"
+				"&a完成之后，手持画右键署名。署名后和画框合成就可以挂起来"
+			]
+			id: "1F198929D05C7365"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1EF1D5B1FB9BB586"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.5d
+			tasks: [
+				{
+					id: "1925736E2BAF7F7D"
+					item: "zetter:artist_table"
+					type: "item"
+				}
+				{
+					id: "4657FC612929E520"
+					item: "zetter:easel"
+					type: "item"
+				}
+				{
+					id: "43FF2697156616A8"
+					item: "zetter:canvas"
+					type: "item"
+				}
+				{
+					id: "4AD4AD325F71557A"
+					item: {
+						Count: 1b
+						id: "zetter:palette"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			x: -3.75d
+			y: -3.75d
+		}
+		{
+			description: [
+				"&3圆环的数量取决于信标等级。在距离过远后信标默认会被剔除，所以看不见，在视频设置里面关闭方块剔除，这样，就算离得很远也可以看到哦"
+				""
+				"{image:kubejs:textures/aaaa/xinbiao.png width:160 height:150 align:1}"
+			]
+			id: "08D37095BE2057CC"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "54BE1563B5602950"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&e信标放下后天空中会出现巨大的圆环哦"
+			tasks: [{
+				id: "644FB6109E5B998D"
+				item: "minecraft:beacon"
+				type: "item"
+			}]
+			x: 5.5d
+			y: -2.5d
+		}
+		{
+			description: [
+				"在物品栏右击相机打开GUI"
+				""
+				"{image:kubejs:textures/aaaa/xiangji.png width:180 height:100 align:1}"
+				"相机拍照必须装有胶卷，其它配件都是可选"
+				""
+				"&7装红石灯后，拥有照明灯功能"
+				"&3装望远镜，拍的更远"
+				"&7玻璃板是滤镜"
+				""
+				"&e快门速度越快，照片越暗"
+				""
+				"图中圈出的是快门"
+				"{image:kubejs:textures/aaaa/kuaimen.png width:150 height:150 align:1}"
+			]
+			id: "7506A93E944A671A"
+			rewards: [
+				{
+					id: "36220B9F39213C76"
+					item: "exposure:black_and_white_film"
+					type: "item"
+				}
+				{
+					id: "557EE0FB3A872D43"
+					item: "exposure:color_film"
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "098D6A2D5F12491F"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			size: 2.0d
+			subtitle: "记录精彩瞬间"
+			tasks: [{
+				id: "264AA807BEF2027A"
+				item: {
+					Count: 1b
+					id: "exposure:camera"
+					tag: {
+						Active: 0b
+						CompositionGuide: "none"
+						Filter: {
+							Count: 1b
+							id: "minecraft:glass_pane"
+						}
+						FlashMode: "auto"
+						Selfie: 0b
+						ShutterSpeed: "15"
+						Zoom: 18.000000000000004d
+					}
+				}
+				type: "item"
+			}]
+			x: -6.0d
+			y: 1.5d
+		}
+		{
+			id: "3C1B1920DCDCB2DE"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "06D1C5CB768B637C"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "给箱子和桶上锁"
+			tasks: [
+				{
+					id: "31153EF7126A0F44"
+					item: "ironchests:lock"
+					type: "item"
+				}
+				{
+					id: "0D0A3F7E6A256721"
+					item: "ironchests:key"
+					type: "item"
+				}
+			]
+			x: 6.5d
+			y: 0.5d
+		}
+		{
+			dependencies: ["7506A93E944A671A"]
+			description: [
+				"&6拍完后，取出胶卷，根据jei配合进行“清洗”"
+				""
+				"&6清洗后在 &d暗房&6放入对应材料，选择生成的照片,重复清洗获得一堆照片"
+				""
+				"&6购买染料连接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"6067DF8B83BE7CFD\" } }"
+			]
+			id: "4605E8C432BDACC1"
+			rewards: [
+				{
+					count: 16
+					id: "6C5B549C44A34A71"
+					item: {
+						Count: 1b
+						id: "minecraft:potion"
+						tag: {
+							Potion: "minecraft:awkward"
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 16
+					id: "0497101FE1231DC9"
+					item: {
+						Count: 1b
+						id: "minecraft:potion"
+						tag: {
+							Potion: "minecraft:mundane"
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 16
+					id: "1C770877A5940F6A"
+					item: {
+						Count: 1b
+						id: "minecraft:potion"
+						tag: {
+							Potion: "minecraft:thick"
+						}
+					}
+					type: "item"
+				}
+			]
+			size: 1.5d
+			subtitle: "洗照片"
+			tasks: [{
+				id: "20C6E0AD0A6E77DF"
+				item: "exposure:lightroom"
+				type: "item"
+			}]
+			x: -4.5d
+			y: 3.5d
+		}
+		{
+			dependencies: ["4605E8C432BDACC1"]
+			description: ["{image:kubejs:textures/aaaa/xiangkuang.png width:150 height:150 align:1}"]
+			id: "58D9628367D38D1A"
+			rewards: [{
+				id: "1B6FB790D2818822"
+				item: "exposure:album"
+				type: "item"
+			}]
+			subtitle: "展示照片"
+			tasks: [{
+				id: "42CDB03D5391FCF9"
+				item: "exposure:photograph_frame"
+				type: "item"
+			}]
+			x: -3.0d
+			y: 4.5d
+		}
+		{
+			description: ["&2游戏机运行需要卡带哦，卡带会出现在野生结构的箱子中"]
+			id: "413B264EFBE0B757"
+			rewards: [
+				{
+					id: "598096641F407BD3"
+					item: "gamediscs:game_disc_froggie"
+					type: "item"
+				}
+				{
+					id: "3A073B6493CD95B4"
+					item: "gamediscs:game_disc_blocktris"
+					type: "item"
+				}
+				{
+					id: "4E3316BF0A186FE7"
+					item: "gamediscs:game_disc_flappy_bird"
+					type: "item"
+				}
+			]
+			size: 2.0d
+			subtitle: "game    game"
+			tasks: [{
+				id: "6419861DDC043D78"
+				item: "gamediscs:gaming_console"
+				type: "item"
+			}]
+			x: -1.5d
+			y: -5.0d
+		}
+		{
+			id: "1CEE9B4D4BC4E6FD"
+			size: 1.5d
+			subtitle: "右键绑定当前坐标，使用【末影珍珠】右键权杖充能，右击生物即可传送"
+			tasks: [{
+				id: "7EED5F8E88882909"
+				item: {
+					Count: 1b
+					id: "celestial_artifacts:ender_jump_scepter"
+					tag: {
+						CelestialCore_enderJumpScepter_charging: 11
+						CelestialCore_enderJumpScepter_dimPos: "minecraft:overworld"
+						CelestialCore_enderJumpScepter_xPos: -106.0d
+						CelestialCore_enderJumpScepter_yPos: 77.0d
+						CelestialCore_enderJumpScepter_zPos: 824.0d
+					}
+				}
+				type: "item"
+			}]
+			title: "&e末影折送权杖"
+			x: -6.75d
+			y: -0.25d
+		}
+		{
+			id: "6ED8B854FF01484A"
+			subtitle: "&e附魔会非常吃经验，建议刷个【超级挖掘大师】或者【超级打架大师】附魔"
+			tasks: [{
+				id: "6896BE634EA7300A"
+				item: "minecraft:enchanting_table"
+				type: "item"
+			}]
+			x: 6.5d
+			y: -2.5d
+		}
+		{
+			id: "74A47983E325B5A2"
+			subtitle: "伤害测试器，无限生命值"
+			tasks: [{
+				id: "65F647B8DBCA4607"
+				item: "dummmmmmy:target_dummy"
+				type: "item"
+			}]
+			x: 5.0d
+			y: -4.0d
+		}
+		{
+			disable_toast: true
+			id: "042C87244FA48265"
+			rewards: [{
+				id: "2A5175EBC69E5CA6"
+				item: "farmersdelight:apple_cider"
+				type: "item"
+			}]
+			size: 1.0d
+			subtitle: "&e可以使指定生物免受自己的攻击！"
+			tasks: [{
+				disable_toast: true
+				id: "56F9EE08ABDD7537"
+				item: "philiaamulet:philia_amulet"
+				type: "item"
+			}]
+			x: 6.0d
+			y: -4.0d
+		}
+		{
+			description: [
+				"&n&e1.在网易云中，选择要刻录的音乐"
+				""
+				"{image:kubejs:textures/aaaa/xuanzeyinyuepn.png width:200 height:160 align:1}"
+				""
+				"&n&e2.：鼠标右键，点击分享，选择复制链接"
+				""
+				"{image:kubejs:textures/aaaa/fuzhilianjie.png width:200 height:140 align:1}"
+				""
+				"&e&n3.返回游戏，右键打开唱片刻录机的GUI界面，在框框内进行复制，放入音乐唱片，随后点击【制作唱片】即可完成制作"
+				"{image:kubejs:textures/aaaa/shuruid.png width:150 height:150 align:1}"
+				"&e（若点击只读选项，则之后不可改变此唱片内容）"
+			]
+			id: "6CE2C597D0BB51DE"
+			rewards: [{
+				count: 10
+				id: "50AD7925D3847EE9"
+				item: "netmusic:music_cd"
+				type: "item"
+			}]
+			size: 2.0d
+			tasks: [{
+				id: "5F594C57030D6A3E"
+				item: "netmusic:cd_burner"
+				type: "item"
+			}]
+			x: 0.0d
+			y: 5.3d
+		}
+		{
+			dependencies: ["6CE2C597D0BB51DE"]
+			description: ["{image:kubejs:textures/aaaa/bofangchangpian.png width:160 height:200 align:1}"]
+			id: "5683EA991DEC14F8"
+			rewards: [{
+				id: "6EB3460FBA9664AB"
+				item: {
+					Count: 1b
+					id: "netmusic:music_cd"
+					tag: {
+						NetMusicSongInfo: {
+							artists: ["akulamatata"]
+							name: "伯虎说（基米说）"
+							read_only: 0b
+							time: 155
+							url: "https://music.163.com/song/media/outer/url?id=2746470688.mp3"
+							vip: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			size: 1.7d
+			subtitle: "&6用来播放刻录的唱片"
+			tasks: [{
+				id: "17C59358E4452C89"
+				item: "netmusic:music_player"
+				type: "item"
+			}]
+			x: 2.5d
+			y: 4.8d
+		}
+		{
+			dependencies: ["5683EA991DEC14F8"]
+			description: [
+				"&6和刻录机用法大致相同，需要手动输入时长"
+				""
+				"&a&l1.本地刻录："
+				"&a&n输入完整的电脑文件路径在框框内即可刻录（注：本地刻录其他玩家是听不到的）"
+				""
+				""
+				"&2&l2.网页刻录："
+				"&2&n输入完整的音乐下载链接（后缀为mp3/flac）即可刻录（不要硬改后缀，不生效的）"
+			]
+			id: "7751433AC197A314"
+			rewards: [{
+				id: "1A0DCF73DEAB1442"
+				item: "alexscaves:caramel_apple"
+				type: "item"
+			}]
+			size: 1.4d
+			subtitle: "&6可刻录网络链接和本地音乐"
+			tasks: [{
+				id: "51247E1BC67F485A"
+				item: "netmusic:computer"
+				type: "item"
+			}]
+			x: 4.8999999999999995d
+			y: 3.5d
+		}
+	]
+	title: "&d一些杂物"
+}

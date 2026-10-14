@@ -1,0 +1,2515 @@
+{
+	consume_items: true
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	default_repeatable_quest: true
+	disable_toast: true
+	filename: "551C4FB5BDA47F26"
+	group: "7916E3ED902C17A5"
+	icon: "soulsweapons:chungus_emerald"
+	id: "551C4FB5BDA47F26"
+	images: [
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 12.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/beijingban4.png"
+			rotation: 0.0d
+			width: 21.048d
+			x: 4.0d
+			y: 4.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/fangwu.png"
+			rotation: 0.0d
+			width: 5.05d
+			x: 10.0d
+			y: 6.5d
+		}
+	]
+	order_index: 6
+	quest_links: [ ]
+	quests: [
+		{
+			id: "36AF5D9434D791A4"
+			rewards: [
+				{
+					id: "43C51732DE50DC9D"
+					item: "minecraft:emerald"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "62212CBC36D5D5E9"
+					team_reward: false
+					type: "xp"
+					xp: 20
+				}
+			]
+			tasks: [{
+				id: "6338701E0547B2AA"
+				item: "waystones:waystone"
+				type: "item"
+			}]
+			title: "指路石回收计划"
+			x: -2.0d
+			y: 1.0d
+		}
+		{
+			can_repeat: false
+			id: "26F7A615D014E134"
+			size: 1.5d
+			tasks: [{
+				advancement: "minecraft:husbandry/tame_an_animal"
+				criterion: ""
+				id: "6779FD58F25A7E99"
+				title: "驯服任意生物"
+				type: "advancement"
+			}]
+			title: "&6开启宠物商店"
+			x: 10.0d
+			y: 1.5d
+		}
+		{
+			icon: {
+				Count: 1b
+				id: "tarotcards:temperance"
+				tag: { }
+			}
+			id: "400896F339578643"
+			rewards: [{
+				id: "503B87B28B5F6465"
+				item: {
+					Count: 1b
+					id: "tarotcards:temperance"
+					tag: { }
+				}
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "减少饥饿值消耗"
+			tasks: [{
+				consume_items: true
+				count: 10L
+				id: "2E345F497E547C11"
+				item: "minecraft:emerald_block"
+				type: "item"
+			}]
+			title: "&e塔罗牌：节制"
+			x: -2.0d
+			y: 8.0d
+		}
+		{
+			description: [
+				"&6&n&c长颈兽可在&c幼年时期&6喂食&c孢子花&6驯服，&c成年后不可驯服&6。可以骑乘，最多容纳四人，可配备箱子"
+				"{image:kubejs:textures/aaaa/changjingshou.png width:130 height:150 align:1}"
+				"&6&n成年暴食兽&c攻击时小概率掉落&6他的牙齿，用于合成&c远古大棒&6（会主动攻击🐖🐏🐂等小动物"
+				""
+				"&6&n对成年破碎兽&c使用凿子&6将获得他的尖刺，用于合成&c反伤盾牌"
+			]
+			icon: "wan_ancient_beasts:eater_egg"
+			id: "712E559412275838"
+			rewards: [
+				{
+					id: "7A872E0BFE6EAC68"
+					item: "wan_ancient_beasts:walker_egg"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "2E554619A12EAB43"
+					item: "wan_ancient_beasts:eater_egg"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "022BC9FBBAD4752D"
+					item: "wan_ancient_beasts:crusher_egg"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "2106B204FAEBD60A"
+					item: {
+						Count: 1b
+						id: "wan_ancient_beasts:chisel"
+						tag: {
+							Damage: 0
+						}
+					}
+					team_reward: false
+					type: "item"
+				}
+			]
+			subtitle: "仅需20绿宝石，绝不会亏的！"
+			tasks: [{
+				count: 20L
+				id: "675CF4A04D7166B7"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "买“蛋”吗？"
+			x: -1.0d
+			y: 7.0d
+		}
+		{
+			dependencies: ["26F7A615D014E134"]
+			description: ["&6使用植物的种子即可驯服哦，shift+右键可以拿起来，有几率和仓鼠轮互动。"]
+			icon: "hamsters:hamster_spawn_egg"
+			id: "1194738D3C8C77F5"
+			rewards: [
+				{
+					id: "7FD454909FEEFB07"
+					item: "hamsters:hamster_spawn_egg"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "5DBAAD61865EBC47"
+					item: "hamsters:hamster_wheel"
+					team_reward: false
+					type: "item"
+				}
+			]
+			subtitle: "我一般管它叫耗子（"
+			tasks: [{
+				id: "0A239F7E3F077051"
+				item: "minecraft:copper_block"
+				type: "item"
+			}]
+			title: "仓鼠"
+			x: 10.0d
+			y: 0.0d
+		}
+		{
+			icon: "hotbath:bath_herb"
+			id: "3AD65E189BA81877"
+			rewards: [{
+				count: 16
+				id: "2A2D4BF1F891022B"
+				item: "hotbath:bath_herb"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "用来制作草药浴桶"
+			tasks: [{
+				count: 40L
+				id: "16BECA593F69B741"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "洗浴用草药"
+			x: 0.0d
+			y: 7.0d
+		}
+		{
+			icon: "zetter:paints"
+			id: "2FF162A13E0A943D"
+			rewards: [{
+				count: 10
+				id: "0F57646DB9B5868A"
+				item: "zetter:paints"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "哦吼，想画画吗？这里可以购买颜料哦"
+			tasks: [{
+				count: 10L
+				id: "54D7A79F7FD9B683"
+				item: { Count: 10b, id: "minecraft:emerald" }
+				type: "item"
+			}]
+			title: "颜料"
+			x: 1.0d
+			y: 7.0d
+		}
+		{
+			icon: { Count: 64b, id: "luphieclutteredmod:luphie_pink_log" }
+			id: "2E1E40A167544AC0"
+			rewards: [
+				{
+					count: 64
+					id: "6A027A843A496AD9"
+					item: "luphieclutteredmod:luphie_purple_log"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "3636469A7D0CE8FD"
+					item: "luphieclutteredmod:luphie_flowering_purple_log"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "37B27A7A707C75A9"
+					item: "luphieclutteredmod:luphie_glow_log"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "607CFE99331BD1CF"
+					item: "luphieclutteredmod:luphie_flowering_yellow_log"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "179337D16BD4D443"
+					item: "luphieclutteredmod:luphie_pink_log"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "0F2B96B1D9A70115"
+					item: "luphieclutteredmod:stripped_luphie_flowering_pinklog"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "disabled"
+					count: 64
+					id: "1E7503F09E97B5DC"
+					item: "luphieclutteredmod:luphie_blue_mushroom_planks"
+					team_reward: false
+					type: "item"
+				}
+			]
+			subtitle: "&2用来做家具的"
+			tasks: [{
+				consume_items: true
+				count: 5L
+				id: "34BAB739483DFA2D"
+				item: "minecraft:emerald_block"
+				type: "item"
+			}]
+			title: "家具木材"
+			x: 2.0d
+			y: 7.0d
+		}
+		{
+			icon: { Count: 64b, id: "luphieclutteredmod:checkeredwallpaperpink" }
+			id: "67B35E4382334EAF"
+			rewards: [
+				{
+					auto: "no_toast"
+					count: 64
+					id: "71515AE50771A190"
+					item: "luphieclutteredmod:checkeredwallpaperpink"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "16D164D785FCA8CE"
+					item: "luphieclutteredmod:checkeredwallpaperlime"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "3FA5E74861489744"
+					item: "luphieclutteredmod:luphie_blue_checkered_block"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "2D34810D0A7EB968"
+					item: "luphieclutteredmod:luphie_green_checkered_block"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "7E581EB48475105E"
+					item: "luphieclutteredmod:luphie_yellow_checkered_block"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "6D64CC311CBC1CCD"
+					item: "luphieclutteredmod:luphie_red_checkered_block"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "3264387F574A95DA"
+					item: "luphieclutteredmod:luphie_halloween_wallpaper_b"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "164218413C30D2D7"
+					item: "luphieclutteredmod:luphie_halloween_wallpaper_a"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "40459604A66A30F1"
+					item: "luphieclutteredmod:luphie_choco_mint_wallpaper_1"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "085D577D21A153C4"
+					item: "luphieclutteredmod:luphie_confectionary_wallpaper_a"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "1ACDBA978BE13EF3"
+					item: "luphieclutteredmod:luphie_confectionary_wallpaper_b"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "2542CC2317C12A69"
+					item: "luphieclutteredmod:luphie_choco_mint_wallpaper_b"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "045E9CFBAC4E35BD"
+					item: "luphieclutteredmod:luphie_floral_striped_wallpaper"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "no_toast"
+					count: 64
+					id: "7C5D1EA632C25522"
+					item: "luphieclutteredmod:luphie_pastel_strawberry_wallpaper"
+					team_reward: false
+					type: "item"
+				}
+				{
+					auto: "disabled"
+					count: 64
+					id: "68205545BD340501"
+					item: "luphieclutteredmod:luphie_purple_checkered_block"
+					team_reward: false
+					type: "item"
+				}
+			]
+			subtitle: "&e非常漂亮可爱的装饰方块"
+			tasks: [{
+				count: 10L
+				id: "56F35DD32E961D7C"
+				item: "minecraft:emerald_block"
+				type: "item"
+			}]
+			title: "可爱的方块"
+			x: 3.0d
+			y: 7.0d
+		}
+		{
+			can_repeat: true
+			icon: "minecraft:diamond_ore"
+			id: "66E95B7092CBD79F"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "7DC246B63A1B42FB"
+				table_id: 995036791765017796L
+				team_reward: false
+				title: "自选矿石"
+				type: "choice"
+			}]
+			subtitle: "溢价严重....奸商！"
+			tasks: [{
+				count: 100L
+				id: "78A4C7BD58CE66AB"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "买矿石"
+			x: 6.0d
+			y: 4.0d
+		}
+		{
+			disable_toast: true
+			icon: {
+				Count: 1b
+				id: "tacz:ammo"
+				tag: {
+					AmmoId: "tacz:45acp"
+				}
+			}
+			id: "196B556B16444EB5"
+			rewards: [{
+				count: 230
+				id: "1BE6694519C6D984"
+				item: {
+					Count: 1b
+					id: "tacz:ammo"
+					tag: {
+						AmmoId: "tacz:45acp"
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "230发"
+			tasks: [{
+				count: 40L
+				id: "292171574C24C2B1"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: ".45"
+			x: 0.0d
+			y: 4.0d
+		}
+		{
+			disable_toast: true
+			icon: {
+				Count: 1b
+				id: "tacz:ammo"
+				tag: {
+					AmmoId: "tacz:556x45"
+				}
+			}
+			id: "1F07B557322011EC"
+			rewards: [{
+				count: 200
+				id: "5262298FA0DC050E"
+				item: {
+					Count: 1b
+					id: "tacz:ammo"
+					tag: {
+						AmmoId: "tacz:556x45"
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "200发"
+			tasks: [{
+				count: 40L
+				id: "78C6C5485334D9BB"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "5.56x45"
+			x: 1.0d
+			y: 4.0d
+		}
+		{
+			disable_toast: true
+			icon: {
+				Count: 1b
+				id: "tacz:ammo"
+				tag: {
+					AmmoId: "tacz:762x39"
+				}
+			}
+			id: "2B75EA987D2C8970"
+			rewards: [{
+				count: 170
+				id: "77F106E12886E230"
+				item: {
+					Count: 1b
+					id: "tacz:ammo"
+					tag: {
+						AmmoId: "tacz:762x39"
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "170发"
+			tasks: [{
+				count: 40L
+				id: "196BA1ECBC5B58CA"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "7.62x39"
+			x: 2.0d
+			y: 4.0d
+		}
+		{
+			icon: {
+				Count: 1b
+				id: "tacz:ammo"
+				tag: {
+					AmmoId: "cyber_armorer:material_1"
+				}
+			}
+			id: "545B649AA82CA9EB"
+			rewards: [{
+				count: 40
+				id: "6DEE787A228ED044"
+				item: {
+					Count: 1b
+					id: "tacz:ammo"
+					tag: {
+						AmmoId: "cyber_armorer:material_1"
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [{
+				count: 40L
+				id: "1B9BFF9F4896C8E8"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "普通组件"
+			x: -2.0d
+			y: 5.0d
+		}
+		{
+			icon: {
+				Count: 1b
+				id: "tacz:ammo"
+				tag: {
+					AmmoId: "cyber_armorer:material_2"
+				}
+			}
+			id: "78C279912FB538E8"
+			rewards: [{
+				count: 20
+				id: "0BDAEAE4EED09524"
+				item: {
+					Count: 1b
+					id: "tacz:ammo"
+					tag: {
+						AmmoId: "cyber_armorer:material_2"
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [{
+				count: 40L
+				id: "023BF3DD7404636A"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "稀有组件"
+			x: -1.0d
+			y: 5.0d
+		}
+		{
+			icon: {
+				Count: 1b
+				id: "tacz:ammo"
+				tag: {
+					AmmoId: "cyber_armorer:material_3"
+				}
+			}
+			id: "57016D7CD042BADC"
+			rewards: [{
+				count: 10
+				id: "1692386754537A1F"
+				item: {
+					Count: 1b
+					id: "tacz:ammo"
+					tag: {
+						AmmoId: "cyber_armorer:material_3"
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [{
+				count: 40L
+				id: "7F0C00D55B9A5B1F"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "史诗组件"
+			x: 0.0d
+			y: 5.0d
+		}
+		{
+			description: [
+				"&e凋零合金锭获取链接："
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"5DD1DFBC650A5E8D\" } }"
+			]
+			icon: {
+				Count: 1b
+				id: "tacz:workbench_c"
+				tag: {
+					BlockId: "eos:eos_printer"
+				}
+			}
+			id: "0CBFEF695766E36B"
+			rewards: [{
+				id: "0CA2D1AB07F8611F"
+				item: {
+					Count: 1b
+					id: "tacz:workbench_c"
+					tag: {
+						BlockId: "eos:eos_printer"
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "&e未知的古代科技。用来制作一些“高科技武器”"
+			tasks: [
+				{
+					count: 4L
+					id: "689063CF7AC57820"
+					item: { Count: 4b, id: "cataclysm:witherite_ingot" }
+					type: "item"
+				}
+				{
+					count: 20L
+					id: "7E5FC33CD459A44A"
+					item: "minecraft:emerald_block"
+					type: "item"
+				}
+			]
+			title: "&e曙光女神 武器箱"
+			x: 1.0d
+			y: 5.0d
+		}
+		{
+			disable_toast: true
+			icon: {
+				Count: 1b
+				id: "tacz:ammo"
+				tag: {
+					AmmoId: "tacz:9mm"
+				}
+			}
+			id: "4F981B859972D6B3"
+			rewards: [{
+				count: 250
+				id: "09C2FB983673ABE2"
+				item: {
+					Count: 1b
+					id: "tacz:ammo"
+					tag: {
+						AmmoId: "tacz:9mm"
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "250发"
+			tasks: [{
+				count: 40L
+				id: "6E175FE81427356C"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "9mm"
+			x: -1.0d
+			y: 4.0d
+		}
+		{
+			icon: {
+				Count: 1b
+				id: "slashblade:proudsoul_sphere"
+				tag: {
+					SpecialAttackType: "slashblade:judgement_cut"
+				}
+			}
+			id: "56507C736DF194C2"
+			rewards: [{
+				id: "5552670331843DDA"
+				item: {
+					Count: 1b
+					id: "slashblade:proudsoul_sphere"
+					tag: {
+						SpecialAttackType: "slashblade:judgement_cut"
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [{
+				count: 3L
+				id: "5F23A2CA6635D540"
+				item: { Count: 2b, id: "minecraft:netherite_scrap" }
+				type: "item"
+			}]
+			title: "&e次元斩"
+			x: 3.0d
+			y: 5.0d
+		}
+		{
+			icon: {
+				Count: 1b
+				id: "slashblade:proudsoul_sphere"
+				tag: {
+					SpecialAttackType: "slashblade:sakura_end"
+				}
+			}
+			id: "5D6393C52F1F814C"
+			rewards: [{
+				id: "2A865CE2CF346062"
+				item: {
+					Count: 1b
+					id: "slashblade:proudsoul_sphere"
+					tag: {
+						SpecialAttackType: "slashblade:sakura_end"
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [{
+				count: 2L
+				id: "26974DE3B2D35DFB"
+				item: { Count: 2b, id: "minecraft:netherite_scrap" }
+				type: "item"
+			}]
+			title: "&c终焉樱"
+			x: 4.0d
+			y: 5.0d
+		}
+		{
+			icon: {
+				Count: 1b
+				id: "slashblade:proudsoul_sphere"
+				tag: {
+					SpecialAttackType: "slashblade:void_slash"
+				}
+			}
+			id: "0F20503E5E29E09F"
+			rewards: [{
+				id: "5EBE8DCB7C9A947F"
+				item: {
+					Count: 1b
+					id: "slashblade:proudsoul_sphere"
+					tag: {
+						SpecialAttackType: "slashblade:void_slash"
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [{
+				id: "47FB26420D859FA0"
+				item: { Count: 2b, id: "minecraft:netherite_scrap" }
+				type: "item"
+			}]
+			title: "&9虚无刀界"
+			x: 5.0d
+			y: 5.0d
+		}
+		{
+			description: [
+				"酿酒任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"4DD57CE33B4C0A93\" } }"
+			]
+			id: "02C96CAEDE67971C"
+			rewards: [{
+				count: 20
+				id: "2F656163D13EDC01"
+				item: "minecraft:emerald"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "酿造酒，再卖出去"
+			tasks: [{
+				count: 3L
+				id: "5460A8EF3819B10C"
+				item: "alcocraftplus:kvass"
+				type: "item"
+			}]
+			x: 4.0d
+			y: 0.0d
+		}
+		{
+			id: "71511F550D38F048"
+			tasks: [{
+				id: "597A043C30793DC5"
+				title: "购买"
+				type: "checkmark"
+			}]
+			x: -3.5d
+			y: 4.5d
+		}
+		{
+			id: "09D5903ABC4B88EC"
+			tasks: [{
+				id: "1B19EAB13FE84FC7"
+				title: "回收"
+				type: "checkmark"
+			}]
+			x: -3.5d
+			y: 0.5d
+		}
+		{
+			id: "7AA8B8E20938A8AF"
+			rewards: [{
+				count: 20
+				id: "74DA10EC18B34DFE"
+				item: "minecraft:emerald"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "小麦回收...."
+			tasks: [{
+				count: 20L
+				id: "4DEC3D8BA1269001"
+				item: "minecraft:hay_block"
+				type: "item"
+			}]
+			x: -2.0d
+			y: 0.0d
+		}
+		{
+			icon: { Count: 64b, id: "cagedmobs:crystallized_experience_block" }
+			id: "7849809EF54765B6"
+			rewards: [{
+				count: 64
+				id: "183CE2A9CBDC323E"
+				item: "cagedmobs:crystallized_experience_block"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "&2这经验，你要不要吧"
+			tasks: [{
+				count: 45L
+				id: "55FDB851126F5BE7"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "&a经验"
+			x: 1.0d
+			y: 6.0d
+		}
+		{
+			id: "56A4F1A347E85264"
+			rewards: [{
+				count: 18
+				id: "4A45C08BA1E586AE"
+				item: "minecraft:emerald"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "西红柿"
+			tasks: [{
+				count: 20L
+				id: "0DF86F03302A0430"
+				item: "farmersdelight:tomato_crate"
+				type: "item"
+			}]
+			x: -1.0d
+			y: 0.0d
+		}
+		{
+			id: "7A9E3534433866E5"
+			rewards: [{
+				count: 18
+				id: "0CC6332EA5313601"
+				item: "minecraft:emerald"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "胡罗贝"
+			tasks: [{
+				count: 20L
+				id: "26A07C5852DDCEF3"
+				item: "farmersdelight:carrot_crate"
+				type: "item"
+			}]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			id: "6E15F7E0CBBC724E"
+			rewards: [{
+				count: 16
+				id: "592415F45BA5EEB1"
+				item: "minecraft:emerald"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "菜嘎达"
+			tasks: [{
+				count: 20L
+				id: "64C4BCB9D8366EE6"
+				item: "farmersdelight:cabbage_crate"
+				type: "item"
+			}]
+			x: 1.0d
+			y: 0.0d
+		}
+		{
+			id: "626A162486255CFD"
+			rewards: [{
+				count: 11
+				id: "755AE2ED67FF8632"
+				item: {
+					Count: 1b
+					id: "minecraft:emerald"
+					tag: { }
+				}
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "稻米"
+			tasks: [{
+				count: 10L
+				id: "6EAAD91CADAE52CD"
+				item: "farmersdelight:rice_bag"
+				type: "item"
+			}]
+			x: 3.0d
+			y: 0.0d
+		}
+		{
+			icon: "minecraft:spawner"
+			id: "0FC1C22CD68D0FA9"
+			rewards: [
+				{
+					id: "2793773E31DC1375"
+					item: "minecraft:spawner"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "2068AC2572B48DC8"
+					item: "minecraft:skeleton_spawn_egg"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "62C5D92E2F9FBB0D"
+					item: "minecraft:slime_spawn_egg"
+					type: "item"
+				}
+			]
+			subtitle: "不众所周知...野生的刷怪笼是可以用【捕捉笼】搬走的"
+			tasks: [{
+				count: 5L
+				id: "49C57230E75B0310"
+				item: "goety:flame_capture"
+				type: "item"
+			}]
+			title: "刷怪笼"
+			x: -2.0d
+			y: 7.0d
+		}
+		{
+			can_repeat: true
+			description: [
+				"&6这种武器由&c暴怒的流浪商人&6和&c劫匪&6掉落"
+				""
+				"&n&6劫匪：常常伴随着掠夺者队伍，袭击村民"
+				""
+				"&n&6暴怒的流浪商人：受到威胁时，流浪商人将变为暴怒的流浪商人（比如，把枪口对准流浪商人"
+				""
+				"{image:kubejs:textures/aaaa/liulangshangrenhejeifei.png width:200 height:100 align:1}"
+			]
+			disable_toast: true
+			id: "1D184AA3A87420B5"
+			rewards: [
+				{
+					auto: "disabled"
+					count: 20
+					id: "2E8F2D10963CFD91"
+					ignore_reward_blocking: true
+					item: "minecraft:iron_ingot"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "4254916539C88FEA"
+					team_reward: false
+					type: "xp"
+					xp: 400
+				}
+				{
+					count: 50
+					id: "1CB2715E3A5549A2"
+					item: "minecraft:copper_ingot"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 30
+					id: "2227BA69CB431D52"
+					item: "minecraft:gunpowder"
+					team_reward: false
+					type: "item"
+				}
+			]
+			subtitle: "提交枪支领取奖励"
+			tasks: [{
+				consume_items: true
+				count: 10L
+				disable_toast: true
+				id: "54A5A2B95E5F1B7B"
+				item: "mugging_villagers_mod:gun"
+				type: "item"
+			}]
+			title: "枪支回收"
+			x: -1.0d
+			y: 1.0d
+		}
+		{
+			can_repeat: true
+			id: "436B853DD5DA2904"
+			rewards: [{
+				count: 64
+				id: "30E70ED104A864F8"
+				item: "minecraft:emerald"
+				team_reward: false
+				type: "item"
+			}
+				{
+				coinMinorUnits: 500L
+				id: "FF62AFA4C392B81A"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			subtitle: "劫掠兽掉落"
+			tasks: [{
+				consume_items: true
+				count: 10L
+				id: "6807F4AB42A7393B"
+				item: {
+					Count: 1b
+					id: "takesapillage:ravager_horn"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 0.0d
+			y: 1.0d
+		}
+		{
+			icon: "exposure:lightroom"
+			id: "6067DF8B83BE7CFD"
+			rewards: [
+				{
+					count: 64
+					id: "54C8C91208961626"
+					item: "minecraft:cyan_dye"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 64
+					id: "5E490D6E72233671"
+					item: "minecraft:magenta_dye"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 64
+					id: "481C32505B0AD8B6"
+					item: "minecraft:yellow_dye"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 64
+					id: "2740B0317A69642A"
+					item: "minecraft:black_dye"
+					team_reward: false
+					type: "item"
+				}
+			]
+			subtitle: "购买大量染料"
+			tasks: [{
+				consume_items: true
+				count: 30L
+				id: "7A534E1F80AE3589"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "暗房所需染料"
+			x: 3.0d
+			y: 6.0d
+		}
+		{
+			icon: "irons_spellbooks:rare_ink"
+			id: "4909FF9D7B558877"
+			rewards: [{
+				id: "1A626CDD7C2EF301"
+				item: "irons_spellbooks:rare_ink"
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [{
+				count: 16L
+				id: "1260A3946DA72A8F"
+				item: { Count: 16b, id: "minecraft:emerald" }
+				type: "item"
+			}]
+			title: "&b稀有墨水"
+			x: -2.0d
+			y: 6.0d
+		}
+		{
+			icon: "irons_spellbooks:epic_ink"
+			id: "66BEB7BC756F24DE"
+			rewards: [{
+				id: "5B6B85CCD58416C2"
+				item: "irons_spellbooks:epic_ink"
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [{
+				count: 40L
+				id: "255B76BFB63CAAF2"
+				item: { Count: 32b, id: "minecraft:emerald" }
+				type: "item"
+			}]
+			title: "&d史诗墨水"
+			x: -1.0d
+			y: 6.0d
+		}
+		{
+			icon: "irons_spellbooks:legendary_ink"
+			id: "160FE90E7493DA6C"
+			rewards: [{
+				id: "63725A43824F0ECD"
+				item: "irons_spellbooks:legendary_ink"
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [{
+				count: 100L
+				id: "7F06F99B4577A099"
+				item: { Count: 64b, id: "minecraft:emerald" }
+				type: "item"
+			}]
+			title: "&6传奇墨水"
+			x: 0.0d
+			y: 6.0d
+		}
+		{
+			icon: {
+				Count: 8b
+				id: "slashblade:proudsoul_tiny"
+				tag: {
+					Enchantments: [{
+						id: "minecraft:unbreaking"
+						lvl: 1s
+					}]
+				}
+			}
+			id: "2F603D3EE0833B3A"
+			rewards: [{
+				count: 8
+				id: "2DAFEDB7A76FB98A"
+				item: {
+					Count: 1b
+					id: "slashblade:proudsoul_tiny"
+					tag: {
+						Enchantments: [{
+							id: "minecraft:unbreaking"
+							lvl: 1s
+						}]
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "&6用于复制拔刀剑的SA"
+			tasks: [{
+				consume_items: true
+				count: 64L
+				id: "63969A91221FCAAC"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "&e含有附魔的&d破碎耀魂碎片"
+			x: 5.0d
+			y: 4.0d
+		}
+		{
+			icon: {
+				Count: 1b
+				ForgeCaps: {
+					Parent: {
+						AttackAmplifier: 0.0f
+						BladeUniqueId: [I;
+							1821640212
+							-305774426
+							-1855949413
+							-366219575
+						]
+						ComboRoot: "slashblade:standby"
+						Damage: 0
+						ModelName: "slashblade:model/named/muramasa/muramasa.obj"
+						RepairCounter: 0
+						SpecialAttackType: "slashblade:judgement_cut"
+						StandbyRenderType: 2b
+						SummonedSwordColor: -13421569
+						SummonedSwordColorInverse: 0b
+						TargetEntity: 0
+						TextureName: "slashblade:model/named/muramasa/sabigatana.png"
+						_onClick: 0b
+						adjustXYZ: [
+							0.0d
+							0.0d
+							0.0d
+						]
+						baseAttackModifier: 3.0f
+						currentCombo: "slashblade:none"
+						fallDecreaseRate: 0.0f
+						isBroken: 0b
+						isDefaultBewitched: 0b
+						isSealed: 0b
+						killCount: 0
+						lastActionTime: 0L
+						maxDamage: 40
+						proudSoul: 0
+						translationKey: "item.slashblade.sabigatana"
+					}
+				}
+				id: "slashblade:slashblade"
+				tag: {
+					bladeState: {
+						AttackAmplifier: 0.0f
+						BladeUniqueId: [I;
+							1821640212
+							-305774426
+							-1855949413
+							-366219575
+						]
+						ComboRoot: "slashblade:standby"
+						Damage: 0
+						ModelName: "slashblade:model/named/muramasa/muramasa.obj"
+						RepairCounter: 0
+						SpecialAttackType: "slashblade:judgement_cut"
+						StandbyRenderType: 2b
+						SummonedSwordColor: -13421569
+						SummonedSwordColorInverse: 0b
+						TargetEntity: 0
+						TextureName: "slashblade:model/named/muramasa/sabigatana.png"
+						_onClick: 0b
+						adjustXYZ: [
+							0.0d
+							0.0d
+							0.0d
+						]
+						baseAttackModifier: 3.0f
+						currentCombo: "slashblade:none"
+						fallDecreaseRate: 0.0f
+						isBroken: 0b
+						isDefaultBewitched: 0b
+						isSealed: 0b
+						killCount: 0
+						lastActionTime: 0L
+						maxDamage: 40
+						proudSoul: 0
+						translationKey: "item.slashblade.sabigatana"
+					}
+				}
+			}
+			id: "4FAC21AF6A004CD2"
+			rewards: [{
+				id: "38C6B274ADA8B7A1"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							AttackAmplifier: 0.0f
+							BladeUniqueId: [I;
+								-1151610097
+								44716023
+								-1403358878
+								-83287113
+							]
+							ComboRoot: "slashblade:standby"
+							Damage: 0
+							ModelName: "slashblade:model/named/muramasa/muramasa.obj"
+							RepairCounter: 0
+							SpecialAttackType: "slashblade:judgement_cut"
+							StandbyRenderType: 2b
+							SummonedSwordColor: -13421569
+							SummonedSwordColorInverse: 0b
+							TargetEntity: 0
+							TextureName: "slashblade:model/named/muramasa/sabigatana.png"
+							_onClick: 0b
+							adjustXYZ: [
+								0.0d
+								0.0d
+								0.0d
+							]
+							baseAttackModifier: 3.0f
+							currentCombo: "slashblade:none"
+							fallDecreaseRate: 0.0f
+							isBroken: 0b
+							isDefaultBewitched: 0b
+							isSealed: 0b
+							killCount: 0
+							lastActionTime: 2281087L
+							maxDamage: 40
+							proudSoul: 0
+							translationKey: "item.slashblade.sabigatana"
+						}
+					}
+					id: "slashblade:slashblade"
+					tag: {
+						bladeState: {
+							AttackAmplifier: 0.0f
+							BladeUniqueId: [I;
+								-519711585
+								-1144172674
+								-1962254847
+								-2113263830
+							]
+							ComboRoot: "slashblade:standby"
+							Damage: 0
+							ModelName: "slashblade:model/named/muramasa/muramasa.obj"
+							RepairCounter: 0
+							SpecialAttackType: "slashblade:judgement_cut"
+							StandbyRenderType: 2b
+							SummonedSwordColor: -13421569
+							SummonedSwordColorInverse: 0b
+							TargetEntity: 0
+							TextureName: "slashblade:model/named/muramasa/sabigatana.png"
+							_onClick: 0b
+							adjustXYZ: [
+								0.0d
+								0.0d
+								0.0d
+							]
+							baseAttackModifier: 3.0f
+							currentCombo: "slashblade:none"
+							fallDecreaseRate: 0.0f
+							isBroken: 0b
+							isDefaultBewitched: 0b
+							isSealed: 0b
+							killCount: 0
+							lastActionTime: 2281087L
+							maxDamage: 40
+							proudSoul: 0
+							translationKey: "item.slashblade.sabigatana"
+						}
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "&6一把锈迹斑斑的刀...或许可以用来打造神兵利器？"
+			tasks: [{
+				count: 120L
+				id: "4150CF9BD26A5832"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "&e购买锈刀，买一送一"
+			x: 4.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["26F7A615D014E134"]
+			description: [
+				"如何驯服？教程链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"55166307F839214B\" } }"
+			]
+			icon: "iceandfire:spawn_egg_hippogryph"
+			id: "7F1A2FFA98154AB5"
+			rewards: [
+				{
+					id: "05BDCB62B94B4C82"
+					item: "iceandfire:spawn_egg_hippogryph"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 32
+					id: "46395B1B0BE0D909"
+					item: "minecraft:rabbit_foot"
+					type: "item"
+				}
+			]
+			subtitle: "&e飞行单位"
+			tasks: [
+				{
+					count: 4L
+					id: "274053904A4439A9"
+					item: { Count: 4b, id: "minecraft:emerald_block" }
+					type: "item"
+				}
+				{
+					consume_items: true
+					count: 16L
+					id: "573D0356EC52CF34"
+					item: { Count: 32b, id: "minecraft:feather" }
+					type: "item"
+				}
+			]
+			title: "骏鹰"
+			x: 8.5d
+			y: 1.5d
+		}
+		{
+			dependencies: ["26F7A615D014E134"]
+			icon: "alexsmobs:spawn_egg_komodo_dragon"
+			id: "74AC86F911836B00"
+			rewards: [{
+				id: "611BD3DF300CDB33"
+				item: "legendary_monsters:skeletosaurus_egg"
+				type: "item"
+			}]
+			subtitle: "&e超快的陆地单位，喂食【任意肉】驯服"
+			tasks: [{
+				count: 10L
+				id: "458D5B67D1733A51"
+				item: "minecraft:gold_block"
+				type: "item"
+			}]
+			title: "骷髅骨龙"
+			x: 10.0d
+			y: 3.0d
+		}
+		{
+			disable_toast: true
+			icon: {
+				Count: 1b
+				id: "tacz:ammo"
+				tag: {
+					AmmoId: "tacz:12g"
+				}
+			}
+			id: "2F9D3005A906AFBA"
+			rewards: [{
+				count: 36
+				id: "214F5A79EC8D507B"
+				item: {
+					Count: 1b
+					id: "tacz:ammo"
+					tag: {
+						AmmoId: "tacz:12g"
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "36发"
+			tasks: [{
+				count: 25L
+				id: "06BF44A26DF001B5"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "12号霰弹枪弹药"
+			x: 3.0d
+			y: 4.0d
+		}
+		{
+			id: "19C3E856044B0E85"
+			rewards: [{
+				count: 12
+				id: "470BC91C668A6993"
+				item: "minecraft:emerald"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "刀哥"
+			tasks: [{
+				count: 20L
+				id: "6B08CD8EF3F184BC"
+				item: "farmersdelight:potato_crate"
+				type: "item"
+			}]
+			x: 2.0d
+			y: 0.0d
+		}
+		{
+			icon: {
+				Count: 1b
+				id: "minecraft:enchanted_book"
+				tag: {
+					StoredEnchantments: [{
+						id: "g_abun:absolutelyunbreakable"
+						lvl: 1s
+					}]
+				}
+			}
+			id: "598F1CAAD429FBFC"
+			rewards: [{
+				id: "6C78161CC4B74B9B"
+				item: {
+					Count: 1b
+					id: "minecraft:enchanted_book"
+					tag: {
+						StoredEnchantments: [{
+							id: "g_abun:absolutelyunbreakable"
+							lvl: 1s
+						}]
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "给予物品【无法破坏】特性"
+			tasks: [{
+				id: "61558E603A008418"
+				item: "minecraft:netherite_ingot"
+				type: "item"
+			}]
+			title: "&e使物品无限耐久的附魔"
+			x: 2.0d
+			y: 6.0d
+		}
+		{
+			id: "0C321FCFCC725441"
+			rewards: [{
+				count: 20
+				id: "08237B64E0E9C4BE"
+				item: "minecraft:emerald"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "探索龙巢等结构获得"
+			tasks: [{
+				count: 30L
+				id: "69DC6329B1F465E0"
+				item: { Count: 11b, id: "iceandfire:manuscript" }
+				type: "item"
+			}]
+			x: 1.0d
+			y: 1.0d
+		}
+		{
+			id: "3FA5EA3CDFED43B3"
+			rewards: [
+				{
+					id: "4856C953E214543E"
+					item: "minecraft:gold_block"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "1B9D02126878AA04"
+					team_reward: false
+					type: "xp_levels"
+					xp_levels: 2
+				}
+			]
+			subtitle: "什么书都行（"
+			tasks: [{
+				count: 60L
+				id: "7DD0933FDC2B3996"
+				item: {
+					Count: 1b
+					id: "itemfilters:tag"
+					tag: {
+						value: "minecraft:bookshelf_books"
+					}
+				}
+				title: "书本回收"
+				type: "item"
+			}]
+			x: 2.0d
+			y: 1.0d
+		}
+		{
+			id: "5B3D5D42B8C04E81"
+			rewards: [{
+				count: 40
+				id: "1EAF941E6D5D167F"
+				item: "minecraft:emerald"
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [{
+				count: 10L
+				id: "58CC60A20D2B69BE"
+				item: { Count: 7b, id: "iceandfire:fire_dragon_flesh" }
+				type: "item"
+			}]
+			x: -2.0d
+			y: 2.0d
+		}
+		{
+			id: "06BB074401E1ABA0"
+			rewards: [{
+				count: 40
+				id: "05D134FEB8A7DA46"
+				item: "minecraft:emerald"
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [{
+				count: 10L
+				id: "1343D4141361DE9A"
+				item: "iceandfire:ice_dragon_flesh"
+				type: "item"
+			}]
+			x: -1.0d
+			y: 2.0d
+		}
+		{
+			id: "6F688C1A8ECA6E14"
+			rewards: [{
+				count: 40
+				id: "667753BF2E8C369B"
+				item: "minecraft:emerald"
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [{
+				count: 10L
+				id: "56F3EA251F4CBB43"
+				item: "iceandfire:lightning_dragon_flesh"
+				type: "item"
+			}]
+			x: 0.0d
+			y: 2.0d
+		}
+		{
+			icon: "minecraft:netherite_upgrade_smithing_template"
+			id: "6E3EC12CBFDD1681"
+			rewards: [{
+				id: "1BDE34646AB96FA2"
+				item: "minecraft:netherite_upgrade_smithing_template"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "用来升级钻石装备/工具"
+			tasks: [{
+				count: 10L
+				id: "70DD78C13F6544DC"
+				item: "minecraft:diamond"
+				type: "item"
+			}]
+			title: "锻造模板"
+			x: 4.0d
+			y: 6.0d
+		}
+		{
+			id: "349C988DD4E5AD08"
+			rewards: [{
+				count: 20
+				id: "424C14D59C38D1F8"
+				item: "minecraft:emerald"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "出现在冰龙的巢穴中和寒冷群系的洞穴"
+			tasks: [{
+				count: 20L
+				id: "4ACABEB8869B24A8"
+				item: "iceandfire:sapphire_gem"
+				type: "item"
+			}]
+			x: 3.0d
+			y: 1.0d
+		}
+		{
+			description: [
+				"这里是链接哦："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"5401000619A57B22\" } }"
+			]
+			id: "73847CF4451BCE74"
+			rewards: [{
+				count: 40
+				id: "2F7BA231CFC06A6B"
+				item: "minecraft:emerald"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "【坚守者】掉落"
+			tasks: [{
+				count: 20L
+				id: "3E21FF7320A0F8DA"
+				item: { Count: 4b, id: "celestial_core:warden_sclerite" }
+				type: "item"
+			}]
+			x: 4.0d
+			y: 1.0d
+		}
+		{
+			dependencies: ["26F7A615D014E134"]
+			icon: "iceandfire:spawn_egg_hippocampus"
+			id: "7E4982AFF890DB47"
+			rewards: [
+				{
+					id: "4D877E49FF2D1002"
+					item: "iceandfire:spawn_egg_hippocampus"
+					type: "item"
+				}
+				{
+					count: 32
+					id: "1A6379900605500F"
+					item: "minecraft:kelp"
+					type: "item"
+				}
+			]
+			subtitle: "&e超快的水中单位，喂食【海带】驯服"
+			tasks: [{
+				count: 4L
+				id: "7D894F3718A4159B"
+				item: { Count: 4b, id: "minecraft:gold_block" }
+				type: "item"
+			}]
+			title: "海马"
+			x: 11.5d
+			y: 1.5d
+		}
+		{
+			icon: {
+				Count: 1b
+				id: "tacz:ammo_box"
+				tag: {
+					Level: 0
+				}
+			}
+			id: "371D3CFF232F950D"
+			rewards: [
+				{
+					count: 50
+					id: "3D87426F60E63F09"
+					item: "minecraft:copper_ingot"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 18
+					id: "01315F64B3C5317A"
+					item: "minecraft:gunpowder"
+					team_reward: false
+					type: "item"
+				}
+			]
+			subtitle: "铜【50】火药【18】"
+			tasks: [{
+				consume_items: true
+				count: 40L
+				id: "6894E7ADA3784AED"
+				item: { Count: 4b, id: "minecraft:emerald" }
+				type: "item"
+			}]
+			title: "铜和火药"
+			x: -2.0d
+			y: 4.0d
+		}
+		{
+			icon: {
+				Count: 1b
+				id: "minecraft:enchanted_book"
+				tag: {
+					StoredEnchantments: [{
+						id: "tonsofenchants:praise_the_sun"
+						lvl: 1s
+					}]
+				}
+			}
+			id: "1A50BD145C38FABE"
+			rewards: [{
+				id: "30B4B24E12DD94FA"
+				item: {
+					Count: 1b
+					id: "minecraft:enchanted_book"
+					tag: {
+						StoredEnchantments: [{
+							id: "tonsofenchants:praise_the_sun"
+							lvl: 1s
+						}]
+					}
+				}
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [{
+				id: "14B5F0BDDCA3CFF1"
+				item: "minecraft:netherite_scrap"
+				type: "item"
+			}]
+			title: "&e使物品自动修复耐久的附魔"
+			x: 2.0d
+			y: 5.0d
+		}
+		{
+			icon: { Count: 5b, id: "dragonfinder:fire_dragon_eye" }
+			id: "62ABAA633D13D75C"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "32FCC2983558D5A0"
+				table_id: 4207255973769785386L
+				type: "random"
+			}]
+			subtitle: "三种龙眼效果都是一样的哦"
+			tasks: [{
+				id: "69E1F93B6426FF5C"
+				item: "minecraft:gold_ingot"
+				type: "item"
+			}]
+			title: "&e龙眼"
+			x: -1.0d
+			y: 8.0d
+		}
+		{
+			icon: "dragonseeker:godly_dragonseeker"
+			id: "02DAA184B3E4105F"
+			rewards: [{
+				id: "118526FAC8928CAE"
+				item: "dragonseeker:godly_dragonseeker"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "&e右键获得500格内龙的坐标"
+			tasks: [{
+				count: 2L
+				id: "2FE0CCE1923F36AB"
+				item: "minecraft:diamond"
+				type: "item"
+			}]
+			title: "&b如何大范围探测龙"
+			x: 0.0d
+			y: 8.0d
+		}
+		{
+			can_repeat: false
+			description: [
+				"材料链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"4F7E09B3EA4C166A\" } }"
+			]
+			icon: "celestial_artifacts:precious_bracelet"
+			id: "558BBA3A30EEBDF4"
+			rewards: [{
+				command: "/curios add bracelet @p"
+				elevate_perms: true
+				id: "68E69D7A83005BC1"
+				title: "扩展一个手镯饰品槽位"
+				type: "command"
+			}]
+			tasks: [{
+				id: "5A7DED535CEF977B"
+				item: "soulsweapons:essence_of_luminescence"
+				type: "item"
+			}]
+			title: "&e扩展手镯槽位"
+			x: 4.0d
+			y: 8.0d
+		}
+		{
+			can_repeat: false
+			description: [
+				"材料链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2D763D90223C9A51\" } }"
+			]
+			icon: {
+				Count: 1b
+				id: "relics:leather_belt"
+				tag: {
+					abilities: {
+						slots: {
+							points: 0
+							stats: {
+								charm: 2.98381d
+							}
+						}
+					}
+				}
+			}
+			id: "76D7FEF00439677F"
+			rewards: [{
+				command: "/curios add belt @p"
+				elevate_perms: true
+				id: "1B58B2D3833CBE6E"
+				title: "扩展一个腰带饰品槽位"
+				type: "command"
+			}]
+			tasks: [{
+				id: "6E1FD4748AAAC024"
+				item: "cataclysm:monstrous_horn"
+				type: "item"
+			}]
+			title: "&e扩展腰带槽位"
+			x: 5.0d
+			y: 8.0d
+		}
+		{
+			can_repeat: false
+			icon: "celestial_artifacts:gold_ring"
+			id: "29FF693A26540A3B"
+			rewards: [{
+				command: "/curios add ring @p"
+				elevate_perms: true
+				id: "4B24398052B533E5"
+				title: "扩展一个戒指饰品槽位"
+				type: "command"
+			}]
+			tasks: [{
+				id: "3B052E6243455FEE"
+				item: "celestial_core:earth_core"
+				type: "item"
+			}]
+			title: "&e扩展戒指槽位"
+			x: 3.0d
+			y: 8.0d
+		}
+		{
+			can_repeat: false
+			description: [
+				"材料链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"0D6C1396B2DB7C93\" } }"
+			]
+			icon: "celestial_artifacts:heirloom_necklace"
+			id: "54046EE103BC32D5"
+			rewards: [{
+				command: "/curios add necklace @p"
+				elevate_perms: true
+				id: "1146F09A573920DA"
+				title: "扩展一个项链饰品槽"
+				type: "command"
+			}]
+			tasks: [{
+				id: "3950991FB50AE1B5"
+				item: "soulsweapons:essence_of_eventide"
+				type: "item"
+			}]
+			title: "&e扩展项链槽位"
+			x: 2.0d
+			y: 8.0d
+		}
+		{
+			icon: "iceandfire:hydra_heart"
+			id: "3E426C06068D8D6E"
+			rewards: [{
+				id: "349D9823D5981E0D"
+				item: "iceandfire:hydra_heart"
+				type: "item"
+			}]
+			tasks: [{
+				count: 64L
+				id: "5F7835B2868E0BA9"
+				item: { Count: 64b, id: "minecraft:enchanted_golden_apple" }
+				type: "item"
+			}]
+			title: "九头蛇心脏"
+			x: 1.0d
+			y: 8.0d
+		}
+		{
+			description: ["&e建议附魔火焰附加类附魔，用三级农场造个刷怪塔，难度拉困难，随便刷的"]
+			icon: "slashblade:proudsoul_crystal"
+			id: "3FD5E671629C5B8E"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "068528E39CDCB6B0"
+				table_id: 7786429842428606545L
+				type: "random"
+			}]
+			subtitle: "&6使用【虚金锭】兑换：击杀着火且穿甲的敌人获得虚金"
+			tasks: [{
+				id: "3EB616A18C4C8E8F"
+				item: "celestial_core:virtual_gold_ingot"
+				type: "item"
+			}]
+			title: "抽取耀魂"
+			x: 5.0d
+			y: 6.0d
+		}
+		{
+			icon: {
+				Count: 1b
+				id: "minecraft:enchanted_book"
+				tag: {
+					StoredEnchantments: [{
+						id: "goety:potency"
+						lvl: 3s
+					}]
+				}
+			}
+			id: "107FD12E3EC55BB9"
+			rewards: [
+				{
+					id: "1AFDB266A1D7FB72"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+				{
+					id: "7D4605A47E40CB74"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+				{
+					id: "4F64B5FAA2C4B77D"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+				{
+					id: "0136016AF457AFAB"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+				{
+					id: "2522D15EB90C0935"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+			]
+			size: 1.3d
+			subtitle: "全部随机....."
+			tasks: [{
+				count: 5L
+				id: "074F284EC8251A42"
+				item: "minecraft:gold_block"
+				type: "item"
+			}]
+			title: "附魔书"
+			x: 6.65d
+			y: 1.0d
+		}
+		{
+			icon: "ironchests:gold_barrel"
+			id: "63C233C000151F02"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "535B9931C5E6467D"
+				table_id: 8876663770757852249L
+				type: "random"
+			}]
+			size: 1.3d
+			subtitle: "只是一些高级的桶......"
+			tasks: [{
+				consume_items: true
+				count: 64L
+				id: "73E420F879A93CC3"
+				item: "minecraft:bone"
+				type: "item"
+			}]
+			title: "容器·桶"
+			x: 6.65d
+			y: 2.3d
+		}
+		{
+			icon: "minecraft:cherry_sapling"
+			id: "7A5231EEFFDDC3B9"
+			rewards: [
+				{
+					count: 128
+					id: "2551FB3FA07FA5C9"
+					item: "farmersdelight:rich_soil"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "197C6E3416F2081C"
+					item: {
+						Count: 1b
+						id: "minecraft:green_shulker_box"
+						tag: {
+							BlockEntityTag: {
+								Items: [
+									{
+										Count: 64b
+										Slot: 0b
+										id: "minecraft:oak_sapling"
+									}
+									{
+										Count: 64b
+										Slot: 1b
+										id: "minecraft:spruce_sapling"
+									}
+									{
+										Count: 64b
+										Slot: 2b
+										id: "minecraft:birch_sapling"
+									}
+									{
+										Count: 64b
+										Slot: 3b
+										id: "minecraft:jungle_sapling"
+									}
+									{
+										Count: 64b
+										Slot: 4b
+										id: "minecraft:acacia_sapling"
+									}
+									{
+										Count: 64b
+										Slot: 5b
+										id: "minecraft:dark_oak_sapling"
+									}
+									{
+										Count: 64b
+										Slot: 6b
+										id: "minecraft:cherry_sapling"
+									}
+									{
+										Count: 3b
+										Slot: 7b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 8b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 9b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 10b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 11b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 12b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 13b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 14b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 15b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 16b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 17b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 18b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 19b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 20b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 21b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 22b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 23b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 24b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 25b
+										id: "minecraft:bone_meal"
+									}
+									{
+										Count: 3b
+										Slot: 26b
+										id: "minecraft:bone_meal"
+									}
+								]
+								id: "minecraft:shulker_box"
+							}
+							RepairCost: 0
+							display: {
+								Name: "{\"text\":\"树苗礼包\"}"
+							}
+						}
+					}
+					team_reward: false
+					type: "item"
+				}
+			]
+			tasks: [{
+				count: 32L
+				id: "4F1413AA6C39CD3F"
+				item: { Count: 32b, id: "minecraft:gold_ingot" }
+				type: "item"
+			}]
+			title: "肥沃的土壤和树苗"
+			x: 4.0d
+			y: 7.0d
+		}
+		{
+			icon: "waystones:waystone"
+			id: "2F60ECCD4C4D59CC"
+			rewards: [{
+				id: "6D0F80B9B7E7E7A6"
+				item: "waystones:waystone"
+				type: "item"
+			}]
+			tasks: [{
+				count: 3L
+				id: "614E7041B9C8DC43"
+				item: "minecraft:diamond"
+				type: "item"
+			}]
+			title: "指路石"
+			x: 6.0d
+			y: 5.0d
+		}
+		{
+			description: [
+				"轻装简从：持有提高移速"
+				""
+				"空尖弹：有几率造成额外半颗心伤害，等级越高，几率越高"
+				""
+				"照明：使被攻击的敌人短暂发光"
+				""
+				"重甲：持有时，给予缓慢和抗性提升"
+				""
+				"火焰子弹：被攻击的敌人会被点燃"
+				""
+				"毒药子弹：被攻击的敌人会中毒"
+				""
+				"炮弹冲击：被攻击的敌人会短暂失明"
+				""
+				"盔甲刺穿：增加枪械护甲穿透能力"
+				""
+				"破军：每一级提供5%伤害"
+			]
+			icon: {
+				Count: 1b
+				id: "tacz:modern_kinetic_gun"
+				tag: {
+					Enchantments: [{
+						id: "enchanted_arsenal:lightweight"
+						lvl: 2s
+					}]
+					GunCurrentAmmoCount: 17
+					GunFireMode: "SEMI"
+					GunId: "tacz:glock_17"
+					HasBulletInBarrel: 1b
+					RepairCost: 1
+				}
+			}
+			id: "429169FD42CBF2F9"
+			rewards: [{
+				id: "2470309C07881FD7"
+				table_id: 8054706433082236914L
+				team_reward: false
+				type: "random"
+			}]
+			size: 1.3d
+			tasks: [{
+				consume_items: true
+				count: 5L
+				id: "1E77CEE2E9E1F5D0"
+				item: "mugging_villagers_mod:gun"
+				type: "item"
+			}]
+			title: "tacz枪械附魔书"
+			x: 5.5d
+			y: 1.5d
+		}
+		{
+			description: [
+				"&6有概率开出......."
+				""
+				"&n末影珍珠"
+				""
+				"&n金锭"
+				""
+				"&n绿宝石"
+				""
+				"&n玉"
+				""
+				"&n末影之眼"
+				""
+				"&n恶魂之泪"
+				""
+				"&n钻石"
+				""
+				"&n附魔书（固定30级附魔）"
+				""
+				"&n附魔之瓶"
+				""
+				"&n书"
+				""
+				"&n金苹果"
+				""
+				"&n黑暗金属锭"
+				""
+				"&n附魔金苹果"
+			]
+			icon: "goety:treasure_pouch"
+			id: "20DA7B69CEE63E44"
+			rewards: [{
+				id: "35ED7A02F8CAA9A6"
+				item: "goety:treasure_pouch"
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [{
+				count: 192L
+				id: "71DB5F2AD3AD65AF"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "宝藏带"
+			x: 6.0d
+			y: 7.0d
+		}
+		{
+			icon: "goety:jade"
+			id: "227A72B37B8D7057"
+			rewards: [{
+				count: 2
+				exclude_from_claim_all: true
+				id: "2D2B632DF2A31C00"
+				item: "goety:jade"
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				count: 15L
+				id: "3141B9178E273534"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			title: "玉"
+			x: 6.0d
+			y: 6.0d
+		}
+		{
+			icon: "minecraft:bee_nest"
+			id: "382E005F9BF9E8FD"
+			rewards: [
+				{
+					id: "7993A6629CBE2E86"
+					item: "minecraft:bee_spawn_egg"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "688EDE4C9F790EC8"
+					item: "minecraft:bee_nest"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 2
+					id: "541D6D5BA9924AAE"
+					item: "minecraft:honeycomb"
+					team_reward: false
+					type: "item"
+				}
+			]
+			tasks: [{
+				consume_items: true
+				count: 10L
+				id: "797AA6B0343FD273"
+				item: "minecraft:emerald_block"
+				type: "item"
+			}]
+			title: "蜂巢与蜜蜂"
+			x: 6.0d
+			y: 8.0d
+		}
+		{
+			description: [
+				"&e储存的仆从血量越多，占的空间越大"
+				"&7（佩戴精灵手环后无法使用，神秘BUG）"
+			]
+			icon: {
+				Count: 1b
+				id: "goety:esoteric_tesseract"
+				tag: {
+					Damage: 0
+					RepairCost: 0
+					Unbreakable: 1b
+				}
+			}
+			id: "1D2A6D1B525B5FC5"
+			rewards: [{
+				id: "6835FB53CF0E2838"
+				item: {
+					Count: 1b
+					id: "goety:esoteric_tesseract"
+					tag: {
+						Damage: 0
+						RepairCost: 0
+						Unbreakable: 1b
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "诡厄巫法mod仆从专用存储器"
+			tasks: [{
+				consume_items: true
+				count: 20L
+				id: "46F31C84FDB34369"
+				item: "goety:ectoplasm"
+				type: "item"
+			}]
+			title: "奥术方匣"
+			x: 5.0d
+			y: 7.0d
+		}
+	]
+	title: "&d商品交易"
+}

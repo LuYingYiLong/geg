@@ -1,0 +1,330 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "7E24529349DF7E00"
+	group: "3041B6EFACB9A615"
+	hide_quest_until_deps_visible: true
+	icon: {
+		Count: 1b
+		id: "goety_revelation:halo_of_the_end"
+		tag: {
+			Enchantments: [{
+				id: "minecraft:binding_curse"
+				lvl: 1s
+			}]
+		}
+	}
+	id: "7E24529349DF7E00"
+	order_index: 2
+	quest_links: [ ]
+	quests: [
+		{
+			dependencies: [
+				"1A096F2F6C1F07A9"
+				"4BC3D6DD581F0008"
+				"7029F986D14E315D"
+			]
+			description: [
+				"注意：终末仪式需要10w完整的灵魂能量，一定要有充足的能量！不然仪式会失败，实在担心可以在仪式途中杀两只坚守者"
+				""
+				"&a先来到末地维度Y轴小于10处（可以岩浆加水，浇灌一个石柱）"
+				""
+				"{image:kubejs:textures/aaaa/dengshenchangjie7.png width:200 height:110 align:1}"
+				""
+				"1.使用【4x末地烛，8x紫珀块，16x末地石砖4x展示框】在展示框内放入四个【谜底物品】无序搭建祭坛"
+				""
+				"{image:kubejs:textures/aaaa/dengshenchangjie8.png width:190 height:150 align:1}"
+				""
+				"2.将【维度意志，永恒怀表，4x神秘碎片，恶蝗蛰针】放在基座上【晋升之环】放在中央.然后献祭自己，死亡后复活在祭坛中央，等待转化完成即可获得&e终末之环"
+				""
+				"&6&n如今，你已知晓最终的秘密"
+				"&6&n是时候去登上那神座了"
+				"&6&n带上那&e璀璨的环"
+				"&6&n这片荒芜之地，终于迸发生机"
+				""
+				"{image:kubejs:textures/aaaa/zhongmozhihuan.png width:200 height:150 align:1}"
+				""
+				"&6&n如今，汝已然通晓世间辛秘，向此界宣告真正的神明到来！"
+				""
+				"&7位面意志&6献上忠诚"
+				"&7时间伟力&6拜服于汝"
+				"&7世界恶意&6匍匐于手"
+				""
+				"&6于荒芜的终末之地展示汝的权柄，献上汝的一切，如同昔日的神明一样站在寰宇的终点"
+				"&6觐见——&l&e终末神"
+				""
+				""
+				"&7（注意！佩戴后将无法取下。你不会被大部分生物视为敌人）"
+				""
+				"&7（佩戴终末环使用附魔有破军的枪械会导致崩溃）"
+				""
+				"&7（佩戴终末环使用拔刀剑睦子米时将无法发挥睦子米的百分比伤害）"
+			]
+			hide: false
+			id: "17C179C50AE3FD9C"
+			rewards: [{
+				id: "0D1702577CDD5366"
+				item: {
+					Count: 1b
+					id: "commandsceptre:command_block_sceptre"
+					tag: {
+						SceptreMode: 10.0d
+					}
+				}
+				type: "item"
+			}]
+			shape: "octagon"
+			size: 1.0d
+			subtitle: "&6解&e开&b谜&a底&2，&f进&e行&a仪&b式，&f佩&9戴&5终&6末&e之&d环&3，&2成&d为&e&m&l&e神明"
+			tasks: [{
+				id: "5C8F849E39DCD101"
+				item: {
+					Count: 1b
+					id: "goety_revelation:halo_of_the_end"
+					tag: {
+						Enchantments: [{
+							id: "minecraft:binding_curse"
+							lvl: 1s
+						}]
+					}
+				}
+				type: "item"
+			}]
+			title: "&6终·&e&m登——神"
+			x: 0.0d
+			y: -7.5d
+		}
+		{
+			dependencies: ["0464D4DD2D426E50"]
+			description: [
+				"&e打开【黑暗秘典】。巫法启示录→终末谣言（如果你找不到，请重新制作一本黑暗秘典）"
+				""
+				"&6游戏已经正常完成了，这是额外内容！"
+				""
+				"{image:kubejs:textures/aaaa/dengshenchangjie3.png width:200 height:130 align:1}"
+				"{image:kubejs:textures/aaaa/dengshenchangjie1.png width:200 height:130 align:1}"
+				""
+				"&e可以看到混沌提取，和终末谜题，根据混沌提取&b【制作四种终末启示之语】"
+				""
+				"{image:kubejs:textures/aaaa/dengshenchangjie2.png width:200 height:140 align:1}"
+			]
+			id: "13B8E10C3A2A32B8"
+			shape: "square"
+			subtitle: "&6获得晋升之环后，完成此任务"
+			tasks: [{
+				id: "24B9FBB6D7FF801B"
+				item: {
+					Count: 1b
+					id: "patchouli:guide_book"
+					tag: {
+						"patchouli:book": "goety:black_book"
+					}
+				}
+				type: "item"
+			}]
+			title: "&e第一步·又一次"
+			x: 0.0d
+			y: -1.5d
+		}
+		{
+			dependencies: ["13B8E10C3A2A32B8"]
+			description: [
+				"&l方法一："
+				"&n&e分别将制作的四个【终末启示之语】，放在主手【长按右键】，答案会浮现在屏幕上"
+				""
+				"&e得到谜语后，可以自行猜测或者在此任务的第三页中查看"
+				"&e也可在【&fhttps://www.mcmod.cn/post/4974.html&e】查询谜底答案"
+				""
+				"&e猜出四个谜底后，在魔法仪式上，放单个谜底于祭坛基座，并在祭坛上放置空法术聚晶，即可获得其对应碎片"
+				""
+				"{image:kubejs:textures/aaaa/dengshenchangjie6.png width:130 height:40 align:1}"
+				"&7（图中对应物品为：隐藏ID之戒）"
+				"&e（神秘碎片，其小字内容对应谜面。谜底物品会返还）"
+				""
+				"&6每样碎片做两个，共八个。"
+				""
+				"&e继续魔法仪式，将四个不同碎片放在基座上，空法术聚晶放在祭坛上"
+				""
+				"&e得到一个神秘物品“内含永恒的奥秘”，该物品是随机“附魔的”方块"
+				"&l方法二：（见第二页）"
+				"{@pagebreak}"
+				"&l方法二："
+				"&e根据JEI，使用魔法仪式合成冰冻远古兽肉"
+				"{image:kubejs:textures/aaaa/yuangubingdongshourou.png width:170 height:140 align:1}"
+				""
+				"&a获得冻肉后使用营火烤成熟肉（不要生吃！！！"
+				""
+				"&e吃掉熟肉即可获得终末谜题的所有相关物品"
+				""
+				"&7注：（合成中材料的音乐唱片，击败所有灾变BOSS后自动获得）"
+				"{@pagebreak}"
+				"&l所有谜题的答案："
+				""
+				"未曾绽放的末路之花——紫颂花"
+				""
+				"呼唤往昔之号——炽烈号角"
+				""
+				"幽暗处摇曳的暗焰——暗影精粹"
+				""
+				"往昔之事的残败记叙——凋零手稿"
+				""
+				"远古灭绝之生灵——嗅探兽蛋"
+				""
+				"诓骗死神之物——不死图腾"
+				""
+				"炼金的终点——贤者之石"
+				""
+				"空岛之基——末地石"
+				""
+				"世界之暗的伊始——暗夜信标"
+				""
+				"墓穴主人的沉眠之所——陶瓷坛"
+				""
+				"幽深黑暗的回忆——回响碎片"
+				""
+				"生者安息之所——床"
+				""
+				"极限模式毁灭者——灵魂方舟"
+				""
+				"生机本源的连接者——活力核心"
+				""
+				"幽暗之中的明光——发光地衣"
+				""
+				"忤逆指令的力量——灵魂图腾"
+				""
+				"归家之引——信标"
+				""
+				"暗影猎手之魂——咆哮之魂"
+				""
+				"先古回音的碎片——禁书碎片"
+				""
+				"终末永恒之伴——末影水晶"
+				""
+				"最初挚友的心爱之物——骨头"
+				""
+				"守护者的遗志——铁锭"
+				""
+				"守护者的忠情——虞美人"
+				""
+				"群死排衙累白骨，幽邃晦暝止鬼哭——尖啸方尖碑"
+				""
+				"创生塑魂烦抟土，深影为始束身无——赋魂器"
+				""
+				"黑暗魔法的起源——灵质"
+				""
+				"深埋于高山之下的奇异珍宝——深层绿宝石矿石"
+				""
+				"层嶂存于虚无，吾将开辟道路——隧穿聚晶"
+				""
+				"无所不知，无所不说——黑暗之书"
+				""
+				"以身紫烛引世久，颂炎驱火净尘沙——炼狱魔典"
+				""
+				"迷于尘世者的忿怒——愤怒之质"
+				""
+				"荒芜生机的遗迹——枯萎的灌木"
+				""
+				"追随死亡——追溯指针"
+				""
+				"破败的神性冠冕——黯淡皇冠"
+				""
+				"神明的黄金冠冕——Iron的皇冠"
+				""
+				"匿踪商队的埋没之物——永冻碎片"
+				""
+				"不可视之物——隐藏ID之戒"
+				""
+				"不见光明的遗忘金属——奥术残骸"
+				""
+				"深埋黑暗的不语之书——颓残之书"
+				""
+				"炽焰魔神的固化力量——腾炎块"
+				""
+				"诅咒守卫的惨白头颅——武弁的头"
+				""
+				"终界堡垒的明灯——虚空灯"
+				""
+				"听闻壁外苍天语——熊尘"
+				""
+				"远古天灾的媒介——灾厄触媒"
+				""
+				"奔雷淬其脆如酥，琼液如玉甘似梦——奶油甜馅煎饼卷"
+				""
+				"虚空之中的末影之眼——虚空之眼"
+				""
+				"深渊死灵之王的无上冠冕——汽水帽"
+				""
+				"漂亮国海底旅游工具操作器——游戏手柄"
+			]
+			hide: false
+			id: "1579498497016D0E"
+			shape: "pentagon"
+			tasks: [{
+				id: "0C0F6D93DBCB09AB"
+				item: "goety_revelation:puzzle_item"
+				type: "item"
+			}]
+			title: "&e第二步·窥探终末之语"
+			x: 0.0d
+			y: -3.0d
+		}
+		{
+			dependencies: ["1579498497016D0E"]
+			description: ["&e通过魔法仪式，将四个原版的时钟放在基座上，将神秘物品放在祭坛上，得到永恒怀表。"]
+			hide: false
+			id: "7029F986D14E315D"
+			shape: "hexagon"
+			subtitle: "&e『The World』"
+			tasks: [{
+				id: "3B78DA02A7774A0C"
+				item: "goety_revelation:eternal_watch"
+				type: "item"
+			}]
+			title: "&e第三步·永恒怀表"
+			x: 0.0d
+			y: -5.0d
+		}
+		{
+			dependencies: ["1579498497016D0E"]
+			description: [
+				"&e合成不会消耗天启七印，只会掉一点耐久"
+				""
+				"&e天启七印获取：整个存档【首次在下界击败亚波伦】获得"
+			]
+			hide: false
+			id: "1A096F2F6C1F07A9"
+			shape: "hexagon"
+			subtitle: "&e合成维度意志"
+			tasks: [{
+				id: "14ACCE20E21D8B1F"
+				item: "goety_revelation:dimensional_will"
+				type: "item"
+			}]
+			title: "&e第三步·维度意志"
+			x: -1.5d
+			y: -5.0d
+		}
+		{
+			dependencies: ["1579498497016D0E"]
+			hide: false
+			id: "4BC3D6DD581F0008"
+			shape: "hexagon"
+			subtitle: "&e由下界亚波伦掉落"
+			tasks: [{
+				id: "4A22B861C63FE23C"
+				item: {
+					Count: 1b
+					id: "goety_revelation:the_needle"
+					tag: {
+						isRealNeedle: 1b
+					}
+				}
+				type: "item"
+			}]
+			title: "&e第三步·恶蝗蛰针"
+			x: 1.5d
+			y: -5.0d
+		}
+	]
+	title: "&d我是个唤魔者·登神长阶"
+}

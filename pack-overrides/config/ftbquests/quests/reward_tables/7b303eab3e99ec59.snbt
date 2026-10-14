@@ -1,0 +1,13 @@
+{
+	id: "7B303EAB3E99EC59"
+	loot_size: 1
+	order_index: 16
+	rewards: [
+		{ item: "ironchests:copper_barrel" }
+		{ item: "ironchests:iron_barrel" }
+		{ item: "ironchests:obsidian_barrel" }
+		{ item: "ironchests:netherite_barrel" }
+		{ item: "ironchests:gold_barrel" }
+	]
+	title: "桶"
+}

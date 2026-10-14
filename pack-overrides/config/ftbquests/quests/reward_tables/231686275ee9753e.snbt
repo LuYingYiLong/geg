@@ -1,0 +1,103 @@
+{
+	id: "231686275EE9753E"
+	loot_size: 1
+	order_index: 10
+	rewards: [
+		{ count: 16, item: "minecraft:copper_ingot", weight: 4.0f }
+		{ count: 16, item: "minecraft:emerald", weight: 4.0f }
+		{
+			count: 2
+			item: {
+				Count: 1b
+				id: "culinaryconstruct:sandwich"
+				tag: {
+					Base: {
+						Count: 1b
+						id: "minecraft:bread"
+					}
+					Count: 5
+					Food: 9
+					Ingredients: {
+						Items: [
+							{
+								Count: 1b
+								Slot: 0b
+								id: "minecraft:golden_apple"
+							}
+							{
+								Count: 1b
+								Slot: 1b
+								id: "bosses_of_mass_destruction:crystal_fruit"
+							}
+							{
+								Count: 1b
+								Slot: 2b
+								id: "butcher:elder_meat"
+							}
+							{
+								Count: 1b
+								Slot: 3b
+								id: "farmersdelight:kelp_roll"
+							}
+							{
+								Count: 1b
+								Slot: 4b
+								id: "alexscaves:dinosaur_nugget"
+							}
+						]
+					}
+					Quality: 4
+					Saturation: 0.92727274f
+					Size: 5
+					Solids: {
+						Items: [
+							{
+								Count: 1b
+								Slot: 0b
+								id: "minecraft:golden_apple"
+							}
+							{
+								Count: 1b
+								Slot: 1b
+								id: "bosses_of_mass_destruction:crystal_fruit"
+							}
+							{
+								Count: 1b
+								Slot: 2b
+								id: "butcher:elder_meat"
+							}
+							{
+								Count: 1b
+								Slot: 3b
+								id: "farmersdelight:kelp_roll"
+							}
+							{
+								Count: 1b
+								Slot: 4b
+								id: "alexscaves:dinosaur_nugget"
+							}
+							{
+								Count: 1b
+								Slot: 5b
+								id: "minecraft:bread"
+							}
+						]
+					}
+					SolidsSize: 6
+				}
+			}
+			weight: 2.0f
+		}
+		{ item: "minecraft:diamond", weight: 2.0f }
+		{ item: "minecraft:netherite_scrap" }
+		{ item: "ironchests:iron_barrel", weight: 4.0f }
+		{ item: "ironchests:netherite_barrel" }
+		{
+			type: "xp"
+			weight: 4.0f
+			xp: 350
+		}
+		{ count: 5, item: "celestial_core:virtual_gold_nugget" }
+	]
+	title: "随机奖励"
+}

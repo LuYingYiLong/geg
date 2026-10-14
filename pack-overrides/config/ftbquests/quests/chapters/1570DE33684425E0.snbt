@@ -1,0 +1,275 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "1570DE33684425E0"
+	group: "50FDD722F8A8E4F8"
+	id: "1570DE33684425E0"
+	images: [
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 6.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/tarotcards.png"
+			rotation: 0.0d
+			width: 5.58d
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 1.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/drhrynrn.png"
+			rotation: 0.0d
+			width: 7.84d
+			x: 0.0d
+			y: -3.5d
+		}
+	]
+	order_index: 4
+	quest_links: [ ]
+	quests: [
+		{
+			id: "5566B7911A2C2520"
+			subtitle: "&e用于增强女仆！&a女仆专用饰品"
+			tasks: [{
+				id: "64CEB29BCA7E4D10"
+				title: "&l&e女仆法术饰品"
+				type: "checkmark"
+			}]
+			x: 0.0d
+			y: -1.5d
+		}
+		{
+			id: "1553F2ACF3966C97"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "36BBFF6E73C937A0"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "快速增进女仆好感的道具"
+			tasks: [{
+				id: "5C6D6EBD7363ACF3"
+				item: "touhou_little_maid_spell:fragrant_ingenuity"
+				type: "item"
+			}]
+			x: -0.5d
+			y: -0.5d
+		}
+		{
+			id: "4FB26DCA64F70CD5"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "655424FE207559C3"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.0d
+			subtitle: "&6提供抗击退能力"
+			tasks: [{
+				id: "7F88F126ADBA05BC"
+				item: "touhou_little_maid_spell:rock_crystal"
+				type: "item"
+			}]
+			x: -1.5d
+			y: -0.5d
+		}
+		{
+			description: [
+				"&b流星雨随机发生于夜晚"
+				""
+				"&b宝藏碎片任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"01D71AFAB6F67EB3\" } }"
+			]
+			id: "42A054EE8051469D"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0DCA7E9BEEBF6C82"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.0d
+			subtitle: "&b减少女仆法术冷却"
+			tasks: [{
+				id: "3BA16335A333B05B"
+				item: "touhou_little_maid_spell:quick_chant_ring"
+				type: "item"
+			}]
+			x: -1.5d
+			y: 0.5d
+		}
+		{
+			id: "798F82A011C5A800"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "139BF28B2988A1A5"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.0d
+			subtitle: "&6根据损失血量提高攻击能力"
+			tasks: [{
+				id: "55ECCB4882972A1B"
+				item: "touhou_little_maid_spell:spring_ring"
+				type: "item"
+			}]
+			x: -0.5d
+			y: 0.5d
+		}
+		{
+			id: "65ED3C72D15D2E69"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "7FE4E2CC90D3F0CD"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.0d
+			tasks: [{
+				id: "08617E71249AB550"
+				item: "touhou_little_maid_spell:double_heart_chain"
+				type: "item"
+			}]
+			x: 0.5d
+			y: 0.5d
+		}
+		{
+			description: [
+				"&b监守者感受器，由生物笼DNA监守者基因获取，生物笼链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"78494C2624BB0151\" } }"
+			]
+			id: "277B34E7182804A2"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "67868B376AF3422C"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.0d
+			subtitle: "&6提升治疗能力"
+			tasks: [{
+				id: "7D09B22219C60B7D"
+				item: "touhou_little_maid_spell:flow_core"
+				type: "item"
+			}]
+			x: -1.5d
+			y: 1.5d
+		}
+		{
+			id: "37053DABCCE8BBC2"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "15D916475C898A64"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.0d
+			subtitle: "&6造成伤害进行吸血"
+			tasks: [{
+				id: "32A99B28D8B82417"
+				item: "touhou_little_maid_spell:bleeding_heart"
+				type: "item"
+			}]
+			x: 1.5d
+			y: -0.5d
+		}
+		{
+			id: "280DDD57B3948373"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "70179D1F53AA060F"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.0d
+			subtitle: "&e女仆受到的伤害会通过玩家进行减伤，再结算在女仆身上"
+			tasks: [{
+				id: "615C97DA680E219E"
+				item: "touhou_little_maid_spell:hairpin"
+				type: "item"
+			}]
+			x: 0.5d
+			y: 1.5d
+		}
+		{
+			description: [
+				"&b古代灵魂由BOSS巫妖掉落，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"67D912B04189EC2D\" } }"
+			]
+			id: "1DAEDFA018A087F8"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "3B1138FD4B5701E9"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			tasks: [{
+				id: "7FA2430CFE6DC8F0"
+				item: "touhou_little_maid_spell:soul_book"
+				type: "item"
+			}]
+			x: 1.5d
+			y: 1.5d
+		}
+		{
+			description: ["&c火&9冰&b雷&6三种龙肉，击杀对应的飞龙，空手右键尸体获得"]
+			id: "2FD17477FB3184DE"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1F9499A2485E191F"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.0d
+			subtitle: "（可反弹伤害）"
+			tasks: [{
+				id: "39850DF5E2B5F17F"
+				item: "touhou_little_maid_spell:sliver_cercis"
+				type: "item"
+			}]
+			x: -0.5d
+			y: 1.5d
+		}
+		{
+			id: "1CB4D000FFA313C8"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "017BA0566B7AAC8C"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.0d
+			subtitle: "&b右键选择光环样式，佩戴在女仆饰品栏即可显现（无特殊效果）"
+			tasks: [{
+				id: "5977D0C04DA712A1"
+				item: "touhou_little_maid_spell:transmog_necklace"
+				type: "item"
+			}]
+			x: 0.5d
+			y: -0.5d
+		}
+		{
+			id: "357869B2E6C4B477"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "15A0512BCC65CAC1"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&e施法后获得一层叠层，当玩家或女仆受到高额伤害，会消耗叠层进行回血"
+			tasks: [{
+				id: "4F4060E51E6F311A"
+				item: "touhou_little_maid_spell:spring_bloom_return"
+				type: "item"
+			}]
+			x: 1.5d
+			y: 0.5d
+		}
+	]
+	title: "女仆饰品"
+}

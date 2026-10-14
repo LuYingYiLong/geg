@@ -1,0 +1,21 @@
+{
+	id: "3B7853B7E9532263"
+	loot_size: 1
+	order_index: 6
+	rewards: [
+		{ count: 2, item: "minecraft:copper_block" }
+		{ count: 10, item: "farmersdelight:dumplings" }
+		{ count: 20, item: "minecraft:gunpowder" }
+		{ count: 10, item: "minecraft:iron_ingot" }
+		{ item: "minecraft:diamond" }
+		{
+			type: "xp"
+			xp: 200
+		}
+		{ count: 2, item: "slashblade:proudsoul" }
+		{ item: "celestial_artifacts:purified_powder" }
+		{ count: 7, item: "irons_spellbooks:arcane_essence" }
+		{ count: 5, item: "smithstory:ranjinle" }
+	]
+	title: "选择奖励"
+}

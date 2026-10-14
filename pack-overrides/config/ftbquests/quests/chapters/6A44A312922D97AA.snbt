@@ -1,0 +1,921 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "6A44A312922D97AA"
+	group: "7212331F85A8A7A2"
+	icon: "skyarena:altar_battle"
+	id: "6A44A312922D97AA"
+	images: [{
+		click: ""
+		corner: false
+		dev: false
+		height: 10.0d
+		hover: [ ]
+		image: "kubejs:textures/aaaa/xaingzi2.png"
+		rotation: 0.0d
+		width: 10.0d
+		x: 0.0d
+		y: 0.0d
+	}]
+	order_index: 3
+	quest_links: [ ]
+	quests: [
+		{
+			id: "68673424F839D4AB"
+			rewards: [{
+				id: "2A351CDA782828F3"
+				item: "artifacts:everlasting_beef"
+				type: "item"
+			}]
+			tasks: [{
+				id: "0974CEF7844FBAD6"
+				stat: "minecraft:play_time"
+				type: "stat"
+				value: 2400000
+			}]
+			title: "&6游玩一百天？（游戏时间）"
+			x: -0.5d
+			y: -1.0d
+		}
+		{
+			id: "6746A58EBE700093"
+			rewards: [
+				{
+					id: "75F34F9081056E57"
+					item: {
+						Count: 1b
+						id: "minecraft:blue_shulker_box"
+						tag: {
+							BlockEntityTag: {
+								CustomName: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"blue\",\"text\":\"拔刀剑潜影盒\"}"
+								ForgeData: { }
+								Items: [{
+									Count: 1b
+									ForgeCaps: {
+										Parent: {
+											AttackAmplifier: 0.0f
+											BladeUniqueId: [I;
+												-42420499
+												-980267455
+												-2081501943
+												-1325599913
+											]
+											ComboRoot: "slashblade:standby"
+											Damage: 0
+											ModelName: "yakumoblade:model/relicofpaseone/green_inflammation.obj"
+											RepairCounter: 0
+											SpecialAttackType: "slashblade:judgement_cut"
+											SpecialEffects: ["yakumoblade:very_green"]
+											StandbyRenderType: 2b
+											SummonedSwordColor: -16744449
+											SummonedSwordColorInverse: 0b
+											TargetEntity: 0
+											TextureName: "yakumoblade:model/relicofpaseone/green_inflammation.png"
+											_onClick: 0b
+											adjustXYZ: [
+												0.0d
+												0.0d
+												0.0d
+											]
+											baseAttackModifier: 42.0f
+											currentCombo: "slashblade:none"
+											fallDecreaseRate: 0.0f
+											isBroken: 0b
+											isDefaultBewitched: 1b
+											isSealed: 0b
+											killCount: 0
+											lastActionTime: 0L
+											maxDamage: 180
+											proudSoul: 0
+											translationKey: "item.yakumoblade.green_inflammation"
+										}
+									}
+									Slot: 13b
+									id: "slashblade:slashblade"
+									tag: {
+										Enchantments: [
+											{
+												id: "minecraft:power"
+												lvl: 5s
+											}
+											{
+												id: "minecraft:sharpness"
+												lvl: 5s
+											}
+											{
+												id: "minecraft:unbreaking"
+												lvl: 3s
+											}
+											{
+												id: "minecraft:looting"
+												lvl: 10s
+											}
+										]
+										bladeState: {
+											AttackAmplifier: 0.0f
+											BladeUniqueId: [I;
+												-42420499
+												-980267455
+												-2081501943
+												-1325599913
+											]
+											ComboRoot: "slashblade:standby"
+											Damage: 0
+											ModelName: "yakumoblade:model/relicofpaseone/green_inflammation.obj"
+											RepairCounter: 0
+											SpecialAttackType: "slashblade:judgement_cut"
+											SpecialEffects: ["yakumoblade:very_green"]
+											StandbyRenderType: 2b
+											SummonedSwordColor: -16744449
+											SummonedSwordColorInverse: 0b
+											TargetEntity: 0
+											TextureName: "yakumoblade:model/relicofpaseone/green_inflammation.png"
+											_onClick: 0b
+											adjustXYZ: [
+												0.0d
+												0.0d
+												0.0d
+											]
+											baseAttackModifier: 42.0f
+											currentCombo: "slashblade:none"
+											fallDecreaseRate: 0.0f
+											isBroken: 0b
+											isDefaultBewitched: 1b
+											isSealed: 0b
+											killCount: 0
+											lastActionTime: 0L
+											maxDamage: 180
+											proudSoul: 0
+											translationKey: "item.yakumoblade.green_inflammation"
+										}
+									}
+								}]
+								id: "minecraft:shulker_box"
+							}
+							display: {
+								Name: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"blue\",\"text\":\"拔刀剑潜影盒\"}"
+							}
+						}
+					}
+					title: "&9拔刀剑潜影盒&6·&b魔剑·蓝染大和"
+					type: "item"
+				}
+				{
+					id: "519FED41B9B90B84"
+					item: {
+						Count: 1b
+						id: "tacz:modern_kinetic_gun"
+						tag: {
+							GunCurrentAmmoCount: 10
+							GunFireMode: "SEMI"
+							GunId: "tacz:m107"
+							HasBulletInBarrel: 1b
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "掠夺者的梦魇"
+			tasks: [{
+				entity: "minecraft:pillager"
+				id: "4CB147CAA19D1340"
+				type: "kill"
+				value: 600L
+			}]
+			x: 0.5d
+			y: 0.0d
+		}
+		{
+			id: "29EB0FB2DF62C87D"
+			rewards: [{
+				count: 20
+				id: "15850FC4CA142F7C"
+				item: "minecraft:enchanted_golden_apple"
+				type: "item"
+			}]
+			subtitle: "先投掷【喷溅型虚弱药水】，再用【金苹果】右键"
+			tasks: [{
+				advancement: "minecraft:story/cure_zombie_villager"
+				criterion: ""
+				id: "2953FE0F80ACF157"
+				type: "advancement"
+			}]
+			title: "&e治愈一名僵尸村民"
+			x: -2.0d
+			y: -1.5d
+		}
+		{
+			id: "7AE1190313431642"
+			rewards: [{
+				id: "018541A3416A62DB"
+				item: "artifacts:running_shoes"
+				type: "item"
+			}]
+			subtitle: "50km......"
+			tasks: [{
+				id: "43C5258A4E1BDF21"
+				stat: "minecraft:walk_one_cm"
+				type: "stat"
+				value: 5000000
+			}]
+			x: 0.0d
+			y: -2.0d
+		}
+		{
+			dependencies: [
+				"432D90B9CD7D89EA"
+				"1D5BCD377D9D9E72"
+				"35AC7EC3827E2F5B"
+				"2D763D90223C9A51"
+				"57D574A10D5C2F38"
+				"3C2E3A0880B80ACE"
+				"6BABEA3A977B80FB"
+				"643864F09415C6C8"
+				"4DF2313C186B6BBD"
+				"102432CFE3159567"
+				"38D832860E8D62CE"
+				"7823AA372E7CF0B5"
+				"750588050C70B86E"
+				"7CDAD4610501F81B"
+				"60927FCACB31B20B"
+				"6363C5A4875057B2"
+				"7E0E73892E4C972D"
+				"401F2F9B5CA4BD46"
+				"6C7F53469075F521"
+				"3844985F5638B3D3"
+				"69BF3887F73D9C31"
+				"71355383CE140B96"
+				"421A6A544CDC1124"
+				"325A12D3C0C4C071"
+				"09B922F3D3E6AC11"
+			]
+			id: "7327572608FD2EA7"
+			rewards: [{
+				id: "6AC459F0E3288A3C"
+				item: {
+					Count: 1b
+					id: "tarotcards:judgement"
+					tag: { }
+				}
+				type: "item"
+			}]
+			tasks: [{
+				icon: "minecraft:netherrack"
+				id: "7B301B09C0E5F96C"
+				stat: "minecraft:mob_kills"
+				title: "&6完成章节【旧世界】"
+				type: "stat"
+				value: 1
+			}]
+			x: 0.5d
+			y: -1.0d
+		}
+		{
+			id: "0C0D9D6BD62813D2"
+			rewards: [{
+				id: "1C4930EE4D378D3C"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:blaze_spell_book"
+					tag: {
+						ISB_Spells: {
+							data: [ ]
+							maxSpells: 10
+							mustEquip: 1b
+							spellWheel: 1b
+						}
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "这是保底系统....."
+			tasks: [{
+				entity: "minecraft:blaze"
+				id: "0B14D54CD825782F"
+				type: "kill"
+				value: 50L
+			}]
+			x: -1.0d
+			y: -2.0d
+		}
+		{
+			dependencies: [
+				"16D07A6119CA2D5A"
+				"0D391259C6B98A3C"
+				"0E2B9E56BB16960E"
+				"6249E92EA9464406"
+				"77E28508762F7BA2"
+				"4C984B18671947D0"
+				"6E068D0D28DE86BF"
+				"69777282F33899E7"
+				"3E74AD38FC8A9D4A"
+				"0AC897FF0593F328"
+				"7138598E20E2A619"
+				"26E61D8A06FAB278"
+				"42FCB5AD464D0FD3"
+				"1AD72679E4A2911C"
+				"4AB36B0F64DF2EB0"
+				"6F4B8E3BE30A1E49"
+				"73CF07220BC6183D"
+				"39F973775596D420"
+				"2A6B3B5507EBC50E"
+				"49D7A07B580E939E"
+				"6FD9928980FE2CD3"
+				"28D68A77A793C60D"
+			]
+			id: "1D8B066F42146093"
+			rewards: [{
+				count: 3
+				id: "032557E8747B4E2B"
+				item: "sophisticatedbackpacks:stack_upgrade_tier_4"
+				type: "item"
+			}]
+			tasks: [{
+				icon: "minecraft:end_stone"
+				id: "6C4CF42EEF2CCFC9"
+				stat: "minecraft:mob_kills"
+				title: "&d完成章节【末地】"
+				type: "stat"
+				value: 1
+			}]
+			x: -1.5d
+			y: 0.5d
+		}
+		{
+			id: "77712B39242D0556"
+			rewards: [{
+				count: 40
+				id: "0BF1888AE4A00444"
+				item: "minecraft:emerald"
+				type: "item"
+			}]
+			subtitle: "&e兄弟，你好香"
+			tasks: [{
+				id: "04D494F9C937AF57"
+				item: "butcher:villager_corpse_item"
+				type: "item"
+			}]
+			title: "获得一具村民的尸体"
+			x: -1.5d
+			y: -0.5d
+		}
+		{
+			id: "68598D56A457D279"
+			rewards: [{
+				id: "1726CA16C4FE2E32"
+				item: "ringsofascension:ring_undying"
+				type: "item"
+			}]
+			subtitle: "死亡100次"
+			tasks: [{
+				id: "73CF5BD27E321E83"
+				stat: "minecraft:deaths"
+				type: "stat"
+				value: 100
+			}]
+			x: -0.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["59925D0AB1768958"]
+			description: ["&a注意：突破限制的附魔需要【黑暗铁砧】才能附魔到武器上"]
+			id: "55B453898E595B86"
+			rewards: [
+				{
+					id: "109327B179EB2C4F"
+					item: {
+						Count: 1b
+						id: "minecraft:blue_shulker_box"
+						tag: {
+							BlockEntityTag: {
+								CustomName: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"blue\",\"text\":\"拔刀剑潜影盒\"}"
+								ForgeData: { }
+								Items: [{
+									Count: 1b
+									ForgeCaps: {
+										Parent: {
+											AttackAmplifier: 0.0f
+											BladeUniqueId: [I;
+												-822123037
+												1841840955
+												-1553826037
+												1629639868
+											]
+											ComboRoot: "slashblade:standby"
+											Damage: 0
+											ModelName: "yakumoblade:model/relicofpaseone/blade_seven.obj"
+											RepairCounter: 0
+											SpecialAttackType: "slashblade_addon:rapid_blistering_swords"
+											SpecialEffects: [
+												"yakumoblade:yuyuko"
+												"yakumoblade:gapgap"
+												"yakumoblade:very_green"
+											]
+											StandbyRenderType: 2b
+											SummonedSwordColor: -13685950
+											SummonedSwordColorInverse: 0b
+											TargetEntity: 0
+											TextureName: "yakumoblade:model/relicofpaseone/blade_hexagram_s.png"
+											_onClick: 0b
+											adjustXYZ: [
+												0.0d
+												0.0d
+												0.0d
+											]
+											baseAttackModifier: 60.0f
+											currentCombo: "slashblade:none"
+											fallDecreaseRate: 0.0f
+											isBroken: 0b
+											isDefaultBewitched: 0b
+											isSealed: 0b
+											killCount: 0
+											lastActionTime: 947555L
+											maxDamage: 200
+											proudSoul: 0
+											translationKey: "item.yakumoblade.terra"
+										}
+									}
+									Slot: 13b
+									id: "slashblade:slashblade"
+									tag: {
+										Enchantments: [{
+											id: "minecraft:power"
+											lvl: 20s
+										}]
+										bladeState: {
+											AttackAmplifier: 0.0f
+											BladeUniqueId: [I;
+												-822123037
+												1841840955
+												-1553826037
+												1629639868
+											]
+											ComboRoot: "slashblade:standby"
+											Damage: 0
+											ModelName: "yakumoblade:model/relicofpaseone/blade_seven.obj"
+											RepairCounter: 0
+											SpecialAttackType: "slashblade_addon:rapid_blistering_swords"
+											SpecialEffects: [
+												"yakumoblade:yuyuko"
+												"yakumoblade:gapgap"
+												"yakumoblade:very_green"
+											]
+											StandbyRenderType: 2b
+											SummonedSwordColor: -13685950
+											SummonedSwordColorInverse: 0b
+											TargetEntity: 0
+											TextureName: "yakumoblade:model/relicofpaseone/blade_hexagram_s.png"
+											_onClick: 0b
+											adjustXYZ: [
+												0.0d
+												0.0d
+												0.0d
+											]
+											baseAttackModifier: 60.0f
+											currentCombo: "slashblade:none"
+											fallDecreaseRate: 0.0f
+											isBroken: 0b
+											isDefaultBewitched: 0b
+											isSealed: 0b
+											killCount: 0
+											lastActionTime: 947555L
+											maxDamage: 200
+											proudSoul: 0
+											translationKey: "item.yakumoblade.terra"
+										}
+									}
+								}]
+								id: "minecraft:shulker_box"
+							}
+							display: {
+								Name: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"blue\",\"text\":\"拔刀剑潜影盒\"}"
+							}
+						}
+					}
+					team_reward: false
+					title: "&9拔刀剑潜影盒【暗影】【非团队奖励】"
+					type: "item"
+				}
+				{
+					id: "3B6B4C92B27EA362"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							RepairCost: 25
+							StoredEnchantments: [{
+								id: "tonsofenchants:enhanced_sharpness"
+								lvl: 30s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					auto: "disabled"
+					command: "/gamerule liberateAttachment true"
+					elevate_perms: true
+					exclude_from_claim_all: true
+					id: "16FACE68F6B84F60"
+					team_reward: false
+					title: "&e无限提供枪械可用配件，对所有玩家生效！"
+					type: "command"
+				}
+			]
+			subtitle: "&e挑战100次获得，奖励超强拔刀剑和无限枪械配件"
+			tasks: [{
+				id: "77F0E2062ECA9C15"
+				item: "skyarena:netherite_trophy"
+				type: "item"
+			}]
+			x: 6.0d
+			y: -1.5d
+		}
+		{
+			dependencies: ["59925D0AB1768958"]
+			id: "3A281931AD8C2316"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "5155CEBA765AA0BB"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&e挑战50次获得，用于合成【大圣套装】"
+			tasks: [{
+				id: "6ACF95532B108F86"
+				item: "skyarena:diamond_trophy"
+				type: "item"
+			}]
+			x: 4.5d
+			y: -0.5d
+		}
+		{
+			dependencies: ["59925D0AB1768958"]
+			id: "66EE53E5B607C402"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "43442B97AAAB4E90"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&e挑战20次获得，用于合成百分比伤害武器【终极分形者】"
+			tasks: [{
+				id: "246AB07F908B3CCE"
+				item: "skyarena:gold_trophy"
+				type: "item"
+			}]
+			x: 3.0d
+			y: -1.5d
+		}
+		{
+			dependencies: ["59925D0AB1768958"]
+			id: "5A57DFA6905396AF"
+			rewards: [{
+				id: "36F9764DD75FA161"
+				item: {
+					Count: 1b
+					id: "minecraft:blue_shulker_box"
+					tag: {
+						BlockEntityTag: {
+							Items: [
+								{
+									Count: 1b
+									ForgeCaps: {
+										Parent: {
+											AttackAmplifier: 0.0f
+											BladeUniqueId: [I;
+												-1542197167
+												-628669424
+												-1633182520
+												629848699
+											]
+											ComboRoot: "slashblade:standby"
+											Damage: 0
+											ModelName: "slashblade_addon:model/terra/terra.obj"
+											RepairCounter: 0
+											SpecialAttackType: "slashblade_addon:blistering_terra_swords"
+											StandbyRenderType: 5b
+											SummonedSwordColor: -13253103
+											SummonedSwordColorInverse: 0b
+											TargetEntity: 0
+											TextureName: "slashblade_addon:model/terra/terra.png"
+											_onClick: 0b
+											adjustXYZ: [
+												0.0d
+												0.0d
+												0.0d
+											]
+											baseAttackModifier: 6.0f
+											currentCombo: "slashblade:none"
+											fallDecreaseRate: 0.0f
+											isBroken: 0b
+											isDefaultBewitched: 1b
+											isSealed: 0b
+											killCount: 0
+											lastActionTime: 0L
+											maxDamage: 60
+											proudSoul: 0
+											translationKey: "item.slashblade_addon.terra_blade"
+										}
+									}
+									Slot: 12b
+									id: "slashblade:slashblade"
+									tag: {
+										Enchantments: [{
+											id: "minecraft:power"
+											lvl: 1s
+										}]
+										bladeState: {
+											AttackAmplifier: 0.0f
+											BladeUniqueId: [I;
+												-1542197167
+												-628669424
+												-1633182520
+												629848699
+											]
+											ComboRoot: "slashblade:standby"
+											Damage: 0
+											ModelName: "slashblade_addon:model/terra/terra.obj"
+											RepairCounter: 0
+											SpecialAttackType: "slashblade_addon:blistering_terra_swords"
+											StandbyRenderType: 5b
+											SummonedSwordColor: -13253103
+											SummonedSwordColorInverse: 0b
+											TargetEntity: 0
+											TextureName: "slashblade_addon:model/terra/terra.png"
+											_onClick: 0b
+											adjustXYZ: [
+												0.0d
+												0.0d
+												0.0d
+											]
+											baseAttackModifier: 6.0f
+											currentCombo: "slashblade:none"
+											fallDecreaseRate: 0.0f
+											isBroken: 0b
+											isDefaultBewitched: 1b
+											isSealed: 0b
+											killCount: 0
+											lastActionTime: 0L
+											maxDamage: 60
+											proudSoul: 0
+											translationKey: "item.slashblade_addon.terra_blade"
+										}
+									}
+								}
+								{
+									Count: 1b
+									ForgeCaps: {
+										Parent: {
+											AttackAmplifier: 0.0f
+											BladeUniqueId: [I;
+												-111107757
+												-671920559
+												-1149305937
+												-1281750607
+											]
+											ComboRoot: "slashblade:standby"
+											Damage: 0
+											ModelName: "yakumoblade:model/named/custom/vergil/mirageedge.obj"
+											RepairCounter: 0
+											SpecialAttackType: "yakumoblade:thoo"
+											SpecialEffects: ["slashblade_addon:burst_drive"]
+											StandbyRenderType: 2b
+											SummonedSwordColor: -14774017
+											SummonedSwordColorInverse: 0b
+											TargetEntity: 0
+											TextureName: "yakumoblade:model/named/custom/vergil/mirageedge.png"
+											_onClick: 0b
+											adjustXYZ: [
+												0.0d
+												0.0d
+												0.0d
+											]
+											baseAttackModifier: 10.0f
+											currentCombo: "slashblade:none"
+											fallDecreaseRate: 0.0f
+											isBroken: 0b
+											isDefaultBewitched: 1b
+											isSealed: 0b
+											killCount: 0
+											lastActionTime: 802965L
+											maxDamage: 120
+											proudSoul: 0
+											translationKey: "item.yakumoblade.mirageedge"
+										}
+									}
+									Slot: 13b
+									id: "slashblade:slashblade"
+									tag: {
+										Enchantments: [{
+											id: "minecraft:power"
+											lvl: 10s
+										}]
+										bladeState: {
+											AttackAmplifier: 0.0f
+											BladeUniqueId: [I;
+												-111107757
+												-671920559
+												-1149305937
+												-1281750607
+											]
+											ComboRoot: "slashblade:standby"
+											Damage: 0
+											ModelName: "yakumoblade:model/named/custom/vergil/mirageedge.obj"
+											RepairCounter: 0
+											SpecialAttackType: "yakumoblade:thoo"
+											SpecialEffects: ["slashblade_addon:burst_drive"]
+											StandbyRenderType: 2b
+											SummonedSwordColor: -14774017
+											SummonedSwordColorInverse: 0b
+											TargetEntity: 0
+											TextureName: "yakumoblade:model/named/custom/vergil/mirageedge.png"
+											_onClick: 0b
+											adjustXYZ: [
+												0.0d
+												0.0d
+												0.0d
+											]
+											baseAttackModifier: 10.0f
+											currentCombo: "slashblade:none"
+											fallDecreaseRate: 0.0f
+											isBroken: 0b
+											isDefaultBewitched: 1b
+											isSealed: 0b
+											killCount: 0
+											lastActionTime: 802965L
+											maxDamage: 120
+											proudSoul: 0
+											translationKey: "item.yakumoblade.mirageedge"
+										}
+									}
+								}
+								{
+									Count: 1b
+									ForgeCaps: {
+										Parent: {
+											AttackAmplifier: 0.0f
+											BladeUniqueId: [I;
+												-255679625
+												1309689658
+												-1749508868
+												623747985
+											]
+											ComboRoot: "slashblade:standby"
+											Damage: 0
+											ModelName: "slashblade_addon:model/toyako/toyako.obj"
+											RepairCounter: 0
+											SpecialAttackType: "slashblade:judgement_cut"
+											StandbyRenderType: 4b
+											SummonedSwordColor: -13421569
+											SummonedSwordColorInverse: 0b
+											TargetEntity: 0
+											TextureName: "slashblade_addon:model/toyako/toyako.png"
+											_onClick: 0b
+											adjustXYZ: [
+												0.0d
+												0.0d
+												0.0d
+											]
+											baseAttackModifier: 6.0f
+											currentCombo: "slashblade:none"
+											fallDecreaseRate: 0.0f
+											isBroken: 0b
+											isDefaultBewitched: 0b
+											isSealed: 0b
+											killCount: 0
+											lastActionTime: 802730L
+											maxDamage: 70
+											proudSoul: 0
+											translationKey: "item.slashblade_addon.toyako"
+										}
+									}
+									Slot: 14b
+									id: "slashblade:slashblade"
+									tag: {
+										bladeState: {
+											AttackAmplifier: 0.0f
+											BladeUniqueId: [I;
+												-255679625
+												1309689658
+												-1749508868
+												623747985
+											]
+											ComboRoot: "slashblade:standby"
+											Damage: 0
+											ModelName: "slashblade_addon:model/toyako/toyako.obj"
+											RepairCounter: 0
+											SpecialAttackType: "slashblade:judgement_cut"
+											StandbyRenderType: 4b
+											SummonedSwordColor: -13421569
+											SummonedSwordColorInverse: 0b
+											TargetEntity: 0
+											TextureName: "slashblade_addon:model/toyako/toyako.png"
+											_onClick: 0b
+											adjustXYZ: [
+												0.0d
+												0.0d
+												0.0d
+											]
+											baseAttackModifier: 6.0f
+											currentCombo: "slashblade:none"
+											fallDecreaseRate: 0.0f
+											isBroken: 0b
+											isDefaultBewitched: 0b
+											isSealed: 0b
+											killCount: 0
+											lastActionTime: 802730L
+											maxDamage: 70
+											proudSoul: 0
+											translationKey: "item.slashblade_addon.toyako"
+										}
+									}
+								}
+							]
+							id: "minecraft:shulker_box"
+						}
+						display: {
+							Name: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"blue\",\"text\":\"拔刀剑潜影盒\"}"
+						}
+					}
+				}
+				title: "&9拔刀剑潜影盒&e【两把收藏用拔刀剑+魅影刃】"
+				type: "item"
+			}]
+			subtitle: "挑战10次获得"
+			tasks: [{
+				id: "4FAABB7BDF3A323E"
+				item: "skyarena:iron_trophy"
+				type: "item"
+			}]
+			x: 6.0d
+			y: -3.0d
+		}
+		{
+			dependencies: ["59925D0AB1768958"]
+			id: "43CAEF2A67553864"
+			rewards: [{
+				count: 2
+				id: "6FEF8A7465D6051F"
+				item: "irons_spellbooks:eldritch_manuscript"
+				type: "item"
+			}]
+			subtitle: "挑战5次获得"
+			tasks: [{
+				id: "438201AAADA591D2"
+				item: "skyarena:stone_trophy"
+				type: "item"
+			}]
+			x: 4.5d
+			y: -4.0d
+		}
+		{
+			dependencies: ["59925D0AB1768958"]
+			id: "783F725CEBF993F2"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "356524D972F78985"
+				table_id: 2006233011676489970L
+				type: "random"
+			}]
+			subtitle: "首次完成挑战获得"
+			tasks: [{
+				id: "66F4E9033487CAE4"
+				item: "skyarena:oak_trophy"
+				type: "item"
+			}]
+			x: 3.0d
+			y: -3.0d
+		}
+		{
+			description: [
+				"&e在主世界的天空上，有时会出现巨大的竞技场，使用指南针搜索：&d【竞技场】&e来寻找"
+				""
+				"{image:kubejs:textures/aaaa/lieyanjignjichang.png width:130 height:100 align:1}"
+				""
+				"{image:kubejs:textures/aaaa/bingzhijingjichang.png width:130 height:100 align:1}"
+			]
+			id: "59925D0AB1768958"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "5C0E7ABADE110473"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&b无尽的试炼"
+			tasks: [{
+				icon: "skyarena:altar_battle"
+				id: "19DEBA87D5E51DE6"
+				observe_type: 0
+				timer: 0L
+				title: "&5观察挑战剑碑"
+				to_observe: "skyarena:altar_battle"
+				type: "observation"
+			}]
+			title: "&e天空竞技场"
+			x: 4.5d
+			y: -2.3d
+		}
+	]
+	title: "成就/挑战"
+}

@@ -1,0 +1,805 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: "circle"
+	default_repeatable_quest: true
+	filename: "1FA50BBFE0BFBF84"
+	group: "7916E3ED902C17A5"
+	icon: "waystones:return_scroll"
+	id: "1FA50BBFE0BFBF84"
+	images: [{
+		click: ""
+		corner: false
+		dev: false
+		height: 5.0d
+		hover: [ ]
+		image: "kubejs:textures/aaaa/xiangzi.png"
+		rotation: 0.0d
+		width: 6.05d
+		x: 10.0d
+		y: 11.0d
+	}]
+	order_index: 2
+	quest_links: [ ]
+	quests: [
+		{
+			can_repeat: false
+			id: "651E62F7511A361C"
+			shape: "circle"
+			subtitle: "完成指定目标即可获得奖励"
+			tasks: [{
+				id: "5D1E2963402FCC32"
+				stat: "minecraft:mob_kills"
+				title: "&b近战击杀一个任意生物"
+				type: "stat"
+				value: 1
+			}]
+			title: "&6开启击杀奖励"
+			x: 9.5d
+			y: 7.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["651E62F7511A361C"]
+			description: ["{image:kubejs:textures/aaaa/duyanjuren.png width:130 height:100 align:1}"]
+			id: "523EE9F005F26AB1"
+			rewards: [
+				{
+					count: 20
+					id: "5966D701A4EA5470"
+					item: "minecraft:gold_ingot"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "21569B7E27C9A380"
+					team_reward: false
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					count: 7
+					id: "685633AB3A157119"
+					item: "minecraft:copper_block"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 3
+					id: "16C7A75DBB5F0289"
+					item: "minecraft:emerald_block"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 20
+					id: "0E92C2FAEB728E72"
+					item: "minecraft:gunpowder"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "7AAC9F9F8CBF1095"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+			
+				{
+				coinMinorUnits: 500L
+				id: "4972F4E59D9CAE50"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			subtitle: "常常出没在平原"
+			tasks: [{
+				entity: "iceandfire:cyclops"
+				icon: "iceandfire:cyclops_skull"
+				id: "1492A2F1E1C33D42"
+				type: "kill"
+				value: 3L
+			}]
+			x: 10.0d
+			y: 10.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["651E62F7511A361C"]
+			description: [
+				"&6常常伴随异教徒在主世界各地举行仪式，召唤着恐怖的下界军团，企图将主世界变为第二个下界。如果长时间放任，将会转化仪式周围区域变为下界"
+				""
+				"{image:kubejs:textures/aaaa/heiyaoshizhu.png width:150 height:100 align:1}"
+			]
+			icon: "artifacts:obsidian_skull"
+			id: "2833B6C6DD475F52"
+			rewards: [
+				{
+					count: 10
+					id: "7AF2E5C00BC387A4"
+					item: "minecraft:iron_ingot"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 60
+					id: "6199522F3860C9F6"
+					item: "minecraft:emerald"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "17C9D950C8DDADC1"
+					team_reward: false
+					type: "xp_levels"
+					xp_levels: 1
+				}
+				{
+					id: "59BF48BBFCA75191"
+					item: "minecraft:netherite_scrap"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 5
+					id: "286A7301B803A822"
+					item: "slashblade:proudsoul"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "26F89EEA9AEBC369"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+			]
+			subtitle: "&a可用探险家指南针搜索【黑暗集会】来寻找"
+			tasks: [{
+				entity: "goety:obsidian_monolith"
+				icon: "artifacts:obsidian_skull"
+				id: "560048C47210D1E2"
+				type: "kill"
+				value: 1L
+			}]
+			title: "&e委托：黑曜石仪式柱"
+			x: 8.0d
+			y: 9.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["651E62F7511A361C"]
+			id: "564F4F7B9CB31FA3"
+			rewards: [
+				{
+					id: "3D57FB50E716C0D8"
+					team_reward: false
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					count: 70
+					id: "12A39DFEDCBD56D9"
+					item: "minecraft:emerald"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 40
+					id: "3548FDBAE3417825"
+					item: "minecraft:bread"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "198AEEE6B96E8240"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+			]
+			tasks: [{
+				entity: "alexsmobs:grizzly_bear"
+				icon: "alexsmobs:bear_fur"
+				id: "049D2B02C4E05884"
+				type: "kill"
+				value: 10L
+			}]
+			x: 11.0d
+			y: 5.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["651E62F7511A361C"]
+			description: ["{image:kubejs:textures/aaaa/haimang.png width:100 height:100 align:1}"]
+			id: "6B34AF93D6458C6A"
+			rewards: [
+				{
+					auto: "enabled"
+					id: "3AC9C1E1805DF251"
+					team_reward: false
+					type: "xp_levels"
+					xp_levels: 20
+				}
+				{
+					count: 5
+					id: "19DB31E041427BB7"
+					item: "minecraft:emerald_block"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 20
+					id: "7E8CBD11B3628061"
+					item: "slashblade:proudsoul"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "47A830A46E5EABAB"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+			
+				{
+				coinMinorUnits: 500L
+				id: "354A980B57FB5CA5"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			subtitle: "生成于海洋"
+			tasks: [{
+				entity: "iceandfire:sea_serpent"
+				icon: "iceandfire:seaserpent_skull"
+				id: "409163B32D296AF9"
+				type: "kill"
+				value: 10L
+			}]
+			x: 9.0d
+			y: 10.0d
+		}
+		{
+			dependencies: ["651E62F7511A361C"]
+			id: "037FF6EDF1081A69"
+			rewards: [
+				{
+					id: "43AC816059F10BEF"
+					team_reward: false
+					type: "xp_levels"
+					xp_levels: 15
+				}
+				{
+					count: 30
+					id: "0DE1EEB06EAF5D40"
+					item: "minecraft:gunpowder"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 60
+					id: "138B3511A671E50C"
+					item: "minecraft:copper_ingot"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 40
+					id: "6436DA4F08ACAE4C"
+					item: "minecraft:emerald"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 20
+					id: "22D39551B7726BB4"
+					item: "slashblade:proudsoul"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "1F0ED0F11976CE1E"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+			]
+			tasks: [{
+				entity: "minecraft:pillager"
+				id: "29D70C3F9AF8F307"
+				type: "kill"
+				value: 30L
+			}]
+			x: 10.0d
+			y: 5.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["651E62F7511A361C"]
+			id: "40FBE87765716648"
+			rewards: [
+				{
+					id: "381AE77FBA8144B2"
+					team_reward: false
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					count: 60
+					id: "089D1B239EA4DE20"
+					item: "minecraft:copper_ingot"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 30
+					id: "0A2C9FB054953CF5"
+					item: "minecraft:gunpowder"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 20
+					id: "3AA08A6AE47F8322"
+					item: "minecraft:emerald"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 7
+					id: "0E6D52F53EC9EB7D"
+					item: "slashblade:proudsoul"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "6C2188AD3F1E9548"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+			]
+			tasks: [{
+				entity: "minecraft:zombie"
+				id: "3111EDAA98065882"
+				type: "kill"
+				value: 50L
+			}]
+			x: 7.0d
+			y: 7.5d
+		}
+		{
+			dependencies: ["651E62F7511A361C"]
+			id: "79A23DDB23083508"
+			rewards: [
+				{
+					id: "722C8781D7F68CAD"
+					team_reward: false
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					count: 50
+					id: "3CEF13132CEBF4A1"
+					item: "minecraft:gunpowder"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 30
+					id: "67EE62F4CAC5CE62"
+					item: "minecraft:iron_ingot"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 20
+					id: "0029E2F00A1294E2"
+					item: "minecraft:emerald"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 5
+					id: "597BC9170C253522"
+					item: "slashblade:proudsoul"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "03F75551608E6365"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+			]
+			tasks: [{
+				entity: "minecraft:creeper"
+				id: "4F199C6695E417B5"
+				type: "kill"
+				value: 40L
+			}]
+			x: 8.0d
+			y: 5.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["651E62F7511A361C"]
+			id: "0117B2EDE08B7449"
+			rewards: [
+				{
+					id: "574FEAEDBEE8B29F"
+					team_reward: false
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					count: 60
+					id: "2BDE605141B1056A"
+					item: "minecraft:copper_ingot"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 30
+					id: "3C83859E2DFE4A3C"
+					item: "minecraft:gunpowder"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 20
+					id: "605AFBC22D95175F"
+					item: "minecraft:emerald"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 7
+					id: "73F1A35ED0EFEDBE"
+					item: "slashblade:proudsoul"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "2ADC3FB837A78EAD"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+			]
+			tasks: [{
+				entity: "minecraft:piglin"
+				id: "0A9EB7EBA503D94C"
+				type: "kill"
+				value: 50L
+			}]
+			x: 11.5d
+			y: 6.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["651E62F7511A361C"]
+			id: "417419DAA72BCE80"
+			rewards: [
+				{
+					id: "2C81F9098BBD7AC9"
+					team_reward: false
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					count: 60
+					id: "7B42A7F93D5F600E"
+					item: "minecraft:copper_ingot"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 30
+					id: "2E3313D38BBF15C7"
+					item: "minecraft:gunpowder"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 20
+					id: "4B48E7190D67B918"
+					item: "minecraft:emerald"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 7
+					id: "46CC698E2DCED441"
+					item: "slashblade:proudsoul"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "2720D5C0D006C449"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+			]
+			tasks: [{
+				entity: "minecraft:zombified_piglin"
+				id: "4F22096EFC7C872C"
+				type: "kill"
+				value: 80L
+			}]
+			x: 11.5d
+			y: 8.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["651E62F7511A361C"]
+			id: "77392E2915848B6F"
+			rewards: [
+				{
+					id: "5EE54370924644CD"
+					team_reward: false
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					count: 40
+					id: "5079C4504E689E29"
+					item: "minecraft:copper_ingot"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 40
+					id: "0F40FD72B0AF1779"
+					item: "minecraft:gunpowder"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 30
+					id: "0BB4795CEA1C3D83"
+					item: "minecraft:emerald"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 7
+					id: "65C04CC6ACCC5731"
+					item: "slashblade:proudsoul"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "17238CF654D8801E"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+			]
+			tasks: [{
+				entity: "minecraft:skeleton"
+				id: "08D9D37F3CAD66F7"
+				type: "kill"
+				value: 50L
+			}]
+			x: 7.5d
+			y: 6.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["651E62F7511A361C"]
+			id: "0B630A68F2AF873B"
+			rewards: [
+				{
+					id: "25D35E780DCCF437"
+					team_reward: false
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					count: 60
+					id: "50218E820018FB4E"
+					item: "minecraft:copper_ingot"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 30
+					id: "61799BA747F612B2"
+					item: "minecraft:gunpowder"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 20
+					id: "328F1528823D1F93"
+					item: "minecraft:emerald"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 7
+					id: "06CE49F887585A59"
+					item: "slashblade:proudsoul"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "7B213F4491DBD305"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+			]
+			tasks: [{
+				entity: "minecraft:husk"
+				id: "6A0A5D0CA61F853D"
+				type: "kill"
+				value: 50L
+			}]
+			x: 7.5d
+			y: 8.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["651E62F7511A361C"]
+			id: "3AFA58BC68B845D8"
+			rewards: [
+				{
+					id: "42C4743AE250AD75"
+					team_reward: false
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					count: 60
+					id: "4694E2957D7FAD3F"
+					item: "minecraft:copper_ingot"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 30
+					id: "3D2C0999478F76D7"
+					item: "minecraft:gunpowder"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 20
+					id: "6B6663061C1F6B1B"
+					item: "minecraft:emerald"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 7
+					id: "693E413F55E3C554"
+					item: "slashblade:proudsoul"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "3EC95AB67181CACF"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+			]
+			tasks: [{
+				entity: "minecraft:drowned"
+				id: "3748373792F15211"
+				type: "kill"
+				value: 30L
+			}]
+			x: 9.0d
+			y: 5.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["651E62F7511A361C"]
+			id: "26C42F80AAFB71D8"
+			rewards: [
+				{
+					id: "7CB36760645019EB"
+					team_reward: false
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					count: 60
+					id: "41E71CAB1F7CA81A"
+					item: "minecraft:copper_ingot"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 30
+					id: "21F2D4177BCE0030"
+					item: "minecraft:gunpowder"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 20
+					id: "4A2F429702BCB099"
+					item: "minecraft:emerald"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 7
+					id: "2EFEAA84DA28E48D"
+					item: "slashblade:proudsoul"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "3C2807F46B638D58"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+			]
+			tasks: [{
+				entity: "minecraft:stray"
+				id: "4B98B9C9DD218985"
+				type: "kill"
+				value: 50L
+			}]
+			x: 11.0d
+			y: 9.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["651E62F7511A361C"]
+			id: "46D5F77549BD42B8"
+			rewards: [
+				{
+					id: "098B75515D02FD8D"
+					team_reward: false
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					count: 60
+					id: "01DF214D9829766D"
+					item: "minecraft:coal"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 20
+					id: "05CE57E21EEA232E"
+					item: "minecraft:emerald"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 7
+					id: "0DF22423C14D9EE6"
+					item: "slashblade:proudsoul"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "4F891AD6E96F4207"
+					table_id: 8257480025292461532L
+					team_reward: false
+					type: "random"
+				}
+			]
+			tasks: [{
+				entity: "minecraft:wither_skeleton"
+				id: "5DBC944DE4463E39"
+				type: "kill"
+				value: 50L
+			}]
+			x: 12.0d
+			y: 7.5d
+		}
+	]
+	title: "&d赏金猎人"
+}

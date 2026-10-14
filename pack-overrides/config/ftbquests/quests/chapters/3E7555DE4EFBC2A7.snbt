@@ -1,0 +1,2891 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "3E7555DE4EFBC2A7"
+	group: "5DFEC790B7E6DAC6"
+	icon: "farmersdelight:roast_chicken_block"
+	id: "3E7555DE4EFBC2A7"
+	images: [
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/shiwu.png"
+			rotation: 0.0d
+			width: 5.0d
+			x: 4.5d
+			y: 0.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 3.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/cha.png"
+			rotation: 0.0d
+			width: 3.0d
+			x: 22.5d
+			y: 11.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 1.0d
+			hover: [ ]
+			image: "farmersdelight:item/fried_rice"
+			rotation: 0.0d
+			width: 1.0d
+			x: 8.5d
+			y: 14.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 1.0d
+			hover: [ ]
+			image: "farmersdelight:item/dumplings"
+			rotation: 0.0d
+			width: 1.0d
+			x: -5.5d
+			y: 13.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 1.0d
+			hover: [ ]
+			image: "farmersdelight:item/cake_slice"
+			rotation: 0.0d
+			width: 1.0d
+			x: 0.5d
+			y: 7.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 6.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/laingshi.png"
+			rotation: 0.0d
+			width: 6.0d
+			x: 13.5d
+			y: 4.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/fulan.png"
+			rotation: 0.0d
+			width: 5.0d
+			x: 0.0d
+			y: 13.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 2.0d
+			hover: [ ]
+			image: "farmersdelight:item/rice_panicle"
+			rotation: 0.0d
+			width: 2.0d
+			x: 16.5d
+			y: 15.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 8.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/meishi.png"
+			rotation: 0.0d
+			width: 8.0d
+			x: 4.5d
+			y: 22.0d
+		}
+	]
+	order_index: 4
+	quest_links: [ ]
+	quests: [
+		{
+			description: ["&e需要【点亮检查标记周围的食物】，才能点击检查标记完成任务哦！"]
+			id: "6610C8DB84B24DE0"
+			size: 5.0d
+			subtitle: "注意：食物线并非强制，不做也没什么影响哦"
+			tasks: [{
+				id: "33B341BE7E84A099"
+				title: "完成任务后获得【稀有道具】或者【附魔书】"
+				type: "checkmark"
+			}]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			id: "285017C8187349CA"
+			subtitle: "美味！"
+			tasks: [{
+				id: "3872DCEEFE0B9E79"
+				item: "minecraft:cake"
+				type: "item"
+			}]
+			x: 17.0d
+			y: -2.0d
+		}
+		{
+			id: "568CE686413DAE23"
+			tasks: [{
+				id: "3586446B7F927842"
+				item: "minecraft:bread"
+				type: "item"
+			}]
+			x: 21.0d
+			y: 2.0d
+		}
+		{
+			id: "125466865EA08E15"
+			tasks: [{
+				id: "1E5457B9AB142373"
+				item: "minecraft:cooked_salmon"
+				type: "item"
+			}]
+			x: 21.0d
+			y: -1.0d
+		}
+		{
+			id: "7E85F0119D82B824"
+			tasks: [{
+				id: "1861D0FD09D6A8E9"
+				item: "minecraft:cookie"
+				type: "item"
+			}]
+			x: 21.0d
+			y: 1.0d
+		}
+		{
+			id: "4ACC3AF975EB3B38"
+			tasks: [{
+				id: "29EEC27106EA1C6B"
+				item: "minecraft:pumpkin_pie"
+				type: "item"
+			}]
+			x: 21.0d
+			y: 0.0d
+		}
+		{
+			id: "0416F11C960D3303"
+			tasks: [{
+				id: "1C0F9FE11180132F"
+				item: "minecraft:cooked_cod"
+				type: "item"
+			}]
+			x: 21.0d
+			y: -2.0d
+		}
+		{
+			id: "32B594F16BAD3530"
+			tasks: [{
+				id: "70316AFDF1309860"
+				item: "minecraft:dried_kelp"
+				type: "item"
+			}]
+			x: 18.0d
+			y: -2.0d
+		}
+		{
+			id: "748907BFAF4AC73D"
+			tasks: [{
+				id: "55D65606E78B4912"
+				item: "minecraft:baked_potato"
+				type: "item"
+			}]
+			x: 19.0d
+			y: -2.0d
+		}
+		{
+			id: "7FD5DE6B7830E405"
+			tasks: [{
+				id: "0F563FFE2E88AB5E"
+				item: "minecraft:melon_slice"
+				type: "item"
+			}]
+			x: 20.0d
+			y: -2.0d
+		}
+		{
+			id: "0F3CF8B4C9B69C3D"
+			subtitle: "虽然不是同一时间......"
+			tasks: [{
+				id: "7ED0F549CA7992FD"
+				item: "butcher:cookedintestines"
+				type: "item"
+			}]
+			x: 21.0d
+			y: 4.0d
+		}
+		{
+			id: "4E4133F3BBDFFFD6"
+			tasks: [{
+				id: "4D15114245116406"
+				item: "butcher:cookedlungs"
+				type: "item"
+			}]
+			x: 21.0d
+			y: 5.0d
+		}
+		{
+			id: "3CCC9E88A4B3E73D"
+			tasks: [{
+				id: "2720D56BF2C4100E"
+				item: "butcher:cookedliver"
+				type: "item"
+			}]
+			x: 21.0d
+			y: 6.0d
+		}
+		{
+			id: "18C6AF8AB1CCEE90"
+			tasks: [{
+				id: "10F34F548BD01338"
+				item: "butcher:cookedkidney"
+				type: "item"
+			}]
+			x: 21.0d
+			y: 7.0d
+		}
+		{
+			id: "2C1D92DDB9CA1306"
+			tasks: [{
+				id: "48FA0D54D568A45E"
+				item: "butcher:cookedstomach"
+				type: "item"
+			}]
+			x: 17.0d
+			y: 7.0d
+		}
+		{
+			id: "334D26ED25B3C389"
+			subtitle: "掠夺者的尸体需要先用剥皮刀，然后才能放血"
+			tasks: [{
+				id: "3BB9C3451E376940"
+				item: "butcher:cookedpillagermeat"
+				type: "item"
+			}]
+			x: 17.0d
+			y: 5.0d
+		}
+		{
+			id: "5538329886AF81B5"
+			subtitle: "吃了不会爆炸吗（"
+			tasks: [{
+				id: "0843FA2F8B7932DF"
+				item: "butcher:creepermeat"
+				type: "item"
+			}]
+			x: 17.0d
+			y: 6.0d
+		}
+		{
+			id: "17E454A5BEE218D7"
+			subtitle: "兄弟，你好香"
+			tasks: [{
+				id: "5E49AA154352DE2F"
+				item: "butcher:cooked_villager_meat"
+				type: "item"
+			}]
+			x: 17.0d
+			y: 4.0d
+		}
+		{
+			id: "0CEA5CA0F7B9270D"
+			tasks: [{
+				id: "2E8E8367B0315CD0"
+				item: "minecraft:beef"
+				type: "item"
+			}]
+			x: 7.5d
+			y: -1.5d
+		}
+		{
+			id: "0EB8FCCA99285F8C"
+			tasks: [{
+				id: "18E7BBD8ED88A8CB"
+				item: "minecraft:porkchop"
+				type: "item"
+			}]
+			x: 8.5d
+			y: -1.5d
+		}
+		{
+			id: "569419E6988E4E44"
+			tasks: [{
+				id: "62B66E2EF00353CA"
+				item: "minecraft:mutton"
+				type: "item"
+			}]
+			x: 9.5d
+			y: -1.5d
+		}
+		{
+			id: "5992C536E2E319BD"
+			tasks: [{
+				id: "5960E880A762D14A"
+				item: "minecraft:chicken"
+				type: "item"
+			}]
+			x: 7.5d
+			y: 1.5d
+		}
+		{
+			id: "52E0C9BBEC7E0F03"
+			tasks: [{
+				id: "3B8D2C791B6CD6C1"
+				item: "minecraft:cod"
+				type: "item"
+			}]
+			x: 8.5d
+			y: 1.5d
+		}
+		{
+			id: "4BE81B6868C4D7D7"
+			tasks: [{
+				id: "0705165792B84C0C"
+				item: "minecraft:salmon"
+				type: "item"
+			}]
+			x: 9.5d
+			y: 1.5d
+		}
+		{
+			dependencies: [
+				"6610C8DB84B24DE0"
+				"4BE81B6868C4D7D7"
+				"52E0C9BBEC7E0F03"
+				"0EB8FCCA99285F8C"
+				"569419E6988E4E44"
+				"5992C536E2E319BD"
+				"0CEA5CA0F7B9270D"
+			]
+			id: "3EFFE17BF8DBFA72"
+			rewards: [
+				{
+					id: "55BA9896A4973AFC"
+					item: {
+						Count: 1b
+						id: "celestial_core:sakura_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3D9356B9B2BA4E76"
+					item: {
+						Count: 1b
+						id: "celestial_core:sakura_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "7979BAD5B31736E3"
+					item: {
+						Count: 1b
+						id: "celestial_core:sakura_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "16920F51727CC71F"
+					item: {
+						Count: 1b
+						id: "celestial_core:sakura_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "36C7A916D3DC7399"
+					item: {
+						Count: 1b
+						id: "tacz:attachment"
+						tag: {
+							AttachmentId: "tacz:extended_mag_2"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "41E2D45BF36F6D83"
+					item: {
+						Count: 1b
+						id: "tacz:attachment"
+						tag: {
+							AttachmentId: "tacz:grip_vertical_talon"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3D61A956FAAD77A7"
+					item: {
+						Count: 1b
+						id: "culinaryconstruct:sandwich"
+						tag: {
+							Base: {
+								Count: 1b
+								id: "minecraft:bread"
+							}
+							Count: 2
+							Food: 9
+							Ingredients: {
+								Items: [
+									{
+										Count: 1b
+										Slot: 0b
+										id: "butcher:villager_meat"
+									}
+									{
+										Count: 1b
+										Slot: 1b
+										id: "minecraft:enchanted_golden_apple"
+									}
+									{
+										Count: 1b
+										Slot: 2b
+										id: "butcher:lungs"
+									}
+									{
+										Count: 1b
+										Slot: 3b
+										id: "butcher:stomach"
+									}
+									{
+										Count: 1b
+										Slot: 4b
+										id: "butcher:intestines"
+									}
+								]
+							}
+							Quality: 4
+							Saturation: 0.9333334f
+							Size: 5
+							Solids: {
+								Items: [
+									{
+										Count: 1b
+										Slot: 0b
+										id: "butcher:villager_meat"
+									}
+									{
+										Count: 1b
+										Slot: 1b
+										id: "minecraft:enchanted_golden_apple"
+									}
+									{
+										Count: 1b
+										Slot: 2b
+										id: "butcher:lungs"
+									}
+									{
+										Count: 1b
+										Slot: 3b
+										id: "butcher:stomach"
+									}
+									{
+										Count: 1b
+										Slot: 4b
+										id: "butcher:intestines"
+									}
+									{
+										Count: 1b
+										Slot: 5b
+										id: "minecraft:bread"
+									}
+								]
+							}
+							SolidsSize: 6
+						}
+					}
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "708D78F0A3CA6B49"
+				type: "checkmark"
+			}]
+			title: "一些简单的生肉"
+			x: 8.5d
+			y: 0.0d
+		}
+		{
+			dependencies: [
+				"285017C8187349CA"
+				"748907BFAF4AC73D"
+				"7E85F0119D82B824"
+				"0416F11C960D3303"
+				"568CE686413DAE23"
+				"4ACC3AF975EB3B38"
+				"125466865EA08E15"
+				"32B594F16BAD3530"
+				"7FD5DE6B7830E405"
+				"50BE331CF0F91D40"
+			]
+			id: "2429974D89780DD5"
+			rewards: [
+				{
+					id: "480030573EDB34A9"
+					item: {
+						Count: 1b
+						id: "tacz:modern_kinetic_gun"
+						tag: {
+							AttachmentEXTENDED_MAG: {
+								Count: 1b
+								id: "minecraft:air"
+								tag: { }
+							}
+							AttachmentMUZZLE: {
+								Count: 1b
+								id: "tacz:attachment"
+								tag: {
+									AttachmentId: "tacz:deagle_golden_long_barrel"
+								}
+							}
+							GunCurrentAmmoCount: 8
+							GunFireMode: "SEMI"
+							GunId: "tacz:deagle_golden"
+							HasBulletInBarrel: 1b
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 25
+					id: "2E4636C1BF573601"
+					item: "minecraft:iron_ingot"
+					type: "item"
+				}
+				{
+					count: 4
+					id: "3E5479720758486C"
+					item: "minecraft:ender_pearl"
+					type: "item"
+				}
+				{
+					id: "3951B5EFBE0AF310"
+					item: {
+						Count: 1b
+						id: "butcher:butchersguidebook"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "49D15B4D623123FB"
+					type: "xp_levels"
+					xp_levels: 10
+				}
+				{
+					id: "45B51E7E2F0CC34F"
+					item: "celestial_core:fire_essence"
+					type: "item"
+				}
+				{
+					id: "1A1CB2ED1863BAFC"
+					item: "celestial_core:ocean_essence"
+					type: "item"
+				}
+				{
+					id: "7E9ECD7B9A5214A8"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "minecraft:efficiency"
+								lvl: 5s
+							}]
+						}
+					}
+					title: "效率5"
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "06F192DC93B38488"
+				type: "checkmark"
+			}]
+			title: "原版美食"
+			x: 19.0d
+			y: 0.0d
+		}
+		{
+			dependencies: [
+				"2429974D89780DD5"
+				"18C6AF8AB1CCEE90"
+				"0F3CF8B4C9B69C3D"
+				"17E454A5BEE218D7"
+				"3CCC9E88A4B3E73D"
+				"334D26ED25B3C389"
+				"5538329886AF81B5"
+				"4E4133F3BBDFFFD6"
+				"2C1D92DDB9CA1306"
+			]
+			id: "7FF3507554CB022B"
+			rewards: [
+				{
+					count: 5
+					id: "7024FB91A49373A9"
+					item: "farmersdelight:rice"
+					type: "item"
+				}
+				{
+					id: "56D01F004B294DF1"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "minecraft:looting"
+								lvl: 3s
+							}]
+						}
+					}
+					title: "掠夺3"
+					type: "item"
+				}
+				{
+					id: "13F410A95553F7EB"
+					item: {
+						Count: 1b
+						id: "iceandfire:dragonbone_bow"
+						tag: {
+							Damage: 0
+							Enchantments: [
+								{
+									id: "butcher:butcherenchantment"
+									lvl: 1s
+								}
+								{
+									id: "tonsofenchants:xp_bow_master"
+									lvl: 3s
+								}
+							]
+							RepairCost: 3
+							display: {
+								Name: "{\"text\":\"屠宰·龙骨长弓\"}"
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "38773AFCA57AA28C"
+					item: {
+						Count: 1b
+						id: "tacz:modern_kinetic_gun"
+						tag: {
+							GunCurrentAmmoCount: 1
+							GunFireMode: "SEMI"
+							GunId: "tacz:m320"
+							HasBulletInBarrel: 1b
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 4
+					id: "7441378DF97BB1C6"
+					item: "ironchests:netherite_barrel"
+					type: "item"
+				}
+			]
+			subtitle: "分解尸体后获得，具体见屠夫指南或主线任务·屠宰"
+			tasks: [{
+				id: "6CEE8F5A51CA3B2D"
+				type: "checkmark"
+			}]
+			title: "屠宰"
+			x: 19.0d
+			y: 5.5d
+		}
+		{
+			dependencies: [
+				"079BA02B80C47046"
+				"4085F6E9906A2860"
+				"27A4A702EE087758"
+				"302FBB2469AD8508"
+				"7FF3507554CB022B"
+				"3AADAF6F200F3C5D"
+				"3A3505D5FCE78380"
+				"6AD2D4C7EB25BBC9"
+				"061014BCA80062E0"
+			]
+			id: "5547DC6969450376"
+			rewards: [
+				{
+					id: "4D3CE7A46C7366D9"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "tonsofenchants:midas_touch"
+								lvl: 1s
+							}]
+						}
+					}
+					title: "点石成金"
+					type: "item"
+				}
+				{
+					id: "062F86D60ADA0A75"
+					item: "celestial_artifacts:evil_eye"
+					type: "item"
+				}
+				{
+					id: "09D988C925ABAEA1"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "tonsofenchants:praise_the_sun"
+								lvl: 1s
+							}]
+						}
+					}
+					title: "光合作用"
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "441B727127CD9F0A"
+				type: "checkmark"
+			}]
+			title: "基础农作物和简单饮品"
+			x: 19.0d
+			y: 11.0d
+		}
+		{
+			id: "302FBB2469AD8508"
+			subtitle: "稻米可种在水中"
+			tasks: [{
+				id: "54CF10BABDDC8289"
+				item: "farmersdelight:rice"
+				type: "item"
+			}]
+			x: 17.0d
+			y: 9.5d
+		}
+		{
+			id: "079BA02B80C47046"
+			tasks: [{
+				id: "1DFBE75BD0A21A10"
+				item: "farmersdelight:cabbage"
+				type: "item"
+			}]
+			x: 17.0d
+			y: 10.5d
+		}
+		{
+			id: "4085F6E9906A2860"
+			tasks: [{
+				id: "140ACF7BD4EE46F5"
+				item: "farmersdelight:onion"
+				type: "item"
+			}]
+			x: 17.0d
+			y: 11.5d
+		}
+		{
+			id: "27A4A702EE087758"
+			tasks: [{
+				id: "61966D09AAE75739"
+				item: "farmersdelight:tomato"
+				type: "item"
+			}]
+			x: 17.0d
+			y: 12.5d
+		}
+		{
+			id: "3AADAF6F200F3C5D"
+			tasks: [{
+				id: "45DABCBFBA00084A"
+				item: "farmersdelight:milk_bottle"
+				type: "item"
+			}]
+			x: 21.0d
+			y: 9.5d
+		}
+		{
+			id: "6AD2D4C7EB25BBC9"
+			tasks: [{
+				id: "6C9E57286ECE1A2E"
+				item: "farmersdelight:hot_cocoa"
+				type: "item"
+			}]
+			x: 21.0d
+			y: 10.5d
+		}
+		{
+			id: "061014BCA80062E0"
+			tasks: [{
+				id: "77703FD8EB31B992"
+				item: "farmersdelight:apple_cider"
+				type: "item"
+			}]
+			x: 21.0d
+			y: 11.5d
+		}
+		{
+			id: "3A3505D5FCE78380"
+			tasks: [{
+				id: "62A00193E0F8D583"
+				item: "farmersdelight:melon_juice"
+				type: "item"
+			}]
+			x: 21.0d
+			y: 12.5d
+		}
+		{
+			id: "52E4383845E76FD5"
+			tasks: [{
+				id: "5099B2F091E82A79"
+				item: "farmersdelight:fried_egg"
+				type: "item"
+			}]
+			x: 18.0d
+			y: 18.0d
+		}
+		{
+			id: "4D2B195B18B61B20"
+			tasks: [{
+				id: "67F6B4AFF2699CE0"
+				item: "farmersdelight:tomato_sauce"
+				type: "item"
+			}]
+			x: 19.0d
+			y: 18.0d
+		}
+		{
+			id: "4E7EC659A71D1BFD"
+			tasks: [{
+				id: "2E9DFDABF53A2051"
+				item: "farmersdelight:raw_pasta"
+				type: "item"
+			}]
+			x: 21.0d
+			y: 18.0d
+		}
+		{
+			id: "41D9055767A10B97"
+			tasks: [{
+				id: "7E9F2FFD0A8B26A6"
+				item: "farmersdelight:wheat_dough"
+				type: "item"
+			}]
+			x: 21.0d
+			y: 17.0d
+		}
+		{
+			id: "519DAA65B4EAE0DD"
+			tasks: [{
+				id: "2130FB2221EFAEB0"
+				item: "farmersdelight:cabbage_leaf"
+				type: "item"
+			}]
+			x: 20.0d
+			y: 18.0d
+		}
+		{
+			id: "21EB8EA492261F4B"
+			subtitle: "使用切菜的【刀】杀死猪获得"
+			tasks: [{
+				id: "7DB95B6F97D95E27"
+				item: "farmersdelight:ham"
+				type: "item"
+			}]
+			x: 21.0d
+			y: 15.0d
+		}
+		{
+			id: "3E0758640E3B1C0F"
+			tasks: [{
+				id: "4A18697C9E00E702"
+				item: "farmersdelight:pie_crust"
+				type: "item"
+			}]
+			x: 21.0d
+			y: 16.0d
+		}
+		{
+			dependencies: [
+				"3EFFE17BF8DBFA72"
+				"0E8E9E98D8561FD1"
+				"11D23E20D101F8A0"
+				"4A1FB8F99344754A"
+				"1B754421868A81F0"
+				"763103BE19FBBC9A"
+				"3C02756CC91C5A1D"
+			]
+			id: "50BE331CF0F91D40"
+			rewards: [
+				{
+					id: "4B151174BAED3A7B"
+					item: {
+						Count: 1b
+						id: "tacz:attachment"
+						tag: {
+							AttachmentId: "eos:scope_schmidt_bender_10x56mm"
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 8
+					id: "57F6EA2048B00D3D"
+					item: "minecraft:golden_apple"
+					type: "item"
+				}
+				{
+					id: "352FB412A96EA41D"
+					item: {
+						Count: 1b
+						id: "minecraft:diamond_pickaxe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "17D6281E8D7D0FBE"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "minecraft:luck_of_the_sea"
+								lvl: 3s
+							}]
+						}
+					}
+					title: "海之眷顾III"
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "0F19AC213ABBE3B8"
+				type: "checkmark"
+			}]
+			title: "使用刀切割砧板上的食物"
+			x: 13.5d
+			y: 0.0d
+		}
+		{
+			id: "763103BE19FBBC9A"
+			tasks: [{
+				id: "0EBA96DD493CEB39"
+				item: "farmersdelight:minced_beef"
+				type: "item"
+			}]
+			x: 12.5d
+			y: -1.5d
+		}
+		{
+			id: "0E8E9E98D8561FD1"
+			tasks: [{
+				id: "6CDEE26853D5C6C4"
+				item: "farmersdelight:bacon"
+				type: "item"
+			}]
+			x: 13.5d
+			y: -1.5d
+		}
+		{
+			id: "11D23E20D101F8A0"
+			tasks: [{
+				id: "4AF24E8D7B0EFE52"
+				item: "farmersdelight:chicken_cuts"
+				type: "item"
+			}]
+			x: 12.5d
+			y: 1.5d
+		}
+		{
+			id: "1B754421868A81F0"
+			tasks: [{
+				id: "6B4E0B8A9947E4E7"
+				item: "farmersdelight:mutton_chops"
+				type: "item"
+			}]
+			x: 14.5d
+			y: -1.5d
+		}
+		{
+			id: "4A1FB8F99344754A"
+			tasks: [{
+				id: "68F48DE253DC11D5"
+				item: "farmersdelight:cod_slice"
+				type: "item"
+			}]
+			x: 13.5d
+			y: 1.5d
+		}
+		{
+			id: "3C02756CC91C5A1D"
+			tasks: [{
+				id: "0D6F97A9A2263E13"
+				item: "farmersdelight:salmon_slice"
+				type: "item"
+			}]
+			x: 14.5d
+			y: 1.5d
+		}
+		{
+			dependencies: [
+				"5547DC6969450376"
+				"21EB8EA492261F4B"
+				"4D2B195B18B61B20"
+				"3E0758640E3B1C0F"
+				"4E7EC659A71D1BFD"
+				"41D9055767A10B97"
+				"52E4383845E76FD5"
+				"519DAA65B4EAE0DD"
+			]
+			id: "06A1CEBE42946F0F"
+			rewards: [
+				{
+					id: "40E853EE2D1B7B54"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_delight:hydra_fang_knife"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 5
+					id: "136FC6DFB4682871"
+					item: "farmersdelight:oak_cabinet"
+					type: "item"
+				}
+				{
+					count: 5
+					id: "6AEA3E8A200D3647"
+					item: "farmersdelight:cherry_cabinet"
+					type: "item"
+				}
+				{
+					count: 5
+					id: "29F4749AE1F4068A"
+					item: "farmersdelight:birch_cabinet"
+					type: "item"
+				}
+				{
+					count: 33
+					id: "56E8412D053CEA96"
+					item: "farmersdelight:tatami"
+					type: "item"
+				}
+				{
+					count: 64
+					id: "5DDD3729332F8308"
+					item: "luphieclutteredmod:luphie_red_checkered_block"
+					type: "item"
+				}
+				{
+					count: 64
+					id: "1035E88439E8DF94"
+					item: "luphieclutteredmod:luphie_yellow_checkered_block"
+					type: "item"
+				}
+				{
+					count: 64
+					id: "0F5FD2B7E2158CE3"
+					item: "luphieclutteredmod:luphie_confectionary_wallpaper_b"
+					type: "item"
+				}
+				{
+					count: 64
+					id: "491B5E32B724A215"
+					item: "luphieclutteredmod:checkeredwallpaperpink"
+					type: "item"
+				}
+				{
+					count: 64
+					id: "59E173EDA93C4EDC"
+					item: "luphieclutteredmod:checkeredwallpaperlime"
+					type: "item"
+				}
+				{
+					id: "7377D1F60554BFE5"
+					item: "ringsofascension:ring_health"
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "6A0435A37B9123D2"
+				type: "checkmark"
+			}]
+			title: "进阶食材"
+			x: 19.0d
+			y: 16.0d
+		}
+		{
+			id: "3AA97102300E76A4"
+			tasks: [{
+				id: "1C38D46FAF38B7C2"
+				item: "farmersdelight:apple_pie"
+				type: "item"
+			}]
+			x: 6.5d
+			y: 14.0d
+		}
+		{
+			id: "37B99BD5163FFAAF"
+			tasks: [{
+				id: "73ED0C72750B440A"
+				item: "farmersdelight:sweet_berry_cheesecake"
+				type: "item"
+			}]
+			x: 3.5d
+			y: 14.0d
+		}
+		{
+			id: "6BFB44E8A72AC3A5"
+			tasks: [{
+				id: "6F71F0E72073E672"
+				item: "farmersdelight:chocolate_pie"
+				type: "item"
+			}]
+			x: 4.5d
+			y: 14.0d
+		}
+		{
+			id: "1DC44F66BC6798F8"
+			tasks: [{
+				id: "22BB5CAD19184BC3"
+				item: "farmersdelight:sweet_berry_cookie"
+				type: "item"
+			}]
+			x: 5.5d
+			y: 14.0d
+		}
+		{
+			id: "106D9D9F61AE1079"
+			tasks: [{
+				id: "5FD4CEC00558774C"
+				item: "farmersdelight:honey_cookie"
+				type: "item"
+			}]
+			x: 2.5d
+			y: 14.0d
+		}
+		{
+			id: "25337D68FC75ACFC"
+			tasks: [{
+				id: "4F7E8EFF871C3A31"
+				item: "farmersdelight:glow_berry_custard"
+				type: "item"
+			}]
+			x: 11.5d
+			y: 10.0d
+		}
+		{
+			id: "5906FCAFA8AEEA8B"
+			tasks: [{
+				id: "65A9320F9B19337E"
+				item: "farmersdelight:fruit_salad"
+				type: "item"
+			}]
+			x: 3.5d
+			y: 18.0d
+		}
+		{
+			id: "3276FC0183F9F7B7"
+			tasks: [{
+				id: "1ACAF78035F03D7F"
+				item: "farmersdelight:mixed_salad"
+				type: "item"
+			}]
+			x: 4.5d
+			y: 18.0d
+		}
+		{
+			id: "7B4D43914C150A03"
+			tasks: [{
+				id: "2D5599D28ADC23B2"
+				item: "farmersdelight:nether_salad"
+				type: "item"
+			}]
+			x: -4.5d
+			y: 8.0d
+		}
+		{
+			id: "167463450D898943"
+			tasks: [{
+				id: "42F43518E0117E54"
+				item: "farmersdelight:barbecue_stick"
+				type: "item"
+			}]
+			x: 6.5d
+			y: 18.0d
+		}
+		{
+			id: "743B3D8D0B8DC517"
+			tasks: [{
+				id: "23657D54ED18BA14"
+				item: "farmersdelight:egg_sandwich"
+				type: "item"
+			}]
+			x: 14.5d
+			y: 14.0d
+		}
+		{
+			id: "2EDA1B898B74255B"
+			tasks: [{
+				id: "4A990F14AC5C970D"
+				item: "farmersdelight:chicken_sandwich"
+				type: "item"
+			}]
+			x: -4.5d
+			y: 18.0d
+		}
+		{
+			id: "67A1DBE996B3D024"
+			tasks: [{
+				id: "011236D8C31B1540"
+				item: "farmersdelight:hamburger"
+				type: "item"
+			}]
+			x: -3.5d
+			y: 18.0d
+		}
+		{
+			id: "181D3C579A07A2D9"
+			tasks: [{
+				id: "2294E475D3B3D737"
+				item: "farmersdelight:bacon_sandwich"
+				type: "item"
+			}]
+			x: -2.5d
+			y: 18.0d
+		}
+		{
+			id: "5411DAF90EC39455"
+			tasks: [{
+				id: "2E77E3270B680051"
+				item: "farmersdelight:mutton_wrap"
+				type: "item"
+			}]
+			x: -1.5d
+			y: 18.0d
+		}
+		{
+			id: "33447681979CE4B5"
+			tasks: [{
+				id: "72E2BAC22C4110A1"
+				item: "farmersdelight:stuffed_potato"
+				type: "item"
+			}]
+			x: 14.5d
+			y: 18.0d
+		}
+		{
+			id: "39E22946237CF32C"
+			tasks: [{
+				id: "7BB47689BA836B15"
+				item: "farmersdelight:cabbage_rolls"
+				type: "item"
+			}]
+			x: 12.5d
+			y: 14.0d
+		}
+		{
+			id: "3EBA4F4D5CECE5A4"
+			tasks: [{
+				id: "09B58DC74771B26E"
+				item: "farmersdelight:salmon_roll"
+				type: "item"
+			}]
+			x: 13.5d
+			y: 14.0d
+		}
+		{
+			id: "244700BBA4EB25C2"
+			tasks: [{
+				id: "579370CBFE91C297"
+				item: "farmersdelight:cod_roll"
+				type: "item"
+			}]
+			x: 10.5d
+			y: 18.0d
+		}
+		{
+			id: "18FE522F85293341"
+			tasks: [{
+				id: "386651BA9A1A1FD8"
+				item: "farmersdelight:kelp_roll"
+				type: "item"
+			}]
+			x: 11.5d
+			y: 18.0d
+		}
+		{
+			id: "1BB27CB643157CEB"
+			tasks: [{
+				id: "5EE3B8876268858D"
+				item: "farmersdelight:cooked_rice"
+				type: "item"
+			}]
+			x: 10.5d
+			y: 14.0d
+		}
+		{
+			id: "4E2DEE7447405FED"
+			tasks: [{
+				id: "52AB91B314E4D3A7"
+				item: "farmersdelight:bone_broth"
+				type: "item"
+			}]
+			x: 11.5d
+			y: 14.0d
+		}
+		{
+			id: "5F0C46EFDD2AF0BC"
+			tasks: [{
+				id: "2233856260C371AB"
+				item: "farmersdelight:beef_stew"
+				type: "item"
+			}]
+			x: 2.5d
+			y: 18.0d
+		}
+		{
+			id: "45D4A4BEBF58577F"
+			tasks: [{
+				id: "1F9E61E53AA53F2E"
+				item: "farmersdelight:chicken_soup"
+				type: "item"
+			}]
+			x: -4.5d
+			y: 15.0d
+		}
+		{
+			id: "302865F72D3F8E65"
+			tasks: [{
+				id: "76034F256BA8FB36"
+				item: "farmersdelight:vegetable_soup"
+				type: "item"
+			}]
+			x: 5.5d
+			y: 18.0d
+		}
+		{
+			id: "291C2AED4544B835"
+			tasks: [{
+				id: "4C2195A515FE8C6E"
+				item: "farmersdelight:fish_stew"
+				type: "item"
+			}]
+			x: 3.0d
+			y: 6.0d
+		}
+		{
+			id: "0A8122F5F67DF9F3"
+			tasks: [{
+				id: "1D374842DF0A20B0"
+				item: "farmersdelight:fried_rice"
+				type: "item"
+			}]
+			x: -4.5d
+			y: 17.0d
+		}
+		{
+			id: "6ADD82D0C8F18E0C"
+			tasks: [{
+				id: "22B8207248EA7433"
+				item: "farmersdelight:pumpkin_soup"
+				type: "item"
+			}]
+			x: -4.5d
+			y: 9.0d
+		}
+		{
+			id: "6B30C47DA00621F1"
+			tasks: [{
+				id: "040C36CE7E86425B"
+				item: "farmersdelight:baked_cod_stew"
+				type: "item"
+			}]
+			x: 4.0d
+			y: 6.0d
+		}
+		{
+			id: "79AF5868C8D66173"
+			tasks: [{
+				id: "6C52152106CD2DDC"
+				item: "farmersdelight:noodle_soup"
+				type: "item"
+			}]
+			x: -4.5d
+			y: 16.0d
+		}
+		{
+			id: "1A482624DD86FF9D"
+			tasks: [{
+				id: "284EEE884A7B2528"
+				item: "farmersdelight:bacon_and_eggs"
+				type: "item"
+			}]
+			x: 5.0d
+			y: 6.0d
+		}
+		{
+			id: "5B753FEE94B2E7E1"
+			tasks: [{
+				id: "71A24C7C52A5B841"
+				item: "farmersdelight:pasta_with_meatballs"
+				type: "item"
+			}]
+			x: -4.5d
+			y: 7.0d
+		}
+		{
+			id: "4A3D2AFC8F364695"
+			tasks: [{
+				id: "6EACDDB5DF9117F3"
+				item: "farmersdelight:pasta_with_mutton_chop"
+				type: "item"
+			}]
+			x: -4.5d
+			y: 6.0d
+		}
+		{
+			id: "1512F8281B2C75A8"
+			tasks: [{
+				id: "1218FACD7F56B879"
+				item: "farmersdelight:mushroom_rice"
+				type: "item"
+			}]
+			x: -2.5d
+			y: 6.0d
+		}
+		{
+			id: "28CDC3C9FC716A7F"
+			tasks: [{
+				id: "7ECD848AA7254DF1"
+				item: "farmersdelight:roasted_mutton_chops"
+				type: "item"
+			}]
+			x: 12.5d
+			y: 9.0d
+		}
+		{
+			id: "5432BBABC9983517"
+			tasks: [{
+				id: "075F0FEDA6533245"
+				item: "farmersdelight:vegetable_noodles"
+				type: "item"
+			}]
+			x: -1.5d
+			y: 6.0d
+		}
+		{
+			id: "2DF1E15E0425BC38"
+			tasks: [{
+				id: "7202C8B16647AFB3"
+				item: "farmersdelight:steak_and_potatoes"
+				type: "item"
+			}]
+			x: 10.5d
+			y: 6.0d
+		}
+		{
+			id: "3B26353078D025D1"
+			tasks: [{
+				id: "4B33287F12D1B3A9"
+				item: "farmersdelight:ratatouille"
+				type: "item"
+			}]
+			x: -3.5d
+			y: 6.0d
+		}
+		{
+			id: "70094EDF6D92355F"
+			tasks: [{
+				id: "1D2D272C2A8B3FFD"
+				item: "farmersdelight:squid_ink_pasta"
+				type: "item"
+			}]
+			x: 10.5d
+			y: 10.0d
+		}
+		{
+			id: "4EBC1D7572375CD1"
+			tasks: [{
+				id: "6BDAB703B5A6D5C2"
+				item: "farmersdelight:grilled_salmon"
+				type: "item"
+			}]
+			x: 11.5d
+			y: 6.0d
+		}
+		{
+			id: "738B5BA7D62234FD"
+			tasks: [{
+				id: "16DCC3DFE406B538"
+				item: "farmersdelight:roast_chicken_block"
+				type: "item"
+			}]
+			x: 3.0d
+			y: 10.0d
+		}
+		{
+			id: "0DD239580FEC9EFE"
+			tasks: [{
+				id: "64A042BAED8B3ECF"
+				item: "farmersdelight:stuffed_pumpkin_block"
+				type: "item"
+			}]
+			x: 5.0d
+			y: 10.0d
+		}
+		{
+			id: "7C8BC11F8AA37944"
+			tasks: [{
+				id: "384B16F5B1C13D01"
+				item: "farmersdelight:honey_glazed_ham_block"
+				type: "item"
+			}]
+			x: 4.0d
+			y: 10.0d
+		}
+		{
+			id: "53C2A48995D98403"
+			tasks: [{
+				id: "5044DEE01A21803B"
+				item: "farmersdelight:shepherds_pie_block"
+				type: "item"
+			}]
+			x: 2.0d
+			y: 10.0d
+		}
+		{
+			id: "380E91C4D85CDE60"
+			tasks: [{
+				id: "40EFF6C399801395"
+				item: "farmersdelight:rice_roll_medley_block"
+				type: "item"
+			}]
+			x: 12.5d
+			y: 8.0d
+		}
+		{
+			id: "076124781EC6479E"
+			tasks: [{
+				id: "28E5074E1010C831"
+				item: "alexsdelight:maggot_salad"
+				type: "item"
+			}]
+			x: 9.5d
+			y: 10.0d
+		}
+		{
+			id: "68C328ABD15D96EF"
+			tasks: [{
+				id: "0D5E3D7C4F110E95"
+				item: "alexsdelight:acacia_blossom_soup"
+				type: "item"
+			}]
+			x: 9.5d
+			y: 6.0d
+		}
+		{
+			id: "46C99174AAB76856"
+			tasks: [{
+				id: "2894D909F3ADC438"
+				item: "alexsdelight:bison_burger"
+				type: "item"
+			}]
+			x: 2.0d
+			y: 6.0d
+		}
+		{
+			id: "19B98BAE264BC344"
+			tasks: [{
+				id: "4EE9996503AD5F63"
+				item: "alexsdelight:lobster_pasta"
+				type: "item"
+			}]
+			x: 12.5d
+			y: 7.0d
+		}
+		{
+			id: "1A4B7EE8EF178074"
+			tasks: [{
+				id: "182420971517977F"
+				item: "ice_and_fire_delight:fried_dragon_egg"
+				type: "item"
+			}]
+			x: -1.5d
+			y: 28.0d
+		}
+		{
+			id: "7F2AB47E13768465"
+			tasks: [{
+				id: "39947E48E89D978D"
+				item: "ice_and_fire_delight:chips_from_shiny_scales"
+				type: "item"
+			}]
+			x: 11.0d
+			y: 30.5d
+		}
+		{
+			id: "2217C3D308C0F04E"
+			tasks: [{
+				id: "02EC3FABF47C9A35"
+				item: "ice_and_fire_delight:spicy_chips_from_shiny_scales"
+				type: "item"
+			}]
+			x: 15.0d
+			y: 27.5d
+		}
+		{
+			id: "750EFEDD13D5EE4F"
+			tasks: [{
+				id: "1341E6642B1A4CE3"
+				item: "ice_and_fire_delight:sea_serpent_meat"
+				type: "item"
+			}]
+			x: 12.0d
+			y: 30.5d
+		}
+		{
+			id: "0ECAA2E5010A8CE8"
+			tasks: [{
+				id: "694B9102ED08597E"
+				item: "ice_and_fire_delight:troll_meat"
+				type: "item"
+			}]
+			x: 13.0d
+			y: 30.5d
+		}
+		{
+			id: "32CF2E715D99A252"
+			tasks: [{
+				id: "7F25BA85605D780B"
+				item: "ice_and_fire_delight:cyclops_meat"
+				type: "item"
+			}]
+			x: 14.0d
+			y: 30.5d
+		}
+		{
+			description: [
+				"链接"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1AC858C2BE3027E6\" } }"
+			]
+			id: "694669E95C8134C5"
+			subtitle: "九头蛇死亡固定掉落。九头蛇小概率生成在主世界沼泽区域"
+			tasks: [{
+				id: "15BF3DC96F2D7A6A"
+				item: "ice_and_fire_delight:hydra_meat"
+				type: "item"
+			}]
+			x: 15.0d
+			y: 26.5d
+		}
+		{
+			id: "6E268521CE22A59A"
+			tasks: [{
+				id: "2F0B06DE45EC53B9"
+				item: "ice_and_fire_delight:fresh_soup_from_sea_serpent"
+				type: "item"
+			}]
+			x: 6.0d
+			y: 26.0d
+		}
+		{
+			id: "6F4173257EEC4AB3"
+			tasks: [{
+				id: "41E4CC47AE10C04A"
+				item: "ice_and_fire_delight:honey_glazed_troll_meat"
+				type: "item"
+			}]
+			x: 7.0d
+			y: 26.0d
+		}
+		{
+			id: "598D1D16B0284A0D"
+			tasks: [{
+				id: "25FCB68AFE7452E5"
+				item: "ice_and_fire_delight:fire_dragon_ramen"
+				type: "item"
+			}]
+			x: 6.0d
+			y: 30.0d
+		}
+		{
+			id: "40FB5FF42CF2D04E"
+			tasks: [{
+				id: "42FB7C1B4243BB7B"
+				item: "ice_and_fire_delight:hydra_venom_soup"
+				type: "item"
+			}]
+			x: 8.0d
+			y: 26.0d
+		}
+		{
+			id: "78A7AB0B771EF26E"
+			tasks: [{
+				id: "19DC06879E3F6B34"
+				item: "ice_and_fire_delight:fire_dragon_taco"
+				type: "item"
+			}]
+			x: 8.0d
+			y: 30.0d
+		}
+		{
+			id: "6EF4A86F4730B1F5"
+			tasks: [{
+				id: "01DC8AF7C179A79F"
+				item: "ice_and_fire_delight:cool_sandwich"
+				type: "item"
+			}]
+			x: 7.0d
+			y: 30.0d
+		}
+		{
+			id: "1CF7FDB9CA872387"
+			tasks: [{
+				id: "2D37470A00FFF240"
+				item: "ice_and_fire_delight:fire_sausage"
+				type: "item"
+			}]
+			x: -0.5d
+			y: 29.0d
+		}
+		{
+			id: "775DC2FE532C248B"
+			tasks: [{
+				id: "09B7C1A1713FF425"
+				item: "ice_and_fire_delight:ice_sausage"
+				type: "item"
+			}]
+			x: 0.5d
+			y: 30.0d
+		}
+		{
+			id: "4CC184523097A263"
+			tasks: [{
+				id: "208D341E19E1AB86"
+				item: "ice_and_fire_delight:lightning_sausage"
+				type: "item"
+			}]
+			x: 1.5d
+			y: 30.0d
+		}
+		{
+			id: "4B1BFA4D2555EE9E"
+			subtitle: "于主世界采摘获得，或者合成"
+			tasks: [{
+				id: "1420B4833C493D13"
+				item: "ice_and_fire_delight:fire_lily_extract"
+				type: "item"
+			}]
+			x: 10.5d
+			y: 20.5d
+		}
+		{
+			id: "3B5A2096C1A73430"
+			subtitle: "于主世界雪原采摘获得，或者合成"
+			tasks: [{
+				id: "09ACCAF4B2B53181"
+				item: "ice_and_fire_delight:frost_lily_extract"
+				type: "item"
+			}]
+			x: 10.0d
+			y: 21.5d
+		}
+		{
+			id: "2157F170FA6DCDDC"
+			subtitle: "于主世界热带草原采摘获得，或者合成"
+			tasks: [{
+				id: "279CA2279F902A21"
+				item: "ice_and_fire_delight:lightning_lily_extract"
+				type: "item"
+			}]
+			x: 10.0d
+			y: 22.5d
+		}
+		{
+			id: "29B9762E45B8E58E"
+			tasks: [{
+				id: "08671BE69526BAE7"
+				item: "ice_and_fire_delight:dragon_pie_crust"
+				type: "item"
+			}]
+			x: 10.0d
+			y: 23.5d
+		}
+		{
+			id: "12DF218751A8BCDE"
+			tasks: [{
+				id: "42548B98F59A24BF"
+				item: "ice_and_fire_delight:lightning_minced_meat"
+				type: "item"
+			}]
+			x: 15.0d
+			y: 22.5d
+		}
+		{
+			id: "342119A383C5BCE2"
+			tasks: [{
+				id: "51C28E0C57C6A21C"
+				item: "ice_and_fire_delight:ice_minced_meat"
+				type: "item"
+			}]
+			x: 15.0d
+			y: 21.5d
+		}
+		{
+			id: "413181D84D757FDD"
+			tasks: [{
+				id: "7F7C70236A8BAC87"
+				item: "ice_and_fire_delight:fire_minced_meat"
+				type: "item"
+			}]
+			x: 14.5d
+			y: 20.5d
+		}
+		{
+			id: "112A1B4678025FD4"
+			subtitle: "食人妖掉落"
+			tasks: [{
+				id: "71F38EED1DC500F8"
+				item: "ice_and_fire_delight:troll_intestines"
+				type: "item"
+			}]
+			x: 15.0d
+			y: 23.5d
+		}
+		{
+			id: "72E57D1A4F27D58D"
+			tasks: [{
+				id: "3CD3608632502522"
+				item: "ice_and_fire_delight:fiery_hot_pie"
+				type: "item"
+			}]
+			x: -0.5d
+			y: 27.0d
+		}
+		{
+			id: "41EEB532DEA34A52"
+			tasks: [{
+				id: "2C3EFB3ECC28A1D2"
+				item: "ice_and_fire_delight:frost_pie"
+				type: "item"
+			}]
+			x: 0.5d
+			y: 26.0d
+		}
+		{
+			id: "2D9E493076A0E59B"
+			tasks: [{
+				id: "0C051FC2A9950EBF"
+				item: "ice_and_fire_delight:electric_pie"
+				type: "item"
+			}]
+			x: 1.5d
+			y: 26.0d
+		}
+		{
+			id: "05E8720D89527B39"
+			tasks: [{
+				id: "167F021132AF172C"
+				item: "ice_and_fire_delight:dragon_special_pie"
+				type: "item"
+			}]
+			x: 2.5d
+			y: 27.0d
+		}
+		{
+			id: "50C3E00FED71D827"
+			subtitle: "精灵生成在主世界黑森林"
+			tasks: [{
+				id: "21DB09C84A51EEFA"
+				item: "ice_and_fire_delight:spices"
+				type: "item"
+			}]
+			x: 10.5d
+			y: 24.5d
+		}
+		{
+			id: "350480E10DB9290C"
+			tasks: [{
+				id: "5BD55E3A9156BEEC"
+				item: "ice_and_fire_delight:dragon_bone_bun"
+				type: "item"
+			}]
+			x: 14.5d
+			y: 24.5d
+		}
+		{
+			id: "63B5A6CDF6F7017D"
+			tasks: [{
+				id: "40A2B976A0CF10B4"
+				item: "ice_and_fire_delight:mini_pizza"
+				type: "item"
+			}]
+			x: 15.0d
+			y: 29.5d
+		}
+		{
+			id: "40C8755BCF7C2F4A"
+			tasks: [{
+				id: "751D170E87D5F955"
+				item: "ice_and_fire_delight:sea_serpent_roll"
+				type: "item"
+			}]
+			x: 15.0d
+			y: 28.5d
+		}
+		{
+			id: "089E9614637245B5"
+			tasks: [{
+				id: "173F8E62DE2EEDE3"
+				item: "minecraft:honey_bottle"
+				type: "item"
+			}]
+			x: 13.5d
+			y: 18.0d
+		}
+		{
+			dependencies: [
+				"06A1CEBE42946F0F"
+				"39E22946237CF32C"
+				"4E2DEE7447405FED"
+				"244700BBA4EB25C2"
+				"18FE522F85293341"
+				"1BB27CB643157CEB"
+				"33447681979CE4B5"
+				"743B3D8D0B8DC517"
+				"089E9614637245B5"
+				"3EBA4F4D5CECE5A4"
+			]
+			id: "091598AF8AA824DE"
+			rewards: [
+				{
+					id: "7542ABFC738796BF"
+					item: {
+						Count: 1b
+						id: "tacz:modern_kinetic_gun"
+						tag: {
+							GunCurrentAmmoCount: 0
+							GunFireMode: "SEMI"
+							GunId: "eos:wa2000"
+							HasBulletInBarrel: 1b
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0597EEE257F8BD2F"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "tonsofenchants:lightning"
+								lvl: 1s
+							}]
+						}
+					}
+					title: "电击疗法"
+					type: "item"
+				}
+				{
+					id: "569687610DC69F0B"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "tonsofenchants:enhanced_sharpness"
+								lvl: 5s
+							}]
+						}
+					}
+					title: "利刃出鞘5"
+					type: "item"
+				}
+				{
+					count: 6
+					id: "5A6C5A758C85465E"
+					item: "iceandfire:fire_lily"
+					type: "item"
+				}
+				{
+					count: 6
+					id: "5E950698A9136CDA"
+					item: "iceandfire:frost_lily"
+					type: "item"
+				}
+				{
+					count: 6
+					id: "6EFFB109F7B9DBA6"
+					item: "iceandfire:lightning_lily"
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "5537E607EA4FB76B"
+				type: "checkmark"
+			}]
+			title: "简单美食"
+			x: 12.5d
+			y: 16.0d
+		}
+		{
+			dependencies: [
+				"091598AF8AA824DE"
+				"3276FC0183F9F7B7"
+				"5906FCAFA8AEEA8B"
+				"5F0C46EFDD2AF0BC"
+				"302865F72D3F8E65"
+				"167463450D898943"
+				"3AA97102300E76A4"
+				"106D9D9F61AE1079"
+				"37B99BD5163FFAAF"
+				"6BFB44E8A72AC3A5"
+				"1DC44F66BC6798F8"
+			]
+			id: "7634014A603C8707"
+			rewards: [
+				{
+					id: "5540B3D59F5416F5"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "tonsofenchants:lumberjack"
+								lvl: 1s
+							}]
+						}
+					}
+					title: "伐木工"
+					type: "item"
+				}
+				{
+					id: "4E9FF1F3267A4CE9"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "tonsofenchants:excavator"
+								lvl: 1s
+							}]
+						}
+					}
+					title: "挖掘机"
+					type: "item"
+				}
+				{
+					id: "0F6CBCFA15530236"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "tonsofenchants:smelting"
+								lvl: 1s
+							}]
+						}
+					}
+					title: "熔炼"
+					type: "item"
+				}
+				{
+					id: "33B799813EB8786F"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "tonsofenchants:xp_mining_master"
+								lvl: 3s
+							}]
+						}
+					}
+					title: "超级挖掘大师3"
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "04A4C3BDD131D42D"
+				type: "checkmark"
+			}]
+			title: "盛宴"
+			x: 4.5d
+			y: 16.0d
+		}
+		{
+			dependencies: [
+				"7634014A603C8707"
+				"79AF5868C8D66173"
+				"181D3C579A07A2D9"
+				"0A8122F5F67DF9F3"
+				"2EDA1B898B74255B"
+				"45D4A4BEBF58577F"
+				"5411DAF90EC39455"
+				"67A1DBE996B3D024"
+			]
+			id: "20FE83C805FB6C50"
+			rewards: [
+				{
+					id: "3633457F5542AEBA"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							RepairCost: 7
+							StoredEnchantments: [{
+								id: "minecraft:looting"
+								lvl: 10s
+							}]
+						}
+					}
+					title: "抢夺10（需要黑暗铁砧才能附魔到武器上）"
+					type: "item"
+				}
+				{
+					id: "47646CE0103C931A"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "g_abun:absolutelyunbreakable"
+								lvl: 1s
+							}]
+						}
+					}
+					title: "无法破坏"
+					type: "item"
+				}
+				{
+					id: "0D7BADF141E9CEB2"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "minecraft:silk_touch"
+								lvl: 1s
+							}]
+						}
+					}
+					title: "精准采集"
+					type: "item"
+				}
+			]
+			subtitle: "突破限制的附魔需要黑暗铁砧才能附魔到武器上"
+			tasks: [{
+				id: "66B361FE77082247"
+				type: "checkmark"
+			}]
+			title: "汤和汉堡包"
+			x: -2.5d
+			y: 16.0d
+		}
+		{
+			dependencies: [
+				"20FE83C805FB6C50"
+				"6ADD82D0C8F18E0C"
+				"5B753FEE94B2E7E1"
+				"7B4D43914C150A03"
+				"5432BBABC9983517"
+				"3B26353078D025D1"
+				"1512F8281B2C75A8"
+				"4A3D2AFC8F364695"
+			]
+			id: "65ED4E1F15DE543D"
+			rewards: [
+				{
+					id: "5DE251E290005799"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "tonsofenchants:enhanced_sharpness"
+								lvl: 10s
+							}]
+						}
+					}
+					title: "利刃出鞘10"
+					type: "item"
+				}
+				{
+					id: "7FF6DB063B15FCA6"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "g_abun:absolutelyunbreakable"
+								lvl: 1s
+							}]
+						}
+					}
+					title: "无法破坏"
+					type: "item"
+				}
+				{
+					count: 2
+					id: "55B061DC5AE16308"
+					item: "minecraft:netherite_ingot"
+					type: "item"
+				}
+				{
+					id: "039C87778C844AC2"
+					item: {
+						Count: 1b
+						id: "goety_revelation:spectre_darkmage_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "604A5B8B21062BFC"
+					item: {
+						Count: 1b
+						id: "goety_revelation:spectre_darkmage_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0E0E01D537BE259F"
+					item: {
+						Count: 1b
+						id: "goety_revelation:spectre_darkmage_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "087ADA7358C7E070"
+					item: {
+						Count: 1b
+						id: "goety_revelation:spectre_darkmage_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "突破限制的附魔需要黑暗铁砧才能附魔到武器上"
+			tasks: [{
+				id: "75A6AB6CB19631A3"
+				type: "checkmark"
+			}]
+			title: "进阶美食"
+			x: -2.5d
+			y: 8.0d
+		}
+		{
+			dependencies: [
+				"65ED4E1F15DE543D"
+				"291C2AED4544B835"
+				"53C2A48995D98403"
+				"7C8BC11F8AA37944"
+				"738B5BA7D62234FD"
+				"1A482624DD86FF9D"
+				"0DD239580FEC9EFE"
+				"6B30C47DA00621F1"
+				"46C99174AAB76856"
+			]
+			id: "4515F88ECD485A9C"
+			rewards: [
+				{
+					id: "06ED89413B445B87"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "g_abun:absolutelyunbreakable"
+								lvl: 1s
+							}]
+						}
+					}
+					title: "无法破坏"
+					type: "item"
+				}
+				{
+					id: "2FA4BED8D2F3B1A1"
+					item: {
+						Count: 1b
+						id: "tacz:modern_kinetic_gun"
+						tag: {
+							GunCurrentAmmoCount: 65
+							GunFireMode: "AUTO"
+							GunId: "cib:mg3"
+							HasBulletInBarrel: 1b
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "42EED1010FD912B9"
+					item: {
+						Count: 1b
+						id: "iceandfire:dread_queen_sword"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 5
+					id: "4BCF46CBE1B68B63"
+					item: "minecraft:netherite_ingot"
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "457770BC4BB68F0F"
+				type: "checkmark"
+			}]
+			title: "饕餮盛宴"
+			x: 3.5d
+			y: 8.0d
+		}
+		{
+			dependencies: [
+				"4515F88ECD485A9C"
+				"076124781EC6479E"
+				"28CDC3C9FC716A7F"
+				"4EBC1D7572375CD1"
+				"25337D68FC75ACFC"
+				"2DF1E15E0425BC38"
+				"380E91C4D85CDE60"
+				"19B98BAE264BC344"
+				"68C328ABD15D96EF"
+				"70094EDF6D92355F"
+			]
+			id: "773A6ED5AC7266A4"
+			rewards: [
+				{
+					id: "1B1C2562E07E067E"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "g_abun:absolutelyunbreakable"
+								lvl: 1s
+							}]
+						}
+					}
+					title: "无法破坏"
+					type: "item"
+				}
+				{
+					id: "73D13D432C4C027E"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "minecraft:fortune"
+								lvl: 10s
+							}]
+						}
+					}
+					title: "时运10"
+					type: "item"
+				}
+				{
+					id: "02AA77C8835B7C92"
+					item: "celestial_artifacts:magic_horseshoe"
+					type: "item"
+				}
+				{
+					id: "606DD28B77D5C56A"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "minecraft:power"
+								lvl: 10s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "598D6F749E72683B"
+					item: "artifacts:everlasting_beef"
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "6BD9969D1A63F137"
+				type: "checkmark"
+			}]
+			title: "饕餮盛宴2"
+			x: 10.5d
+			y: 8.0d
+		}
+		{
+			dependencies: [
+				"091598AF8AA824DE"
+				"413181D84D757FDD"
+				"29B9762E45B8E58E"
+				"342119A383C5BCE2"
+				"2157F170FA6DCDDC"
+				"112A1B4678025FD4"
+				"3B5A2096C1A73430"
+				"4B1BFA4D2555EE9E"
+				"12DF218751A8BCDE"
+				"350480E10DB9290C"
+				"50C3E00FED71D827"
+			]
+			id: "136B5F39D1836A2A"
+			rewards: [
+				{
+					id: "7CCBF82458A8D1A2"
+					item: "minecraft:nether_star"
+					type: "item"
+				}
+				{
+					count: 10
+					id: "50B703C9A971F508"
+					item: "ironchests:netherite_barrel"
+					type: "item"
+				}
+				{
+					id: "17B702C35F7BD726"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "g_abun:absolutelyunbreakable"
+								lvl: 1s
+							}]
+						}
+					}
+					title: "无法破坏"
+					type: "item"
+				}
+				{
+					id: "63F3A00D4E3BF9B6"
+					item: "celestial_core:soaring_wings"
+					type: "item"
+				}
+				{
+					id: "3A95E75F7C5CCA94"
+					item: {
+						Count: 1b
+						id: "tacz:modern_kinetic_gun"
+						tag: {
+							AttachmentSCOPE: {
+								Count: 1b
+								id: "tacz:attachment"
+								tag: {
+									AttachmentId: "eos:scope_elp_52_t3_default"
+								}
+							}
+							GunCurrentAmmoCount: 4
+							GunFireMode: "SEMI"
+							GunId: "rainbow:rb60_gs"
+							HasBulletInBarrel: 1b
+						}
+					}
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "3F37FCEF9EFF83D7"
+				type: "checkmark"
+			}]
+			title: "异兽食材"
+			x: 12.5d
+			y: 22.5d
+		}
+		{
+			dependencies: [
+				"136B5F39D1836A2A"
+				"63B5A6CDF6F7017D"
+				"40C8755BCF7C2F4A"
+				"32CF2E715D99A252"
+				"7F2AB47E13768465"
+				"750EFEDD13D5EE4F"
+				"2217C3D308C0F04E"
+				"694669E95C8134C5"
+				"0ECAA2E5010A8CE8"
+			]
+			id: "77267A515423809F"
+			rewards: [
+				{
+					id: "27ACD67F5EEAAE6B"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "minecraft:smite"
+								lvl: 10s
+							}]
+						}
+					}
+					title: "亡灵杀手10"
+					type: "item"
+				}
+				{
+					id: "48AD29CA16370AAF"
+					item: "iceandfire:dragonarmor_silver_head"
+					type: "item"
+				}
+				{
+					id: "0596475DE7F3D9C5"
+					item: "iceandfire:dragonarmor_silver_neck"
+					type: "item"
+				}
+				{
+					id: "1FE974D024E97841"
+					item: "iceandfire:dragonarmor_silver_body"
+					type: "item"
+				}
+				{
+					id: "7D62F72A90C05576"
+					item: "iceandfire:dragonarmor_silver_tail"
+					type: "item"
+				}
+				{
+					id: "394FE413315135B5"
+					item: "artifacts:antidote_vessel"
+					type: "item"
+				}
+				{
+					id: "318785C4BA1DB0B7"
+					item: "artifacts:power_glove"
+					type: "item"
+				}
+				{
+					id: "2743405D5BF88553"
+					item: {
+						Count: 1b
+						id: "tacz:attachment"
+						tag: {
+							AttachmentId: "eos:muzzle_chasing_light"
+						}
+					}
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "24E0D67D4C3ABE0D"
+				type: "checkmark"
+			}]
+			title: "异兽食材2"
+			x: 12.5d
+			y: 28.0d
+		}
+		{
+			dependencies: [
+				"77267A515423809F"
+				"40FB5FF42CF2D04E"
+				"6F4173257EEC4AB3"
+				"78A7AB0B771EF26E"
+				"6EF4A86F4730B1F5"
+				"598D1D16B0284A0D"
+				"6E268521CE22A59A"
+			]
+			id: "7D6675641EBF7B9B"
+			rewards: [
+				{
+					id: "25DE3E8B95F530AD"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "g_abun:absolutelyunbreakable"
+								lvl: 1s
+							}]
+						}
+					}
+					title: "无法破坏"
+					type: "item"
+				}
+				{
+					id: "7F931F2B15F6A04C"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:dragonmancers_oathbook"
+						tag: {
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 12
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "63CE7E4C97664F72"
+					item: {
+						Count: 1b
+						id: "tacz:modern_kinetic_gun"
+						tag: {
+							AttachmentEXTENDED_MAG: {
+								Count: 1b
+								id: "tacz:attachment"
+								tag: {
+									AttachmentId: "eos:magazine_t2_4"
+								}
+							}
+							AttachmentGRIP: {
+								Count: 1b
+								id: "tacz:attachment"
+								tag: {
+									AttachmentId: "eos:grip_eos_grip_1"
+								}
+							}
+							AttachmentMUZZLE: {
+								Count: 1b
+								id: "tacz:attachment"
+								tag: {
+									AttachmentId: "tacz:muzzle_silencer_mirage"
+								}
+							}
+							AttachmentSCOPE: {
+								Count: 1b
+								id: "tacz:attachment"
+								tag: {
+									AttachmentId: "eos:sight_eos_hs02"
+								}
+							}
+							GunCurrentAmmoCount: 60
+							GunFireMode: "AUTO"
+							GunId: "eos:eos_hg57_t2_smgmod"
+							HasBulletInBarrel: 1b
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5A106A7F2482B88D"
+					item: "prefab:item_farm_advanced"
+					type: "item"
+				}
+				{
+					id: "077F84267AA68B09"
+					item: "prefab:item_modern_buildings_improved"
+					type: "item"
+				}
+				{
+					id: "483B9FCE94797426"
+					item: "prefab:item_modern_buildings"
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "1A21BD80E8522BB8"
+				type: "checkmark"
+			}]
+			title: "异兽美食"
+			x: 7.0d
+			y: 28.0d
+		}
+		{
+			dependencies: [
+				"7D6675641EBF7B9B"
+				"775DC2FE532C248B"
+				"2D9E493076A0E59B"
+				"72E57D1A4F27D58D"
+				"4CC184523097A263"
+				"1EE6C5F4D4B97B36"
+				"41EEB532DEA34A52"
+				"1CF7FDB9CA872387"
+				"05E8720D89527B39"
+				"1A4B7EE8EF178074"
+			]
+			id: "26A37342A7909883"
+			rewards: [
+				{
+					count: 20
+					id: "603A822886803D72"
+					item: "ice_and_fire_delight:lightning_dragon_hotdog"
+					type: "item"
+				}
+				{
+					id: "413687633648BAC6"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "tonsofenchants:enhanced_sharpness"
+								lvl: 15s
+							}]
+						}
+					}
+					title: "利刃出鞘15"
+					type: "item"
+				}
+				{
+					id: "7B033EBBEDB0B958"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "g_abun:absolutelyunbreakable"
+								lvl: 1s
+							}]
+						}
+					}
+					title: "无法破坏"
+					type: "item"
+				}
+				{
+					count: 5
+					id: "5CB380345D9614DB"
+					item: "minecraft:netherite_ingot"
+					type: "item"
+				}
+				{
+					id: "59138A5D17880DE3"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:lightning_dragon_priest_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "214D01735CBFE2DC"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:lightning_dragon_priest_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "2492FDA6BB89C593"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:lightning_dragon_priest_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3E3FA601DCABCFFD"
+					item: {
+						Count: 1b
+						id: "ice_and_fire_spellbooks:lightning_dragon_priest_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5C93FAD0EE74851C"
+					item: {
+						Count: 1b
+						id: "tacz:modern_kinetic_gun"
+						tag: {
+							GunCurrentAmmoCount: 18
+							GunFireMode: "AUTO"
+							GunId: "eos:eos_hg57_t2_smgmod"
+							HasBulletInBarrel: 1b
+						}
+					}
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "0E94B67942E016E7"
+				type: "checkmark"
+			}]
+			title: "龙之食"
+			x: 1.0d
+			y: 28.0d
+		}
+		{
+			id: "1EE6C5F4D4B97B36"
+			tasks: [{
+				id: "067BE8A535A4A651"
+				item: "ice_and_fire_delight:dragon_special_sausage"
+				type: "item"
+			}]
+			x: 2.5d
+			y: 29.0d
+		}
+	]
+	title: "品尝美食"
+}

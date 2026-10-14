@@ -1,0 +1,18 @@
+{
+	id: "58208A11C5CD4E68"
+	loot_size: 1
+	order_index: 18
+	rewards: [
+		{
+			command: "/itemblacklist ban time_slow:time_slow"
+			title: "&e封印·时间的加护"
+			type: "command"
+		}
+		{
+			command: "/itemblacklist unban time_slow:time_slow"
+			title: "&a解禁·时间的加护"
+			type: "command"
+		}
+	]
+	title: "时间的加护"
+}

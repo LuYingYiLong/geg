@@ -1,0 +1,1216 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: "hexagon"
+	filename: "6924A37D09369FAF"
+	group: "7212331F85A8A7A2"
+	icon: {
+		Count: 1b
+		id: "iceandfire:dragonsteel_lightning_helmet"
+		tag: {
+			Damage: 0
+		}
+	}
+	id: "6924A37D09369FAF"
+	images: [
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 10.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/tarotcards.png"
+			rotation: 0.0d
+			width: 9.3d
+			x: -5.5d
+			y: -1.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 10.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/tarotcards.png"
+			rotation: 0.0d
+			width: 9.3d
+			x: 3.5d
+			y: -1.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 2.88d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/drhrynrn.png"
+			rotation: 0.0d
+			width: 22.5792d
+			x: -1.0d
+			y: -7.5d
+		}
+	]
+	order_index: 4
+	quest_links: [ ]
+	quests: [
+		{
+			dependencies: ["5B4AE842B8D2F8AA"]
+			description: ["{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1303A35CC1DC0C45\" } }"]
+			id: "5D40161666FFD23B"
+			subtitle: "&e搭建昂贵的龙霜钢炉后制作"
+			tasks: [
+				{
+					id: "6F5FF4F80EA15A14"
+					item: {
+						Count: 1b
+						id: "iceandfire:dragonsteel_ice_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "4B3B6B9D62CEDEC6"
+					item: {
+						Count: 1b
+						id: "iceandfire:dragonsteel_ice_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0DCE4B697623F872"
+					item: {
+						Count: 1b
+						id: "iceandfire:dragonsteel_ice_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "33A0AD78895B09DF"
+					item: {
+						Count: 1b
+						id: "iceandfire:dragonsteel_ice_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&9龙霜铠甲"
+			x: 3.5d
+			y: -0.5d
+		}
+		{
+			dependencies: ["5B4AE842B8D2F8AA"]
+			description: ["{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1303A35CC1DC0C45\" } }"]
+			id: "3ADAE8FD301A8FF2"
+			subtitle: "&e搭建昂贵的龙炎钢炉后制作"
+			tasks: [
+				{
+					id: "691D1383679866C7"
+					item: {
+						Count: 1b
+						id: "iceandfire:dragonsteel_fire_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3C017F69D4301C3E"
+					item: {
+						Count: 1b
+						id: "iceandfire:dragonsteel_fire_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "54F0ECDE38EFA678"
+					item: {
+						Count: 1b
+						id: "iceandfire:dragonsteel_fire_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0E9C47D140D96389"
+					item: {
+						Count: 1b
+						id: "iceandfire:dragonsteel_fire_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&c龙炎铠甲"
+			x: 2.5d
+			y: -0.5d
+		}
+		{
+			dependencies: ["5B4AE842B8D2F8AA"]
+			description: ["{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1303A35CC1DC0C45\" } }"]
+			id: "2C2DBF0253975A99"
+			subtitle: "&e搭建昂贵的龙霆钢炉后制作"
+			tasks: [
+				{
+					id: "5FF87D1FB5CF8B6C"
+					item: {
+						Count: 1b
+						id: "iceandfire:dragonsteel_lightning_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "1A42AD3ACB684C2B"
+					item: {
+						Count: 1b
+						id: "iceandfire:dragonsteel_lightning_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3D48C520C1172707"
+					item: {
+						Count: 1b
+						id: "iceandfire:dragonsteel_lightning_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "17E6644EF3F0AF3D"
+					item: {
+						Count: 1b
+						id: "iceandfire:dragonsteel_lightning_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&d龙霆铠甲"
+			x: 4.5d
+			y: -0.5d
+		}
+		{
+			dependencies: ["7202765CEFE13CE0"]
+			description: [
+				"{image:kubejs:textures/aaaa/heiantaozhuang.png width:220 height:85 align:1}"
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"582052F6A2978360\" } }"
+			]
+			id: "723DC21AD17AFE92"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "4149994F25DBFF90"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "提供多种极高抗性，减少仪式所需灵魂能量"
+			tasks: [
+				{
+					id: "6C3F043000E88735"
+					item: {
+						Count: 1b
+						id: "goety:dark_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "37DAA32C06B74BB1"
+					item: {
+						Count: 1b
+						id: "goety:dark_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5B5C41B548A7FA2B"
+					item: {
+						Count: 1b
+						id: "goety:dark_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6C9D899F33E42D61"
+					item: {
+						Count: 1b
+						id: "goety:dark_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "综合性能极强的盔甲"
+			x: 2.5d
+			y: -2.0d
+		}
+		{
+			dependencies: [
+				"63DEFD3777BB4966"
+				"5B4AE842B8D2F8AA"
+			]
+			id: "01BBA71A19D5A0CB"
+			subtitle: "&d相较于龙钢，制作更简单一点（相对的"
+			tasks: [
+				{
+					id: "5A8C94C6024D6B5E"
+					item: {
+						Count: 1b
+						id: "butcher:dragonscalearmor_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "19268F4EAC444A48"
+					item: {
+						Count: 1b
+						id: "butcher:dragonscalearmor_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "4A53B9F27B12A3CE"
+					item: {
+						Count: 1b
+						id: "butcher:dragonscalearmor_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6182407814BEA52C"
+					item: {
+						Count: 1b
+						id: "butcher:dragonscalearmor_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&a末影龙鳞甲"
+			x: 5.5d
+			y: -0.5d
+		}
+		{
+			dependencies: ["62096B0AA21F5CA6"]
+			description: ["{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1303A35CC1DC0C45\" } }"]
+			id: "79CD2545C3BC67CE"
+			subtitle: "&e使用最昂贵的悚怖钢合成"
+			tasks: [
+				{
+					id: "7384D424AA9A1FC8"
+					item: "dreadsteel:dreadsteel_helmet"
+					type: "item"
+				}
+				{
+					id: "61094CF0BFAE6D39"
+					item: "dreadsteel:dreadsteel_chestplate"
+					type: "item"
+				}
+				{
+					id: "35733DABCB9FB4D7"
+					item: "dreadsteel:dreadsteel_leggings"
+					type: "item"
+				}
+				{
+					id: "7E1949A64E75EAB7"
+					item: "dreadsteel:dreadsteel_boots"
+					type: "item"
+				}
+			]
+			title: "&c悚&9怖&d甲"
+			x: 2.5d
+			y: 1.0d
+		}
+		{
+			description: ["{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"293BF983D344709B\" } }"]
+			id: "63DEFD3777BB4966"
+			rewards: [{
+				count: 4
+				id: "3B80B245CD4B009F"
+				item: "butcher:dragonsmithingtemplate"
+				type: "item"
+			}]
+			subtitle: "末影龙固定掉落，使用【下界合金切肉刀】来分解"
+			tasks: [{
+				id: "7071C7AEC10EE6E1"
+				item: { Count: 2b, id: "butcher:enderdragoncorpse" }
+				type: "item"
+			}]
+			x: 6.8d
+			y: -0.5d
+		}
+		{
+			dependencies: ["3C66D05E8264DA00"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"102432CFE3159567\" } }"
+			]
+			id: "7036F2AA25A90008"
+			subtitle: "&e大范围造成百分比伤害"
+			tasks: [{
+				id: "59621BAC92363DAC"
+				item: "cataclysm:the_incinerator"
+				type: "item"
+			}]
+			x: -6.5d
+			y: 1.5d
+		}
+		{
+			dependencies: ["3C66D05E8264DA00"]
+			description: ["{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"47B79BDA0A70D698\" } }"]
+			id: "5DA6933824774BC4"
+			subtitle: "&e极大范围AOE攻击"
+			tasks: [{
+				id: "772414FCDDF61A41"
+				item: "cataclysm:the_immolator"
+				type: "item"
+			}]
+			x: -7.5d
+			y: 1.5d
+		}
+		{
+			dependencies: ["3C66D05E8264DA00"]
+			description: ["{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2E234A7111AC8092\" } }"]
+			id: "721C4C8762084E0A"
+			subtitle: "&e自动锁敌，可以将自己拉向目标处，或者将目标拉向自己"
+			tasks: [{
+				id: "74A82EFC050FF99D"
+				item: "cataclysm:tidal_claws"
+				type: "item"
+			}]
+			x: -5.5d
+			y: 1.5d
+		}
+		{
+			dependencies: ["128654C9E43F7488"]
+			description: [
+				"&d虚金&b可以通过&d困难模式下的刷怪塔&b快速获取"
+				""
+				"&c下界合金&b在下界维度挖取，或者击败&c【下界铁掌/混沌君主/下界合金巨兽】&b等boss获得"
+				""
+				"&a王的灵魂&b击杀多种boss获得，如&a【凋零/末影龙/旧日冠军/莫德凯撒】"
+				""
+				"&9海洋锭&b需要去&9【海底神殿】&b获得"
+				""
+				"&6融合利爪&b由&6骸骨巨龙&b掉落物合成，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1DD5146C62E2450B\" } }"
+				""
+				"&7龙之骨&b由龙的尸体掉落"
+			]
+			id: "0BD2AD80EA605D4A"
+			subtitle: "&6无限高频发射穿墙弹幕攻击"
+			tasks: [{
+				id: "66CE3625C8221D38"
+				item: "zenith:zenith"
+				type: "item"
+			}]
+			title: "&l来自&a【泰拉瑞亚】&7最强的武器&e【&6天&9顶&c剑&e】"
+			x: -3.0d
+			y: -1.0d
+		}
+		{
+			dependencies: ["5347C11DD09E9D07"]
+			id: "6B459267BA817600"
+			subtitle: "廉价好用，材料不算昂贵"
+			tasks: [{
+				id: "449CAFA55526DD2C"
+				item: {
+					Count: 1b
+					id: "soulsweapons:featherlight"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -6.0d
+			y: -3.5d
+		}
+		{
+			dependencies: ["128654C9E43F7488"]
+			id: "778F8405A128CD5A"
+			subtitle: "&6可以投掷攻击和远程回收"
+			tasks: [{
+				id: "6146952F11BAF569"
+				item: {
+					Count: 1b
+					id: "soulsweapons:leviathan_axe"
+					tag: {
+						Damage: 0
+						owners_last_pos: [I;
+							-12
+							75
+							600
+						]
+					}
+				}
+				type: "item"
+			}]
+			x: -7.0d
+			y: -1.0d
+		}
+		{
+			dependencies: ["3C66D05E8264DA00"]
+			description: [
+				"&d龙钢锭链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1303A35CC1DC0C45\" } }"
+				""
+				"&7德拉古尔获得链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"634873341552E2CC\" } }"
+				""
+				"&e金奖杯由竞技场挑战获得，竞技场链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"59925D0AB1768958\" } }"
+				""
+				"&c灵魂大剑合成材料获取链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"6500D72DC8974DAF\" } }"
+				""
+				"&4炎葬由焰魔掉落物合成，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"102432CFE3159567\" } }"
+				""
+				"&6凋灵合金锭由先驱者掉落，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"5DD1DFBC650A5E8D\" } }"
+			]
+			id: "26CCBC78CBBCBBB3"
+			subtitle: "&e攻击造成百分比伤害"
+			tasks: [{
+				id: "159D452E9FBF744D"
+				item: {
+					Count: 1b
+					id: "cataclysm:final_fractal"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "&e【百分比】&6伤害之刃&e【&c终&a极&9分&c形&d者&e】"
+			x: -2.5d
+			y: 1.5d
+		}
+		{
+			dependencies: ["62096B0AA21F5CA6"]
+			description: [
+				"&e防御最高的套装和普通攻击伤害最高的单手武器"
+				""
+				"&6链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"44F7E0748D4C5A30\" } }"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"23B6359E821AE844\" } }"
+			]
+			id: "6E9827AC3BFDF522"
+			rewards: [{
+				id: "17B3BC7CB733ACE9"
+				item: "sw_wukong:wukong_music"
+				type: "item"
+			}]
+			size: 1.0d
+			subtitle: "&e击败【昼行者】和【夜行者】后可制作"
+			tasks: [
+				{
+					id: "37520300B35F0320"
+					item: {
+						Count: 1b
+						id: "sw_wukong:dark_wukong_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "1F2C5952BD73AF9D"
+					item: {
+						Count: 1b
+						id: "sw_wukong:dark_wukong_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "2DFF798760015A6C"
+					item: {
+						Count: 1b
+						id: "sw_wukong:dark_wukong_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "2787D2947BA5A935"
+					item: {
+						Count: 1b
+						id: "sw_wukong:dark_wukong_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&6【如意金箍棒】和【黄金锁子甲】"
+			x: 3.5d
+			y: 1.0d
+		}
+		{
+			dependencies: ["128654C9E43F7488"]
+			id: "4ADB831732CC4DA4"
+			subtitle: "&b暗月长弓：攻击造成法术伤害，伤害高于龙骨弓  &6龙骨箭：不管通过什么弓发射，都会有不俗的伤害"
+			tasks: [
+				{
+					id: "7E202F0932CE53EC"
+					item: {
+						Count: 1b
+						id: "soulsweapons:darkmoon_longbow"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3978DEFAA2186732"
+					item: "iceandfire:dragonbone_arrow"
+					type: "item"
+				}
+			]
+			x: -4.0d
+			y: -1.0d
+		}
+		{
+			dependencies: ["30674EB8056E1334"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2F0B4D754E3A60DE\" } }"
+			]
+			id: "3437386382E4E9F9"
+			subtitle: "全套额外提供4点护甲值"
+			tasks: [
+				{
+					id: "3CF591CBEBA3ADA8"
+					item: {
+						Count: 1b
+						id: "goety:cursed_paladin_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5510AF35FF7C9D48"
+					item: {
+						Count: 1b
+						id: "goety:cursed_paladin_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "4DA5E799FD176F9E"
+					item: {
+						Count: 1b
+						id: "goety:cursed_paladin_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0A65ABEE5E4F4423"
+					item: {
+						Count: 1b
+						id: "goety:cursed_paladin_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&6诅咒骑士套装"
+			x: 4.5d
+			y: -3.5d
+		}
+		{
+			dependencies: ["30674EB8056E1334"]
+			description: [
+				"链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"498D7D657D0C3DA3\" } }"
+			]
+			id: "3CDDB3ED317AA499"
+			tasks: [
+				{
+					id: "50A9F2809895D713"
+					item: {
+						Count: 1b
+						id: "goety:black_iron_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "177AB4671504412F"
+					item: {
+						Count: 1b
+						id: "goety:black_iron_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "4D818460E594C9C9"
+					item: {
+						Count: 1b
+						id: "goety:black_iron_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "164DADD5DB8BF778"
+					item: {
+						Count: 1b
+						id: "goety:black_iron_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&f黑铁套"
+			x: 2.5d
+			y: -3.5d
+		}
+		{
+			dependencies: ["30674EB8056E1334"]
+			id: "48DD3D8384A189B6"
+			tasks: [
+				{
+					id: "41EA072A9D785A6A"
+					item: {
+						Count: 1b
+						id: "celestial_core:virtual_gold_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "7241F6A194C26253"
+					item: {
+						Count: 1b
+						id: "celestial_core:virtual_gold_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "52969852EC81A22B"
+					item: {
+						Count: 1b
+						id: "celestial_core:virtual_gold_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "02BB7A8F360C67A8"
+					item: {
+						Count: 1b
+						id: "celestial_core:virtual_gold_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&e虚金铠甲"
+			x: 3.5d
+			y: -3.5d
+		}
+		{
+			dependencies: ["7202765CEFE13CE0"]
+			description: [
+				"&6相关链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"30EE9B04F1837DA3\" } }"
+			]
+			id: "4D2B2502817913F4"
+			tasks: [
+				{
+					id: "45249CC5F86E6153"
+					item: {
+						Count: 1b
+						id: "cataclysm:ignitium_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "700C7A0478918A45"
+					item: {
+						Count: 1b
+						id: "cataclysm:ignitium_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6188B9F382F4A631"
+					item: {
+						Count: 1b
+						id: "cataclysm:ignitium_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "794CE810F0E5B247"
+					item: {
+						Count: 1b
+						id: "cataclysm:ignitium_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&e腾炎套装"
+			x: 3.5d
+			y: -2.0d
+		}
+		{
+			dependencies: ["7202765CEFE13CE0"]
+			description: [
+				"&b相关链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"47B79BDA0A70D698\" } }"
+			]
+			id: "6A6EEFD00195FDF2"
+			tasks: [
+				{
+					id: "14DD3AD1E6EA4B4D"
+					item: {
+						Count: 1b
+						id: "cataclysm:cursium_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "4E87E27984928F20"
+					item: {
+						Count: 1b
+						id: "cataclysm:cursium_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3634D174603FDD59"
+					item: {
+						Count: 1b
+						id: "cataclysm:cursium_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "151FAA352492821D"
+					item: {
+						Count: 1b
+						id: "cataclysm:cursium_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&b咒魂之甲"
+			x: 4.5d
+			y: -2.0d
+		}
+		{
+			dependencies: ["3C66D05E8264DA00"]
+			description: [
+				"&e链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"44F7E0748D4C5A30\" } }"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"23B6359E821AE844\" } }"
+			]
+			id: "1E4EC110E476AFAC"
+			subtitle: "&e击败【昼行者】和【夜行者】后制作"
+			tasks: [{
+				id: "73276E999901BE53"
+				item: {
+					Count: 1b
+					id: "sw_wukong:dark_wukong_staff"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -3.5d
+			y: 1.5d
+		}
+		{
+			id: "30674EB8056E1334"
+			tasks: [{
+				id: "44E1E20020FE6393"
+				title: "前期推荐装备"
+				type: "checkmark"
+			}]
+			x: 0.5d
+			y: -3.5d
+		}
+		{
+			id: "7202765CEFE13CE0"
+			tasks: [{
+				id: "175A8F5C9F05C76D"
+				title: "中期推荐装备"
+				type: "checkmark"
+			}]
+			x: 0.5d
+			y: -2.0d
+		}
+		{
+			id: "5B4AE842B8D2F8AA"
+			tasks: [{
+				id: "36A1DC0C2AC74D9C"
+				title: "后期推荐装备"
+				type: "checkmark"
+			}]
+			x: 0.5d
+			y: -0.5d
+		}
+		{
+			id: "62096B0AA21F5CA6"
+			tasks: [{
+				id: "4E20E1D01E67D3C3"
+				title: "防御最高的装备"
+				type: "checkmark"
+			}]
+			x: 0.5d
+			y: 1.0d
+		}
+		{
+			id: "5347C11DD09E9D07"
+			tasks: [{
+				id: "7F3D9AE7D41C5BA6"
+				title: "前期推荐武器"
+				type: "checkmark"
+			}]
+			x: -8.5d
+			y: -3.5d
+		}
+		{
+			id: "128654C9E43F7488"
+			tasks: [{
+				id: "26BE6B844FA824E2"
+				title: "中期推荐武器"
+				type: "checkmark"
+			}]
+			x: -8.5d
+			y: -1.0d
+		}
+		{
+			id: "3C66D05E8264DA00"
+			tasks: [{
+				id: "2FAA36A7115DB360"
+				title: "后期推荐武器"
+				type: "checkmark"
+			}]
+			x: -8.5d
+			y: 1.5d
+		}
+		{
+			dependencies: ["5347C11DD09E9D07"]
+			id: "4E8DB1CB1E24547C"
+			subtitle: "&c拥有吸血能力"
+			tasks: [{
+				id: "155CB47EF5AA57C9"
+				item: {
+					Count: 1b
+					id: "soulsweapons:bloodthirster"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -5.0d
+			y: -3.5d
+		}
+		{
+			dependencies: ["5347C11DD09E9D07"]
+			description: ["{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"6500D72DC8974DAF\" } }"]
+			id: "41080E6787B637D7"
+			subtitle: "&6综合性能很强"
+			tasks: [{
+				id: "20A0442F96585CDC"
+				item: {
+					Count: 1b
+					id: "legendary_monsters:soul_great_sword"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -4.0d
+			y: -3.5d
+		}
+		{
+			dependencies: ["5347C11DD09E9D07"]
+			description: ["{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"311F715ECE5324CF\" } }"]
+			id: "2A56B959FB78D84C"
+			subtitle: "&b召唤特殊闪电攻击"
+			tasks: [{
+				id: "45CA220E7F3E23E4"
+				item: {
+					Count: 1b
+					id: "legendary_monsters:axe_of_lightning"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -3.0d
+			y: -3.5d
+		}
+		{
+			dependencies: ["128654C9E43F7488"]
+			id: "15F38098EBA3609D"
+			subtitle: "&e放在副手自带【激流】，落地后造成大范围伤害"
+			tasks: [{
+				id: "0D766B0FA6BB3AC7"
+				item: {
+					Count: 1b
+					id: "soulsweapons:comet_spear"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -6.0d
+			y: -1.0d
+		}
+		{
+			dependencies: ["128654C9E43F7488"]
+			id: "42AAC4917248D926"
+			subtitle: "&e拥有较高白值，攻击后会大大降低，冷却结束后恢复"
+			tasks: [{
+				id: "63D116C92E8C315E"
+				item: {
+					Count: 1b
+					id: "soulsweapons:crucible_sword"
+					tag: {
+						Damage: 0
+						empowered: 1b
+					}
+				}
+				type: "item"
+			}]
+			x: -5.0d
+			y: -1.0d
+		}
+		{
+			dependencies: ["5347C11DD09E9D07"]
+			id: "363A047899F71A20"
+			subtitle: "&2性价比拉满，既可以做饭又可以当武器"
+			tasks: [{
+				id: "454E3977D92581BB"
+				item: {
+					Count: 1b
+					id: "farmersdelight:skillet"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -7.0d
+			y: -3.5d
+		}
+		{
+			dependencies: ["3C66D05E8264DA00"]
+			description: ["{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1303A35CC1DC0C45\" } }"]
+			id: "3A56A94469119E97"
+			subtitle: "&e最强之盾，指综合性能"
+			tasks: [{
+				id: "01AF33E8DAD211F6"
+				item: "dreadsteel:dreadsteel_shield"
+				type: "item"
+			}]
+			x: -4.5d
+			y: 1.5d
+		}
+		{
+			id: "4F64407E2DDA41F7"
+			subtitle: "我知道。哎呀，拔刀剑得了MVP，原版类武器都是躺赢狗"
+			tasks: [{
+				id: "1D73D58285DC251A"
+				type: "checkmark"
+			}]
+			title: "只是一些推荐武器...."
+			x: -5.5d
+			y: -4.5d
+		}
+		{
+			id: "77E44BB648C59AFB"
+			subtitle: "你可以做别的，我只是列举出一些有点代表性的..."
+			tasks: [{
+				id: "37B90C0A0EF160DB"
+				type: "checkmark"
+			}]
+			title: "只是一些推荐装备...."
+			x: 3.5d
+			y: -4.5d
+		}
+		{
+			dependencies: [
+				"069AD958E1EC51BB"
+				"62096B0AA21F5CA6"
+			]
+			description: [
+				"{image:kubejs:textures/aaaa/erbankuangkuang.png width:190 height:90 align:1}"
+				"&e相关链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"13326026494399C4\" } }"
+			]
+			id: "79616268D5160DF5"
+			subtitle: "&e属性最全面，最强力的护甲"
+			tasks: [
+				{
+					id: "60B5B95EE0BAFB4D"
+					item: {
+						Count: 1b
+						id: "goety_revelation:apocalyptium_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5B5A2CAE1686DA1A"
+					item: {
+						Count: 1b
+						id: "goety_revelation:apocalyptium_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "4FD0FA48DFFD3F94"
+					item: {
+						Count: 1b
+						id: "goety_revelation:apocalyptium_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "7EB5072024B70DF7"
+					item: {
+						Count: 1b
+						id: "goety_revelation:apocalyptium_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&e神灵金套装"
+			x: 4.5d
+			y: 1.0d
+		}
+	]
+	title: "装备展示馆"
+}

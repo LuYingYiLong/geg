@@ -1,0 +1,107 @@
+{
+	id: "54493E9B92CA740F"
+	loot_size: 1
+	order_index: 2
+	rewards: [
+		{
+			item: {
+				Count: 1b
+				id: "minecraft:golden_axe"
+				tag: {
+					Damage: 0
+					Enchantments: [
+						{
+							id: "minecraft:efficiency"
+							lvl: 5s
+						}
+						{
+							id: "tonsofenchants:xp_mining_master"
+							lvl: 3s
+						}
+					]
+					RepairCost: 3
+					Unbreakable: 1b
+				}
+			}
+		}
+		{
+			item: {
+				Count: 1b
+				id: "minecraft:iron_axe"
+				tag: {
+					Damage: 0
+					Enchantments: [
+						{
+							id: "tonsofenchants:xp_sword_master"
+							lvl: 3s
+						}
+						{
+							id: "tonsofenchants:frostbite"
+							lvl: 1s
+						}
+						{
+							id: "minecraft:looting"
+							lvl: 3s
+						}
+					]
+					RepairCost: 7
+				}
+			}
+		}
+		{
+			item: {
+				Count: 1b
+				id: "minecraft:netherite_axe"
+				tag: {
+					Damage: 0
+					Enchantments: [
+						{
+							id: "tonsofenchants:delicate"
+							lvl: 3s
+						}
+						{
+							id: "tonsofenchants:decay"
+							lvl: 3s
+						}
+						{
+							id: "tonsofenchants:concrete"
+							lvl: 3s
+						}
+						{
+							id: "tonsofenchants:slowness"
+							lvl: 3s
+						}
+						{
+							id: "tonsofenchants:dull_blade"
+							lvl: 4s
+						}
+						{
+							id: "minecraft:binding_curse"
+							lvl: 1s
+						}
+						{
+							id: "minecraft:vanishing_curse"
+							lvl: 1s
+						}
+					]
+					RepairCost: 127
+				}
+			}
+		}
+		{
+			item: {
+				Count: 1b
+				id: "minecraft:diamond_axe"
+				tag: {
+					Damage: 0
+					Enchantments: [{
+						id: "minecraft:sharpness"
+						lvl: 1s
+					}]
+					RepairCost: 1
+				}
+			}
+		}
+	]
+	title: "金斧还是铁斧？"
+}

@@ -1,0 +1,971 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "2851848b8ca18601"
+	group: "7916E3ED902C17A5"
+	icon: "minecraft:netherrack"
+	id: "0FF354A05EE84538"
+	images: [
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 9.55d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/liangzisemofazhen.png"
+			rotation: 90.0d
+			width: 9.55d
+			x: 0.5d
+			y: -2.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 2.0d
+			hover: [ ]
+			image: "relics:item/magma_walker_fire"
+			rotation: 0.0d
+			width: 2.0d
+			x: 0.5d
+			y: 1.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 2.0d
+			hover: [ ]
+			image: "relics:item/magma_walker_fire"
+			rotation: 0.0d
+			width: 2.0d
+			x: 0.5d
+			y: -6.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 2.0d
+			hover: [ ]
+			image: "relics:item/magma_walker_fire"
+			rotation: 0.0d
+			width: 2.0d
+			x: 4.0d
+			y: -2.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 2.0d
+			hover: [ ]
+			image: "relics:item/magma_walker_fire"
+			rotation: 0.0d
+			width: 2.0d
+			x: -3.0d
+			y: -2.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/suolian.png"
+			rotation: 0.0d
+			width: 5.0d
+			x: 0.6d
+			y: -12.0d
+		}
+	]
+	order_index: 4
+	quest_links: [ ]
+	quests: [
+		{
+			id: "325A12D3C0C4C071"
+			size: 2.0d
+			tasks: [{
+				dimension: "minecraft:the_nether"
+				id: "6C6738F2017D3166"
+				title: "&d通过下界传送门抵达下界"
+				type: "dimension"
+			}]
+			title: "&e强敌"
+			x: 0.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["325A12D3C0C4C071"]
+			description: [
+				"燃魂："
+				"{image:kubejs:textures/aaaa/ranhun.png width:120 height:100 align:1}"
+				""
+				""
+				"烈焰祭坛："
+				""
+				"{image:kubejs:textures/aaaa/lieyanjitan.png width:120 height:100 align:1}"
+			]
+			id: "38D832860E8D62CE"
+			rewards: [{
+				id: "3EE2BF9D6E738497"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			subtitle: "&e使用指南针搜【烈焰竞技场】寻找。杀死燃魂，获得祭品后放入烈焰祭坛召唤焰魔"
+			tasks: [{
+				id: "0C1B32F17BE15380"
+				structure: "cataclysm:burning_arena"
+				type: "structure"
+			}]
+			title: "&c抵达&6烈焰竞技场"
+			x: 2.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["38D832860E8D62CE"]
+			description: [
+				"&e&e使用指南针搜【烈焰竞技场】寻找。"
+				"{image:kubejs:textures/aaaa/yanmo.png width:160 height:140 align:1}"
+				"&6（袭击boss·红石傀儡也会掉落其召唤物）"
+			]
+			id: "102432CFE3159567"
+			rewards: [
+				{
+					id: "50CA094202F50BB1"
+					item: "celestial_artifacts:traveler_scroll"
+					type: "item"
+				}
+				{
+					id: "12FDD5660917C8D0"
+					item: "goety:bygone_scroll"
+					type: "item"
+				}
+				{
+					count: 8
+					id: "21BFB9A85E4047EF"
+					item: {
+						Count: 1b
+						id: "culinaryconstruct:sandwich"
+						tag: {
+							Base: {
+								Count: 1b
+								id: "minecraft:bread"
+							}
+							Count: 4
+							Food: 8
+							Ingredients: {
+								Items: [
+									{
+										Count: 1b
+										Slot: 0b
+										id: "ice_and_fire_delight:dragon_special_sausage"
+									}
+									{
+										Count: 1b
+										Slot: 1b
+										id: "minecraft:enchanted_golden_apple"
+									}
+									{
+										Count: 1b
+										Slot: 2b
+										id: "extrameat:raw_tadpole"
+									}
+									{
+										Count: 1b
+										Slot: 3b
+										id: "alexscaves:slam"
+									}
+									{
+										Count: 1b
+										Slot: 4b
+										id: "peyroscythe:captain_greg_donut"
+									}
+								]
+							}
+							Quality: 4
+							Saturation: 1.4100001f
+							Size: 5
+							Solids: {
+								Items: [
+									{
+										Count: 1b
+										Slot: 0b
+										id: "ice_and_fire_delight:dragon_special_sausage"
+									}
+									{
+										Count: 1b
+										Slot: 1b
+										id: "minecraft:enchanted_golden_apple"
+									}
+									{
+										Count: 1b
+										Slot: 2b
+										id: "extrameat:raw_tadpole"
+									}
+									{
+										Count: 1b
+										Slot: 3b
+										id: "alexscaves:slam"
+									}
+									{
+										Count: 1b
+										Slot: 4b
+										id: "peyroscythe:captain_greg_donut"
+									}
+									{
+										Count: 1b
+										Slot: 5b
+										id: "minecraft:bread"
+									}
+								]
+							}
+							SolidsSize: 6
+							display: {
+								Name: "{\"text\":\"八八秘制三明治\"}"
+							}
+						}
+					}
+					type: "item"
+				}
+			
+				{
+				coinMinorUnits: 3000L
+				id: "32F469BB433AADF2"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			subtitle: "&e传说中的BOSS"
+			tasks: [{
+				advancement: "cataclysm:kill_ignis"
+				criterion: ""
+				id: "26621EF95ADFA09A"
+				type: "advancement"
+			}]
+			title: "&c击败&6焰魔"
+			x: 4.0d
+			y: -2.5d
+		}
+		{
+			dependencies: ["325A12D3C0C4C071"]
+			id: "7E0E73892E4C972D"
+			rewards: [{
+				id: "507097B18522E55B"
+				item: "ringsofascension:ring_lava_sponge"
+				type: "item"
+			}]
+			subtitle: "&6使用指南针搜【灵魂锻造厂】寻找。"
+			tasks: [{
+				id: "38533EE3D8E43CE3"
+				structure: "cataclysm:soul_black_smith"
+				type: "structure"
+			}]
+			title: "&c抵达&6灵魂锻造厂"
+			x: 0.5d
+			y: -0.5d
+		}
+		{
+			dependencies: ["7E0E73892E4C972D"]
+			description: [
+				"&6使用指南针搜【灵魂锻造厂】寻找。"
+				"{image:kubejs:textures/aaaa/xaijiehejinjushou.png width:180 height:180 align:1}"
+				""
+				"&6死亡后生成BOSS重生笼，使用恶兽之眼复活"
+			]
+			id: "2D763D90223C9A51"
+			rewards: [
+				{
+					id: "516047730D04FCF4"
+					item: {
+						Count: 1b
+						id: "relics:holy_locket"
+						tag: {
+							abilities: {
+								belief: {
+									points: 0
+									stats: {
+										amount: 0.22671d
+										capacity: 10.42649d
+										count: 1.01885d
+										radius: 3.35605d
+									}
+								}
+								blessing: {
+									points: 0
+									stats: {
+										consumption: 6.56567d
+									}
+									temp: {
+										ticking: 1b
+									}
+								}
+								repentance: {
+									points: 0
+									stats: {
+										damage: 0.10132d
+										radius: 3.32056d
+									}
+								}
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "7DF5EA899CBF4422"
+					item: "celestial_artifacts:destroyer_badge"
+					type: "item"
+				}
+				{
+					id: "4FC47824BE64BFF3"
+					item: {
+						Count: 1b
+						id: "goety_cataclysm:netherite_monstrosity_spawn_egg"
+						tag: { }
+					}
+					type: "item"
+				}
+			
+				{
+				coinMinorUnits: 4000L
+				id: "65AFB82CB08CEA38"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			subtitle: "&e传说中的BOSS，下界最强"
+			tasks: [{
+				advancement: "cataclysm:kill_monstrosity"
+				criterion: ""
+				id: "49A98A21B4723626"
+				type: "advancement"
+			}]
+			title: "&c击败&d下界合金巨兽"
+			x: 0.5d
+			y: 1.0d
+		}
+		{
+			dependencies: ["325A12D3C0C4C071"]
+			description: [
+				"&e破坏结构中心的方块召唤BOSS"
+				"{image:kubejs:textures/aaaa/xiajietiehangzhiyan.png width:180 height:150 align:1}"
+			]
+			id: "60927FCACB31B20B"
+			rewards: [{
+				id: "0D50C4F0505D1D5F"
+				item: "bosses_of_mass_destruction:brimstone_nectar"
+				type: "item"
+			}]
+			subtitle: "&7使用指南针搜&e【下界铁掌竞技场】&7寻找。此结构可被&e【硫磺花蜜】&7重置"
+			tasks: [{
+				id: "7D1FD122563DC280"
+				structure: "bosses_of_mass_destruction:gauntlet_arena"
+				type: "structure"
+			}]
+			title: "&6寻找&c下界铁掌"
+			x: -1.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["60927FCACB31B20B"]
+			description: [
+				"{image:kubejs:textures/aaaa/xiajietiezhang.png width:100 height:100 align:1}"
+				"&7使用指南针搜&e【下界铁掌竞技场】&7寻找。"
+			]
+			id: "432D90B9CD7D89EA"
+			rewards: [
+				{
+					id: "2C0B4E6023BD664E"
+					item: "minecraft:netherite_ingot"
+					type: "item"
+				}
+				{
+					id: "3B5177981AA3A639"
+					item: {
+						Count: 1b
+						id: "alexsmobs:straddleboard"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "&b中级BOSS"
+			tasks: [{
+				advancement: "bosses_of_mass_destruction:nether/gauntlet_defeat"
+				criterion: ""
+				id: "01A1743213E2F250"
+				type: "advancement"
+			}]
+			title: "&6击败&c下界铁掌"
+			x: -3.0d
+			y: -2.5d
+		}
+		{
+			dependencies: ["432D90B9CD7D89EA"]
+			description: [
+				"&6智能武器装载自瞄功能，装有自瞄功能武器如下"
+				""
+				"{image:kubejs:textures/aaaa/zhinengwuqi.png width:110 height:30 align:1}"
+				"&6子弹自带追踪目标"
+				"{image:kubejs:textures/aaaa/sijibao.png width:200 height:130 align:1}"
+				""
+				"&e枪械附魔书链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"429169FD42CBF2F9\" } }"
+			]
+			id: "1D5BCD377D9D9E72"
+			rewards: [
+				{
+					id: "37C163F3598CEBB0"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					id: "2DE478ADAE5BFB35"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "enchanted_arsenal:hollow_point"
+								lvl: 5s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "44FA0520B490B7A1"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "enchanted_arsenal:shell_shock"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "&d你可以用它制作来自2077的高科技武器 "
+			tasks: [{
+				id: "650F690BD7AF3F96"
+				item: {
+					Count: 1b
+					id: "tacz:workbench_b"
+					tag: {
+						BlockId: "cyber_armorer:workbench_cyber_armorer"
+					}
+				}
+				type: "item"
+			}]
+			x: -3.0d
+			y: -4.0d
+		}
+		{
+			dependencies: ["325A12D3C0C4C071"]
+			id: "3844985F5638B3D3"
+			rewards: [{
+				id: "1DCEF944EE3C3549"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			subtitle: "&7使用指南针搜&d【腐朽王国】&7寻找。"
+			tasks: [{
+				id: "7E8E104F21303106"
+				structure: "soulsweapons:decaying_kingdom"
+				type: "structure"
+			}]
+			title: "抵达腐朽王国遗迹"
+			x: 0.5d
+			y: -4.5d
+		}
+		{
+			dependencies: ["3844985F5638B3D3"]
+			description: [
+				"&7使用指南针搜&d【腐朽王国】&7寻找。"
+				"{image:kubejs:textures/aaaa/yatuokesi.png width:140 height:140 align:1}"
+			]
+			id: "750588050C70B86E"
+			rewards: [
+				{
+					id: "17A1D33115058A4F"
+					item: "celestial_artifacts:sakura_hairpin"
+					type: "item"
+				}
+				{
+					count: 10
+					id: "3070A1A8E27DA3C5"
+					item: "ironchests:netherite_barrel"
+					type: "item"
+				}
+				{
+					command: "/give @s sophisticatedbackpacks:netherite_backpack"
+					elevate_perms: true
+					icon: "sophisticatedbackpacks:netherite_backpack"
+					id: "1F8671EA86F6FFDC"
+					title: "下界合金背包"
+					type: "command"
+				}
+			]
+			subtitle: "&d高级BOSS"
+			tasks: [{
+				advancement: "soulsweapons:end_of_reigns"
+				criterion: ""
+				id: "58CC48ADB66E31AF"
+				type: "advancement"
+			}]
+			title: "击败亚托克斯"
+			x: 0.5d
+			y: -6.0d
+		}
+		{
+			dependencies: ["71355383CE140B96"]
+			description: [
+				"如何召唤（这个应该人尽皆知了"
+				"{image:kubejs:textures/aaaa/zhaohuandiaoling.png width:100 height:100 align:1}"
+				"&c注意：如果被方块阻挡，则不会召唤，如图中被杂草遮挡"
+			]
+			id: "09B922F3D3E6AC11"
+			rewards: [
+				{
+					count: 4
+					id: "107FF056AA9CBC1E"
+					item: "minecraft:enchanted_golden_apple"
+					type: "item"
+				}
+				{
+					id: "150656224B4A211B"
+					item: {
+						Count: 1b
+						id: "butcher:netherite_butchers_knife"
+						tag: {
+							Damage: 0
+							Enchantments: [{
+								id: "tonsofenchants:enhanced_sharpness"
+								lvl: 5s
+							}]
+							RepairCost: 1
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "&e注：凋零骷髅头可合成"
+			tasks: [{
+				entity: "minecraft:wither"
+				id: "547818BE5D4D816C"
+				type: "kill"
+				value: 1L
+			}]
+			x: 0.5d
+			y: -13.0d
+		}
+		{
+			dependencies: ["09B922F3D3E6AC11"]
+			description: [
+				"&e手持【凋零恶魔之心】对【黑石基座】右键召唤【腐朽的王·亚托克斯】。"
+				""
+				"&e手持【不确定性的残片】对【黑石基座】右键召唤【混沌君主】。"
+			]
+			id: "57D574A10D5C2F38"
+			rewards: [{
+				id: "35BC00B1E7D9C676"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			tasks: [
+				{
+					id: "1C306865289846F2"
+					item: { Count: 2b, id: "soulsweapons:shard_of_uncertainty" }
+					type: "item"
+				}
+				{
+					id: "6E1A3F21C28A6E09"
+					item: "soulsweapons:blackstone_pedestal"
+					type: "item"
+				}
+			]
+			title: "&eBOSS召唤祭坛"
+			x: -1.0d
+			y: -14.0d
+		}
+		{
+			dependencies: ["09B922F3D3E6AC11"]
+			description: [
+				"&e通过黑石基座召唤："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"57D574A10D5C2F38\" } }"
+				"{image:kubejs:textures/aaaa/hundunjunzhu.png width:140 height:160 align:1}"
+			]
+			id: "7823AA372E7CF0B5"
+			rewards: [
+				{
+					id: "23583FAD15C8C8EA"
+					type: "xp_levels"
+					xp_levels: 50
+				}
+				{
+					id: "02897DC23E42761B"
+					item: "cagedmobs:speed_iii_upgrade"
+					type: "item"
+				}
+				{
+					id: "08ED11FC093174FB"
+					item: {
+						Count: 1b
+						id: "immersive_melodies:tiny_drum"
+						tag: { }
+					}
+					type: "item"
+				}
+			
+				{
+				coinMinorUnits: 8000L
+				id: "62534A5B31300D69"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			size: 2.0d
+			subtitle: "&d高级BOSS  &e固定掉落【下界合金锭】和【锻造模板】"
+			tasks: [{
+				advancement: "soulsweapons:ender_of_world_ender"
+				criterion: ""
+				id: "0E7788824A925913"
+				type: "advancement"
+			}]
+			title: "&d击杀混沌君主"
+			x: 0.5d
+			y: -16.0d
+		}
+		{
+			dependencies: ["3C2E3A0880B80ACE"]
+			description: [
+				"&c注：不要喝【狂乱药水】，攻击力和护甲会清零，还有崩溃的风险（喝了后，可通过死亡来重置攻击力和护甲）"
+				""
+				"&6使用指南针搜【血色祭坛】寻找。"
+				"{image:kubejs:textures/aaaa/sishishushi.png width:100 height:100 align:1}"
+			]
+			id: "35AC7EC3827E2F5B"
+			rewards: [{
+				id: "3D5EAE787D6FB3A4"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:tarnished_helmet"
+					tag: {
+						Damage: 0
+						ISBUpgrades: [{
+							id: "irons_spellbooks:cooldown"
+							slot: "head"
+							upgrades: 3
+						}]
+						ISB_Spells: {
+							data: [{
+								id: "irons_spellbooks:raise_dead"
+								index: 0
+								level: 6
+								locked: 0b
+							}]
+							maxSpells: 1
+							mustEquip: 1b
+							spellWheel: 1b
+						}
+						RepairCost: 0
+						Unbreakable: 1b
+						display: {
+							Name: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"yellow\",\"text\":\"死灵之王皇冠\"}"
+						}
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "进阶级boss"
+			tasks: [{
+				advancement: "eeeabsmobs:eeeabsmobs/kill_corpse_warlock"
+				criterion: ""
+				id: "4039E3E50CE88075"
+				type: "advancement"
+			}]
+			title: "击败死尸术士"
+			x: -3.0d
+			y: -10.5d
+		}
+		{
+			dependencies: ["71355383CE140B96"]
+			id: "3C2E3A0880B80ACE"
+			rewards: [{
+				id: "6EB473929AB17DB4"
+				type: "xp"
+				xp: 100
+			}]
+			subtitle: "使用指南针搜【血色祭坛】寻找。"
+			tasks: [{
+				id: "1CF9B93EFA87AF40"
+				structure: "eeeabsmobs:bloody_altar"
+				type: "structure"
+			}]
+			title: "血色祭坛"
+			x: -1.5d
+			y: -10.0d
+		}
+		{
+			dependencies: ["09B922F3D3E6AC11"]
+			id: "421A6A544CDC1124"
+			rewards: [{
+				id: "01259CFD79C70396"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			subtitle: "&b碧蓝档案枪械武器包！"
+			tasks: [{
+				id: "4DCD634816EBE4E0"
+				item: {
+					Count: 1b
+					id: "tacz:workbench_b"
+					tag: {
+						BlockId: "rsws:ba"
+					}
+				}
+				type: "item"
+			}]
+			x: 2.0d
+			y: -14.0d
+		}
+		{
+			dependencies: ["71355383CE140B96"]
+			id: "6363C5A4875057B2"
+			rewards: [{
+				id: "1FE8F182A6C0AB1A"
+				type: "xp"
+				xp: 100
+			}]
+			subtitle: "使用指南针搜【灵魂要塞遗迹】寻找。"
+			tasks: [{
+				id: "576B7CA47CB9B7AD"
+				structure: "legendary_monsters:soul_fortress_remains"
+				type: "structure"
+			}]
+			title: "灵魂要塞"
+			x: 2.5d
+			y: -10.0d
+		}
+		{
+			dependencies: ["71355383CE140B96"]
+			id: "4DF2313C186B6BBD"
+			rewards: [{
+				id: "5B6030D7FD56C7F9"
+				type: "xp"
+				xp: 100
+			}]
+			subtitle: "&7使用指南针搜&6【熔岩食者巢穴】&7寻找。"
+			tasks: [{
+				id: "225C904F46F12001"
+				structure: "legendary_monsters:lava_eater_spawn"
+				type: "structure"
+			}]
+			title: "熔岩食者巢穴"
+			x: 1.5d
+			y: -11.0d
+		}
+		{
+			dependencies: ["4DF2313C186B6BBD"]
+			description: [
+				"&6使用指南针搜【熔岩食者巢穴】寻找。"
+				"&8没图（  此BOSS会遁入地下攻击玩家"
+			]
+			id: "7CDAD4610501F81B"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "41EEA73758D9123B"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "进阶级boss"
+			tasks: [{
+				advancement: "legendary_monsters:defeat_lava_eater"
+				criterion: ""
+				id: "793190229AA7232E"
+				type: "advancement"
+			}]
+			title: "击败熔岩食者"
+			x: 3.0d
+			y: -12.0d
+		}
+		{
+			dependencies: ["6363C5A4875057B2"]
+			description: [
+				"&6使用指南针搜【灵魂要塞遗迹】寻找。"
+				"{image:kubejs:textures/aaaa/diaolingznegwuzhe.png width:100 height:100 align:1}"
+			]
+			id: "643864F09415C6C8"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "2D1625599A68127E"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "进阶级boss"
+			tasks: [{
+				advancement: "legendary_monsters:defeat_withered_abomination"
+				criterion: ""
+				id: "23F1DE1624EE8BE9"
+				type: "advancement"
+			}]
+			title: "凋零憎恶者"
+			x: 4.0d
+			y: -10.5d
+		}
+		{
+			dependencies: ["71355383CE140B96"]
+			id: "69BF3887F73D9C31"
+			rewards: [{
+				id: "59F436E1FF1696D4"
+				type: "xp"
+				xp: 100
+			}]
+			subtitle: "使用指南针搜【骷髅龙巢穴】寻找。"
+			tasks: [{
+				id: "22E3C961AF12FDFB"
+				structure: "legendary_monsters:skeletosaurus_nest"
+				type: "structure"
+			}]
+			title: "骷髅龙巢穴"
+			x: -0.5d
+			y: -11.0d
+		}
+		{
+			dependencies: ["69BF3887F73D9C31"]
+			description: [
+				"使用指南针搜【骷髅龙巢穴】寻找。"
+				"{image:kubejs:textures/aaaa/kuloulong.png width:100 height:100 align:1}"
+				""
+				"&e其掉落物可合成一种蛋，孵化后使用任意肉驯服"
+			]
+			id: "401F2F9B5CA4BD46"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "68A3904A31F88EB6"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					id: "30117918A8B84025"
+					item: {
+						Count: 1b
+						id: "immersive_melodies:didgeridoo"
+						tag: { }
+					}
+					type: "item"
+				}
+			]
+			subtitle: "进阶级boss"
+			tasks: [{
+				advancement: "legendary_monsters:defeat_skeletosaurus"
+				criterion: ""
+				id: "411AFFE182ABA601"
+				type: "advancement"
+			}]
+			title: "击杀骷髅龙"
+			x: -2.0d
+			y: -12.0d
+		}
+		{
+			dependencies: ["432D90B9CD7D89EA"]
+			id: "6BABEA3A977B80FB"
+			rewards: [{
+				id: "1AA6C7949C4CAFEE"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			subtitle: "&e下界铁掌死后【掉落大量经验】，并【生成远古残骸】"
+			tasks: [{
+				id: "54180DB98070B08F"
+				item: "minecraft:ancient_debris"
+				type: "item"
+			}]
+			x: -3.0d
+			y: -1.0d
+		}
+		{
+			id: "71355383CE140B96"
+			size: 2.0d
+			tasks: [{
+				dimension: "minecraft:the_nether"
+				id: "47BAE6D6F1EF97CF"
+				title: "&d通过下界传送门抵达下界"
+				type: "dimension"
+			}]
+			x: 0.5d
+			y: -9.0d
+		}
+		{
+			dependencies: ["71355383CE140B96"]
+			description: [
+				"&e会爆下界合金的的BOSS："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"7823AA372E7CF0B5\" } }"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"432D90B9CD7D89EA\" } }"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2D763D90223C9A51\" } }"
+			]
+			id: "6C7F53469075F521"
+			rewards: [{
+				count: 3
+				id: "1536CA5017B0F554"
+				item: "minecraft:netherite_scrap"
+				type: "item"
+			}]
+			subtitle: "最稀有的矿石"
+			tasks: [{
+				id: "57EF78350B4DB791"
+				item: "minecraft:ancient_debris"
+				type: "item"
+			}]
+			title: "获得远古残骸"
+			x: 0.5d
+			y: -7.5d
+		}
+		{
+			dependencies: ["102432CFE3159567"]
+			id: "66B11892FF6B4983"
+			rewards: [{
+				id: "7EE839C2B235AE10"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			subtitle: "&e最强的武器之一，右键蓄力进行大范围AOE"
+			tasks: [{
+				id: "1723E3B17614BCBC"
+				item: "cataclysm:the_incinerator"
+				type: "item"
+			}]
+			title: "&c炎葬"
+			x: 4.0d
+			y: -4.0d
+		}
+		{
+			dependencies: ["102432CFE3159567"]
+			id: "02908870623C99DD"
+			rewards: [{
+				id: "67D869C561AC4E71"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			tasks: [{
+				id: "259C9EE1E5D82452"
+				item: {
+					Count: 1b
+					id: "tarotcards:strength"
+					tag: { }
+				}
+				type: "item"
+			}]
+			x: 4.0d
+			y: -1.0d
+		}
+	]
+	title: "&d旧世界"
+}

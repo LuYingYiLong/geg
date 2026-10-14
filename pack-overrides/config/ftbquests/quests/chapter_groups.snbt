@@ -1,0 +1,11 @@
+{
+	chapter_groups: [
+		{ id: "7916E3ED902C17A5", title: "&6主线" }
+		{ id: "7212331F85A8A7A2", title: "&6百科全书" }
+		{ id: "49A990AC3D05E50E", title: "&6洞穴之旅" }
+		{ id: "3041B6EFACB9A615", title: "&6魔法" }
+		{ id: "50FDD722F8A8E4F8", title: "&6饰品" }
+		{ id: "5DFEC790B7E6DAC6", title: "&6卸甲归田" }
+		{ id: "2CCD54ABEB9E03F4", title: "DLC篇章" }
+	]
+}

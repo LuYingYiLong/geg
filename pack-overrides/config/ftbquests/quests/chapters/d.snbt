@@ -1,0 +1,838 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: "rsquare"
+	filename: "d"
+	group: "5DFEC790B7E6DAC6"
+	icon: "minecraft:wheat_seeds"
+	id: "6D698020207C1403"
+	images: [{
+		click: ""
+		corner: false
+		dev: false
+		height: 20.0d
+		hover: [ ]
+		image: "kubejs:textures/aaaa/judashumu.png"
+		order: -9000
+		rotation: 0.0d
+		width: 20.0d
+		x: 0.5d
+		y: -3.5d
+	}]
+	order_index: 2
+	quest_links: [ ]
+	quests: [
+		{
+			id: "5D6302618824910C"
+			rewards: [{
+				id: "08CA3D2E6FE4470E"
+				item: {
+					Count: 1b
+					id: "minecraft:lime_shulker_box"
+					tag: {
+						BlockEntityTag: {
+							CustomName: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"dark_green\",\"text\":\"一些基础的种子\"}"
+							ForgeData: { }
+							Items: [
+								{
+									Count: 5b
+									Slot: 0b
+									id: "minecraft:wheat_seeds"
+								}
+								{
+									Count: 2b
+									Slot: 1b
+									id: "minecraft:pumpkin_seeds"
+								}
+								{
+									Count: 5b
+									Slot: 2b
+									id: "minecraft:melon_seeds"
+								}
+								{
+									Count: 3b
+									Slot: 3b
+									id: "minecraft:beetroot_seeds"
+								}
+								{
+									Count: 1b
+									Slot: 4b
+									id: "minecraft:torchflower_seeds"
+								}
+								{
+									Count: 5b
+									Slot: 5b
+									id: "farmersdelight:cabbage_seeds"
+								}
+								{
+									Count: 4b
+									Slot: 6b
+									id: "farmersdelight:tomato_seeds"
+								}
+								{
+									Count: 3b
+									Slot: 7b
+									id: "alcocraftplus:hop_seeds"
+								}
+								{
+									Count: 8b
+									Slot: 8b
+									id: "alcocraftplus:dry_seeds"
+								}
+								{
+									Count: 18b
+									Slot: 9b
+									id: "farmersdelight:rice"
+								}
+								{
+									Count: 5b
+									Slot: 10b
+									id: "farmersdelight:onion"
+								}
+								{
+									Count: 2b
+									Slot: 11b
+									id: "minecraft:bamboo"
+								}
+								{
+									Count: 4b
+									Slot: 12b
+									id: "minecraft:sugar_cane"
+								}
+								{
+									Count: 3b
+									Slot: 13b
+									id: "minecraft:cactus"
+								}
+								{
+									Count: 2b
+									Slot: 14b
+									id: "minecraft:potato"
+								}
+								{
+									Count: 1b
+									Slot: 15b
+									id: "minecraft:carrot"
+								}
+								{
+									Count: 8b
+									Slot: 16b
+									id: "alexscaves:pewen_sapling"
+								}
+								{
+									Count: 6b
+									Slot: 17b
+									id: "alexscaves:ancient_sapling"
+								}
+								{
+									Count: 5b
+									Slot: 18b
+									id: "goety:haunted_sapling"
+								}
+								{
+									Count: 2b
+									Slot: 19b
+									id: "goety:rotten_sapling"
+								}
+								{
+									Count: 4b
+									Slot: 20b
+									id: "goety:windswept_sapling"
+								}
+								{
+									Count: 5b
+									Slot: 21b
+									id: "goety:pine_sapling"
+								}
+							]
+							id: "minecraft:shulker_box"
+						}
+						display: {
+							Name: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"dark_green\",\"text\":\"一些基础的种子\"}"
+						}
+					}
+				}
+				type: "item"
+			}]
+			tasks: [{
+				consume_items: true
+				id: "640AE34012EF5457"
+				item: {
+					Count: 1b
+					id: "minecraft:iron_hoe"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "兑换种子"
+			x: 4.0d
+			y: -2.0d
+		}
+		{
+			id: "37D6CF6EB1941FB1"
+			rewards: [{
+				id: "663E96CF06B39504"
+				type: "xp"
+				xp: 100
+			}]
+			subtitle: "需要放入动物的对应食物"
+			tasks: [{
+				id: "6DC5520368506DFD"
+				item: "farmingforblockheads:feeding_trough"
+				type: "item"
+			}]
+			x: 3.0d
+			y: -1.0d
+		}
+		{
+			id: "3E63D83EDBC47A14"
+			rewards: [{
+				id: "5D4CEB12FF6C0D3A"
+				type: "xp"
+				xp: 100
+			}]
+			subtitle: "收集周围的鸡蛋"
+			tasks: [{
+				id: "130452191D3DA6FA"
+				item: "farmingforblockheads:chicken_nest"
+				type: "item"
+			}]
+			x: 4.0d
+			y: -1.0d
+		}
+		{
+			id: "68C73CF1AC8E4D91"
+			rewards: [{
+				id: "6EBBAFB8C0DDC4A8"
+				type: "xp"
+				xp: 100
+			}]
+			subtitle: "进行一些关于农作物的交易"
+			tasks: [{
+				id: "18CA72BC6EB3C413"
+				item: "farmingforblockheads:market"
+				type: "item"
+			}]
+			x: 5.0d
+			y: -1.0d
+		}
+		{
+			dependencies: ["71958410BA412F8E"]
+			description: [
+				"&2记得倒水哦"
+				"{image:kubejs:textures/aaaa/xujiutong.png width:160 height:200 align:1}"
+			]
+			id: "4DD57CE33B4C0A93"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "62068FC3A1ECBA18"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "倒上水，开始酿酒吧！"
+			tasks: [{
+				id: "5C0556204B34EEE2"
+				item: "alcocraftplus:keg"
+				type: "item"
+			}]
+			x: 5.0d
+			y: 1.0d
+		}
+		{
+			dependencies: ["4788EBA34D3AAD2E"]
+			description: [
+				"&7烘培小麦种子由小麦种子烧制后获得"
+				""
+				"&7啤酒花可用啤酒花种子种植后获得&2（购买种子链接："
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"5D6302618824910C\" } }"
+			]
+			id: "71958410BA412F8E"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "7861D58BE291379C"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "酿酒必不可少的原材料"
+			tasks: [
+				{
+					id: "743F6B2F04341A76"
+					item: "alcocraftplus:dry_seeds"
+					type: "item"
+				}
+				{
+					id: "77EAE64F172ADA44"
+					item: "alcocraftplus:hop"
+					type: "item"
+				}
+			]
+			title: "原材料"
+			x: 3.0d
+			y: 1.0d
+		}
+		{
+			dependencies: ["4DD57CE33B4C0A93"]
+			id: "73A1BA334B5292A5"
+			rewards: [{
+				id: "687F3879817E1734"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:diamond_spell_book"
+					tag: {
+						ISBUpgrades: [{
+							id: "irons_spellbooks:holy_power"
+							slot: "spellbook"
+							upgrades: 3
+						}]
+						ISB_Spells: {
+							data: [
+								{
+									id: "irons_spellbooks:fortify"
+									index: 0
+									level: 10
+									locked: 0b
+								}
+								{
+									id: "irons_spellbooks:blight"
+									index: 1
+									level: 8
+									locked: 0b
+								}
+								{
+									id: "irons_spellbooks:root"
+									index: 2
+									level: 10
+									locked: 0b
+								}
+								{
+									id: "irons_spellbooks:blessing_of_life"
+									index: 3
+									level: 10
+									locked: 0b
+								}
+								{
+									id: "irons_spellbooks:healing_circle"
+									index: 4
+									level: 10
+									locked: 0b
+								}
+								{
+									id: "irons_spellbooks:heal"
+									index: 5
+									level: 8
+									locked: 0b
+								}
+								{
+									id: "irons_spellbooks:teleport"
+									index: 6
+									level: 3
+									locked: 0b
+								}
+								{
+									id: "irons_spellbooks:shield"
+									index: 7
+									level: 10
+									locked: 0b
+								}
+								{
+									id: "irons_spellbooks:slow"
+									index: 8
+									level: 4
+									locked: 0b
+								}
+							]
+							maxSpells: 10
+							mustEquip: 1b
+							spellWheel: 1b
+						}
+						display: {
+							Name: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"yellow\",\"text\":\"嗜酒的大牧师留下的魔法书\"}"
+						}
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "尝遍所有美酒（酒也会刷在宝箱中哦）"
+			tasks: [
+				{
+					id: "1AA4EB8AA0EDA581"
+					item: "alcocraftplus:kvass"
+					type: "item"
+				}
+				{
+					id: "717C1D0177026C35"
+					item: "alcocraftplus:chorus_ale"
+					type: "item"
+				}
+				{
+					id: "4F921536C65907B6"
+					item: "alcocraftplus:digger_bitter"
+					type: "item"
+				}
+				{
+					id: "5F83C43666495FB7"
+					item: "alcocraftplus:drowned_ale"
+					type: "item"
+				}
+				{
+					id: "5FCA0D79DA4A3BA2"
+					item: "alcocraftplus:ice_beer"
+					type: "item"
+				}
+				{
+					id: "334398B7BC25266E"
+					item: "alcocraftplus:leprechaun_cider"
+					type: "item"
+				}
+				{
+					id: "58873BE7B9622384"
+					item: "alcocraftplus:magnet_pilsner"
+					type: "item"
+				}
+				{
+					id: "16B4F197F042C5A2"
+					item: "alcocraftplus:nether_porter"
+					type: "item"
+				}
+				{
+					id: "72E8CBEA93AAEE70"
+					item: "alcocraftplus:nether_star_lager"
+					type: "item"
+				}
+				{
+					id: "450F251BC6AF98A4"
+					item: "alcocraftplus:night_rauch"
+					type: "item"
+				}
+				{
+					id: "3AE0B90160978015"
+					item: "alcocraftplus:sun_pale_ale"
+					type: "item"
+				}
+				{
+					id: "7BEE2EE4430C129D"
+					item: "alcocraftplus:wither_stout"
+					type: "item"
+				}
+			]
+			title: "某，千杯不醉"
+			x: 6.5d
+			y: 1.0d
+		}
+		{
+			description: [
+				"&e浸泡15s获得【迅捷】20s"
+				"{image:kubejs:textures/aaaa/reshuizao.png width:180 height:120 align:1}"
+			]
+			id: "0A990A45D51CCCD0"
+			rewards: [
+				{
+					id: "0F106427EDC9F7BB"
+					type: "xp"
+					xp: 100
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2A1FD0C5DC86B56F"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+				{
+					id: "310FB428FE748A74"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:scroll"
+						tag: {
+							ISB_Spells: {
+								data: [{
+									id: "smithstory:mourning_flower"
+									index: 0
+									level: 1
+									locked: 1b
+								}]
+								maxSpells: 1
+								mustEquip: 0b
+								spellWheel: 0b
+							}
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "用来泡澡的哦"
+			tasks: [{
+				id: "500296D80591F590"
+				item: "hotbath:hot_water_bucket"
+				type: "item"
+			}]
+			x: -2.0d
+			y: -1.0d
+		}
+		{
+			dependencies: ["0A990A45D51CCCD0"]
+			id: "59D8C8AD79057FFC"
+			rewards: [
+				{
+					id: "13F9413C1AD6442E"
+					type: "xp"
+					xp: 100
+				}
+				{
+					exclude_from_claim_all: true
+					id: "4018BF7601111F76"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "继承拥有【牛奶浴桶】效果，并可以伤害亡灵"
+			tasks: [{
+				id: "795373A54E98C646"
+				item: "hotbath:herbal_bath_bucket"
+				type: "item"
+			}]
+			x: -3.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0A990A45D51CCCD0"]
+			id: "0D47AF2DD74680DF"
+			rewards: [
+				{
+					id: "1EE0497FF2DA3105"
+					type: "xp"
+					xp: 100
+				}
+				{
+					exclude_from_claim_all: true
+					id: "53D12B791892F02D"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "继承【牛奶浴桶】效果，侵泡15s获得【伤害吸收】20s"
+			tasks: [{
+				id: "2ABBD60052E588D8"
+				item: "hotbath:honey_bath_bucket"
+				type: "item"
+			}]
+			x: -3.5d
+			y: -2.0d
+		}
+		{
+			dependencies: ["0A990A45D51CCCD0"]
+			id: "7C44DC6D6BB54A1B"
+			rewards: [
+				{
+					id: "6FBC3D69A3C5B942"
+					type: "xp"
+					xp: 100
+				}
+				{
+					exclude_from_claim_all: true
+					id: "39CC2ADE722D1DC1"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "缓慢恢复生命和饥饿，浸泡15s清除负面效果"
+			tasks: [{
+				id: "74CDF7A6CD3AA16B"
+				item: "hotbath:milk_bath_bucket"
+				type: "item"
+			}]
+			x: -2.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["0A990A45D51CCCD0"]
+			id: "7FA75AE980CFD7BC"
+			rewards: [
+				{
+					id: "6234576433D560E6"
+					type: "xp"
+					xp: 100
+				}
+				{
+					exclude_from_claim_all: true
+					id: "024019BA59C5ABE5"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "继承【牛奶浴桶】效果，提供【击退抗性】和【攻击速度】"
+			tasks: [{
+				id: "11EFC5D3CBCCAE3C"
+				item: "hotbath:peony_bath_bucket"
+				type: "item"
+			}]
+			x: -2.5d
+			y: 0.5d
+		}
+		{
+			dependencies: ["0A990A45D51CCCD0"]
+			id: "38FA239F962CB72F"
+			rewards: [
+				{
+					id: "588460A6364D3928"
+					type: "xp"
+					xp: 100
+				}
+				{
+					exclude_from_claim_all: true
+					id: "57726CF1EEBAD197"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "移除包含不祥之兆的所有负面效果，并提供【力量】"
+			tasks: [{
+				id: "43AAD09F0ACB4691"
+				item: "hotbath:rose_bath_bucket"
+				type: "item"
+			}]
+			x: -3.5d
+			y: -1.0d
+		}
+		{
+			description: [
+				"注：有些食物必须用碗才能取出来哦"
+				"{image:kubejs:textures/aaaa/chuguo.png width:160 height:80 align:1}"
+			]
+			id: "7541986ACB3C4EB1"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "140628E5FF2AD8DF"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "需要营火或炉灶来加热，是制作大量食物的核心道具"
+			tasks: [{
+				id: "2B296BC8888E18AF"
+				item: "farmersdelight:cooking_pot"
+				type: "item"
+			}]
+			x: 4.5d
+			y: 0.0d
+		}
+		{
+			id: "32AD0D20541BC8FB"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1BB1D28ABBEC9769"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "需要营火或炉灶来加热，用来加热食物，或者当武器用("
+			tasks: [{
+				id: "06036360C4632CCB"
+				item: {
+					Count: 1b
+					id: "farmersdelight:skillet"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 3.5d
+			y: 0.0d
+		}
+		{
+			description: ["{image:kubejs:textures/aaaa/luzao.png width:150 height:100 align:1}"]
+			id: "5FE58FC03DD12A5A"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "786CFBF4DEA34563"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "营火的升级版，可以同时烤制6个食物"
+			tasks: [{
+				id: "7A0095C82A53AB0C"
+				item: "farmersdelight:stove"
+				type: "item"
+			}]
+			x: 2.5d
+			y: 0.0d
+		}
+		{
+			description: ["{image:kubejs:textures/aaaa/shengchuyunzaimache.png width:130 height:100 align:1}"]
+			id: "5FCF7EBFC3AA60FC"
+			rewards: [
+				{
+					id: "0FB5C7566B80E214"
+					type: "xp"
+					xp: 100
+				}
+				{
+					exclude_from_claim_all: true
+					id: "556BD77D6AF35C04"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "用来移动生物"
+			tasks: [{
+				id: "1D0E465BD925D11D"
+				item: "astikorcarts:animal_cart"
+				type: "item"
+			}]
+			x: 7.5d
+			y: -2.0d
+		}
+		{
+			description: ["{image:kubejs:textures/aaaa/mache.png width:100 height:100 align:1}"]
+			id: "38EC8D3FE24DC5CE"
+			rewards: [
+				{
+					id: "46DD93B1D4BF0D36"
+					type: "xp"
+					xp: 100
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2CDF8644F50C032C"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "可存储一定量物品，玩家可坐在上面"
+			tasks: [{
+				id: "77C1F7453263C88F"
+				item: "astikorcarts:supply_cart"
+				type: "item"
+			}]
+			x: 7.5d
+			y: -1.0d
+		}
+		{
+			description: ["{image:kubejs:textures/aaaa/li.png width:130 height:110 align:1}"]
+			id: "48ADB040EA938DB6"
+			rewards: [
+				{
+					id: "785E6A8D3D8590C9"
+					type: "xp"
+					xp: 100
+				}
+				{
+					exclude_from_claim_all: true
+					id: "767D2D2F60D7B8B1"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "放上锄头或铲子，拉动时会犁地"
+			tasks: [{
+				id: "6BBFC3303086B9D1"
+				item: "astikorcarts:plow"
+				type: "item"
+			}]
+			x: 7.5d
+			y: 0.0d
+		}
+		{
+			description: [
+				"&a注意！！！不要给女仆用注入了【兔兔滋补】的永恒牛排！！！女仆会变成任意生物的！！！"
+				""
+				"&e注入奶桶可以洗掉所有药水哦！"
+				""
+				"&6生物笼链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"78494C2624BB0151\" } }"
+			]
+			id: "03CE9BF5AF2DDEC1"
+			rewards: [{
+				count: 64
+				id: "54F89D27D12919D0"
+				item: "mowziesmobs:naga_fang"
+				type: "item"
+			}]
+			subtitle: "击杀牛，极小概率掉落，或者使用【生物笼】！"
+			tasks: [{
+				id: "75F89B426D2907F4"
+				item: "artifacts:eternal_steak"
+				type: "item"
+			}]
+			x: 5.5d
+			y: 0.0d
+		}
+		{
+			id: "4788EBA34D3AAD2E"
+			rewards: [{
+				id: "050869A0B03BC194"
+				type: "xp_levels"
+				xp_levels: 1
+			}]
+			subtitle: "种植在方块的下方"
+			tasks: [{
+				id: "768FCDE7534AAC4D"
+				item: { Count: 18b, id: "alcocraftplus:hop_seeds" }
+				type: "item"
+			}]
+			x: 1.5d
+			y: 1.0d
+		}
+		{
+			description: [
+				"&7用来生产&e【蜂蜜】&7。需要周围存在&e【蜜蜂】&7和&e【花朵】"
+				""
+				"&7使用&e【精准采集工具】&7破坏&e【下方有营火】&7的&e【蜂巢】&7，能使得蜜蜂留在其中，而不激怒蜜蜂"
+				""
+				"&7充满蜂蜜后使用&e【剪刀】&7或&e【玻璃瓶】&7来收集蜂蜜"
+				""
+				"{image:kubejs:textures/aaaa/fengchao.png width:100 height:100 align:1}"
+			]
+			id: "6209BECEB68249EE"
+			rewards: [
+				{
+					id: "204FC6A91634F214"
+					item: {
+						Count: 1b
+						id: "minecraft:shears"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 10
+					id: "5B40853A2B320285"
+					item: "minecraft:glass_bottle"
+					type: "item"
+				}
+			]
+			subtitle: "蜂巢：常常生成在森林的树干上"
+			tasks: [{
+				icon: "minecraft:bee_nest"
+				id: "30E97408E9F70F19"
+				observe_type: 0
+				timer: 0L
+				title: "观察蜂巢"
+				to_observe: "minecraft:bee_nest"
+				type: "observation"
+			}]
+			x: 5.0d
+			y: -2.0d
+		}
+		{
+			id: "311AE02871689034"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "50DCEF96B9D554E4"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "&e制作三明治，放上面包并夹一些食物即可制作"
+			tasks: [{
+				id: "131446F10DB73774"
+				item: "culinaryconstruct:culinary_station"
+				type: "item"
+			}]
+			x: 3.0d
+			y: -2.0d
+		}
+	]
+	title: "&d开垦良田"
+}

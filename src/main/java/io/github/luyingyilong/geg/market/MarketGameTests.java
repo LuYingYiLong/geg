@@ -4,6 +4,9 @@ import com.mojang.authlib.GameProfile;
 import io.github.luyingyilong.geg.GegMod;
 import io.github.luyingyilong.geg.money.MoneyBalance;
 import io.github.luyingyilong.geg.money.MoneySavedData;
+import io.github.luyingyilong.geg.money.CoinAuditService;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,12 +21,26 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import net.minecraftforge.fml.ModList;
 
 
 @GameTestHolder(GegMod.MODID)
 @PrefixGameTestTemplate(false)
 public final class MarketGameTests {
     private MarketGameTests() {
+    }
+
+    @GameTest(template = "empty")
+    public static void loadedPackCoinRewards(GameTestHelper helper) {
+        if (ModList.get().isLoaded("ftbquests")
+                && io.github.luyingyilong.geg.money.integration.FtbCoinIntegration.packQuestsPresent()) {
+            helper.assertTrue(MoneySavedData.get(helper.getLevel().getServer()).questActivationTime() > 0L,
+                    "Quest reward activation time was not persisted at server startup");
+            helper.assertTrue(
+                    io.github.luyingyilong.geg.money.integration.FtbCoinIntegration.validateLoadedPackRewards() == 17,
+                    "Not all approved coin rewards were loaded by FTB Quests");
+        }
+        helper.succeed();
     }
 
 
@@ -108,6 +125,11 @@ public final class MarketGameTests {
                 "Buyer was not charged the unit price");
         helper.assertTrue(MarketService.pendingCoin(helper.getLevel().getServer(), seller.getUUID()) == 125L,
                 "Offline seller proceeds were not queued");
+        helper.assertTrue(data.audit().stream().anyMatch(entry -> entry.reason().equals("market_sale")
+                        && entry.reference().equals("listing:" + listingId) && entry.amount() == 125L
+                        && entry.from().equals("wallet:" + buyer.getUUID())
+                        && entry.to().startsWith("pending:" + seller.getUUID() + ":")),
+                "Sale proceeds were not recorded as a wallet-to-pending transfer");
         helper.assertTrue(MarketService.buy(buyer, listingId, 1L, 125L, 1) == MarketResult.STALE,
                 "Stale purchase succeeded");
         helper.assertTrue(MarketService.reprice(seller, listingId, 1L, 200L) == MarketResult.STALE,
@@ -130,6 +152,18 @@ public final class MarketGameTests {
                 "Second sale proceeds could not be claimed");
         helper.assertTrue(data.balance(seller.getUUID()).coinMinorUnits() == 725L,
                 "Seller proceeds were incorrect");
+        helper.assertTrue(data.audit().stream().filter(entry -> entry.reason().equals("market_claim")
+                        && entry.to().equals("wallet:" + seller.getUUID()))
+                        .mapToLong(entry -> entry.amount()).sum() == 725L,
+                "Seller claims were not fully audited");
+        try {
+            var report = CoinAuditService.export(helper.getLevel().getServer(),
+                    CoinAuditService.date(System.currentTimeMillis()));
+            helper.assertTrue(Files.readString(report).contains("market_sale"),
+                    "The CSV audit export omitted market sales");
+        } catch (IOException exception) {
+            throw new AssertionError("Could not export the audit CSV", exception);
+        }
         data.put(seller.getUUID(), new MoneyBalance(Long.MAX_VALUE, 0L));
         data.market().coinCredits.put(seller.getUUID(), new ArrayList<>(List.of(
                 new MarketCoinCredit(data.market().nextId++, 1L))));
@@ -203,6 +237,9 @@ public final class MarketGameTests {
                 == MarketResult.REQUESTED, "Buy order creation failed");
         helper.assertTrue(data.balance(buyer.getUUID()).coinMinorUnits() == 500L,
                 "Buy order did not escrow all coin");
+        helper.assertTrue(data.audit().stream().anyMatch(entry -> entry.reason().equals("market_escrow")
+                        && entry.amount() == 500L && entry.to().equals("escrow:" + buyer.getUUID() + ":" + id)),
+                "Buy-order escrow was not audited");
         helper.assertTrue(buyer.getInventory().getItem(0).getCount() == 1,
                 "Buy order sample was removed from inventory");
         helper.assertTrue(MarketService.createRequest(buyer, 0, 0L, 1, Long.MAX_VALUE, sample)
@@ -243,6 +280,10 @@ public final class MarketGameTests {
                 "Buy order cancellation failed");
         helper.assertTrue(MarketService.pendingCoin(helper.getLevel().getServer(), buyer.getUUID()) == 200L,
                 "Cancellation refund was not recorded");
+        helper.assertTrue(data.audit().stream().filter(entry -> entry.reference().equals("order:" + id)
+                        && entry.reason().startsWith("market_"))
+                        .noneMatch(entry -> entry.from().equals("system:mint")),
+                "Market movements were counted as newly minted coin");
         helper.assertTrue(MarketService.favorites(helper.getLevel().getServer(), rival.getUUID())
                 .get(0).ended(), "Finished order favorite was not marked ended");
         helper.assertTrue(MarketService.fulfillRequest(rival, id, 4L, 50L, 1)

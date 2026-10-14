@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 @Mixin(targets = "brachy.modularui.drawable.text.FontRenderHelper", remap = false)
 public abstract class FontRenderHelperMixin {
-    // Other mods add formatting codes outside ModularUI's assumed '0'..'r' range.
+    // Other mods add formatting codes outside ModularUI's assumed '0'...'r' range.
     // Index by the full char value instead of subtracting '0'.
     @ModifyConstant(method = "<clinit>", constant = @Constant(intValue = 67), require = 1)
     private static int geg$expandFormattingMap(int originalSize) {

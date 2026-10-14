@@ -1,0 +1,378 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "5AD935C77B7415CD"
+	group: "5DFEC790B7E6DAC6"
+	icon: "prefab:item_magic_temple"
+	id: "5AD935C77B7415CD"
+	images: [{
+		click: ""
+		corner: false
+		dev: false
+		height: 5.0d
+		hover: [ ]
+		image: "kubejs:textures/aaaa/bomen.png"
+		rotation: 0.0d
+		width: 5.0d
+		x: 2.0d
+		y: -5.0d
+	}]
+	order_index: 0
+	quest_links: [ ]
+	quests: [
+		{
+			description: ["&dshift+滚轮&6切换放置方式"]
+			id: "78F6804E38765975"
+			subtitle: "快速放置大量方块"
+			tasks: [{
+				id: "6970286BBBF66F2B"
+				item: {
+					Count: 1b
+					id: "constructionwand:stone_wand"
+					tag: {
+						Damage: 0
+						wand_options: { }
+					}
+				}
+				type: "item"
+			}]
+			title: "建筑手杖"
+			x: 0.0d
+			y: -6.5d
+		}
+		{
+			description: ["&6&d右键&6选择地面&c材质&6及&c半径，&dshift+右键&6启用此工具"]
+			id: "208717C561954C5D"
+			subtitle: "快速铺设道路"
+			tasks: [{
+				id: "74403106F223100D"
+				item: "pathfinder:pathfinders_spade"
+				type: "item"
+			}]
+			x: 3.5d
+			y: -6.0d
+		}
+		{
+			id: "44EA98E2AED109D0"
+			size: 2.0d
+			subtitle: "完成任务领取一些蓝图，或者自己去合成(具体看JEI)"
+			tasks: [{
+				id: "153EDF6FEE12901E"
+				item: "prefab:item_house"
+				type: "item"
+			}]
+			title: "&6得到第一份建筑蓝图"
+			x: 2.0d
+			y: -3.0d
+		}
+		{
+			dependencies: ["44EA98E2AED109D0"]
+			icon: "prefab:item_ender_gateway"
+			id: "489640E2F3F25ACF"
+			rewards: [{
+				id: "453F3BF01AD403AF"
+				item: "prefab:item_ender_gateway"
+				type: "item"
+			}]
+			subtitle: "人造末地门"
+			tasks: [
+				{
+					consume_items: true
+					count: 20L
+					id: "32B9953E0C1FACE3"
+					item: "minecraft:ender_eye"
+					type: "item"
+				}
+				{
+					entity: "minecraft:enderman"
+					id: "628145B95489F0AA"
+					type: "kill"
+					value: 20L
+				}
+			]
+			title: "兑换末地门"
+			x: 5.0d
+			y: -4.0d
+		}
+		{
+			dependencies: ["44EA98E2AED109D0"]
+			icon: "prefab:item_farm"
+			id: "3A1EB8FDC288F8B5"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1E541454EE58A062"
+				item: "prefab:item_farm"
+				type: "item"
+			}]
+			tasks: [{
+				icon: "minecraft:clock"
+				id: "556ADD742734F7EE"
+				stat: "minecraft:play_time"
+				type: "stat"
+				value: 120000
+			}]
+			title: "游玩10天（游戏时间）"
+			x: 1.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["44EA98E2AED109D0"]
+			icon: "prefab:item_farm_improved"
+			id: "7888821DEC516D99"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0A92E2BD115369D8"
+				item: "prefab:item_farm_improved"
+				type: "item"
+			}]
+			tasks: [{
+				icon: "minecraft:clock"
+				id: "2983E3BCD8BE80BE"
+				stat: "minecraft:play_time"
+				type: "stat"
+				value: 240000
+			}]
+			title: "游玩20天（游戏时间）"
+			x: 2.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["44EA98E2AED109D0"]
+			icon: "prefab:item_farm_advanced"
+			id: "43982CC3647B58C6"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "4865C82310F6962F"
+				item: "prefab:item_farm_advanced"
+				type: "item"
+			}]
+			tasks: [{
+				icon: "minecraft:clock"
+				id: "44F551D726C4E742"
+				stat: "minecraft:play_time"
+				type: "stat"
+				value: 480000
+			}]
+			title: "游玩40天（游戏时间）"
+			x: 3.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["44EA98E2AED109D0"]
+			icon: "prefab:item_creative_bulldozer"
+			id: "68A7D3FB60CCF1AC"
+			rewards: [{
+				id: "7E7892CE046FE44B"
+				item: "prefab:item_creative_bulldozer"
+				team_reward: false
+				type: "item"
+			}]
+			tasks: [
+				{
+					consume_items: true
+					count: 3L
+					id: "7DE5828BFECCEA1D"
+					item: "minecraft:netherite_block"
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "45655B6036268639"
+					item: "bosses_of_mass_destruction:blazing_eye"
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "4A2C1781CBEA1F1B"
+					item: {
+						Count: 1b
+						id: "minecraft:netherite_pickaxe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "挖矿神器（创造推土机）"
+			x: 5.0d
+			y: -3.0d
+		}
+		{
+			dependencies: ["44EA98E2AED109D0"]
+			description: ["&6在铁砧上与三重压缩石融合才能使用！"]
+			icon: {
+				Count: 1b
+				id: "prefab:item_bulldozer"
+				tag: {
+					Damage: 0
+					prefab: {
+						powered: 0b
+					}
+				}
+			}
+			id: "46790EA7D3A7CCBF"
+			rewards: [
+				{
+					id: "72E7599EA867D614"
+					item: {
+						Count: 1b
+						id: "prefab:item_bulldozer"
+						tag: {
+							Damage: 0
+							prefab: {
+								powered: 0b
+							}
+						}
+					}
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "0482C017AFFA68DD"
+					item: "prefab:block_triple_compressed_stone"
+					team_reward: false
+					type: "item"
+				}
+			]
+			subtitle: "NND，为什么只收橡木？"
+			tasks: [{
+				consume_items: true
+				count: 32L
+				id: "23B5D0A3215DD33D"
+				item: "minecraft:oak_log"
+				type: "item"
+			}]
+			title: "提交32个橡木(一次性推土机)"
+			x: 5.0d
+			y: -2.0d
+		}
+		{
+			dependencies: ["44EA98E2AED109D0"]
+			icon: "prefab:item_house_improved"
+			id: "4B3A6C3B237F91A5"
+			rewards: [{
+				id: "2103B8C22F6CA014"
+				item: "prefab:item_house_improved"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:zombie"
+				id: "51FA2F57CC35DA22"
+				type: "kill"
+				value: 100L
+			}]
+			x: -1.0d
+			y: -4.0d
+		}
+		{
+			dependencies: ["44EA98E2AED109D0"]
+			icon: "prefab:item_modern_buildings"
+			id: "7AA2B5AB922879AA"
+			rewards: [{
+				id: "466BA6ED20F869D4"
+				item: "prefab:item_modern_buildings"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:skeleton"
+				id: "4563527A47F32986"
+				type: "kill"
+				value: 200L
+			}]
+			x: -1.0d
+			y: -2.0d
+		}
+		{
+			dependencies: ["44EA98E2AED109D0"]
+			icon: "prefab:item_house_advanced"
+			id: "0EB6E37596B29D5C"
+			rewards: [{
+				id: "3BBBA0C78F81C0E0"
+				item: "prefab:item_house_advanced"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:zombie"
+				id: "3CB221A362747332"
+				type: "kill"
+				value: 300L
+			}]
+			x: -1.0d
+			y: -3.0d
+		}
+		{
+			dependencies: ["44EA98E2AED109D0"]
+			icon: "prefab:item_modern_buildings_improved"
+			id: "326EB89B0B5F2E86"
+			rewards: [{
+				id: "3CF661D088C6B703"
+				item: "prefab:item_modern_buildings_improved"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:skeleton"
+				id: "425FDB0E5E7D13D9"
+				type: "kill"
+				value: 600L
+			}]
+			x: -0.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["44EA98E2AED109D0"]
+			icon: "prefab:item_modern_buildings_advanced"
+			id: "1391757411085BC8"
+			rewards: [{
+				id: "61BAF04E076B3154"
+				item: "prefab:item_modern_buildings_advanced"
+				type: "item"
+			}]
+			tasks: [{
+				entity: "minecraft:creeper"
+				id: "259FEB119EB6C3DC"
+				type: "kill"
+				value: 400L
+			}]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["44EA98E2AED109D0"]
+			icon: "prefab:item_ski_lodge"
+			id: "593ED3FAD72B371E"
+			rewards: [{
+				id: "1F83B462673356D1"
+				item: "prefab:item_ski_lodge"
+				type: "item"
+			}]
+			tasks: [{
+				id: "49D399D2E3BC0D4B"
+				stat: "minecraft:horse_one_cm"
+				type: "stat"
+				value: 1000000
+			}]
+			x: 4.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["44EA98E2AED109D0"]
+			icon: "prefab:item_welcome_center"
+			id: "5C209EBCA408ED48"
+			rewards: [{
+				id: "0AEA1FA7C7C35A09"
+				item: "prefab:item_welcome_center"
+				type: "item"
+			}]
+			tasks: [{
+				id: "7FD45A69C9880BA2"
+				points: false
+				type: "xp"
+				value: 50L
+			}]
+			x: 4.0d
+			y: 0.0d
+		}
+	]
+	title: "&d建造家园"
+}

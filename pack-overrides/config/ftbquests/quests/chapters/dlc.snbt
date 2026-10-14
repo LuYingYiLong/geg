@@ -1,0 +1,74 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "dlc"
+	group: "2CCD54ABEB9E03F4"
+	id: "62F27990E1448128"
+	images: [{
+		click: ""
+		corner: false
+		dev: false
+		height: 10.0d
+		hover: [ ]
+		image: "kubejs:textures/aaaa/chuyin.png"
+		rotation: 0.0d
+		width: 5.3d
+		x: 0.0d
+		y: 0.5d
+	}]
+	order_index: 0
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&e必须将指定MOD放入根目录mods文件夹中才能使用！"
+				""
+				"&n&e为什么会有DLC这个设定？因为DLC模组【可能会】【导致崩溃】，【影响平衡】，【占用资源多】（因此不建议服务器装"
+				""
+				"&b魔法使DLC链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1E05CBEF5575FDDD\" } }"
+				""
+				"&bRs精致存储DLC链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"085814AD2FED7B59\" } }"
+				""
+				"&b自动备份存档DLC链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"6BF16BEB2E3176C8\" } }"
+			]
+			id: "1C39C0AD40FEBA12"
+			rewards: [{
+				id: "38E7943348960AFD"
+				item: "astikorcarts:supply_cart"
+				type: "item"
+			}]
+			size: 4.0d
+			tasks: [{
+				id: "5FA7E98CCE5408E0"
+				type: "checkmark"
+			}]
+			title: "DLC篇章食用指南"
+			x: 4.0d
+			y: 0.0d
+		}
+		{
+			description: [
+				"&b加入&e【简单备份SimpleBackups】&b模组后，每隔一个小时自动备份存档到&e【.minecraft/simplebackups】&b文件夹，需要手动解压到&e【saves】存档文件夹进行回档"
+				""
+				"&a注意：如果你装了遥远地平线mod不要装此DLC，因为每次备份会同时备份遥远地平线模组的数据。"
+				""
+				"&c&l&n（此MOD可能导致，帧率骤降，小概率崩溃！！！）"
+			]
+			icon: "refurbished_furniture:computer"
+			id: "6BF16BEB2E3176C8"
+			size: 1.5d
+			subtitle: "简单备份MOD"
+			tasks: [{
+				id: "19D19DFD676090E6"
+				title: "&e自动备份！"
+				type: "checkmark"
+			}]
+			x: 7.5d
+			y: 0.0d
+		}
+	]
+	title: "DLC篇章食用指南"
+}

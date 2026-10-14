@@ -1,0 +1,881 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "2D9FFEC9A95CC5AA"
+	group: "7212331F85A8A7A2"
+	id: "2D9FFEC9A95CC5AA"
+	images: [
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 3.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/mutouren.png"
+			rotation: 0.0d
+			width: 3.0d
+			x: 10.5d
+			y: -2.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 0.5d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/shijian.png"
+			rotation: 0.0d
+			width: 0.5d
+			x: 17.5d
+			y: 0.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 4.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/xiaocongyu.png"
+			rotation: 0.0d
+			width: 4.0d
+			x: 8.0d
+			y: 2.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 3.5d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/wozuohaole.png"
+			rotation: 0.0d
+			width: 2.86d
+			x: 14.0d
+			y: 2.5d
+		}
+	]
+	order_index: 1
+	quest_links: [ ]
+	quests: [
+		{
+			description: ["&e【月光石】&3在主世界地下挖掘获得"]
+			id: "23BFF534AD149EF5"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "171D5CBF72F564C2"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 2.0d
+			subtitle: "&e合成获得！&a【月光石】&3在主世界地下挖掘获得"
+			tasks: [{
+				disable_toast: true
+				id: "49E869FAC31D0237"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							AttackAmplifier: 0.0f
+							BladeUniqueId: [I;
+								-71908762
+								1481330288
+								-1319015880
+								1713285432
+							]
+							ComboRoot: "slashblade:standby"
+							Damage: 0
+							ModelName: "resonantisshelomoh:model/solmen/temperance.obj"
+							RepairCounter: 0
+							SpecialAttackType: "slashblade:drive_vertical"
+							StandbyRenderType: 1b
+							SummonedSwordColor: -13421569
+							SummonedSwordColorInverse: 0b
+							TargetEntity: 0
+							TextureName: "resonantisshelomoh:model/solmen/temperance.png"
+							_onClick: 0b
+							adjustXYZ: [
+								0.0d
+								0.0d
+								0.0d
+							]
+							baseAttackModifier: 7.0f
+							currentCombo: "slashblade:none"
+							fallDecreaseRate: 0.0f
+							isBroken: 0b
+							isDefaultBewitched: 1b
+							isSealed: 0b
+							killCount: 0
+							lastActionTime: 0L
+							maxDamage: 200
+							proudSoul: 0
+							translationKey: "item.resonantisshelomoh.temperance"
+						}
+					}
+					id: "slashblade:slashblade"
+					tag: {
+						bladeState: {
+							TextureName: "resonantisshelomoh:model/solmen/temperance.png"
+							translationKey: "item.resonantisshelomoh.temperance"
+						}
+					}
+				}
+				match_nbt: true
+				type: "item"
+				weak_nbt_match: true
+			}]
+			x: 6.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["23BFF534AD149EF5"]
+			description: [
+				"&c虚金残骸：穿戴【附魔金盔甲】被【火焰伤害】杀死时100%掉落（玩家也算）"
+				""
+				"&f精炼头盔：钢铁守护者掉落，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"76B5F92F30F35132\" } }"
+				""
+				"&2藓牙由沼泽巨颌怪掉落，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"77E2868359348DF1\" } }"
+				""
+				"&3墨水获取途经较多，最方便的是在商店购买，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"160FE90E7493DA6C\" } }"
+			]
+			id: "51B17A4FFB2226EE"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "3442210820B36EFD"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 2.0d
+			tasks: [{
+				disable_toast: true
+				id: "6C3CB8989737F8AD"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							AttackAmplifier: 0.0f
+							BladeUniqueId: [I;
+								-621441383
+								1043481820
+								-1733527315
+								1700180400
+							]
+							ComboRoot: "slashblade:standby"
+							Damage: 0
+							ModelName: "resonantisshelomoh:model/solmen/reflection.obj"
+							RepairCounter: 0
+							SpecialAttackType: "resonantisshelomoh:allover"
+							StandbyRenderType: 1b
+							SummonedSwordColor: -13421569
+							SummonedSwordColorInverse: 0b
+							TargetEntity: 0
+							TextureName: "resonantisshelomoh:model/solmen/reflection.png"
+							_onClick: 0b
+							adjustXYZ: [
+								0.0d
+								0.0d
+								0.0d
+							]
+							baseAttackModifier: 10.0f
+							currentCombo: "slashblade:none"
+							fallDecreaseRate: 0.0f
+							isBroken: 0b
+							isDefaultBewitched: 1b
+							isSealed: 0b
+							killCount: 0
+							lastActionTime: 0L
+							maxDamage: 200
+							proudSoul: 0
+							translationKey: "item.resonantisshelomoh.reflection"
+						}
+					}
+					id: "slashblade:slashblade"
+					tag: {
+						bladeState: {
+							TextureName: "resonantisshelomoh:model/solmen/reflection.png"
+							translationKey: "item.resonantisshelomoh.reflection"
+						}
+					}
+				}
+				match_nbt: true
+				type: "item"
+				weak_nbt_match: true
+			}]
+			x: 9.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["51B17A4FFB2226EE"]
+			description: [
+				"&6巨人之眼由独眼巨人掉落，主世界平原和岸边经常刷新"
+				""
+				"&e凋灵合金由先驱者掉落，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"5DD1DFBC650A5E8D\" } }"
+			]
+			id: "12FF5A599423C4C9"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6D3EF6F22C34303D"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 2.0d
+			subtitle: "&e【占据之心】给予抗性提升III 力量III  给予攻击目标黑暗/缓慢"
+			tasks: [{
+				disable_toast: true
+				id: "34F59BE556CC58BD"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							AttackAmplifier: 0.0f
+							BladeUniqueId: [I;
+								437439350
+								1605912172
+								-1668803320
+								54097304
+							]
+							ComboRoot: "slashblade:standby"
+							Damage: 0
+							ModelName: "resonantisshelomoh:model/speed/speed.obj"
+							RepairCounter: 0
+							SpecialAttackType: "resonantisshelomoh:allover"
+							SpecialEffects: [
+								"resonantisshelomoh:occupyingheart"
+								"slashblade_addon:burst_drive"
+							]
+							StandbyRenderType: 1b
+							SummonedSwordColor: -9399333
+							SummonedSwordColorInverse: 0b
+							TargetEntity: 0
+							TextureName: "resonantisshelomoh:model/speed/speed.png"
+							_onClick: 0b
+							adjustXYZ: [
+								0.0d
+								0.0d
+								0.0d
+							]
+							baseAttackModifier: 17.0f
+							currentCombo: "slashblade:none"
+							fallDecreaseRate: 0.0f
+							isBroken: 0b
+							isDefaultBewitched: 1b
+							isSealed: 0b
+							killCount: 0
+							lastActionTime: 0L
+							maxDamage: 200
+							proudSoul: 0
+							translationKey: "item.resonantisshelomoh.reversed"
+						}
+					}
+					id: "slashblade:slashblade"
+					tag: {
+						bladeState: {
+							TextureName: "resonantisshelomoh:model/speed/speed.png"
+							translationKey: "item.resonantisshelomoh.reversed"
+						}
+					}
+				}
+				match_nbt: true
+				type: "item"
+				weak_nbt_match: true
+			}]
+			x: 12.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["12FF5A599423C4C9"]
+			description: [
+				"&6【超级幻刃风暴】攻击附带超级剑气"
+				""
+				"&6【夺取之血/无可奈何的安息】造成伤害附加最大生命值真实伤害，并回复自身"
+				"&7（夺取之血0.7%真实伤害，无可奈何叹息为0.6%）"
+				""
+				"&6&e【大圣残魂】&6需要使用竞技场的&b【钻石奖杯】&6+&5【昼夜行者BOSS】&6战利品合成，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"59925D0AB1768958\" } }"
+				""
+				"&e泰坦剑鞘由【远古遗魂】的战利品合成，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2F91EFF54CA2999B\" } }"
+				""
+				"&a裂变核心由【核能苦力怕】掉落，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"73F7EDA1D7DB8451\" } }"
+				""
+				"&9深渊之卵由&5【利维坦】&9固定掉落，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2E234A7111AC8092\" } }"
+				""
+				"&b虚空回响由【末影守望者】掉落物合成，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"4677ACC569C2F349\" } }"
+				""
+				"&e天使之心由纯净之星和星云立方合成，纯净之星链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"0D3BCE314877E0A7\" } }"
+				""
+				"&6星云立方是刻蚀板未成功掉落的副产物，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"315964E756BC5D6D\" } }"
+			]
+			id: "4A73D4156FD94194"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "750CE98C86EA1B46"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 3.0d
+			subtitle: "&e大器晚成的拔刀剑，具有高频攻击和百分比伤害的绝世神兵，但是也会带来削减生命的负面buff"
+			tasks: [
+				{
+					disable_toast: true
+					id: "180E4F6FE8E4DE29"
+					item: {
+						Count: 1b
+						ForgeCaps: {
+							Parent: {
+								AttackAmplifier: 0.0f
+								BladeUniqueId: [I;
+									1627969696
+									-305118215
+									-1893448339
+									413745002
+								]
+								ComboRoot: "slashblade:standby"
+								Damage: 0
+								ModelName: "resonantisshelomoh:model/solmen/muzimi.obj"
+								RepairCounter: 0
+								SpecialAttackType: "resonantisshelomoh:alloverex2"
+								SpecialEffects: [
+									"resonantisshelomoh:occupyingheart"
+									"resonantisshelomoh:helplessrest"
+									"resonantisshelomoh:anuntraceablehope"
+								]
+								StandbyRenderType: 1b
+								SummonedSwordColor: -7087248
+								SummonedSwordColorInverse: 0b
+								TargetEntity: 0
+								TextureName: "resonantisshelomoh:model/solmen/ruoyemu.png"
+								_onClick: 0b
+								adjustXYZ: [
+									0.0d
+									0.0d
+									0.0d
+								]
+								baseAttackModifier: 20.0f
+								currentCombo: "slashblade:none"
+								fallDecreaseRate: 0.0f
+								isBroken: 0b
+								isDefaultBewitched: 1b
+								isSealed: 0b
+								killCount: 0
+								lastActionTime: 0L
+								maxDamage: 200
+								proudSoul: 0
+								translationKey: "item.resonantisshelomoh.solomond"
+							}
+						}
+						id: "slashblade:slashblade"
+						tag: {
+							bladeState: {
+								TextureName: "resonantisshelomoh:model/solmen/ruoyemu.png"
+								translationKey: "item.resonantisshelomoh.solomond"
+							}
+						}
+					}
+					match_nbt: true
+					type: "item"
+					weak_nbt_match: true
+				}
+				{
+					disable_toast: true
+					id: "207B8A46B3B88543"
+					item: {
+						Count: 1b
+						ForgeCaps: {
+							Parent: {
+								AttackAmplifier: 0.0f
+								BladeUniqueId: [I;
+									-1631401918
+									1750026105
+									-1704512965
+									-2095387919
+								]
+								ComboRoot: "slashblade:standby"
+								Damage: 0
+								ModelName: "resonantisshelomoh:model/solmen/muzimi.obj"
+								RepairCounter: 0
+								SpecialAttackType: "resonantisshelomoh:alloverex"
+								SpecialEffects: [
+									"resonantisshelomoh:occupyingheart"
+									"resonantisshelomoh:seizetheblood"
+									"resonantisshelomoh:compassionfortorture"
+								]
+								StandbyRenderType: 1b
+								SummonedSwordColor: -65536
+								SummonedSwordColorInverse: 0b
+								TargetEntity: 0
+								TextureName: "resonantisshelomoh:model/solmen/mortis.png"
+								_onClick: 0b
+								adjustXYZ: [
+									0.0d
+									0.0d
+									0.0d
+								]
+								baseAttackModifier: 21.0f
+								currentCombo: "slashblade:none"
+								fallDecreaseRate: 0.0f
+								isBroken: 0b
+								isDefaultBewitched: 1b
+								isSealed: 0b
+								killCount: 0
+								lastActionTime: 0L
+								maxDamage: 200
+								proudSoul: 0
+								translationKey: "item.resonantisshelomoh.reverse_solomond"
+							}
+						}
+						id: "slashblade:slashblade"
+						tag: {
+							bladeState: {
+								TextureName: "resonantisshelomoh:model/solmen/mortis.png"
+								translationKey: "item.resonantisshelomoh.reverse_solomond"
+							}
+						}
+					}
+					match_nbt: true
+					only_from_crafting: false
+					type: "item"
+					weak_nbt_match: true
+				}
+			]
+			title: "&2睦子米"
+			x: 16.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["25B40F9E9AEF3E0D"]
+			description: [
+				"&a丛雨祝福：提供&6【抗性提升3】&d【 生命提升2】 &c【力量2】 &a并召唤小丛雨陪伴玩家"
+				""
+				"&9虚空蠕虫之眼由虚空蠕虫掉落，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"69777282F33899E7\" } }"
+				""
+				"&c凋灵恶魔之心由亚托克斯掉落，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"750588050C70B86E\" } }"
+				""
+				"&b昏光精粹由月光骑士掉落，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"43C13ADBB432155E\" } }"
+				""
+				"&d下界之星由凋灵掉落，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"09B922F3D3E6AC11\" } }"
+				""
+				"{image:kubejs:textures/aaaa/congyu.png width:180 height:160 align:1}"
+			]
+			icon: {
+				Count: 1b
+				ForgeCaps: {
+					Parent: {
+						AttackAmplifier: 0.0f
+						BladeUniqueId: [I;
+							-1774210283
+							-840351504
+							-2129848794
+							2131844990
+						]
+						ComboRoot: "slashblade:standby"
+						Damage: 0
+						ModelName: "murasame:models/murasame/murasamemaru_awakened.obj"
+						RepairCounter: 0
+						SpecialAttackType: "murasame:spatial_slash"
+						SpecialEffects: ["murasame:murasame_blessing"]
+						StandbyRenderType: 1b
+						SummonedSwordColor: -16711866
+						SummonedSwordColorInverse: 0b
+						TargetEntity: 0
+						TextureName: "murasame:models/murasame/murasamemaru_awakened.png"
+						_onClick: 0b
+						adjustXYZ: [
+							0.0d
+							0.0d
+							0.0d
+						]
+						baseAttackModifier: 60.0f
+						currentCombo: "slashblade:none"
+						fallDecreaseRate: 0.0f
+						isBroken: 0b
+						isDefaultBewitched: 1b
+						isSealed: 0b
+						killCount: 0
+						lastActionTime: 0L
+						maxDamage: 300
+						proudSoul: 0
+						translationKey: "item.murasame.murasamemaru_awakened"
+					}
+				}
+				id: "slashblade:slashblade"
+				tag: {
+					Enchantments: [
+						{
+							id: "minecraft:smite"
+							lvl: 25s
+						}
+						{
+							id: "minecraft:sharpness"
+							lvl: 10s
+						}
+						{
+							id: "minecraft:fire_aspect"
+							lvl: 3s
+						}
+						{
+							id: "minecraft:unbreaking"
+							lvl: 10s
+						}
+					]
+					bladeState: {
+						AttackAmplifier: 0.0f
+						BladeUniqueId: [I;
+							-1774210283
+							-840351504
+							-2129848794
+							2131844990
+						]
+						ComboRoot: "slashblade:standby"
+						Damage: 0
+						ModelName: "murasame:models/murasame/murasamemaru_awakened.obj"
+						RepairCounter: 0
+						SpecialAttackType: "murasame:spatial_slash"
+						SpecialEffects: ["murasame:murasame_blessing"]
+						StandbyRenderType: 1b
+						SummonedSwordColor: -16711866
+						SummonedSwordColorInverse: 0b
+						TargetEntity: 0
+						TextureName: "murasame:models/murasame/murasamemaru_awakened.png"
+						_onClick: 0b
+						adjustXYZ: [
+							0.0d
+							0.0d
+							0.0d
+						]
+						baseAttackModifier: 60.0f
+						currentCombo: "slashblade:none"
+						fallDecreaseRate: 0.0f
+						isBroken: 0b
+						isDefaultBewitched: 1b
+						isSealed: 0b
+						killCount: 0
+						lastActionTime: 0L
+						maxDamage: 300
+						proudSoul: 0
+						translationKey: "item.murasame.murasamemaru_awakened"
+					}
+				}
+			}
+			id: "7A1C5A3E50FCD4F5"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1BCE229045D3DFE4"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 3.0d
+			subtitle: "&f可转化为【&6神刀&3·&a千恋万花&f】"
+			tasks: [{
+				id: "5C0CCEB31E47D297"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							AttackAmplifier: 0.0f
+							BladeUniqueId: [I;
+								2113483934
+								704268184
+								-1759128054
+								-1390406645
+							]
+							ComboRoot: "slashblade:standby"
+							Damage: 0
+							ModelName: "murasame:models/murasame/murasamemaru_awakened.obj"
+							RepairCounter: 0
+							SpecialAttackType: "murasame:spatial_slash"
+							SpecialEffects: ["murasame:murasame_blessing"]
+							StandbyRenderType: 1b
+							SummonedSwordColor: -16711866
+							SummonedSwordColorInverse: 0b
+							TargetEntity: 0
+							TextureName: "murasame:models/murasame/murasamemaru_awakened.png"
+							_onClick: 0b
+							adjustXYZ: [
+								0.0d
+								0.0d
+								0.0d
+							]
+							baseAttackModifier: 60.0f
+							currentCombo: "slashblade:none"
+							fallDecreaseRate: 0.0f
+							isBroken: 0b
+							isDefaultBewitched: 1b
+							isSealed: 0b
+							killCount: 0
+							lastActionTime: 0L
+							maxDamage: 300
+							proudSoul: 0
+							translationKey: "item.murasame.murasamemaru_awakened"
+						}
+					}
+					id: "slashblade:slashblade"
+					tag: {
+						bladeState: {
+							TextureName: "murasame:models/murasame/murasamemaru_awakened.png"
+							translationKey: "item.murasame.murasamemaru_awakened"
+						}
+					}
+				}
+				match_nbt: true
+				type: "item"
+				weak_nbt_match: true
+			}]
+			x: 9.0d
+			y: 5.0d
+		}
+		{
+			description: [
+				"&6条件1：玩家经验等级大于50"
+				""
+				"&6条件2：玩家击杀亡灵生物总数大于500"
+				""
+				"&6条件3：玩家携带五种正面BUFF"
+				""
+				"{image:kubejs:textures/aaaa/congyuwan.png width:150 height:140 align:1}"
+			]
+			id: "25B40F9E9AEF3E0D"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "58EFB1605611992B"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 2.0d
+			subtitle: "&a位于【柚子神社】结构的嵌刀石中，建议用指南针寻找，满足条件即可拔出"
+			tasks: [{
+				id: "4E27691FB2BD2CEC"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							AttackAmplifier: 0.0f
+							BladeUniqueId: [I;
+								11305853
+								2070171023
+								-1579194606
+								-1906890361
+							]
+							ComboRoot: "slashblade:standby"
+							Damage: 0
+							ModelName: "murasame:models/murasame/murasamemaru.obj"
+							RepairCounter: 0
+							SpecialAttackType: "slashblade:wave_edge"
+							StandbyRenderType: 1b
+							SummonedSwordColor: -16711866
+							SummonedSwordColorInverse: 0b
+							TargetEntity: 0
+							TextureName: "murasame:models/murasame/murasamemaru.png"
+							_onClick: 0b
+							adjustXYZ: [
+								0.0d
+								0.0d
+								0.0d
+							]
+							baseAttackModifier: 18.0f
+							currentCombo: "slashblade:none"
+							fallDecreaseRate: 0.0f
+							isBroken: 0b
+							isDefaultBewitched: 1b
+							isSealed: 0b
+							killCount: 0
+							lastActionTime: 0L
+							maxDamage: 150
+							proudSoul: 0
+							translationKey: "item.murasame.murasamemaru"
+						}
+					}
+					id: "slashblade:slashblade"
+					tag: {
+						bladeState: {
+							TextureName: "murasame:models/murasame/murasamemaru.png"
+							translationKey: "item.murasame.murasamemaru"
+						}
+					}
+				}
+				match_nbt: true
+				type: "item"
+				weak_nbt_match: true
+			}]
+			x: 5.0d
+			y: 5.0d
+		}
+		{
+			description: [
+				"&b前置拔刀剑，魅影刃任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"402E6AF4645E3793\" } }"
+				""
+				"&b虚空荆棘由虚空之花掉落，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"6E51C9E86EFAEDCE\" } }"
+			]
+			id: "1B3642271ED4F707"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "51E48D94482F76B4"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 2.0d
+			subtitle: "&e幻刃风暴：自带剑气"
+			tasks: [{
+				id: "4A051C2FA176688A"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							AttackAmplifier: 0.0f
+							BladeUniqueId: [I;
+								489587114
+								308431058
+								-1829459154
+								-776916137
+							]
+							ComboRoot: "slashblade:standby"
+							Damage: 0
+							ModelName: "feibiblade:model/named/feibi/feibi.obj"
+							RepairCounter: 0
+							SpecialAttackType: "slashblade:judgement_cut"
+							SpecialEffects: ["slashblade_addon:burst_drive"]
+							StandbyRenderType: 2b
+							SummonedSwordColor: -13421569
+							SummonedSwordColorInverse: 0b
+							TargetEntity: 0
+							TextureName: "feibiblade:model/named/feibi/feibi.png"
+							_onClick: 0b
+							adjustXYZ: [
+								0.0d
+								0.0d
+								0.0d
+							]
+							baseAttackModifier: 13.0f
+							currentCombo: "slashblade:none"
+							fallDecreaseRate: 0.0f
+							isBroken: 0b
+							isDefaultBewitched: 0b
+							isSealed: 0b
+							killCount: 0
+							lastActionTime: 0L
+							maxDamage: 120
+							proudSoul: 0
+							translationKey: "item.feibiblade.xiaofeibi"
+						}
+					}
+					id: "slashblade:slashblade"
+					tag: {
+						bladeState: {
+							TextureName: "feibiblade:model/named/feibi/feibi.png"
+							translationKey: "item.feibiblade.xiaofeibi"
+						}
+					}
+				}
+				match_nbt: true
+				type: "item"
+				weak_nbt_match: true
+			}]
+			x: 12.5d
+			y: 5.0d
+		}
+		{
+			dependencies: ["1B3642271ED4F707"]
+			description: [
+				"&6注：se的触发条件是杀敌数，而不是经验等级"
+				""
+				"&9风暴精华由斯库拉掉落："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"66FBCC85A7D03552\" } }"
+				"&d末影护手由末影守卫掉落："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"77E28508762F7BA2\" } }"
+				"&e沙暴瓶由远古遗魂掉落："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2F91EFF54CA2999B\" } }"
+				"&b守卫者核心由无名守卫者掉落："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"3D1E708CFA20E344\" } }"
+				""
+				""
+				"{image:kubejs:textures/aaaa/wozuohaole.png width:100 height:125 align:1}"
+				"                                         &e（我坐好了）"
+			]
+			id: "008708D6963638EF"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "5A415757B4277CB7"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 3.0d
+			subtitle: "&e幻刃风暴：自带剑气  &d菲八啾比：杀敌达到1k后攻击附带凋零"
+			tasks: [{
+				id: "500AEB71CAAF44F9"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							AttackAmplifier: 0.0f
+							BladeUniqueId: [I;
+								-1358329656
+								1048593247
+								-1207444513
+								-638401331
+							]
+							ComboRoot: "slashblade:standby"
+							Damage: 0
+							ModelName: "feibiblade:model/named/feibi/feibi.obj"
+							RepairCounter: 0
+							SpecialAttackType: "feibiblade:jiubi"
+							SpecialEffects: [
+								"slashblade_addon:burst_drive"
+								"feibiblade:fei_ba_jiubi"
+							]
+							StandbyRenderType: 2b
+							SummonedSwordColor: -2500327
+							SummonedSwordColorInverse: 0b
+							TargetEntity: 0
+							TextureName: "feibiblade:model/named/feibi/feibi.png"
+							_onClick: 0b
+							adjustXYZ: [
+								0.0d
+								0.0d
+								0.0d
+							]
+							baseAttackModifier: 30.0f
+							currentCombo: "slashblade:none"
+							fallDecreaseRate: 0.0f
+							isBroken: 0b
+							isDefaultBewitched: 1b
+							isSealed: 0b
+							killCount: 0
+							lastActionTime: 0L
+							maxDamage: 120
+							proudSoul: 0
+							translationKey: "item.feibiblade.feibi"
+						}
+					}
+					id: "slashblade:slashblade"
+					tag: {
+						bladeState: {
+							TextureName: "feibiblade:model/named/feibi/dafeibi.png"
+							translationKey: "item.feibiblade.feibi"
+						}
+					}
+				}
+				match_nbt: true
+				type: "item"
+				weak_nbt_match: true
+			}]
+			title: "&e菲比啾比"
+			x: 16.5d
+			y: 5.0d
+		}
+	]
+	title: "拔刀剑·分篇"
+}

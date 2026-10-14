@@ -1,0 +1,729 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "114C270C26ECD0D2"
+	group: "5DFEC790B7E6DAC6"
+	icon: {
+		Count: 1b
+		id: "touhou_little_maid:entity_placeholder"
+		tag: {
+			RecipeId: "touhou_little_maid:altar/spawn_box"
+		}
+	}
+	id: "114C270C26ECD0D2"
+	images: [{
+		click: ""
+		corner: false
+		dev: false
+		height: 20.0d
+		hover: [ ]
+		image: "kubejs:textures/aaaa/nvpuailisi.png"
+		rotation: 0.0d
+		width: 12.8d
+		x: 0.0d
+		y: 0.0d
+	}]
+	order_index: 1
+	quest_links: [ ]
+	quests: [
+		{
+			description: ["&6任务只会进行一些基础的指引哦，想了解的更全面，请翻查此书吧"]
+			id: "02462B8F4C7D32A6"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "0770E5C1DAF1348A"
+					item: "touhou_little_maid:trumpet"
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "20E38AFCDAE6EB6C"
+					item: "farmersdelight:dumplings"
+					title: "&e用于与女仆缔结契约之物"
+					type: "item"
+				}
+			]
+			subtitle: "这是第一步，从这里开始哦"
+			tasks: [{
+				id: "4C0B7A9A28378745"
+				item: {
+					Count: 1b
+					id: "patchouli:guide_book"
+					tag: {
+						"patchouli:book": "touhou_little_maid:memorizable_gensokyo"
+					}
+				}
+				type: "item"
+			}]
+			x: 4.5d
+			y: -5.5d
+		}
+		{
+			dependencies: ["02462B8F4C7D32A6"]
+			description: [
+				"&n打开名为【记忆中的幻想乡】的手册，找到搭建祭坛的方法"
+				""
+				"{image:kubejs:textures/aaaa/duofangkuaijitan.png width:160 height:100 align:1}"
+				""
+				"{image:kubejs:textures/aaaa/jitan.png width:140 height:100 align:1}"
+			]
+			id: "4CAE4ABF9CB67C4C"
+			rewards: [
+				{
+					id: "7056A10B40E37B71"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					id: "051C51589065B530"
+					item: "philiaamulet:philia_amulet"
+					type: "item"
+				}
+			]
+			size: 1.5d
+			subtitle: "很简单的！"
+			tasks: [{
+				id: "501CB59F12DA85CB"
+				title: "如何搭建祭坛？"
+				type: "checkmark"
+			}]
+			x: 5.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["4CAE4ABF9CB67C4C"]
+			description: [
+				"&c祭坛是用来合成关于女仆的物品的，需要消耗&6P值&c来合成。具体合成可对&6【博丽的御币】&c按下U查看JEI"
+				""
+				"完成后的祭坛："
+				"{image:kubejs:textures/aaaa/wanchengdejitan.png width:100 height:100 align:1}"
+				"这时使用御币，右击中间的横梁，就完成啦"
+				""
+				"彻底完成后的祭坛："
+				""
+				"{image:kubejs:textures/aaaa/yubi.png width:160 height:100 align:1}"
+			]
+			id: "2529DC44647AC24B"
+			size: 1.8d
+			tasks: [{
+				id: "6C7146FF0CB2B076"
+				title: "搭建完成后"
+				type: "checkmark"
+			}]
+			x: 6.5d
+			y: -0.5d
+		}
+		{
+			dependencies: ["2529DC44647AC24B"]
+			description: [
+				"通过击杀【女仆妖精】和探索宝箱获得。"
+				""
+				"{image:kubejs:textures/aaaa/nvpuyaojingheyubi.png width:200 height:150 align:1}"
+			]
+			id: "623505F6C903FC19"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "5E1370DD68535460"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			size: 1.3d
+			subtitle: "进行相关仪式的重要资源"
+			tasks: [{
+				id: "7FEF5AD3C274633F"
+				item: "touhou_little_maid:power_point"
+				type: "item"
+			}]
+			x: 7.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["2529DC44647AC24B"]
+			description: [
+				"&6&n最重要的部分！  女仆会帮你做一些工作，还可以陪你玩游戏，一起守卫家园，探索世界。"
+				""
+				"{image:kubejs:textures/aaaa/guanyunvpu.png width:250 height:170 align:1}"
+				""
+				"&7女仆工作的条件：在工作时间   持有对应物品"
+			]
+			id: "57318A12DE277542"
+			size: 1.2d
+			subtitle: "&d使用&e【饺子】&d来缔结契约哦"
+			tasks: [{
+				advancement: "touhou_little_maid:base/spawn_maid"
+				criterion: ""
+				id: "6BCC58B015D8F93B"
+				title: "&6从祭坛处召唤一只女仆"
+				type: "advancement"
+			}]
+			x: 8.5d
+			y: -1.5d
+		}
+		{
+			dependencies: ["2529DC44647AC24B"]
+			description: [
+				"&6&n女仆是有自己的饰品的，通过祭坛进行合成，点击打开女仆饰品栏，放入女仆饰品即可"
+				"{image:kubejs:textures/aaaa/nvpushipinlan.png width:160 height:110 align:1}"
+			]
+			id: "3EB4DCE418BD793F"
+			rewards: [{
+				count: 18
+				id: "08D51B9258F03939"
+				item: {
+					Count: 1b
+					id: "culinaryconstruct:sandwich"
+					tag: {
+						Base: {
+							Count: 1b
+							id: "minecraft:bread"
+						}
+						Count: 6
+						Food: 9
+						Ingredients: {
+							Items: [
+								{
+									Count: 1b
+									Slot: 0b
+									id: "butcher:pork_loin"
+								}
+								{
+									Count: 1b
+									Slot: 1b
+									id: "butcher:pork_shoulder"
+								}
+								{
+									Count: 1b
+									Slot: 2b
+									id: "butcher:pork_leg"
+								}
+								{
+									Count: 1b
+									Slot: 3b
+									id: "smithstory:ranjinle"
+								}
+								{
+									Count: 1b
+									Slot: 4b
+									id: "minecraft:cooked_porkchop"
+								}
+							]
+						}
+						Quality: 4
+						Saturation: 4.887547f
+						Size: 5
+						Solids: {
+							Items: [
+								{
+									Count: 1b
+									Slot: 0b
+									id: "butcher:pork_loin"
+								}
+								{
+									Count: 1b
+									Slot: 1b
+									id: "butcher:pork_shoulder"
+								}
+								{
+									Count: 1b
+									Slot: 2b
+									id: "butcher:pork_leg"
+								}
+								{
+									Count: 1b
+									Slot: 3b
+									id: "smithstory:ranjinle"
+								}
+								{
+									Count: 1b
+									Slot: 4b
+									id: "minecraft:cooked_porkchop"
+								}
+								{
+									Count: 1b
+									Slot: 5b
+									id: "minecraft:bread"
+								}
+							]
+						}
+						SolidsSize: 6
+					}
+				}
+				type: "item"
+			}]
+			size: 1.1d
+			subtitle: "制作【女仆饰品】"
+			tasks: [{
+				id: "6AA7161B57BE6D0E"
+				item: {
+					Count: 1b
+					id: "touhou_little_maid:ultramarine_orb_elixir"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "女仆饰品"
+			x: 9.0d
+			y: -0.5d
+		}
+		{
+			description: [
+				""
+				"{image:kubejs:textures/aaaa/nvpumubei.png width:150 height:200 align:1}"
+			]
+			id: "6EF90EAC6C65AA71"
+			size: 2.0d
+			subtitle: "右击女仆死后生成的墓碑获得，可通过祭坛复活"
+			tasks: [{
+				id: "66004E73CCF4E039"
+				item: "touhou_little_maid:film"
+				type: "item"
+			}]
+			title: "&d如果你的女仆不幸身亡"
+			x: -2.5d
+			y: -6.0d
+		}
+		{
+			dependencies: ["6EF90EAC6C65AA71"]
+			id: "5249C029E7BBCDD9"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "3C273814439B0A2F"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&b用来寻找女仆墓碑和走丢的女仆"
+			tasks: [
+				{
+					id: "2C312002B6EAA5FE"
+					item: "touhou_little_maid:white_fox_scroll"
+					type: "item"
+				}
+				{
+					id: "37D3DC39A8BDE8C8"
+					item: "touhou_little_maid:red_fox_scroll"
+					type: "item"
+				}
+			]
+			title: "狐狸卷轴"
+			x: -3.0d
+			y: -7.5d
+		}
+		{
+			dependencies: ["2529DC44647AC24B"]
+			id: "7073D1224618872B"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "5C7DB7E815891630"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.05d
+			subtitle: "为女仆提供更大的储存空间"
+			tasks: [{
+				id: "297D15474AF86CFC"
+				item: "touhou_little_maid:maid_backpack_big"
+				type: "item"
+			}]
+			title: "制作女仆背包"
+			x: 8.5d
+			y: 0.5d
+		}
+		{
+			dependencies: ["2529DC44647AC24B"]
+			description: [
+				"&6难度非常的高（"
+				""
+				"{image:kubejs:textures/aaaa/nvpuguojixiangqi.png width:180 height:150 align:1}"
+			]
+			id: "01DA33CB3758DDC3"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "26850FF52346BE0E"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "将女仆切换到游戏模式，就可以玩了"
+			tasks: [
+				{
+					id: "32ACD7D44CF12F95"
+					item: "touhou_little_maid:gomoku"
+					type: "item"
+				}
+				{
+					id: "36CDD1B7FF54B0A6"
+					item: "touhou_little_maid:wchess"
+					type: "item"
+				}
+				{
+					id: "7757EB069CB720B1"
+					item: "touhou_little_maid:cchess"
+					type: "item"
+				}
+			]
+			title: "女仆游戏"
+			x: 4.5d
+			y: 0.5d
+		}
+		{
+			dependencies: ["2529DC44647AC24B"]
+			description: [
+				"&6需要用&b河童的罗盘&6先指定一下区域  任务链接 ："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"6867D715B9B978B0\" } }"
+			]
+			id: "13F717E3741B0917"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "7CCF1DAE43DA0927"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "放在休息区域，女仆在休息时间会进行互动"
+			tasks: [
+				{
+					id: "1F92B4B568BC9A37"
+					item: "touhou_little_maid:keyboard"
+					type: "item"
+				}
+				{
+					id: "30E7CA3C2A7A81E2"
+					item: "touhou_little_maid:bookshelf"
+					type: "item"
+				}
+				{
+					id: "55B0C8B7BB6B4C52"
+					item: "touhou_little_maid:computer"
+					type: "item"
+				}
+			]
+			title: "&d互动方块/设施"
+			x: 5.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["2529DC44647AC24B"]
+			description: [
+				"&6需要用&b河童的罗盘&6先指定一下区域  任务链接 ："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"6867D715B9B978B0\" } }"
+				""
+				"{image:kubejs:textures/aaaa/shuijiaodenupu.png width:100 height:100 align:1}"
+			]
+			id: "3DA542906B0FB5A7"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "33A7270DC3ED14E5"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "放在女仆的睡觉区域，女仆会在睡觉时间睡觉"
+			tasks: [{
+				id: "70B4FA648D8B1BDF"
+				item: "touhou_little_maid:maid_bed"
+				type: "item"
+			}]
+			x: 6.0d
+			y: 2.0d
+		}
+		{
+			description: [
+				"&n&6使用文文的相机将女仆变为照片，右键可放出"
+				""
+				"主手持凿子，副手持照片，对粘土右键制作雕像（雕像可烤制成手办"
+				""
+				"{image:kubejs:textures/aaaa/nvpudiaoxiang.png width:300 height:150 align:1}"
+			]
+			id: "1B23D9CE9A6176ED"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "5FDC53967F153A50"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.2d
+			tasks: [
+				{
+					id: "63B40316286AC131"
+					item: {
+						Count: 1b
+						id: "touhou_little_maid:camera"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "7EF38498BEB3372A"
+					item: {
+						Count: 1b
+						id: "touhou_little_maid:chisel"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "女仆雕像/手办"
+			x: -5.0d
+			y: -2.0d
+		}
+		{
+			id: "6C5ADD01F1371EF2"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "67B29344803CC30A"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			size: 1.3d
+			subtitle: "呼唤女仆来找你"
+			tasks: [{
+				id: "525AABCF443D2A24"
+				item: "touhou_little_maid:servant_bell"
+				type: "item"
+			}]
+			x: -6.0d
+			y: -4.0d
+		}
+		{
+			dependencies: ["2529DC44647AC24B"]
+			description: [
+				"&6&n划分女仆&a工作&6/&d休息&6/&c睡觉&6  区域"
+				""
+				"{image:kubejs:textures/aaaa/hetongdeluopan.png width:150 height:100 align:1}"
+			]
+			id: "6867D715B9B978B0"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "5D13AEF46294B1F3"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.025d
+			subtitle: "非常重要的工具"
+			tasks: [{
+				id: "536B4B2CF2A599C6"
+				item: "touhou_little_maid:kappa_compass"
+				type: "item"
+			}]
+			x: 8.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["2529DC44647AC24B"]
+			description: [
+				"记得打开女仆的骑乘模式哦"
+				"{image:kubejs:textures/aaaa/saozhu.png width:100 height:100 align:1}"
+			]
+			id: "4A2D67191BB079C7"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "29D9A700A97353D4"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "用于飞行，需要与女仆一起骑乘"
+			tasks: [{
+				id: "2A9EC7126FEDD5BC"
+				item: "touhou_little_maid:broom"
+				type: "item"
+			}]
+			x: 7.0d
+			y: 2.0d
+		}
+		{
+			dependencies: ["6EF90EAC6C65AA71"]
+			description: ["&6在野外开箱大概率获得"]
+			id: "2B9E78A93E84C214"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "707AA20636B96D3F"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "放入胶片，消耗生命，快速复活女仆（放心哦，不是生命上限）"
+			tasks: [{
+				id: "12116F3C3CC12E33"
+				item: "touhou_little_maid:shrine"
+				type: "item"
+			}]
+			x: -2.0d
+			y: -4.0d
+		}
+		{
+			dependencies: ["623505F6C903FC19"]
+			description: ["&6&n冷知识：P值的上限为5，满了就不再积攒，右键神社亭灯可以进行储存"]
+			id: "18429B4D9CCF573E"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "73943DAD0BCBE023"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "用来存储P值"
+			tasks: [{
+				id: "08C43F17FCDF7263"
+				item: {
+					Count: 1b
+					id: "touhou_little_maid:maid_beacon"
+					tag: {
+						StorageData: { }
+					}
+				}
+				type: "item"
+			}]
+			x: 9.0d
+			y: -3.0d
+		}
+		{
+			dependencies: ["2529DC44647AC24B"]
+			description: [
+				"&n&6切换到对应的工作模式，持有可烹饪/切  的食材时，女仆会进行料理&7（甚至会偷吃）"
+				""
+				"&7注释：有些食物需要碗来盛，因此，你需要给女仆一些碗"
+			]
+			id: "3165225D55A23E3B"
+			rewards: [
+				{
+					count: 10
+					id: "29E16E5E48EA20C3"
+					item: "minecraft:bowl"
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "4C71A42DCCD53B9C"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			tasks: [
+				{
+					id: "184D4C1B31E470FC"
+					item: "farmersdelight:cooking_pot"
+					type: "item"
+				}
+				{
+					id: "64A95083D439ACDA"
+					item: "farmersdelight:cutting_board"
+					type: "item"
+				}
+			]
+			title: "女仆的料理（"
+			x: 4.0d
+			y: -0.5d
+		}
+		{
+			description: [
+				"切换女仆工作模式到&e法术战斗&f女仆将可以使用...."
+				"&b【拔刀剑/诡厄魔法的法杖/铁魔法的书和卷轴】进行战斗"
+				"{image:kubejs:textures/aaaa/zhandounvpu.png width:200 height:165 align:1}"
+				""
+				"&e1.拔刀剑：需要放在手上"
+				""
+				"&a2.铁魔法的魔法书：需要放在背包任意位置，且含有魔法（可使用注入魔法武器）"
+				""
+				"&b3.诡厄巫法魔杖和聚晶：需要把【聚晶放在聚晶包里面】，然后放进女仆的背包中，【手持魔杖】才能用魔法"
+				""
+				"&c注：这三种武器可以一起使用"
+				""
+				"获取加强女仆法术饰品："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1F19BF64C6D8D973\" } }"
+			]
+			icon: {
+				Count: 1b
+				id: "touhou_little_maid:fire_protect_bauble"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "13903F40E40BCE20"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "756B79DCD3478847"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "irons_spellbooks:blood_slash"
+								index: 0
+								level: 2
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			size: 2.5d
+			tasks: [{
+				disable_toast: true
+				entity: "minecraft:zombie"
+				id: "45A79FAF76A4AB2F"
+				type: "kill"
+				value: 10L
+			}]
+			title: "&e魔法女仆！！！"
+			x: 9.1d
+			y: -7.35d
+		}
+		{
+			dependencies: ["13903F40E40BCE20"]
+			id: "188868CFFA56954B"
+			size: 1.0d
+			subtitle: "&6右键打开GUI，放入卷轴进行标记（不消耗卷轴）"
+			tasks: [{
+				id: "6DBDC8FB65A24A91"
+				item: "touhou_little_maid_spell:blue_note"
+				type: "item"
+			}]
+			x: 10.0d
+			y: -9.0d
+		}
+		{
+			description: [
+				"&b情为真，&e心如意，&c万里相随不负卿"
+				""
+				"&c逢缘起，&b近君心，&e此生随主了无遗"
+				""
+				"&e如梦令，&c爱别离，&b念念不忘吾主情"
+				""
+				"主人，我在……我一直都在。"
+				"主人，我想……我想吃蛋糕～"
+				"主人，你说……你喜欢我？"
+				""
+				"{image:kubejs:textures/aaaa/heixian.png width:200 height:3 align:1}"
+				""
+				"&l材料获取："
+				""
+				"&e晋升之环由BOSS·亚波伦固定掉落，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"090121B3A38BF6C7\" } }"
+				""
+				"&c板块碎片由瞑煌龙掉落，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"3A6B3E30B7958D89\" } }"
+				""
+				"{image:kubejs:textures/aaaa/mengyunshuijing.png width:130 height:130 align:1}"
+			]
+			id: "482BE916D66DCEBB"
+			size: 1.4d
+			subtitle: "&e女仆的终极饰品"
+			tasks: [{
+				id: "5E6486C1F30CA696"
+				item: "touhou_little_maid_spell:dream_cat_crystal"
+				type: "item"
+			}]
+			title: "&b梦&d云&7水&5晶"
+			x: -7.0d
+			y: 0.0d
+		}
+	]
+	title: "&d缔结契约"
+}

@@ -1,0 +1,13 @@
+{
+	id: "568351FB462743FC"
+	loot_size: 1
+	order_index: 11
+	rewards: [
+		{ item: "celestial_core:jungle_pyramid_loot_box" }
+		{ item: "celestial_core:desert_pyramid_loot_box" }
+		{ item: "celestial_core:igloo_loot_box" }
+		{ item: "celestial_core:manson_loot_box" }
+		{ item: "celestial_core:pillager_outpost_loot_box" }
+	]
+	title: "宝箱"
+}

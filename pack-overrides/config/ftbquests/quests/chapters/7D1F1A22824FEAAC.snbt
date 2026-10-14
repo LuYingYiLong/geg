@@ -1,0 +1,1001 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "7D1F1A22824FEAAC"
+	group: "5DFEC790B7E6DAC6"
+	icon: "refurbished_furniture:pink_sofa"
+	id: "7D1F1A22824FEAAC"
+	images: [
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 10.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/beijingban4.png"
+			rotation: 0.0d
+			width: 16.0d
+			x: -4.0d
+			y: -1.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 13.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/huakuang.png"
+			rotation: 0.0d
+			width: 18.5d
+			x: -4.0d
+			y: -1.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 3.0d
+			hover: [ ]
+			image: "fumo:item/fumotabiconanimated"
+			rotation: 0.0d
+			width: 3.0d
+			x: -4.0d
+			y: 1.0d
+		}
+	]
+	order_index: 5
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&6fumo在放下后通过蹲下右键正常回收，喂食腐肉或毒马铃薯非正常回收（并播放一段音效"
+				"{image:kubejs:textures/aaaa/fumo1.png width:200 height:100 align:1}"
+			]
+			id: "6BA8506DAE40DBED"
+			rewards: [{
+				id: "0C139E610D420306"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			size: 1.2d
+			subtitle: "通常比较昂贵（"
+			tasks: [
+				{
+					consume_items: true
+					id: "6C1B7BA46B9D2BF9"
+					item: "minecraft:poisonous_potato"
+					type: "item"
+				}
+				{
+					consume_items: true
+					id: "0A387A45DEB84D11"
+					item: "minecraft:rotten_flesh"
+					type: "item"
+				}
+			]
+			title: "关于fumo"
+			x: 0.0d
+			y: -1.5d
+		}
+		{
+			id: "52874EA242D2A2EA"
+			rewards: [
+				{
+					id: "234C40C6084F552D"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "23529AC7205F4329"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "5126F5798FD9D33C"
+				item: "fumo:marisa_hat_item"
+				type: "item"
+			}]
+			x: -2.0d
+			y: -0.5d
+		}
+		{
+			id: "1C09C2DAD8834AF5"
+			rewards: [
+				{
+					id: "044CCD79CC0BF99D"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "32EDB6D6AF774F87"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "5F9C72990DBE85F9"
+				item: "fumo:eiki_item"
+				type: "item"
+			}]
+			x: 0.0d
+			y: -0.5d
+		}
+		{
+			id: "1C93C0BA1784814A"
+			rewards: [
+				{
+					id: "17EFFEAC0F1F436F"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "51959069FA330B71"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "57D7588FB95AE4E6"
+				item: "fumo:reimu_item"
+				type: "item"
+			}]
+			x: 2.0d
+			y: 0.5d
+		}
+		{
+			id: "66E9031335C432D4"
+			rewards: [
+				{
+					id: "74661266EFA55F4C"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "055306ADB3307218"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e烧制获取"
+			tasks: [{
+				id: "57E30B2DDBAAC6CC"
+				item: "fumo:marisa_item"
+				type: "item"
+			}]
+			x: -1.0d
+			y: -0.5d
+		}
+		{
+			id: "6247264D437B3332"
+			rewards: [
+				{
+					id: "7959C8DBC30EAE67"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "00BD86D4EC34B355"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取  &bbaka！"
+			tasks: [{
+				id: "2A536251068F597F"
+				item: "fumo:cirno_item"
+				type: "item"
+			}]
+			x: 2.0d
+			y: -0.5d
+		}
+		{
+			id: "76D2B699A03A8D73"
+			rewards: [
+				{
+					id: "599B509753CCE6E9"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "59CB76E098680B0E"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e烧制获取"
+			tasks: [{
+				id: "6EEC3DB156F05C6A"
+				item: "fumo:tan_cirno_item"
+				type: "item"
+			}]
+			x: -2.0d
+			y: 0.5d
+		}
+		{
+			id: "7FDD36B93A285169"
+			rewards: [
+				{
+					id: "67FC5366267A3C5F"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "26D4CFDB4F9094C3"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "1947B148F003CD64"
+				item: "fumo:chen_item"
+				type: "item"
+			}]
+			x: -1.0d
+			y: 0.5d
+		}
+		{
+			id: "41AFB27E9D35D7FD"
+			rewards: [
+				{
+					id: "4A7E2861ADF29733"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "03FE13BCCE874B5A"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "4B0A25549A410134"
+				item: "fumo:new_reimu_item"
+				type: "item"
+			}]
+			x: 0.0d
+			y: 0.5d
+		}
+		{
+			id: "2F26641DBA8AB053"
+			rewards: [
+				{
+					id: "12D1E474A8CE0C7E"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "133348E0C67E2E48"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "46A08FF564BF463B"
+				item: "fumo:blue_reimu_item"
+				type: "item"
+			}]
+			x: 1.0d
+			y: 0.5d
+		}
+		{
+			id: "0B3DC166835736D8"
+			rewards: [
+				{
+					id: "6A18D5C311F3AD46"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "631D1CC55F801F34"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "771AC79655CE081F"
+				item: "fumo:koishi_item"
+				type: "item"
+			}]
+			x: 1.0d
+			y: -0.5d
+		}
+		{
+			id: "79870E69AD52785D"
+			rewards: [
+				{
+					id: "2BA48B3824EE6791"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "6658AEE0CD3A596A"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "39DD5912F527B479"
+				item: "fumo:flandre_item"
+				type: "item"
+			}]
+			x: -2.0d
+			y: 1.5d
+		}
+		{
+			id: "0B376406D0AF9485"
+			rewards: [
+				{
+					id: "37E7AEEEBB1F47E1"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "301690C199CD124C"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "531CA8CFF054C8C3"
+				item: "fumo:meiling_item"
+				type: "item"
+			}]
+			x: -1.0d
+			y: 1.5d
+		}
+		{
+			id: "5EA396B780DD0FD5"
+			rewards: [
+				{
+					id: "62A2D74E0B31343C"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "767ED45C659B88DF"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "563B3B713BAD33E7"
+				item: "fumo:youmu_item"
+				type: "item"
+			}]
+			x: 0.0d
+			y: 1.5d
+		}
+		{
+			description: [
+				""
+				"{image:kubejs:textures/aaaa/fumo.png width:150 height:150 align:1}"
+			]
+			id: "5279B77DB18E4808"
+			rewards: [
+				{
+					id: "07F84EDF1DDDF2E0"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "45668F860EB59161"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "48AA5467A9068F6C"
+				item: "fumo:yuyuko_item"
+				type: "item"
+			}]
+			x: 1.0d
+			y: 1.5d
+		}
+		{
+			id: "10E728BA5F874F30"
+			rewards: [
+				{
+					id: "4FB414B308C78A6A"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "25AF590650C11156"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "360D412D562FA35B"
+				item: "fumo:patchouli_item"
+				type: "item"
+			}]
+			x: 2.0d
+			y: 1.5d
+		}
+		{
+			id: "7D9AB1C09CF519D1"
+			rewards: [
+				{
+					id: "210D8F43198BC3DA"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "5CABEE8F26720E9D"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "29423A03B569E8F9"
+				item: "fumo:nitori_item"
+				type: "item"
+			}]
+			x: -2.0d
+			y: 2.5d
+		}
+		{
+			id: "143EFA345655BB48"
+			rewards: [
+				{
+					id: "0B177CCDB0CC1C85"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2B3217843F25B3E6"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "561BFB47D8015686"
+				item: "fumo:tewi_item"
+				type: "item"
+			}]
+			x: -1.0d
+			y: 2.5d
+		}
+		{
+			id: "79F8433E3590C5EE"
+			rewards: [
+				{
+					id: "2864503EE71C5541"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "4C0E29E86940EB9E"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "6ABC80B868EC3F2D"
+				item: "fumo:nazrin_item"
+				type: "item"
+			}]
+			x: 0.0d
+			y: 2.5d
+		}
+		{
+			id: "0F77E0A087D3D323"
+			rewards: [
+				{
+					id: "7211E52FED73C2BA"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "6E2438A64FEC7F1E"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "06243F00823264CE"
+				item: "fumo:sunny_milk_item"
+				type: "item"
+			}]
+			x: 1.0d
+			y: 2.5d
+		}
+		{
+			id: "0513EBE45E7C8B5E"
+			rewards: [
+				{
+					id: "3BF92EE8E201CE7C"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "5E515E1ADB62F912"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e合成获取"
+			tasks: [{
+				id: "6D884E780D4A23F3"
+				item: "fumo:alice_item"
+				type: "item"
+			}]
+			x: 2.0d
+			y: 2.5d
+		}
+		{
+			description: [
+				"为发电机填充燃料发电，使用扳手连接需要电力的电器"
+				""
+				"{image:kubejs:textures/aaaa/fadianji.png width:200 height:80 align:1}"
+				""
+				"{image:kubejs:textures/aaaa/lianjie.png width:180 height:100 align:1}"
+			]
+			id: "6F3829493B9055F4"
+			rewards: [
+				{
+					id: "0C90BF1419217D45"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "1A772113B576C0E5"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			tasks: [
+				{
+					id: "2110B1BB859ABDCC"
+					item: "refurbished_furniture:light_electricity_generator"
+					type: "item"
+				}
+				{
+					id: "15E7F1E92EBAF31A"
+					item: "refurbished_furniture:wrench"
+					type: "item"
+				}
+			]
+			title: "发电发电！"
+			x: -8.0d
+			y: 2.0d
+		}
+		{
+			dependencies: ["6F3829493B9055F4"]
+			id: "1326C101C20837CF"
+			rewards: [
+				{
+					id: "0E58EE8F6FAC56C7"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2D09BDA58D145FC9"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			size: 1.5d
+			subtitle: "制作大量的家具"
+			tasks: [{
+				id: "6502F66FD30FA1A3"
+				item: "refurbished_furniture:workbench"
+				type: "item"
+			}]
+			x: -8.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["1326C101C20837CF"]
+			description: [
+				"只能用木炭作为燃料哦。放上可烤制的食物，用锅铲翻面"
+				""
+				"{image:kubejs:textures/aaaa/kaojia.png width:150 height:150 align:1}"
+			]
+			id: "54088BE87282A4E4"
+			rewards: [
+				{
+					id: "683B5B5037B04DCA"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "174DA4CEF4DB4A90"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "太有生活了"
+			tasks: [
+				{
+					id: "4C45815BEECE04D8"
+					item: "refurbished_furniture:white_grill"
+					type: "item"
+				}
+				{
+					id: "0ED694879CE38810"
+					item: {
+						Count: 1b
+						id: "refurbished_furniture:spatula"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			x: -6.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["1326C101C20837CF"]
+			description: [
+				"&a用【刀】和【砧板】，将【面包】切割后，获得面包片"
+				""
+				"&a使用&a【烤面包机】烤制【面包片】获得【吐司】，烤面包机需要红石触发哦"
+			]
+			id: "656AD1A6A3910370"
+			rewards: [
+				{
+					id: "70A1EEEF769ED62E"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "0FCDFD70F8172AEC"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "用来切一些食物和植物"
+			tasks: [
+				{
+					id: "13E0279F4DDF1DC4"
+					item: "refurbished_furniture:oak_cutting_board"
+					type: "item"
+				}
+				{
+					id: "6F95B61647CAFE2E"
+					item: {
+						Count: 1b
+						id: "refurbished_furniture:knife"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "14525A1E8B16DC03"
+					item: "refurbished_furniture:light_toaster"
+					type: "item"
+				}
+			]
+			title: "烤面包"
+			x: -7.0d
+			y: -1.0d
+		}
+		{
+			dependencies: ["1326C101C20837CF"]
+			id: "08534C66E588F0E5"
+			rewards: [
+				{
+					id: "09A9F4BAFF89FA3D"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "4A4AE5A913D72D6C"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "玩玩小游戏，管理家电!"
+			tasks: [{
+				id: "3D55FA60D73EF7E6"
+				item: "refurbished_furniture:computer"
+				type: "item"
+			}]
+			x: -9.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["1326C101C20837CF"]
+			id: "40FE3E35228C75DB"
+			rewards: [
+				{
+					id: "4306381DB9D73778"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "049B2D6B79A92971"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "通上电就能看，遥控器负责远程操控"
+			tasks: [
+				{
+					id: "234E39FBE9D9D513"
+					item: "refurbished_furniture:television"
+					type: "item"
+				}
+				{
+					id: "0F760F207D5817B3"
+					item: "refurbished_furniture:television_remote"
+					type: "item"
+				}
+			]
+			x: -9.0d
+			y: -1.0d
+		}
+		{
+			dependencies: ["1326C101C20837CF"]
+			description: [
+				"{image:kubejs:textures/aaaa/pisa.png width:170 height:170 align:1}"
+				"&a【吐司】由【烤面包机】烤制【面包片】获得，烤面包机需要红石触发哦"
+			]
+			id: "715F6EDEC4F98F8A"
+			rewards: [
+				{
+					id: "76C3DA876FFD7993"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "29E696806325EE23"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "注：披萨放在砧板上用刀切开哦"
+			tasks: [
+				{
+					id: "778B0AF8396F7A72"
+					item: "refurbished_furniture:cheese_sandwich"
+					type: "item"
+				}
+				{
+					id: "4EFD12F1D55F2496"
+					item: "refurbished_furniture:cooked_vegetable_pizza"
+					type: "item"
+				}
+				{
+					id: "79A4E04BD2CDEB3A"
+					item: "refurbished_furniture:cooked_meatlovers_pizza"
+					type: "item"
+				}
+			]
+			title: "制作美食"
+			x: -8.0d
+			y: -1.5d
+		}
+		{
+			id: "013DA41D32C739E7"
+			rewards: [
+				{
+					id: "42E28A338B6F5468"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "24EB733C53787D71"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "制作床，任意方块都可以哦！"
+			tasks: [{
+				id: "11D926AE20EB1BB5"
+				item: "multibeds:bed_kit"
+				type: "item"
+			}]
+			x: -9.0d
+			y: -4.0d
+		}
+		{
+			id: "0C22A35C5DA4F33F"
+			rewards: [
+				{
+					id: "36EFD71E08E39BBE"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2D2DDA152CAA4E36"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "制作梯子，任意方块都可以哦！"
+			tasks: [{
+				id: "75AA29AACF578E9A"
+				item: "multibeds:ladder_tools"
+				type: "item"
+			}]
+			x: -8.0d
+			y: -4.0d
+		}
+		{
+			id: "0AFE023DB9BD805C"
+			rewards: [
+				{
+					id: "7FC620BBDBE26C1D"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "3F8814017BA8FC27"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "在被子上画画！"
+			tasks: [{
+				id: "0E12BA8422A7AD7C"
+				item: {
+					Count: 1b
+					id: "multibeds:embroidery_thread"
+					tag: { }
+				}
+				type: "item"
+			}]
+			x: -7.0d
+			y: -4.0d
+		}
+		{
+			id: "4E3AF5B3243558DF"
+			rewards: [
+				{
+					id: "38F8B2DCB6DF93CE"
+					item: {
+						Count: 1b
+						id: "multibeds:bedding_package"
+						tag: { }
+					}
+					type: "item"
+				}
+				{
+					id: "5CAF903C9A4ECA26"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "63BBA4CE35D5F96C"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "当然，你喜欢的话可以染成别的颜色哦"
+			tasks: [
+				{
+					id: "020229F91A300F96"
+					item: {
+						Count: 1b
+						id: "multibeds:sheet"
+						tag: {
+							rgb16: 4095s
+							rgbsimple: 0b
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "4708AB80F7784F57"
+					item: {
+						Count: 1b
+						id: "multibeds:blanket_white"
+						tag: { }
+					}
+					type: "item"
+				}
+				{
+					id: "46010EA9D5444650"
+					item: {
+						Count: 1b
+						id: "multibeds:pillow"
+						tag: {
+							rgb16: 4095s
+							rgbsimple: 0b
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "三件套"
+			x: -9.0d
+			y: -3.0d
+		}
+		{
+			id: "381FEF5DF62E0D08"
+			rewards: [
+				{
+					id: "5DC06BCCDF8C58CF"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "0C4B0A162CA6D4B1"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+			]
+			subtitle: "贴在墙上，查看当前的节气"
+			tasks: [{
+				id: "2ECF16CE6065D599"
+				item: "eclipticseasons:calendar"
+				type: "item"
+			}]
+			x: -8.0d
+			y: -3.0d
+		}
+		{
+			id: "2BC110E9D77CB3FA"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "15091B3486B3F74C"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			tasks: [{
+				id: "6EB7241382D88650"
+				item: "shutter:oak_shutter"
+				type: "item"
+			}]
+			x: -7.0d
+			y: -3.0d
+		}
+	]
+	title: "&d家具/内饰"
+}

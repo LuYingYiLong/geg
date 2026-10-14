@@ -1,6 +1,7 @@
 package io.github.luyingyilong.geg.money;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import io.github.luyingyilong.geg.money.integration.LightmansMigrationCommands;
@@ -11,9 +12,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.fml.ModList;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.io.IOException;
+import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public final class MoneyCommands {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MoneyCommands.class);
+
     private MoneyCommands() {
     }
 
@@ -33,7 +42,23 @@ public final class MoneyCommands {
                 .then(Commands.literal("admin")
                         .requires(source -> source.hasPermission(2))
                         .then(adminBranch(MoneyCurrency.COIN))
-                        .then(adminBranch(MoneyCurrency.GEM)));
+                        .then(adminBranch(MoneyCurrency.GEM)))
+                .then(Commands.literal("audit")
+                        .requires(source -> source.hasPermission(2))
+                        .then(Commands.literal("summary")
+                                .executes(context -> auditSummary(context.getSource(), 7, null))
+                                .then(Commands.argument("days", IntegerArgumentType.integer(1, 36500))
+                                        .executes(context -> auditSummary(context.getSource(),
+                                                IntegerArgumentType.getInteger(context, "days"), null))))
+                        .then(Commands.literal("player")
+                                .then(Commands.argument("player", StringArgumentType.word())
+                                        .executes(context -> auditPlayer(context, 7))
+                                        .then(Commands.argument("days", IntegerArgumentType.integer(1, 36500))
+                                                .executes(context -> auditPlayer(context,
+                                                        IntegerArgumentType.getInteger(context, "days"))))))
+                        .then(Commands.literal("export")
+                                .then(Commands.argument("date", StringArgumentType.word())
+                                        .executes(MoneyCommands::auditExport))));
 
         if (ModList.get().isLoaded("lightmanscurrency")) {
             root.then(LightmansMigrationCommands.branch());
@@ -181,6 +206,47 @@ public final class MoneyCommands {
             source.sendFailure(Component.translatable(key));
             return null;
         }
+    }
+
+    private static int auditPlayer(CommandContext<CommandSourceStack> context, int days) {
+        String raw = StringArgumentType.getString(context, "player");
+        UUID id;
+        try {
+            id = UUID.fromString(raw);
+        } catch (IllegalArgumentException exception) {
+            var profile = context.getSource().getServer().getProfileCache().get(raw);
+            if (profile.isEmpty()) {
+                context.getSource().sendFailure(Component.translatable("commands.geg.money.audit.unknown_player"));
+                return 0;
+            }
+            id = profile.get().getId();
+        }
+        return auditSummary(context.getSource(), days, id);
+    }
+
+    private static int auditSummary(CommandSourceStack source, int days, UUID player) {
+        CoinAuditService.Summary summary = CoinAuditService.summary(source.getServer(), days, player);
+        source.sendSuccess(() -> Component.translatable("commands.geg.money.audit.summary",
+                days, summary.count(), CoinAuditService.format(summary.opening()),
+                CoinAuditService.format(summary.minted()),
+                CoinAuditService.format(summary.sunk()), CoinAuditService.format(summary.transferred())), false);
+        return 1;
+    }
+
+    private static int auditExport(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        try {
+            LocalDate day = LocalDate.parse(StringArgumentType.getString(context, "date"));
+            var path = CoinAuditService.export(source.getServer(), day);
+            source.sendSuccess(() -> Component.translatable("commands.geg.money.audit.export", path.toString()), false);
+            return 1;
+        } catch (DateTimeParseException exception) {
+            source.sendFailure(Component.translatable("commands.geg.money.audit.invalid_date"));
+        } catch (IOException exception) {
+            LOGGER.error("Could not export GEG money audit report", exception);
+            source.sendFailure(Component.translatable("commands.geg.money.audit.io_error"));
+        }
+        return 0;
     }
 
 

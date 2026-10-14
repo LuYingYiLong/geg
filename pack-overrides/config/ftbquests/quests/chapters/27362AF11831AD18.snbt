@@ -1,0 +1,518 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "27362AF11831AD18"
+	group: "49A990AC3D05E50E"
+	icon: "alexscaves:cave_book"
+	id: "27362AF11831AD18"
+	images: [{
+		click: ""
+		corner: false
+		dev: false
+		height: 10.0d
+		hover: [ ]
+		image: "kubejs:textures/aaaa/shibanbeijing.png"
+		rotation: 0.0d
+		width: 13.8d
+		x: 1.1d
+		y: -4.5d
+	}]
+	order_index: 0
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&a你也可以用【群系指南针】直接搜索对应洞穴！"
+				""
+				"&a如果太远了没搜到就用随机传送1w格功能，链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"156AE531933FA775\" } }"
+				""
+				"&a如果还找不到，就用指令或者地图找吧"
+			]
+			id: "310D3BB58FD1BA96"
+			rewards: [
+				{
+					id: "59684A53A2238F61"
+					item: {
+						Count: 1b
+						id: "alexscaves:cave_tablet"
+						tag: {
+							CaveBiome: "alexscaves:abyssal_chasm"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6FA706DF0F583FB1"
+					item: {
+						Count: 1b
+						id: "alexscaves:cave_tablet"
+						tag: {
+							CaveBiome: "alexscaves:primordial_caves"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "300B3775A769B189"
+					item: {
+						Count: 1b
+						id: "alexscaves:cave_tablet"
+						tag: {
+							CaveBiome: "alexscaves:magnetic_caves"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "21863D0E4ADDFDBF"
+					item: {
+						Count: 1b
+						id: "alexscaves:cave_tablet"
+						tag: {
+							CaveBiome: "alexscaves:toxic_caves"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "47A60B3AAB09EC90"
+					item: {
+						Count: 1b
+						id: "alexscaves:cave_tablet"
+						tag: {
+							CaveBiome: "alexscaves:forlorn_hollows"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "07D746468C73ED67"
+					item: {
+						Count: 1b
+						id: "alexscaves:cave_tablet"
+						tag: {
+							CaveBiome: "alexscaves:candy_cavity"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0F5A0514FB290865"
+					item: {
+						Count: 1b
+						id: "immersive_melodies:trumpet"
+						tag: { }
+					}
+					type: "item"
+				}
+			]
+			size: 1.0d
+			subtitle: "生成于主世界地下，使用指南针搜：&l【地底小屋】"
+			tasks: [{
+				id: "5EA3E1C52D536774"
+				structure: "#alexscaves:on_underground_cabin_maps"
+				type: "structure"
+			}]
+			title: "&6抵达洞穴小屋，开启洞穴之旅"
+			x: -3.0d
+			y: -7.0d
+		}
+		{
+			description: [
+				"&6洞穴概论&2在&3地底小屋&2获取，点击边角翻页，使用手稿解锁内容"
+				"&7（洞穴概论是mod自带说明书，不获取一直看任务指引也是可以的）"
+				""
+				"前往洞穴的三种办法："
+				""
+				"&l&b1.使用手稿制作地图 "
+				""
+				"&l&d2.使用指南针"
+				"  "
+				"&l&a3.使用任务控制台指令获取坐标"
+			]
+			id: "27BC478721B2605C"
+			rewards: [{
+				id: "7C7D1A04796405F0"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			size: 3.0d
+			subtitle: "前往洞穴的三种办法&l&b1.使用手稿制作地图  &d2.使用指南针  &a3.使用任务控制台指令获取坐标"
+			tasks: [{
+				id: "1F4FD21687646FFF"
+				item: "alexscaves:cave_book"
+				type: "item"
+			}]
+			title: "&aalex洞穴之旅"
+			x: 1.1d
+			y: -5.0d
+		}
+		{
+			dependencies: [
+				"310D3BB58FD1BA96"
+				"142055F03A3447AD"
+			]
+			id: "1733E7B4C6FBF59C"
+			rewards: [{
+				id: "7C14CCA20CA6A52D"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			size: 1.5d
+			subtitle: "放上石板和纸，点击对应字母即可（有点费眼睛）"
+			tasks: [{
+				icon: "alexscaves:spelunkery_table"
+				id: "4800F997D6A67895"
+				observe_type: 0
+				timer: 0L
+				title: "观察洞穴勘探台"
+				to_observe: "alexscaves:spelunkery_table"
+				type: "observation"
+			}]
+			title: "&e很费眼睛台（"
+			x: -2.5d
+			y: -5.5d
+		}
+		{
+			dependencies: ["1733E7B4C6FBF59C"]
+			description: ["&2手稿用于合成寻找洞穴的地图，多余手稿可解锁洞穴概论的内容"]
+			id: "2656A8EBB54A9314"
+			rewards: [{
+				id: "4CE8D2EB404B26F6"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			size: 2.0d
+			subtitle: "合成洞穴地图，寻找对应的洞穴"
+			tasks: [{
+				id: "6D8B891C5C401203"
+				item: {
+					Count: 1b
+					id: "itemfilters:or"
+					tag: {
+						items: [
+							{
+								Count: 1b
+								id: "alexscaves:cave_codex"
+								tag: {
+									CaveBiome: "alexscaves:primordial_caves"
+								}
+							}
+							{
+								Count: 1b
+								id: "alexscaves:cave_codex"
+								tag: {
+									CaveBiome: "alexscaves:magnetic_caves"
+								}
+							}
+							{
+								Count: 1b
+								id: "alexscaves:cave_codex"
+								tag: {
+									CaveBiome: "alexscaves:toxic_caves"
+								}
+							}
+							{
+								Count: 1b
+								id: "alexscaves:cave_codex"
+								tag: {
+									CaveBiome: "alexscaves:abyssal_chasm"
+								}
+							}
+							{
+								Count: 1b
+								id: "alexscaves:cave_codex"
+								tag: {
+									CaveBiome: "alexscaves:forlorn_hollows"
+								}
+							}
+							{
+								Count: 1b
+								id: "alexscaves:cave_codex"
+								tag: {
+									CaveBiome: "alexscaves:candy_cavity"
+								}
+							}
+						]
+					}
+				}
+				title: "任意手稿"
+				type: "item"
+			}]
+			title: "&c获得任意洞穴手稿"
+			x: -2.5d
+			y: -3.5d
+		}
+		{
+			id: "142055F03A3447AD"
+			rewards: [{
+				id: "1488663AFC568CD7"
+				type: "xp_levels"
+				xp_levels: 5
+			}]
+			size: 1.0d
+			subtitle: "&a开各种箱子有可能获得"
+			tasks: [{
+				id: "4883A6D82B709D92"
+				item: {
+					Count: 1b
+					id: "itemfilters:or"
+					tag: {
+						items: [
+							{
+								Count: 1b
+								id: "alexscaves:cave_tablet"
+								tag: {
+									CaveBiome: "alexscaves:magnetic_caves"
+								}
+							}
+							{
+								Count: 1b
+								id: "alexscaves:cave_tablet"
+								tag: {
+									CaveBiome: "alexscaves:primordial_caves"
+								}
+							}
+							{
+								Count: 1b
+								id: "alexscaves:cave_tablet"
+								tag: {
+									CaveBiome: "alexscaves:toxic_caves"
+								}
+							}
+							{
+								Count: 1b
+								id: "alexscaves:cave_tablet"
+								tag: {
+									CaveBiome: "alexscaves:abyssal_chasm"
+								}
+							}
+							{
+								Count: 1b
+								id: "alexscaves:cave_tablet"
+								tag: {
+									CaveBiome: "alexscaves:forlorn_hollows"
+								}
+							}
+							{
+								Count: 1b
+								id: "alexscaves:cave_tablet"
+								tag: {
+									CaveBiome: "alexscaves:candy_cavity"
+								}
+							}
+						]
+					}
+				}
+				title: "&e任意石板即可"
+				type: "item"
+			}]
+			x: -2.0d
+			y: -7.0d
+		}
+		{
+			can_repeat: false
+			description: [
+				"注：因为要大范围探测地图，所以会有点卡。"
+				""
+				"&n&e太远的话会检测不到，检测不到就用一下随机传送指令跑远点。链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"156AE531933FA775\" } }"
+				""
+				"&a如果你实在检测不到，那就用地图找吧"
+			]
+			icon: "commandsceptre:command_block_sceptre"
+			id: "3ABB1B2064E3B5BA"
+			subtitle: "&e提交【任意石板】获取【洞穴坐标】"
+			tasks: [{
+				id: "1125EA8B440F9557"
+				title: "&c你必须拥有OP权限才可以使用控制台"
+				type: "checkmark"
+			}]
+			title: "&c控制台·洞穴探测"
+			x: 5.0d
+			y: -5.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["3ABB1B2064E3B5BA"]
+			id: "305379D96AF32A49"
+			rewards: [{
+				command: "/locate biome alexscaves:magnetic_caves"
+				elevate_perms: true
+				id: "02AB1A3153854CAC"
+				team_reward: false
+				title: "寻找磁场洞穴"
+				type: "command"
+			}]
+			subtitle: "提交任意石板即可"
+			tasks: [{
+				consume_items: true
+				count: 7L
+				id: "23F126B1D1A1E627"
+				item: {
+					Count: 1b
+					id: "alexscaves:cave_tablet"
+					tag: {
+						CaveBiome: "alexscaves:magnetic_caves"
+					}
+				}
+				type: "item"
+			}]
+			title: "磁场洞穴"
+			x: 4.0d
+			y: -6.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["3ABB1B2064E3B5BA"]
+			id: "2E7B806BBAFDA0EA"
+			rewards: [{
+				command: "/locate biome alexscaves:primordial_caves"
+				elevate_perms: true
+				id: "3B0F346FD8036192"
+				team_reward: false
+				title: "寻找原始洞穴"
+				type: "command"
+			}]
+			subtitle: "提交任意石板即可"
+			tasks: [{
+				consume_items: true
+				count: 7L
+				id: "3F96321E2B6C561B"
+				item: {
+					Count: 1b
+					id: "alexscaves:cave_tablet"
+					tag: {
+						CaveBiome: "alexscaves:primordial_caves"
+					}
+				}
+				type: "item"
+			}]
+			title: "原始洞穴"
+			x: 5.0d
+			y: -7.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["3ABB1B2064E3B5BA"]
+			id: "570F06CE3E6FCF84"
+			rewards: [{
+				command: "/locate biome alexscaves:toxic_caves"
+				elevate_perms: true
+				id: "3EEDFD6DE9A346C2"
+				team_reward: false
+				title: "寻找毒化洞穴"
+				type: "command"
+			}]
+			subtitle: "提交任意石板即可"
+			tasks: [{
+				consume_items: true
+				count: 7L
+				id: "6D88F0D165C822C9"
+				item: {
+					Count: 1b
+					id: "alexscaves:cave_tablet"
+					tag: {
+						CaveBiome: "alexscaves:toxic_caves"
+					}
+				}
+				type: "item"
+			}]
+			title: "毒化洞穴"
+			x: 6.0d
+			y: -6.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["3ABB1B2064E3B5BA"]
+			id: "48CFA4ED7D9A88D0"
+			rewards: [{
+				command: "/locate biome alexscaves:abyssal_chasm"
+				elevate_perms: true
+				id: "4FBC17B82B9837FE"
+				team_reward: false
+				title: "寻找渊海陷窟"
+				type: "command"
+			}]
+			subtitle: "提交任意石板即可"
+			tasks: [{
+				consume_items: true
+				count: 7L
+				id: "566E45D777158868"
+				item: {
+					Count: 1b
+					id: "alexscaves:cave_tablet"
+					tag: {
+						CaveBiome: "alexscaves:abyssal_chasm"
+					}
+				}
+				type: "item"
+			}]
+			title: "渊海陷窟"
+			x: 4.0d
+			y: -3.5d
+		}
+		{
+			can_repeat: true
+			dependencies: ["3ABB1B2064E3B5BA"]
+			id: "68781BEA6A18B2D9"
+			rewards: [{
+				command: "/locate biome alexscaves:forlorn_hollows"
+				elevate_perms: true
+				id: "7567166130045464"
+				team_reward: false
+				title: "寻找异寂空谷"
+				type: "command"
+			}]
+			subtitle: "提交任意石板即可"
+			tasks: [{
+				consume_items: true
+				count: 5L
+				id: "114D972610CC59B5"
+				item: {
+					Count: 1b
+					id: "alexscaves:cave_tablet"
+					tag: {
+						CaveBiome: "alexscaves:forlorn_hollows"
+					}
+				}
+				type: "item"
+			}]
+			title: "异寂空谷"
+			x: 5.0d
+			y: -3.0d
+		}
+		{
+			can_repeat: true
+			dependencies: ["3ABB1B2064E3B5BA"]
+			id: "7CC2015145B4B13A"
+			rewards: [{
+				command: "/locate biome alexscaves:candy_cavity"
+				elevate_perms: true
+				id: "1E0A84CA7B87674B"
+				team_reward: false
+				title: "寻找糖果洞穴"
+				type: "command"
+			}]
+			subtitle: "提交任意石板即可"
+			tasks: [{
+				consume_items: true
+				count: 5L
+				id: "366064A0795EC7D9"
+				item: {
+					Count: 1b
+					id: "alexscaves:cave_tablet"
+					tag: {
+						CaveBiome: "alexscaves:candy_cavity"
+					}
+				}
+				type: "item"
+			}]
+			title: "糖果龋洞"
+			x: 6.0d
+			y: -3.5d
+		}
+	]
+	title: "&d洞穴之旅·开端"
+}

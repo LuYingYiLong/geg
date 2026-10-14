@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -26,6 +27,17 @@ public final class MarketState {
 
     public long revision() {
         return revision;
+    }
+
+    public void forEachCoinHolding(BiConsumer<String, Long> consumer) {
+        buyOrders.values().forEach(order -> {
+            if (order.escrow() > 0) consumer.accept("escrow:" + order.buyer() + ":" + order.id(), order.escrow());
+        });
+        coinCredits.forEach((player, credits) -> credits.forEach(credit -> {
+            if (credit.amount() > 0) {
+                consumer.accept("pending:" + player + ":" + credit.id(), credit.amount());
+            }
+        }));
     }
 
 

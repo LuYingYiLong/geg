@@ -1,0 +1,2628 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "761424B4A005A98B"
+	group: "49A990AC3D05E50E"
+	icon: "alexscaves:tectonic_shard"
+	id: "761424B4A005A98B"
+	images: [
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 15.0d
+			hover: [ ]
+			image: "alexscaves:textures/misc/advancement/toxic_midground.png"
+			order: -2
+			rotation: 0.0d
+			width: 15.0d
+			x: -6.8999999999999995d
+			y: 6.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 15.0d
+			hover: [ ]
+			image: "alexscaves:textures/misc/advancement/toxic_background.png"
+			order: -3
+			rotation: 0.0d
+			width: 15.0d
+			x: -6.8999999999999995d
+			y: 6.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 15.0d
+			hover: [ ]
+			image: "alexscaves:textures/misc/advancement/primordial_midground.png"
+			order: -2
+			rotation: 0.0d
+			width: 15.0d
+			x: 10.2d
+			y: -11.1d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 15.0d
+			hover: [ ]
+			image: "alexscaves:textures/misc/advancement/primordial_background.png"
+			order: -3
+			rotation: 0.0d
+			width: 15.0d
+			x: 10.2d
+			y: -11.1d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 15.0d
+			hover: [ ]
+			image: "alexscaves:textures/misc/advancement/magnetic_midground.png"
+			rotation: 0.0d
+			width: 15.0d
+			x: -6.8999999999999995d
+			y: -11.1d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 15.0d
+			hover: [ ]
+			image: "alexscaves:textures/misc/advancement/magnetic_background.png"
+			order: -1
+			rotation: 0.0d
+			width: 15.0d
+			x: -6.8999999999999995d
+			y: -11.1d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 15.0d
+			hover: [ ]
+			image: "alexscaves:textures/misc/advancement/forlorn_midground.png"
+			order: -5
+			rotation: 0.0d
+			width: 15.0d
+			x: 27.299999999999997d
+			y: 6.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 15.0d
+			hover: [ ]
+			image: "alexscaves:textures/misc/advancement/forlorn_background.png"
+			order: -8
+			rotation: 0.0d
+			width: 15.0d
+			x: 27.299999999999997d
+			y: 6.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 15.0d
+			hover: [ ]
+			image: "alexscaves:textures/misc/advancement/candy_midground.png"
+			order: -2
+			rotation: 0.0d
+			width: 15.0d
+			x: 27.299999999999997d
+			y: -11.1d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 15.0d
+			hover: [ ]
+			image: "alexscaves:textures/misc/advancement/candy_background.png"
+			order: -3
+			rotation: 0.0d
+			width: 15.0d
+			x: 27.299999999999997d
+			y: -11.1d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 15.0d
+			hover: [ ]
+			image: "alexscaves:textures/misc/advancement/abyssal_midground.png"
+			order: -5
+			rotation: 0.0d
+			width: 15.0d
+			x: 10.2d
+			y: 6.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 15.0d
+			hover: [ ]
+			image: "alexscaves:textures/misc/advancement/abyssal_background.png"
+			order: -6
+			rotation: 0.0d
+			width: 15.0d
+			x: 10.2d
+			y: 6.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 45.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/kuangkuang1.png"
+			rotation: 0.0d
+			width: 63.0d
+			x: 10.5d
+			y: -2.5d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 15.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/minghuanglong.png"
+			rotation: 0.0d
+			width: 31.0d
+			x: 14.5d
+			y: -6.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 10.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/handisila.png"
+			rotation: 0.0d
+			width: 15.1d
+			x: -8.5d
+			y: -2.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 10.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/yiqizhe.png"
+			rotation: 0.0d
+			width: 13.4d
+			x: 32.5d
+			y: 9.5d
+		}
+	]
+	order_index: 1
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&b前置任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2656A8EBB54A9314\" } }"
+				"{image:kubejs:textures/aaaa/cichangdongxue.png width:160 height:130 align:1}"
+			]
+			icon: "alexscaves:tesla_bulb"
+			id: "6AA282F7B8E3CE5D"
+			size: 3.0d
+			subtitle: "&c可用群系指南针搜索：&9磁场洞穴"
+			tasks: [{
+				biome: "alexscaves:magnetic_caves"
+				id: "64C206A5AB4D5E34"
+				title: "&7抵达&c磁化&9洞穴"
+				type: "biome"
+			}]
+			title: "&7抵达&c磁化&9洞穴"
+			x: -7.0d
+			y: -10.0d
+		}
+		{
+			dependencies: [
+				"2A40A36C287B1E2D"
+				"455CA09BF9E38309"
+			]
+			description: [
+				"&b&n可操纵铁制工具远程使用"
+				"&e&n附魔【晶体化】后可使用："
+				""
+				"&3晶体类武器和龙钢工具和&5【终极分形者】"
+				"{image:kubejs:textures/aaaa/shoutao.png width:200 height:200 align:1}"
+			]
+			id: "5F17097BFC7015CE"
+			rewards: [
+				{
+					id: "7C9E46B580F4656D"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:crystallization"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "01B84B32B303CDE3"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:ferrous_haste"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3AD99E6D244DCDEA"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:field_extension"
+								lvl: 4s
+							}]
+						}
+					}
+					type: "item"
+				}
+			]
+			size: 1.0d
+			tasks: [{
+				id: "72E544CFBFFEA078"
+				item: {
+					Count: 1b
+					id: "alexscaves:galena_gauntlet"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -2.5d
+			y: -10.0d
+		}
+		{
+			dependencies: ["2781C04C50D1B553"]
+			description: [
+				"&9“神罗天征”：排斥敌人"
+				"&c“万象天引”：吸引敌人"
+				""
+				"&n&7shift+右击切换模式"
+				"{image:kubejs:textures/aaaa/zunidunpai.png width:180 height:150 align:1}"
+				"&7吸引敌人中......"
+			]
+			id: "006DDD257599DDC3"
+			rewards: [
+				{
+					id: "555A88BB0570B71A"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:heavy_slam"
+								lvl: 3s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "62EE8B0C29837950"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:arrow_inducting"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+			]
+			size: 1.0d
+			subtitle: "&9“神罗天征”&c“万象天引”"
+			tasks: [{
+				id: "4E44677975BBE8E3"
+				item: {
+					Count: 1b
+					id: "alexscaves:resistor_shield"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -11.0d
+			y: -12.0d
+		}
+		{
+			dependencies: [
+				"2781C04C50D1B553"
+				"425BCC0B0201E76E"
+			]
+			description: [
+				"&e在【Y轴100格以上】以放置【磁力灯】，必须是矩形"
+				""
+				"&e并在磁力灯的一边上放置【磁力采石机】"
+				""
+				"&e在中间放【磁力采石场粉碎器】"
+				"{image:kubejs:textures/aaaa/cilicaishiji.png width:180 height:180 align:1}"
+			]
+			id: "0E8D60642B0C712E"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "37D83015F285297E"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "声音很大机（"
+			tasks: [
+				{
+					id: "3B3E1B5DAE25573A"
+					item: "alexscaves:quarry_smasher"
+					type: "item"
+				}
+				{
+					id: "4123A34CD9D82BC1"
+					item: "alexscaves:quarry"
+					type: "item"
+				}
+				{
+					id: "4C7B08435087F137"
+					item: "alexscaves:magnetic_light"
+					type: "item"
+				}
+			]
+			title: "&e自动采矿机"
+			x: -11.5d
+			y: -10.0d
+		}
+		{
+			dependencies: ["6AA282F7B8E3CE5D"]
+			icon: "alexscaves:spawn_egg_boundroid"
+			id: "425BCC0B0201E76E"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6B93842B1DF39950"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "掉落【配重块】"
+			tasks: [{
+				entity: "alexscaves:boundroid"
+				id: "6EFC9B95AD0D45D8"
+				type: "kill"
+				value: 1L
+			}]
+			x: -10.0d
+			y: -9.0d
+		}
+		{
+			dependencies: ["6AA282F7B8E3CE5D"]
+			icon: "alexscaves:spawn_egg_magnetron"
+			id: "2781C04C50D1B553"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "472D756DA863819E"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "掉落【机铁之心】"
+			tasks: [{
+				entity: "alexscaves:magnetron"
+				id: "6FB3E335E09BE932"
+				type: "kill"
+				value: 1L
+			}]
+			x: -10.0d
+			y: -11.0d
+		}
+		{
+			dependencies: ["6AA282F7B8E3CE5D"]
+			icon: "alexscaves:ferrouslime_ball"
+			id: "2A40A36C287B1E2D"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "66E361D30D0CD928"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "掉落【富铁粘液球】"
+			tasks: [{
+				entity: "alexscaves:ferrouslime"
+				icon: "alexscaves:ferrouslime_ball"
+				id: "77BBAB8A25EA302D"
+				type: "kill"
+				value: 1L
+			}]
+			x: -4.0d
+			y: -9.0d
+		}
+		{
+			dependencies: ["6AA282F7B8E3CE5D"]
+			icon: "alexscaves:telecore"
+			id: "455CA09BF9E38309"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "34FA2FD105CA627F"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "掉落【磁流核】"
+			tasks: [{
+				entity: "alexscaves:teletor"
+				icon: "alexscaves:telecore"
+				id: "1D63FDAE5509E7CF"
+				type: "kill"
+				value: 1L
+			}]
+			x: -4.0d
+			y: -11.0d
+		}
+		{
+			description: [
+				"&b前置任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2656A8EBB54A9314\" } }"
+				"&2（或者用群系指南针搜索）"
+				"{image:kubejs:textures/aaaa/yuanshidongxue.png width:160 height:160 align:1}"
+			]
+			icon: "alexscaves:pewen_branch"
+			id: "17DE5A937A5A7E9A"
+			rewards: [{
+				id: "3D72037A0056A2A6"
+				item: {
+					Count: 1b
+					id: "alexscaves:primordial_helmet"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			size: 3.0d
+			subtitle: "&6可用群系指南针搜索：原始洞穴"
+			tasks: [{
+				biome: "alexscaves:primordial_caves"
+				icon: "alexscaves:pewen_branch"
+				id: "67C3527D88B5C8C6"
+				title: "&2抵达原始洞穴"
+				type: "biome"
+			}]
+			title: "&2原始洞穴"
+			x: 12.5d
+			y: -13.0d
+		}
+		{
+			dependencies: ["17DE5A937A5A7E9A"]
+			description: ["{image:kubejs:textures/aaaa/juecai.png width:170 height:100 align:1}"]
+			id: "5B9662A7A8A48FA5"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "42ACE5CB42C7F167"
+				table_id: 4700555676844784138L
+				type: "random"
+			}]
+			subtitle: "采集洞穴角龙啃食过蕨菜获得"
+			tasks: [{
+				id: "4ED1C771B9406F41"
+				item: "alexscaves:fiddlehead"
+				type: "item"
+			}]
+			x: 11.0d
+			y: -10.5d
+		}
+		{
+			dependencies: ["17DE5A937A5A7E9A"]
+			description: ["{image:kubejs:textures/aaaa/xingshuguo.png width:170 height:170 align:1}"]
+			id: "6D454308721E192A"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "31B57E40FEF3408E"
+				table_id: 4700555676844784138L
+				type: "random"
+			}]
+			subtitle: "从树上采摘，可用于繁殖洞穴角龙和遗迹恐手龙"
+			tasks: [{
+				id: "58B5036AA440A040"
+				item: "alexscaves:tree_star"
+				type: "item"
+			}]
+			x: 12.5d
+			y: -10.5d
+		}
+		{
+			dependencies: ["17DE5A937A5A7E9A"]
+			description: ["{image:kubejs:textures/aaaa/xiatouxiaochun.png width:100 height:100 align:1}"]
+			id: "10EB79088822D7D3"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "68563691DEA05F2F"
+				table_id: 4700555676844784138L
+				type: "random"
+			}]
+			subtitle: "&e套装效果：食用肉后额外恢复饥饿度"
+			tasks: [
+				{
+					id: "7FF1BB656D959135"
+					item: {
+						Count: 1b
+						id: "alexscaves:primordial_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "79F0A8BAAEF9B8A2"
+					item: {
+						Count: 1b
+						id: "alexscaves:primordial_tunic"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "2EAC3F7969B8CDFB"
+					item: {
+						Count: 1b
+						id: "alexscaves:primordial_pants"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "我宣布个事！我是个原始人"
+			x: 15.0d
+			y: -14.5d
+		}
+		{
+			dependencies: ["17DE5A937A5A7E9A"]
+			id: "019619699E5C1671"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "042574611464B03F"
+				table_id: 4700555676844784138L
+				type: "random"
+			}]
+			tasks: [{
+				entity: "alexscaves:tremorsaurus"
+				icon: "alexscaves:spawn_egg_tremorsaurus"
+				id: "3CBFA569A9AFE570"
+				type: "kill"
+				value: 1L
+			}]
+			x: 9.0d
+			y: -10.5d
+		}
+		{
+			dependencies: ["019619699E5C1671"]
+			id: "46A987F68F38472B"
+			rewards: [
+				{
+					count: 10
+					id: "4F81BF6953523117"
+					item: {
+						Count: 1b
+						id: "minecraft:lingering_potion"
+						tag: {
+							Potion: "minecraft:strong_healing"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "4A65D4220F14A50E"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:bonking"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "41953F17CB225E9D"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:swiftwood"
+								lvl: 3s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "71A62F12147A758B"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:dazing_sweep"
+								lvl: 2s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 5
+					id: "6DD5605B5148C873"
+					item: {
+						Count: 1b
+						id: "minecraft:splash_potion"
+						tag: {
+							Potion: "minecraft:long_turtle_master"
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "&e攻击附带强力【眩晕】效果"
+			tasks: [{
+				id: "1DD90E3632F631BD"
+				item: {
+					Count: 1b
+					id: "alexscaves:primitive_club"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 9.0d
+			y: -7.5d
+		}
+		{
+			dependencies: ["17DE5A937A5A7E9A"]
+			description: [
+				"小知识：地底翼龙用鳕鱼繁殖"
+				"{image:kubejs:textures/aaaa/yilong.png width:100 height:100 align:1}"
+				""
+				"小知识2：按U可直接骑乘野生翼龙，驯服后按K收纳进物品栏"
+			]
+			id: "28430C953556804A"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "7C04C8BA5BD9C62A"
+				table_id: 4700555676844784138L
+				type: "random"
+			}]
+			size: 1.5d
+			subtitle: "&e可飞行的仆从，使用【生三叶虾虾尾】驯服。"
+			tasks: [{
+				advancement: "alexscaves:alexscaves/tame_subterranodon"
+				criterion: ""
+				id: "38AFED626DA03DA8"
+				type: "advancement"
+			}]
+			title: "驯服地底翼龙"
+			x: 12.5d
+			y: -16.0d
+		}
+		{
+			dependencies: ["17DE5A937A5A7E9A"]
+			description: [
+				"是图中这样的树哦"
+				"{image:kubejs:textures/aaaa/songzi.png width:170 height:170 align:1}"
+			]
+			id: "47516878F5729134"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "7D96806245824A27"
+				table_id: 4700555676844784138L
+				type: "random"
+			}]
+			subtitle: "破坏树叶掉落"
+			tasks: [{
+				id: "6E328D42018A3A4C"
+				item: "alexscaves:pine_nuts"
+				type: "item"
+			}]
+			x: 14.0d
+			y: -10.5d
+		}
+		{
+			dependencies: [
+				"5B9662A7A8A48FA5"
+				"6D454308721E192A"
+				"47516878F5729134"
+			]
+			id: "6ED04FB8ECFCB3C3"
+			rewards: [
+				{
+					count: 10
+					id: "2D4AFDC164274077"
+					item: "alexscaves:trilocaris_tail"
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "3B29B2F80DDCF4A9"
+					table_id: 4700555676844784138L
+					type: "random"
+				}
+			]
+			size: 1.5d
+			subtitle: "&e一定要多做几个哦"
+			tasks: [{
+				id: "4B0D5FF6B1339AB7"
+				item: "alexscaves:serene_salad"
+				type: "item"
+			}]
+			x: 12.5d
+			y: -8.5d
+		}
+		{
+			dependencies: ["6ED04FB8ECFCB3C3"]
+			description: [
+				"&e&n1.将【恐龙肉块】放到箱子里"
+				""
+				"&e&n2.跑远点。"
+				""
+				"&e&n3.等待迅猛龙偷走【恐龙肉块】进行休憩状态"
+				""
+				"&e&n4.喂食幽静沙拉驯服"
+				""
+				"&7恐龙肉块繁殖"
+			]
+			id: "591B2EB263332B02"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6761D2E455BDDFFE"
+				table_id: 4700555676844784138L
+				type: "random"
+			}]
+			tasks: [{
+				advancement: "alexscaves:alexscaves/tame_vallumraptor"
+				criterion: ""
+				id: "4984BAB0EE75C169"
+				type: "advancement"
+			}]
+			title: "驯服阔鼻迅猛龙"
+			x: 14.5d
+			y: -8.5d
+		}
+		{
+			dependencies: [
+				"6ED04FB8ECFCB3C3"
+				"46A987F68F38472B"
+			]
+			description: [
+				"&e使用【原始大棒】击晕撼地龙，喂食【幽静沙拉】，反复操作即可驯服"
+				""
+				"{image:kubejs:textures/aaaa/xuanyundehandilong.png width:150 height:100 align:1}"
+				"6不想让它乱跑可以用【唱片机放音乐】，硬控它（"
+				""
+				"&7使用【琥珀珍品】或【地壳碎片】切换皮肤，按【G键进行咆哮】"
+				""
+				"&8命名为“princess”后变成粉色撼地龙"
+			]
+			id: "3D23B508373F6034"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "603DD059B71D5BBB"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 2.0d
+			tasks: [{
+				advancement: "alexscaves:alexscaves/tame_tremorsaurus"
+				criterion: ""
+				id: "00FC3DECF3F382F0"
+				type: "advancement"
+			}]
+			title: "驯服撼地龙"
+			x: 12.5d
+			y: -5.5d
+		}
+		{
+			dependencies: ["17DE5A937A5A7E9A"]
+			description: ["{image:kubejs:textures/aaaa/hupo.png width:100 height:100 align:1}"]
+			id: "674C5A480A6924DF"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "4EBDE8EE484B6FD3"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.0d
+			subtitle: "挖掘洞穴上方琥珀小概率掉落"
+			tasks: [{
+				id: "7BBDDCA1A446B3AF"
+				item: "alexscaves:amber_curiosity"
+				type: "item"
+			}]
+			x: 9.0d
+			y: -13.0d
+		}
+		{
+			dependencies: ["674C5A480A6924DF"]
+			description: [
+				"&c将&6【灾厄触媒】&c丢入火山口&c召唤"
+				""
+				"{image:kubejs:textures/aaaa/zaiechumei.png width:170 height:100 align:1}"
+			]
+			id: "5A51AA0D9B7CB4B1"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "58DE0E53E94B3809"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "用于召唤  暝煌龙"
+			tasks: [{
+				id: "74F7DB82610F5523"
+				item: "alexscaves:ominous_catalyst"
+				type: "item"
+			}]
+			x: 7.5d
+			y: -13.0d
+		}
+		{
+			dependencies: ["5A51AA0D9B7CB4B1"]
+			description: [
+				"&6如何召唤瞑煌龙？链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"5A51AA0D9B7CB4B1\" } }"
+				""
+				"{image:kubejs:textures/aaaa/minghuanglong.png width:180 height:100 align:1}"
+			]
+			id: "3A6B3E30B7958D89"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0D1391220214E13A"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 2.0d
+			subtitle: "&6大血牛BOSS，不吃拔刀剑的挥砍伤害，但会被剑气伤害"
+			tasks: [{
+				advancement: "alexscaves:alexscaves/defeat_luxtructosaurus"
+				criterion: ""
+				id: "03E048776D797CEC"
+				type: "advancement"
+			}]
+			title: "&c击败暝煌龙"
+			x: 5.5d
+			y: -13.0d
+		}
+		{
+			dependencies: ["3A6B3E30B7958D89"]
+			id: "22045E90E1FD6366"
+			rewards: [
+				{
+					id: "4973DEB29497E68A"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:plummeting_flight"
+								lvl: 3s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "783F0216CF93D3B6"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:herd_phalanx"
+								lvl: 3s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "608EDB9A1DAD4689"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:chomping_spirit"
+								lvl: 2s
+							}]
+						}
+					}
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "63A7A59EE7F395A4"
+				item: {
+					Count: 1b
+					id: "alexscaves:extinction_spear"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 5.0d
+			y: -15.0d
+		}
+		{
+			dependencies: ["3A6B3E30B7958D89"]
+			description: [
+				"&c擎天龙:无法驯服，喂食幽静沙拉骑乘（或者直接按U骑）"
+				""
+				"&6使用【琥珀珍品】【板块碎片】切换皮肤"
+			]
+			id: "0A63322F45D80963"
+			subtitle: "擎天龙的琥珀石"
+			tasks: [{
+				id: "6AB588AB097CAC49"
+				item: "alexscaves:amber_monolith"
+				type: "item"
+			}]
+			x: 6.0d
+			y: -15.0d
+		}
+		{
+			description: [
+				"&b前置任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2656A8EBB54A9314\" } }"
+				"{image:kubejs:textures/aaaa/guaidanchong.png width:140 height:100 align:1}"
+				""
+				"&a如果你到达坐标后没有找到渊海，请使用随机传送功能，传送远点再找。随机传送链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"156AE531933FA775\" } }"
+			]
+			icon: "alexscaves:metal_swarf"
+			id: "544C7C58825211E7"
+			rewards: [
+				{
+					count: 3
+					id: "2D279B3A8974197F"
+					item: {
+						Count: 1b
+						id: "minecraft:potion"
+						tag: {
+							Potion: "alexscaves:long_deepsight"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "0C97C6F5D50E2E33"
+					item: "alexscaves:floater"
+					type: "item"
+				}
+			]
+			size: 2.0d
+			subtitle: "&b可用群系指南针搜索：渊海陷窟&f     最好携带酿造台，并携带一些水肺药水"
+			tasks: [{
+				biome: "alexscaves:abyssal_chasm"
+				icon: "alexscaves:metal_swarf"
+				id: "0E3BDDF3527C5F30"
+				title: "&9抵达渊海"
+				type: "biome"
+			}]
+			title: "&9抵达渊海陷窟"
+			x: 10.9d
+			y: 4.0d
+		}
+		{
+			dependencies: ["544C7C58825211E7"]
+			id: "4523C39F85EAE591"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0F006908240C1B47"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "使用【灯笼鱼】酿造"
+			tasks: [{
+				id: "4BB766C833CF9E75"
+				item: {
+					Count: 1b
+					id: "minecraft:potion"
+					tag: {
+						Potion: "alexscaves:long_deepsight"
+					}
+				}
+				type: "item"
+			}]
+			title: "酿造渊视药水"
+			x: 9.9d
+			y: 2.0d
+		}
+		{
+			dependencies: ["544C7C58825211E7"]
+			id: "6B7DAC5CB35C204D"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "4BBAA24AAA35980D"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "有概率在渊海中生成"
+			tasks: [{
+				advancement: "alexscaves:alexscaves/ride_submarine"
+				criterion: ""
+				id: "5C7273A6C678AD8D"
+				type: "advancement"
+			}]
+			title: "坐上潜水艇"
+			x: 10.9d
+			y: 1.5d
+		}
+		{
+			dependencies: ["544C7C58825211E7"]
+			description: [
+				"破坏贻贝概率获得"
+				""
+				"{image:kubejs:textures/aaaa/yibei.png width:160 height:200 align:1}"
+			]
+			id: "5596BF7A2473AEFF"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1D731FA569510C44"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			size: 1.0d
+			subtitle: "与深潜者交易的重要物品！"
+			tasks: [{
+				id: "30E7D39ABBF7A051"
+				item: "alexscaves:pearl"
+				type: "item"
+			}]
+			x: 10.9d
+			y: 6.0d
+		}
+		{
+			dependencies: ["544C7C58825211E7"]
+			description: [
+				"&9碎船兽是游荡于渊海的强大生物"
+				"{image:kubejs:textures/aaaa/suichuanshou.png width:150 height:100 align:1}"
+				""
+				"&7（由于体型较大，当玩家处于渊海Y轴160格以上时，会大大提升刷新概率）"
+			]
+			icon: "alexscaves:immortal_embryo"
+			id: "4D18EE537CA05E7B"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "323116080D2BE1AC"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 2.0d
+			subtitle: "&e由【碎船兽】掉落，【碎船兽】刷新于渊海 （概率较低）"
+			tasks: [{
+				id: "719B2D958CE9C810"
+				item: "alexscaves:immortal_embryo"
+				type: "item"
+			}]
+			x: 7.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["5596BF7A2473AEFF"]
+			description: [
+				""
+				"{image:kubejs:textures/aaaa/shenhaijitan.png width:120 height:150 align:1}"
+			]
+			id: "507C985AC24867DE"
+			size: 1.3d
+			subtitle: "放上珍珠，吸引深潜者来进行交易"
+			tasks: [{
+				icon: "alexscaves:abyssal_altar"
+				id: "798B30A144CDA703"
+				observe_type: 0
+				timer: 0L
+				title: "观察深海祭坛"
+				to_observe: "alexscaves:abyssal_altar"
+				type: "observation"
+			}]
+			x: 10.9d
+			y: 7.5d
+		}
+		{
+			dependencies: ["507C985AC24867DE"]
+			id: "02AB4C5E20319216"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "3190FE6DED1D5461"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "普通深潜者交易物，用于查看深潜者好感度"
+			tasks: [{
+				id: "3F533D751072A287"
+				item: {
+					Count: 1b
+					id: "alexscaves:gazing_pearl"
+					tag: {
+						HasReputation: 1b
+						LastReputationTimestamp: 1773428L
+						Reputation: -100
+					}
+				}
+				type: "item"
+			}]
+			x: 9.4d
+			y: 8.5d
+		}
+		{
+			dependencies: ["507C985AC24867DE"]
+			id: "65B44816E4F44022"
+			rewards: [
+				{
+					id: "666AC2ABB68BF2E9"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:enveloping_bubble"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "69873CF769B4F1D5"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:bouncing_bolt"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "2DFBECF04D8D5147"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:triple_splash"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "447E1DAAC043FDB0"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:soak_seeking"
+								lvl: 3s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "400DF5A8293EE680"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "深潜者法师交易物"
+			tasks: [{
+				id: "2243B2FD82E915DB"
+				item: {
+					Count: 1b
+					id: "alexscaves:sea_staff"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 11.4d
+			y: 9.0d
+		}
+		{
+			dependencies: ["507C985AC24867DE"]
+			id: "1F414055B4F872A0"
+			rewards: [
+				{
+					id: "0D23EC4F1008A001"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:charting_call"
+								lvl: 4s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "79417B16B3B3A9F7"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:lasting_morale"
+								lvl: 3s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "0DC79D27C78884B3"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "深潜者骑士交易物，召唤深潜者加入作战"
+			tasks: [{
+				id: "0EB19D9B5AAA7080"
+				item: {
+					Count: 1b
+					id: "alexscaves:magic_conch"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 12.4d
+			y: 8.5d
+		}
+		{
+			dependencies: ["507C985AC24867DE"]
+			id: "7929D2722BC0DB6D"
+			rewards: [
+				{
+					id: "0A1AD8C1DB90AA7F"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:second_wave"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "4251632AA700F88F"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:tsunami"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5CE951A63EC003DE"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:sea_swing"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "79820D665F1D60AA"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:flinging"
+								lvl: 3s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "09AC3C7DBCD31C6C"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "深潜者骑士交易物，自带“激流”，可在鞘翅飞行时提供极大动力"
+			tasks: [{
+				id: "0CAFE247AABAF09E"
+				item: {
+					Count: 1b
+					id: "alexscaves:ortholance"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 10.4d
+			y: 9.0d
+		}
+		{
+			dependencies: ["544C7C58825211E7"]
+			description: [
+				"&e头盔在出水时提供【水下呼吸】"
+				""
+				"&e护腿可以加快【游泳速度】"
+				""
+				"&e靴子使玩家【不受海底淤泥的减速影响】"
+			]
+			id: "00DEEEF2B677A6C2"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "03CE105CB549AC73"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			tasks: [
+				{
+					id: "1A39D6C15415DB48"
+					item: {
+						Count: 1b
+						id: "alexscaves:diving_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6CAC0B26661854D6"
+					item: {
+						Count: 1b
+						id: "alexscaves:diving_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "437E1A9BAD1DE101"
+					item: {
+						Count: 1b
+						id: "alexscaves:diving_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6162864A36F0CC8C"
+					item: {
+						Count: 1b
+						id: "alexscaves:diving_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			x: 13.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["544C7C58825211E7"]
+			id: "1D6302F7C5ACD04F"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "4DD4FE4D448102B5"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "快速升到海平面（宝可梦的脱洞绳）"
+			tasks: [{
+				id: "34F631CFD3E3B63D"
+				item: "alexscaves:floater"
+				type: "item"
+			}]
+			x: 11.9d
+			y: 2.0d
+		}
+		{
+			dependencies: ["4D18EE537CA05E7B"]
+			description: [
+				"搭建方法："
+				"{image:kubejs:textures/aaaa/tajianqianshuiting.png width:130 height:180 align:1}"
+			]
+			id: "1FE4803E37C82C47"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "36D69B473CE5658D"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "搭建潜水艇的核心方块"
+			tasks: [{
+				id: "2434EFBC3E38AF27"
+				item: "alexscaves:enigmatic_engine"
+				type: "item"
+			}]
+			x: 5.0d
+			y: 4.0d
+		}
+		{
+			description: [
+				"&b前置任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2656A8EBB54A9314\" } }"
+				"{image:kubejs:textures/aaaa/duhaudongxue.png width:160 height:111 align:1}"
+				""
+				"&a你可以用禁品草方块来大量刷出这里的生物"
+			]
+			icon: "alexscaves:uranium"
+			id: "2DFEF0884A773F32"
+			rewards: [
+				{
+					id: "1008158FF60A626F"
+					item: {
+						Count: 1b
+						id: "alexscaves:hazmat_mask"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "4564229F25E5C124"
+					item: {
+						Count: 1b
+						id: "alexscaves:hazmat_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "01ECC8A76A30C071"
+					item: {
+						Count: 1b
+						id: "alexscaves:hazmat_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "7CD51177FF4C012D"
+					item: {
+						Count: 1b
+						id: "alexscaves:hazmat_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 4
+					id: "228F4F92D264C13A"
+					item: "goety:forbidden_grass"
+					type: "item"
+				}
+			]
+			size: 2.8d
+			subtitle: "&a可用群系指南针搜索：毒化洞穴"
+			tasks: [{
+				biome: "alexscaves:toxic_caves"
+				icon: "alexscaves:uranium"
+				id: "02E3CD5AB467D63D"
+				title: "&e毒化洞穴"
+				type: "biome"
+			}]
+			title: "&e毒化洞穴"
+			x: -7.0d
+			y: 7.0d
+		}
+		{
+			dependencies: ["2DFEF0884A773F32"]
+			description: [
+				"&a【携带辐射物品】或【处于毒化洞穴】将被辐照影响"
+				"&c【防化服】只能减弱辐照，并不是消除"
+				""
+				"&a辐照：无法自然恢复生命，缓慢减少生命值。"
+				""
+				"&a食用“绿色食品”、“硫心蛋糕卷”和“猛汉午餐肉”恢复生命值"
+			]
+			id: "6A63097D055DF292"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "2FF7DC942B8478DD"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+				{
+					count: 4
+					id: "660AD87E6C177FDB"
+					item: "alexscaves:waste_drum"
+					type: "item"
+				}
+			]
+			size: 2.0d
+			tasks: [
+				{
+					id: "084E2439D2D5C060"
+					item: {
+						Count: 1b
+						id: "alexscaves:hazmat_mask"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "216FB4207CD30327"
+					item: {
+						Count: 1b
+						id: "alexscaves:hazmat_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "1D0B5BA44D571A72"
+					item: {
+						Count: 1b
+						id: "alexscaves:hazmat_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "07A594F2B7E0339B"
+					item: {
+						Count: 1b
+						id: "alexscaves:hazmat_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "关于辐照"
+			x: -7.0d
+			y: 10.5d
+		}
+		{
+			dependencies: ["2DFEF0884A773F32"]
+			id: "37F8B62865B15C77"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "3020DF8A5918BF5D"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+				{
+					count: 4
+					id: "3C9CE817B6F1D58E"
+					item: "alexscaves:waste_drum"
+					type: "item"
+				}
+			]
+			subtitle: "&a【辐鳃鱼】驯服。【射线猫】定期清除【辐照】效果"
+			tasks: [{
+				advancement: "alexscaves:alexscaves/tame_raycat"
+				criterion: ""
+				id: "2DCE374E6A4552E1"
+				type: "advancement"
+			}]
+			title: "驯服一只射线猫"
+			x: -9.5d
+			y: 7.0d
+		}
+		{
+			dependencies: ["2DFEF0884A773F32"]
+			description: [
+				""
+				"{image:kubejs:textures/aaaa/henengkulipa.png width:140 height:200 align:1}"
+			]
+			icon: "alexscaves:fissile_core"
+			id: "73F7EDA1D7DB8451"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "484E124E07DA4DD1"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					count: 4
+					id: "18AD96A0BA8D1389"
+					item: "alexscaves:waste_drum"
+					type: "item"
+				}
+			]
+			size: 1.3d
+			subtitle: "低概率在毒化洞穴中生成"
+			tasks: [{
+				entity: "alexscaves:nucleeper"
+				icon: "alexscaves:fissile_core"
+				id: "1D8B0A18535881DA"
+				type: "kill"
+				value: 1L
+			}]
+			x: -7.0d
+			y: 3.5d
+		}
+		{
+			dependencies: ["73F7EDA1D7DB8451"]
+			id: "5375B07B1E5134B8"
+			rewards: [
+				{
+					id: "698A4BE918CD92E3"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:gamma_ray"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6497380CC27E4EC9"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:x_ray"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5579BF0DB2533277"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:solar"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5CFDFC58D68C2FE7"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:energy_efficiency"
+								lvl: 3s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "0804AD7CEC3676E2"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					count: 4
+					id: "096CF3339CFEC35B"
+					item: "alexscaves:waste_drum"
+					type: "item"
+				}
+			]
+			size: 1.3d
+			tasks: [{
+				id: "3EB8BD7E590FBDDB"
+				item: {
+					Count: 1b
+					id: "alexscaves:raygun"
+					tag: { }
+				}
+				type: "item"
+			}]
+			x: -7.0d
+			y: 2.0d
+		}
+		{
+			dependencies: ["73F7EDA1D7DB8451"]
+			id: "697B05BA364DEB33"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "75A0EBBD342C71CB"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					count: 4
+					id: "1A0266E04B8DCCC6"
+					item: "alexscaves:waste_drum"
+					type: "item"
+				}
+			]
+			size: 1.3d
+			subtitle: "远程引爆爆炸物"
+			tasks: [{
+				id: "4A8837F1BF89BA19"
+				item: "alexscaves:remote_detonator"
+				type: "item"
+			}]
+			x: -8.0d
+			y: 2.5d
+		}
+		{
+			dependencies: [
+				"2DFEF0884A773F32"
+				"1FBE047B933B02E2"
+				"3A6B3E30B7958D89"
+				"4D18EE537CA05E7B"
+			]
+			description: [
+				"&a使用废料驯服，喂食核弹加速生长"
+				""
+				"&a&n非常强大的宠物 可骑乘 会破坏阻挡它的方块，骑乘按G原子吐息（拆迁王"
+				" "
+				"&a&n拥有强大再生能力和近战能力"
+			]
+			id: "0CECDB8BE8A98509"
+			rewards: [{
+				id: "1D8A29A4D89E996D"
+				type: "xp_levels"
+				xp_levels: 50
+			}]
+			size: 8.0d
+			subtitle: "&a【撼地斯拉蛋】&c  受到核爆炸后孵化"
+			tasks: [{
+				advancement: "alexscaves:alexscaves/hatch_tremorzilla_egg"
+				criterion: ""
+				id: "79BC1199D3E00BC7"
+				type: "advancement"
+			}]
+			title: "&a孵化【撼地斯拉】"
+			x: 1.5d
+			y: -2.4d
+		}
+		{
+			dependencies: ["73F7EDA1D7DB8451"]
+			description: ["{image:kubejs:textures/aaaa/hebao.png width:100 height:100 align:1}"]
+			id: "22B2843C0233054A"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "7A3F92B4FD3269F7"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					count: 4
+					id: "40C770D62511A6F5"
+					item: "alexscaves:waste_drum"
+					type: "item"
+				}
+			]
+			size: 1.3d
+			subtitle: "用来进行“核爆炸”，爆炸后周围变为辐射区"
+			tasks: [{
+				id: "71B2662C133A63CE"
+				item: "alexscaves:nuclear_bomb"
+				type: "item"
+			}]
+			x: -6.0d
+			y: 2.5d
+		}
+		{
+			dependencies: ["2DFEF0884A773F32"]
+			description: [
+				""
+				"{image:kubejs:textures/aaaa/feiliaotong.png width:130 height:100 align:1}"
+			]
+			id: "55E5498DB6FDBBD3"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "4620B868792B5FDF"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			size: 1.3d
+			subtitle: "&e用于驯服【撼地斯拉】（大概1组左右）"
+			tasks: [{
+				id: "63784723002FED44"
+				item: "alexscaves:waste_drum"
+				type: "item"
+			}]
+			x: -4.5d
+			y: 7.0d
+		}
+		{
+			dependencies: ["2DFEF0884A773F32"]
+			description: [
+				"&a可以高速烧炼高炉烧炼的所有物品，使用【铀棒】作为燃料"
+				""
+				""
+				"&a左侧可以将【金属桶】转化为【废料桶】（请定期清理废料桶哦，不清理的话轻则产生辐照云，重则瞬间爆炸！）"
+			]
+			id: "238CB3A1BA6ED60C"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "26A282B443F10D69"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+				{
+					count: 4
+					id: "0B373C326F72F2DC"
+					item: "alexscaves:waste_drum"
+					type: "item"
+				}
+			]
+			size: 1.2d
+			subtitle: "以2X2形式摆放变为核能熔炉"
+			tasks: [{
+				id: "10DF98FA97D1916A"
+				item: "alexscaves:nuclear_furnace_component"
+				type: "item"
+			}]
+			title: "核能熔炉"
+			x: -8.7d
+			y: 5.5d
+		}
+		{
+			description: [
+				"&b前置任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2656A8EBB54A9314\" } }"
+				""
+				"{image:kubejs:textures/aaaa/yijikonggu.png width:100 height:100 align:1}"
+				""
+				"&b这里会刷新【地底异教徒】，它们会经常【献祭】一些生物来召唤....更强大的生物"
+				""
+				"&a你可以用禁品草方块来大量刷出这里的生物"
+			]
+			id: "0E68753243850C6A"
+			rewards: [
+				{
+					id: "341B571FB5F74312"
+					item: {
+						Count: 1b
+						id: "alexscaves:desolate_dagger"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "30027EB3130F07B6"
+					table_id: 2528355744469316926L
+					type: "random"
+				}
+				{
+					count: 4
+					id: "60D4633CCF859C95"
+					item: "goety:forbidden_grass"
+					type: "item"
+				}
+				{
+					count: 10
+					id: "6CDC84F8BC026CE3"
+					item: "iceandfire:chain"
+					type: "item"
+				}
+				{
+					count: 10
+					id: "04F8FD8B2726026A"
+					item: "minecraft:cobblestone_wall"
+					type: "item"
+				}
+			]
+			size: 2.0d
+			subtitle: "&d可用群系指南针搜索：异寂空谷"
+			tasks: [{
+				biome: "alexscaves:forlorn_hollows"
+				icon: "alexscaves:pure_darkness"
+				id: "67B4750B218A4FB0"
+				type: "biome"
+			}]
+			title: "抵达异寂空谷"
+			x: 28.0d
+			y: 5.5d
+		}
+		{
+			dependencies: ["0E68753243850C6A"]
+			description: [
+				"{image:kubejs:textures/aaaa/yiqizheggwg.png width:100 height:100 align:1}"
+				"&a如果异教徒太笨了抓不到蝙蝠，你就用【铁链】把蝙蝠锁在异教徒的祭坛附近（念力法术同理）"
+				"&7（ps：铁链可以绑到石墙上）"
+				""
+				"&a注意：不要让异教徒对你有仇恨（跑远点就好了），否则不会进行献祭"
+			]
+			icon: "alexscaves:forsaken_idol"
+			id: "1E3F40C26EB02A38"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "79530AEB30206808"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			size: 1.5d
+			subtitle: "&c地底异教徒献祭【夜行蝠】所召唤的强大生物"
+			tasks: [{
+				entity: "alexscaves:forsaken"
+				icon: "alexscaves:forsaken_idol"
+				id: "704AEB987FEAC2A8"
+				type: "kill"
+				value: 1L
+			}]
+			x: 28.0d
+			y: 8.5d
+		}
+		{
+			dependencies: ["1E3F40C26EB02A38"]
+			description: ["&c技能激活期间，使用暗染苹果可延长技能时间"]
+			id: "784F6EFCC05BA52F"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "7A7AA97691F161A1"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					count: 5
+					id: "69691F73690ABFE9"
+					item: "alexscaves:darkened_apple"
+					type: "item"
+				}
+				{
+					count: 5
+					id: "06B7D66AFB922E89"
+					item: "splash_milk:splash_milk_bottle"
+					type: "item"
+				}
+			]
+			subtitle: "&e遗弃者掉落物合成，充能完毕按G使用特殊技能"
+			tasks: [
+				{
+					id: "71CCD21C49CF0687"
+					item: {
+						Count: 1b
+						id: "alexscaves:hood_of_darkness"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "7F2090F3134ABEF2"
+					item: {
+						Count: 1b
+						id: "alexscaves:cloak_of_darkness"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			x: 26.0d
+			y: 8.5d
+		}
+		{
+			dependencies: ["1E3F40C26EB02A38"]
+			id: "301D208FAF3DFCFB"
+			rewards: [
+				{
+					id: "601435D7EED2E235"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:twilight_perfection"
+								lvl: 3s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "1369EABABA62299F"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:shaded_respite"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3855B94514A0C78D"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:precise_volley"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "21D66AAEE1114990"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:dark_nock"
+								lvl: 3s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "3C48EBDCE9CA0E4A"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:relentless_darkness"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "718742B359B7B171"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "&e遗弃者掉落物合成，进行大范围箭雨打击"
+			tasks: [{
+				id: "53792AE497E7B2FD"
+				item: {
+					Count: 1b
+					id: "alexscaves:dreadbow"
+					tag: {
+						Damage: 0
+						LastUsedArrowType: "minecraft:arrow"
+						PerfectShotTicks: 0
+						PrevUseTime: 0
+						UseTime: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 28.0d
+			y: 10.5d
+		}
+		{
+			dependencies: ["4A495E8DA5E457B1"]
+			id: "2992C89A6EA7C1FC"
+			rewards: [
+				{
+					id: "700C83232A00C724"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:detonating_death"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "138881BF0E3567FA"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:rapid_possession"
+								lvl: 3s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "343964F16D8F0167"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:sightless"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "7820EA530C688834"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "alexscaves:astral_transferring"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "34FEFFA74E786549"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			size: 2.0d
+			subtitle: "左键标记生物，右击操控生物去指定位置，或者攻击目标"
+			tasks: [{
+				id: "079361430E1049DD"
+				item: {
+					Count: 1b
+					id: "alexscaves:totem_of_possession"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 28.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["0E68753243850C6A"]
+			description: [
+				"{image:kubejs:textures/aaaa/kuixinzhe.png width:100 height:100 align:1}"
+				""
+				"&a如果异教徒太笨了抓不到幽暗蛾，你就用【铁链】把幽暗蛾锁在异教徒的祭坛附近（念力法术同理）"
+				"&7（ps：铁链可以绑到石墙上）"
+				""
+				"&a注意：不要让异教徒对你有仇恨（跑远点就好了），否则不会进行献祭"
+			]
+			icon: "goety:hunger_core"
+			id: "4A495E8DA5E457B1"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1A4885052A546B03"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "&c地底异教徒献祭【幽暗蛾】所召唤的生物"
+			tasks: [{
+				entity: "alexscaves:watcher"
+				icon: "goety:hunger_core"
+				id: "69FF660D037D0653"
+				type: "kill"
+				value: 1L
+			}]
+			x: 28.0d
+			y: 3.5d
+		}
+		{
+			description: [
+				"&b前置任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2656A8EBB54A9314\" } }"
+			]
+			icon: {
+				Count: 1b
+				id: "alexscaves:sugar_staff"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "37CE43EEAA811187"
+			rewards: [{
+				count: 10
+				id: "049F5D2C7233B100"
+				item: "alexscaves:caramel_apple"
+				type: "item"
+			}]
+			size: 4.0d
+			subtitle: "&e可用群系指南针搜索：糖果龋洞"
+			tasks: [{
+				biome: "alexscaves:candy_cavity"
+				icon: {
+					Count: 1b
+					id: "alexscaves:sugar_staff"
+					tag: {
+						Damage: 0
+					}
+				}
+				id: "72F200C585DF8BB7"
+				title: "&e糖果洞穴"
+				type: "biome"
+			}]
+			title: "&e糖果龋洞"
+			x: 28.5d
+			y: -9.5d
+		}
+		{
+			dependencies: ["0859A2DDDD245736"]
+			description: [
+				"&e&n不要装入永恒牛排，会爆炸的，核爆那种（该爆炸可用于孵化撼地斯拉"
+				"{image:kubejs:textures/aaaa/hebaozha3.png width:100 height:100 align:1}"
+			]
+			id: "710C80EE190A0F15"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "765358F1A59C97B9"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.5d
+			subtitle: "用食物来投喂它，当你饿了的时候他会喂你（"
+			tasks: [{
+				id: "186A424C1F743BCD"
+				item: {
+					Count: 1b
+					id: "alexscaves:sack_of_sating"
+					tag: { }
+				}
+				type: "item"
+			}]
+			x: 22.0d
+			y: -10.5d
+		}
+		{
+			dependencies: ["37CE43EEAA811187"]
+			id: "16E085474D9F247F"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "3D0E77AEFA6309B8"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "落地地上会弹起来"
+			tasks: [{
+				id: "5720D34DC9F55B5E"
+				item: {
+					Count: 1b
+					id: "alexscaves:rainbounce_boots"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 31.5d
+			y: -9.0d
+		}
+		{
+			dependencies: ["441CA84F5ABD0AA1"]
+			description: [
+				"&e&n当没有饱食度时候食用【生物群系棒糖】记录所在群系"
+				""
+				"放下【转换坩埚】，放入【生物群系棒糖】再放入对应物品，即可转换周围群系"
+				"{image:kubejs:textures/aaaa/ganguo.png width:100 height:100 align:1}"
+			]
+			id: "233966F2ADA129DE"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "406C5A548D070BA2"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "转化周围的生物群系"
+			tasks: [
+				{
+					id: "41FE8A3C77C2E46D"
+					item: "alexscaves:conversion_crucible"
+					type: "item"
+				}
+				{
+					id: "11FC4D21BAB42BE0"
+					item: "alexscaves:biome_treat"
+					type: "item"
+				}
+			]
+			x: 28.0d
+			y: -14.0d
+		}
+		{
+			dependencies: ["37CE43EEAA811187"]
+			description: [
+				"&e&n拐杖糖钩索：射出钩索，右击将自己拉过去。可以拉住口香糖蠕虫，并骑乘。"
+				""
+				"&e&n糖槌：吸引口香糖蠕虫"
+				""
+				"&6&n放置【糖槌】来吸引口香糖蠕虫，使用钩索钩住它就可以骑乘"
+			]
+			id: "607043C34FC117EF"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6C088F2BEE042A17"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.5d
+			tasks: [
+				{
+					id: "357648FAE67766ED"
+					item: {
+						Count: 1b
+						id: "alexscaves:candy_cane_hook"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "43C5D1C83B0596FA"
+					item: "alexscaves:gobthumper"
+					type: "item"
+				}
+			]
+			x: 24.5d
+			y: -8.5d
+		}
+		{
+			dependencies: ["37CE43EEAA811187"]
+			id: "441CA84F5ABD0AA1"
+			subtitle: "刷新于【甘草女巫塔】"
+			tasks: [{
+				entity: "alexscaves:licowitch"
+				icon: "alexscaves:spawn_egg_licowitch"
+				id: "3DC23B6ED8884E09"
+				type: "kill"
+				value: 1L
+			}]
+			x: 28.5d
+			y: -12.5d
+		}
+		{
+			dependencies: ["441CA84F5ABD0AA1"]
+			id: "041D65196D5FD313"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "74E93ABD2636E586"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "使用红石激活，无限召唤姜饼人军团"
+			tasks: [{
+				id: "021C80AA85A759AD"
+				item: "alexscaves:confection_oven"
+				type: "item"
+			}]
+			x: 29.0d
+			y: -14.0d
+		}
+		{
+			dependencies: ["37CE43EEAA811187"]
+			id: "0859A2DDDD245736"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "115618A1135D5D2E"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.5d
+			subtitle: "随机刷新在糖果洞穴中"
+			tasks: [{
+				advancement: "alexscaves:alexscaves/defeat_gum_worm"
+				criterion: ""
+				id: "1D04C4E31E01AAA8"
+				type: "advancement"
+			}]
+			title: "击败口香糖蠕虫"
+			x: 24.5d
+			y: -10.5d
+		}
+		{
+			dependencies: ["3D23B508373F6034"]
+			id: "1FBE047B933B02E2"
+			size: 1.5d
+			subtitle: "&6【恐龙肉骨】繁殖。必须用【精准采集】工具才能拾取"
+			tasks: [{
+				id: "34E57C9B5B269B19"
+				item: "alexscaves:tremorsaurus_egg"
+				type: "item"
+			}]
+			title: "&e繁殖撼地龙，获得撼地龙蛋"
+			x: 6.75d
+			y: -5.25d
+		}
+		{
+			dependencies: ["607043C34FC117EF"]
+			id: "48BBC53B55E04AAA"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "3F7466F4800FE410"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			size: 1.5d
+			tasks: [{
+				advancement: "alexscaves:alexscaves/ride_gum_worm"
+				criterion: ""
+				id: "286EC4D1386F94F1"
+				title: "&e骑上口香糖蠕虫"
+				type: "advancement"
+			}]
+			x: 22.0d
+			y: -8.5d
+		}
+		{
+			dependencies: ["37CE43EEAA811187"]
+			description: [
+				"&n&e糖果独角兽：可装备【鞍】。奔跑时会充能，充能满后【按G进行冲刺】，对经过的敌人造成伤害"
+				"{image:kubejs:textures/aaaa/tangguodujiaoshou.png width:100 height:100 align:1}"
+			]
+			id: "065DC9E53B1F6032"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "763A3C7ED7CB76EB"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "用来驯服【糖果独角兽】"
+			tasks: [{
+				id: "2175F999B9766E0B"
+				item: "alexscaves:caramel_apple"
+				type: "item"
+			}]
+			x: 31.5d
+			y: -10.0d
+		}
+		{
+			dependencies: ["1E3F40C26EB02A38"]
+			id: "3D5A6556B18EEBA5"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "418100479388D19F"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&e遗弃者掉落"
+			tasks: [{
+				id: "7EC35856DE324993"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_devil"
+					tag: { }
+				}
+				type: "item"
+			}]
+			x: 30.0d
+			y: 8.5d
+		}
+		{
+			dependencies: ["544C7C58825211E7"]
+			description: [
+				"&b1.潜水服于渊海探索获得"
+				""
+				"&b2.珍珠获得："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"5596BF7A2473AEFF\" } }"
+				""
+				"&b3.深海寿司卷的材料通过击杀渊海的生物获得"
+			]
+			id: "7A29A3061C3AB66E"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1A0FF9B4F85AF509"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			tasks: [{
+				id: "15D7080095C505CD"
+				item: "alexscaves:spawn_egg_hullbreaker"
+				type: "item"
+			}]
+			title: "&e可选任务&6·&b合成碎船兽刷怪蛋"
+			x: 9.0d
+			y: 4.0d
+		}
+	]
+	title: "&d洞穴之旅途"
+}

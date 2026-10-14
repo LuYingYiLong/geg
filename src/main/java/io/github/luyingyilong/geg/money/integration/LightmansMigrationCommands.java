@@ -176,7 +176,8 @@ public final class LightmansMigrationCommands {
             if (plan.equippedWallet != null) {
                 plan.equippedWallet.handler.setWallet(plan.equippedWallet.after.copy());
             }
-            MoneyService.set(player.server, player.getUUID(), MoneyCurrency.COIN, newBalance);
+            MoneyService.addWithReason(player.server, player.getUUID(), MoneyCurrency.COIN,
+                    newBalance - oldBalance, "lightmans_migration", "coins=" + plan.totalCoins);
             inventory.setChanged();
             player.containerMenu.broadcastChanges();
         } catch (RuntimeException exception) {
@@ -186,7 +187,10 @@ public final class LightmansMigrationCommands {
             if (plan.equippedWallet != null) {
                 plan.equippedWallet.handler.setWallet(plan.equippedWallet.before.copy());
             }
-            MoneyService.set(player.server, player.getUUID(), MoneyCurrency.COIN, oldBalance);
+            if (MoneyService.balance(player.server, player.getUUID()).coinMinorUnits() != oldBalance) {
+                MoneyService.setWithReason(player.server, player.getUUID(), MoneyCurrency.COIN,
+                        oldBalance, "lightmans_migration_rollback", "");
+            }
             inventory.setChanged();
             player.containerMenu.broadcastChanges();
             throw exception;

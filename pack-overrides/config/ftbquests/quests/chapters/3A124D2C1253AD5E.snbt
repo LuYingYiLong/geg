@@ -1,0 +1,2782 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: "square"
+	filename: "3A124D2C1253AD5E"
+	group: "2CCD54ABEB9E03F4"
+	icon: "mahoutsukai:guidebook"
+	id: "3A124D2C1253AD5E"
+	images: [
+		{
+			click: ""
+			color: 9109643
+			corner: false
+			dev: false
+			height: 3.5d
+			hover: [ ]
+			image: "mahoutsukai:block/mahoujin_casting"
+			rotation: 180.0d
+			width: 3.5d
+			x: -9.5d
+			y: 15.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "mahoutsukai:block/mahoujin"
+			rotation: 0.0d
+			width: 5.0d
+			x: -12.0d
+			y: 0.0d
+		}
+		{
+			click: ""
+			color: 16766720
+			corner: false
+			dev: false
+			height: 7.0d
+			hover: [ ]
+			image: "mahoutsukai:block/mahoujin_casting"
+			rotation: 0.0d
+			width: 7.0d
+			x: -1.5d
+			y: 0.0d
+		}
+		{
+			click: ""
+			color: 16712022
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "mahoutsukai:block/mahoujin_casting"
+			rotation: 45.0d
+			width: 5.0d
+			x: -22.0d
+			y: 0.0d
+		}
+		{
+			click: ""
+			color: 9109643
+			corner: false
+			dev: false
+			height: 6.0d
+			hover: [ ]
+			image: "mahoutsukai:block/mahoujin_casting"
+			rotation: 0.0d
+			width: 6.0d
+			x: 6.0d
+			y: 0.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 6.0d
+			hover: [ ]
+			image: "mahoutsukai:block/mahoujin_changeable_fae"
+			rotation: 0.0d
+			width: 6.0d
+			x: -7.5d
+			y: 9.0d
+		}
+		{
+			click: ""
+			color: 9662683
+			corner: false
+			dev: false
+			height: 3.0d
+			hover: [ ]
+			image: "mahoutsukai:block/mahoujin_casting"
+			rotation: 80.0d
+			width: 3.0d
+			x: -0.5d
+			y: 11.5d
+		}
+		{
+			click: ""
+			color: 16744192
+			corner: false
+			dev: false
+			height: 3.0d
+			hover: [ ]
+			image: "mahoutsukai:block/mahoujin_casting"
+			rotation: 45.0d
+			width: 3.0d
+			x: -12.5d
+			y: 14.5d
+		}
+		{
+			click: ""
+			color: 5526612
+			corner: false
+			dev: false
+			height: 3.0d
+			hover: [ ]
+			image: "mahoutsukai:block/mahoujin_casting"
+			rotation: 57.0d
+			width: 3.0d
+			x: -12.5d
+			y: 6.0d
+		}
+		{
+			click: ""
+			color: 16770628
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "mahoutsukai:block/mahoujin_casting"
+			rotation: 120.0d
+			width: 5.0d
+			x: -15.0d
+			y: 11.0d
+		}
+		{
+			click: ""
+			color: 16740039
+			corner: false
+			dev: false
+			height: 4.0d
+			hover: [ ]
+			image: "mahoutsukai:block/mahoujin_casting"
+			rotation: 90.0d
+			width: 4.0d
+			x: -3.5d
+			y: 14.0d
+		}
+		{
+			click: ""
+			color: 7910399
+			corner: false
+			dev: false
+			height: 5.0d
+			hover: [ ]
+			image: "mahoutsukai:block/mahoujin_casting"
+			rotation: 150.0d
+			width: 5.0d
+			x: -1.5d
+			y: 7.0d
+		}
+		{
+			click: ""
+			color: 16711680
+			corner: false
+			dev: false
+			height: 8.0d
+			hover: [ ]
+			image: "mahoutsukai:block/mahoujin_casting"
+			rotation: 0.0d
+			width: 8.0d
+			x: -7.5d
+			y: 20.0d
+		}
+	]
+	order_index: 2
+	quest_links: [ ]
+	quests: [
+		{
+			dependencies: ["2E1D3F5F71EED0DC"]
+			description: [
+				"&6范围最广，伤害最高的毁灭级大魔法，需要8000点魔力"
+				"&6三种模式，shift右键切换模式"
+				"使用时一定要注意距离哦（别一炮把自己炸飞了）"
+				""
+				""
+				"&c这是起源的火焰，也是终结的火焰。现在 过去 未来超越万象的禁忌力量。"
+				"&c火焰啊，我是破坏者，冷血无情的人，现在以我的血，以我的肉，打破古代众神的戒律。"
+			]
+			id: "233F689587B3EB2A"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "19ED2716D1B934B6"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			size: 3.0d
+			subtitle: "&c吾名慧慧&c，是红魔一族首屈一指的天才，是操纵爆裂魔法的人。"
+			tasks: [{
+				id: "1619F57E2574A194"
+				item: {
+					Count: 1b
+					id: "mahoutsukai:mystic_staff"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "&5为美好的世界献上爆焰！！！"
+			x: -7.5d
+			y: 19.9d
+		}
+		{
+			description: [
+				"&6你必须装入名为&c【魔法使】&6的&c扩展内容模组&6才能使用"
+				"{image:kubejs:textures/aaaa/mofashikuozhan.png width:200 height:120 align:1}"
+				""
+				"&e注意：此扩展平衡性较差，更多的是娱乐性，追求平衡的话建议中后期使用"
+			]
+			id: "1E05CBEF5575FDDD"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1CD9800A8679C3E9"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			size: 3.0d
+			subtitle: "&c一切奥秘，尽在其中"
+			tasks: [{
+				id: "46EF2645DC76FA8E"
+				item: "mahoutsukai:guidebook"
+				type: "item"
+			}]
+			title: "&6成为一名马猴烧酒吧！"
+			x: -22.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["1E05CBEF5575FDDD"]
+			description: [
+				""
+				"{image:mahoutsukai:block/mahoujin width:100 height:100 align:1}"
+			]
+			id: "6119129BE0EFE03C"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "4BDB5C2F8A4F2491"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			size: 2.0d
+			subtitle: "受伤后，按下m键绘制"
+			tasks: [{
+				advancement: "mahoutsukai:root"
+				criterion: ""
+				id: "668B9379248470B8"
+				title: "&6绘制你的第一个法阵！"
+				type: "advancement"
+			}]
+			title: "&6绘制鲜血法阵"
+			x: -12.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["1E05CBEF5575FDDD"]
+			description: [
+				"&c右键对自己进行伤害，用于方便绘制鲜血魔法阵"
+				"&9小知识：献祭匕首给予的流血buff  比受伤获得的流血buff更持久"
+			]
+			id: "62CA1A4B27737264"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "3D9D36403D09EC86"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			subtitle: "绘制法阵的便利道具"
+			tasks: [{
+				id: "195F62B4E95598D2"
+				item: "mahoutsukai:dagger"
+				type: "item"
+			}]
+			x: -22.0d
+			y: -2.0d
+		}
+		{
+			dependencies: ["1E05CBEF5575FDDD"]
+			id: "37D1341DD01FBE04"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "66EADD6B4CAC36FF"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			size: 1.5d
+			tasks: [
+				{
+					id: "20E6240873FCE83A"
+					item: "mahoutsukai:powdered_diamond"
+					type: "item"
+				}
+				{
+					id: "531D279717F653EA"
+					item: "mahoutsukai:powdered_emerald"
+					type: "item"
+				}
+				{
+					id: "6D82C216D45E812F"
+					item: "mahoutsukai:powdered_ender"
+					type: "item"
+				}
+				{
+					id: "372471BE9B3285A3"
+					item: "mahoutsukai:powdered_eye"
+					type: "item"
+				}
+				{
+					id: "30058E3525DA4B04"
+					item: "mahoutsukai:powdered_gold"
+					type: "item"
+				}
+				{
+					id: "0F7CB3BA5D2C626C"
+					item: "mahoutsukai:powdered_iron"
+					type: "item"
+				}
+				{
+					id: "7B7ABEB466D381D0"
+					item: "mahoutsukai:powdered_quartz"
+					type: "item"
+				}
+			]
+			title: "&d必备材料"
+			x: -18.5d
+			y: -3.0d
+		}
+		{
+			dependencies: ["6119129BE0EFE03C"]
+			description: [
+				"在鲜血法阵中放入三个铁粉，右键激活围墙结界"
+				""
+				""
+				"&c想使用更多魔法可以在《魔法使知识汇编》中了解"
+				"{image:mahoutsukai:block/mahoujin_changeable width:100 height:100 align:1}"
+			]
+			id: "3B82850EC3EA36B3"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0E4DB385E090010C"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			size: 2.0d
+			subtitle: "举个例子（不是栗子"
+			tasks: [{
+				count: 3L
+				id: "0C8C9A059D0E8F79"
+				item: "mahoutsukai:powdered_iron"
+				type: "item"
+			}]
+			title: "&c魔法！"
+			x: -7.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["6119129BE0EFE03C"]
+			description: [
+				"&c魔力是使用魔法的基础，不同的法术所需魔力消耗不同"
+				""
+				"&c每消耗10点魔力，可以提升1点魔力上限"
+				""
+				"&d魔力值可以自然恢复(魔力上限越高，恢复越多)。睡觉，进食的方式恢复魔力值"
+			]
+			id: "75B0C3B4FC4C9154"
+			tasks: [{
+				id: "395D5FBAB0A23D2B"
+				title: "&6魔力！"
+				type: "checkmark"
+			}]
+			x: -12.0d
+			y: -2.0d
+		}
+		{
+			dependencies: ["3B82850EC3EA36B3"]
+			description: [
+				"&c一些魔法无法直接用【鲜血法阵】施法，必须借助魔法布料的帮助"
+				""
+				"&9在魔法布料上绘制鲜血法阵，放入制作魔法的材料。制作成卷轴"
+			]
+			id: "72C0ED93B3FD78D7"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0002CE5C1B263DCD"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			size: 3.0d
+			subtitle: "迈向更高的境界！"
+			tasks: [{
+				id: "7567F914204D40DA"
+				item: "mahoutsukai:spell_cloth"
+				type: "item"
+			}]
+			title: "&6卷轴的制作"
+			x: -7.5d
+			y: 9.0d
+		}
+		{
+			dependencies: ["3B82850EC3EA36B3"]
+			description: [
+				"&6将带有附魔的剑丢入湖中，将根据剑的附魔和基础伤害生成石中剑"
+				""
+				"&e石中剑拥有最远的攻击距离和最广的攻击范围，且成长性极高。亡灵生物惧怕此武器，会刻意躲避持有者。"
+				""
+				"&l&e右键拉近自身与亡灵生物的距离，按Y对周围亡灵生物释放光束打击（没有原作离谱就是了）"
+			]
+			id: "12EE3203EC2B43A4"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "72ED443063C85EF7"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			subtitle: "&6使用力量固结，生成一片湖泊。"
+			tasks: [{
+				id: "2661FFA545ECB422"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							MAHOUTSUKAI_ATTACK_CAP: 10000.0d
+							MAHOUTSUKAI_ATTACK_DAMAGE: 3.0f
+						}
+					}
+					id: "mahoutsukai:caliburn"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "&e誓约胜利之剑！Excalibur！！！"
+			x: -1.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["06EDE63851AD1D55"]
+			id: "57D2971B7BB0D4FD"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1B78E480AE29C68C"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			subtitle: "使用强化卷轴增益的钻石剑对龙息右键获得。（无法获取,待修复）"
+			tasks: [{
+				id: "79BF821252C33262"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							MAHOUTSUKAI_ATTACK_CAP: 10000.0d
+							MAHOUTSUKAI_ATTACK_DAMAGE: 3.0f
+						}
+					}
+					id: "mahoutsukai:clarent"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -3.5d
+			y: 14.0d
+		}
+		{
+			dependencies: ["12EE3203EC2B43A4"]
+			description: [
+				"&c这把剑的力量不是来自于神秘的湖泊，而是来自于对无辜者的杀戮。"
+				""
+				"&c屠戮村民将会消耗魔力，提升剑的攻击力"
+			]
+			id: "2C51396C3D304BFB"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "203AABF31F76D2D2"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			subtitle: "&c使用石中剑杀死驯服后的狼获得"
+			tasks: [{
+				id: "0EDC31C847C9D8CE"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							MAHOUTSUKAI_ATTACK_CAP: 10000.0d
+							MAHOUTSUKAI_ATTACK_DAMAGE: 3.0f
+						}
+					}
+					id: "mahoutsukai:morgan"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "&c誓约胜利之剑——「摩根」"
+			x: 6.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["092074AD80A71DDE"]
+			id: "14E11DDD271E31F6"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6E7F70E2D4313992"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			tasks: [{
+				id: "1F12F6D57F713278"
+				item: {
+					Count: 1b
+					id: "mahoutsukai:spatial_disorientation_staff"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -12.5d
+			y: 14.5d
+		}
+		{
+			dependencies: ["06EDE63851AD1D55"]
+			description: ["&6放在副手右键释放雷电攻击"]
+			id: "143CA3ABC35E9913"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1B77C7F1AF954C90"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			subtitle: "使用强化卷轴强化木棍，副手持有木棍被闪电劈中获得"
+			tasks: [{
+				id: "0222F9A896369BB4"
+				item: "mahoutsukai:staff_emrys"
+				type: "item"
+			}]
+			x: -0.5d
+			y: 11.5d
+		}
+		{
+			dependencies: ["1F655127496018D9"]
+			id: "5DCDDD936D75ADF7"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "21D8B66D1286DCD9"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			subtitle: "双持武器，右键消耗魔力创造迷雾"
+			tasks: [{
+				id: "3A2FF76ADF2EAF47"
+				item: {
+					Count: 1b
+					id: "mahoutsukai:theripper"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: -12.5d
+			y: 6.0d
+		}
+		{
+			dependencies: ["6F226F9397351A3D"]
+			description: ["&e&n投影使用者的武器和工具，SHIFT+右键 可切换王之臂铠的另外两种模式"]
+			id: "12C41A6B023A518A"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1955C126E667EDF9"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			size: 2.0d
+			subtitle: "&e非常消耗魔力（"
+			tasks: [{
+				id: "0D8E0CE1D90E61B3"
+				item: {
+					Count: 1b
+					id: "mahoutsukai:treasury_projection_gauntlet"
+					tag: {
+						MAHOUTSUKAI_TREASURY_MODE: 1
+					}
+				}
+				type: "item"
+			}]
+			title: "&e杂修"
+			x: -15.0d
+			y: 11.0d
+		}
+		{
+			dependencies: ["69D6B880A51FD874"]
+			id: "527E22B4E9B487AD"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "01B3CC5AE5FCC0AC"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			size: 1.0d
+			subtitle: "蹲下右键记录卷轴，施法不会消耗卷轴（限100次）"
+			tasks: [{
+				id: "2E832BDCC1B1FAAA"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							Items: [ ]
+							Size: 3
+						}
+					}
+					id: "mahoutsukai:mystic_code_first_sorcery"
+					tag: {
+						Damage: 0
+						capability: {
+							Items: [ ]
+							Size: 3
+						}
+						slot1: "SLOT EMPTY"
+						slot2: "SLOT EMPTY"
+						slot3: "SLOT EMPTY"
+					}
+				}
+				type: "item"
+			}]
+			x: -9.5d
+			y: 15.0d
+		}
+		{
+			dependencies: ["6119129BE0EFE03C"]
+			id: "3295D0B906D86DE5"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "17A5B8217954F1DB"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			subtitle: "右键存储你的魔力"
+			tasks: [{
+				id: "49D1698092DA5516"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							MAHOUTSUKAI_GEM_STORED_MANA: 0
+						}
+					}
+					id: "mahoutsukai:attuned_diamond"
+				}
+				type: "item"
+			}]
+			title: "魔力存储"
+			x: -12.0d
+			y: 2.0d
+		}
+		{
+			dependencies: ["72C0ED93B3FD78D7"]
+			description: ["&c离开固有结界的方法只有一个！杀死对方或者被对方杀死"]
+			id: "2469EE41C5521E25"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1FDB869449EDA889"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			subtitle: "对实体右键使用，将使用者和被施法者传送到固有结界。"
+			tasks: [{
+				id: "141AA5DF045E8D93"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							MAHOUTSUKAI_CASTER_NAME: ""
+						}
+					}
+					id: "mahoutsukai:scroll_reality_marble"
+				}
+				type: "item"
+			}]
+			x: -6.0d
+			y: 7.0d
+		}
+		{
+			dependencies: ["72C0ED93B3FD78D7"]
+			description: ["&9SHIFT+右键切换模式"]
+			id: "4B8A9A35A4C75986"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "3C0DFA9E2FEFE72B"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			size: 2.0d
+			subtitle: "大范围高阶魔法，耗费极大魔力值"
+			tasks: [{
+				id: "3C99D86BB6456C60"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							MAHOUTSUKAI_CASTER_NAME: ""
+							MAHOUTSUKAI_SPELL_STORAGE: {
+								MAHOUTSUKAI_BEAM_MODE_ON: 1
+							}
+						}
+					}
+					id: "mahoutsukai:scroll_fallen_down"
+					tag: {
+						MAHOUTSUKAI_CASTER_NAME: ""
+						MAHOUTSUKAI_SPELL_STORAGE: {
+							MAHOUTSUKAI_BEAM_MODE_ON: 1
+						}
+					}
+				}
+				type: "item"
+			}]
+			title: "&9超位魔法·天空坠落"
+			x: -1.5d
+			y: 7.0d
+		}
+		{
+			dependencies: ["72C0ED93B3FD78D7"]
+			id: "6F226F9397351A3D"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "7AE9DF343A65C821"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			subtitle: "用于获得王之臂铠"
+			tasks: [{
+				id: "1A672562066BFDC8"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							MAHOUTSUKAI_CASTER_NAME: ""
+						}
+					}
+					id: "mahoutsukai:scroll_treasury_projection"
+				}
+				type: "item"
+			}]
+			x: -10.0d
+			y: 10.0d
+		}
+		{
+			dependencies: ["72C0ED93B3FD78D7"]
+			id: "06EDE63851AD1D55"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "2534941D5991AD5A"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			subtitle: "强化快捷栏的第一件物品，或副手的物品。"
+			tasks: [{
+				id: "229814AE5279776C"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							MAHOUTSUKAI_CASTER_NAME: ""
+						}
+					}
+					id: "mahoutsukai:scroll_strengthening"
+				}
+				type: "item"
+			}]
+			x: -6.5d
+			y: 11.5d
+		}
+		{
+			dependencies: ["72C0ED93B3FD78D7"]
+			description: ["&c使用该卷轴后，看着任何生物死去都将获得灵魂，在受到致命伤害时，消耗1灵魂避免致死的伤害"]
+			id: "18A29A939C74A84C"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0E49AF6239C36609"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			subtitle: "不死图腾？"
+			tasks: [{
+				id: "4574FE7C745AD061"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							MAHOUTSUKAI_CASTER_NAME: ""
+						}
+					}
+					id: "mahoutsukai:scroll_death_collection"
+				}
+				type: "item"
+			}]
+			x: -5.5d
+			y: 10.5d
+		}
+		{
+			dependencies: ["72C0ED93B3FD78D7"]
+			description: ["&6在境界线周围，会大概率生成一些小精灵，击杀后获得精灵精华"]
+			id: "69D6B880A51FD874"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6B938DEEC8C36322"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			subtitle: "&6用于观察境界线"
+			tasks: [{
+				id: "595E5836EB6AED2D"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							MAHOUTSUKAI_CASTER_NAME: ""
+						}
+					}
+					id: "mahoutsukai:scroll_fay_sight"
+				}
+				type: "item"
+			}]
+			x: -8.5d
+			y: 11.5d
+		}
+		{
+			dependencies: ["72C0ED93B3FD78D7"]
+			description: [
+				"&c召唤自己的使魔，使魔会陪你一起探险“聊天”"
+				""
+				"&9移形和传唤卷轴分别可以移至使魔位置/使魔传送到当前位置"
+			]
+			id: "2E64753077711D33"
+			rewards: [
+				{
+					id: "4B128C53DA2CF6F9"
+					item: {
+						Count: 1b
+						ForgeCaps: {
+							Parent: { }
+						}
+						id: "mahoutsukai:scroll_recall_familiar"
+					}
+					type: "item"
+				}
+				{
+					id: "181B8FC992E6C442"
+					item: {
+						Count: 1b
+						ForgeCaps: {
+							Parent: { }
+						}
+						id: "mahoutsukai:scroll_swap_familiar"
+					}
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "32DEDB4FFBF52F8B"
+					table_id: 899413985895062615L
+					type: "random"
+				}
+			]
+			tasks: [{
+				id: "0D1F93716D9766EF"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							MAHOUTSUKAI_CASTER_NAME: ""
+						}
+					}
+					id: "mahoutsukai:scroll_summon_familiar"
+				}
+				type: "item"
+			}]
+			x: -11.0d
+			y: 8.5d
+		}
+		{
+			dependencies: ["72C0ED93B3FD78D7"]
+			id: "6B4A42D08B870FBC"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "59B2BF69DD66135B"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			subtitle: "消耗魔力值，进行一次远程攻击"
+			tasks: [{
+				id: "3EC46A8CD1B29476"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							MAHOUTSUKAI_CASTER_NAME: ""
+						}
+					}
+					id: "mahoutsukai:scroll_gandr"
+					tag: {
+						MAHOUTSUKAI_CASTER_NAME: ""
+					}
+				}
+				type: "item"
+			}]
+			x: -5.0d
+			y: 9.0d
+		}
+		{
+			dependencies: ["72C0ED93B3FD78D7"]
+			id: "1F655127496018D9"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0BCE9A0D555D1165"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			subtitle: "用于获得——开膛手"
+			tasks: [{
+				id: "59384123C5E75CA4"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: { }
+					}
+					id: "mahoutsukai:scroll_presence_concealment"
+				}
+				type: "item"
+			}]
+			x: -9.5d
+			y: 7.5d
+		}
+		{
+			dependencies: ["72C0ED93B3FD78D7"]
+			id: "092074AD80A71DDE"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1AB627BA5B63C4D8"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			tasks: [{
+				id: "79024AD9E187F34F"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: { }
+					}
+					id: "mahoutsukai:scroll_spatial_disorientation"
+				}
+				type: "item"
+			}]
+			x: -9.5d
+			y: 11.0d
+		}
+		{
+			dependencies: ["72C0ED93B3FD78D7"]
+			id: "2E1D3F5F71EED0DC"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0555513302CFCD3C"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			tasks: [{
+				id: "2A68864E3C15C139"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: { }
+					}
+					id: "mahoutsukai:scroll_mystic_staff"
+				}
+				type: "item"
+			}]
+			x: -7.5d
+			y: 12.0d
+		}
+		{
+			dependencies: ["3B82850EC3EA36B3"]
+			description: ["&c放置一个吸血结界（详细见魔法使知识汇编），可以持续消耗魔力值，从而增长魔力上限"]
+			id: "43D8C56F4198EEE9"
+			tasks: [{
+				id: "506739B13AAB981C"
+				title: "快速刷取魔力值"
+				type: "checkmark"
+			}]
+			x: -7.5d
+			y: -2.0d
+		}
+		{
+			dependencies: ["2E64753077711D33"]
+			description: ["&6在区域内所有其他生物攻击只会产生击退，而不会造成任何伤害"]
+			id: "0BF80D18FEB28CB0"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "79D0315562D5E9D6"
+				table_id: 899413985895062615L
+				type: "random"
+			}]
+			subtitle: "在使魔周围生成一个飘满花瓣的区域"
+			tasks: [{
+				id: "16A7E03E2E0421F2"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: { }
+					}
+					id: "mahoutsukai:scroll_familiars_garden"
+				}
+				type: "item"
+			}]
+			x: -13.0d
+			y: 8.0d
+		}
+		{
+			dependencies: ["233F689587B3EB2A"]
+			description: [
+				"&6释放一次爆裂魔法获得成就：&e爆裂，爆裂.."
+				""
+				"&6来自群友提供！b站搜索：&d【慰蓝之森】"
+				"{image:kubejs:textures/aaaa/cahoshuaimofazhen.png width:195 height:120 align:1}"
+			]
+			id: "193C5EB5847054F2"
+			rewards: [{
+				id: "6CAFE91AB9CF2DD1"
+				item: {
+					Count: 1b
+					id: "minecraft:diamond_chestplate"
+					tag: {
+						Damage: 0
+						Enchantments: [{
+							id: "mahoutsukai:projector"
+							lvl: 1s
+						}]
+						mahoujin_projector: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 155
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 44.5f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 0b
+							CIRCLE_SIZE: 15.0f
+							CIRCLE_SPEED: 0.5f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 0.0f
+							CIRCLE_Y: -0.5f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector1: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 45.0f
+							CIRCLE_ROTATION: 92.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 3.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 6.0f
+							CIRCLE_Y: 3.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.3f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector10: {
+							CIRCLE_A: 200
+							CIRCLE_B: 50
+							CIRCLE_G: 50
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 255
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 65.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 5.0f
+							CIRCLE_SPEED: 10.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 6.0f
+							CIRCLE_Y: 5.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.5f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector11: {
+							CIRCLE_A: 200
+							CIRCLE_B: 50
+							CIRCLE_G: 50
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 255
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 261.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 5.0f
+							CIRCLE_SPEED: 10.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -6.0f
+							CIRCLE_Y: 5.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.5f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector12: {
+							CIRCLE_A: 200
+							CIRCLE_B: 50
+							CIRCLE_G: 50
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 255
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 143.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 5.0f
+							CIRCLE_SPEED: 10.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 6.0f
+							CIRCLE_Y: 5.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.5f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector13: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 216
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 0.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 4.0f
+							CIRCLE_SPEED: 0.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 6.0f
+							CIRCLE_Y: -0.5f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.6f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector14: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 216
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 0.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 4.0f
+							CIRCLE_SPEED: 0.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -6.0f
+							CIRCLE_Y: -0.5f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.6f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector15: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 216
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 0.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 4.0f
+							CIRCLE_SPEED: 0.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 6.0f
+							CIRCLE_Y: -0.5f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.6f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector16: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 216
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 0.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 4.0f
+							CIRCLE_SPEED: 0.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -6.0f
+							CIRCLE_Y: -0.5f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.6f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector17: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 216
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 0.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 4.0f
+							CIRCLE_SPEED: 0.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 10.0f
+							CIRCLE_Y: -0.5f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.6f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector18: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 216
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 0.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 4.0f
+							CIRCLE_SPEED: 0.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -10.0f
+							CIRCLE_Y: 0.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.6f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector19: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 221.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 6.0f
+							CIRCLE_SPEED: 3.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -10.0f
+							CIRCLE_Y: 2.5f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.8f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector2: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 45.0f
+							CIRCLE_ROTATION: 322.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 3.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -6.0f
+							CIRCLE_Y: 3.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.3f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector20: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 286.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 6.0f
+							CIRCLE_SPEED: 3.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 10.0f
+							CIRCLE_Y: 2.5f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.8f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector21: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 42.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 6.0f
+							CIRCLE_SPEED: 3.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -6.0f
+							CIRCLE_Y: 2.5f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.8f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector22: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 96.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 6.0f
+							CIRCLE_SPEED: 3.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 6.0f
+							CIRCLE_Y: 2.5f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.8f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector23: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 149.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 6.0f
+							CIRCLE_SPEED: 3.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -6.0f
+							CIRCLE_Y: 2.5f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.8f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector24: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 184.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 6.0f
+							CIRCLE_SPEED: 3.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 6.0f
+							CIRCLE_Y: 2.5f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.8f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector25: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 350.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 1.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 6.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.25f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector26: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 23.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 1.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -6.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.25f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector27: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 59.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 1.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 6.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.25f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector28: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 98.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 1.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -6.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.25f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector29: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 64.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 1.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 10.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.25f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector3: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 45.0f
+							CIRCLE_ROTATION: 90.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 3.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 6.0f
+							CIRCLE_Y: 3.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.3f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector30: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 155
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 148.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 1.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -10.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.25f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector31: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 7.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 2.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -10.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector32: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 351.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 2.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 10.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector33: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 345.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 2.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -6.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector34: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 341.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 2.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 6.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector35: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 330.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 2.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -6.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector36: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 312.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 2.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 6.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector37: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 145.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 255
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 254.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 1.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 0.0f
+							CIRCLE_Y: 1.55f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -0.3f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector38: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 145.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 255
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 330.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 0b
+							CIRCLE_SIZE: 1.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 0.0f
+							CIRCLE_Y: 1.9f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -0.45f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.0f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector39: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 90.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 216
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 151.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 1.5f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -2.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 45.0f
+							CIRCLE_Z: -1.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector4: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 45.0f
+							CIRCLE_ROTATION: 318.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 3.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -6.0f
+							CIRCLE_Y: 3.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.3f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector40: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 90.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 216
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 267.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 1.5f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 2.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 145.0f
+							CIRCLE_Z: -1.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector41: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 120.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 215.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 5.0f
+							CIRCLE_SPEED: 15.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 0.0f
+							CIRCLE_Y: 3.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -2.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.35f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector42: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 74.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 13.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 0.0f
+							CIRCLE_Y: 2.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: 2
+							RING_HEIGHT: 1.0f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: 2
+						}
+						mahoujin_projector43: {
+							CIRCLE_A: 200
+							CIRCLE_B: 50
+							CIRCLE_G: 50
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 255
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 62.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 3.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 0.0f
+							CIRCLE_Y: 0.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.5f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector44: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 45.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 352.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 10.0f
+							CIRCLE_SPEED: 5.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 0.0f
+							CIRCLE_Y: 7.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 16.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 1.0f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector45: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 145.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 338.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 10.0f
+							CIRCLE_SPEED: 5.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 0.0f
+							CIRCLE_Y: 7.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -16.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 1.0f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector46: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 45.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 104.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 10.0f
+							CIRCLE_SPEED: 5.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 16.0f
+							CIRCLE_Y: 7.0f
+							CIRCLE_YAW: 90.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 1.0f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector47: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 145.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 301.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 10.0f
+							CIRCLE_SPEED: 5.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -16.0f
+							CIRCLE_Y: 7.0f
+							CIRCLE_YAW: 90.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 1.0f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector48: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 4.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 17.0f
+							CIRCLE_SPEED: 20.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 0.0f
+							CIRCLE_Y: 10.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 2.0f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector49: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 90.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 216
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 231.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 3.0f
+							CIRCLE_SPEED: 10.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -3.0f
+							CIRCLE_Y: 2.0f
+							CIRCLE_YAW: 90.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector5: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 45.0f
+							CIRCLE_ROTATION: 240.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 3.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 10.0f
+							CIRCLE_Y: 3.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.3f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector50: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 90.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 216
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 344.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 3.0f
+							CIRCLE_SPEED: 10.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 3.0f
+							CIRCLE_Y: 2.0f
+							CIRCLE_YAW: 90.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector51: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 90.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 216
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 244.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 3.0f
+							CIRCLE_SPEED: 10.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 3.0f
+							CIRCLE_Y: 2.0f
+							CIRCLE_YAW: 90.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector52: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 90.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 216
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 121.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 3.0f
+							CIRCLE_SPEED: 10.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -3.0f
+							CIRCLE_Y: 2.0f
+							CIRCLE_YAW: 90.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector53: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 188.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 14.0f
+							CIRCLE_SPEED: 100.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 0.0f
+							CIRCLE_Y: 0.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 1.0f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector54: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 188.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 14.0f
+							CIRCLE_SPEED: 100.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 0.0f
+							CIRCLE_Y: 6.5f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 1.0f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector55: {
+							CIRCLE_A: 255
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 150
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 139.91312f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 18.0f
+							CIRCLE_SPEED: 0.1f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 0.0f
+							CIRCLE_Y: 8.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 3.0f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector56: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 90.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 216
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 214.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 1.5f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -2.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 145.0f
+							CIRCLE_Z: 1.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector57: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 90.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 216
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 129.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 1.5f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 2.0f
+							CIRCLE_Y: 1.0f
+							CIRCLE_YAW: 45.0f
+							CIRCLE_Z: 1.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector58: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 216
+							CIRCLE_RING_ANGLE: 0.0f
+							CIRCLE_ROTATION: 336.0f
+							CIRCLE_SHOW_C: 1b
+							CIRCLE_SHOW_R: 0b
+							CIRCLE_SIZE: 12.0f
+							CIRCLE_SPEED: 5.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 0.0f
+							CIRCLE_Y: 6.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.125f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector6: {
+							CIRCLE_A: 200
+							CIRCLE_B: 0
+							CIRCLE_G: 0
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 155
+							CIRCLE_RING_ANGLE: 45.0f
+							CIRCLE_ROTATION: 217.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 3.0f
+							CIRCLE_SPEED: 1.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -10.0f
+							CIRCLE_Y: 3.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.3f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector7: {
+							CIRCLE_A: 200
+							CIRCLE_B: 50
+							CIRCLE_G: 50
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 255
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 210.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 5.0f
+							CIRCLE_SPEED: 10.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -10.0f
+							CIRCLE_Y: 5.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.5f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector8: {
+							CIRCLE_A: 200
+							CIRCLE_B: 50
+							CIRCLE_G: 50
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 255
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 222.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 5.0f
+							CIRCLE_SPEED: 10.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: 10.0f
+							CIRCLE_Y: 5.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: 0.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.5f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+						mahoujin_projector9: {
+							CIRCLE_A: 200
+							CIRCLE_B: 50
+							CIRCLE_G: 50
+							CIRCLE_ORBIT: 0.0f
+							CIRCLE_ORBIT_SPEED: 0.0f
+							CIRCLE_PITCH: 0.0f
+							CIRCLE_PRE_PITCH: 0.0f
+							CIRCLE_PRE_YAW: 0.0f
+							CIRCLE_R: 255
+							CIRCLE_RING_ANGLE: 90.0f
+							CIRCLE_ROTATION: 183.0f
+							CIRCLE_SHOW_C: 0b
+							CIRCLE_SHOW_R: 1b
+							CIRCLE_SIZE: 5.0f
+							CIRCLE_SPEED: 10.0f
+							CIRCLE_SPEED_PITCH: 0.0f
+							CIRCLE_SPEED_YAW: 0.0f
+							CIRCLE_X: -6.0f
+							CIRCLE_Y: 5.0f
+							CIRCLE_YAW: 0.0f
+							CIRCLE_Z: -9.0f
+							GIF_LAYER: 0b
+							GIF_SPEED: 1.0f
+							IMAGE_LOAD: -1
+							RING_HEIGHT: 0.5f
+							ROTATION_OFFSET: 0.0f
+							RUNES_LOAD: -1
+						}
+					}
+				}
+				type: "item"
+			}]
+			size: 2.0d
+			subtitle: "超级帅气的魔法阵！"
+			tasks: [{
+				advancement: "mahoutsukai:bakuretsu"
+				criterion: ""
+				id: "2E95ADA575C51BFA"
+				type: "advancement"
+			}]
+			title: "&e大型魔法阵盔甲！"
+			x: -7.5d
+			y: 23.0d
+		}
+	]
+	title: "&d成为魔法使吧！【DLC】"
+}

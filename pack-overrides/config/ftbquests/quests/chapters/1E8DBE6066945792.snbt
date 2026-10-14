@@ -1,0 +1,3099 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: "square"
+	filename: "1E8DBE6066945792"
+	group: "7916E3ED902C17A5"
+	icon: {
+		Count: 1b
+		id: "irons_spellbooks:gold_spell_book"
+		tag: {
+			ISB_Spells: {
+				data: [ ]
+				maxSpells: 8
+				mustEquip: 1b
+				spellWheel: 1b
+			}
+		}
+	}
+	id: "1E8DBE6066945792"
+	images: [
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 4.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/hrkrmrm.png"
+			rotation: 0.0d
+			width: 31.36d
+			x: 17.0d
+			y: -9.0d
+		}
+		{
+			click: ""
+			corner: false
+			dev: false
+			height: 1.0d
+			hover: [ ]
+			image: "kubejs:textures/aaaa/qiangxie.png"
+			rotation: 0.0d
+			width: 3.7804878048780486d
+			x: 15.0d
+			y: 2.0d
+		}
+	]
+	order_index: 0
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&n&e生命其实有二次，当你意识到生命只有一次，第二次便开始了"
+				""
+				"&d诅咒开始蔓延.........你感到毛骨悚然，但这种感觉很快随着灾厄之册一起消失了。似乎是被什么东西封印住了"
+				""
+				"&n&d灾厄之册已经被禁用，在【世界的枷锁】篇章完成任务即可解锁）"
+				"&e灾厄之册链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"315964E756BC5D6D\" } }"
+				"&e注意事项链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"49BCCFBB375A53D0\" } }"
+				""
+				"&a你可以装DLC内容来丰富游戏内容（还有备份存档功能之类的...），DLC链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1C39C0AD40FEBA12\" } }"
+			]
+			id: "4F97050FD9391D04"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "25A0CB0776DE0FC1"
+					item: {
+						Count: 1b
+						id: "tarotcards:the_fool"
+						tag: { }
+					}
+					title: "&e\"愚者\"象征着新的旅途"
+					type: "item"
+				}
+				{
+					auto: "invisible"
+					command: "/title @p times 2s 10s 2s"
+					elevate_perms: true
+					id: "6689A3234BD17E98"
+					team_reward: false
+					type: "command"
+				}
+				{
+					auto: "invisible"
+					command: "/title @p title {\"text\":\"灾厄之册已封印，完成任务解锁\",\"color\":\"red\"}"
+					elevate_perms: true
+					id: "59539CC6E796EFA2"
+					team_reward: false
+					type: "command"
+				}
+			]
+			size: 3.0d
+			subtitle: "欢迎游玩落幕曲！"
+			tasks: [{
+				dimension: "minecraft:overworld"
+				icon: "goety:rupture_focus"
+				id: "1B8D092AFCB4F26D"
+				title: "&6奇迹的始发点"
+				type: "dimension"
+			}]
+			x: 1.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["4F97050FD9391D04"]
+			id: "09FABBF9B7AA076B"
+			rewards: [
+				{
+					auto: "enabled"
+					id: "2362644788251EDF"
+					item: {
+						Count: 1b
+						id: "minecraft:shulker_box"
+						tag: {
+							BlockEntityTag: {
+								Items: [
+									{
+										Count: 1b
+										Slot: 9b
+										id: "alexsmobs:animal_dictionary"
+									}
+									{
+										Count: 1b
+										Slot: 10b
+										id: "patchouli:guide_book"
+										tag: {
+											"patchouli:book": "ice_and_fire_delight:cookbook"
+										}
+									}
+									{
+										Count: 1b
+										Slot: 11b
+										id: "patchouli:guide_book"
+										tag: {
+											"patchouli:book": "touhou_little_maid:memorizable_gensokyo"
+										}
+									}
+									{
+										Count: 1b
+										Slot: 12b
+										id: "butcher:butchersguidebook"
+										tag: {
+											Damage: 0
+										}
+									}
+									{
+										Count: 1b
+										Slot: 13b
+										id: "patchouli:guide_book"
+										tag: {
+											"patchouli:book": "parcool:parcool_guide"
+										}
+									}
+									{
+										Count: 1b
+										Slot: 14b
+										id: "patchouli:guide_book"
+										tag: {
+											"patchouli:book": "irons_spellbooks:iss_guide_book"
+										}
+									}
+									{
+										Count: 1b
+										Slot: 15b
+										id: "patchouli:guide_book"
+										tag: {
+											"patchouli:book": "goety:black_book"
+										}
+									}
+									{
+										Count: 1b
+										Slot: 16b
+										id: "patchouli:guide_book"
+										tag: {
+											"patchouli:book": "goety:witches_brew"
+										}
+									}
+									{
+										Count: 1b
+										Slot: 17b
+										id: "ftbquests:book"
+									}
+								]
+								id: "minecraft:shulker_box"
+							}
+							display: {
+								Name: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"light_purple\",\"text\":\"书籍\"}"
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6376F167D4F0F1BC"
+					item: "extrameat:allay_softserve"
+					type: "item"
+				}
+				{
+					id: "10355D72EE211420"
+					item: {
+						Count: 1b
+						id: "lrtactical:melee"
+						tag: {
+							MeleeWeaponId: "ab_wt:hands"
+						}
+					}
+					type: "item"
+				}
+			]
+			size: 1.5d
+			subtitle: "&e小提示：M键可以打开地图，按住~键连锁"
+			tasks: [{
+				id: "6BA228896FE21443"
+				item: {
+					Count: 1b
+					id: "itemfilters:tag"
+					tag: {
+						value: "minecraft:logs"
+					}
+				}
+				title: "任意木头即可"
+				type: "item"
+			}]
+			title: "&6收集一块原木"
+			x: 7.5d
+			y: -2.5d
+		}
+		{
+			dependencies: ["09FABBF9B7AA076B"]
+			id: "4EB4C4CB3444E400"
+			rewards: [
+				{
+					id: "03955472C0DCE973"
+					item: "peyroscythe:clair_de_lune_disc"
+					type: "item"
+				}
+				{
+					id: "287649894042B944"
+					item: "minecraft:jukebox"
+					type: "item"
+				}
+			]
+			size: 1.5d
+			subtitle: "这是铁锭"
+			tasks: [{
+				id: "49867CD7360DDC7A"
+				item: "minecraft:iron_ingot"
+				type: "item"
+			}]
+			x: 13.0d
+			y: -1.0d
+		}
+		{
+			dependencies: ["4EB4C4CB3444E400"]
+			description: [
+				"&a&n注意：1.枪械工作台非常吃性能，建议放到平时看不到的地方哦"
+				""
+				"{image:kubejs:textures/aaaa/jujizhong.png width:150 height:150 align:1}"
+				"&e相关工作台链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"5A29A732789A625F\" } }"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"75AD3C4C2FCFF1D7\" } }"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1D5BCD377D9D9E72\" } }"
+				""
+				"&b把枪械分给女仆，组成战斗女仆团，输出会有很大提升"
+				"&b女仆链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"02462B8F4C7D32A6\" } }"
+				""
+				"&e枪械附魔书链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"429169FD42CBF2F9\" } }"
+			]
+			id: "24F48914B9CFF9B1"
+			rewards: [
+				{
+					id: "631A53AAD66F5022"
+					item: "ironchests:iron_chest"
+					type: "item"
+				}
+				{
+					id: "135552FAA9094392"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "enchanted_arsenal:armour_piercing"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5128705ABEDA94C2"
+					item: {
+						Count: 1b
+						id: "tacz:workbench_b"
+						tag: {
+							BlockId: "lrtactical:smith_table"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6EF27DF8DE2F83E8"
+					item: {
+						Count: 1b
+						id: "tacz:workbench_c"
+						tag: {
+							BlockId: "tacz:attachment_workbench"
+						}
+					}
+					type: "item"
+				}
+			]
+			size: 1.4d
+			subtitle: "制作枪械工作台"
+			tasks: [
+				{
+					id: "3C1354337CF73784"
+					item: "tacz:gun_smith_table"
+					type: "item"
+				}
+				{
+					id: "6C7ED18D0E934CFB"
+					item: {
+						Count: 1b
+						id: "tacz:workbench_a"
+						tag: {
+							BlockId: "tacz:ammo_workbench"
+						}
+					}
+					type: "item"
+				}
+			]
+			title: "&6制作   热武器"
+			x: 13.0d
+			y: 1.0d
+		}
+		{
+			dependencies: ["24F48914B9CFF9B1"]
+			description: [
+				"&n&6将枪口对准&d村民&6，迫使他们交出所有财产（"
+				"{image:kubejs:textures/aaaa/qiangjiecunmin.png width:150 height:150 align:1}"
+				"&6&n受到威胁的&d流浪商人&6会掏枪打你"
+			]
+			id: "7F01A60E84D2BB7F"
+			subtitle: "bro，让我们去“购物”吧"
+			tasks: [{
+				id: "5DD0F33B811C681A"
+				item: {
+					Count: 1b
+					id: "itemfilters:tag"
+					tag: {
+						value: "mugging_villagers_mod:muggables_tacz"
+					}
+				}
+				title: "任意枪械即可"
+				type: "item"
+			}]
+			title: "获得一把枪"
+			x: 14.5d
+			y: 1.0d
+		}
+		{
+			dependencies: ["5714438856A16B77"]
+			description: ["&6&n你可以在这本书里学到很多关于屠宰的知识，例如：获取尸体，放血，分解尸体.......注意，如果你没有放置blood Grate方块来储存血液，血液会喷溅在别的地方，需要用【湿海绵】来清理"]
+			id: "542E3B606E1B6B5A"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "0E16B6566ED3B44D"
+					item: {
+						Count: 1b
+						id: "butcher:butchers_knife"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "005591A3FF950AF8"
+					item: "butcher:bloodgratetank"
+					title: "放在尸体下方，收集血液"
+					type: "item"
+				}
+				{
+					id: "2129FB70A75F6839"
+					item: "minecraft:wet_sponge"
+					type: "item"
+				}
+				{
+					id: "4AF47171364352DB"
+					item: {
+						Count: 1b
+						id: "butcher:wet_rag"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "想学“如何做人”"
+			tasks: [{
+				id: "07CDDE834D627DBA"
+				item: {
+					Count: 1b
+					id: "butcher:butchersguidebook"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 16.5d
+			y: -4.5d
+		}
+		{
+			dependencies: ["09FABBF9B7AA076B"]
+			description: [
+				"&n&6靠近&c宠物/仆从&6按&dK&6（默认）将宠物收入背包"
+				"{image:kubejs:textures/aaaa/chongwushouna.png width:100 height:100 align:1}"
+				""
+				"&n&6&c马匹&6可以按&dY键&6进行&c脱手骑乘"
+			]
+			icon: "minecraft:lead"
+			id: "23A34AEA614E0F4E"
+			rewards: [{
+				auto: "enabled"
+				id: "740629822B74DEBA"
+				item: "sophisticatedbackpacks:netherite_backpack"
+				team_reward: false
+				type: "item"
+			}]
+			subtitle: "梦想是成为宝可梦大师（"
+			tasks: [{
+				id: "3FE546751EA39DAE"
+				item: "minecraft:crafting_table"
+				type: "item"
+			}]
+			title: "&6宠物系统"
+			x: 6.5d
+			y: -4.0d
+		}
+		{
+			dependencies: ["09FABBF9B7AA076B"]
+			description: [
+				"&n&6高版本拔刀剑改动很大，想完美发挥拔刀剑的力量需要掌握对应招数。"
+				""
+				"拔刀剑指引连接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"7185C0BC1A29F8AA\" } }"
+			]
+			id: "1ABB8A3EA1B6553F"
+			rewards: [
+				{
+					count: 2
+					id: "0C655D47099FE4EB"
+					item: "slashblade:proudsoul"
+					type: "item"
+				}
+				{
+					id: "77594C03FC3AEA3E"
+					item: "dummmmmmy:target_dummy"
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "14BEDE8277482136"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							AttackAmplifier: 0.0f
+							BladeUniqueId: [I;
+								-692368000
+								-534296160
+								-1248975836
+								2122245869
+							]
+							ComboRoot: "slashblade:standby"
+							Damage: 0
+							RepairCounter: 0
+							SpecialAttackType: "slashblade:judgement_cut"
+							StandbyRenderType: 0b
+							SummonedSwordColor: -13421569
+							SummonedSwordColorInverse: 0b
+							TargetEntity: 0
+							_onClick: 0b
+							adjustXYZ: [
+								0.0d
+								0.0d
+								0.0d
+							]
+							currentCombo: "slashblade:none"
+							fallDecreaseRate: 0.0f
+							isBroken: 0b
+							isSealed: 0b
+							killCount: 0
+							lastActionTime: 0L
+							proudSoul: 0
+						}
+					}
+					id: "slashblade:slashblade_wood"
+					tag: {
+						bladeState: { }
+					}
+				}
+				type: "item"
+			}]
+			title: "万刃之祖【木偶】"
+			x: 6.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["5714438856A16B77"]
+			description: [
+				"&e来自启示录枪包的一些古董武器（战地"
+				""
+				"&e枪械附魔书链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"429169FD42CBF2F9\" } }"
+			]
+			id: "75AD3C4C2FCFF1D7"
+			rewards: [
+				{
+					id: "7A47F7BA8A5A9D09"
+					item: "ironchests:diamond_chest"
+					type: "item"
+				}
+				{
+					id: "263C95CB7C38BB50"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "enchanted_arsenal:lightweight"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "你可以用它来制作一些“老古董”"
+			tasks: [{
+				id: "64E6F3949E331490"
+				item: {
+					Count: 1b
+					id: "tacz:workbench_a"
+					tag: {
+						BlockId: "bf1:telegraph"
+					}
+				}
+				type: "item"
+			}]
+			x: 18.5d
+			y: -4.5d
+		}
+		{
+			dependencies: ["09FABBF9B7AA076B"]
+			description: [
+				"&eU键可以骑在准心目标上，甚至可以直接操控一部分生物"
+				"{image:kubejs:textures/aaaa/qichengkulipa.png width:130 height:180 align:1}"
+				"{image:kubejs:textures/aaaa/congyuqiwugui.png width:120 height:100 align:1}"
+			]
+			icon: "minecraft:saddle"
+			id: "74D0147F17B13267"
+			rewards: [
+				{
+					id: "404D109D2968EFDE"
+					item: "minecraft:horse_spawn_egg"
+					type: "item"
+				}
+				{
+					id: "2453E11A1CFFEDC9"
+					item: {
+						Count: 1b
+						id: "relics:horse_flute"
+						tag: {
+							abilities: {
+								heal: {
+									points: 0
+									stats: {
+										amount: 0.03669d
+									}
+								}
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "58FA065394246760"
+					item: "philiaamulet:philia_amulet"
+					type: "item"
+				}
+			]
+			subtitle: "我想骑什么就骑什么（"
+			tasks: [{
+				id: "47D064B79F056766"
+				item: "minecraft:saddle"
+				type: "item"
+			}]
+			title: "&6名为“凌驾”的能力"
+			x: 8.5d
+			y: -4.0d
+		}
+		{
+			dependencies: ["542E3B606E1B6B5A"]
+			description: [
+				"&7小知识：流浪汉村民死后固定掉落尸体"
+				""
+				"&7小知识：鸡的尸体比较特殊，需要【shift+右键挂到钩子】上，放血后【取下】，放下后使用【剪刀剔毛】，【切肉刀分解】，分解掉头部后可使用镊子取出叉骨"
+				""
+				"&7小知识：掠夺者需要先用剥皮刀扒掉衣服，然后才能放血"
+			]
+			id: "293BF983D344709B"
+			rewards: [{
+				id: "5DD01FBA4C9EAD16"
+				item: "ironchests:diamond_chest"
+				type: "item"
+			}]
+			subtitle: "&6用&c【切肉刀】&c杀死生物&6获得"
+			tasks: [{
+				id: "4DEF1C98BD558192"
+				item: {
+					Count: 1b
+					id: "itemfilters:tag"
+					tag: {
+						value: "forge:corpseitem"
+					}
+				}
+				title: "任意一具尸体"
+				type: "item"
+			}]
+			title: "获取一具尸体"
+			x: 15.5d
+			y: -5.5d
+		}
+		{
+			dependencies: ["5714438856A16B77"]
+			description: [
+				"&d龙之骨获取：&6空手右键龙的尸体获取，龙的尸体生成在世界各地。或者去村庄里面找，可能找到少量龙之骨"
+				""
+				"&7（注意：原始坐标为中心200格内不会生成龙骨）"
+			]
+			id: "7DF5E7523BAE1F83"
+			rewards: [
+				{
+					id: "3B294C05B9AF83E6"
+					item: "tacz:target"
+					type: "item"
+				}
+				{
+					id: "0C34C4392AD12F9C"
+					item: "dummmmmmy:target_dummy"
+					type: "item"
+				}
+			]
+			subtitle: "乘风而起"
+			tasks: [{
+				id: "78D065C3C909D725"
+				item: "broomsmod:wooden_broom"
+				type: "item"
+			}]
+			title: "&6魔女之旅"
+			x: 17.5d
+			y: -5.0d
+		}
+		{
+			dependencies: ["4EB4C4CB3444E400"]
+			id: "5714438856A16B77"
+			rewards: [
+				{
+					icon: {
+						Count: 1b
+						id: "goety:hunters_bow"
+						tag: {
+							Damage: 0
+							Enchantments: [{
+								id: "butcher:butcherenchantment"
+								lvl: 1s
+							}]
+							RepairCost: 1
+						}
+					}
+					id: "0948D9878B56750D"
+					item: {
+						Count: 1b
+						id: "goety:hunters_bow"
+						tag: {
+							Damage: 0
+						}
+					}
+					title: "猎人之弓（自带抢夺IV）"
+					type: "item"
+				}
+				{
+					id: "0870E881B5D7E459"
+					item: {
+						Count: 1b
+						id: "minecraft:blue_shulker_box"
+						tag: {
+							BlockEntityTag: {
+								CustomName: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"blue\",\"text\":\"拔刀剑潜影盒\"}"
+								ForgeData: { }
+								Items: [{
+									Count: 1b
+									ForgeCaps: {
+										Parent: {
+											AttackAmplifier: 0.0f
+											BladeUniqueId: [I;
+												177875287
+												-854048211
+												-2128180079
+												167058373
+											]
+											ComboRoot: "slashblade:standby"
+											Damage: 0
+											RepairCounter: 0
+											SpecialAttackType: "slashblade:judgement_cut"
+											StandbyRenderType: 0b
+											SummonedSwordColor: -13421569
+											SummonedSwordColorInverse: 0b
+											TargetEntity: 0
+											_onClick: 0b
+											adjustXYZ: [
+												0.0d
+												0.0d
+												0.0d
+											]
+											baseAttackModifier: 4.0f
+											currentCombo: "slashblade:none"
+											fallDecreaseRate: 0.0f
+											isBroken: 0b
+											isDefaultBewitched: 0b
+											isSealed: 0b
+											killCount: 0
+											lastActionTime: 0L
+											maxDamage: 40
+											proudSoul: 0
+											translationKey: ""
+										}
+									}
+									Slot: 13b
+									id: "slashblade:slashblade"
+									tag: {
+										bladeState: {
+											AttackAmplifier: 0.0f
+											BladeUniqueId: [I;
+												177875287
+												-854048211
+												-2128180079
+												167058373
+											]
+											ComboRoot: "slashblade:standby"
+											Damage: 0
+											RepairCounter: 0
+											SpecialAttackType: "slashblade:judgement_cut"
+											StandbyRenderType: 0b
+											SummonedSwordColor: -13421569
+											SummonedSwordColorInverse: 0b
+											TargetEntity: 0
+											_onClick: 0b
+											adjustXYZ: [
+												0.0d
+												0.0d
+												0.0d
+											]
+											baseAttackModifier: 4.0f
+											currentCombo: "slashblade:none"
+											fallDecreaseRate: 0.0f
+											isBroken: 0b
+											isDefaultBewitched: 0b
+											isSealed: 0b
+											killCount: 0
+											lastActionTime: 0L
+											maxDamage: 40
+											proudSoul: 0
+											translationKey: ""
+										}
+									}
+								}]
+								id: "minecraft:shulker_box"
+							}
+							display: {
+								Name: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"blue\",\"text\":\"拔刀剑潜影盒\"}"
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5333EFD2DE900969"
+					item: {
+						Count: 1b
+						id: "minecraft:iron_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "042A610AD6124626"
+					item: {
+						Count: 1b
+						id: "minecraft:iron_chestplate"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5B8C7E7C13582AB5"
+					item: {
+						Count: 1b
+						id: "minecraft:iron_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "36E0D25636814373"
+					item: {
+						Count: 1b
+						id: "minecraft:iron_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "2EBDBC2DA872140D"
+					item: "ironchests:diamond_dolly"
+					type: "item"
+				}
+			]
+			size: 1.5d
+			subtitle: "钻石！！！"
+			tasks: [{
+				id: "499BA6B143BB1292"
+				item: "minecraft:diamond"
+				type: "item"
+			}]
+			x: 17.5d
+			y: -3.0d
+		}
+		{
+			dependencies: ["3259483A2A303E41"]
+			id: "191879B4A270CE98"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0BFB078AFD1172FB"
+				table_id: 6073454410389419023L
+				type: "choice"
+			}]
+			tasks: [
+				{
+					consume_items: true
+					id: "5DBA3C4AC0C9E938"
+					item: {
+						Count: 1b
+						id: "minecraft:diamond_axe"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					consume_items: true
+					count: 30L
+					id: "640246B6B94857B6"
+					item: {
+						Count: 1b
+						id: "itemfilters:tag"
+						tag: {
+							value: "minecraft:logs"
+						}
+					}
+					title: "Any #minecraft:logs"
+					type: "item"
+				}
+			]
+			title: "你掉的是哪把斧头？"
+			x: 24.5d
+			y: -1.5d
+		}
+		{
+			dependencies: ["5714438856A16B77"]
+			id: "0FFB5FB65B8AB998"
+			rewards: [
+				{
+					id: "336CBFAF9C2D7F96"
+					item: {
+						Count: 1b
+						id: "minecraft:blue_shulker_box"
+						tag: {
+							BlockEntityTag: {
+								CustomName: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"blue\",\"text\":\"拔刀剑潜影盒\"}"
+								ForgeData: { }
+								Items: [{
+									Count: 1b
+									ForgeCaps: {
+										Parent: {
+											AttackAmplifier: 0.0f
+											BladeUniqueId: [I;
+												1488523403
+												-1310307027
+												-2116537741
+												1578184329
+											]
+											ComboRoot: "slashblade:standby"
+											Damage: 0
+											ModelName: "slashblade:model/named/muramasa/muramasa.obj"
+											RepairCounter: 0
+											SpecialAttackType: "slashblade:judgement_cut"
+											StandbyRenderType: 2b
+											SummonedSwordColor: -13421569
+											SummonedSwordColorInverse: 0b
+											TargetEntity: 0
+											TextureName: "slashblade:model/named/muramasa/sabigatana.png"
+											_onClick: 0b
+											adjustXYZ: [
+												0.0d
+												0.0d
+												0.0d
+											]
+											baseAttackModifier: 3.0f
+											currentCombo: "slashblade:none"
+											fallDecreaseRate: 0.0f
+											isBroken: 0b
+											isDefaultBewitched: 0b
+											isSealed: 0b
+											killCount: 0
+											lastActionTime: 3701602L
+											maxDamage: 40
+											proudSoul: 0
+											translationKey: "item.slashblade.sabigatana"
+										}
+									}
+									Slot: 13b
+									id: "slashblade:slashblade"
+									tag: {
+										bladeState: {
+											AttackAmplifier: 0.0f
+											BladeUniqueId: [I;
+												1488523403
+												-1310307027
+												-2116537741
+												1578184329
+											]
+											ComboRoot: "slashblade:standby"
+											Damage: 0
+											ModelName: "slashblade:model/named/muramasa/muramasa.obj"
+											RepairCounter: 0
+											SpecialAttackType: "slashblade:judgement_cut"
+											StandbyRenderType: 2b
+											SummonedSwordColor: -13421569
+											SummonedSwordColorInverse: 0b
+											TargetEntity: 0
+											TextureName: "slashblade:model/named/muramasa/sabigatana.png"
+											_onClick: 0b
+											adjustXYZ: [
+												0.0d
+												0.0d
+												0.0d
+											]
+											baseAttackModifier: 3.0f
+											currentCombo: "slashblade:none"
+											fallDecreaseRate: 0.0f
+											isBroken: 0b
+											isDefaultBewitched: 0b
+											isSealed: 0b
+											killCount: 0
+											lastActionTime: 3701602L
+											maxDamage: 40
+											proudSoul: 0
+											translationKey: "item.slashblade.sabigatana"
+										}
+									}
+								}]
+								id: "minecraft:shulker_box"
+							}
+							display: {
+								Name: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"blue\",\"text\":\"拔刀剑潜影盒\"}"
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "622D6A87AF0A02BD"
+					item: "eclipticseasons:calendar"
+					type: "item"
+				}
+				{
+					id: "3770A14FB45D209E"
+					item: {
+						Count: 1b
+						id: "immersive_melodies:ender_bass"
+						tag: { }
+					}
+					type: "item"
+				}
+			]
+			size: 1.5d
+			subtitle: "用来传送的道具"
+			tasks: [{
+				id: "0763DABF5AD1E86E"
+				item: {
+					Count: 1b
+					id: "waystones:warp_stone"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			title: "合成传送石"
+			x: 21.5d
+			y: -3.0d
+		}
+		{
+			dependencies: ["0FFB5FB65B8AB998"]
+			description: ["{image:kubejs:textures/aaaa/dianlongyuzhenhong.png width:180 height:120 align:1}"]
+			id: "3259483A2A303E41"
+			rewards: [
+				{
+					auto: "disabled"
+					id: "5F451D3A04C0239C"
+					item: {
+						Count: 1b
+						id: "iceandfire:bestiary"
+						tag: {
+							Pages: [I;
+								0
+								5
+								13
+								21
+								15
+								1
+								26
+								3
+								19
+								4
+								23
+								16
+								12
+								10
+								2
+								14
+								22
+								7
+								6
+								9
+								25
+								8
+								11
+								24
+								18
+								17
+								20
+							]
+						}
+					}
+					title: "完整的异兽笔记"
+					type: "item"
+				}
+				{
+					count: 10
+					id: "2EDC33B9B32C75EC"
+					item: "iceandfire:chain"
+					type: "item"
+				}
+			]
+			subtitle: "&e后续任务强度较高，建议先去完成【主世界】章节中一些简单任务"
+			tasks: [{
+				id: "4922F0E9AACCB9E2"
+				item: {
+					Count: 1b
+					id: "itemfilters:tag"
+					tag: {
+						value: "waystones:waystones"
+					}
+				}
+				title: "Any #waystones:waystones"
+				type: "item"
+			}]
+			title: "合成指路石"
+			x: 24.5d
+			y: -3.0d
+		}
+		{
+			dependencies: ["7DF5E7523BAE1F83"]
+			icon: "minecraft:diamond"
+			id: "7F0F8365599113BF"
+			rewards: [
+				{
+					id: "1D216418B869BEF2"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "broomsmod:hovering"
+								lvl: 4s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "61131AE72186774B"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "broomsmod:land_skills"
+								lvl: 3s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "2204B6556CEC1267"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "broomsmod:seabreeze"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "40099A38FFD89BFE"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "broomsmod:air_skills"
+								lvl: 3s
+							}]
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "御空术和行地术只能二选一哦"
+			tasks: [{
+				consume_items: true
+				count: 6L
+				id: "79E2E8FA1BC5A63D"
+				item: "minecraft:diamond"
+				type: "item"
+			}]
+			title: "&6木扫帚附魔"
+			x: 17.5d
+			y: -6.5d
+		}
+		{
+			dependencies: ["24F48914B9CFF9B1"]
+			description: [
+				"&n&6当玩家携带&c不详征兆BUFF&6进入村庄将触发一场袭击"
+				"&6&n将会有百名&c灾厄阵营敌人&6来摧毁村庄"
+				""
+				"&6&n（在一个村庄逗留太久，也会有概率触发袭击）"
+				""
+				"&c&n因为袭击的难度非常高，建议招募帮手，筑造防御结构"
+				""
+				"&e如果你找不到袭击的敌人，可以用召集之钟来召唤"
+				"{image:kubejs:textures/aaaa/jujishou.png width:100 height:100 align:1}"
+			]
+			id: "2F45755432F2CC6B"
+			rewards: [{
+				id: "3E45C692796F41A4"
+				item: "goety:hook_bell"
+				type: "item"
+			}]
+			subtitle: "这是...地狱吗？"
+			tasks: [{
+				entity: "minecraft:pillager"
+				id: "48EDE6F05E811457"
+				type: "kill"
+				value: 1L
+			}]
+			title: "&6关于&c袭击"
+			x: 13.0d
+			y: 2.5d
+		}
+		{
+			dependencies: ["24F48914B9CFF9B1"]
+			description: ["&6&n持枪&c掠夺者&6会掉落铜和火药，&c赏金猎人任务奖励&6也包含一些子弹材料，所以不用去刻意下矿哦"]
+			id: "071202F87518A923"
+			rewards: [{
+				count: 10
+				exclude_from_claim_all: true
+				id: "2EFA54815AC7F98A"
+				item: "minecraft:gunpowder"
+				type: "item"
+			}]
+			tasks: [{
+				id: "43872CBEA219CBBB"
+				item: {
+					Count: 1b
+					id: "tacz:ammo_box"
+					tag: {
+						Level: 0
+					}
+				}
+				title: "&e任意弹药盒即可"
+				type: "item"
+			}]
+			title: "关于弹药"
+			x: 11.5d
+			y: 1.0d
+		}
+		{
+			dependencies: ["24F48914B9CFF9B1"]
+			id: "6F99A3DE5F7B8677"
+			rewards: [
+				{
+					count: 30
+					exclude_from_claim_all: true
+					id: "2E3FE24F1BF37F90"
+					item: "minecraft:gunpowder"
+					type: "item"
+				}
+				{
+					count: 20
+					exclude_from_claim_all: true
+					id: "5D56E36BECC1AB5B"
+					item: "minecraft:copper_ingot"
+					type: "item"
+				}
+				{
+					id: "1DC612979130BFC5"
+					item: {
+						Count: 1b
+						id: "tacz:ammo_box"
+						tag: {
+							Level: 2
+						}
+					}
+					type: "item"
+				}
+			]
+			tasks: [{
+				entity: "minecraft:pillager"
+				id: "753CB0D877C2AB82"
+				type: "kill"
+				value: 10L
+			}]
+			x: 10.0d
+			y: 1.0d
+		}
+		{
+			dependencies: ["4EB4C4CB3444E400"]
+			description: [
+				"&d跳转至魔法篇："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"206690BB149FE86A\" } }"
+			]
+			id: "57E6390709408987"
+			rewards: [{
+				id: "6661BCCEEC7D7183"
+				item: "ironchests:iron_chest"
+				type: "item"
+			}]
+			tasks: [{
+				id: "05E3E9E79B505560"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:copper_spell_book"
+					tag: {
+						ISB_Spells: {
+							data: [ ]
+							maxSpells: 5
+							mustEquip: 1b
+							spellWheel: 1b
+						}
+					}
+				}
+				type: "item"
+			}]
+			title: "&d魔法使的诞生"
+			x: 13.0d
+			y: -3.0d
+		}
+		{
+			dependencies: ["0FFB5FB65B8AB998"]
+			description: ["&e幽寂的希望，在无人知晓处生根发芽...."]
+			icon: {
+				Count: 1b
+				id: "tarotcards:the_star"
+				tag: { }
+			}
+			id: "35CC61D5D5B2009A"
+			rewards: [{
+				id: "1A07ABEC591A4A88"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_star"
+					tag: { }
+				}
+				type: "item"
+			}]
+			subtitle: "抵达  &2平原  &e沙漠  &b雪原"
+			tasks: [
+				{
+					biome: "minecraft:plains"
+					id: "19EE297CBF85A537"
+					title: "抵达草原"
+					type: "biome"
+				}
+				{
+					biome: "minecraft:desert"
+					id: "4BCA93F1F4E68B66"
+					title: "抵达沙漠"
+					type: "biome"
+				}
+				{
+					biome: "minecraft:snowy_plains"
+					id: "292A084D54F4096A"
+					title: "抵达雪原"
+					type: "biome"
+				}
+			]
+			title: "&e希望之星"
+			x: 21.5d
+			y: -5.0d
+		}
+		{
+			dependencies: ["4EB4C4CB3444E400"]
+			description: [
+				"&n&6当你拥有&c不详征兆BUFF&6...或者其它&c不需要的BUFF&6，可以喝下&c瓶装奶&6来&c清除"
+				""
+				"&n&6当然，你可以制作喷剂的瓶装奶"
+			]
+			id: "65F75367F3AC7E1E"
+			rewards: [
+				{
+					count: 5
+					id: "685A7CC83AEB131D"
+					item: "splash_milk:splash_milk_bottle"
+					type: "item"
+				}
+				{
+					id: "0181E99DDFCC4669"
+					item: "ironchests:iron_chest"
+					type: "item"
+				}
+			]
+			tasks: [{
+				id: "3C073A59319346EC"
+				item: "splash_milk:milk_bottle"
+				type: "item"
+			}]
+			title: "&6清除一切效果！"
+			x: 11.5d
+			y: -0.5d
+		}
+		{
+			dependencies: ["5714438856A16B77"]
+			description: [
+				"&6&n分别代表要到达某个群系和结构，这些一般会在任务里有具体的提示，或者用对应的指南针&c搜：后面的英文&6即可查找"
+				""
+				"&2自然罗盘：右键打开，搜索想去的群系即可"
+				""
+				"&7探险家指南针：用于寻找结构。搜索任务给出的名字，或者BOSS名字即可"
+				"&6【举个例子】：搜索此任务中给出的名字即可"
+				"{image:kubejs:textures/aaaa/tanxianluopan.png width:180 height:30 align:1}"
+				""
+				"&e如果你搜到的结构已经被你探索过了，可以先用【关于整合包，控制台】任务中的随机传送1w格跑远点"
+			]
+			id: "329F902F3CEA01EC"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "1324BC4645A77A6F"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			size: 2.0d
+			tasks: [
+				{
+					id: "74BBF91DA4592E35"
+					item: {
+						Count: 1b
+						id: "explorerscompass:explorerscompass"
+						tag: { }
+					}
+					type: "item"
+				}
+				{
+					id: "34F1B66AA2F521D0"
+					item: {
+						Count: 1b
+						id: "naturescompass:naturescompass"
+						tag: { }
+					}
+					type: "item"
+				}
+			]
+			title: "&6制作&2自然&6/&c探险家&6指南针"
+			x: 19.7d
+			y: 0.0d
+		}
+		{
+			dependencies: ["09FABBF9B7AA076B"]
+			description: [
+				"&6&n打开物品栏，点击圈出的地方放入饰品。"
+				""
+				"&n&6戒指必须放到戒指栏才能生效！"
+				""
+				"{image:kubejs:textures/aaaa/shipinjiangjie.png width:150 height:150 align:1}"
+				"&7（拔刀剑也有这个功能，指平滑上坡）"
+			]
+			id: "7C6D080C43F07A1B"
+			rewards: [{
+				id: "02A01CD0912346C4"
+				type: "xp"
+				xp: 100
+			}]
+			subtitle: "廉价实用的饰品！"
+			tasks: [{
+				id: "21F7BED0691B2680"
+				item: "ringsofascension:ring_steadfast_steps"
+				type: "item"
+			}]
+			title: "&6坚定戒指"
+			x: 8.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["09FABBF9B7AA076B"]
+			description: [
+				"&6当你在&e【不打开死亡不掉落】&6的情况下......."
+				""
+				"&6你死后将在原地生成墓碑，并在重生后获得&e【钥匙】&6，使用&e【钥匙右键，或者蹲在上面】&6将取回丢失的物品"
+				""
+				""
+				"&6对了，钥匙还有&e【短途传送】&6功能，祝你玩的开心"
+			]
+			icon: "minecraft:skeleton_skull"
+			id: "7ACC682A57CB5D33"
+			rewards: [{
+				id: "7BE85D96ADEE75D3"
+				item: "ironchests:iron_barrel"
+				type: "item"
+			}]
+			subtitle: "&2当你在&b【不打开死亡不掉落】&2的情况下...."
+			tasks: [{
+				id: "68478AC4599C9B75"
+				type: "checkmark"
+			}]
+			title: "&6死亡"
+			x: 7.5d
+			y: -4.5d
+		}
+		{
+			dependencies: ["4EB4C4CB3444E400"]
+			id: "644990522BE8A8AB"
+			rewards: [
+				{
+					id: "62B2A89EE96067B3"
+					item: {
+						Count: 1b
+						id: "minecraft:fishing_rod"
+						tag: {
+							Damage: 0
+							Enchantments: [
+								{
+									id: "minecraft:luck_of_the_sea"
+									lvl: 3s
+								}
+								{
+									id: "minecraft:lure"
+									lvl: 3s
+								}
+							]
+							RepairCost: 3
+						}
+					}
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "29436D2FFD6FCE6D"
+					item: {
+						Count: 1b
+						id: "artifacts:anglers_hat"
+						tag: {
+							abilities: {
+								catch: {
+									points: 0
+									stats: {
+										chance: 0.15545d
+									}
+								}
+							}
+						}
+					}
+					team_reward: false
+					type: "item"
+				}
+			]
+			subtitle: "兑换钓鱼装备！"
+			tasks: [{
+				consume_items: true
+				count: 10L
+				id: "33BDDDBF43EBD58F"
+				item: "minecraft:apple"
+				type: "item"
+			}]
+			title: "&6仅需十个苹果"
+			x: 14.5d
+			y: -0.5d
+		}
+		{
+			dependencies: ["0FFB5FB65B8AB998"]
+			id: "634873341552E2CC"
+			rewards: [{
+				id: "2820ED0738116283"
+				item: "ironfurnaces:iron_furnace"
+				type: "item"
+			}]
+			subtitle: "使用指南针搜&e【冠军之墓】&7寻找。固定生成一只&e【旧日冠军】"
+			tasks: [{
+				id: "4D177838BFE85235"
+				structure: "soulsweapons:champions_graves"
+				type: "structure"
+			}]
+			title: "古老英雄墓地"
+			x: 29.0d
+			y: -3.0d
+		}
+		{
+			dependencies: ["634873341552E2CC"]
+			description: ["&7使用指南针搜&e【冠军之墓】&7寻找。"]
+			id: "0D6C1396B2DB7C93"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "36740A1FA4929B4F"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					id: "754A2334CE016765"
+					item: "celestial_artifacts:repent_mirror"
+					type: "item"
+				}
+			]
+			subtitle: "&6【旧日冠军】&f死后生成&d【狂乱幽影】"
+			tasks: [{
+				advancement: "soulsweapons:draugr_boss"
+				criterion: ""
+				id: "63194FC316900A7A"
+				type: "advancement"
+			}]
+			title: "击败古英雄的遗骸和狂乱幽影"
+			x: 29.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["0D6C1396B2DB7C93"]
+			description: [
+				"&6用【德拉古尔】召唤【古英雄的残骸】。"
+				""
+				"&e用【迷失的灵魂】召唤【莫德凯撒】。"
+				""
+				"&b用【日暮精粹】召唤【月光骑士】。"
+			]
+			id: "43C13ADBB432155E"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "6810EB41FDF0E990"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			tasks: [{
+				id: "1EC8D5195CD29CB0"
+				item: "soulsweapons:altar_block"
+				type: "item"
+			}]
+			x: 29.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["43C13ADBB432155E"]
+			description: [
+				"&e必须一命通关，否则将会重置二阶段的复活"
+				"{image:kubejs:textures/aaaa/yueguangqishi.png width:150 height:150 align:1}"
+			]
+			id: "4F7E09B3EA4C166A"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "25937351F7CAC42D"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&d高级BOSS,   双阶段BOSS"
+			tasks: [{
+				advancement: "soulsweapons:moonknight"
+				criterion: ""
+				id: "51A9436EC0464070"
+				type: "advancement"
+			}]
+			title: "击败月光骑士"
+			x: 30.5d
+			y: 2.0d
+		}
+		{
+			dependencies: ["43C13ADBB432155E"]
+			id: "75BFD3A886FB7004"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "2C8E30DE0F159902"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					id: "5747D10C2547E180"
+					item: {
+						Count: 1b
+						id: "culinaryconstruct:sandwich"
+						tag: {
+							Base: {
+								Count: 1b
+								id: "minecraft:bread"
+							}
+							Food: 20
+							Ingredients: {
+								Items: [
+									{
+										Count: 1b
+										Slot: 0b
+										id: "minecraft:nether_star"
+									}
+									{
+										Count: 1b
+										Slot: 1b
+										id: "minecraft:nether_star"
+									}
+									{
+										Count: 1b
+										Slot: 2b
+										id: "minecraft:nether_star"
+									}
+									{
+										Count: 1b
+										Slot: 3b
+										id: "minecraft:nether_star"
+									}
+									{
+										Count: 1b
+										Slot: 4b
+										id: "minecraft:nether_star"
+									}
+								]
+							}
+							Quality: 4
+							Saturation: 1.0f
+							Size: 5
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "&d高级BOSS"
+			tasks: [{
+				advancement: "soulsweapons:returning_knight"
+				criterion: ""
+				id: "3125ADE5B17E55D8"
+				type: "advancement"
+			}]
+			title: "&6击败莫德凯撒"
+			x: 30.5d
+			y: 1.0d
+		}
+		{
+			dependencies: ["0FFB5FB65B8AB998"]
+			id: "3475FD71A55813FC"
+			rewards: [
+				{
+					id: "51F34630F305E3FD"
+					item: "ironchests:netherite_chest"
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "4D0415399EF5BAEE"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+			]
+			subtitle: "当然，你可以做一些别的，如：双翼机"
+			tasks: [
+				{
+					id: "4F8A86207039E237"
+					item: "immersive_aircraft:airship"
+					type: "item"
+				}
+				{
+					id: "6DAB855414E654DF"
+					item: "immersive_aircraft:cargo_airship"
+					type: "item"
+				}
+				{
+					id: "33BCC59B99EC61D1"
+					item: "immersive_aircraft:warship"
+					type: "item"
+				}
+			]
+			title: "&6飞行工具？"
+			x: 21.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["4EB4C4CB3444E400"]
+			description: [
+				"&e相关链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"310D3BB58FD1BA96\" } }"
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"17DE5A937A5A7E9A\" } }"
+			]
+			icon: {
+				Count: 1b
+				id: "alexscaves:primitive_club"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "3A1A05CDB8A629BA"
+			rewards: [
+				{
+					id: "6BAE535AFE1A3EE7"
+					item: "alexscaves:spelunkery_table"
+					type: "item"
+				}
+				{
+					id: "7B5B619E50A9591B"
+					item: {
+						Count: 1b
+						id: "alexscaves:cave_tablet"
+						tag: {
+							CaveBiome: "alexscaves:forlorn_hollows"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "21F1F7406BFF37DF"
+					item: {
+						Count: 1b
+						id: "alexscaves:cave_map"
+						tag: {
+							BiomeTargetResourceKey: "alexscaves:primordial_caves"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "25937803AB82A4BE"
+					item: "alexscaves:cave_book"
+					type: "item"
+				}
+			]
+			subtitle: "&6基础的道具和一张地图"
+			tasks: [{
+				id: "19B0480B85278168"
+				type: "checkmark"
+			}]
+			title: "&e洞穴之旅"
+			x: 14.0d
+			y: -2.5d
+		}
+		{
+			dependencies: ["2F45755432F2CC6B"]
+			id: "15562B5313DDE9A5"
+			rewards: [{
+				id: "17C059B8CA528B26"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:villager_spell_book"
+					tag: {
+						ISB_Spells: {
+							data: [ ]
+							maxSpells: 10
+							mustEquip: 1b
+							spellWheel: 1b
+						}
+					}
+				}
+				type: "item"
+			}
+				{
+				coinMinorUnits: 500L
+				id: "168923408C7240AD"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			subtitle: "这并不容易！"
+			tasks: [{
+				advancement: "minecraft:adventure/hero_of_the_village"
+				criterion: ""
+				id: "3A635890AF817962"
+				type: "advancement"
+			}]
+			title: "&d打赢一场袭击"
+			x: 14.5d
+			y: 2.5d
+		}
+		{
+			dependencies: ["5714438856A16B77"]
+			description: [
+				"如何寻找巨龙？"
+				""
+				"在距离中心坐标800格以外，自然生成地表龙巢和地下龙巢"
+				""
+				"&b使用探险家指南针搜索【龙巢穴】和【地下巢穴】即可"
+				""
+				"&7或者使用龙眼可探测3级别以上的龙"
+				"{image:kubejs:textures/aaaa/lognyan.png width:80 height:20 align:1}"
+				"&6如何击败巨龙？"
+				""
+				"&7方法1·地道战：&n挖一条地道通向龙巢穴，使龙无法攻击到你，使用弓或枪械，魔法等远程攻击龙"
+				""
+				"&3方法2·捆龙术：&n偷偷的把龙捆起来，在龙无法攻击的地方，用弓或枪械类远程武器攻击龙"
+				""
+				"&2方法3·围剿：&n躲在安全的地方不停的召唤仆从，命令仆从去攻击龙（最难的一个"
+				""
+				"方法4·数值怪：&n如果你有强大的数值，直接硬刚就对了！"
+				""
+				"&n&c注：龙死后，&7【空手右键】&c可获得&d【龙鳞】【龙心】【龙蛋】&c等物品。使用&7【玻璃瓶】&c可获得&d【龙血】"
+				""
+				"&6兑换寻龙道具："
+				"&c龙眼："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"62ABAA633D13D75C\" } }"
+				"&e龙杖："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"02DAA184B3E4105F\" } }"
+			]
+			id: "60A8BD339235D4C5"
+			rewards: [
+				{
+					id: "5F9170D287697B66"
+					item: "celestial_artifacts:backtrack_mirror"
+					type: "item"
+				}
+				{
+					count: 20
+					id: "77BFF16AD0C54A4C"
+					item: "peyroscythe:captain_greg_donut"
+					type: "item"
+				}
+				{
+					id: "6CF6C7EF526C26DF"
+					item: {
+						Count: 1b
+						id: "soulsweapons:chungus_disc"
+						tag: { }
+					}
+					type: "item"
+				}
+			
+				{
+				coinMinorUnits: 2000L
+				id: "6E9AF36AFFFB710A"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			size: 2.0d
+			subtitle: "强大的龙....但脑子不太好使"
+			tasks: [{
+				advancement: "iceandfire:iceandfire/kill_if_dragon"
+				criterion: ""
+				icon: {
+					Count: 1b
+					id: "iceandfire:dragon_skull_lightning"
+					tag: {
+						DragonAge: 58
+						DragonType: 0
+						Stage: 3
+					}
+				}
+				id: "1926BD104CF627DC"
+				title: "&6杀死一只龙（冰，火，雷任意一种）"
+				type: "advancement"
+			}]
+			title: "&6斩&c杀&9巨&d龙"
+			x: 31.0d
+			y: -3.0d
+		}
+		{
+			dependencies: ["60A8BD339235D4C5"]
+			description: [
+				"&6由地下的巨龙掉落，地表的龙不会掉落龙蛋"
+				""
+				"用来孵化龙......龙是一种十分强大的仆从，成年的龙血量可达2000+。可骑乘，三级以后可以飞行，按下R吐息"
+				""
+				""
+				"&e如何孵化龙蛋？"
+				""
+				"&c火龙蛋：放在火焰中炙烤"
+				"&b冰龙蛋：放在水中"
+				"&d电龙蛋：放在雨中"
+				""
+				"{image:kubejs:textures/aaaa/ruhefuhualongdan.png width:150 height:150 align:1}"
+				""
+				""
+				"一级火龙："
+				""
+				"{image:kubejs:textures/aaaa/babylong.png width:100 height:100 align:1}"
+				"五级电龙："
+				"{image:kubejs:textures/aaaa/dianlong.png width:130 height:100 align:1}"
+			]
+			id: "67230DCA363C762D"
+			rewards: [
+				{
+					exclude_from_claim_all: true
+					id: "4FD0D5EE5403631D"
+					table_id: 4285267094801687139L
+					type: "choice"
+				}
+				{
+					id: "0C3F257F0F11F9CB"
+					item: {
+						Count: 1b
+						id: "iceandfire:bestiary"
+						tag: {
+							Pages: [I;
+								0
+								5
+								13
+								21
+								15
+								1
+								26
+								3
+								19
+								4
+								23
+								16
+								12
+								10
+								2
+								14
+								22
+								7
+								6
+								9
+								25
+								8
+								11
+								24
+								18
+								17
+								20
+							]
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "强大的仆从...."
+			tasks: [{
+				advancement: "iceandfire:iceandfire/dragon_egg"
+				criterion: ""
+				id: "3D0B18171AE6858B"
+				type: "advancement"
+			}]
+			title: "&e获得龙蛋"
+			x: 33.0d
+			y: -3.0d
+		}
+		{
+			dependencies: ["0FFB5FB65B8AB998"]
+			id: "67F8759EA259E86A"
+			rewards: [{
+				id: "6250FF0D47CDF31F"
+				item: "ironchests:diamond_chest"
+				type: "item"
+			}]
+			subtitle: "由女巫小概率掉落，或者合成获得"
+			tasks: [{
+				id: "5E9C16A2C2B900AC"
+				item: {
+					Count: 1b
+					id: "goety:witch_robe"
+					tag: {
+						WITCH_ROBE_BREW: 8
+					}
+				}
+				type: "item"
+			}]
+			title: "&6让你看看，什么叫魔抗！"
+			x: 20.5d
+			y: -1.5d
+		}
+		{
+			dependencies: ["0FFB5FB65B8AB998"]
+			description: [
+				"{image:kubejs:textures/aaaa/shuazi.png width:200 height:120 align:1}"
+				""
+				"可疑的方块"
+				""
+				"{image:kubejs:textures/aaaa/youxiaofangkuai.png width:200 height:100 align:1}"
+			]
+			id: "353ADEED23B54025"
+			rewards: [{
+				id: "1462D7C28C89B49E"
+				item: "ironchests:netherite_chest"
+				type: "item"
+			}]
+			subtitle: "用于刷取可疑的方块，很大概率刷出饰品"
+			tasks: [{
+				id: "1ED70E6B93BB427D"
+				item: {
+					Count: 1b
+					id: "minecraft:brush"
+					tag: {
+						Damage: 0
+					}
+				}
+				type: "item"
+			}]
+			x: 22.5d
+			y: -4.5d
+		}
+		{
+			dependencies: ["09FABBF9B7AA076B"]
+			id: "51A60486DF8FFD32"
+			rewards: [{
+				id: "578F976D97AD9D06"
+				type: "xp"
+				xp: 100
+			}]
+			subtitle: "放上生肉，可以变成熟肉哦"
+			tasks: [{
+				id: "7FB5C427212F52AB"
+				item: "minecraft:campfire"
+				type: "item"
+			}]
+			x: 9.5d
+			y: -3.5d
+		}
+		{
+			dependencies: ["09FABBF9B7AA076B"]
+			description: [
+				"&e烹饪台链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"311AE02871689034\" } }"
+			]
+			id: "6ECDEECE8DBAE88E"
+			rewards: [
+				{
+					count: 2
+					id: "3329F6D94372C674"
+					item: "minecraft:bread"
+					type: "item"
+				}
+				{
+					id: "2CADD415EEA3280A"
+					item: "culinaryconstruct:culinary_station"
+					type: "item"
+				}
+			]
+			subtitle: "放下砧板，放入食材，使用刀来切食材吧"
+			tasks: [
+				{
+					id: "78843490D647C5D1"
+					item: "farmersdelight:cutting_board"
+					type: "item"
+				}
+				{
+					id: "32EBF4F0139EB8A7"
+					item: {
+						Count: 1b
+						id: "farmersdelight:iron_knife"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+			]
+			x: 5.5d
+			y: -1.5d
+		}
+		{
+			dependencies: ["5714438856A16B77"]
+			description: [
+				"&e使用【DNA采样器】攻击生物，汲取DNA"
+				""
+				"&b注意：凋零会给予范围内玩家虚弱1效果，如果不能提取，带个力量BUFF，让攻击力不为0就好了"
+				""
+				"{image:kubejs:textures/aaaa/jiqudna.png width:100 height:120 align:1}"
+				"&e放下生物笼，再放入对应的方块（具体看DNA采样器的JEI用途，按U查看用途）"
+				""
+				"&e用【DNA采样器】或【刷怪蛋】右键生物笼即可"
+				""
+				"{image:kubejs:textures/aaaa/longzhongshengw.png width:100 height:100 align:1}"
+				"&e进度满后使用【剑】，来收集"
+				""
+				"{image:kubejs:textures/aaaa/longzhongshengwu2.png width:120 height:120 align:1}"
+			]
+			id: "78494C2624BB0151"
+			rewards: [
+				{
+					count: 18
+					id: "36C2D6E4C33F9615"
+					item: {
+						Count: 1b
+						id: "culinaryconstruct:sandwich"
+						tag: {
+							Base: {
+								Count: 1b
+								id: "minecraft:bread"
+							}
+							Count: 6
+							Food: 9
+							Ingredients: {
+								Items: [
+									{
+										Count: 1b
+										Slot: 0b
+										id: "butcher:pork_loin"
+									}
+									{
+										Count: 1b
+										Slot: 1b
+										id: "butcher:pork_shoulder"
+									}
+									{
+										Count: 1b
+										Slot: 2b
+										id: "butcher:pork_leg"
+									}
+									{
+										Count: 1b
+										Slot: 3b
+										id: "smithstory:ranjinle"
+									}
+									{
+										Count: 1b
+										Slot: 4b
+										id: "minecraft:cooked_porkchop"
+									}
+								]
+							}
+							Quality: 4
+							Saturation: 4.887547f
+							Size: 5
+							Solids: {
+								Items: [
+									{
+										Count: 1b
+										Slot: 0b
+										id: "butcher:pork_loin"
+									}
+									{
+										Count: 1b
+										Slot: 1b
+										id: "butcher:pork_shoulder"
+									}
+									{
+										Count: 1b
+										Slot: 2b
+										id: "butcher:pork_leg"
+									}
+									{
+										Count: 1b
+										Slot: 3b
+										id: "smithstory:ranjinle"
+									}
+									{
+										Count: 1b
+										Slot: 4b
+										id: "minecraft:cooked_porkchop"
+									}
+									{
+										Count: 1b
+										Slot: 5b
+										id: "minecraft:bread"
+									}
+								]
+							}
+							SolidsSize: 6
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 20
+					id: "21CD1BCDB437952C"
+					item: "minecraft:gunpowder"
+					type: "item"
+				}
+			]
+			tasks: [
+				{
+					id: "4B8621E79B518E35"
+					item: "cagedmobs:mob_cage"
+					type: "item"
+				}
+				{
+					id: "5AC35B3050E64633"
+					item: "cagedmobs:diamond_dna_sampler"
+					type: "item"
+				}
+			]
+			x: 17.5d
+			y: -1.0d
+		}
+		{
+			dependencies: ["78494C2624BB0151"]
+			description: [
+				"{image:kubejs:textures/aaaa/shengwulongdadwad.png width:100 height:100 align:1}"
+				""
+				"&e配合汤姆简易存储实现自动化："
+				"{image:kubejs:textures/aaaa/cunchuzhongduanluoshishengwulong.png width:180 height:100 align:1}"
+				"&7下面不用放漏斗的（展示容错"
+			]
+			id: "02381FF87B64BE10"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0242F54A7C65F9FA"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "自带漏斗，会将掉落物传输到下方容器"
+			tasks: [{
+				id: "57E6807A14856F88"
+				item: "cagedmobs:hopping_mob_cage"
+				type: "item"
+			}]
+			x: 18.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["78494C2624BB0151"]
+			description: [
+				"{image:kubejs:textures/aaaa/shengwulongshengji.png width:190 height:80 align:1}"
+				"放入图中槽位"
+			]
+			id: "49DB873E46E5CA4E"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "68ADEAD4B9B5C575"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "升级生物笼"
+			tasks: [
+				{
+					id: "438BEAEE27DD6B33"
+					item: "cagedmobs:lightning_upgrade"
+					type: "item"
+				}
+				{
+					id: "46B8DF18D4420D22"
+					item: "cagedmobs:cooking_upgrade"
+					type: "item"
+				}
+				{
+					id: "0B4062C4126F09D5"
+					item: "cagedmobs:arrow_upgrade"
+					type: "item"
+				}
+				{
+					id: "3E49896F8717BF93"
+					item: "cagedmobs:looting_upgrade"
+					type: "item"
+				}
+				{
+					id: "39F11222C0E1AA78"
+					item: "cagedmobs:speed_i_upgrade"
+					type: "item"
+				}
+				{
+					id: "717AC84F0809B5F4"
+					item: "cagedmobs:speed_ii_upgrade"
+					type: "item"
+				}
+				{
+					id: "2291A4AECD30B929"
+					item: "cagedmobs:speed_iii_upgrade"
+					type: "item"
+				}
+				{
+					id: "4AB7C43CEDF7FBD1"
+					item: "cagedmobs:experience_upgrade"
+					type: "item"
+				}
+			]
+			x: 17.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["0FFB5FB65B8AB998"]
+			description: ["&e快速便捷的移动箱子和桶"]
+			id: "2CD48D957A258CDE"
+			rewards: [{
+				id: "1A8E2D824FE3AC82"
+				item: "ironchests:netherite_chest"
+				type: "item"
+			}]
+			subtitle: "移动箱子和桶"
+			tasks: [{
+				id: "41BCB0DC4A4BDBB6"
+				item: {
+					Count: 1b
+					id: "ironchests:diamond_dolly"
+					tag: { }
+				}
+				type: "item"
+			}]
+			x: 20.5d
+			y: -4.5d
+		}
+		{
+			dependencies: ["09FABBF9B7AA076B"]
+			description: [
+				"&e相关链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"44EA98E2AED109D0\" } }"
+			]
+			id: "49F4BACB58773C7E"
+			rewards: [{
+				id: "442E961C2C094E62"
+				item: "ironchests:iron_barrel"
+				type: "item"
+			}]
+			subtitle: "&c使用建造蓝图，一键建造房屋"
+			tasks: [{
+				disable_toast: true
+				id: "7C0A98C2A6CD2CE8"
+				item: "prefab:item_house"
+				type: "item"
+			}]
+			title: "建筑蓝图"
+			x: 7.5d
+			y: -0.5d
+		}
+		{
+			dependencies: ["4EB4C4CB3444E400"]
+			description: [
+				"饰品链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"579DAD4EC5560DFA\" } }"
+			]
+			id: "31DE7ADF85294B76"
+			rewards: [
+				{
+					id: "270F4B80792B87E8"
+					item: "ironchests:iron_chest"
+					type: "item"
+				}
+				{
+					id: "7A785A11331254B8"
+					item: "minecraft:iron_horse_armor"
+					type: "item"
+				}
+			]
+			subtitle: "可合成获得，空手即可挖掘石头级别的方块"
+			tasks: [{
+				id: "3F532F2E976C5D3D"
+				item: "artifacts:digging_claws"
+				type: "item"
+			}]
+			x: 12.0d
+			y: -2.5d
+		}
+		{
+			dependencies: ["3259483A2A303E41"]
+			description: ["&d先放一个，拿出石头。再放另一个，交换两个石盘的石头"]
+			id: "59612CA4F694BD94"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "65476DCCDEE9EDC4"
+				table_id: 2528355744469316926L
+				type: "random"
+			}]
+			subtitle: "长途运输生物和物品"
+			tasks: [{
+				id: "41A8BD6F0EEB559B"
+				item: "waystones:warp_plate"
+				type: "item"
+			}]
+			x: 24.5d
+			y: -4.5d
+		}
+		{
+			dependencies: ["5714438856A16B77"]
+			description: [
+				"&e枪械附魔书链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"429169FD42CBF2F9\" } }"
+			]
+			id: "5A29A732789A625F"
+			rewards: [
+				{
+					id: "768D8EE45D3B5BAB"
+					item: "ironchests:diamond_chest"
+					type: "item"
+				}
+				{
+					id: "6C687742746BF69E"
+					item: {
+						Count: 1b
+						id: "minecraft:enchanted_book"
+						tag: {
+							StoredEnchantments: [{
+								id: "enchanted_arsenal:hollow_point"
+								lvl: 1s
+							}]
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "7AC96D9046EE79EC"
+					item: {
+						Count: 1b
+						id: "tacz:workbench_b"
+						tag: {
+							BlockId: "cib:cib_printer_parts"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "499BB9C18FE7A4CE"
+					item: {
+						Count: 1b
+						id: "tacz:workbench_a"
+						tag: {
+							BlockId: "cib:cib_printer_bullet"
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "&e来自CIB的热武器"
+			tasks: [
+				{
+					id: "501F3392F45972F8"
+					item: {
+						Count: 1b
+						id: "tacz:workbench_b"
+						tag: {
+							BlockId: "cib:cib_printer"
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "69D43899E9AAD036"
+					item: {
+						Count: 1b
+						id: "tacz:workbench_b"
+						tag: {
+							BlockId: "cibs:cib_printer_skin"
+						}
+					}
+					type: "item"
+				}
+			]
+			x: 16.5d
+			y: -1.5d
+		}
+		{
+			dependencies: ["09FABBF9B7AA076B"]
+			description: [
+				"&e将所有容器整合到一起，方便拿取"
+				"{image:kubejs:textures/aaaa/zhongduan.png width:140 height:100 align:1}"
+				"&6存储整合器与任意容器相连即可使用"
+				"{image:kubejs:textures/aaaa/cunchu.png width:180 height:120 align:1}"
+				""
+				"&e不建议把重要的拔刀剑放进终端，有时候会检测不到"
+			]
+			id: "4AECAC1D31D11059"
+			rewards: [{
+				id: "3377D7518390CBD9"
+				item: "ironchests:iron_barrel"
+				type: "item"
+			}]
+			tasks: [
+				{
+					id: "5F124E1155985BC7"
+					item: "toms_storage:ts.inventory_connector"
+					type: "item"
+				}
+				{
+					id: "58B017031F382E77"
+					item: "toms_storage:ts.storage_terminal"
+					type: "item"
+				}
+			]
+			title: "如何大量存储"
+			x: 5.5d
+			y: -3.5d
+		}
+		{
+			dependencies: ["67230DCA363C762D"]
+			description: [
+				"驯龙杖：&n控制龙的行动状态（如：【休息】【跟随】）。shift+右键设置家"
+				""
+				"龙歌长笛：&n安抚龙的情绪，让龙落到地上。"
+				""
+				"龙吟号角：&n将自己的龙收纳其中"
+			]
+			id: "7403397A84D5C193"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "00EDBD3100C41938"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "【龙】无法快捷携带，必须要用【龙吟号角】"
+			tasks: [
+				{
+					id: "67286B0929BF5871"
+					item: "iceandfire:dragon_stick"
+					type: "item"
+				}
+				{
+					id: "5A727769F9726ABF"
+					item: "iceandfire:dragon_flute"
+					type: "item"
+				}
+				{
+					id: "49561DE286A174AC"
+					item: "iceandfire:dragon_horn"
+					type: "item"
+				}
+			]
+			title: "梦想成为驯龙高手"
+			x: 33.0d
+			y: -4.5d
+		}
+		{
+			dependencies: ["67230DCA363C762D"]
+			description: [
+				"龙会饥饿，需要吃肉"
+				""
+				"随时间推移会慢慢的长大，食用【龙食】加速生长。满级后血量和体型将不再提高，转为提高护甲值"
+				""
+				"&7龙的成长过程是相当漫长的，需要足够的耐心哦"
+			]
+			id: "3CA725EF2C45E098"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "0227DA3AB80EA4BC"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "关于龙的生长"
+			tasks: [{
+				id: "1BC8D0CB54E817DF"
+				item: "iceandfire:dragon_meal"
+				type: "item"
+			}]
+			x: 33.0d
+			y: -1.5d
+		}
+		{
+			dependencies: [
+				"4F7E09B3EA4C166A"
+				"75BFD3A886FB7004"
+			]
+			icon: {
+				Count: 1b
+				id: "irons_spellbooks:netherite_mage_helmet"
+				tag: {
+					Damage: 0
+				}
+			}
+			id: "173B012E1C394D82"
+			rewards: [
+				{
+					id: "4AB304D0D1A74240"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:netherite_mage_helmet"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "2A430FE580AEA951"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:netherite_mage_chestplate"
+						tag: {
+							Damage: 0
+							ISB_Spells: {
+								data: [ ]
+								maxSpells: 1
+								mustEquip: 1b
+								spellWheel: 1b
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "6196FBD83DC629F7"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:netherite_mage_leggings"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "5869ABA482694341"
+					item: {
+						Count: 1b
+						id: "irons_spellbooks:netherite_mage_boots"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 400
+					id: "05B9F8A6A0A5115B"
+					item: "minecraft:emerald"
+					team_reward: false
+					type: "item"
+				}
+				{
+					id: "58B874F0375E3C74"
+					item: "irons_spellbooks:ruined_book"
+					team_reward: false
+					type: "item"
+				}
+				{
+					count: 2
+					id: "2AC17F89E1173D05"
+					item: "minecraft:netherite_ingot"
+					team_reward: false
+					type: "item"
+				}
+			]
+			subtitle: "一套非常强的法师装备...."
+			tasks: [{
+				id: "5417C92EFF2C12D0"
+				title: "奖励......."
+				type: "checkmark"
+			}]
+			x: 32.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["67230DCA363C762D"]
+			description: [
+				"&e此结构需要大量材料，建议使用生物笼来制造"
+				"生物笼链接"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"78494C2624BB0151\" } }"
+				""
+				""
+				"&e完成品刨析层：第三个为完成品"
+				"{image:kubejs:textures/aaaa/longduanluzi.png width:150 height:120 align:1}"
+				"&c完成之后将你的龙放在附近，龙将自觉的工作"
+				""
+				"&c或者用锁链将野龙栓到龙骨墙上诱导它向龙锻炉吐息"
+			]
+			id: "1303A35CC1DC0C45"
+			rewards: [{
+				id: "5E5A7198E0EB6EC8"
+				item: "artifacts:vampiric_glove"
+				type: "item"
+			}]
+			subtitle: "可根据【异兽笔记】中的方法搭建"
+			tasks: [{
+				id: "2D571D25523B0B41"
+				item: "iceandfire:dragonforge_fire_core_disabled"
+				type: "item"
+			}]
+			title: "&e锻造龙钢"
+			x: 35.0d
+			y: -3.0d
+		}
+		{
+			dependencies: ["5714438856A16B77"]
+			description: [
+				"&e如何回收fumo玩偶："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"6BA8506DAE40DBED\" } }"
+			]
+			icon: {
+				Count: 1b
+				id: "tacz:modern_kinetic_gun"
+				tag: {
+					GunCurrentAmmoCount: 16
+					GunFireMode: "AUTO"
+					GunId: "tacz:cz75"
+					HasBulletInBarrel: 1b
+				}
+			}
+			id: "175A97CC6DFE8442"
+			rewards: [
+				{
+					id: "43D386C5B7ACBDCC"
+					table_id: 4571061950206000594L
+					type: "random"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "23CAABD61CBCE96B"
+					item: "fumo:marisa_hat_item"
+					title: "赠品（"
+					type: "item"
+				}
+				{
+					id: "243114F22171C5DB"
+					item: "tacz:statue"
+					type: "item"
+				}
+				{
+					id: "61744A25F0A20744"
+					item: {
+						Count: 1b
+						id: "tacz:workbench_a"
+						tag: {
+							BlockId: "tacz:ammo_workbench"
+						}
+					}
+					team_reward: false
+					type: "item"
+				}
+			]
+			subtitle: "完全随机，概率一样"
+			tasks: [{
+				consume_items: true
+				count: 3L
+				id: "0DA9FD22ED6F2D24"
+				item: "minecraft:diamond"
+				type: "item"
+			}]
+			title: "抽取新手枪械"
+			x: 16.0d
+			y: -3.5d
+		}
+		{
+			dependencies: ["634873341552E2CC"]
+			description: [
+				"&7急速：获得更高移速"
+				""
+				"&7瘫痪：使目标几秒内无法动弹"
+				""
+				"&7爆震：增强击退"
+				""
+				"&7熔融：增加攻击和护甲穿透"
+				""
+				"&7瘟疫：给予周围生物虚弱效果"
+				""
+				"&7创伤：造成致残效果，减少生命恢复"
+			]
+			id: "40B6536B8B1750BB"
+			rewards: [{
+				id: "7221EB1C3F9DB2A2"
+				item: {
+					Count: 1b
+					id: "tacz:modern_kinetic_gun"
+					tag: {
+						GunCurrentAmmoCount: 4
+						GunFireMode: "SEMI"
+						GunId: "tacz:m870"
+						HasBulletInBarrel: 1b
+					}
+				}
+				type: "item"
+			}
+				{
+				coinMinorUnits: 500L
+				id: "45B6B629F76E72E4"
+				team_reward: false
+				type: "geg:coin"
+			}
+			]
+			tasks: [{
+				advancement: "champions:kill_a_champion"
+				criterion: ""
+				id: "6DA40772CF623D0A"
+				type: "advancement"
+			}]
+			title: "&e击杀一名冠军生物"
+			x: 29.0d
+			y: -4.5d
+		}
+		{
+			dependencies: ["0D6C1396B2DB7C93"]
+			id: "59D0EA35E4E70334"
+			subtitle: "&e放上没有附魔的书，取下物品的第一个附魔"
+			tasks: [{
+				id: "59B7440427830F85"
+				item: "disenchanting:disenchanter"
+				type: "item"
+			}]
+			x: 31.0d
+			y: -0.5d
+		}
+		{
+			dependencies: ["5714438856A16B77"]
+			description: [
+				"&e由部分主世界BOSS掉落和末影人概率掉落"
+				"&eBOSS链接："
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"6500D72DC8974DAF\" } }"
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"633203BE60563FF5\" } }"
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"311F715ECE5324CF\" } }"
+				""
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"217B64AF90110789\" } }"
+			]
+			id: "64934BD4F7BBBD8A"
+			rewards: [{
+				id: "5D9C30B726F2CA9E"
+				item: {
+					Count: 1b
+					id: "tacz:attachment"
+					tag: {
+						AttachmentId: "tacz:scope_acog_ta31"
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "用于合成基础饰品"
+			tasks: [{
+				id: "592012398CE1612E"
+				item: "celestial_core:treasure_fragment"
+				type: "item"
+			}]
+			x: 26.0d
+			y: -3.0d
+		}
+		{
+			dependencies: ["0FFB5FB65B8AB998"]
+			description: [
+				"&ashift+右键保存终端&7（图中终端）&a，然后可以&e【远程打开】&a，距离由信标等级决定"
+				"&7（这个终端哦，不要搞错了）"
+				"{image:kubejs:textures/aaaa/cunchu.png width:130 height:100 align:1}"
+				"&a太远了不会加载&e【需要保持区块加载】"
+			]
+			id: "216731620FDB91B2"
+			rewards: [{
+				id: "1D393AC969A211DA"
+				item: {
+					Count: 1b
+					id: "irons_spellbooks:scroll"
+					tag: {
+						ISB_Spells: {
+							data: [{
+								id: "irons_spellbooks:summon_polar_bear"
+								index: 0
+								level: 10
+								locked: 1b
+							}]
+							maxSpells: 1
+							mustEquip: 0b
+							spellWheel: 0b
+						}
+					}
+				}
+				type: "item"
+			}]
+			size: 1.7d
+			subtitle: "&6远程访问终端"
+			tasks: [{
+				id: "121D591623982698"
+				item: "toms_storage:ts.adv_wireless_terminal"
+				type: "item"
+			}]
+			x: 23.0d
+			y: -1.0d
+		}
+		{
+			dependencies: ["24F48914B9CFF9B1"]
+			id: "356BE7892069F961"
+			rewards: [
+				{
+					id: "1E3D39D7D1A49549"
+					type: "xp_levels"
+					xp_levels: 5
+				}
+				{
+					count: 3
+					id: "11391B2D07526A22"
+					item: {
+						Count: 1b
+						id: "lrtactical:throwable"
+						tag: {
+							ThrowableId: "lrtactical:m67"
+						}
+					}
+					type: "item"
+				}
+				{
+					count: 2
+					id: "040C6E03CBA1ECC3"
+					item: {
+						Count: 1b
+						id: "lrtactical:throwable"
+						tag: {
+							ThrowableId: "lrtactical:flash_grenade"
+						}
+					}
+					type: "item"
+				}
+			]
+			size: 1.4d
+			subtitle: "&a锻造近战武器和投掷物！"
+			tasks: [{
+				id: "064FFF408DFD9033"
+				item: {
+					Count: 1b
+					id: "tacz:workbench_b"
+					tag: {
+						BlockId: "lrtactical:smith_table"
+					}
+				}
+				type: "item"
+			}]
+			x: 11.5d
+			y: 2.5d
+		}
+		{
+			dependencies: ["216731620FDB91B2"]
+			description: [
+				"&b灵魂方舟：放置后可以使所在方块常加载"
+				""
+				""
+				"&e锚定核心：放入女仆饰品栏中即可保持周围区块的常加载"
+				""
+				"{image:kubejs:textures/aaaa/nvpushipinlan.png width:140 height:100 align:1}"
+				"{image:kubejs:textures/aaaa/changjiaza.png width:160 height:100 align:1}"
+				""
+				"&b虚空荆棘获得链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2C8347AC5E38C84E\" } }"
+			]
+			id: "1E19C20A1B92CE0A"
+			rewards: [{
+				exclude_from_claim_all: true
+				id: "574D6A3432033456"
+				table_id: 4285267094801687139L
+				type: "choice"
+			}]
+			subtitle: "&a区块常加载道具"
+			tasks: [
+				{
+					id: "0A1025EFA1FB5E61"
+					item: "touhou_little_maid_spell:anchor_core"
+					type: "item"
+				}
+				{
+					id: "47D5D0A9C9FBC18A"
+					item: "goety:arca"
+					type: "item"
+				}
+			]
+			title: "区块常加载道具"
+			x: 23.0d
+			y: 0.5d
+		}
+		{
+			dependencies: ["3259483A2A303E41"]
+			description: [
+				"&6龙骨鞘翅可以代替鞘翅使用，但有两个缺点"
+				"&71.耐久值很低（可使用无法破坏附魔弥补这个缺点）"
+				"&72.飞的很高时，装备者将被点燃"
+				""
+				"&6【新春·毕方】特殊技能可为飞行中的鞘翅提供动力"
+				"&7SA裂霄：向前突进，并短暂给予使用者BUFF"
+			]
+			id: "3AC8446A40BED0B2"
+			rewards: [{
+				id: "57EC37FF05185F44"
+				item: "slashblade:proudsoul_crystal"
+				type: "item"
+			}]
+			subtitle: "前期鞘翅+无限动力"
+			tasks: [
+				{
+					id: "3B28F03DCA2571FA"
+					item: {
+						Count: 1b
+						id: "wooden_elytra:wooden_elytra"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					disable_toast: true
+					id: "4172D63500D4479B"
+					item: {
+						Count: 1b
+						ForgeCaps: {
+							Parent: {
+								AttackAmplifier: 0.0f
+								BladeUniqueId: [I;
+									-689911016
+									-1808250627
+									-1896504669
+									1947055234
+								]
+								ComboRoot: "slashblade:standby"
+								Damage: 0
+								ModelName: "slashblade_addon:model/frostwolf/frosty_cherry.obj"
+								RepairCounter: 0
+								SpecialAttackType: "godbird:birdthrust"
+								StandbyRenderType: 1b
+								SummonedSwordColor: -2500327
+								SummonedSwordColorInverse: 0b
+								TargetEntity: 0
+								TextureName: "godbird:model/godbird/texture.png"
+								_onClick: 0b
+								adjustXYZ: [
+									0.0d
+									0.0d
+									0.0d
+								]
+								baseAttackModifier: 12.0f
+								currentCombo: "slashblade:none"
+								fallDecreaseRate: 0.0f
+								isBroken: 0b
+								isDefaultBewitched: 1b
+								isSealed: 0b
+								killCount: 0
+								lastActionTime: 1015400L
+								maxDamage: 2000
+								proudSoul: 0
+								translationKey: "item.godbird.godbird"
+							}
+						}
+						id: "slashblade:slashblade"
+						tag: {
+							bladeState: {
+								TextureName: "godbird:model/godbird/texture.png"
+								translationKey: "item.godbird.godbird"
+							}
+						}
+					}
+					match_nbt: true
+					type: "item"
+					weak_nbt_match: true
+				}
+			]
+			title: "&6翱翔于天际"
+			x: 27.5d
+			y: -3.0d
+		}
+	
+		{
+			can_repeat: false
+			dependencies: ["09FABBF9B7AA076B"]
+			id: "7E6A4B31C9D80F22"
+			rewards: [{
+				coinMinorUnits: 200L
+				id: "7E6A4B31C9D80F24"
+				team_reward: false
+				type: "geg:coin"
+			}]
+			subtitle: "获得市场终端后，可以进入全服自由市场"
+			tasks: [{
+				consume_items: false
+				id: "7E6A4B31C9D80F23"
+				item: "geg:market_terminal"
+				type: "item"
+			}]
+			title: "&e获得市场终端"
+			x: 9.0d
+			y: -4.0d
+		}
+	]
+	title: "&d新手引导"
+}

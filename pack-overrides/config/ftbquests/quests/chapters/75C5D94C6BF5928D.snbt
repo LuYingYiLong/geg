@@ -1,0 +1,653 @@
+{
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "75C5D94C6BF5928D"
+	group: "50FDD722F8A8E4F8"
+	id: "75C5D94C6BF5928D"
+	images: [{
+		click: ""
+		corner: false
+		dev: false
+		height: 30.0d
+		hover: [ ]
+		image: "kubejs:textures/aaaa/taluopai.png"
+		rotation: 0.0d
+		width: 17.4d
+		x: -0.04d
+		y: -0.22d
+	}]
+	order_index: 1
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&e海洋之心位于结构：埋藏的宝藏"
+				""
+				"&e获取内脏任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"542E3B606E1B6B5A\" } }"
+			]
+			id: "453C1DCD74CC8FE7"
+			rewards: [{
+				id: "7461B4935F574845"
+				item: {
+					Count: 1b
+					id: "goety:dark_metal_scythe"
+					tag: {
+						Damage: 0
+						Enchantments: [
+							{
+								id: "butcher:butcherenchantment"
+								lvl: 1s
+							}
+							{
+								id: "tonsofenchants:enhanced_sharpness"
+								lvl: 5s
+							}
+							{
+								id: "g_abun:absolutelyunbreakable"
+								lvl: 1s
+							}
+						]
+						RepairCost: 7
+					}
+				}
+				type: "item"
+			}]
+			subtitle: "&e由海洋之心和各种内脏合成"
+			tasks: [{
+				id: "33F48C26C3E0025E"
+				item: {
+					Count: 1b
+					id: "tarotcards:death"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：死亡"
+			x: -0.5d
+			y: -0.5d
+		}
+		{
+			description: [
+				"&e链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"7327572608FD2EA7\" } }"
+			]
+			id: "3346BB9AADE7FFB8"
+			rewards: [{
+				id: "205C86CFFAF8E28B"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e任务 百科全书→成就→完成章节【旧世界】获得"
+			tasks: [{
+				id: "60A2940531DF6567"
+				item: {
+					Count: 1b
+					id: "tarotcards:judgement"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：审判"
+			x: 2.0d
+			y: 3.5d
+		}
+		{
+			description: [
+				"&e返还受到的25％伤害"
+				"&e链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"0D3BCE314877E0A7\" } }"
+			]
+			id: "3EBFE58ECD37945B"
+			rewards: [{
+				id: "20527DE55CF60831"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e凋灵掉落特殊材料合成"
+			tasks: [{
+				id: "6A345F79DA720ECC"
+				item: {
+					Count: 1b
+					id: "tarotcards:justice"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：正义"
+			x: 2.5d
+			y: -8.5d
+		}
+		{
+			description: [
+				"&e链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"102432CFE3159567\" } }"
+			]
+			id: "5B5FE614714CC6E7"
+			rewards: [{
+				id: "7FF6CE651FD28209"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e由BOSS焰魔掉落物合成"
+			tasks: [{
+				id: "31F8FCE114D80BD8"
+				item: {
+					Count: 1b
+					id: "tarotcards:strength"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：力量"
+			x: 2.5d
+			y: -3.5d
+		}
+		{
+			description: [
+				"&e链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"400896F339578643\" } }"
+			]
+			id: "6AC646E8438AC298"
+			rewards: [{
+				id: "742553512F2A1EF6"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e位于主线→商品交易中购买"
+			tasks: [{
+				id: "78ED08681A8D3C77"
+				item: {
+					Count: 1b
+					id: "tarotcards:temperance"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：节制"
+			x: 1.5d
+			y: 0.0d
+		}
+		{
+			description: [
+				"&e链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"76B5F92F30F35132\" } }"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"44F7E0748D4C5A30\" } }"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"23B6359E821AE844\" } }"
+			]
+			id: "1801D428C2AC5CD8"
+			rewards: [{
+				id: "7F177F665BD4BB45"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e由BOSS掉落物合成"
+			tasks: [{
+				id: "5017AC0AEEC0EFFB"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_chariot"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：战车"
+			x: 1.0d
+			y: -2.5d
+		}
+		{
+			description: [
+				"&e链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"1E3F40C26EB02A38\" } }"
+			]
+			id: "6756D7781392EFA4"
+			rewards: [{
+				id: "74C8A2B6D9B5B87B"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e由BOSS遗弃者固定掉落"
+			tasks: [{
+				id: "10C6EF2682C1539B"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_devil"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：恶魔"
+			x: -2.0d
+			y: 0.5d
+		}
+		{
+			description: ["&e无限提供村庄英雄3 （生电必备"]
+			id: "041A1EEE50086DDD"
+			rewards: [{
+				id: "13DC7CBBC80A3764"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e大量矿物合成"
+			tasks: [{
+				id: "07693310F5EE191B"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_emperor"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：皇帝"
+			x: -3.5d
+			y: -5.0d
+		}
+		{
+			description: ["&e自动繁殖周围生物，并加快农作物生长"]
+			id: "149B4B026ECD117A"
+			rewards: [{
+				id: "44E4DE4616062A19"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e多种农作物合成获得"
+			tasks: [{
+				id: "68A0B24A89AE7D03"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_empress"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：皇后"
+			x: -3.5d
+			y: -7.0d
+		}
+		{
+			id: "321F34E81EEBB482"
+			rewards: [{
+				id: "7DAB100B863A6259"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e由主线任务，新的旅途→奇迹的始发点领取"
+			tasks: [{
+				id: "62608942324300D8"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_fool"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：愚者"
+			x: -1.0d
+			y: -9.5d
+		}
+		{
+			description: ["&e拥有将受到伤害转化为经验的能力"]
+			id: "0C0C21500CE72655"
+			rewards: [{
+				id: "63B62BAD7104B861"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e由塔罗牌：正义塔罗牌合成获得"
+			tasks: [{
+				id: "7BF64B0CD41A48B0"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_hanged_man"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：倒吊者"
+			x: 1.0d
+			y: -9.5d
+		}
+		{
+			description: [
+				"&e链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"30FEDC2E5D2F49E3\" } }"
+			]
+			id: "4BA3A41E269D1438"
+			rewards: [{
+				id: "2B784B1CEDB49274"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e由BOSS掉落物合成"
+			tasks: [{
+				id: "1C3979AEBBB8E6FE"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_hermit"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：隐者"
+			x: 3.5d
+			y: -5.0d
+		}
+		{
+			description: [
+				"&e链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2C8347AC5E38C84E\" } }"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"0CC3388E5FC0A71F\" } }"
+			]
+			id: "4C7E394CDD72FA69"
+			rewards: [{
+				id: "687F44E585DBD829"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e由BOSS掉落物合成获得"
+			tasks: [{
+				id: "61691EA64BF78F90"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_high_priestess"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：女祭司"
+			x: -2.0d
+			y: 4.0d
+		}
+		{
+			description: ["&e将获取经验值乘1.5倍"]
+			id: "7DAD080FF4389273"
+			rewards: [{
+				id: "190DFFB687637010"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e由塔罗牌：皇帝合成"
+			tasks: [{
+				id: "219089BD24965F14"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_hierophant"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：教皇"
+			x: -2.5d
+			y: -3.5d
+		}
+		{
+			description: [
+				"&e链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2C8347AC5E38C84E\" } }"
+			]
+			id: "5D6DCBC5CB6DAD3D"
+			rewards: [{
+				id: "5DFE305A32602444"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e由BOSS掉落材料与魔法道具合成"
+			tasks: [{
+				id: "7B02DC0C6F3F033A"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_lovers"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：恋人"
+			x: -1.0d
+			y: -2.5d
+		}
+		{
+			description: ["&e使用黄金物品不会消耗耐久"]
+			id: "1F5D9E22462C2C86"
+			rewards: [
+				{
+					id: "07AB4B548F926ACA"
+					item: {
+						Count: 1b
+						id: "minecraft:golden_sword"
+						tag: {
+							Damage: 0
+							Enchantments: [
+								{
+									id: "tonsofenchants:frostbite"
+									lvl: 1s
+								}
+								{
+									id: "tonsofenchants:enhanced_fire_aspect"
+									lvl: 2s
+								}
+								{
+									id: "tonsofenchants:wither"
+									lvl: 3s
+								}
+							]
+							RepairCost: 7
+							Unbreakable: 1b
+							display: {
+								Name: "{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"yellow\",\"text\":\"魔术师之剑\"}"
+							}
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "24A62BFC38623EA5"
+					type: "xp_levels"
+					xp_levels: 20
+				}
+			]
+			subtitle: "&e黄金合成"
+			tasks: [{
+				id: "213B732762FC950A"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_magician"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：魔术师"
+			x: -2.5d
+			y: -8.5d
+		}
+		{
+			description: [
+				"&e链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"0D6C1396B2DB7C93\" } }"
+			]
+			id: "55484F39D55B2C84"
+			rewards: [{
+				id: "6CFFCDB126D3685F"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e由BOSS暗夜之影掉落"
+			tasks: [{
+				id: "7129DDE431726D49"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_moon"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：月亮"
+			x: 1.0d
+			y: 2.0d
+		}
+		{
+			description: [
+				"任务链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"35CC61D5D5B2009A\" } }"
+			]
+			id: "10B2573068045F18"
+			rewards: [{
+				id: "59222864E8F17743"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e任务 主线→新的旅途→希望之星"
+			tasks: [{
+				id: "64855EF057664DF4"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_star"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：星星"
+			x: -1.5d
+			y: 2.0d
+		}
+		{
+			description: [
+				"&e链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"46D6A6CF1224A6FA\" } }"
+			]
+			id: "0845842AF9E8D49F"
+			rewards: [{
+				id: "647E1E561625A056"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e由BOSS太阳鸟掉落"
+			tasks: [{
+				id: "7CB0159E9F295CA7"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_sun"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：太阳"
+			x: -0.5d
+			y: 3.0d
+		}
+		{
+			description: [
+				"&e链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"3A6B3E30B7958D89\" } }"
+			]
+			id: "394EEACEFDEBC02E"
+			rewards: [{
+				id: "520032FEEC35D959"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e由BOSS暝煌龙固定掉落"
+			tasks: [{
+				id: "1514D89F82961F24"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_tower"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：塔楼"
+			x: 0.0d
+			y: 1.0d
+		}
+		{
+			description: [
+				"&e链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"2E234A7111AC8092\" } }"
+			]
+			id: "11D108790A925826"
+			rewards: [{
+				id: "0DAB5BB5798644EF"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&e由BOSS利维坦掉落"
+			tasks: [{
+				id: "7B0AE5D447CA2405"
+				item: {
+					Count: 1b
+					id: "tarotcards:the_world"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：世界"
+			x: 0.5d
+			y: 6.5d
+		}
+		{
+			description: [
+				"&e可以提高运气值的相关强力道具，配合&d樱花发簪&e可获得50％以上暴击率"
+				""
+				"&e相关链接："
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"3E74AD38FC8A9D4A\" } }"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"3A6B3E30B7958D89\" } }"
+				"{ \"text\": \"EDIT HERE\", \"underlined\": \"true\", \"clickEvent\": { \"action\": \"change_page\", \"value\": \"674C5A480A6924DF\" } }"
+				""
+				"&e衣壳体由末地的末影噬菌体掉落"
+			]
+			id: "17A2FCE93F7B190E"
+			rewards: [{
+				id: "7DDEF469EDC84C60"
+				type: "xp_levels"
+				xp_levels: 20
+			}]
+			subtitle: "&eBOSS/怪物掉落的材料和原始洞穴的琥珀合成获得"
+			tasks: [{
+				id: "17C1437EECE9FEC3"
+				item: {
+					Count: 1b
+					id: "tarotcards:wheel_of_fortune"
+					tag: { }
+				}
+				type: "item"
+			}]
+			title: "&e塔罗牌：命运之轮"
+			x: 3.5d
+			y: -7.0d
+		}
+		{
+			description: [
+				"&e&n塔罗牌的力量十分强大，获取方式见详细任务"
+				""
+				"&c&n塔罗牌&e在&c饰品栏&e和&c物品栏&e都会触发效果，可以放进&c塔罗牌组&e节省空间和栏位"
+				""
+				"&c(塔罗牌效果不可叠加哦)"
+			]
+			id: "61F6990FFEF2F664"
+			rewards: [{
+				id: "3250AC173EB5A919"
+				type: "xp"
+				xp: 100
+			}]
+			size: 2.0d
+			tasks: [{
+				id: "1F26941F337E82D0"
+				item: {
+					Count: 1b
+					ForgeCaps: {
+						Parent: {
+							Items: [ ]
+							Size: 22
+						}
+					}
+					id: "tarotcards:tarot_deck"
+				}
+				type: "item"
+			}]
+			title: "&e关于塔罗牌"
+			x: 0.0d
+			y: -6.0d
+		}
+	]
+	title: "&d塔罗牌"
+}
