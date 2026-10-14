@@ -100,6 +100,22 @@
       "borderY": 1
     }
   },
+  "panel:listItem": {
+    "textColor": "#FFFCFCFC",
+    "textShadow": false,
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/list_item",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 0,
+      "borderY": 1
+    }
+  },
   "textField": {
     "textColor": "#FFEAE8EC",
     "markedColor": "#FFA9AAAC"

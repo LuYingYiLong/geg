@@ -11,6 +11,7 @@ import io.github.luyingyilong.geg.client.ui.Form;
 import io.github.luyingyilong.geg.client.ui.FormItem;
 import io.github.luyingyilong.geg.client.ui.Modal;
 import io.github.luyingyilong.geg.client.ui.NumberInput;
+import io.github.luyingyilong.geg.client.ui.layout.Rect;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.widget.sizer.Unit;
 import io.github.luyingyilong.geg.market.MarketActionPacket;
@@ -33,6 +34,9 @@ public final class ClientMarketScreen {
     private static StringValue quantityValue;
     private static StringValue priceValue;
     private static StringValue tradeQuantityValue;
+    private static int searchX;
+    private static int searchY;
+    private static int searchWidth;
 
     private ClientMarketScreen() {
     }
@@ -41,33 +45,33 @@ public final class ClientMarketScreen {
         canvas = new MarketCanvasWidget();
         search = new Input(175.0F);
         search.setInputVisible(true);
-        search.hintText(Component.translatable("market.geg.search"));
+        search.placeholder(Component.translatable("market.geg.search"));
         search.setMaxLength(80);
         search.autoUpdateOnChange(true);
         search.controlSize(Button.Size.SMALL);
-        search.right(88).top((25 - Button.Size.SMALL.height()) / 2)
-                .width(() -> Math.min(138, Math.max(16,
-                        Minecraft.getInstance().getWindow().getGuiScaledWidth() - 102)), Unit.Measure.PIXEL)
+        search.left(() -> searchX, Unit.Measure.PIXEL)
+                .top(() -> searchY, Unit.Measure.PIXEL)
+                .width(() -> searchWidth, Unit.Measure.PIXEL)
                 .height(Button.Size.SMALL.height());
 
         quantity = new NumberInput(250.0F, NumberInput.Kind.QUANTITY);
         quantityValue = new StringValue("");
         quantity.value(quantityValue);
-        quantity.hintText(Component.translatable("market.geg.quantity"));
+        quantity.placeholder(Component.translatable("market.geg.quantity"));
         quantity.controlSize(Button.Size.MEDIUM);
         quantity.setInputVisible(false);
 
         price = new NumberInput(250.0F, NumberInput.Kind.COIN);
         priceValue = new StringValue("");
         price.value(priceValue);
-        price.hintText(Component.translatable("market.geg.unit_price"));
+        price.placeholder(Component.translatable("market.geg.unit_price"));
         price.controlSize(Button.Size.MEDIUM);
         price.setInputVisible(false);
 
         tradeQuantity = new NumberInput(320.0F, NumberInput.Kind.QUANTITY);
         tradeQuantityValue = new StringValue("1");
         tradeQuantity.value(tradeQuantityValue);
-        tradeQuantity.hintText(Component.translatable("market.geg.quantity"));
+        tradeQuantity.placeholder(Component.translatable("market.geg.quantity"));
         tradeQuantity.controlSize(Button.Size.MEDIUM);
         tradeQuantity.setInputVisible(false);
 
@@ -76,6 +80,8 @@ public final class ClientMarketScreen {
         detailForm = new Form().add(quantityItem).add(priceItem);
         tradeForm = new Form().add(new FormItem("quantity",
                 Component.translatable("market.geg.quantity"), tradeQuantity));
+        canvas.prepareLayout(Minecraft.getInstance().getWindow().getGuiScaledWidth(),
+                Minecraft.getInstance().getWindow().getGuiScaledHeight(), Minecraft.getInstance().font);
 
         ModularPanel<?> panel = new ModularPanel<>("market");
         panel.widgetTheme(OreTheme.BACKGROUND);
@@ -105,6 +111,15 @@ public final class ClientMarketScreen {
 
     static String searchText() {
         return search == null ? "" : search.getText();
+    }
+
+    static void placeSearch(Rect bounds) {
+        if (searchX != bounds.x() || searchY != bounds.y() || searchWidth != bounds.width()) {
+            searchX = bounds.x();
+            searchY = bounds.y();
+            searchWidth = bounds.width();
+            search.scheduleResize();
+        }
     }
 
     static void setSearchEnabled(boolean enabled) {

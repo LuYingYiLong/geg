@@ -1,10 +1,11 @@
 package io.github.luyingyilong.geg.client.ui;
 
-import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
-import net.minecraft.client.gui.Font;
+import io.github.luyingyilong.geg.client.ui.layout.Box;
+import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.Panel;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
@@ -28,12 +29,23 @@ public final class Modal {
     private final int verticalOffset;
     private final Component title;
     private final List<Action> actions = new ArrayList<>();
+    private final Box stack = new Box();
+    private final Control headerSlot = new Control();
+    private final Control contentSlot = new Control();
+    private final Control footerSlot = new Control();
+    private final Panel background = new Panel(OreTheme.MODAL);
 
     public Modal(int width, int height, int verticalOffset, Component title) {
         this.preferredWidth = width;
         this.preferredHeight = height;
         this.verticalOffset = verticalOffset;
         this.title = title;
+        headerSlot.minimum(0, HEADER_HEIGHT).preferred(0, HEADER_HEIGHT)
+                .policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        contentSlot.policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
+        footerSlot.minimum(0, FOOTER_HEIGHT).preferred(0, FOOTER_HEIGHT)
+                .policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        stack.add(headerSlot).add(contentSlot).add(footerSlot);
     }
 
     public Modal action(Component label, Runnable onClick) {
@@ -49,27 +61,32 @@ public final class Modal {
     }
 
     public Rect content(Rect bounds) {
-        return new Rect(bounds.x + PADDING, bounds.y + HEADER_HEIGHT,
-                bounds.width - 2 * PADDING,
-                bounds.height - HEADER_HEIGHT - FOOTER_HEIGHT);
+        layoutSlots(bounds);
+        io.github.luyingyilong.geg.client.ui.layout.Rect area = contentSlot.bounds();
+        return new Rect(bounds.x + PADDING, bounds.y + area.y(),
+                Math.max(0, area.width() - 2 * PADDING), area.height());
+    }
+
+    private void layoutSlots(Rect bounds) {
+        stack.layout(new io.github.luyingyilong.geg.client.ui.layout.Rect(
+                0, 0, bounds.width, bounds.height), null);
     }
 
     public void draw(ModularGuiContext context, Rect viewport, Consumer<Rect> drawContent) {
         GuiGraphics graphics = context.getGraphics();
-        Font font = context.getFont();
         Rect bounds = bounds(viewport.x, viewport.y, viewport.width, viewport.height);
         graphics.fill(viewport.x, viewport.y, viewport.right(), viewport.bottom(), OVERLAY_COLOR);
 
         WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.MODAL);
         WidgetTheme style = entry != null ? entry.theme() : context.getTheme().getPanelTheme().theme();
-        IDrawable background = style.getBackground();
-        if (background != null) {
-            background.draw(context, bounds.x, bounds.y, bounds.width, bounds.height, style);
-        }
+        background.drawAt(context, new io.github.luyingyilong.geg.client.ui.layout.Rect(
+                bounds.x, bounds.y, bounds.width, bounds.height));
 
         int titleWidth = Math.max(0, bounds.width - 3 * PADDING - CLOSE_SIZE);
-        graphics.drawString(font, font.plainSubstrByWidth(title.getString(), titleWidth),
-                bounds.x + PADDING, bounds.y + 11, style.getTextColor(), style.isTextShadow());
+        Label.draw(context, title, new io.github.luyingyilong.geg.client.ui.layout.Rect(
+                        bounds.x + PADDING, bounds.y + 8, titleWidth, 20),
+                style.getTextColor(), style.isTextShadow(), Label.Overflow.CLIP,
+                Label.Horizontal.LEFT, Label.Vertical.CENTER);
         drawCloseButton(context, closeButton(bounds));
         drawContent.accept(content(bounds));
         for (int i = 0; i < actions.size(); i++) {
@@ -94,7 +111,9 @@ public final class Modal {
     }
 
     private Rect closeButton(Rect bounds) {
-        return new Rect(bounds.right() - PADDING - CLOSE_SIZE, bounds.y + PADDING,
+        layoutSlots(bounds);
+        return new Rect(bounds.right() - PADDING - CLOSE_SIZE,
+                bounds.y + headerSlot.bounds().y() + PADDING,
                 CLOSE_SIZE, CLOSE_SIZE);
     }
 
@@ -111,13 +130,15 @@ public final class Modal {
     }
 
     private Rect actionButton(Rect bounds, int index) {
+        layoutSlots(bounds);
         int count = actions.size();
         int innerWidth = bounds.width - 2 * PADDING;
         int buttonWidth = Math.min(132, (innerWidth - (count - 1) * BUTTON_GAP) / count);
         int space = count == 1 ? 0 : (innerWidth - count * buttonWidth) / (count - 1);
         int startX = count == 1 ? bounds.right() - PADDING - buttonWidth : bounds.x + PADDING;
         return new Rect(startX + index * (buttonWidth + space),
-                bounds.bottom() - PADDING - BUTTON_HEIGHT, buttonWidth, BUTTON_HEIGHT);
+                bounds.y + footerSlot.bounds().y() + footerSlot.bounds().height()
+                        - PADDING - BUTTON_HEIGHT, buttonWidth, BUTTON_HEIGHT);
     }
 
     private record Action(Component label, Runnable onClick) {
