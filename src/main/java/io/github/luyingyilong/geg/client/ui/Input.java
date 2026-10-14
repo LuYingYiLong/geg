@@ -5,7 +5,6 @@ import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widgets.textfield.TextFieldWidget;
-import io.github.luyingyilong.geg.client.ui.layout.Rect;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
@@ -13,7 +12,6 @@ public class Input extends TextFieldWidget {
     private final float depth;
     private Button.Size controlSize = Button.Size.MEDIUM;
     private boolean inputVisible = true;
-    private Component placeholder = Component.empty();
 
     public Input() {
         this(0.0F);
@@ -34,7 +32,8 @@ public class Input extends TextFieldWidget {
     }
 
     public Input placeholder(Component placeholder) {
-        this.placeholder = java.util.Objects.requireNonNull(placeholder);
+        hintText(java.util.Objects.requireNonNull(placeholder));
+        hintColor(0xFFA9AAAC);
         return this;
     }
 
@@ -73,12 +72,6 @@ public class Input extends TextFieldWidget {
                     }
                 }
                 super.draw(context, theme);
-                if (!isFocused() && getText().isEmpty() && !placeholder.getString().isEmpty()) {
-                    Label.draw(context, placeholder, new Rect(getArea().x + 4, getArea().y,
-                                    Math.max(0, getArea().width - 8), getArea().height),
-                            0xFF858C94, Label.Overflow.CLIP,
-                            Label.Horizontal.LEFT, Label.Vertical.CENTER);
-                }
             });
         }
     }

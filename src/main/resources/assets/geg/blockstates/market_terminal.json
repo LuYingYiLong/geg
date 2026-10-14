@@ -1,5 +1,8 @@
 {
   "variants": {
-    "": { "model": "geg:block/market_terminal" }
+    "facing=north": { "model": "geg:block/market_terminal" },
+    "facing=east": { "model": "geg:block/market_terminal", "y": 90 },
+    "facing=south": { "model": "geg:block/market_terminal", "y": 180 },
+    "facing=west": { "model": "geg:block/market_terminal", "y": 270 }
   }
 }

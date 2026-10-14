@@ -4,34 +4,12 @@ import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-/** A regular or masonry grid with optional view recycling. */
+/**
+ * A regular or masonry grid with optional view recycling
+ */
 public final class Grid<T> extends Control {
-    public enum LayoutMode { ROWS, MASONRY }
-
-    public interface Adapter<T> {
-        int size();
-        T item(int index);
-        Object key(T item);
-        int measureHeight(T item, int cardWidth, Font font);
-        View<T> createView();
-    }
-
-    public interface View<T> {
-        void bind(T item);
-        void draw(ModularGuiContext context, Rect screenBounds, boolean hovered);
-    }
-
-    public record Entry<T>(int index, T item, Object key, Rect bounds) { }
-
     private final List<Entry<T>> entries = new ArrayList<>();
     private final List<Control> fixedChildren = new ArrayList<>();
     private final Map<Integer, View<T>> active = new HashMap<>();
@@ -53,6 +31,13 @@ public final class Grid<T> extends Control {
     private int visibleScroll = -1;
     private int visibleHeight = -1;
 
+    private static int shortest(int[] heights) {
+        int index = 0;
+        for (int candidate = 1; candidate < heights.length; candidate++)
+            if (heights[candidate] < heights[index]) index = candidate;
+        return index;
+    }
+
     public Grid<T> adapter(Adapter<T> adapter) {
         if (adapter != null && !fixedChildren.isEmpty())
             throw new IllegalStateException("A Grid cannot mix fixed children and an adapter");
@@ -60,6 +45,7 @@ public final class Grid<T> extends Control {
         invalidate();
         return this;
     }
+
     public Grid<T> add(Control child) {
         if (adapter != null) throw new IllegalStateException("A Grid cannot mix fixed children and an adapter");
         attach(child);
@@ -67,7 +53,13 @@ public final class Grid<T> extends Control {
         invalidate();
         return this;
     }
-    public Grid<T> mode(LayoutMode mode) { this.mode = mode; invalidate(); return this; }
+
+    public Grid<T> mode(LayoutMode mode) {
+        this.mode = mode;
+        invalidate();
+        return this;
+    }
+
     public Grid<T> columns(int minCardWidth, int maxColumns, int gap) {
         this.minCardWidth = Math.max(1, minCardWidth);
         this.maxColumns = Math.max(1, maxColumns);
@@ -81,16 +73,31 @@ public final class Grid<T> extends Control {
         dirty = true;
     }
 
-    public List<Entry<T>> entries() { return List.copyOf(entries); }
-    public int contentHeight() { return contentHeight; }
-    public int scroll() { return scroll; }
-    public int activeViews() { return active.size(); }
+    public List<Entry<T>> entries() {
+        return List.copyOf(entries);
+    }
+
+    public int contentHeight() {
+        return contentHeight;
+    }
+
+    public int scroll() {
+        return scroll;
+    }
+
+    public int activeViews() {
+        return active.size();
+    }
+
     public int columns() {
         int width = Math.max(1, bounds().width());
         return Math.max(1, Math.min(maxColumns, (width + gap) / (minCardWidth + gap)));
     }
 
-    public void scrollBy(int amount) { setScroll(scroll + amount); }
+    public void scrollBy(int amount) {
+        setScroll(scroll + amount);
+    }
+
     public void setScroll(int scroll) {
         this.scroll = Math.max(0, Math.min(Math.max(0, contentHeight - bounds().height()), scroll));
         if (!dirty && adapter != null) updateVisible();
@@ -161,10 +168,11 @@ public final class Grid<T> extends Control {
         contentHeight = mode == LayoutMode.ROWS ? rowY + rowHeight
                 : Math.max(0, Arrays.stream(heights).max().orElse(0) - gap);
         if (anchorKey != null) {
-            for (Entry<T> entry : entries) if (anchorKey.equals(entry.key())) {
-                scroll = entry.bounds().y() + anchorOffset;
-                break;
-            }
+            for (Entry<T> entry : entries)
+                if (anchorKey.equals(entry.key())) {
+                    scroll = entry.bounds().y() + anchorOffset;
+                    break;
+                }
         }
         recycleAll();
         setScroll(scroll);
@@ -196,13 +204,6 @@ public final class Grid<T> extends Control {
         setScroll(scroll);
     }
 
-    private static int shortest(int[] heights) {
-        int index = 0;
-        for (int candidate = 1; candidate < heights.length; candidate++)
-            if (heights[candidate] < heights[index]) index = candidate;
-        return index;
-    }
-
     private void recycleAll() {
         recycled.addAll(active.values());
         active.clear();
@@ -220,19 +221,22 @@ public final class Grid<T> extends Control {
         int start = scroll - buffer;
         int end = scroll + bounds().height() + buffer;
         Set<Integer> visible = new HashSet<>();
-        for (Entry<T> entry : entries) if (entry.bounds().bottom() >= start && entry.bounds().y() <= end) {
-            visible.add(entry.index());
-        }
+        for (Entry<T> entry : entries)
+            if (entry.bounds().bottom() >= start && entry.bounds().y() <= end) {
+                visible.add(entry.index());
+            }
         visibleIndices.clear();
         visibleIndices.addAll(visible);
         visibleIndices.sort(Integer::compareTo);
-        for (int index : List.copyOf(active.keySet())) if (!visible.contains(index))
-            recycled.add(active.remove(index));
-        for (Entry<T> entry : entries) if (visible.contains(entry.index()) && !active.containsKey(entry.index())) {
-            View<T> view = recycled.isEmpty() ? adapter.createView() : recycled.removeFirst();
-            view.bind(entry.item());
-            active.put(entry.index(), view);
-        }
+        for (int index : List.copyOf(active.keySet()))
+            if (!visible.contains(index))
+                recycled.add(active.remove(index));
+        for (Entry<T> entry : entries)
+            if (visible.contains(entry.index()) && !active.containsKey(entry.index())) {
+                View<T> view = recycled.isEmpty() ? adapter.createView() : recycled.removeFirst();
+                view.bind(entry.item());
+                active.put(entry.index(), view);
+            }
     }
 
     @Override
@@ -278,8 +282,32 @@ public final class Grid<T> extends Control {
 
     public Control hitFixed(int rootX, int rootY) {
         if (adapter != null || !absoluteBounds().contains(rootX, rootY)) return null;
-        for (Control child : fixedChildren) if (child.visible()
-                && child.absoluteBounds().contains(rootX, rootY + scroll)) return child;
+        for (Control child : fixedChildren)
+            if (child.visible()
+                    && child.absoluteBounds().contains(rootX, rootY + scroll)) return child;
         return null;
+    }
+
+    public enum LayoutMode {ROWS, MASONRY}
+
+    public interface Adapter<T> {
+        int size();
+
+        T item(int index);
+
+        Object key(T item);
+
+        int measureHeight(T item, int cardWidth, Font font);
+
+        View<T> createView();
+    }
+
+    public interface View<T> {
+        void bind(T item);
+
+        void draw(ModularGuiContext context, Rect screenBounds, boolean hovered);
+    }
+
+    public record Entry<T>(int index, T item, Object key, Rect bounds) {
     }
 }

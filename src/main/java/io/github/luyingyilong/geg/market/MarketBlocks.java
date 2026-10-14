@@ -20,7 +20,8 @@ public final class MarketBlocks {
 
     public static final RegistryObject<Block> MARKET_TERMINAL = BLOCKS.register("market_terminal",
             () -> new MarketTerminalBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL).strength(3.0F, 6.0F).requiresCorrectToolForDrops()));
+                    .mapColor(MapColor.COLOR_GRAY).strength(5.0F, 6.0F).lightLevel(state -> 9)
+                    .requiresCorrectToolForDrops()));
     public static final RegistryObject<Item> MARKET_TERMINAL_ITEM = ITEMS.register("market_terminal",
             () -> new BlockItem(MARKET_TERMINAL.get(), new Item.Properties()));
 

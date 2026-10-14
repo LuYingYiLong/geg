@@ -83,7 +83,7 @@ public final class ClientMarketScreen {
         canvas.prepareLayout(Minecraft.getInstance().getWindow().getGuiScaledWidth(),
                 Minecraft.getInstance().getWindow().getGuiScaledHeight(), Minecraft.getInstance().font);
 
-        ModularPanel<?> panel = new ModularPanel<>("market");
+        ModularPanel<?> panel = new InstantMarketPanel();
         panel.widgetTheme(OreTheme.BACKGROUND);
         panel.full();
         panel.child(canvas.full().disableThemeBackground(true));
@@ -186,6 +186,17 @@ public final class ClientMarketScreen {
             priceValue.setStringValue(text);
             price.setText(text);
             price.clearError();
+        }
+    }
+
+    private static final class InstantMarketPanel extends ModularPanel<InstantMarketPanel> {
+        private InstantMarketPanel() {
+            super("market");
+        }
+
+        @Override
+        public boolean shouldAnimate() {
+            return false;
         }
     }
 }

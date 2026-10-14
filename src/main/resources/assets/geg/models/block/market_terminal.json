@@ -1,8 +1,24 @@
 {
-  "parent": "minecraft:block/cube_bottom_top",
+  "parent": "minecraft:block/block",
   "textures": {
-    "side": "minecraft:block/cyan_terracotta",
-    "top": "minecraft:block/emerald_block",
-    "bottom": "minecraft:block/iron_block"
-  }
+    "front": "geg:block/market_terminal_front",
+    "side": "geg:block/market_terminal_side",
+    "top": "geg:block/market_terminal_top",
+    "bottom": "geg:block/market_terminal_bottom",
+    "particle": "geg:block/market_terminal_side"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 16, 16],
+      "faces": {
+        "north": { "texture": "#front", "cullface": "north" },
+        "east": { "texture": "#side", "cullface": "east" },
+        "south": { "texture": "#side", "cullface": "south" },
+        "west": { "texture": "#side", "cullface": "west" },
+        "up": { "texture": "#top", "cullface": "up" },
+        "down": { "texture": "#bottom", "cullface": "down" }
+      }
+    }
+  ]
 }

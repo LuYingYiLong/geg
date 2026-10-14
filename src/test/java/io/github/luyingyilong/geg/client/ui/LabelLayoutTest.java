@@ -47,6 +47,23 @@ public final class LabelLayoutTest {
         check(asString(ellipsis.displayedLines(font, 12, 10).get(0)).equals("A…"));
         Label visible = new Label(Component.literal("ABCDE"));
         check(asString(visible.displayedLines(font, 12, 10).get(0)).equals("ABCDE"));
+
+        Label marquee = new Label(Component.literal("ABCDE"))
+                .wrap(Label.Wrap.CHARACTER).overflow(Label.Overflow.MARQUEE)
+                .scrollSpeed(6.0F).scrollEndPause(500L);
+        check(marquee.displayedLines(font, 12, 10).size() == 1);
+        check(marquee.marqueeOffset(font, 12, 1000L, true) == 0);
+        check(marquee.marqueeOffset(font, 12, 2000L, true) == 6);
+        check(marquee.marqueeOffset(font, 12, 4000L, true) == 18);
+        check(marquee.marqueeOffset(font, 12, 4300L, true) == 18);
+        check(marquee.marqueeOffset(font, 12, 5000L, true) == 15);
+        check(marquee.marqueeOffset(font, 12, 5001L, false) == 0);
+        check(marquee.marqueeOffset(font, 12, 6000L, true) == 0);
+        marquee.scrollTrigger(Label.ScrollTrigger.ALWAYS);
+        check(marquee.marqueeOffset(font, 12, 7000L, false) == 0);
+        check(marquee.marqueeOffset(font, 12, 8000L, false) == 6);
+        marquee.text(Component.literal("AB"));
+        check(marquee.marqueeOffset(font, 12, 9000L, false) == 0);
     }
 
     private static String asString(FormattedCharSequence sequence) {

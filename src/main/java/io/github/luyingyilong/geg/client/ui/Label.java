@@ -15,10 +15,11 @@ import java.util.Objects;
 
 /** Shared Ore text measurement and rendering, including styled Minecraft Components. */
 public final class Label extends Control {
-    public enum Overflow { VISIBLE, CLIP, ELLIPSIS }
+    public enum Overflow { VISIBLE, CLIP, ELLIPSIS, MARQUEE }
     public enum Wrap { NONE, WORD, CHARACTER }
     public enum Horizontal { LEFT, CENTER, RIGHT }
     public enum Vertical { TOP, CENTER, BOTTOM }
+    public enum ScrollTrigger { ALWAYS, HOVER }
 
     private Component text;
     private Overflow overflow = Overflow.VISIBLE;
@@ -29,11 +30,42 @@ public final class Label extends Control {
     private boolean shadow;
     private float scale = 1.0F;
     private int maxLines = Integer.MAX_VALUE;
+    private ScrollTrigger scrollTrigger = ScrollTrigger.HOVER;
+    private float scrollSpeed = 20.0F;
+    private long scrollEndPauseMs = 700L;
+    private long scrollStartMs = Long.MIN_VALUE;
 
     public Label(Component text) { this.text = Objects.requireNonNull(text); }
-    public Label text(Component text) { this.text = Objects.requireNonNull(text); return this; }
-    public Label overflow(Overflow overflow) { this.overflow = Objects.requireNonNull(overflow); return this; }
+    public Label text(Component text) {
+        Component next = Objects.requireNonNull(text);
+        if (!this.text.equals(next)) scrollStartMs = Long.MIN_VALUE;
+        this.text = next;
+        return this;
+    }
+    public Label overflow(Overflow overflow) {
+        this.overflow = Objects.requireNonNull(overflow);
+        scrollStartMs = Long.MIN_VALUE;
+        return this;
+    }
     public Label wrap(Wrap wrap) { this.wrap = Objects.requireNonNull(wrap); return this; }
+    public Label scrollTrigger(ScrollTrigger trigger) {
+        scrollTrigger = Objects.requireNonNull(trigger);
+        scrollStartMs = Long.MIN_VALUE;
+        return this;
+    }
+    public Label scrollSpeed(float pixelsPerSecond) {
+        if (!(pixelsPerSecond > 0.0F) || !Float.isFinite(pixelsPerSecond))
+            throw new IllegalArgumentException("Scroll speed must be positive and finite");
+        scrollSpeed = pixelsPerSecond;
+        scrollStartMs = Long.MIN_VALUE;
+        return this;
+    }
+    public Label scrollEndPause(long milliseconds) {
+        if (milliseconds < 0L) throw new IllegalArgumentException("Pause cannot be negative");
+        scrollEndPauseMs = milliseconds;
+        scrollStartMs = Long.MIN_VALUE;
+        return this;
+    }
     public Label align(Horizontal horizontal, Vertical vertical) {
         this.horizontal = Objects.requireNonNull(horizontal);
         this.vertical = Objects.requireNonNull(vertical);
@@ -71,7 +103,7 @@ public final class Label extends Control {
 
     public List<FormattedCharSequence> lines(Font font, int width) {
         int logicalWidth = Math.max(1, (int) Math.floor(width / scale));
-        if (wrap == Wrap.NONE) return List.of(text.getVisualOrderText());
+        if (wrap == Wrap.NONE || overflow == Overflow.MARQUEE) return List.of(text.getVisualOrderText());
         if (wrap == Wrap.WORD) return font.split(text, logicalWidth);
         List<FormattedCharSequence> result = new ArrayList<>();
         List<FormattedCharSequence> current = new ArrayList<>();
@@ -132,6 +164,25 @@ public final class Label extends Control {
         return List.copyOf(result);
     }
 
+    /** Screen-pixel offset for a left-right marquee; package-visible for deterministic tests. */
+    int marqueeOffset(Font font, int width, long nowMs, boolean hovered) {
+        int distance = Math.max(0, (int) Math.ceil(font.width(text) * scale) - width);
+        if (distance == 0 || (scrollTrigger == ScrollTrigger.HOVER && !hovered)) {
+            scrollStartMs = Long.MIN_VALUE;
+            return 0;
+        }
+        if (scrollStartMs == Long.MIN_VALUE || nowMs < scrollStartMs) scrollStartMs = nowMs;
+        double travelMs = distance * 1000.0D / scrollSpeed;
+        double cycleMs = travelMs * 2.0D + scrollEndPauseMs * 2.0D;
+        double phase = (nowMs - scrollStartMs) % cycleMs;
+        if (phase < travelMs) return Math.min(distance, (int) Math.floor(phase * scrollSpeed / 1000.0D));
+        phase -= travelMs;
+        if (phase < scrollEndPauseMs) return distance;
+        phase -= scrollEndPauseMs;
+        if (phase < travelMs) return Math.max(0, distance - (int) Math.floor(phase * scrollSpeed / 1000.0D));
+        return 0;
+    }
+
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
         drawAt(context, screenBounds(screenX, screenY));
@@ -159,6 +210,10 @@ public final class Label extends Control {
                 case CENTER -> (area.width() - lineWidth) / 2;
                 case RIGHT -> area.width() - lineWidth;
             };
+            if (overflow == Overflow.MARQUEE && lineWidth > area.width()) {
+                boolean hovered = area.contains(context.getAbsMouseX(), context.getAbsMouseY());
+                lineX = area.x() - marqueeOffset(font, area.width(), System.nanoTime() / 1_000_000L, hovered);
+            }
             if (scale == 1.0F) graphics.drawString(font, line, lineX, startY + index * lineHeight, color, shadow);
             else {
                 graphics.pose().pushPose();

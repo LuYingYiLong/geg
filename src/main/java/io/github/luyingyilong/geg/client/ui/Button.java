@@ -58,7 +58,7 @@ public final class Button {
         int labelWidth = Math.max(0, width - 2 * PADDING_X - iconSpace);
         Label.draw(context, label, new io.github.luyingyilong.geg.client.ui.layout.Rect(
                         x + PADDING_X, y, labelWidth, height), style.getTextColor(), style.isTextShadow(),
-                Label.Overflow.CLIP, switch (alignment) {
+                Label.Overflow.ELLIPSIS, switch (alignment) {
                     case LEFT -> Label.Horizontal.LEFT;
                     case CENTER -> Label.Horizontal.CENTER;
                     case RIGHT -> Label.Horizontal.RIGHT;
