@@ -23,7 +23,7 @@ public final class MarketNetwork {
     private static final String PROTOCOL_VERSION = "2";
     private static final int CHUNK_SIZE = 8;
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(GegMod.MODID, "market"),
+            ResourceLocation.fromNamespaceAndPath(GegMod.MODID, "market"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals

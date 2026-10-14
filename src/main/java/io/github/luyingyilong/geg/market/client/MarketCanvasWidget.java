@@ -1,9 +1,14 @@
 package io.github.luyingyilong.geg.market.client;
 
+import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
+import brachy.modularui.theme.SelectableTheme;
+import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
+import io.github.luyingyilong.geg.client.ui.Modal;
+import io.github.luyingyilong.geg.client.ui.OreTheme;
 import io.github.luyingyilong.geg.market.*;
 import io.github.luyingyilong.geg.money.MoneyCurrency;
 import io.github.luyingyilong.geg.money.client.ClientMoneyState;
@@ -20,11 +25,11 @@ import java.util.*;
 
 final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Interactable {
     private static final int BACKGROUND = 0xFF101821;
-    private static final int SURFACE = 0xFF202D38;
     private static final int SURFACE_HOVER = 0xFF2C4050;
     private static final int ACCENT = 0xFF52BEA8;
-    private static final int TEXT = 0xFFE4EEF1;
-    private static final int MUTED = 0xFFA8BBC5;
+    private static final int TEXT = 0xFFFCFCFC;
+    private static final int HEADER_TEXT = 0xFF1E1E1F;
+    private static final int SECONDARY_TEXT = 0xFFD8D9DC;
     private static final int CARD_GAP = 4;
     private static final int MIN_CARD_WIDTH = 96;
     private static final int HEADER_HEIGHT = 25;
@@ -139,9 +144,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         }
 
         // 绘制 header
-        graphics.fill(x, y, x + width, y + height, BACKGROUND);
-        graphics.fill(x, y, x + width, y + HEADER_HEIGHT, 0xFF18242E);
-        graphics.drawString(font, Component.translatable("market.geg.title"), x + 10, y + 8, TEXT, false);
+        WidgetThemeEntry<WidgetTheme> headerEntry = context.getTheme().getWidgetTheme(OreTheme.HEADER_PANEL);
+        drawPanelBackground(x, y, width, HEADER_HEIGHT, headerEntry);
+        graphics.drawString(font, Component.translatable("market.geg.title"), x + 10, y + 8, HEADER_TEXT, false);
         drawFilter(graphics, font, x, y, width);
         if (tab == Tab.SELL) drawPublishSwitch(graphics, font, x, y);
         drawBody(graphics, font, x, y, width, height, context.getAbsMouseX(), context.getAbsMouseY());
@@ -159,7 +164,14 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             graphics.pose().pushPose();
             graphics.pose().translate(0.0F, 0.0F, 200.0F);
             drawModal(graphics, font, x, y, width, height);
-            if (quantityMenu) drawQuantityMenu(graphics, font, x, y, width, height);
+            if (quantityMenu) {
+                graphics.flush();
+                graphics.pose().pushPose();
+                graphics.pose().translate(0.0F, 0.0F, 100.0F);
+                drawQuantityMenu(graphics, font, x, y, width, height);
+                graphics.flush();
+                graphics.pose().popPose();
+            }
             graphics.flush();
             graphics.pose().popPose();
         }
@@ -336,7 +348,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         if (cards.isEmpty()) {
             graphics.drawCenteredString(font,
                     Component.translatable(ClientMarketState.ready() ? "market.geg.empty" : "market.geg.loading"),
-                    x + width / 2, top + 24, MUTED);
+                    x + width / 2, top + 24, SECONDARY_TEXT);
         }
         if (hovered != null && !hovered.item.isEmpty() && mouseX < x + hovered.x + 24
                 && modal == null && !filterOpen) {
@@ -346,9 +358,13 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     private void drawCard(GuiGraphics graphics, Font font, Card card, int x, int y, boolean hover) {
         boolean ended = card.kind == Kind.FAVORITE && card.favorite != null && card.favorite.ended();
-        graphics.fill(x, y, x + card.width, y + card.height,
-                ended ? 0xFF32383D : hover ? SURFACE_HOVER : SURFACE);
-        graphics.fill(x, y, x + 2, y + card.height, ended ? MUTED : ACCENT);
+        drawPanelBackground(x, y, card.width, card.height, getContext().getTheme().getPanelTheme());
+        if (ended) {
+            graphics.fill(x, y, x + card.width, y + card.height, 0xA032383D);
+        } else if (hover) {
+            graphics.fill(x, y, x + card.width, y + card.height, 0x24FFFFFF);
+        }
+//        graphics.fill(x, y, x + 2, y + card.height, ended ? SECONDARY_TEXT : ACCENT);
         if (!card.item.isEmpty()) {
             graphics.renderItem(card.item, x + 5, y + 6);
         }
@@ -375,7 +391,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         int nextLineY = y + (twoLines ? 26 : 16);
         if (card.kind != Kind.COIN) {
             graphics.drawString(font, font.plainSubstrByWidth(count.getString(), textWidth),
-                    textX, nextLineY, MUTED, false);
+                    textX, nextLineY, SECONDARY_TEXT, false);
             nextLineY += 11;
         }
 
@@ -390,7 +406,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         };
         if (!price.getString().isEmpty()) {
             graphics.drawString(font, font.plainSubstrByWidth(price.getString(), textWidth),
-                    textX, nextLineY, ended ? MUTED : ACCENT, false);
+                    textX, nextLineY, ended ? SECONDARY_TEXT : ACCENT, false);
             nextLineY += 13;
         }
 
@@ -402,33 +418,27 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         });
         int buttonX = textX;
         int buttonY = nextLineY + 1;
-        graphics.fill(buttonX, buttonY, x + card.width - 5, buttonY + 14,
-                 card.kind == Kind.FAVORITE && card.quantity == 0 ? 0xFF4B5960 : 0xFF276D66);
-        graphics.drawCenteredString(font, font.plainSubstrByWidth(action.getString(), textWidth - 4),
-                buttonX + textWidth / 2, buttonY + 3, TEXT);
+        drawButton(graphics, font, buttonX, buttonY, textWidth, 14, action);
     }
 
     private void drawFilter(GuiGraphics graphics, Font font, int x, int y, int width) {
         int buttonX = x + width - FILTER_WIDTH;
-        graphics.fill(buttonX, y, x + width, y + HEADER_HEIGHT, SURFACE);
         String label = filter.equals("all") ? Component.translatable("market.geg.all_mods").getString() : filter;
-        graphics.drawCenteredString(font, font.plainSubstrByWidth(label, FILTER_WIDTH - 8),
-                buttonX + FILTER_WIDTH / 2, y + (HEADER_HEIGHT - font.lineHeight) / 2, TEXT);
+        drawButton(graphics, font, buttonX, y, FILTER_WIDTH, HEADER_HEIGHT, Component.literal(label));
     }
 
     private void drawPublishSwitch(GuiGraphics graphics, Font font, int x, int y) {
-        graphics.fill(x + 6, y + 32, x + 140, y + 50, SURFACE);
-        graphics.fill(x + (requestMode ? 73 : 6), y + 32,
-                x + (requestMode ? 140 : 73), y + 50, 0xFF276D66);
-        graphics.drawCenteredString(font, Component.translatable("market.geg.selling"), x + 39, y + 37, TEXT);
-        graphics.drawCenteredString(font, Component.translatable("market.geg.buying"), x + 106, y + 37, TEXT);
+        drawToggleButton(graphics, font, x + 6, y + 32, 67, 18,
+                Component.translatable("market.geg.selling"), !requestMode);
+        drawToggleButton(graphics, font, x + 73, y + 32, 67, 18,
+                Component.translatable("market.geg.buying"), requestMode);
     }
 
     private void drawFilterMenu(GuiGraphics graphics, Font font, int x, int y, int width) {
         int buttonX = x + width - FILTER_WIDTH;
         int visible = Math.min(8, modIds.size() - filterOffset);
-        graphics.fill(buttonX, y + HEADER_HEIGHT, x + width,
-                y + HEADER_HEIGHT + visible * FILTER_ROW_HEIGHT, 0xFF0C131A);
+        drawPanelBackground(buttonX, y + HEADER_HEIGHT, FILTER_WIDTH,
+                visible * FILTER_ROW_HEIGHT, getContext().getTheme().getWidgetTheme(OreTheme.MODAL));
         for (int index = 0; index < visible; index++) {
             String value = modIds.get(filterOffset + index);
             Component label = value.equals("all") ? Component.translatable("market.geg.all_mods") : Component.literal(value);
@@ -441,63 +451,73 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private void drawFooter(GuiGraphics graphics, Font font, int x, int y, int width, int height) {
         int columns = Tab.values().length;
         int top = y + height - FOOTER_HEIGHT;
-        graphics.fill(x, top, x + width, y + height, 0xFF18242E);
         for (int index = 0; index < Tab.values().length; index++) {
             int tabX = x + index * width / columns;
             int tabEnd = x + (index + 1) * width / columns;
-            if (Tab.values()[index] == tab) {
-                graphics.fill(tabX, top, tabEnd, top + 2, ACCENT);
-            }
-            String label = Tab.values()[index].title().getString();
-            graphics.drawCenteredString(font, font.plainSubstrByWidth(label, tabEnd - tabX - 6),
-                    (tabX + tabEnd) / 2, top + 9, Tab.values()[index] == tab ? TEXT : MUTED);
+            drawToggleButton(graphics, font, tabX, top, tabEnd - tabX, FOOTER_HEIGHT,
+                    Tab.values()[index].title(), Tab.values()[index] == tab);
         }
     }
 
     private void drawModal(GuiGraphics graphics, Font font, int x, int y, int width, int height) {
-        int boxWidth = Math.min(340, width - 12);
-        int boxX = x + (width - boxWidth) / 2;
-        int boxY = y + height / 2 - 112;
-        graphics.fill(x, y, x + width, y + height, 0xB0000000);
-        graphics.fill(boxX, boxY, boxX + boxWidth, boxY + 224, SURFACE);
-        graphics.fill(boxX, boxY, boxX + boxWidth, boxY + 2, ACCENT);
-        graphics.drawString(font, font.plainSubstrByWidth(modal.title().getString(), boxWidth - 75),
-                boxX + 12, boxY + 11, TEXT, false);
-        graphics.drawString(font, Component.translatable("market.geg.close"),
-                boxX + boxWidth - 52, boxY + 11, MUTED, false);
+        detailDialog().draw(getContext(), new Modal.Rect(x, y, width, height),
+                content -> drawModalContent(graphics, font, content));
+    }
+
+    private Modal detailDialog() {
+        Modal dialog = new Modal(340, 224, 0, modal.title());
+        if (modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE) {
+            if (modal.kind == Kind.FAVORITE && modal.favorite.ended()) {
+                dialog.action(Component.translatable("market.geg.unfavorite"), this::secondaryModalAction);
+            }
+            dialog.action(Component.translatable("market.geg.request_this"), this::primaryModalAction);
+        } else if (modal.kind == Kind.OWN || modal.kind == Kind.OWN_REQUEST) {
+            dialog.action(Component.translatable("market.geg.cancel_listing"), this::secondaryModalAction);
+            dialog.action(Component.translatable("market.geg.reprice"), this::primaryModalAction);
+        } else if (modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE) {
+            dialog.action(Component.translatable(requestMode
+                    ? "market.geg.confirm_request" : "market.geg.confirm_list"), this::primaryModalAction);
+        } else if (modal.kind == Kind.DELIVERY || modal.kind == Kind.COIN) {
+            dialog.action(Component.translatable("market.geg.claim"), this::primaryModalAction);
+        }
+        return dialog;
+    }
+
+    private void drawModalContent(GuiGraphics graphics, Font font, Modal.Rect content) {
+        int contentX = content.x();
+        int contentY = content.y();
 
         if (modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE) {
-            graphics.fill(boxX + 10, boxY + 37, boxX + boxWidth - 10, boxY + 54, BACKGROUND);
-            graphics.drawString(font, Component.translatable("market.geg.status"), boxX + 14, boxY + 41, MUTED, false);
-            graphics.drawString(font, Component.translatable("market.geg.unit_price"), boxX + 107, boxY + 41, MUTED, false);
-            graphics.drawString(font, Component.translatable("market.geg.operation"), boxX + boxWidth - 111, boxY + 41, MUTED, false);
+            graphics.fill(contentX + 2, contentY + 5, content.right() - 2, contentY + 22, BACKGROUND);
+            graphics.drawString(font, Component.translatable("market.geg.status"), contentX + 6, contentY + 9, SECONDARY_TEXT, false);
+            graphics.drawString(font, Component.translatable("market.geg.unit_price"), contentX + 99, contentY + 9, SECONDARY_TEXT, false);
+            graphics.drawString(font, Component.translatable("market.geg.operation"), content.right() - 103, contentY + 9, SECONDARY_TEXT, false);
             if (modal.offers.isEmpty()) graphics.drawString(font,
                     Component.translatable(modal.quantity > 0 || modal.buyQuantity > 0
                             ? "market.geg.loading" : "market.geg.out_of_stock"),
-                    boxX + 12, boxY + 64, MUTED, false);
+                    contentX + 4, contentY + 32, SECONDARY_TEXT, false);
             for (int index = selectedOffer; index < Math.min(selectedOffer + 5, modal.offers.size()); index++) {
                 MarketDetail offer = modal.offers.get(index);
-                int rowY = boxY + 56 + (index - selectedOffer) * 25;
-                graphics.fill(boxX + 10, rowY, boxX + boxWidth - 10, rowY + 23,
+                int rowY = contentY + 24 + (index - selectedOffer) * 25;
+                graphics.fill(contentX + 2, rowY, content.right() - 2, rowY + 23,
                         selectedDetailId == offer.id() ? SURFACE_HOVER : BACKGROUND);
                 String status = Component.translatable(offer.buyOrder()
                         ? "market.geg.buying" : "market.geg.selling").getString();
                 graphics.drawString(font, font.plainSubstrByWidth(status + " x" + offer.quantity(), 88),
-                        boxX + 14, rowY + 3, offer.buyOrder() ? ACCENT : TEXT, false);
+                        contentX + 6, rowY + 3, offer.buyOrder() ? ACCENT : TEXT, false);
                 graphics.drawString(font, font.plainSubstrByWidth(offer.ownerName(), 88),
-                        boxX + 14, rowY + 13, MUTED, false);
+                        contentX + 6, rowY + 13, SECONDARY_TEXT, false);
                 graphics.drawString(font, font.plainSubstrByWidth(MoneyCurrency.COIN.format(offer.unitPrice()), 96),
-                        boxX + 107, rowY + 8, TEXT, false);
-                int actionX = boxX + boxWidth - 112;
-                graphics.fill(actionX, rowY + 2, actionX + 50, rowY + 21, 0xFF276D66);
-                graphics.drawCenteredString(font, Component.translatable(offer.buyOrder()
-                        ? "market.geg.fulfill" : "market.geg.buy"), actionX + 25, rowY + 7, TEXT);
+                        contentX + 99, rowY + 8, TEXT, false);
+                int actionX = content.right() - 104;
+                drawButton(graphics, font, actionX, rowY + 2, 50, 19,
+                        Component.translatable(offer.buyOrder()
+                                ? "market.geg.fulfill" : "market.geg.buy"));
                 boolean favorite = ClientMarketState.favorites().stream()
                         .anyMatch(value -> value.orderId() == offer.id());
-                graphics.fill(actionX + 53, rowY + 2, actionX + 104, rowY + 21, favorite ? 0xFF555E6A : 0xFF36536A);
-                graphics.drawCenteredString(font, font.plainSubstrByWidth(Component.translatable(favorite
-                        ? "market.geg.favorited" : "market.geg.favorite").getString(), 49),
-                        actionX + 78, rowY + 7, TEXT);
+                drawToggleButton(graphics, font, actionX + 53, rowY + 2, 51, 19,
+                        Component.translatable(favorite
+                                ? "market.geg.favorited" : "market.geg.favorite"), favorite);
             }
         } else {
             Component info = switch (modal.kind) {
@@ -514,66 +534,90 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                         MoneyCurrency.COIN.format(modal.credit.amount()));
                 default -> Component.empty();
             };
-            graphics.drawString(font, font.plainSubstrByWidth(info.getString(), boxWidth - 24),
-                    boxX + 12, boxY + 54, MUTED, false);
+            graphics.drawString(font, font.plainSubstrByWidth(info.getString(), content.width() - 8),
+                    contentX + 4, contentY + 22, SECONDARY_TEXT, false);
         }
 
         if (modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE) {
-            graphics.drawString(font, Component.translatable("market.geg.quantity"), boxX + 12, boxY + 145, MUTED, false);
+            graphics.drawString(font, Component.translatable("market.geg.quantity"), contentX + 4, contentY + 113, SECONDARY_TEXT, false);
         }
         if (modal.kind == Kind.OWN || modal.kind == Kind.OWN_REQUEST
                 || modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE) {
-            graphics.drawString(font, Component.translatable("market.geg.unit_price"), boxX + 112, boxY + 145, MUTED, false);
-        }
-
-        int actionsY = boxY + 190;
-        int actionWidth = Math.min(132, (boxWidth - 36) / 2);
-        int primaryX = boxX + boxWidth - 12 - actionWidth;
-        if (modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE) {
-            drawModalButton(graphics, font, primaryX, actionsY, actionWidth,
-                    Component.translatable("market.geg.request_this"));
-            if (modal.kind == Kind.FAVORITE && modal.favorite.ended())
-                drawModalButton(graphics, font, boxX + 12, actionsY, actionWidth,
-                        Component.translatable("market.geg.unfavorite"));
-        } else if (modal.kind == Kind.OWN || modal.kind == Kind.OWN_REQUEST) {
-            drawModalButton(graphics, font, boxX + 12, actionsY, actionWidth,
-                    Component.translatable("market.geg.cancel_listing"));
-            drawModalButton(graphics, font, primaryX, actionsY, actionWidth,
-                    Component.translatable("market.geg.reprice"));
-        } else if (modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE) {
-            drawModalButton(graphics, font, primaryX, actionsY, actionWidth,
-                    Component.translatable(requestMode ? "market.geg.confirm_request" : "market.geg.confirm_list"));
-        } else if (modal.kind == Kind.DELIVERY || modal.kind == Kind.COIN) {
-            drawModalButton(graphics, font, primaryX, actionsY, actionWidth,
-                    Component.translatable("market.geg.claim"));
+            graphics.drawString(font, Component.translatable("market.geg.unit_price"), contentX + 104, contentY + 113, SECONDARY_TEXT, false);
         }
     }
 
     private void drawQuantityMenu(GuiGraphics graphics, Font font, int x, int y, int width, int height) {
-        int centerX = x + width / 2;
-        int centerY = y + height / 2;
-        graphics.fill(x, y, x + width, y + height, 0xB8000000);
-        graphics.fill(centerX - 112, centerY - 76, centerX + 112, centerY + 91, SURFACE);
-        graphics.fill(centerX - 112, centerY - 76, centerX + 112, centerY - 74, ACCENT);
-        graphics.drawString(font, Component.translatable("market.geg.quantity"), centerX - 95, centerY - 65, TEXT, false);
-        String[] labels = {"-16", "-8", "+8", "+16", Component.translatable("market.geg.max").getString()};
-        for (int index = 0; index < labels.length; index++) {
-            int buttonX = centerX - 100 + index * 40;
-            graphics.fill(buttonX, centerY - 12, buttonX + 38, centerY + 8, 0xFF36536A);
-            graphics.drawCenteredString(font, labels[index], buttonX + 19, centerY - 6, TEXT);
-        }
-        drawModalButton(graphics, font, centerX - 95, centerY + 28, 190,
-                Component.translatable("market.geg.cancel"));
-        MarketDetail offer = selectedDetail();
-        drawModalButton(graphics, font, centerX - 95, centerY + 56, 190,
-                Component.translatable(offer != null && offer.buyOrder()
-                        ? "market.geg.confirm_fulfill" : "market.geg.confirm_buy"));
+        quantityDialog().draw(getContext(), new Modal.Rect(x, y, width, height), content -> {
+            String[] labels = {"-16", "-8", "+8", "+16", Component.translatable("market.geg.max").getString()};
+            for (int index = 0; index < labels.length; index++) {
+                int buttonX = content.x() + 4 + index * 40;
+                drawButton(graphics, font, buttonX, content.y() + 32, 38, 20,
+                        Component.literal(labels[index]));
+            }
+        });
     }
 
-    private void drawModalButton(GuiGraphics graphics, Font font, int x, int y, int width, Component text) {
-        graphics.fill(x, y, x + width, y + 20, 0xFF276D66);
-        graphics.drawCenteredString(font, font.plainSubstrByWidth(text.getString(), width - 8),
-                x + width / 2, y + 6, TEXT);
+    private Modal quantityDialog() {
+        MarketDetail offer = selectedDetail();
+        return new Modal(224, 167, 8, Component.translatable("market.geg.quantity"))
+                .action(Component.translatable("market.geg.cancel"), this::closeQuantityMenu)
+                .action(Component.translatable(offer != null && offer.buyOrder()
+                        ? "market.geg.confirm_fulfill" : "market.geg.confirm_buy"), this::confirmQuantity);
+    }
+
+    private void closeQuantityMenu() {
+        quantityMenu = false;
+        ClientMarketScreen.showTradeQuantity(false);
+    }
+
+    private void drawButton(GuiGraphics graphics, Font font, int x, int y,
+                            int width, int height, Component text) {
+        ModularGuiContext context = getContext();
+        WidgetTheme style = context.getTheme().getButtonTheme().getTheme(isHovered(x, y, width, height));
+        drawThemedControl(graphics, font, context, style, x, y, width, height, text);
+    }
+
+    private void drawToggleButton(GuiGraphics graphics, Font font, int x, int y,
+                                  int width, int height, Component text, boolean selected) {
+        ModularGuiContext context = getContext();
+        SelectableTheme toggle = context.getTheme().getToggleButtonTheme()
+                .getTheme(isHovered(x, y, width, height));
+        drawThemedControl(graphics, font, context, selected ? toggle.getSelected() : toggle,
+                x, y, width, height, text);
+    }
+
+    private void drawThemedControl(GuiGraphics graphics, Font font, ModularGuiContext context,
+                                   WidgetTheme style, int x, int y, int width, int height, Component text) {
+        IDrawable background = style.getBackground();
+        if (background != null) {
+            background.draw(context, x, y, width, height, style);
+        }
+        String label = font.plainSubstrByWidth(text.getString(), Math.max(0, width - 8));
+        graphics.drawString(font, label, x + (width - font.width(label)) / 2,
+                y + (height - font.lineHeight) / 2, style.getTextColor(), style.isTextShadow());
+    }
+
+    private void drawPanelBackground(int x, int y, int width, int height,
+                                     WidgetThemeEntry<WidgetTheme> entry) {
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+        ModularGuiContext context = getContext();
+        WidgetTheme style = entry != null
+                ? entry.theme()
+                : context.getTheme().getPanelTheme().theme();
+        IDrawable background = style.getBackground();
+        if (background != null) {
+            background.draw(context, x, y, width, height, style);
+        }
+    }
+
+    private boolean isHovered(int x, int y, int width, int height) {
+        ModularGuiContext context = getContext();
+        int mouseX = context.getAbsMouseX();
+        int mouseY = context.getAbsMouseY();
+        return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
     }
 
     @Override
@@ -600,11 +644,14 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             int index = Math.min(columns - 1, Math.max(0,
                     (mouseX - x) * columns / Math.max(width, 1)));
             if (index >= 0 && index < Tab.values().length) {
-                tab = Tab.values()[index];
-                scroll = 0;
-                filter = "all";
-                filterOpen = false;
-                dirty = true;
+                Tab nextTab = Tab.values()[index];
+                if (nextTab != tab) {
+                    tab = nextTab;
+                    scroll = 0;
+                    filter = "all";
+                    filterOpen = false;
+                    dirty = true;
+                }
             }
             return Interactable.Result.STOP;
         }
@@ -650,22 +697,18 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     private void handleModalClick(int mouseX, int mouseY, int width, int height) {
-        int boxWidth = Math.min(340, width - 12);
-        int boxX = (width - boxWidth) / 2;
-        int boxY = height / 2 - 112;
-        int actionWidth = Math.min(132, (boxWidth - 36) / 2);
-        int primaryX = boxX + boxWidth - 12 - actionWidth;
-        if (mouseX < boxX || mouseX > boxX + boxWidth || mouseY < boxY || mouseY > boxY + 224
-                || (mouseX > boxX + boxWidth - 60 && mouseY < boxY + 34)) {
-            closeModal();
+        Modal dialog = detailDialog();
+        Modal.Rect bounds = dialog.bounds(0, 0, width, height);
+        if (dialog.click(bounds, mouseX, mouseY, this::closeModal)) {
             return;
         }
+        Modal.Rect content = dialog.content(bounds);
         if ((modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE)
-                && mouseY >= boxY + 56 && mouseY < boxY + 181) {
-            int index = selectedOffer + (mouseY - boxY - 56) / 25;
+                && mouseY >= content.y() + 24 && mouseY < content.y() + 149) {
+            int index = selectedOffer + (mouseY - content.y() - 24) / 25;
             if (index >= modal.offers.size()) return;
             MarketDetail offer = modal.offers.get(index);
-            int actionX = boxX + boxWidth - 112;
+            int actionX = content.right() - 104;
             if (mouseX >= actionX && mouseX < actionX + 51) {
                 selectedDetailId = offer.id();
                 quantityMenu = true;
@@ -684,13 +727,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 selectedDetailId = offer.id();
             }
             return;
-        }
-        if (mouseY >= boxY + 190 && mouseY < boxY + 211) {
-            if (mouseX >= boxX + 12 && mouseX < boxX + 12 + actionWidth) {
-                secondaryModalAction();
-            } else if (mouseX >= primaryX && mouseX < primaryX + actionWidth) {
-                primaryModalAction();
-            }
         }
     }
 
@@ -713,23 +749,22 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     private void handleQuantityClick(int mouseX, int mouseY, int width, int height) {
-        int centerX = width / 2;
-        int centerY = height / 2;
-        if (mouseX < centerX - 112 || mouseX > centerX + 112
-                || mouseY < centerY - 76 || mouseY > centerY + 91) {
-            quantityMenu = false;
-            ClientMarketScreen.showTradeQuantity(false);
+        Modal dialog = quantityDialog();
+        Modal.Rect bounds = dialog.bounds(0, 0, width, height);
+        if (dialog.click(bounds, mouseX, mouseY, this::closeQuantityMenu)) {
             return;
         }
         MarketDetail offer = selectedDetail();
         if (offer == null) {
-            quantityMenu = false;
-            ClientMarketScreen.showTradeQuantity(false);
+            closeQuantityMenu();
             return;
         }
-        if (mouseY >= centerY - 12 && mouseY < centerY + 8) {
-            int index = (mouseX - (centerX - 100)) / 40;
-            if (index >= 0 && index < 5) {
+        Modal.Rect content = dialog.content(bounds);
+        int quickX = content.x() + 4;
+        if (mouseY >= content.y() + 32 && mouseY < content.y() + 52) {
+            int index = (mouseX - quickX) / 40;
+            if (mouseX >= quickX && index >= 0 && index < 5
+                    && mouseX < quickX + index * 40 + 38) {
                 int current;
                 try { current = Integer.parseInt(ClientMarketScreen.tradeQuantityText()); }
                 catch (NumberFormatException exception) { current = 1; }
@@ -739,22 +774,25 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                         (int) Math.max(Integer.MIN_VALUE, Math.min(Integer.MAX_VALUE, (long) current + deltas[index]))));
                 ClientMarketScreen.setTradeQuantity(Math.max(1, next));
             }
-        } else if (mouseY >= centerY + 28 && mouseY < centerY + 48) {
-            quantityMenu = false;
-            ClientMarketScreen.showTradeQuantity(false);
-        } else if (mouseY >= centerY + 56 && mouseY < centerY + 76) {
-            try {
-                int amount = Integer.parseInt(ClientMarketScreen.tradeQuantityText());
-                if (amount <= 0 || amount > maxTradeQuantity(offer)) throw new IllegalArgumentException();
-                send(offer.buyOrder() ? MarketActionPacket.Action.FULFILL_REQUEST : MarketActionPacket.Action.BUY,
-                        offer.id(), offer.version(), offer.unitPrice(), amount, 0);
-                quantityMenu = false;
-                ClientMarketScreen.showTradeQuantity(false);
-                ClientMarketState.requestDetails(modal.detailId, modal.item);
-            } catch (IllegalArgumentException exception) {
-                if (Minecraft.getInstance().player != null) Minecraft.getInstance().player.displayClientMessage(
-                        Component.translatable("market.geg.result.invalid"), false);
-            }
+        }
+    }
+
+    private void confirmQuantity() {
+        MarketDetail offer = selectedDetail();
+        if (offer == null) {
+            closeQuantityMenu();
+            return;
+        }
+        try {
+            int amount = Integer.parseInt(ClientMarketScreen.tradeQuantityText());
+            if (amount <= 0 || amount > maxTradeQuantity(offer)) throw new IllegalArgumentException();
+            send(offer.buyOrder() ? MarketActionPacket.Action.FULFILL_REQUEST : MarketActionPacket.Action.BUY,
+                    offer.id(), offer.version(), offer.unitPrice(), amount, 0);
+            closeQuantityMenu();
+            ClientMarketState.requestDetails(modal.detailId, modal.item);
+        } catch (IllegalArgumentException exception) {
+            if (Minecraft.getInstance().player != null) Minecraft.getInstance().player.displayClientMessage(
+                    Component.translatable("market.geg.result.invalid"), false);
         }
     }
 

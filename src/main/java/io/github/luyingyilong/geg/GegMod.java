@@ -3,10 +3,13 @@ package io.github.luyingyilong.geg;
 import io.github.luyingyilong.geg.market.MarketBlocks;
 import io.github.luyingyilong.geg.market.MarketEvents;
 import io.github.luyingyilong.geg.market.MarketNetwork;
+import io.github.luyingyilong.geg.client.ui.OreTheme;
 import io.github.luyingyilong.geg.money.MoneyCommands;
 import io.github.luyingyilong.geg.money.MoneyEvents;
 import io.github.luyingyilong.geg.money.MoneyNetwork;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -14,8 +17,9 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public final class GegMod {
     public static final String MODID = "geg";
 
-    public GegMod() {
-        MarketBlocks.register(FMLJavaModLoadingContext.get().getModEventBus());
+    public GegMod(FMLJavaModLoadingContext context) {
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> OreTheme::register);
+        MarketBlocks.register(context.getModEventBus());
         MoneyNetwork.register();
         MarketNetwork.register();
         MinecraftForge.EVENT_BUS.addListener(MoneyCommands::register);

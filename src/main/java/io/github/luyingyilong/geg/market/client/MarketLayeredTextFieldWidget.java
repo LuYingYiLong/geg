@@ -1,8 +1,11 @@
 package io.github.luyingyilong.geg.market.client;
 
+import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
+import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widgets.textfield.TextFieldWidget;
+import io.github.luyingyilong.geg.client.ui.OreTheme;
 import net.minecraft.client.gui.GuiGraphics;
 
 final class MarketLayeredTextFieldWidget extends TextFieldWidget {
@@ -31,15 +34,24 @@ final class MarketLayeredTextFieldWidget extends TextFieldWidget {
 
     @Override
     public void drawBackground(ModularGuiContext context, WidgetThemeEntry<?> theme) {
-        if (marketVisible) {
-            withDepth(context, () -> super.drawBackground(context, theme));
-        }
+        // The market canvas draws after the widget background pass.
     }
 
     @Override
     public void draw(ModularGuiContext context, WidgetThemeEntry<?> theme) {
         if (marketVisible) {
-            withDepth(context, () -> super.draw(context, theme));
+            withDepth(context, () -> {
+                WidgetThemeEntry<WidgetTheme> inputEntry = context.getTheme()
+                        .getWidgetTheme(OreTheme.INPUT_BOX);
+                if (inputEntry != null) {
+                    WidgetTheme inputTheme = inputEntry.theme();
+                    IDrawable background = inputTheme.getBackground();
+                    if (background != null) {
+                        background.drawAtZero(context, getArea(), inputTheme);
+                    }
+                }
+                super.draw(context, theme);
+            });
         }
     }
 

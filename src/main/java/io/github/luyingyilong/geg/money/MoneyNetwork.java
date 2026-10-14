@@ -10,7 +10,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 public final class MoneyNetwork {
     private static final String PROTOCOL_VERSION = "1";
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(GegMod.MODID, "money"),
+            ResourceLocation.fromNamespaceAndPath(GegMod.MODID, "money"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals

@@ -4,6 +4,7 @@ import brachy.modularui.factory.ClientGUI;
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
 import brachy.modularui.value.StringValue;
+import io.github.luyingyilong.geg.client.ui.OreTheme;
 import io.github.luyingyilong.geg.market.MarketActionPacket;
 import io.github.luyingyilong.geg.market.MarketNetwork;
 import net.minecraft.client.Minecraft;
@@ -12,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 
 
 public final class ClientMarketScreen {
-    private static final String THEME_NAME = "geg_market";
     private static MarketCanvasWidget canvas;
     private static MarketLayeredTextFieldWidget search;
     private static MarketLayeredTextFieldWidget quantity;
@@ -63,8 +63,10 @@ public final class ClientMarketScreen {
         tradeQuantity.leftRel(0.5F, -95, 0.0F).topRel(0.5F, -43, 0.0F).size(190, 18);
         tradeQuantity.setMarketVisible(false);
 
-        ModularPanel<?> panel = new ModularPanel<>("market").fullScreenInvisible();
-        panel.child(canvas.full());
+        ModularPanel<?> panel = new ModularPanel<>("market");
+        panel.widgetTheme(OreTheme.BACKGROUND);
+        panel.full();
+        panel.child(canvas.full().disableThemeBackground(true));
         panel.child(search);
         panel.child(quantity);
         panel.child(price);
@@ -74,7 +76,7 @@ public final class ClientMarketScreen {
             ClientMarketState.clearDetails();
             canvas = null;
         });
-        ClientGUI.open(new ModularScreen("geg", panel).useTheme(THEME_NAME).pausesGame(false));
+        ClientGUI.open(new ModularScreen("geg", panel).useTheme(OreTheme.NAME).pausesGame(false));
     }
 
     public static boolean isOpen() {

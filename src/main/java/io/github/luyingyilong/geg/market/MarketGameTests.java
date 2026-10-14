@@ -30,7 +30,7 @@ public final class MarketGameTests {
     @GameTest(template = "empty")
     public static void distinctItemDataAndPersistence(GameTestHelper helper) {
         helper.assertTrue(helper.getLevel().getRecipeManager()
-                        .byKey(new ResourceLocation(GegMod.MODID, "market_terminal")).isPresent(),
+                        .byKey(ResourceLocation.fromNamespaceAndPath(GegMod.MODID, "market_terminal")).isPresent(),
                 "Market terminal recipe was not loaded");
         ItemStack first = new ItemStack(Items.PAPER);
         first.getOrCreateTag().putString("variant", "first");

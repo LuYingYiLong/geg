@@ -1,0 +1,163 @@
+{
+  "parent": "vanilla",
+  "panel": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/panel",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 1,
+      "borderY": 1
+    }
+  },
+  "panel:background": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/background",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16
+    }
+  },
+  "panel:headerPanel": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/header_panel",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 0,
+      "borderY": 3
+    }
+  },
+  "panel:inputBox": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/input_box",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 1,
+      "borderY": 4
+    }
+  },
+  "panel:modal": {
+    "textColor": "#FFFCFCFC",
+    "textShadow": false,
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/modal",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 3,
+      "borderY": 5
+    }
+  },
+  "textField": {
+    "textColor": "#FFEAE8EC",
+    "markedColor": "#FFA9AAAC"
+  },
+  "button": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/toggle_button",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "textColor": "#FF1E1E1F",
+    "textShadow": false
+  },
+  "button:hover": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/hover_toggle_button",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    }
+  },
+  "toggleButton": {
+    "textColor": "#FF1E1E1F",
+    "textShadow": false,
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/toggle_button",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "selectedBackground": {
+      "type": "texture",
+      "location": "geg:modularui/gui/toggled_button",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 3
+    },
+    "selectedTextColor": "#FF1E1E1F",
+    "selectedTextShadow": false
+  },
+  "toggleButton:hover": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/hover_toggle_button",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "selectedBackground": {
+      "type": "texture",
+      "location": "geg:modularui/gui/toggled_button",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 3
+    }
+  }
+}
