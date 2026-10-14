@@ -4,11 +4,9 @@ import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
-import io.github.luyingyilong.geg.GegMod;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,13 +17,11 @@ public final class Modal {
     public static final int PADDING = 8;
     private static final int HEADER_HEIGHT = 32;
     private static final int FOOTER_HEIGHT = 36;
-    private static final int BUTTON_HEIGHT = 20;
+    private static final int BUTTON_HEIGHT = Button.Size.MEDIUM.height();
     private static final int BUTTON_GAP = 8;
     private static final int CLOSE_SIZE = 18;
     private static final int CLOSE_ICON_SIZE = 8;
     private static final int OVERLAY_COLOR = 0xB8000000;
-    private static final ResourceLocation CLOSE_ICON = ResourceLocation.fromNamespaceAndPath(
-            GegMod.MODID, "textures/modularui/icons/small_close.png");
 
     private final int preferredWidth;
     private final int preferredHeight;
@@ -77,7 +73,9 @@ public final class Modal {
         drawCloseButton(context, closeButton(bounds));
         drawContent.accept(content(bounds));
         for (int i = 0; i < actions.size(); i++) {
-            drawButton(context, actionButton(bounds, i), actions.get(i).label);
+            Rect button = actionButton(bounds, i);
+            Button.draw(context, button.x, button.y, button.width, Button.Size.MEDIUM,
+                    actions.get(i).label);
         }
     }
 
@@ -108,7 +106,7 @@ public final class Modal {
         int iconX = bounds.x + (bounds.width - CLOSE_ICON_SIZE) / 2;
         int iconY = bounds.y + (bounds.height - CLOSE_ICON_SIZE) / 2;
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-        graphics.blit(CLOSE_ICON, iconX, iconY, 0.0F, 0.0F,
+        graphics.blit(OreIcons.SMALL_CLOSE, iconX, iconY, 0.0F, 0.0F,
                 CLOSE_ICON_SIZE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);
     }
 
@@ -120,21 +118,6 @@ public final class Modal {
         int startX = count == 1 ? bounds.right() - PADDING - buttonWidth : bounds.x + PADDING;
         return new Rect(startX + index * (buttonWidth + space),
                 bounds.bottom() - PADDING - BUTTON_HEIGHT, buttonWidth, BUTTON_HEIGHT);
-    }
-
-    private static void drawButton(ModularGuiContext context, Rect bounds, Component label) {
-        GuiGraphics graphics = context.getGraphics();
-        Font font = context.getFont();
-        boolean hovered = bounds.contains(context.getAbsMouseX(), context.getAbsMouseY());
-        WidgetTheme style = context.getTheme().getButtonTheme().getTheme(hovered);
-        IDrawable background = style.getBackground();
-        if (background != null) {
-            background.draw(context, bounds.x, bounds.y, bounds.width, bounds.height, style);
-        }
-        String text = font.plainSubstrByWidth(label.getString(), Math.max(0, bounds.width - 8));
-        graphics.drawString(font, text, bounds.x + (bounds.width - font.width(text)) / 2,
-                bounds.y + (bounds.height - font.lineHeight) / 2,
-                style.getTextColor(), style.isTextShadow());
     }
 
     private record Action(Component label, Runnable onClick) {

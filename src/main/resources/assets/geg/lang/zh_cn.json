@@ -87,5 +87,7 @@
   "market.geg.ended": "已结束",
   "market.geg.buying_item": "求购：%s",
   "market.geg.selling_item": "出售：%s",
-  "market.geg.sample": "已选样本"
+  "market.geg.sample": "已选样本",
+  "market.geg.form.invalid_quantity": "请输入范围内的正整数",
+  "market.geg.form.invalid_coin": "请输入最多两位小数的正数金币金额"
 }

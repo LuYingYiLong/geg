@@ -10,8 +10,8 @@
       "y": 0,
       "width": 16,
       "height": 16,
-      "borderX": 1,
-      "borderY": 1
+      "borderY": 2,
+      "borderX": 2
     }
   },
   "panel:background": {
@@ -70,6 +70,36 @@
       "borderY": 5
     }
   },
+  "panel:dropdownPanel": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/dropdown_panel",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 1,
+      "borderY": 1
+    }
+  },
+  "panel:menuItem": {
+    "textColor": "#FFFCFCFC",
+    "textShadow": false,
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/menu_item",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 1,
+      "borderY": 1
+    }
+  },
   "textField": {
     "textColor": "#FFEAE8EC",
     "markedColor": "#FFA9AAAC"
@@ -102,6 +132,51 @@
       "height": 16,
       "borderX": 2,
       "borderY": 4
+    }
+  },
+  "button:tabButton": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/toggle_button",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "textColor": "#FF1E1E1F",
+    "textShadow": false
+  },
+  "button:tabButton:hover": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/hover_toggle_button",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    }
+  },
+  "button:tabButtonSelected": {
+    "textColor": "#FFFFFFFF",
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/tab_selected",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 2
     }
   },
   "toggleButton": {

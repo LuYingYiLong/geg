@@ -13,11 +13,20 @@ public final class OreTheme {
             PANEL.createSubKey("headerPanel");
     public static final WidgetThemeKey<WidgetTheme> INPUT_BOX = PANEL.createSubKey("inputBox");
     public static final WidgetThemeKey<WidgetTheme> MODAL = PANEL.createSubKey("modal");
+    public static final WidgetThemeKey<WidgetTheme> DROPDOWN_PANEL =
+            PANEL.createSubKey("dropdownPanel");
+    public static final WidgetThemeKey<WidgetTheme> MENU_ITEM = PANEL.createSubKey("menuItem");
+    private static final WidgetThemeKey<WidgetTheme> BUTTON =
+            ITheme.getDefault().getButtonTheme().key();
+    public static final WidgetThemeKey<WidgetTheme> TAB_BUTTON =
+            BUTTON.createSubKey("tabButton");
+    public static final WidgetThemeKey<WidgetTheme> TAB_BUTTON_SELECTED =
+            BUTTON.createSubKey("tabButtonSelected");
 
     private OreTheme() {
     }
 
     public static void register() {
-        // Loading this class registers every panel subtheme before resource reload.
+        // Loading this class registers the panel subthemes and tab button theme before resource reload.
     }
 }

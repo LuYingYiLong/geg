@@ -7,8 +7,11 @@ import brachy.modularui.theme.SelectableTheme;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
+import io.github.luyingyilong.geg.client.ui.Button;
+import io.github.luyingyilong.geg.client.ui.Dropdown;
 import io.github.luyingyilong.geg.client.ui.Modal;
 import io.github.luyingyilong.geg.client.ui.OreTheme;
+import io.github.luyingyilong.geg.client.ui.Tabs;
 import io.github.luyingyilong.geg.market.*;
 import io.github.luyingyilong.geg.money.MoneyCurrency;
 import io.github.luyingyilong.geg.money.client.ClientMoneyState;
@@ -19,6 +22,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -34,13 +38,18 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private static final int MIN_CARD_WIDTH = 96;
     private static final int HEADER_HEIGHT = 25;
     private static final int FILTER_WIDTH = 82;
-    private static final int FILTER_ROW_HEIGHT = 17;
-    private static final int FOOTER_HEIGHT = 25;
+    private static final int FOOTER_HEIGHT = Button.Size.MEDIUM.height();
+    private static final int FAVORITE_BUTTON_WIDTH = 51;
+    private static final int FAVORITE_BUTTON_HEIGHT = 19;
+    private static final Tabs FOOTER_TABS = new Tabs(Arrays.stream(Tab.values())
+            .map(Tab::title).toList());
+    private static final Tabs PUBLISH_TABS = new Tabs(List.of(
+            Component.translatable("market.geg.selling"),
+            Component.translatable("market.geg.buying")), Button.Size.SMALL);
     private final List<Card> cards = new ArrayList<>();
-    private final List<String> modIds = new ArrayList<>();
+    private final Dropdown<String> filterDropdown = new Dropdown<>("all", 8);
     private Tab tab = Tab.MARKET;
     private Card modal;
-    private String filter = "all";
     private String lastSearch = "";
     private int lastWidth = -1;
     private int lastHeight = -1;
@@ -51,8 +60,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private boolean quantityMenu;
     private boolean requestMode;
     private Card requestSample;
-    private int filterOffset;
-    private boolean filterOpen;
     private boolean dirty = true;
 
     private static boolean sameCard(Card left, Card right) {
@@ -146,16 +153,21 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         // 绘制 header
         WidgetThemeEntry<WidgetTheme> headerEntry = context.getTheme().getWidgetTheme(OreTheme.HEADER_PANEL);
         drawPanelBackground(x, y, width, HEADER_HEIGHT, headerEntry);
-        graphics.drawString(font, Component.translatable("market.geg.title"), x + 10, y + 8, HEADER_TEXT, false);
-        drawFilter(graphics, font, x, y, width);
-        if (tab == Tab.SELL) drawPublishSwitch(graphics, font, x, y);
+        Component title = Component.translatable("market.geg.title");
+        int searchWidth = Math.min(138, Math.max(16, width - 102));
+        if (10 + font.width(title) + 8 <= width - 88 - searchWidth) {
+            graphics.drawString(font, title, x + 10, y + 8, HEADER_TEXT, false);
+        }
+        drawFilter(context, x, y, width);
+        if (tab == Tab.SELL) drawPublishSwitch(x, y);
         drawBody(graphics, font, x, y, width, height, context.getAbsMouseX(), context.getAbsMouseY());
-        drawFooter(graphics, font, x, y, width, height);
-        if (filterOpen) {
+        drawFooter(x, y, width, height);
+        if (filterDropdown.isOpen()) {
             graphics.flush();
             graphics.pose().pushPose();
             graphics.pose().translate(0.0F, 0.0F, 200.0F);
-            drawFilterMenu(graphics, font, x, y, width);
+            filterDropdown.drawMenu(context, x + width - FILTER_WIDTH, y + filterTopOffset(),
+                    FILTER_WIDTH, Button.Size.MEDIUM.height());
             graphics.flush();
             graphics.pose().popPose();
         }
@@ -168,7 +180,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 graphics.flush();
                 graphics.pose().pushPose();
                 graphics.pose().translate(0.0F, 0.0F, 100.0F);
-                drawQuantityMenu(graphics, font, x, y, width, height);
+                drawQuantityMenu(x, y, width, height);
                 graphics.flush();
                 graphics.pose().popPose();
             }
@@ -184,15 +196,14 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         dirty = false;
 
         List<Card> source = sourceCards();
-        modIds.clear();
-        modIds.add("all");
+        List<Dropdown.Option<String>> modOptions = new ArrayList<>();
+        modOptions.add(new Dropdown.Option<>("all", Component.translatable("market.geg.all_mods")));
         ClientMarketState.summaries().stream().map(summary -> namespace(summary.item()))
                 .filter(value -> !value.isEmpty())
-                .distinct().sorted().forEach(modIds::add);
-        if (!modIds.contains(filter)) {
-            filter = "all";
-        }
-        filterOffset = Math.min(filterOffset, Math.max(0, modIds.size() - 8));
+                .distinct().sorted().forEach(value ->
+                        modOptions.add(new Dropdown.Option<>(value, Component.literal(value))));
+        filterDropdown.setOptions(modOptions);
+        String filter = filterDropdown.selected();
 
         String query = search.trim().toLowerCase(Locale.ROOT);
         cards.clear();
@@ -225,7 +236,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             boolean twoLines = font.width(card.title()) > titleWidth;
             boolean hasPrice = card.kind == Kind.GROUP || card.kind == Kind.OWN || card.kind == Kind.OWN_REQUEST
                     || card.kind == Kind.FAVORITE || card.kind == Kind.HISTORY || card.kind == Kind.COIN;
-            card.height = (hasPrice && card.kind != Kind.COIN ? 58 : 48) + (twoLines ? 10 : 0);
+            card.height = (hasPrice && card.kind != Kind.COIN ? 42 : 32) + (twoLines ? 10 : 0);
             card.x = 8 + column * (cardWidth + CARD_GAP);
             card.y = columnHeights[column];
             columnHeights[column] += card.height + CARD_GAP;
@@ -351,7 +362,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                     x + width / 2, top + 24, SECONDARY_TEXT);
         }
         if (hovered != null && !hovered.item.isEmpty() && mouseX < x + hovered.x + 24
-                && modal == null && !filterOpen) {
+                && modal == null && !filterDropdown.isOpen()) {
             graphics.renderTooltip(font, hovered.item, mouseX, mouseY);
         }
     }
@@ -407,56 +418,25 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         if (!price.getString().isEmpty()) {
             graphics.drawString(font, font.plainSubstrByWidth(price.getString(), textWidth),
                     textX, nextLineY, ended ? SECONDARY_TEXT : ACCENT, false);
-            nextLineY += 13;
-        }
-
-        Component action = Component.translatable(switch (card.kind) {
-            case GROUP, FAVORITE -> "market.geg.details";
-            case OWN, OWN_REQUEST, HISTORY -> "market.geg.details";
-            case INVENTORY, SAMPLE -> requestMode ? "market.geg.request" : "market.geg.list";
-            case DELIVERY, COIN -> "market.geg.claim";
-        });
-        int buttonX = textX;
-        int buttonY = nextLineY + 1;
-        drawButton(graphics, font, buttonX, buttonY, textWidth, 14, action);
-    }
-
-    private void drawFilter(GuiGraphics graphics, Font font, int x, int y, int width) {
-        int buttonX = x + width - FILTER_WIDTH;
-        String label = filter.equals("all") ? Component.translatable("market.geg.all_mods").getString() : filter;
-        drawButton(graphics, font, buttonX, y, FILTER_WIDTH, HEADER_HEIGHT, Component.literal(label));
-    }
-
-    private void drawPublishSwitch(GuiGraphics graphics, Font font, int x, int y) {
-        drawToggleButton(graphics, font, x + 6, y + 32, 67, 18,
-                Component.translatable("market.geg.selling"), !requestMode);
-        drawToggleButton(graphics, font, x + 73, y + 32, 67, 18,
-                Component.translatable("market.geg.buying"), requestMode);
-    }
-
-    private void drawFilterMenu(GuiGraphics graphics, Font font, int x, int y, int width) {
-        int buttonX = x + width - FILTER_WIDTH;
-        int visible = Math.min(8, modIds.size() - filterOffset);
-        drawPanelBackground(buttonX, y + HEADER_HEIGHT, FILTER_WIDTH,
-                visible * FILTER_ROW_HEIGHT, getContext().getTheme().getWidgetTheme(OreTheme.MODAL));
-        for (int index = 0; index < visible; index++) {
-            String value = modIds.get(filterOffset + index);
-            Component label = value.equals("all") ? Component.translatable("market.geg.all_mods") : Component.literal(value);
-            graphics.drawString(font, font.plainSubstrByWidth(label.getString(), FILTER_WIDTH - 8),
-                    buttonX + 4, y + HEADER_HEIGHT + index * FILTER_ROW_HEIGHT
-                            + (FILTER_ROW_HEIGHT - font.lineHeight) / 2, TEXT, false);
         }
     }
 
-    private void drawFooter(GuiGraphics graphics, Font font, int x, int y, int width, int height) {
-        int columns = Tab.values().length;
+    private void drawFilter(ModularGuiContext context, int x, int y, int width) {
+        filterDropdown.drawTrigger(context, x + width - FILTER_WIDTH, y + filterTopOffset(),
+                FILTER_WIDTH);
+    }
+
+    private static int filterTopOffset() {
+        return (HEADER_HEIGHT - Button.Size.MEDIUM.height()) / 2;
+    }
+
+    private void drawPublishSwitch(int x, int y) {
+        PUBLISH_TABS.draw(getContext(), x + 6, y + 32, 134, requestMode ? 1 : 0);
+    }
+
+    private void drawFooter(int x, int y, int width, int height) {
         int top = y + height - FOOTER_HEIGHT;
-        for (int index = 0; index < Tab.values().length; index++) {
-            int tabX = x + index * width / columns;
-            int tabEnd = x + (index + 1) * width / columns;
-            drawToggleButton(graphics, font, tabX, top, tabEnd - tabX, FOOTER_HEIGHT,
-                    Tab.values()[index].title(), Tab.values()[index] == tab);
-        }
+        FOOTER_TABS.draw(getContext(), x, top, width, tab.ordinal());
     }
 
     private void drawModal(GuiGraphics graphics, Font font, int x, int y, int width, int height) {
@@ -510,12 +490,12 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 graphics.drawString(font, font.plainSubstrByWidth(MoneyCurrency.COIN.format(offer.unitPrice()), 96),
                         contentX + 99, rowY + 8, TEXT, false);
                 int actionX = content.right() - 104;
-                drawButton(graphics, font, actionX, rowY + 2, 50, 19,
+                Button.draw(getContext(), actionX, rowY + 2, 50, Button.Size.SMALL,
                         Component.translatable(offer.buyOrder()
                                 ? "market.geg.fulfill" : "market.geg.buy"));
                 boolean favorite = ClientMarketState.favorites().stream()
                         .anyMatch(value -> value.orderId() == offer.id());
-                drawToggleButton(graphics, font, actionX + 53, rowY + 2, 51, 19,
+                drawFavoriteToggleButton(graphics, font, actionX + 53, rowY + 2,
                         Component.translatable(favorite
                                 ? "market.geg.favorited" : "market.geg.favorite"), favorite);
             }
@@ -538,24 +518,30 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                     contentX + 4, contentY + 22, SECONDARY_TEXT, false);
         }
 
-        if (modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE) {
-            graphics.drawString(font, Component.translatable("market.geg.quantity"), contentX + 4, contentY + 113, SECONDARY_TEXT, false);
-        }
-        if (modal.kind == Kind.OWN || modal.kind == Kind.OWN_REQUEST
-                || modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE) {
-            graphics.drawString(font, Component.translatable("market.geg.unit_price"), contentX + 104, contentY + 113, SECONDARY_TEXT, false);
-        }
+        ClientMarketScreen.drawDetailForm(getContext(), content, getArea().width);
     }
 
-    private void drawQuantityMenu(GuiGraphics graphics, Font font, int x, int y, int width, int height) {
+    private void drawQuantityMenu(int x, int y, int width, int height) {
         quantityDialog().draw(getContext(), new Modal.Rect(x, y, width, height), content -> {
+            int quickTop = ClientMarketScreen.drawTradeForm(getContext(), content, width);
             String[] labels = {"-16", "-8", "+8", "+16", Component.translatable("market.geg.max").getString()};
             for (int index = 0; index < labels.length; index++) {
-                int buttonX = content.x() + 4 + index * 40;
-                drawButton(graphics, font, buttonX, content.y() + 32, 38, 20,
+                Modal.Rect button = quickButton(content, quickTop, index);
+                Button.draw(getContext(), button.x(), button.y(), button.width(), Button.Size.MEDIUM,
                         Component.literal(labels[index]));
             }
         });
+    }
+
+    private static Modal.Rect quickButton(Modal.Rect content, int top, int index) {
+        int available = Math.max(1, content.width() - 8);
+        int columns = Math.min(5, Math.max(1, (available + 2) / 30));
+        int buttonWidth = Math.min(38, Math.max(1, (available - (columns - 1) * 2) / columns));
+        int row = index / columns;
+        int column = index % columns;
+        return new Modal.Rect(content.x() + 4 + column * (buttonWidth + 2),
+                top + row * (Button.Size.MEDIUM.height() + 2),
+                buttonWidth, Button.Size.MEDIUM.height());
     }
 
     private Modal quantityDialog() {
@@ -571,31 +557,20 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         ClientMarketScreen.showTradeQuantity(false);
     }
 
-    private void drawButton(GuiGraphics graphics, Font font, int x, int y,
-                            int width, int height, Component text) {
-        ModularGuiContext context = getContext();
-        WidgetTheme style = context.getTheme().getButtonTheme().getTheme(isHovered(x, y, width, height));
-        drawThemedControl(graphics, font, context, style, x, y, width, height, text);
-    }
-
-    private void drawToggleButton(GuiGraphics graphics, Font font, int x, int y,
-                                  int width, int height, Component text, boolean selected) {
+    private void drawFavoriteToggleButton(GuiGraphics graphics, Font font, int x, int y,
+                                          Component text, boolean selected) {
         ModularGuiContext context = getContext();
         SelectableTheme toggle = context.getTheme().getToggleButtonTheme()
-                .getTheme(isHovered(x, y, width, height));
-        drawThemedControl(graphics, font, context, selected ? toggle.getSelected() : toggle,
-                x, y, width, height, text);
-    }
-
-    private void drawThemedControl(GuiGraphics graphics, Font font, ModularGuiContext context,
-                                   WidgetTheme style, int x, int y, int width, int height, Component text) {
+                .getTheme(isHovered(x, y, FAVORITE_BUTTON_WIDTH, FAVORITE_BUTTON_HEIGHT));
+        WidgetTheme style = selected ? toggle.getSelected() : toggle;
         IDrawable background = style.getBackground();
         if (background != null) {
-            background.draw(context, x, y, width, height, style);
+            background.draw(context, x, y, FAVORITE_BUTTON_WIDTH, FAVORITE_BUTTON_HEIGHT, style);
         }
-        String label = font.plainSubstrByWidth(text.getString(), Math.max(0, width - 8));
-        graphics.drawString(font, label, x + (width - font.width(label)) / 2,
-                y + (height - font.lineHeight) / 2, style.getTextColor(), style.isTextShadow());
+        String label = font.plainSubstrByWidth(text.getString(), FAVORITE_BUTTON_WIDTH - 8);
+        graphics.drawString(font, label, x + (FAVORITE_BUTTON_WIDTH - font.width(label)) / 2,
+                y + (FAVORITE_BUTTON_HEIGHT - font.lineHeight) / 2,
+                style.getTextColor(), style.isTextShadow());
     }
 
     private void drawPanelBackground(int x, int y, int width, int height,
@@ -621,7 +596,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     @Override
-    public Interactable.Result onMousePressed(int button) {
+    public @NotNull Interactable.Result onMousePressed(int button) {
         if (button != 0) {
             return Interactable.Result.IGNORE;
         }
@@ -638,46 +613,36 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             return Interactable.Result.STOP;
         }
 
-        int footerTop = height - FOOTER_HEIGHT;
-        if (mouseY - y >= footerTop) {
-            int columns = Tab.values().length;
-            int index = Math.min(columns - 1, Math.max(0,
-                    (mouseX - x) * columns / Math.max(width, 1)));
-            if (index >= 0 && index < Tab.values().length) {
-                Tab nextTab = Tab.values()[index];
-                if (nextTab != tab) {
-                    tab = nextTab;
-                    scroll = 0;
-                    filter = "all";
-                    filterOpen = false;
-                    dirty = true;
-                }
-            }
-            return Interactable.Result.STOP;
-        }
-
-        if (mouseX - x >= width - FILTER_WIDTH && mouseX - x < width
-                && mouseY - y >= 0 && mouseY - y < HEADER_HEIGHT) {
-            filterOpen = !filterOpen;
-            return Interactable.Result.STOP;
-        }
-        if (filterOpen) {
-            int row = (mouseY - y - HEADER_HEIGHT) / FILTER_ROW_HEIGHT;
-            int index = filterOffset + row;
-            if (mouseX - x >= width - FILTER_WIDTH && mouseX - x < width
-                    && mouseY - y >= HEADER_HEIGHT && row >= 0 && row < 8 && index < modIds.size()) {
-                filter = modIds.get(index);
+        String previousFilter = filterDropdown.selected();
+        if (filterDropdown.click(x + width - FILTER_WIDTH, y + filterTopOffset(), FILTER_WIDTH,
+                Button.Size.MEDIUM.height(), mouseX, mouseY)) {
+            if (!Objects.equals(previousFilter, filterDropdown.selected())) {
                 scroll = 0;
                 dirty = true;
             }
-            filterOpen = false;
             return Interactable.Result.STOP;
         }
 
-        if (tab == Tab.SELL && mouseX - x >= 6 && mouseX - x < 140
-                && mouseY - y >= 32 && mouseY - y < 50) {
-            requestMode = mouseX - x >= 73;
+        int footerIndex = FOOTER_TABS.hitIndex(x, y + height - FOOTER_HEIGHT,
+                width, mouseX, mouseY);
+        if (footerIndex >= 0) {
+            Tab nextTab = Tab.values()[footerIndex];
+            if (nextTab != tab) {
+                tab = nextTab;
+                scroll = 0;
+                filterDropdown.select("all");
+                dirty = true;
+            }
             return Interactable.Result.STOP;
+        }
+
+        if (tab == Tab.SELL) {
+            int publishIndex = PUBLISH_TABS.hitIndex(x + 6, y + 32,
+                    134, mouseX, mouseY);
+            if (publishIndex >= 0) {
+                requestMode = publishIndex == 1;
+                return Interactable.Result.STOP;
+            }
         }
 
         int bodyTop = y + 52;
@@ -713,7 +678,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 selectedDetailId = offer.id();
                 quantityMenu = true;
                 ClientMarketScreen.showTradeQuantity(true);
-            } else if (mouseX >= actionX + 53 && mouseX < actionX + 105) {
+            } else if (mouseX >= actionX + 53
+                    && mouseX < actionX + 53 + FAVORITE_BUTTON_WIDTH) {
                 int favoriteIndex = -1;
                 for (int i = 0; i < ClientMarketState.favorites().size(); i++) {
                     if (ClientMarketState.favorites().get(i).orderId() == offer.id()) {
@@ -760,19 +726,20 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             return;
         }
         Modal.Rect content = dialog.content(bounds);
-        int quickX = content.x() + 4;
-        if (mouseY >= content.y() + 32 && mouseY < content.y() + 52) {
-            int index = (mouseX - quickX) / 40;
-            if (mouseX >= quickX && index >= 0 && index < 5
-                    && mouseX < quickX + index * 40 + 38) {
+        int quickTop = ClientMarketScreen.tradeFormBottom();
+        for (int index = 0; index < 5; index++) {
+            if (quickButton(content, quickTop, index).contains(mouseX, mouseY)) {
                 int current;
-                try { current = Integer.parseInt(ClientMarketScreen.tradeQuantityText()); }
-                catch (NumberFormatException exception) { current = 1; }
+                try {
+                    String raw = ClientMarketScreen.tradeQuantityText();
+                    current = io.github.luyingyilong.geg.client.ui.DecimalExpression.evaluate(raw).intValueExact();
+                } catch (IllegalArgumentException | ArithmeticException exception) { current = 1; }
                 int[] deltas = {-16, -8, 8, 16};
                 int max = maxTradeQuantity(offer);
                 int next = index == 4 ? max : Math.max(1, Math.min(max,
                         (int) Math.max(Integer.MIN_VALUE, Math.min(Integer.MAX_VALUE, (long) current + deltas[index]))));
                 ClientMarketScreen.setTradeQuantity(Math.max(1, next));
+                return;
             }
         }
     }
@@ -783,6 +750,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             closeQuantityMenu();
             return;
         }
+        ClientMarketScreen.setTradeQuantityMaximum(maxTradeQuantity(offer));
+        if (!ClientMarketScreen.validateTradeForm()) return;
         try {
             int amount = Integer.parseInt(ClientMarketScreen.tradeQuantityText());
             if (amount <= 0 || amount > maxTradeQuantity(offer)) throw new IllegalArgumentException();
@@ -838,6 +807,15 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     private void primaryModalAction() {
+        if (modal.kind == Kind.INVENTORY) {
+            ClientMarketScreen.setDetailQuantityMaximum(requestMode
+                    ? Integer.MAX_VALUE : (int) modal.quantity);
+        } else if (modal.kind == Kind.SAMPLE) {
+            ClientMarketScreen.setDetailQuantityMaximum(Integer.MAX_VALUE);
+        }
+        if ((modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE
+                || modal.kind == Kind.OWN || modal.kind == Kind.OWN_REQUEST)
+                && !ClientMarketScreen.validateDetailForm()) return;
         try {
             switch (modal.kind) {
                 case GROUP, FAVORITE -> {
@@ -887,9 +865,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     @Override
     public boolean onMouseScrolled(double delta) {
-        if (filterOpen) {
-            filterOffset = Math.max(0, Math.min(Math.max(0, modIds.size() - 8),
-                    filterOffset - (int) Math.signum(delta)));
+        if (filterDropdown.scroll(delta)) {
             return true;
         }
         if (modal != null) {
@@ -906,12 +882,16 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
 
     @Override
-    public Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
+    public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == 256 && modal != null) {
             if (quantityMenu) {
                 quantityMenu = false;
                 ClientMarketScreen.showTradeQuantity(false);
             } else closeModal();
+            return Interactable.Result.STOP;
+        }
+        if (keyCode == 256 && filterDropdown.isOpen()) {
+            filterDropdown.close();
             return Interactable.Result.STOP;
         }
         return Interactable.Result.IGNORE;

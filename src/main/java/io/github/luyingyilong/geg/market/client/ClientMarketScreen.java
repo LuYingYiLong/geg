@@ -5,6 +5,14 @@ import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
 import brachy.modularui.value.StringValue;
 import io.github.luyingyilong.geg.client.ui.OreTheme;
+import io.github.luyingyilong.geg.client.ui.Input;
+import io.github.luyingyilong.geg.client.ui.Button;
+import io.github.luyingyilong.geg.client.ui.Form;
+import io.github.luyingyilong.geg.client.ui.FormItem;
+import io.github.luyingyilong.geg.client.ui.Modal;
+import io.github.luyingyilong.geg.client.ui.NumberInput;
+import brachy.modularui.screen.viewport.ModularGuiContext;
+import brachy.modularui.widget.sizer.Unit;
 import io.github.luyingyilong.geg.market.MarketActionPacket;
 import io.github.luyingyilong.geg.market.MarketNetwork;
 import net.minecraft.client.Minecraft;
@@ -14,10 +22,14 @@ import net.minecraft.world.item.ItemStack;
 
 public final class ClientMarketScreen {
     private static MarketCanvasWidget canvas;
-    private static MarketLayeredTextFieldWidget search;
-    private static MarketLayeredTextFieldWidget quantity;
-    private static MarketLayeredTextFieldWidget price;
-    private static MarketLayeredTextFieldWidget tradeQuantity;
+    private static Input search;
+    private static NumberInput quantity;
+    private static NumberInput price;
+    private static NumberInput tradeQuantity;
+    private static Form detailForm;
+    private static Form tradeForm;
+    private static FormItem quantityItem;
+    private static FormItem priceItem;
     private static StringValue quantityValue;
     private static StringValue priceValue;
     private static StringValue tradeQuantityValue;
@@ -27,41 +39,43 @@ public final class ClientMarketScreen {
 
     public static void open() {
         canvas = new MarketCanvasWidget();
-        int modalWidth = Math.min(340, Minecraft.getInstance().getWindow().getGuiScaledWidth() - 12);
-        int modalLeftOffset = -modalWidth / 2;
-        search = new MarketLayeredTextFieldWidget(175.0F);
-        search.setMarketVisible(true);
+        search = new Input(175.0F);
+        search.setInputVisible(true);
         search.hintText(Component.translatable("market.geg.search"));
         search.setMaxLength(80);
         search.autoUpdateOnChange(true);
-        search.right(88).top(3).size(Math.min(138, Math.max(60, Minecraft.getInstance().getWindow().getGuiScaledWidth() - 182)), 18);
+        search.controlSize(Button.Size.SMALL);
+        search.right(88).top((25 - Button.Size.SMALL.height()) / 2)
+                .width(() -> Math.min(138, Math.max(16,
+                        Minecraft.getInstance().getWindow().getGuiScaledWidth() - 102)), Unit.Measure.PIXEL)
+                .height(Button.Size.SMALL.height());
 
-        quantity = new MarketLayeredTextFieldWidget(250.0F);
+        quantity = new NumberInput(250.0F, NumberInput.Kind.QUANTITY);
         quantityValue = new StringValue("");
         quantity.value(quantityValue);
         quantity.hintText(Component.translatable("market.geg.quantity"));
-        quantity.setMaxLength(9);
-        quantity.autoUpdateOnChange(true);
-        quantity.leftRel(0.5F, modalLeftOffset + 12, 0.0F).topRel(0.5F, 48, 0.0F).size(86, 18);
-        quantity.setMarketVisible(false);
+        quantity.controlSize(Button.Size.MEDIUM);
+        quantity.setInputVisible(false);
 
-        price = new MarketLayeredTextFieldWidget(250.0F);
+        price = new NumberInput(250.0F, NumberInput.Kind.COIN);
         priceValue = new StringValue("");
         price.value(priceValue);
         price.hintText(Component.translatable("market.geg.unit_price"));
-        price.setMaxLength(22);
-        price.autoUpdateOnChange(true);
-        price.leftRel(0.5F, modalLeftOffset + 112, 0.0F).topRel(0.5F, 48, 0.0F).size(116, 18);
-        price.setMarketVisible(false);
+        price.controlSize(Button.Size.MEDIUM);
+        price.setInputVisible(false);
 
-        tradeQuantity = new MarketLayeredTextFieldWidget(320.0F);
+        tradeQuantity = new NumberInput(320.0F, NumberInput.Kind.QUANTITY);
         tradeQuantityValue = new StringValue("1");
         tradeQuantity.value(tradeQuantityValue);
         tradeQuantity.hintText(Component.translatable("market.geg.quantity"));
-        tradeQuantity.setMaxLength(9);
-        tradeQuantity.autoUpdateOnChange(true);
-        tradeQuantity.leftRel(0.5F, -95, 0.0F).topRel(0.5F, -43, 0.0F).size(190, 18);
-        tradeQuantity.setMarketVisible(false);
+        tradeQuantity.controlSize(Button.Size.MEDIUM);
+        tradeQuantity.setInputVisible(false);
+
+        quantityItem = new FormItem("quantity", Component.translatable("market.geg.quantity"), quantity);
+        priceItem = new FormItem("price", Component.translatable("market.geg.unit_price"), price);
+        detailForm = new Form().add(quantityItem).add(priceItem);
+        tradeForm = new Form().add(new FormItem("quantity",
+                Component.translatable("market.geg.quantity"), tradeQuantity));
 
         ModularPanel<?> panel = new ModularPanel<>("market");
         panel.widgetTheme(OreTheme.BACKGROUND);
@@ -98,40 +112,65 @@ public final class ClientMarketScreen {
     }
 
     static String quantityText() {
-        return quantity == null ? "" : quantity.getText();
+        return detailForm == null ? "" : detailForm.value("quantity");
     }
 
     static String priceText() {
-        return price == null ? "" : price.getText();
+        return detailForm == null ? "" : detailForm.value("price");
     }
 
     static String tradeQuantityText() {
-        return tradeQuantity == null ? "" : tradeQuantity.getText();
+        return tradeForm == null ? "" : tradeForm.value("quantity");
     }
 
+    static boolean validateDetailForm() { return detailForm != null && detailForm.validate(); }
+    static boolean validateTradeForm() { return tradeForm != null && tradeForm.validate(); }
+    static void setDetailQuantityMaximum(int maximum) { quantity.maximumQuantity(maximum); }
+    static void setTradeQuantityMaximum(int maximum) { tradeQuantity.maximumQuantity(maximum); }
+
+    static void drawDetailForm(ModularGuiContext context, Modal.Rect content, int viewportWidth) {
+        if (detailForm != null) detailForm.draw(context, content.x() + 4,
+                content.y() + 58, Math.max(1, content.width() - 8), viewportWidth);
+    }
+
+    static int drawTradeForm(ModularGuiContext context, Modal.Rect content, int viewportWidth) {
+        return tradeForm == null ? content.y() : tradeForm.draw(context, content.x() + 4,
+                content.y() + 2, Math.max(1, content.width() - 8), viewportWidth);
+    }
+
+    static int tradeFormBottom() { return tradeForm == null ? 0 : tradeForm.bottom(); }
+
     static void showTradeQuantity(boolean show) {
-        tradeQuantity.setMarketVisible(show);
-        if (show) setTradeQuantity(1);
+        tradeForm.setVisible(show);
+        if (show) {
+            tradeQuantity.maximumQuantity(Integer.MAX_VALUE);
+            setTradeQuantity(1);
+        }
     }
 
     static void setTradeQuantity(int value) {
         String text = Integer.toString(value);
         tradeQuantityValue.setStringValue(text);
         tradeQuantity.setText(text);
+        tradeQuantity.clearError();
     }
 
     static void showFields(boolean showQuantity, boolean showPrice, int initialQuantity, long initialPrice) {
-        quantity.setMarketVisible(showQuantity);
-        price.setMarketVisible(showPrice);
+        quantityItem.setActive(showQuantity);
+        priceItem.setActive(showPrice);
+        detailForm.setVisible(showQuantity || showPrice);
         if (showQuantity) {
+            quantity.maximumQuantity(Integer.MAX_VALUE);
             String text = Integer.toString(initialQuantity);
             quantityValue.setStringValue(text);
             quantity.setText(text);
+            quantity.clearError();
         }
         if (showPrice) {
             String text = io.github.luyingyilong.geg.money.MoneyCurrency.COIN.format(initialPrice);
             priceValue.setStringValue(text);
             price.setText(text);
+            price.clearError();
         }
     }
 }
