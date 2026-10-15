@@ -26,8 +26,81 @@ public final class Table<T> extends Container {
     public interface Cell<T> {
         void draw(ModularGuiContext context, T row, Rect bounds);
 
+        default int measureHeight(Font font, T row, int width) {
+            return 0;
+        }
+
         default boolean click(T row, Rect bounds, int mouseX, int mouseY) {
             return false;
+        }
+    }
+
+    /** Text cell with configurable clipping and wrapping; its measured height feeds row layout. */
+    public static final class TextCell<T> implements Cell<T> {
+        private final Function<T, Component> text;
+        private final int color;
+        private Label.Overflow overflow = Label.Overflow.ELLIPSIS;
+        private Label.Wrap wrap = Label.Wrap.NONE;
+        private Label.Horizontal horizontal = Label.Horizontal.LEFT;
+        private Label.Vertical vertical = Label.Vertical.CENTER;
+        private int maxLines = Integer.MAX_VALUE;
+        private int horizontalInset = 4;
+        private int verticalInset = 2;
+
+        public TextCell(Function<T, Component> text, int color) {
+            this.text = Objects.requireNonNull(text);
+            this.color = color;
+        }
+
+        public TextCell<T> overflow(Label.Overflow overflow) {
+            this.overflow = Objects.requireNonNull(overflow);
+            return this;
+        }
+
+        public TextCell<T> wrap(Label.Wrap wrap) {
+            this.wrap = Objects.requireNonNull(wrap);
+            return this;
+        }
+
+        public TextCell<T> maxLines(int maxLines) {
+            if (maxLines < 1) throw new IllegalArgumentException("At least one line is required");
+            this.maxLines = maxLines;
+            return this;
+        }
+
+        public TextCell<T> align(Label.Horizontal horizontal, Label.Vertical vertical) {
+            this.horizontal = Objects.requireNonNull(horizontal);
+            this.vertical = Objects.requireNonNull(vertical);
+            return this;
+        }
+
+        public TextCell<T> inset(int horizontal, int vertical) {
+            if (horizontal < 0 || vertical < 0) throw new IllegalArgumentException("Negative cell inset");
+            horizontalInset = horizontal;
+            verticalInset = vertical;
+            return this;
+        }
+
+        @Override public int measureHeight(Font font, T row, int width) {
+            if (font == null) return 0;
+            Label label = label(row);
+            return label.measureHeight(font, Math.max(1, width - 2 * horizontalInset))
+                    + 2 * verticalInset;
+        }
+
+        @Override public void draw(ModularGuiContext context, T row, Rect bounds) {
+            Rect inner = new Rect(bounds.x() + horizontalInset, bounds.y() + verticalInset,
+                    Math.max(0, bounds.width() - 2 * horizontalInset),
+                    Math.max(0, bounds.height() - 2 * verticalInset));
+            if (inner.width() == 0 || inner.height() == 0) return;
+            Label label = label(row);
+            label.layout(inner, context.getFont());
+            label.draw(context, 0, 0);
+        }
+
+        private Label label(T row) {
+            return new Label(Objects.requireNonNull(text.apply(row))).color(color)
+                    .overflow(overflow).wrap(wrap).maxLines(maxLines).align(horizontal, vertical);
         }
     }
 
@@ -76,6 +149,7 @@ public final class Table<T> extends Container {
     private int scroll;
     private int contentHeight;
     private int lastWidth = -1;
+    private Font lastFont;
     private boolean compact;
     private boolean dirty = true;
     private boolean resetScroll;
@@ -167,6 +241,7 @@ public final class Table<T> extends Container {
         if (rowKey == null) throw new IllegalStateException("A table requires a row key");
         if (lastWidth >= 0 && lastWidth != localBounds.width() && !dirty && !resetScroll) saveAnchor();
         super.layout(localBounds, font);
+        lastFont = font;
         if (!dirty && lastWidth == localBounds.width()) {
             setScroll(scroll);
             updateVisible(font);
@@ -181,7 +256,7 @@ public final class Table<T> extends Container {
         int top = 0;
         for (int index = 0; index < rows.size(); index++) {
             T item = rows.get(index);
-            int height = compact ? compactRowHeight() : ROW_HEIGHT;
+            int height = compact ? compactRowHeight(item, font) : regularRowHeight(item, font);
             layoutRows.add(new Row<>(index, item, Objects.requireNonNull(rowKey.apply(item)),
                     new Rect(0, top, localBounds.width(), height)));
             top += height;
@@ -265,11 +340,24 @@ public final class Table<T> extends Container {
         return result;
     }
 
-    private int compactRowHeight() {
+    private int regularRowHeight(T item, Font font) {
+        int height = ROW_HEIGHT;
+        for (int index = 0; index < columns.size(); index++)
+            height = Math.max(height, columns.get(index).cell.measureHeight(font, item,
+                    columnWidths[index]));
+        return height;
+    }
+
+    private int compactCellHeight(Column<T> column, T item, Font font, int width) {
+        return Math.max(1, Math.max(column.compactHeight.applyAsInt(width),
+                column.cell.measureHeight(font, item, width)));
+    }
+
+    private int compactRowHeight(T item, Font font) {
         int contentWidth = Math.max(0, bounds().width() - 2 * COMPACT_INSET);
         int height = 2 * COMPACT_INSET;
         for (Column<T> column : columns)
-            height += COMPACT_LABEL_HEIGHT + Math.max(1, column.compactHeight.applyAsInt(contentWidth));
+            height += COMPACT_LABEL_HEIGHT + compactCellHeight(column, item, font, contentWidth);
         return height;
     }
 
@@ -312,8 +400,19 @@ public final class Table<T> extends Container {
         int x = row.x();
         for (int index = 0; index < columns.size(); index++) {
             int width = columnWidths[index];
-            columns.get(index).cell.draw(context, item, new Rect(x, row.y(), width, row.height()));
+            drawCell(context, columns.get(index), item, new Rect(x, row.y(), width, row.height()));
             x += width;
+        }
+    }
+
+    private void drawCell(ModularGuiContext context, Column<T> column, T item, Rect bounds) {
+        if (bounds.width() <= 0 || bounds.height() <= 0) return;
+        GuiGraphics graphics = context.getGraphics();
+        graphics.enableScissor(bounds.x(), bounds.y(), bounds.right(), bounds.bottom());
+        try {
+            column.cell.draw(context, item, bounds);
+        } finally {
+            graphics.disableScissor();
         }
     }
 
@@ -325,8 +424,8 @@ public final class Table<T> extends Container {
             Label.draw(context, column.title, new Rect(x, y, width, COMPACT_LABEL_HEIGHT),
                     headerColor, Label.Overflow.CLIP, Label.Horizontal.LEFT, Label.Vertical.CENTER);
             y += COMPACT_LABEL_HEIGHT;
-            int height = Math.max(1, column.compactHeight.applyAsInt(width));
-            column.cell.draw(context, item, new Rect(x, y, width, height));
+            int height = compactCellHeight(column, item, context.getFont(), width);
+            drawCell(context, column, item, new Rect(x, y, width, height));
             y += height;
         }
     }
@@ -353,7 +452,7 @@ public final class Table<T> extends Container {
             int y = bounds.y() + COMPACT_INSET;
             for (Column<T> column : columns) {
                 y += COMPACT_LABEL_HEIGHT;
-                int height = Math.max(1, column.compactHeight.applyAsInt(width));
+                int height = compactCellHeight(column, row.item(), lastFont, width);
                 Rect cell = new Rect(x, y, width, height);
                 if (cell.contains(rootX, rootY)
                         && column.cell.click(row.item(), cell, rootX, rootY)) return true;

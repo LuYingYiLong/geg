@@ -79,6 +79,24 @@ public final class TableLayoutTest {
             table.setScroll(Integer.MAX_VALUE);
             check(table.scroll() == table.contentHeight() - 144);
         }
+
+        Table.Cell<Integer> variableHeight = new Table.Cell<>() {
+            @Override public void draw(ModularGuiContext context, Integer row, Rect bounds) { }
+
+            @Override public int measureHeight(net.minecraft.client.gui.Font font,
+                                               Integer row, int width) {
+                return row == 1 ? 36 : 0;
+            }
+        };
+        Table<Integer> wrapped = new Table<Integer>().rowKey(row -> row)
+                .column(new Table.Column<>("name", Component.literal("Name"),
+                        48, 80, 1, width -> 20, variableHeight));
+        wrapped.rows(List.of(0, 1, 2));
+        wrapped.layout(new Rect(0, 0, 100, 100), null);
+        check(wrapped.layoutRows().get(0).bounds().height() == 23);
+        check(wrapped.layoutRows().get(1).bounds().height() == 36);
+        check(wrapped.layoutRows().get(2).bounds().y() == 59);
+        check(wrapped.hitRow(5, 43).item() == 1);
     }
 
     private static void check(boolean condition) {

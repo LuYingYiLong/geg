@@ -16,7 +16,7 @@ import java.util.function.IntConsumer;
 /** A single horizontal row of equally sized tabs. */
 public final class Tabs extends Control {
     private static final int SELECTED_TOP_INSET = 2;
-    private static final int INDICATOR_MAX_WIDTH = 64;
+    private static final int INDICATOR_MAX_WIDTH = 32;
     private static final int TEXT_PADDING = 4;
 
     private final List<Component> labels;

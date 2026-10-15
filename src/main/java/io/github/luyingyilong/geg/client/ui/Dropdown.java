@@ -25,6 +25,8 @@ public final class Dropdown<T> extends Control {
     private final Button.Size size;
     private List<Option<T>> options = List.of();
     private T selected;
+    private Component triggerLabel;
+    private boolean checkable = true;
     private int offset;
     private boolean open;
     private Consumer<T> onSelect = value -> { };
@@ -53,6 +55,22 @@ public final class Dropdown<T> extends Control {
     public Dropdown<T> onSelect(Consumer<T> onSelect) {
         this.onSelect = Objects.requireNonNull(onSelect);
         return this;
+    }
+
+    public Dropdown<T> triggerLabel(Component label) {
+        triggerLabel = Objects.requireNonNull(label);
+        return this;
+    }
+
+    public Dropdown<T> checkable(boolean checkable) {
+        this.checkable = checkable;
+        return this;
+    }
+
+    public int menuHeight() {
+        int count = visibleCount();
+        return 2 * PANEL_PADDING + count * size.height()
+                - Math.max(0, count - 1) * ITEM_OVERLAP;
     }
 
     @Override protected boolean onPointerPressed(int rootX, int rootY) {
@@ -92,14 +110,16 @@ public final class Dropdown<T> extends Control {
     }
 
     public void drawTrigger(ModularGuiContext context, int x, int y, int width, int height) {
-        Component label = options.stream().filter(option -> Objects.equals(option.value, selected))
-                .findFirst().map(Option::label).orElse(Component.empty());
+        Component label = triggerLabel == null ? options.stream()
+                .filter(option -> Objects.equals(option.value, selected))
+                .findFirst().map(Option::label).orElse(Component.empty()) : triggerLabel;
         Button.draw(context, x, y, width, height, label, ARROW, Button.TextAlignment.LEFT);
     }
 
     public void drawTrigger(ModularGuiContext context, int x, int y, int width) {
-        Component label = options.stream().filter(option -> Objects.equals(option.value, selected))
-                .findFirst().map(Option::label).orElse(Component.empty());
+        Component label = triggerLabel == null ? options.stream()
+                .filter(option -> Objects.equals(option.value, selected))
+                .findFirst().map(Option::label).orElse(Component.empty()) : triggerLabel;
         Button.draw(context, x, y, width, size, label, ARROW, Button.TextAlignment.LEFT);
     }
 
@@ -126,8 +146,8 @@ public final class Dropdown<T> extends Control {
                 graphics.fill(item.x + 1, item.y + 1,
                         item.right() - 1, item.bottom() - 1, 0x28FFFFFF);
             }
-            boolean checked = Objects.equals(option.value, selected);
-            int iconSpace = CHECKED_SIZE + ITEM_PADDING;
+            boolean checked = checkable && Objects.equals(option.value, selected);
+            int iconSpace = checkable ? CHECKED_SIZE + ITEM_PADDING : 0;
             int textWidth = Math.max(0, item.width - 2 * ITEM_PADDING - iconSpace);
             Label.draw(context, option.label, new io.github.luyingyilong.geg.client.ui.layout.Rect(
                             item.x + ITEM_PADDING, item.y, textWidth, item.height),
@@ -183,10 +203,7 @@ public final class Dropdown<T> extends Control {
     }
 
     private Rect menuBounds(int x, int y, int width, int triggerHeight) {
-        int count = visibleCount();
-        int height = 2 * PANEL_PADDING + count * size.height()
-                - Math.max(0, count - 1) * ITEM_OVERLAP;
-        return new Rect(x, y + triggerHeight, width, height);
+        return new Rect(x, y + triggerHeight, width, menuHeight());
     }
 
     private Rect itemBounds(Rect panel, int index) {

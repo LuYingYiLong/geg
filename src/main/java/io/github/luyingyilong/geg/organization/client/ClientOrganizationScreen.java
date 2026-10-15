@@ -10,6 +10,9 @@ import io.github.luyingyilong.geg.client.ui.Checkbox;
 import io.github.luyingyilong.geg.client.ui.OreTheme;
 import io.github.luyingyilong.geg.client.ui.layout.Box;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.organization.OrganizationNetwork;
+import io.github.luyingyilong.geg.organization.OrganizationSyncPacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
 public final class ClientOrganizationScreen {
@@ -61,6 +64,14 @@ public final class ClientOrganizationScreen {
             canvas = null;
         });
         ClientGUI.open(new ModularScreen("geg", panel).useTheme(OreTheme.NAME).pausesGame(false));
+        OrganizationNetwork.request();
+    }
+
+    public static void acceptSnapshot(OrganizationSyncPacket packet) {
+        ClientOrganizationState.acceptOrganizations(packet.organizations());
+        if (canvas != null) canvas.acceptSnapshot(packet.resultKey());
+        if (!packet.resultKey().isEmpty() && Minecraft.getInstance().player != null)
+            Minecraft.getInstance().player.displayClientMessage(Component.translatable(packet.resultKey()), false);
     }
 
     private static final class InstantOrganizationPanel extends ModularPanel<InstantOrganizationPanel> {

@@ -1,10 +1,18 @@
 package io.github.luyingyilong.geg.organization.client;
 
+import io.github.luyingyilong.geg.GegMod;
+import io.github.luyingyilong.geg.organization.OrganizationSyncPacket;
 import java.util.List;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
-/** Client-side membership snapshot. Organization persistence and sync are a later feature. */
-final class ClientOrganizationState {
-    private static List<String> organizations = List.of();
+/** Memberships received from the server for the current player. */
+@Mod.EventBusSubscriber(modid = GegMod.MODID, value = Dist.CLIENT)
+public final class ClientOrganizationState {
+    private static List<OrganizationSyncPacket.Summary> organizations = List.of();
+    private static boolean loaded;
 
     private ClientOrganizationState() {
     }
@@ -13,7 +21,22 @@ final class ClientOrganizationState {
         return !organizations.isEmpty();
     }
 
-    static void acceptOrganizations(List<String> ids) {
-        organizations = List.copyOf(ids);
+    static boolean loaded() {
+        return loaded;
+    }
+
+    static List<OrganizationSyncPacket.Summary> organizations() {
+        return organizations;
+    }
+
+    static void acceptOrganizations(List<OrganizationSyncPacket.Summary> summaries) {
+        organizations = List.copyOf(summaries);
+        loaded = true;
+    }
+
+    @SubscribeEvent
+    public static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
+        organizations = List.of();
+        loaded = false;
     }
 }

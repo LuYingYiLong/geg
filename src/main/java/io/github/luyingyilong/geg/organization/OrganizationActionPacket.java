@@ -1,0 +1,106 @@
+package io.github.luyingyilong.geg.organization;
+
+import java.util.function.Supplier;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkEvent;
+
+public record OrganizationActionPacket(Action action, String name, String description,
+                                       Organization.JoinPolicy joinPolicy,
+                                       UUID organizationId, UUID targetId) {
+    private static final UUID EMPTY_ID = new UUID(0L, 0L);
+    public enum Action { REQUEST, CREATE, DISBAND, PROMOTE, DEMOTE, REMOVE, LEAVE }
+
+    public static OrganizationActionPacket request() {
+        return new OrganizationActionPacket(Action.REQUEST, "", "",
+                Organization.JoinPolicy.UNRESTRICTED, EMPTY_ID, EMPTY_ID);
+    }
+
+    public static OrganizationActionPacket create(String name, String description,
+                                                  Organization.JoinPolicy policy) {
+        return new OrganizationActionPacket(Action.CREATE, name, description, policy, EMPTY_ID, EMPTY_ID);
+    }
+
+    public static OrganizationActionPacket operate(OrganizationSavedData.Operation operation,
+                                                   UUID organizationId, UUID targetId) {
+        return new OrganizationActionPacket(Action.valueOf(operation.name()), "", "",
+                Organization.JoinPolicy.UNRESTRICTED, organizationId, targetId);
+    }
+
+    public static void encode(OrganizationActionPacket packet, FriendlyByteBuf buffer) {
+        buffer.writeEnum(packet.action);
+        buffer.writeUtf(packet.name, 48);
+        buffer.writeUtf(packet.description, 120);
+        buffer.writeEnum(packet.joinPolicy);
+        buffer.writeUUID(packet.organizationId);
+        buffer.writeUUID(packet.targetId);
+    }
+
+    public static OrganizationActionPacket decode(FriendlyByteBuf buffer) {
+        return new OrganizationActionPacket(buffer.readEnum(Action.class), buffer.readUtf(48),
+                buffer.readUtf(120), buffer.readEnum(Organization.JoinPolicy.class),
+                buffer.readUUID(), buffer.readUUID());
+    }
+
+    public static void handle(OrganizationActionPacket packet,
+                              Supplier<NetworkEvent.Context> contextSupplier) {
+        NetworkEvent.Context context = contextSupplier.get();
+        context.enqueueWork(() -> {
+            ServerPlayer player = context.getSender();
+            if (player == null) return;
+            if (packet.action == Action.REQUEST) {
+                OrganizationNetwork.sync(player, "");
+                return;
+            }
+            OrganizationSavedData data = OrganizationSavedData.get(player.server);
+            if (packet.action == Action.CREATE) {
+                OrganizationSavedData.CreateResult result = data.create(player.getUUID(),
+                        packet.name, packet.description, packet.joinPolicy);
+                OrganizationNetwork.sync(player, switch (result) {
+                    case CREATED -> "organization.geg.created";
+                    case INVALID_NAME -> "organization.geg.invalid_name";
+                    case INVALID_DESCRIPTION -> "organization.geg.invalid_description";
+                    case DUPLICATE_NAME -> "organization.geg.duplicate_name";
+                    case TOO_MANY -> "organization.geg.too_many";
+                });
+                return;
+            }
+            Organization old = data.organization(packet.organizationId);
+            OrganizationSavedData.Operation operation = OrganizationSavedData.Operation.valueOf(
+                    packet.action.name());
+            OrganizationSavedData.OperationResult result = data.operate(player.getUUID(),
+                    packet.organizationId, packet.targetId, operation);
+            String resultKey = switch (result) {
+                case SUCCESS -> "organization.geg.result." + operation.name().toLowerCase(java.util.Locale.ROOT);
+                case NOT_FOUND -> "organization.geg.result.not_found";
+                case NOT_MEMBER -> "organization.geg.result.not_member";
+                case FORBIDDEN -> "organization.geg.result.forbidden";
+                case INVALID_TARGET -> "organization.geg.result.invalid_target";
+            };
+            if (result != OrganizationSavedData.OperationResult.SUCCESS) {
+                OrganizationNetwork.sync(player, resultKey);
+                return;
+            }
+            Organization updated = data.organization(packet.organizationId);
+            Set<UUID> affected = new HashSet<>();
+            if (old != null) affected.addAll(old.members());
+            if (updated != null) affected.addAll(updated.members());
+            for (UUID member : affected) {
+                ServerPlayer online = player.server.getPlayerList().getPlayer(member);
+                if (online != null) {
+                    String notice = member.equals(player.getUUID()) ? resultKey
+                            : operation == OrganizationSavedData.Operation.DISBAND
+                            ? "organization.geg.result.disbanded_notice"
+                            : operation == OrganizationSavedData.Operation.REMOVE
+                            && member.equals(packet.targetId)
+                            ? "organization.geg.result.removed_notice" : "";
+                    OrganizationNetwork.sync(online, notice);
+                }
+            }
+        });
+        context.setPacketHandled(true);
+    }
+}

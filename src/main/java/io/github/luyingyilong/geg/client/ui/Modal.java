@@ -20,7 +20,7 @@ import java.util.Objects;
 
 /** A positioned overlay with a one-pixel frame and themed header and footer. */
 public final class Modal extends Container {
-    public static final int HEADER_HEIGHT = 25;
+    public static final int HEADER_HEIGHT = 24;
     private static final int FRAME_INSET = 1;
     private static final int CLOSE_HIT_WIDTH = 20;
     private static final int CLOSE_ICON_SIZE = 7;
@@ -52,8 +52,8 @@ public final class Modal extends Container {
     public Modal(Component title) {
         title(title);
         titleLabel.policy(SizePolicy.EXPAND, SizePolicy.FILL);
-        headerSpacer.minimum(CLOSE_HIT_WIDTH, HEADER_HEIGHT);
-        close.minimum(CLOSE_HIT_WIDTH, HEADER_HEIGHT);
+        headerSpacer.minimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
+        close.minimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
         headerRow.add(headerSpacer).add(titleLabel).add(close);
         header.child(new Padding(new Padding.Insets(0, 4, 0, 4)).child(headerRow));
         header.minimum(0, HEADER_HEIGHT).preferred(0, HEADER_HEIGHT)
