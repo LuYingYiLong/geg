@@ -40,6 +40,8 @@ public final class ClientMarketState {
     private static final List<InventoryEntry> INVENTORY = new ArrayList<>();
 
     private static long revision;
+    private static boolean marketEnabled = true;
+    private static int feeBasisPoints;
     private static long detailRequestedId;
     private static ItemStack detailItem = ItemStack.EMPTY;
     private static boolean detailLoading;
@@ -65,6 +67,8 @@ public final class ClientMarketState {
                 FAVORITES.clear();
                 INVENTORY.clear();
                 revision = payload.getLong("revision");
+                marketEnabled = !payload.contains("enabled") || payload.getBoolean("enabled");
+                feeBasisPoints = payload.getInt("feeBasisPoints");
                 ready = false;
                 loading = true;
             }
@@ -298,11 +302,9 @@ public final class ClientMarketState {
         return FAVORITES;
     }
 
-
     public static List<InventoryEntry> inventory() {
         return INVENTORY;
     }
-
 
     public static long pendingCoin() {
         long amount = 0L;
@@ -313,11 +315,17 @@ public final class ClientMarketState {
         return amount;
     }
 
-
     public static boolean ready() {
         return ready;
     }
 
+    public static boolean marketEnabled() {
+        return marketEnabled;
+    }
+
+    public static int feeBasisPoints() {
+        return feeBasisPoints;
+    }
 
     @SubscribeEvent
     public static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
@@ -331,6 +339,8 @@ public final class ClientMarketState {
         FAVORITES.clear();
         INVENTORY.clear();
         revision = 0L;
+        marketEnabled = true;
+        feeBasisPoints = 0;
         detailRequestedId = 0L;
         detailItem = ItemStack.EMPTY;
         detailLoading = false;

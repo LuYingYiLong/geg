@@ -193,7 +193,7 @@ public final class Grid<T> extends Control {
                 rowY += rowHeight + gap;
                 rowHeight = 0;
             }
-            int height = Math.max(1, child.measureHeight(font, cardWidth));
+            int height = Math.max(1, child.measureSize(font, new Size(cardWidth, cardWidth)).height());
             int top = mode == LayoutMode.ROWS ? rowY : heights[column];
             child.layout(new Rect(column * (cardWidth + gap), top, cardWidth, height), font);
             if (mode == LayoutMode.ROWS) rowHeight = Math.max(rowHeight, height);

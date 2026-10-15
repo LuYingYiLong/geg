@@ -7,21 +7,8 @@ import brachy.modularui.theme.SelectableTheme;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
-import io.github.luyingyilong.geg.client.ui.Button;
-import io.github.luyingyilong.geg.client.ui.Dropdown;
-import io.github.luyingyilong.geg.client.ui.Modal;
-import io.github.luyingyilong.geg.client.ui.OreTheme;
-import io.github.luyingyilong.geg.client.ui.Tabs;
-import io.github.luyingyilong.geg.client.ui.Label;
-import io.github.luyingyilong.geg.client.ui.Table;
-import io.github.luyingyilong.geg.client.ui.layout.Box;
-import io.github.luyingyilong.geg.client.ui.layout.Control;
-import io.github.luyingyilong.geg.client.ui.layout.Grid;
-import io.github.luyingyilong.geg.client.ui.layout.Overlay;
-import io.github.luyingyilong.geg.client.ui.layout.Padding;
-import io.github.luyingyilong.geg.client.ui.layout.Panel;
-import io.github.luyingyilong.geg.client.ui.layout.Rect;
-import io.github.luyingyilong.geg.client.ui.layout.Window;
+import io.github.luyingyilong.geg.client.ui.*;
+import io.github.luyingyilong.geg.client.ui.layout.*;
 import io.github.luyingyilong.geg.market.*;
 import io.github.luyingyilong.geg.money.MoneyCurrency;
 import io.github.luyingyilong.geg.money.client.ClientMoneyState;
@@ -60,7 +47,13 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private final Window window = new Window(true);
     private final Grid<Card> grid = new Grid<>();
     private final Table<MarketDetail> offerTable = createOfferTable();
+    private final Label marketTitle = new Label(Component.translatable("market.geg.title"))
+            .color(HEADER_TEXT).overflow(Label.Overflow.CLIP)
+            .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
     private final Control searchSlot = new Control();
+    private final Label coinBalance = new Label().color(HEADER_TEXT)
+            .overflow(Label.Overflow.ELLIPSIS).maximumWidth(128)
+            .align(Label.Horizontal.RIGHT, Label.Vertical.CENTER);
     private final Control filterSlot = new Control() {
         @Override
         public void draw(ModularGuiContext context, int screenX, int screenY) {
@@ -82,6 +75,13 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 Rect area = screenBounds(screenX, screenY);
                 PUBLISH_TABS.draw(context, area.x() + 6, area.y() + 7, Math.min(134, area.width() - 12),
                         requestMode ? 1 : 0);
+                if (area.width() >= 230) {
+                    Label.draw(context, Component.translatable("market.geg.seller_fee",
+                                    MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints())),
+                            new Rect(area.x() + 146, area.y() + 7, area.width() - 152, 18),
+                            SECONDARY_TEXT, Label.Overflow.CLIP,
+                            Label.Horizontal.RIGHT, Label.Vertical.CENTER);
+                }
             }
         }
     };
@@ -99,15 +99,13 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private boolean dirty = true;
 
     MarketCanvasWidget() {
-        Label title = new Label(Component.translatable("market.geg.title"))
-                .color(HEADER_TEXT).overflow(Label.Overflow.CLIP)
-                .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
-        title.policy(Control.SizePolicy.EXPAND, Control.SizePolicy.FILL);
-        searchSlot.minimum(16, Button.Size.SMALL.height()).preferred(138, Button.Size.SMALL.height());
-        filterSlot.minimum(FILTER_WIDTH, Button.Size.MEDIUM.height())
+        marketTitle.policy(Control.SizePolicy.EXPAND, Control.SizePolicy.FILL);
+        coinBalance.minimum(64, Button.Size.MEDIUM.height());
+        searchSlot.minimum(72, Button.Size.SMALL.height()).preferred(138, Button.Size.SMALL.height());
+        filterSlot.minimum(74, Button.Size.MEDIUM.height())
                 .preferred(FILTER_WIDTH, Button.Size.MEDIUM.height());
         Box headerRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(6)
-                .add(title).add(searchSlot).add(filterSlot);
+                .add(marketTitle).add(coinBalance).add(searchSlot).add(filterSlot);
         Panel header = new Panel(OreTheme.HEADER_PANEL)
                 .child(new Padding(new Padding.Insets(0, 4, 0, 8)).child(headerRow));
         header.minimum(0, HEADER_HEIGHT).preferred(0, HEADER_HEIGHT)
@@ -118,6 +116,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 .policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
         Control body = new Control() {
             private final Padding padding = new Padding(new Padding.Insets(4, 4, 0, 4)).child(grid);
+
             {
                 attach(padding);
             }
@@ -145,19 +144,37 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         window.content(column).overlay(overlay);
         grid.columns(MIN_CARD_WIDTH, 4, CARD_GAP).mode(Grid.LayoutMode.MASONRY)
                 .adapter(new Grid.Adapter<>() {
-                    @Override public int size() { return cards.size(); }
-                    @Override public Card item(int index) { return cards.get(index); }
-                    @Override public Object key(Card card) { return cardKey(card); }
-                    @Override public int measureHeight(Card card, int cardWidth, Font font) {
+                    @Override
+                    public int size() {
+                        return cards.size();
+                    }
+
+                    @Override
+                    public Card item(int index) {
+                        return cards.get(index);
+                    }
+
+                    @Override
+                    public Object key(Card card) {
+                        return cardKey(card);
+                    }
+
+                    @Override
+                    public int measureHeight(Card card, int cardWidth, Font font) {
                         boolean hasPrice = card.kind == Kind.GROUP || card.kind == Kind.OWN
                                 || card.kind == Kind.OWN_REQUEST || card.kind == Kind.FAVORITE
                                 || card.kind == Kind.HISTORY || card.kind == Kind.COIN;
                         return hasPrice && card.kind != Kind.COIN ? 42 : 32;
                     }
-                    @Override public Grid.View<Card> createView() { return new CardView(); }
+
+                    @Override
+                    public Grid.View<Card> createView() {
+                        return new CardView();
+                    }
                 });
         overlay.add(new Control() {
-            @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+            @Override
+            public void draw(ModularGuiContext context, int screenX, int screenY) {
                 if (modal != null || filterDropdown.isOpen()) return;
                 Grid.Entry<Card> hovered = grid.hitItem(context.getAbsMouseX() - screenX,
                         context.getAbsMouseY() - screenY);
@@ -171,7 +188,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             }
         });
         overlay.add(new Control() {
-            @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+            @Override
+            public void draw(ModularGuiContext context, int screenX, int screenY) {
                 if (!filterDropdown.isOpen()) return;
                 Rect area = filterSlot.screenBounds(screenX, screenY);
                 withOverlayDepth(context, 200.0F, () -> filterDropdown.drawMenu(context,
@@ -179,7 +197,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             }
         });
         overlay.add(new Control() {
-            @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+            @Override
+            public void draw(ModularGuiContext context, int screenX, int screenY) {
                 if (modal == null) return;
                 Rect area = window.screenBounds(screenX, screenY);
                 withOverlayDepth(context, 200.0F, () -> {
@@ -190,24 +209,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 });
             }
         });
-    }
-
-    private final class CardView implements Grid.View<Card> {
-        private Card card;
-        private final Panel background = new Panel(null);
-        private final Label name = scrollingCardLabel(TEXT);
-        private final Label count = scrollingCardLabel(SECONDARY_TEXT);
-        private final Label price = scrollingCardLabel(ACCENT);
-        @Override public void bind(Card card) {
-            this.card = card;
-            name.text(card.title());
-        }
-        @Override public void draw(ModularGuiContext context, Rect area, boolean hovered) {
-            card.width = area.width();
-            card.height = area.height();
-            drawCard(context.getGraphics(), card, area.x(), area.y(), hovered, background,
-                    name, count, price);
-        }
     }
 
     private static Label scrollingCardLabel(int color) {
@@ -221,8 +222,12 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         graphics.flush();
         graphics.pose().pushPose();
         graphics.pose().translate(0.0F, 0.0F, depth);
-        try { render.run(); graphics.flush(); }
-        finally { graphics.pose().popPose(); }
+        try {
+            render.run();
+            graphics.flush();
+        } finally {
+            graphics.pose().popPose();
+        }
     }
 
     private static Object cardKey(Card card) {
@@ -236,12 +241,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             case DELIVERY -> List.of(card.kind, card.delivery.id());
             case COIN -> List.of(card.kind, card.credit.id());
         };
-    }
-
-    void prepareLayout(int width, int height, Font font) {
-        publishSlot.visible(tab == Tab.SELL);
-        window.layoutViewport(width, height, font);
-        ClientMarketScreen.placeSearch(searchSlot.absoluteBounds());
     }
 
     private static boolean sameCard(Card left, Card right) {
@@ -287,6 +286,27 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private static String itemId(ItemStack item) {
         ResourceLocation id = ForgeRegistries.ITEMS.getKey(item.getItem());
         return item.isEmpty() || id == null ? "" : id.toString().toLowerCase(Locale.ROOT);
+    }
+
+    private static Modal.Rect quickButton(Modal.Rect content, int top, int index) {
+        int available = Math.max(1, content.width() - 8);
+        int columns = Math.min(5, Math.max(1, (available + 2) / 30));
+        int buttonWidth = Math.min(38, Math.max(1, (available - (columns - 1) * 2) / columns));
+        int row = index / columns;
+        int column = index % columns;
+        return new Modal.Rect(content.x() + 4 + column * (buttonWidth + 2),
+                top + row * (Button.Size.MEDIUM.height() + 2),
+                buttonWidth, Button.Size.MEDIUM.height());
+    }
+
+    void prepareLayout(int width, int height, Font font) {
+        publishSlot.visible(tab == Tab.SELL);
+        marketTitle.setText(Component.translatable(ClientMarketState.marketEnabled()
+                ? "market.geg.title" : "market.geg.title_closed"));
+        coinBalance.setText(Component.translatable("market.geg.header_balance",
+                MoneyCurrency.COIN.format(ClientMoneyState.balance().coinMinorUnits())));
+        window.layoutViewport(width, height, font);
+        ClientMarketScreen.placeSearch(searchSlot.absoluteBounds());
     }
 
     void invalidate() {
@@ -470,7 +490,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
         int textX = x + (card.item.isEmpty() ? 6 : 26);
         int textWidth = x + card.width - 5 - textX;
-        nameLabel.drawAt(getContext(), new Rect(textX, y + 5, textWidth, 10));
+        nameLabel.layout(new Rect(textX, y + 5, textWidth, 10), getContext().getFont());
+        nameLabel.draw(getContext(), 0, 0);
         Component count = switch (card.kind) {
             case GROUP -> Component.translatable("market.geg.market_count", card.quantity, card.buyQuantity);
             case OWN, OWN_REQUEST, FAVORITE -> Component.translatable("market.geg.count", card.quantity);
@@ -482,7 +503,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         };
         int nextLineY = y + 16;
         if (card.kind != Kind.COIN) {
-            countLabel.text(count).drawAt(getContext(), new Rect(textX, nextLineY, textWidth, 10));
+            countLabel.setText(count);
+            countLabel.layout(new Rect(textX, nextLineY, textWidth, 10), getContext().getFont());
+            countLabel.draw(getContext(), 0, 0);
             nextLineY += 11;
         }
 
@@ -496,8 +519,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             default -> Component.empty();
         };
         if (!price.getString().isEmpty()) {
-            priceLabel.text(price).color(ended ? SECONDARY_TEXT : ACCENT)
-                    .drawAt(getContext(), new Rect(textX, nextLineY, textWidth, 10));
+            priceLabel.setText(price).color(ended ? SECONDARY_TEXT : ACCENT);
+            priceLabel.layout(new Rect(textX, nextLineY, textWidth, 10), getContext().getFont());
+            priceLabel.draw(getContext(), 0, 0);
         }
     }
 
@@ -517,10 +541,11 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 .onRowClick(offer -> selectedDetailId = offer.id());
         table.column(new Table.Column<>("status", Component.translatable("market.geg.status"),
                 110, 110, 1, width -> 20, new Table.Cell<>() {
-            @Override public void draw(ModularGuiContext context, MarketDetail offer, Rect area) {
+            @Override
+            public void draw(ModularGuiContext context, MarketDetail offer, Rect area) {
                 int top = area.y() + (area.height() >= 23 ? 3 : 0);
                 Component status = Component.translatable(offer.buyOrder()
-                        ? "market.geg.buying" : "market.geg.selling")
+                                ? "market.geg.buying" : "market.geg.selling")
                         .copy().append(Component.literal(" x" + offer.quantity()));
                 drawText(status, area.x() + 4, top, area.width() - 8, 10,
                         offer.buyOrder() ? ACCENT : TEXT);
@@ -530,7 +555,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         }));
         table.column(new Table.Column<>("price", Component.translatable("market.geg.unit_price"),
                 96, 96, 0, width -> 10, new Table.Cell<>() {
-            @Override public void draw(ModularGuiContext context, MarketDetail offer, Rect area) {
+            @Override
+            public void draw(ModularGuiContext context, MarketDetail offer, Rect area) {
                 drawText(Component.literal(MoneyCurrency.COIN.format(offer.unitPrice())),
                         area.x() + 4, area.y() + Math.max(0, (area.height() - 10) / 2),
                         area.width() - 8, 10, TEXT);
@@ -538,7 +564,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         }));
         table.column(new Table.Column<>("action", Component.translatable("market.geg.operation"),
                 104, 104, 0, width -> width >= 104 ? 19 : 39, new Table.Cell<>() {
-            @Override public void draw(ModularGuiContext context, MarketDetail offer, Rect area) {
+            @Override
+            public void draw(ModularGuiContext context, MarketDetail offer, Rect area) {
                 Rect[] buttons = OfferActionLayout.bounds(area, 50,
                         FAVORITE_BUTTON_WIDTH, FAVORITE_BUTTON_HEIGHT);
                 Button.draw(context, buttons[0].x(), buttons[0].y(), buttons[0].width(),
@@ -552,7 +579,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                         buttons[1].width());
             }
 
-            @Override public boolean click(MarketDetail offer, Rect area, int mouseX, int mouseY) {
+            @Override
+            public boolean click(MarketDetail offer, Rect area, int mouseX, int mouseY) {
                 Rect[] buttons = OfferActionLayout.bounds(area, 50,
                         FAVORITE_BUTTON_WIDTH, FAVORITE_BUTTON_HEIGHT);
                 if (buttons[0].contains(mouseX, mouseY)) {
@@ -629,6 +657,11 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 default -> Component.empty();
             };
             drawText(info, contentX + 4, contentY + 22, content.width() - 8, 10, SECONDARY_TEXT);
+            if (modal.kind == Kind.OWN || modal.kind == Kind.INVENTORY && !requestMode) {
+                drawText(Component.translatable("market.geg.seller_fee",
+                                MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints())),
+                        contentX + 4, contentY + 35, content.width() - 8, 10, SECONDARY_TEXT);
+            }
         }
 
         ClientMarketScreen.drawDetailForm(getContext(), content, getArea().width);
@@ -636,7 +669,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     private void layoutOfferTable(Modal.Rect content, int originX, int originY) {
         offerTable.layout(new Rect(content.x() - originX + 2, content.y() - originY + 5,
-                Math.max(0, content.width() - 4), Math.max(0, content.height() - 10)),
+                        Math.max(0, content.width() - 4), Math.max(0, content.height() - 10)),
                 getContext().getFont());
     }
 
@@ -652,20 +685,13 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         });
     }
 
-    private static Modal.Rect quickButton(Modal.Rect content, int top, int index) {
-        int available = Math.max(1, content.width() - 8);
-        int columns = Math.min(5, Math.max(1, (available + 2) / 30));
-        int buttonWidth = Math.min(38, Math.max(1, (available - (columns - 1) * 2) / columns));
-        int row = index / columns;
-        int column = index % columns;
-        return new Modal.Rect(content.x() + 4 + column * (buttonWidth + 2),
-                top + row * (Button.Size.MEDIUM.height() + 2),
-                buttonWidth, Button.Size.MEDIUM.height());
-    }
-
     private Modal quantityDialog() {
         MarketDetail offer = selectedDetail();
-        return new Modal(224, 167, 8, Component.translatable("market.geg.quantity"))
+        Component title = offer != null && offer.buyOrder()
+                ? Component.translatable("market.geg.fulfill_title_fee",
+                MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints()))
+                : Component.translatable("market.geg.quantity");
+        return new Modal(224, 167, 8, title)
                 .action(Component.translatable("market.geg.cancel"), this::closeQuantityMenu)
                 .action(Component.translatable(offer != null && offer.buyOrder()
                         ? "market.geg.confirm_fulfill" : "market.geg.confirm_buy"), this::confirmQuantity);
@@ -809,7 +835,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 try {
                     String raw = ClientMarketScreen.tradeQuantityText();
                     current = io.github.luyingyilong.geg.client.ui.DecimalExpression.evaluate(raw).intValueExact();
-                } catch (IllegalArgumentException | ArithmeticException exception) { current = 1; }
+                } catch (IllegalArgumentException | ArithmeticException exception) {
+                    current = 1;
+                }
                 int[] deltas = {-16, -8, 8, 16};
                 int max = maxTradeQuantity(offer);
                 int next = index == 4 ? max : Math.max(1, Math.min(max,
@@ -957,7 +985,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         return true;
     }
 
-
     @Override
     public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == 256 && modal != null) {
@@ -973,6 +1000,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         }
         return Interactable.Result.IGNORE;
     }
+
 
     private enum Tab {
         MARKET("market"),
@@ -1037,6 +1065,28 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 case OWN -> Component.translatable("market.geg.selling_item", item.getHoverName());
                 default -> item.getHoverName();
             };
+        }
+    }
+
+    private final class CardView implements Grid.View<Card> {
+        private final Panel background = new Panel(null);
+        private final Label name = scrollingCardLabel(TEXT);
+        private final Label count = scrollingCardLabel(SECONDARY_TEXT);
+        private final Label price = scrollingCardLabel(ACCENT);
+        private Card card;
+
+        @Override
+        public void bind(Card card) {
+            this.card = card;
+            name.text(card.title());
+        }
+
+        @Override
+        public void draw(ModularGuiContext context, Rect area, boolean hovered) {
+            card.width = area.width();
+            card.height = area.height();
+            drawCard(context.getGraphics(), card, area.x(), area.y(), hovered, background,
+                    name, count, price);
         }
     }
 }

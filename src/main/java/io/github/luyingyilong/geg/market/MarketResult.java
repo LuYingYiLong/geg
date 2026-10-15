@@ -20,6 +20,7 @@ public enum MarketResult {
     REQUESTED("requested"),
     FULFILLED("fulfilled"),
     INSUFFICIENT_ITEMS("insufficient_items"),
+    DISABLED("disabled"),
     ;
 
     private final String id;

@@ -7,6 +7,7 @@ import io.github.lightman314.lightmanscurrency.common.items.WalletItem;
 import io.github.luyingyilong.geg.money.MoneyBalance;
 import io.github.luyingyilong.geg.money.MoneyCurrency;
 import io.github.luyingyilong.geg.money.MoneyService;
+import io.github.luyingyilong.geg.money.MoneyRules;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.commands.CommandSourceStack;
@@ -42,10 +43,16 @@ public final class LightmansMigrationCommands {
                         .then(Commands.literal("confirm")
                                 .executes(context -> confirm(context.getSource())))
                         .then(Commands.literal("rates")
-                                .executes(context -> rates(context.getSource()))));
+                                .executes(context -> rates(context.getSource())))
+                        .then(Commands.literal("status")
+                                .executes(context -> status(context.getSource()))));
     }
 
     private static int preview(CommandSourceStack source) {
+        if (!MoneyRules.lightmansMigrationEnabled(source.getServer())) {
+            source.sendFailure(Component.translatable("commands.geg.money.migrate.disabled"));
+            return 0;
+        }
         try {
             ServerPlayer player = source.getPlayerOrException();
             MigrationPlan plan = prepare(player);
@@ -72,6 +79,10 @@ public final class LightmansMigrationCommands {
     }
 
     private static int confirm(CommandSourceStack source) {
+        if (!MoneyRules.lightmansMigrationEnabled(source.getServer())) {
+            source.sendFailure(Component.translatable("commands.geg.money.migrate.disabled"));
+            return 0;
+        }
         try {
             ServerPlayer player = source.getPlayerOrException();
             MigrationPlan plan = prepare(player);
@@ -98,6 +109,13 @@ public final class LightmansMigrationCommands {
 
     private static int rates(CommandSourceStack source) {
         source.sendSuccess(() -> Component.translatable("commands.geg.money.migrate.rates"), false);
+        return 1;
+    }
+
+    private static int status(CommandSourceStack source) {
+        String key = MoneyRules.lightmansMigrationEnabled(source.getServer())
+                ? "commands.geg.money.migrate.enabled" : "commands.geg.money.migrate.disabled_status";
+        source.sendSuccess(() -> Component.translatable(key), false);
         return 1;
     }
 

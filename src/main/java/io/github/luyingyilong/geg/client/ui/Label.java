@@ -3,6 +3,7 @@ package io.github.luyingyilong.geg.client.ui;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
+import io.github.luyingyilong.geg.client.ui.layout.Size;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -29,12 +30,14 @@ public final class Label extends Control {
     private int color = 0xFFFFFFFF;
     private boolean shadow;
     private float scale = 1.0F;
+    private int maximumWidth = Integer.MAX_VALUE;
     private int maxLines = Integer.MAX_VALUE;
     private ScrollTrigger scrollTrigger = ScrollTrigger.HOVER;
     private float scrollSpeed = 20.0F;
     private long scrollEndPauseMs = 700L;
     private long scrollStartMs = Long.MIN_VALUE;
 
+    public Label() { this(Component.empty()); }
     public Label(Component text) { this.text = Objects.requireNonNull(text); }
     public Label text(Component text) {
         Component next = Objects.requireNonNull(text);
@@ -42,6 +45,7 @@ public final class Label extends Control {
         this.text = next;
         return this;
     }
+    public Label setText(Component text) { return text(text); }
     public Label overflow(Overflow overflow) {
         this.overflow = Objects.requireNonNull(overflow);
         scrollStartMs = Long.MIN_VALUE;
@@ -83,20 +87,32 @@ public final class Label extends Control {
         this.maxLines = maxLines;
         return this;
     }
+    public Label maximumWidth(int maximumWidth) {
+        if (maximumWidth < 0) throw new IllegalArgumentException("Maximum width cannot be negative");
+        this.maximumWidth = maximumWidth;
+        return this;
+    }
 
     public Component text() { return text; }
+    public Component getText() { return text; }
     public Overflow overflow() { return overflow; }
     public Wrap wrap() { return wrap; }
 
     @Override
     public int measureWidth(Font font, int available) {
-        return (int) Math.ceil(font.width(text) * scale);
+        return Math.max(minimumWidth(), Math.min(maximumWidth, (int) Math.ceil(font.width(text) * scale)));
     }
 
     @Override
     public int measureHeight(Font font, int available) {
         int width = Math.max(1, (int) Math.floor(available / scale));
-        return Math.min(maxLines, lines(font, width).size()) * lineHeight(font);
+        return Math.max(minimumHeight(), Math.min(maxLines, lines(font, width).size()) * lineHeight(font));
+    }
+
+    @Override
+    public Size measureSize(Font font, Size available) {
+        return new Size(measureWidth(font, available.width()),
+                measureHeight(font, available.width()));
     }
 
     public int lineHeight(Font font) { return Math.max(1, (int) Math.ceil((font.lineHeight + 1) * scale)); }
@@ -184,11 +200,11 @@ public final class Label extends Control {
     }
 
     @Override
-    public void draw(ModularGuiContext context, int screenX, int screenY) {
+    protected void render(ModularGuiContext context, int screenX, int screenY) {
         drawAt(context, screenBounds(screenX, screenY));
     }
 
-    public void drawAt(ModularGuiContext context, Rect area) {
+    private void drawAt(ModularGuiContext context, Rect area) {
         if (!visible() || area.width() <= 0 || area.height() <= 0) return;
         Font font = context.getFont();
         GuiGraphics graphics = context.getGraphics();

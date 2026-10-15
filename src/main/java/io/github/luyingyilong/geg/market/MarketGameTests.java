@@ -31,6 +31,86 @@ public final class MarketGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void marketFeeAndTradingPause(GameTestHelper helper) {
+        var server = helper.getLevel().getServer();
+        MoneySavedData data = MoneySavedData.get(server);
+        int previousFee = data.marketFeeBasisPoints();
+        boolean previousEnabled = MarketRules.enabled(server);
+        FakePlayer seller = FakePlayerFactory.get(helper.getLevel(),
+                new GameProfile(UUID.randomUUID(), "fee_seller"));
+        FakePlayer buyer = FakePlayerFactory.get(helper.getLevel(),
+                new GameProfile(UUID.randomUUID(), "fee_buyer"));
+        ItemStack item = new ItemStack(Items.PAPER, 3);
+        item.getOrCreateTag().putUUID("feeTest", UUID.randomUUID());
+        try {
+            server.overworld().getGameRules().getRule(MarketRules.ENABLED).set(true, server);
+            data.setMarketFeeBasisPoints(250);
+            helper.assertTrue(data.save(new CompoundTag()).getInt("marketFeeBasisPoints") == 250,
+                    "Market fee was not saved");
+            helper.assertTrue(MarketService.fee(202L, 250) == 5L
+                            && MarketService.fee(303L, 250) == 7L
+                            && MarketService.fee(1L, 250) == 0L
+                            && MarketService.fee(Long.MAX_VALUE, 10000) == Long.MAX_VALUE,
+                    "Fee calculation rounded incorrectly or overflowed");
+            data.put(buyer.getUUID(), new MoneyBalance(10000L, 0L));
+            seller.getInventory().setItem(0, item.copyWithCount(2));
+            long listingId = data.market().nextId;
+            helper.assertTrue(MarketService.list(seller, 0, 2, 101L, item) == MarketResult.LISTED,
+                    "Fee test listing failed");
+
+            server.overworld().getGameRules().getRule(MarketRules.ENABLED).set(false, server);
+            seller.getInventory().setItem(1, item.copyWithCount(1));
+            helper.assertTrue(MarketService.list(seller, 1, 1, 101L, item) == MarketResult.DISABLED
+                            && seller.getInventory().getItem(1).getCount() == 1,
+                    "Closed market removed items from an attempted listing");
+            helper.assertTrue(MarketService.buy(buyer, listingId, 1L, 101L, 2) == MarketResult.DISABLED
+                            && data.balance(buyer.getUUID()).coinMinorUnits() == 10000L,
+                    "Closed market allowed a purchase or debited the buyer");
+            helper.assertTrue(MarketService.createRequest(buyer, 0, 0L, 1, 101L, item)
+                            == MarketResult.DISABLED, "Closed market allowed a buy order");
+
+            server.overworld().getGameRules().getRule(MarketRules.ENABLED).set(true, server);
+            helper.assertTrue(MarketService.buy(buyer, listingId, 1L, 101L, 2) == MarketResult.BOUGHT,
+                    "Reopened market did not allow a purchase");
+            helper.assertTrue(data.balance(buyer.getUUID()).coinMinorUnits() == 9798L
+                            && MarketService.pendingCoin(server, seller.getUUID()) == 197L,
+                    "Sale fee did not come out of seller proceeds");
+            helper.assertTrue(data.audit().stream().anyMatch(entry -> entry.reason().equals("market_fee")
+                            && entry.reference().equals("listing:" + listingId)
+                            && entry.amount() == 5L && entry.to().equals("system:sink")),
+                    "Sale fee was not recorded as coin removed from circulation");
+
+            buyer.getInventory().setItem(0, item.copyWithCount(1));
+            long orderId = data.market().nextId;
+            helper.assertTrue(MarketService.createRequest(buyer, 0, 0L, 3, 101L, item)
+                    == MarketResult.REQUESTED, "Fee test buy order failed");
+            seller.getInventory().setItem(0, item.copyWithCount(2));
+            seller.getInventory().setItem(1, item.copyWithCount(1));
+            helper.assertTrue(MarketService.fulfillRequest(seller, orderId, 1L, 101L, 3)
+                    == MarketResult.FULFILLED, "Fee test buy order was not fulfilled");
+            helper.assertTrue(MarketService.pendingCoin(server, seller.getUUID()) == 493L,
+                    "Buy-order fulfillment fee did not come out of seller proceeds");
+            helper.assertTrue(data.audit().stream().anyMatch(entry -> entry.reason().equals("market_fee")
+                            && entry.reference().equals("order:" + orderId)
+                            && entry.amount() == 7L && entry.to().equals("system:sink")),
+                    "Fulfillment fee was not recorded as coin removed from circulation");
+
+            long cancelId = data.market().nextId;
+            helper.assertTrue(MarketService.createRequest(buyer, 0, 0L, 1, 100L, item)
+                    == MarketResult.REQUESTED, "Refund test buy order failed");
+            server.overworld().getGameRules().getRule(MarketRules.ENABLED).set(false, server);
+            helper.assertTrue(MarketService.cancelRequest(buyer, cancelId, 1L) == MarketResult.CANCELLED,
+                    "Closed market prevented a buy-order refund");
+            helper.assertTrue(MarketService.claimCoin(seller) == MarketResult.CLAIMED,
+                    "Closed market prevented claiming earned coin");
+            helper.succeed();
+        } finally {
+            data.setMarketFeeBasisPoints(previousFee);
+            server.overworld().getGameRules().getRule(MarketRules.ENABLED).set(previousEnabled, server);
+        }
+    }
+
+    @GameTest(template = "empty")
     public static void loadedPackCoinRewards(GameTestHelper helper) {
         if (ModList.get().isLoaded("ftbquests")
                 && io.github.luyingyilong.geg.money.integration.FtbCoinIntegration.packQuestsPresent()) {

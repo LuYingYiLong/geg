@@ -12,18 +12,38 @@ public final class LayoutRegressionTest {
     }
 
     public static void main(String[] args) {
-        for (int width : new int[]{127, 128, 129, 427}) {
+        Control unset = new Control();
+        check(unset.minimumSize().equals(new Size(0, 0)));
+        check(unset.size().equals(new Size(0, 0)));
+        for (int width : new int[]{127, 128, 129, 320, 427}) {
             Control title = new Control().preferred(60, 20).minimum(0, 20)
                     .policy(Control.SizePolicy.EXPAND, Control.SizePolicy.CONTENT);
-            Control search = new Control().preferred(138, 18).minimum(16, 18);
-            Control filter = new Control().preferred(82, 20).minimum(82, 20);
+            Control balance = new Control().preferred(90, 20).minimum(64, 20);
+            Control search = new Control().preferred(138, 18).minimum(72, 18);
+            Control filter = new Control().preferred(82, 20).minimum(74, 20);
             Box header = new Box().orientation(Box.Orientation.HORIZONTAL).gap(6)
-                    .add(title).add(search).add(filter);
+                    .add(title).add(balance).add(search).add(filter);
             header.layout(new Rect(0, 0, width - 10, 25), null);
+            check(title.size().width() == title.bounds().width());
+            check(balance.minimumSize().equals(new Size(64, 20)));
+            check(title.bounds().right() + 6 <= balance.bounds().x());
+            check(balance.bounds().right() + 6 <= search.bounds().x());
             check(search.bounds().height() == 18 && search.bounds().y() == 3);
             check(filter.bounds().height() == 20 && filter.bounds().y() == 2);
             check(filter.bounds().right() <= width - 10);
             check(search.bounds().right() + 6 <= filter.bounds().x());
+            if (width == 427) {
+                check(title.size().width() > 60);
+                check(balance.size().width() >= balance.minimumWidth());
+                check(search.size().width() >= search.minimumWidth());
+                check(filter.size().width() >= filter.minimumWidth());
+            }
+            if (width == 320) {
+                check(title.size().width() == 60);
+                check(balance.size().width() == balance.minimumWidth());
+                check(search.size().width() >= search.minimumWidth());
+                check(filter.size().width() >= filter.minimumWidth());
+            }
         }
 
         Control inner = new Control().preferred(10, 10);

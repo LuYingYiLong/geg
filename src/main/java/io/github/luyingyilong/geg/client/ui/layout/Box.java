@@ -23,7 +23,7 @@ public final class Box extends Control {
         int total = Math.max(0, (int) children.stream().filter(Control::visible).count() - 1) * gap;
         int maximum = 0;
         for (Control child : children) if (child.visible()) {
-            int value = child.measureWidth(font, available);
+            int value = child.measureSize(font, new Size(available, available)).width();
             total += value;
             maximum = Math.max(maximum, value);
         }
@@ -35,7 +35,7 @@ public final class Box extends Control {
         int total = Math.max(0, (int) children.stream().filter(Control::visible).count() - 1) * gap;
         int maximum = 0;
         for (Control child : children) if (child.visible()) {
-            int value = child.measureHeight(font, available);
+            int value = child.measureSize(font, new Size(available, available)).height();
             total += value;
             maximum = Math.max(maximum, value);
         }
@@ -53,22 +53,18 @@ public final class Box extends Control {
         int desired = 0;
         for (int index = 0; index < active.size(); index++) {
             Control child = active.get(index);
-            sizes[index] = orientation == Orientation.VERTICAL
-                    ? child.measureHeight(font, axis) : child.measureWidth(font, axis);
+            Size measured = child.measureSize(font, orientation == Orientation.VERTICAL
+                    ? new Size(cross, axis) : new Size(axis, cross));
+            sizes[index] = orientation == Orientation.VERTICAL ? measured.height() : measured.width();
             desired += sizes[index];
         }
+        long expandable = active.stream().filter(child -> (orientation == Orientation.VERTICAL
+                ? child.verticalPolicy() : child.horizontalPolicy()) == SizePolicy.EXPAND).count();
         if (desired > space) {
-            int shortage = desired - space;
-            for (int index = 0; index < active.size() && shortage > 0; index++) {
-                Control child = active.get(index);
-                int minimum = orientation == Orientation.VERTICAL ? child.minimumHeight() : child.minimumWidth();
-                int reduction = Math.min(shortage, Math.max(0, sizes[index] - minimum));
-                sizes[index] -= reduction;
-                shortage -= reduction;
-            }
+            int shortage = shrink(active, sizes, desired - space, false);
+            if (shortage > 0) shortage = shrink(active, sizes, shortage, true);
+            if (shortage > 0) shrinkBelowMinimum(sizes, space);
         } else {
-            long expandable = active.stream().filter(child -> (orientation == Orientation.VERTICAL
-                    ? child.verticalPolicy() : child.horizontalPolicy()) == SizePolicy.EXPAND).count();
             int remaining = space - desired;
             for (int index = 0; index < active.size() && expandable > 0; index++) {
                 Control child = active.get(index);
@@ -84,8 +80,9 @@ public final class Box extends Control {
         int cursor = 0;
         for (int index = 0; index < active.size(); index++) {
             Control child = active.get(index);
-            int crossSize = orientation == Orientation.VERTICAL
-                    ? child.measureWidth(font, cross) : child.measureHeight(font, cross);
+            Size measured = child.measureSize(font, orientation == Orientation.VERTICAL
+                    ? new Size(cross, sizes[index]) : new Size(sizes[index], cross));
+            int crossSize = orientation == Orientation.VERTICAL ? measured.width() : measured.height();
             SizePolicy crossPolicy = orientation == Orientation.VERTICAL
                     ? child.horizontalPolicy() : child.verticalPolicy();
             if (crossPolicy != SizePolicy.CONTENT) crossSize = cross;
@@ -95,6 +92,35 @@ public final class Box extends Control {
                     ? new Rect(crossOffset, cursor, crossSize, sizes[index])
                     : new Rect(cursor, crossOffset, sizes[index], crossSize), font);
             cursor += sizes[index] + gap;
+        }
+    }
+
+    private int shrink(List<Control> active, int[] sizes, int shortage, boolean expandChildren) {
+        for (int index = 0; index < active.size() && shortage > 0; index++) {
+            Control child = active.get(index);
+            SizePolicy policy = orientation == Orientation.VERTICAL
+                    ? child.verticalPolicy() : child.horizontalPolicy();
+            if ((policy == SizePolicy.EXPAND) != expandChildren) continue;
+            int minimum = orientation == Orientation.VERTICAL
+                    ? child.minimumHeight() : child.minimumWidth();
+            int reduction = Math.min(shortage, Math.max(0, sizes[index] - minimum));
+            sizes[index] -= reduction;
+            shortage -= reduction;
+        }
+        return shortage;
+    }
+
+    /** An undersized viewport cannot honor every minimum; keep every child in the viewport. */
+    private static void shrinkBelowMinimum(int[] sizes, int space) {
+        int total = 0;
+        for (int size : sizes) total += size;
+        if (total == 0) return;
+        int remaining = space;
+        for (int index = 0; index < sizes.length; index++) {
+            int allocated = index == sizes.length - 1 ? remaining
+                    : (int) ((long) sizes[index] * space / total);
+            sizes[index] = allocated;
+            remaining -= allocated;
         }
     }
 

@@ -25,6 +25,10 @@ public class Control {
         return this;
     }
 
+    public Control minimum(Size size) {
+        return minimum(size.width(), size.height());
+    }
+
     public Control preferred(int width, int height) {
         preferredWidth = Math.max(0, width);
         preferredHeight = Math.max(0, height);
@@ -41,9 +45,12 @@ public class Control {
     public SizePolicy verticalPolicy() { return vertical; }
     public int minimumWidth() { return minimumWidth; }
     public int minimumHeight() { return minimumHeight; }
+    public Size minimumSize() { return new Size(minimumWidth, minimumHeight); }
     public boolean visible() { return visible; }
     public void visible(boolean visible) { this.visible = visible; }
     public Rect bounds() { return bounds; }
+    /** The size assigned by the most recent layout pass. */
+    public Size size() { return new Size(bounds.width(), bounds.height()); }
 
     public Rect absoluteBounds() {
         return parent == null ? bounds : bounds.translated(parent.absoluteBounds().x(), parent.absoluteBounds().y());
@@ -56,11 +63,20 @@ public class Control {
 
     public int measureWidth(Font font, int available) { return Math.max(minimumWidth, preferredWidth); }
     public int measureHeight(Font font, int available) { return Math.max(minimumHeight, preferredHeight); }
+    /** The desired size before layout, which may differ from the current size. */
+    public Size measureSize(Font font, Size available) {
+        return new Size(Math.max(minimumWidth, measureWidth(font, available.width())),
+                Math.max(minimumHeight, measureHeight(font, available.height())));
+    }
 
     /** Coordinates are relative to the parent control. */
     public void layout(Rect localBounds, Font font) { bounds = localBounds; }
 
     public void draw(ModularGuiContext context, int screenX, int screenY) {
+        render(context, screenX, screenY);
+    }
+
+    protected void render(ModularGuiContext context, int screenX, int screenY) {
     }
 
     public Rect screenBounds(int screenX, int screenY) {

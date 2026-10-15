@@ -72,6 +72,7 @@ public final class MarketService {
     public static MarketResult list(ServerPlayer seller, int slot, int quantity,
                                     long unitPrice, ItemStack expectedItem) {
         MinecraftServer server = seller.server;
+        if (!MarketRules.enabled(server)) return MarketResult.DISABLED;
         MarketState state = state(server);
         if (slot < 0 || slot >= 36 || quantity <= 0 || unitPrice <= 0L || state.nextId == Long.MAX_VALUE) {
             return MarketResult.INVALID;
@@ -105,6 +106,7 @@ public final class MarketService {
 
     public static MarketResult buy(ServerPlayer buyer, long listingId, long expectedVersion, long expectedPrice, int quantity) {
         MinecraftServer server = buyer.server;
+        if (!MarketRules.enabled(server)) return MarketResult.DISABLED;
         MarketState state = state(server);
         MarketListing listing = state.listings.get(listingId);
         if (listing == null || listing.version() != expectedVersion || listing.unitPrice() != expectedPrice
@@ -121,26 +123,31 @@ public final class MarketService {
         } catch (ArithmeticException exception) {
             return MarketResult.OVERFLOW;
         }
+        long fee = fee(total, MoneySavedData.get(server).marketFeeBasisPoints());
+        long proceeds = total - fee;
 
         MoneySavedData data = MoneySavedData.get(server);
         MoneyBalance balance = data.balance(buyer.getUUID());
         if (balance.coinMinorUnits() < total) {
             return MarketResult.INSUFFICIENT;
         }
-        if (state.nextId > Long.MAX_VALUE - 2L) {
+        if (state.nextId > Long.MAX_VALUE - (proceeds > 0L ? 2L : 1L)) {
             return MarketResult.LIMIT;
         }
 
         MarketDelivery delivery = new MarketDelivery(state.nextId++, listing.item(), quantity);
-        MarketCoinCredit credit = new MarketCoinCredit(state.nextId++, total);
+        MarketCoinCredit credit = proceeds > 0L ? new MarketCoinCredit(state.nextId++, proceeds) : null;
         MarketPurchase purchase = new MarketPurchase(listing.item(), quantity, listing.unitPrice(),
                 listing.sellerName(), System.currentTimeMillis());
-        data.record("market_sale", MoneyCurrency.COIN, MoneyService.wallet(buyer.getUUID()),
-                MoneyService.pending(listing.seller(), credit.id()), total, "listing:" + listingId);
+        if (credit != null) data.record("market_sale", MoneyCurrency.COIN,
+                MoneyService.wallet(buyer.getUUID()), MoneyService.pending(listing.seller(), credit.id()),
+                proceeds, "listing:" + listingId);
+        if (fee > 0L) data.record("market_fee", MoneyCurrency.COIN,
+                MoneyService.wallet(buyer.getUUID()), "system:sink", fee, "listing:" + listingId);
         data.put(buyer.getUUID(), balance.with(io.github.luyingyilong.geg.money.MoneyCurrency.COIN,
                 balance.coinMinorUnits() - total));
         MoneyNetwork.sync(buyer, data.balance(buyer.getUUID()));
-        state.coinCredits.computeIfAbsent(listing.seller(), ignored -> new ArrayList<>()).add(credit);
+        if (credit != null) state.coinCredits.computeIfAbsent(listing.seller(), ignored -> new ArrayList<>()).add(credit);
         state.deliveries.computeIfAbsent(buyer.getUUID(), ignored -> new ArrayList<>()).add(delivery);
         List<MarketPurchase> records = state.history.computeIfAbsent(buyer.getUUID(), ignored -> new ArrayList<>());
         records.add(0, purchase);
@@ -165,6 +172,7 @@ public final class MarketService {
 
     public static MarketResult reprice(ServerPlayer seller, long listingId, long expectedVersion, long unitPrice) {
         MinecraftServer server = seller.server;
+        if (!MarketRules.enabled(server)) return MarketResult.DISABLED;
         MarketState state = state(server);
         MarketListing listing = state.listings.get(listingId);
         if (listing == null || listing.version() != expectedVersion) {
@@ -297,6 +305,7 @@ public final class MarketService {
     public static MarketResult createRequest(ServerPlayer buyer, int source, long sourceId,
                                              int quantity, long unitPrice, ItemStack expectedItem) {
         MinecraftServer server = buyer.server;
+        if (!MarketRules.enabled(server)) return MarketResult.DISABLED;
         MarketState state = state(server);
         if (quantity <= 0 || unitPrice <= 0L || state.nextId == Long.MAX_VALUE) return MarketResult.INVALID;
         if (state.buyOrders.values().stream().filter(order -> order.buyer().equals(buyer.getUUID())).count()
@@ -339,6 +348,7 @@ public final class MarketService {
     public static MarketResult fulfillRequest(ServerPlayer seller, long orderId, long expectedVersion,
                                               long expectedPrice, int quantity) {
         MinecraftServer server = seller.server;
+        if (!MarketRules.enabled(server)) return MarketResult.DISABLED;
         MarketState state = state(server);
         MarketBuyOrder order = state.buyOrders.get(orderId);
         if (order == null || order.version() != expectedVersion || order.unitPrice() != expectedPrice
@@ -351,14 +361,19 @@ public final class MarketService {
             if (!stack.isEmpty() && MarketKey.of(stack).equals(key)) available += stack.getCount();
         }
         if (available < quantity) return MarketResult.INSUFFICIENT_ITEMS;
-        if (state.nextId > Long.MAX_VALUE - 2L) return MarketResult.LIMIT;
         long total = Math.multiplyExact(order.unitPrice(), quantity);
         if (order.escrow() < total) return MarketResult.STALE;
+        MoneySavedData data = MoneySavedData.get(server);
+        long fee = fee(total, data.marketFeeBasisPoints());
+        long proceeds = total - fee;
+        if (state.nextId > Long.MAX_VALUE - (proceeds > 0L ? 2L : 1L)) return MarketResult.LIMIT;
         long deliveryId = state.nextId++;
-        long creditId = state.nextId++;
-        MoneySavedData.get(server).record("market_fulfill", MoneyCurrency.COIN,
+        long creditId = proceeds > 0L ? state.nextId++ : 0L;
+        if (proceeds > 0L) data.record("market_fulfill", MoneyCurrency.COIN,
                 MoneyService.escrow(order.buyer(), orderId), MoneyService.pending(seller.getUUID(), creditId),
-                total, "order:" + orderId);
+                proceeds, "order:" + orderId);
+        if (fee > 0L) data.record("market_fee", MoneyCurrency.COIN,
+                MoneyService.escrow(order.buyer(), orderId), "system:sink", fee, "order:" + orderId);
         int remaining = quantity;
         for (int slot = 0; slot < 36 && remaining > 0; slot++) {
             ItemStack stack = seller.getInventory().getItem(slot);
@@ -372,8 +387,8 @@ public final class MarketService {
         seller.inventoryMenu.broadcastChanges();
         state.deliveries.computeIfAbsent(order.buyer(), ignored -> new ArrayList<>())
                 .add(new MarketDelivery(deliveryId, order.item(), quantity));
-        state.coinCredits.computeIfAbsent(seller.getUUID(), ignored -> new ArrayList<>())
-                .add(new MarketCoinCredit(creditId, total));
+        if (proceeds > 0L) state.coinCredits.computeIfAbsent(seller.getUUID(), ignored -> new ArrayList<>())
+                .add(new MarketCoinCredit(creditId, proceeds));
         List<MarketPurchase> records = state.history.computeIfAbsent(order.buyer(), ignored -> new ArrayList<>());
         records.add(0, new MarketPurchase(order.item(), quantity, order.unitPrice(),
                 seller.getGameProfile().getName(), System.currentTimeMillis()));
@@ -391,6 +406,7 @@ public final class MarketService {
 
     public static MarketResult repriceRequest(ServerPlayer buyer, long orderId, long version, long price) {
         MinecraftServer server = buyer.server;
+        if (!MarketRules.enabled(server)) return MarketResult.DISABLED;
         MarketState state = state(server);
         MarketBuyOrder order = state.buyOrders.get(orderId);
         if (order == null || order.version() != version) return MarketResult.STALE;
@@ -492,6 +508,12 @@ public final class MarketService {
         state.revision++;
         data.markChanged();
         MarketNetwork.broadcastRevision(server, state.revision(), item);
+    }
+
+    static long fee(long total, int basisPoints) {
+        if (total < 0L || basisPoints < 0 || basisPoints > 10000)
+            throw new IllegalArgumentException("Invalid market fee input");
+        return (total / 10000L) * basisPoints + (total % 10000L) * basisPoints / 10000L;
     }
 
 

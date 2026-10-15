@@ -5,6 +5,8 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import io.github.luyingyilong.geg.money.integration.LightmansMigrationCommands;
+import io.github.luyingyilong.geg.market.MarketRules;
+import io.github.luyingyilong.geg.market.MarketNetwork;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -15,6 +17,7 @@ import net.minecraftforge.fml.ModList;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +46,13 @@ public final class MoneyCommands {
                         .requires(source -> source.hasPermission(2))
                         .then(adminBranch(MoneyCurrency.COIN))
                         .then(adminBranch(MoneyCurrency.GEM)))
+                .then(Commands.literal("market")
+                        .executes(context -> showMarketSettings(context.getSource()))
+                        .then(Commands.literal("fee")
+                                .executes(context -> showMarketFee(context.getSource()))
+                                .then(Commands.argument("percent", StringArgumentType.word())
+                                        .requires(source -> source.hasPermission(2))
+                                        .executes(MoneyCommands::setMarketFee))))
                 .then(Commands.literal("audit")
                         .requires(source -> source.hasPermission(2))
                         .then(Commands.literal("summary")
@@ -71,6 +81,46 @@ public final class MoneyCommands {
         return Commands.literal(currency.id())
                 .then(Commands.argument("amount", StringArgumentType.word())
                         .executes(context -> pay(context, currency)));
+    }
+
+    private static int showMarketSettings(CommandSourceStack source) {
+        boolean enabled = MarketRules.enabled(source.getServer());
+        int basisPoints = MoneySavedData.get(source.getServer()).marketFeeBasisPoints();
+        source.sendSuccess(() -> Component.translatable("commands.geg.money.market.settings",
+                Component.translatable(enabled ? "commands.geg.money.market.enabled"
+                        : "commands.geg.money.market.disabled"), MoneyCurrency.COIN.format(basisPoints)), false);
+        return 1;
+    }
+
+    private static int showMarketFee(CommandSourceStack source) {
+        int basisPoints = MoneySavedData.get(source.getServer()).marketFeeBasisPoints();
+        source.sendSuccess(() -> Component.translatable("commands.geg.money.market.fee",
+                MoneyCurrency.COIN.format(basisPoints)), false);
+        return 1;
+    }
+
+    private static int setMarketFee(CommandContext<CommandSourceStack> context) {
+        String input = StringArgumentType.getString(context, "percent");
+        if (!input.matches("(?:0|[1-9][0-9]?|100)(?:\\.[0-9]{1,2})?")) {
+            context.getSource().sendFailure(Component.translatable("commands.geg.money.market.invalid_fee"));
+            return 0;
+        }
+        int basisPoints;
+        try {
+            basisPoints = new BigDecimal(input).movePointRight(2).intValueExact();
+        } catch (ArithmeticException exception) {
+            context.getSource().sendFailure(Component.translatable("commands.geg.money.market.invalid_fee"));
+            return 0;
+        }
+        if (basisPoints > 10000) {
+            context.getSource().sendFailure(Component.translatable("commands.geg.money.market.invalid_fee"));
+            return 0;
+        }
+        MoneySavedData.get(context.getSource().getServer()).setMarketFeeBasisPoints(basisPoints);
+        MarketNetwork.syncViewers(context.getSource().getServer());
+        context.getSource().sendSuccess(() -> Component.translatable("commands.geg.money.market.fee_set",
+                MoneyCurrency.COIN.format(basisPoints)), true);
+        return 1;
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> adminBranch(MoneyCurrency currency) {

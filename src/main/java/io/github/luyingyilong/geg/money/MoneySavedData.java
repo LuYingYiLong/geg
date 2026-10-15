@@ -20,6 +20,7 @@ public final class MoneySavedData extends SavedData {
 
     private final Map<UUID, MoneyBalance> wallets = new HashMap<>();
     private MarketState market = new MarketState();
+    private int marketFeeBasisPoints;
     private final List<CoinAuditEntry> audit = new ArrayList<>();
     private long nextAuditSequence = 1L;
     private boolean auditInitialized;
@@ -61,6 +62,7 @@ public final class MoneySavedData extends SavedData {
         if (root.contains("market", Tag.TAG_COMPOUND)) {
             data.market = MarketState.load(root.getCompound("market"));
         }
+        data.marketFeeBasisPoints = Math.max(0, Math.min(10000, root.getInt("marketFeeBasisPoints")));
 
         data.auditInitialized = root.getBoolean("auditInitialized");
         data.nextAuditSequence = Math.max(1L, root.getLong("nextAuditSequence"));
@@ -104,6 +106,20 @@ public final class MoneySavedData extends SavedData {
 
     public MarketState market() {
         return market;
+    }
+
+    public int marketFeeBasisPoints() {
+        return marketFeeBasisPoints;
+    }
+
+    public void setMarketFeeBasisPoints(int basisPoints) {
+        if (basisPoints < 0 || basisPoints > 10000) {
+            throw new IllegalArgumentException("Market fee must be between 0% and 100%");
+        }
+        if (marketFeeBasisPoints != basisPoints) {
+            marketFeeBasisPoints = basisPoints;
+            setDirty();
+        }
     }
 
 
@@ -181,6 +197,7 @@ public final class MoneySavedData extends SavedData {
         });
         root.put(WALLETS_KEY, entries);
         root.put("market", market.save());
+        root.putInt("marketFeeBasisPoints", marketFeeBasisPoints);
         root.putBoolean("auditInitialized", auditInitialized);
         root.putLong("nextAuditSequence", nextAuditSequence);
         ListTag auditTags = new ListTag();

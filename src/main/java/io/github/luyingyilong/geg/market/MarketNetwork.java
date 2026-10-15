@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,7 +24,7 @@ import org.slf4j.Logger;
 
 public final class MarketNetwork {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final String PROTOCOL_VERSION = "3";
+    private static final String PROTOCOL_VERSION = "4";
     private static final int CHUNK_SIZE = 8;
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.fromNamespaceAndPath(GegMod.MODID, "market"),
@@ -50,6 +51,9 @@ public final class MarketNetwork {
 
     public static void open(ServerPlayer player) {
         LOGGER.debug("Opening market for {}", player.getGameProfile().getName());
+        if (!MarketRules.enabled(player.server)) {
+            player.sendSystemMessage(Component.translatable(MarketResult.DISABLED.translationKey()));
+        }
         VIEWERS.add(player.getUUID());
         send(player, new MarketOpenPacket());
         sync(player);
@@ -63,6 +67,14 @@ public final class MarketNetwork {
 
     public static boolean isViewer(ServerPlayer player) {
         return VIEWERS.contains(player.getUUID());
+    }
+
+    public static void syncViewers(MinecraftServer server) {
+        for (UUID viewerId : Set.copyOf(VIEWERS)) {
+            ServerPlayer viewer = server.getPlayerList().getPlayer(viewerId);
+            if (viewer == null) VIEWERS.remove(viewerId);
+            else sync(viewer);
+        }
     }
 
 
@@ -80,6 +92,9 @@ public final class MarketNetwork {
         CompoundTag start = new CompoundTag();
         start.putString("kind", "start");
         start.putLong("revision", state.revision());
+        start.putBoolean("enabled", MarketRules.enabled(server));
+        start.putInt("feeBasisPoints", io.github.luyingyilong.geg.money.MoneySavedData.get(server)
+                .marketFeeBasisPoints());
         send(player, new MarketSnapshotPacket(start));
 
         sendChunks(player, "summaries", summaries(state).stream().map(MarketSummary::save).toList());
