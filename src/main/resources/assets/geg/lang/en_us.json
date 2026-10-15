@@ -125,5 +125,22 @@
   "market.geg.selling_item": "Sell: %s",
   "market.geg.sample": "Selected sample",
   "market.geg.form.invalid_quantity": "Enter a positive whole number within the limit",
-  "market.geg.form.invalid_coin": "Enter a positive coin amount with at most two decimals"
+  "market.geg.form.invalid_coin": "Enter a positive coin amount with at most two decimals",
+  "organization.geg.entry": "Org",
+  "organization.geg.title": "Organizations",
+  "organization.geg.none": "You have not joined an organization yet.",
+  "organization.geg.create": "Create organization",
+  "organization.geg.join": "Join organization",
+  "organization.geg.name": "Name",
+  "organization.geg.name_hint": "Organization name",
+  "organization.geg.description": "Description",
+  "organization.geg.description_hint": "What will your organization do?",
+  "organization.geg.join_policy": "Joining conditions",
+  "organization.geg.join_unrestricted": "Unrestricted",
+  "organization.geg.join_approval": "Approval required",
+  "organization.geg.back": "Back",
+  "organization.geg.create_action": "Create",
+  "organization.geg.preview": "Organization creation is not available yet. This form is a UI preview.",
+  "organization.geg.create_unavailable": "Organization creation is not available yet.",
+  "organization.geg.join_unavailable": "Joining organizations is not available yet."
 }

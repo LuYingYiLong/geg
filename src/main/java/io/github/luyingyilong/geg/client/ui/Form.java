@@ -37,14 +37,14 @@ public final class Form extends Container {
         if (items.containsKey(item.name())) throw new IllegalArgumentException("Duplicate field: " + item.name());
         items.put(item.name(), item);
         addChild(item);
-        item.input().setInputVisible(shown && item.active());
+        item.setInputVisible(shown && item.active());
         return this;
     }
 
     public void setVisible(boolean visible) {
         shown = visible;
         super.visible(visible);
-        for (FormItem item : items.values()) item.input().setInputVisible(visible && item.active());
+        for (FormItem item : items.values()) item.setInputVisible(visible && item.active());
     }
 
     @Override public boolean visible() { return shown; }
@@ -59,10 +59,11 @@ public final class Form extends Container {
     /** MUI widgets are siblings of the Ore canvas, so hide fields outside a scrolled viewport. */
     public void clipInputs(Rect viewport) {
         for (FormItem item : items.values()) {
+            if (item.inputNode() == null) continue;
             Rect area = item.inputNode().absoluteBounds();
             boolean fullyVisible = area.x() >= viewport.x() && area.right() <= viewport.right()
                     && area.y() >= viewport.y() && area.bottom() <= viewport.bottom();
-            item.input().setInputVisible(shown && item.active() && fullyVisible);
+            item.setInputVisible(shown && item.active() && fullyVisible);
         }
     }
 
@@ -83,7 +84,7 @@ public final class Form extends Container {
         int height = 0;
         for (FormItem item : items.values()) if (item.active()) {
             item.horizontal(horizontal);
-            height += item.rowHeight();
+            height += item.rowHeight(font, available.width());
         }
         return new Size(Math.max(minimumWidth(), available.width()),
                 Math.max(minimumHeight(), height));
@@ -97,7 +98,7 @@ public final class Form extends Container {
             item.horizontal(horizontal);
             item.visible(item.active());
             if (!item.active()) continue;
-            int height = item.rowHeight();
+            int height = item.rowHeight(font, bounds.width());
             fitChild(item, new Rect(0, top, bounds.width(), height), font);
             top += height;
         }

@@ -2,6 +2,7 @@ package io.github.luyingyilong.geg.client.ui;
 
 import io.github.luyingyilong.geg.client.ui.layout.Box;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.Padding;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
 
 /** Pure layout checks; a live client is required for Forge theme and focus behavior. */
@@ -34,14 +35,27 @@ public final class ModalLayoutTest {
         check(first.bounds().width() == 100 && first.bounds().y() == 0);
         check(second.bounds().width() == 100 && second.bounds().y() == 22);
 
-        Box column = new Box().gap(4);
+        Box column = new Box();
         Control row = new Control().minimum(0, 18);
-        Control body = new Control().minimum(0, 24)
+        Control body = new Control()
                 .policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
-        column.add(row).add(body).add(footer);
-        column.layout(new Rect(0, 0, 100, 92), null);
-        check(row.bounds().y() == 0 && body.bounds().y() == 22);
-        check(footer.bounds().y() == 50 && footer.bounds().bottom() == 92);
+        Padding headerInset = new Padding(new Padding.Insets(2, 8, 4, 8)).child(row);
+        Padding bodyInset = new Padding(new Padding.Insets(0, 8, 5, 8)).child(body);
+        Padding footerInset = new Padding(new Padding.Insets(4, 8, 2, 8)).child(footer);
+        headerInset.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        bodyInset.policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
+        footerInset.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        column.add(headerInset).add(bodyInset).add(footerInset);
+        column.layout(new Rect(0, 0, 100, 96), null);
+        check(row.absoluteBounds().x() == 8 && row.absoluteBounds().y() == 2);
+        check(body.absoluteBounds().x() == 8 && body.absoluteBounds().y() == 24);
+        check(body.bounds().width() == 84 && body.bounds().height() == 19);
+        check(footer.absoluteBounds().x() == 8 && footer.absoluteBounds().y() == 52);
+        check(footer.bounds().width() == 84);
+
+        column.layout(new Rect(0, 0, 100, 80), null);
+        check(body.bounds().height() == 3);
+        check(footerInset.absoluteBounds().bottom() == 80);
     }
 
     private static void check(boolean condition) {

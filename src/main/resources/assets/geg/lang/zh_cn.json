@@ -125,5 +125,22 @@
   "market.geg.selling_item": "出售：%s",
   "market.geg.sample": "已选样本",
   "market.geg.form.invalid_quantity": "请输入范围内的正整数",
-  "market.geg.form.invalid_coin": "请输入最多两位小数的正数金币金额"
+  "market.geg.form.invalid_coin": "请输入最多两位小数的正数金币金额",
+  "organization.geg.entry": "组织",
+  "organization.geg.title": "组织",
+  "organization.geg.none": "你还没有加入任何组织。",
+  "organization.geg.create": "创建组织",
+  "organization.geg.join": "加入组织",
+  "organization.geg.name": "名称",
+  "organization.geg.name_hint": "组织名称",
+  "organization.geg.description": "简介",
+  "organization.geg.description_hint": "这个组织打算做什么？",
+  "organization.geg.join_policy": "加入条件",
+  "organization.geg.join_unrestricted": "无限制",
+  "organization.geg.join_approval": "需要审核",
+  "organization.geg.back": "返回",
+  "organization.geg.create_action": "创建",
+  "organization.geg.preview": "创建组织功能尚未开放，此表单仅供界面预览。",
+  "organization.geg.create_unavailable": "创建组织功能尚未开放。",
+  "organization.geg.join_unavailable": "加入组织功能尚未开放。"
 }

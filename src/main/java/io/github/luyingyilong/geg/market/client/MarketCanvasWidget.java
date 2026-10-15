@@ -923,24 +923,26 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             if (offerTable.visible()) {
                 scroll = 0;
                 contentHeight = height;
-                fitChild(offerTable, new Rect(2, 5, Math.max(1, width - 4),
-                        Math.max(0, height - 10)), font);
+                fitChild(offerTable, new Rect(0, 0, width, height), font);
                 return;
             }
-            int formTop = fee.visible() ? 34 : 22;
+            int formTop = fee.visible() ? 30 : 18;
             int formHeight = form != null && form.visible()
-                    ? form.measureSize(font, new Size(Math.max(1, width - 8), height)).height() : 0;
-            contentHeight = Math.max(formTop + formHeight + 2, fee.visible() ? 46 : 24);
+                    ? form.measureSize(font, new Size(width, height)).height() : 0;
+            contentHeight = Math.max(formTop + formHeight, fee.visible() ? 26 : 12);
             scroll = Math.min(scroll, Math.max(0, contentHeight - height));
-            fitChild(info, new Rect(4, 4 - scroll, Math.max(1, width - 8), 12), font);
-            fitChild(fee, new Rect(4, 18 - scroll, Math.max(1, width - 8), 12), font);
+            fitChild(info, new Rect(0, -scroll, width, 12), font);
+            fitChild(fee, new Rect(0, 14 - scroll, width, 12), font);
             if (form != null && form.visible())
-                fitChild(form, new Rect(4, formTop - scroll, Math.max(1, width - 8), formHeight), font);
+                fitChild(form, new Rect(0, formTop - scroll, width, formHeight), font);
             if (form != null && form.visible()) form.clipInputs(absoluteBounds());
         }
     }
 
     private final class QuantityContent extends ScrollableContent {
+        private static final int QUICK_BUTTON_GAP = 2;
+        private static final int QUICK_BUTTON_MIN_WIDTH = 30;
+        private static final int QUICK_BUTTON_ROW_HEIGHT = Button.Size.MEDIUM.height() + QUICK_BUTTON_GAP;
         private final List<Button> quickButtons = new ArrayList<>();
         private Form form;
 
@@ -966,21 +968,26 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             int width = bounds.width();
             int height = bounds.height();
             int formHeight = form == null ? 0
-                    : form.measureSize(font, new Size(Math.max(1, width - 8), height)).height();
-            int available = Math.max(1, width - 8);
-            int columns = Math.min(5, Math.max(1, (available + 2) / 30));
-            int buttonWidth = Math.max(1, Math.min(38, (available - (columns - 1) * 2) / columns));
-            int buttonTop = formHeight + 6;
-            contentHeight = buttonTop + ((quickButtons.size() + columns - 1) / columns) * 22 + 2;
+                    : form.measureSize(font, new Size(width, height)).height();
+            int available = Math.max(1, width);
+            int columns = Math.min(quickButtons.size(), Math.max(1,
+                    (available + QUICK_BUTTON_GAP) / (QUICK_BUTTON_MIN_WIDTH + QUICK_BUTTON_GAP)));
+            int buttonTop = formHeight + 4;
+            contentHeight = buttonTop + ((quickButtons.size() + columns - 1) / columns)
+                    * QUICK_BUTTON_ROW_HEIGHT;
             scroll = Math.min(scroll, Math.max(0, contentHeight - height));
-            if (form != null) fitChild(form, new Rect(4, 2 - scroll,
-                    Math.max(1, width - 8), formHeight), font);
+            if (form != null) fitChild(form, new Rect(0, -scroll, width, formHeight), font);
             if (form != null) form.clipInputs(absoluteBounds());
             for (int index = 0; index < quickButtons.size(); index++) {
                 int row = index / columns;
                 int column = index % columns;
-                fitChild(quickButtons.get(index), new Rect(4 + column * (buttonWidth + 2),
-                        buttonTop + row * 22 - scroll, buttonWidth, Button.Size.MEDIUM.height()), font);
+                int buttonsInRow = Math.min(columns, quickButtons.size() - row * columns);
+                int rowWidth = Math.max(buttonsInRow, available - (buttonsInRow - 1) * QUICK_BUTTON_GAP);
+                int left = column * rowWidth / buttonsInRow + column * QUICK_BUTTON_GAP;
+                int right = (column + 1) * rowWidth / buttonsInRow + column * QUICK_BUTTON_GAP;
+                fitChild(quickButtons.get(index), new Rect(left,
+                        buttonTop + row * QUICK_BUTTON_ROW_HEIGHT - scroll,
+                        right - left, Button.Size.MEDIUM.height()), font);
             }
         }
 

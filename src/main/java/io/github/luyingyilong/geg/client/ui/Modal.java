@@ -21,8 +21,10 @@ import java.util.Objects;
 /** A tree-owned overlay measured and laid out as header, content, and footer. */
 public final class Modal extends Container {
     public static final int PADDING = 8;
+    private static final int BODY_HORIZONTAL_INSET = PADDING;
+    private static final int BODY_BOTTOM_INSET = 5;
     private static final int COMPACT_VERTICAL_PADDING = 2;
-    private static final int SECTION_GAP = 4;
+    private static final int SECTION_SPACING = 4;
     private static final int BUTTON_GAP = 2;
     private static final int HEADER_GAP = 4;
     private static final int CONTENT_MIN_HEIGHT = 24;
@@ -34,13 +36,18 @@ public final class Modal extends Container {
     private final int preferredHeight;
     private final int verticalOffset;
     private final Panel panel = new Panel(OreTheme.MODAL);
-    private final Box column = new Box().gap(SECTION_GAP);
-    private final Padding inset = new Padding(Padding.Insets.all(PADDING)).child(column);
+    private final Box column = new Box();
     private final Box header = new Box().orientation(Box.Orientation.HORIZONTAL).gap(HEADER_GAP);
+    private final Padding headerInset = new Padding(new Padding.Insets(PADDING, PADDING, SECTION_SPACING, PADDING))
+            .child(header);
     private final Label titleLabel = new Label().overflow(Label.Overflow.CLIP)
             .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
     private final CloseControl close = new CloseControl();
     private final Box footer = new Box().orientation(Box.Orientation.VERTICAL).gap(BUTTON_GAP);
+    private final Padding footerInset = new Padding(new Padding.Insets(SECTION_SPACING, PADDING, PADDING, PADDING))
+            .child(footer);
+    private final Padding bodyInset = new Padding(new Padding.Insets(PADDING, BODY_HORIZONTAL_INSET,
+            PADDING, BODY_HORIZONTAL_INSET));
     private final List<Button> actions = new ArrayList<>();
     private Control content;
     private Runnable onClose = () -> { };
@@ -59,11 +66,13 @@ public final class Modal extends Container {
         close.minimum(CLOSE_SIZE, CLOSE_SIZE);
         header.minimum(0, CLOSE_SIZE).policy(SizePolicy.FILL, SizePolicy.CONTENT);
         header.add(titleLabel).add(close);
-        column.add(header);
+        headerInset.policy(SizePolicy.FILL, SizePolicy.CONTENT);
+        column.add(headerInset);
         footer.policy(SizePolicy.FILL, SizePolicy.CONTENT);
-        footer.visible(false);
-        column.add(footer);
-        panel.child(inset);
+        footerInset.policy(SizePolicy.FILL, SizePolicy.CONTENT);
+        footerInset.visible(false);
+        column.add(footerInset);
+        panel.child(column);
         addChild(panel);
     }
 
@@ -88,12 +97,14 @@ public final class Modal extends Container {
     }
 
     public Modal content(Control content) {
-        if (this.content != null) column.removeChild(this.content);
         this.content = Objects.requireNonNull(content);
-        content.minimum(content.minimumWidth(), Math.max(content.minimumHeight(), CONTENT_MIN_HEIGHT));
         content.policy(SizePolicy.FILL, SizePolicy.EXPAND);
-        column.removeChild(footer);
-        column.add(content).add(footer);
+        bodyInset.child(content);
+        if (bodyInset.parent() == null) {
+            bodyInset.policy(SizePolicy.FILL, SizePolicy.EXPAND);
+            column.removeChild(footerInset);
+            column.add(bodyInset).add(footerInset);
+        }
         return this;
     }
 
@@ -101,7 +112,7 @@ public final class Modal extends Container {
         for (Button action : actions) footer.removeChild(action);
         actions.clear();
         footer.minimum(0, 0);
-        footer.visible(false);
+        footerInset.visible(false);
         return this;
     }
 
@@ -115,7 +126,7 @@ public final class Modal extends Container {
         actions.add(button);
         footer.addChild(button);
         footer.minimum(0, actionHeight(actions.size()));
-        footer.visible(true);
+        footerInset.visible(true);
         return this;
     }
 
@@ -143,13 +154,16 @@ public final class Modal extends Container {
     }
 
     @Override public void layout(Rect viewport, Font font) {
-        inset.insets(viewport.height() < 110
-                ? new Padding.Insets(COMPACT_VERTICAL_PADDING, PADDING, COMPACT_VERTICAL_PADDING, PADDING)
-                : Padding.Insets.all(PADDING));
+        int verticalPadding = viewport.height() < 110 ? COMPACT_VERTICAL_PADDING : PADDING;
+        headerInset.insets(new Padding.Insets(verticalPadding, PADDING, SECTION_SPACING, PADDING));
+        footerInset.insets(new Padding.Insets(SECTION_SPACING, PADDING, verticalPadding, PADDING));
         super.layout(viewport, font);
         Size measured = panel.measureSize(font, new Size(viewport.width(), viewport.height()));
         int width = Math.max(Math.max(preferredWidth, minimumWidth()), measured.width());
-        int height = Math.max(Math.max(preferredHeight, minimumHeight()), measured.height());
+        int intrinsicContentHeight = content == null ? 0
+                : content.measureSize(font, new Size(viewport.width(), viewport.height())).height();
+        int fallbackBodyHeight = content != null && intrinsicContentHeight == 0 ? CONTENT_MIN_HEIGHT : 0;
+        int height = Math.max(Math.max(preferredHeight, minimumHeight()), measured.height() + fallbackBodyHeight);
         fitChild(panel, fittedBounds(width, height, verticalOffset,
                 viewport.width(), viewport.height()), font);
     }
