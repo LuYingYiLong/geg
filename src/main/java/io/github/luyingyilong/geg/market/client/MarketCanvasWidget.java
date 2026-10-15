@@ -559,15 +559,20 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         if (modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE) {
             if (modal.kind == Kind.FAVORITE && modal.favorite.ended())
                 detailModal.action(Component.translatable("market.geg.unfavorite"), this::secondaryModalAction);
-            detailModal.action(Component.translatable("market.geg.request_this"), this::primaryModalAction);
+            detailModal.action(Component.translatable("market.geg.request_this"), this::primaryModalAction,
+                    Button.Type.PRIMARY);
         } else if (modal.kind == Kind.OWN || modal.kind == Kind.OWN_REQUEST) {
-            detailModal.action(Component.translatable("market.geg.cancel_listing"), this::secondaryModalAction);
-            detailModal.action(Component.translatable("market.geg.reprice"), this::primaryModalAction);
+            detailModal.action(Component.translatable("market.geg.cancel_listing"), this::secondaryModalAction,
+                    Button.Type.DESTRUCTIVE);
+            detailModal.action(Component.translatable("market.geg.reprice"), this::primaryModalAction,
+                    Button.Type.PRIMARY);
         } else if (modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE) {
             detailModal.action(Component.translatable(requestMode
-                    ? "market.geg.confirm_request" : "market.geg.confirm_list"), this::primaryModalAction);
+                    ? "market.geg.confirm_request" : "market.geg.confirm_list"), this::primaryModalAction,
+                    Button.Type.PRIMARY);
         } else if (modal.kind == Kind.DELIVERY || modal.kind == Kind.COIN) {
-            detailModal.action(Component.translatable("market.geg.claim"), this::primaryModalAction);
+            detailModal.action(Component.translatable("market.geg.claim"), this::primaryModalAction,
+                    Button.Type.PRIMARY);
         }
     }
 
@@ -575,7 +580,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         MarketDetail offer = selectedDetail();
         quantityModal.clearActions().action(Component.translatable("market.geg.cancel"), this::closeQuantityMenu)
                 .action(Component.translatable(offer != null && offer.buyOrder()
-                        ? "market.geg.confirm_fulfill" : "market.geg.confirm_buy"), this::confirmQuantity);
+                        ? "market.geg.confirm_fulfill" : "market.geg.confirm_buy"), this::confirmQuantity,
+                        Button.Type.PRIMARY);
     }
 
     private void closeQuantityMenu() {

@@ -129,11 +129,8 @@ public final class Tabs extends Control {
                      int width, int selectedIndex) {
         int height = size.height();
         GuiGraphics graphics = context.getGraphics();
-        WidgetThemeEntry<WidgetTheme> normalEntry = context.getTheme()
-                .getWidgetTheme(OreTheme.TAB_BUTTON);
         WidgetThemeEntry<WidgetTheme> selectedEntry = context.getTheme()
                 .getWidgetTheme(OreTheme.TAB_BUTTON_SELECTED);
-        WidgetThemeEntry<WidgetTheme> fallback = context.getTheme().getButtonTheme();
         int hoveredIndex = hitIndex(x, y, width,
                 context.getAbsMouseX(), context.getAbsMouseY());
 
@@ -144,9 +141,9 @@ public final class Tabs extends Control {
             int tabWidth = tabEnd - tabX + (index < labels.size() - 1 ? 1 : 0);
             boolean selected = index == selectedIndex;
             boolean hovered = index == hoveredIndex;
-            WidgetThemeEntry<WidgetTheme> entry = selected && selectedEntry != null
-                    ? selectedEntry : normalEntry != null ? normalEntry : fallback;
-            WidgetTheme style = selected ? entry.theme() : entry.getTheme(hovered);
+            WidgetTheme style = selected && selectedEntry != null ? selectedEntry.theme()
+                    : Button.theme(context.getTheme(), Button.Type.SECONDARY,
+                    hovered, hovered && Button.leftMousePressed());
             IDrawable background = style.getBackground();
             if (background != null) {
                 int inset = selected ? Math.min(SELECTED_TOP_INSET, height) : 0;

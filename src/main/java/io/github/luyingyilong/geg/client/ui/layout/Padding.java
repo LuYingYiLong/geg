@@ -3,6 +3,8 @@ package io.github.luyingyilong.geg.client.ui.layout;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.client.gui.Font;
 
+import java.util.Objects;
+
 public final class Padding extends Container {
     public record Insets(int top, int right, int bottom, int left) {
         public Insets {
@@ -12,10 +14,18 @@ public final class Padding extends Container {
         public static Insets all(int value) { return new Insets(value, value, value, value); }
     }
 
-    private final Insets insets;
+    private Insets insets;
     private Control child;
 
-    public Padding(Insets insets) { this.insets = insets; }
+    public Padding(Insets insets) { this.insets = Objects.requireNonNull(insets); }
+    public Padding insets(Insets insets) {
+        Insets next = Objects.requireNonNull(insets);
+        if (!this.insets.equals(next)) {
+            this.insets = next;
+            requestLayout();
+        }
+        return this;
+    }
     public Padding child(Control child) {
         if (this.child != null) removeChild(this.child);
         addChild(child);

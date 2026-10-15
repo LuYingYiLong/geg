@@ -120,10 +120,26 @@
     "textColor": "#FFEAE8EC",
     "markedColor": "#FFA9AAAC"
   },
-  "button": {
+  "button:disabled": {
     "background": {
       "type": "texture",
-      "location": "geg:modularui/gui/toggle_button",
+      "location": "geg:modularui/gui/button_disabled",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "textColor": "#FF48494A",
+    "textShadow": false
+  },
+  "button:secondary:normal": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/button_secondary_normal",
       "imageWidth": 16,
       "imageHeight": 16,
       "x": 0,
@@ -136,24 +152,10 @@
     "textColor": "#FF1E1E1F",
     "textShadow": false
   },
-  "button:hover": {
+  "button:secondary:hovered": {
     "background": {
       "type": "texture",
-      "location": "geg:modularui/gui/hover_toggle_button",
-      "imageWidth": 16,
-      "imageHeight": 16,
-      "x": 0,
-      "y": 0,
-      "width": 16,
-      "height": 16,
-      "borderX": 2,
-      "borderY": 4
-    }
-  },
-  "button:tabButton": {
-    "background": {
-      "type": "texture",
-      "location": "geg:modularui/gui/toggle_button",
+      "location": "geg:modularui/gui/button_secondary_hovered",
       "imageWidth": 16,
       "imageHeight": 16,
       "x": 0,
@@ -166,10 +168,26 @@
     "textColor": "#FF1E1E1F",
     "textShadow": false
   },
-  "button:tabButton:hover": {
+  "button:secondary:pressed": {
     "background": {
       "type": "texture",
-      "location": "geg:modularui/gui/hover_toggle_button",
+      "location": "geg:modularui/gui/button_secondary_pressed",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 2
+    },
+    "textColor": "#FF1E1E1F",
+    "textShadow": false
+  },
+  "button:primary:normal": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/button_primary_normal",
       "imageWidth": 16,
       "imageHeight": 16,
       "x": 0,
@@ -178,7 +196,89 @@
       "height": 16,
       "borderX": 2,
       "borderY": 4
-    }
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
+  },
+  "button:primary:hovered": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/button_primary_hovered",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
+  },
+  "button:primary:pressed": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/button_primary_pressed",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 2
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
+  },
+  "button:destructive:normal": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/button_destructive_normal",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
+  },
+  "button:destructive:hovered": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/button_destructive_hovered",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
+  },
+  "button:destructive:pressed": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/button_destructive_pressed",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 2
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
   },
   "button:tabButtonSelected": {
     "textColor": "#FFFFFFFF",
