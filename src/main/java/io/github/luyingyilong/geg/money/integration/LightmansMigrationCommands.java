@@ -30,7 +30,7 @@ public final class LightmansMigrationCommands {
             "coin_copper", "coin_iron", "coin_gold", "coin_emerald", "coin_diamond", "coin_netherite"
     };
     // GEG coin uses hundredths; LC's main coin chain increases tenfold at each tier.
-    private static final long[] COIN_MINOR_UNITS = {10L, 100L, 1_000L, 10_000L, 100_000L, 1_000_000L};
+    private static final long[] COIN_MINOR_UNITS = {1L, 10L, 1000L, 1_000L, 10_000L, 100_000L};
 
     private LightmansMigrationCommands() {
     }

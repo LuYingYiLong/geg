@@ -39,14 +39,16 @@ public final class Tabs {
         WidgetThemeEntry<WidgetTheme> selectedEntry = context.getTheme()
                 .getWidgetTheme(OreTheme.TAB_BUTTON_SELECTED);
         WidgetThemeEntry<WidgetTheme> fallback = context.getTheme().getButtonTheme();
+        int hoveredIndex = hitIndex(x, y, width,
+                context.getAbsMouseX(), context.getAbsMouseY());
 
         for (int index = 0; index < labels.size(); index++) {
             int tabX = x + index * width / labels.size();
             int tabEnd = x + (index + 1) * width / labels.size();
-            int tabWidth = tabEnd - tabX;
+            // Overlap the adjacent 1px texture borders without changing the row's outer width.
+            int tabWidth = tabEnd - tabX + (index < labels.size() - 1 ? 1 : 0);
             boolean selected = index == selectedIndex;
-            boolean hovered = Button.contains(tabX, y, tabWidth, height,
-                    context.getAbsMouseX(), context.getAbsMouseY());
+            boolean hovered = index == hoveredIndex;
             WidgetThemeEntry<WidgetTheme> entry = selected && selectedEntry != null
                     ? selectedEntry : normalEntry != null ? normalEntry : fallback;
             WidgetTheme style = selected ? entry.theme() : entry.getTheme(hovered);
