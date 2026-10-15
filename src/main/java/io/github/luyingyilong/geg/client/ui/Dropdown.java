@@ -6,11 +6,13 @@ import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import io.github.luyingyilong.geg.client.ui.layout.Control;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
-public final class Dropdown<T> {
+public final class Dropdown<T> extends Control {
     public static final int ITEM_PADDING = 4;
     public static final int PANEL_PADDING = 1;
     public static final int ITEM_OVERLAP = 1;
@@ -25,6 +27,7 @@ public final class Dropdown<T> {
     private T selected;
     private int offset;
     private boolean open;
+    private Consumer<T> onSelect = value -> { };
 
     public Dropdown(T initialValue, int maxVisibleItems) {
         this(initialValue, maxVisibleItems, Button.Size.MEDIUM);
@@ -34,6 +37,26 @@ public final class Dropdown<T> {
         this.selected = initialValue;
         this.maxVisibleItems = Math.max(1, maxVisibleItems);
         this.size = Objects.requireNonNull(size);
+        minimum(0, size.height());
+    }
+
+    @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+        io.github.luyingyilong.geg.client.ui.layout.Rect area = screenBounds(screenX, screenY);
+        drawTrigger(context, area.x(), area.y(), area.width(), area.height());
+    }
+
+    public boolean clickAt(int screenX, int screenY, int mouseX, int mouseY) {
+        io.github.luyingyilong.geg.client.ui.layout.Rect area = screenBounds(screenX, screenY);
+        return click(area.x(), area.y(), area.width(), area.height(), mouseX, mouseY);
+    }
+
+    public Dropdown<T> onSelect(Consumer<T> onSelect) {
+        this.onSelect = Objects.requireNonNull(onSelect);
+        return this;
+    }
+
+    @Override protected boolean onPointerPressed(int rootX, int rootY) {
+        return clickAt(0, 0, rootX, rootY);
     }
 
     public void setOptions(List<Option<T>> options) {
@@ -53,7 +76,9 @@ public final class Dropdown<T> {
 
     public void select(T value) {
         if (options.stream().anyMatch(option -> Objects.equals(option.value, value))) {
+            boolean changed = !Objects.equals(selected, value);
             selected = value;
+            if (changed) onSelect.accept(selected);
         }
         open = false;
     }
@@ -131,7 +156,7 @@ public final class Dropdown<T> {
         if (panel.contains(mouseX, mouseY)) {
             for (int index = visibleCount() - 1; index >= 0; index--) {
                 if (itemBounds(panel, index).contains(mouseX, mouseY)) {
-                    selected = options.get(offset + index).value;
+                    select(options.get(offset + index).value);
                     break;
                 }
             }

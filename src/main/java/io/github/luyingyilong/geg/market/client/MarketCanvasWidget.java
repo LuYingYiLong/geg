@@ -15,6 +15,7 @@ import io.github.luyingyilong.geg.money.client.ClientMoneyState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -37,54 +38,36 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private static final int FOOTER_HEIGHT = Button.Size.MEDIUM.height();
     private static final int FAVORITE_BUTTON_WIDTH = 51;
     private static final int FAVORITE_BUTTON_HEIGHT = 19;
-    private static final Tabs FOOTER_TABS = new Tabs(Arrays.stream(Tab.values())
+    private final Tabs footerTabs = new Tabs(Arrays.stream(Tab.values())
             .map(Tab::title).toList());
-    private static final Tabs PUBLISH_TABS = new Tabs(List.of(
+    private final Tabs publishTabs = new Tabs(List.of(
             Component.translatable("market.geg.selling"),
             Component.translatable("market.geg.buying")), Button.Size.SMALL);
     private final List<Card> cards = new ArrayList<>();
     private final Dropdown<String> filterDropdown = new Dropdown<>("all", 8);
     private final Window window = new Window(true);
     private final Grid<Card> grid = new Grid<>();
+    private final BodyContent body = new BodyContent();
     private final Table<MarketDetail> offerTable = createOfferTable();
+    private final DetailContent detailContent = new DetailContent();
+    private final QuantityContent quantityContent = new QuantityContent();
+    private final Modal detailModal = new Modal(340, 224, 0, Component.empty())
+            .content(detailContent).onClose(this::closeModal);
+    private final Modal quantityModal = new Modal(224, 167, 8, Component.empty())
+            .content(quantityContent).onClose(this::closeQuantityMenu).depth(300.0F);
     private final Label marketTitle = new Label(Component.translatable("market.geg.title"))
             .color(HEADER_TEXT).overflow(Label.Overflow.CLIP)
             .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
-    private final Control searchSlot = new Control();
+    private final InputControl searchSlot;
     private final Label coinBalance = new Label().color(HEADER_TEXT)
             .overflow(Label.Overflow.ELLIPSIS).maximumWidth(128)
             .align(Label.Horizontal.RIGHT, Label.Vertical.CENTER);
-    private final Control filterSlot = new Control() {
-        @Override
-        public void draw(ModularGuiContext context, int screenX, int screenY) {
-            Rect area = screenBounds(screenX, screenY);
-            filterDropdown.drawTrigger(context, area.x(), area.y(), area.width());
-        }
-    };
-    private final Control footerSlot = new Control() {
-        @Override
-        public void draw(ModularGuiContext context, int screenX, int screenY) {
-            Rect area = screenBounds(screenX, screenY);
-            FOOTER_TABS.draw(context, area.x(), area.y() + 4, area.width(), tab.ordinal());
-        }
-    };
-    private final Control publishSlot = new Control() {
-        @Override
-        public void draw(ModularGuiContext context, int screenX, int screenY) {
-            if (tab == Tab.SELL) {
-                Rect area = screenBounds(screenX, screenY);
-                PUBLISH_TABS.draw(context, area.x() + 6, area.y() + 7, Math.min(134, area.width() - 12),
-                        requestMode ? 1 : 0);
-                if (area.width() >= 230) {
-                    Label.draw(context, Component.translatable("market.geg.seller_fee",
-                                    MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints())),
-                            new Rect(area.x() + 146, area.y() + 7, area.width() - 152, 18),
-                            SECONDARY_TEXT, Label.Overflow.CLIP,
-                            Label.Horizontal.RIGHT, Label.Vertical.CENTER);
-                }
-            }
-        }
-    };
+    private final Padding footerSlot = new Padding(new Padding.Insets(4, 0, 0, 0)).child(footerTabs);
+    private final Label publishFee = new Label().color(SECONDARY_TEXT)
+            .overflow(Label.Overflow.CLIP).align(Label.Horizontal.RIGHT, Label.Vertical.CENTER);
+    private final Padding publishSlot = new Padding(new Padding.Insets(7, 6, 2, 6))
+            .child(new Box().orientation(Box.Orientation.HORIZONTAL).gap(6)
+                    .add(publishTabs).add(publishFee));
     private final Overlay overlay = new Overlay();
     private Tab tab = Tab.MARKET;
     private Card modal;
@@ -98,47 +81,45 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private Card requestSample;
     private boolean dirty = true;
 
-    MarketCanvasWidget() {
+    MarketCanvasWidget(Input search) {
+        searchSlot = new InputControl(search);
         marketTitle.policy(Control.SizePolicy.EXPAND, Control.SizePolicy.FILL);
         coinBalance.minimum(64, Button.Size.MEDIUM.height());
         searchSlot.minimum(72, Button.Size.SMALL.height()).preferred(138, Button.Size.SMALL.height());
-        filterSlot.minimum(74, Button.Size.MEDIUM.height())
+        filterDropdown.minimum(74, Button.Size.MEDIUM.height())
                 .preferred(FILTER_WIDTH, Button.Size.MEDIUM.height());
-        Box headerRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(6)
-                .add(marketTitle).add(coinBalance).add(searchSlot).add(filterSlot);
+        ResponsiveHeader headerRow = new ResponsiveHeader(marketTitle, coinBalance,
+                searchSlot, filterDropdown);
         Panel header = new Panel(OreTheme.HEADER_PANEL)
                 .child(new Padding(new Padding.Insets(0, 4, 0, 8)).child(headerRow));
         header.minimum(0, HEADER_HEIGHT).preferred(0, HEADER_HEIGHT)
                 .policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
         publishSlot.minimum(0, 27).preferred(0, 27)
                 .policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        publishTabs.minimum(96, Button.Size.SMALL.height()).preferred(134, Button.Size.SMALL.height())
+                .policy(Control.SizePolicy.CONTENT, Control.SizePolicy.CONTENT);
+        publishFee.policy(Control.SizePolicy.EXPAND, Control.SizePolicy.FILL);
         footerSlot.minimum(0, FOOTER_HEIGHT + 4).preferred(0, FOOTER_HEIGHT + 4)
                 .policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
-        Control body = new Control() {
-            private final Padding padding = new Padding(new Padding.Insets(4, 4, 0, 4)).child(grid);
-
-            {
-                attach(padding);
+        footerTabs.policy(Control.SizePolicy.FILL, Control.SizePolicy.FILL);
+        footerTabs.onSelect(index -> {
+            Tab next = Tab.values()[index];
+            if (next != tab) {
+                tab = next;
+                grid.scrollToTop();
+                filterDropdown.select("all");
+                dirty = true;
             }
-
-            @Override
-            public void layout(Rect bounds, Font font) {
-                super.layout(bounds, font);
-                padding.layout(new Rect(0, 0, bounds.width(), bounds.height()), font);
-            }
-
-            @Override
-            public void draw(ModularGuiContext context, int screenX, int screenY) {
-                padding.draw(context, screenX, screenY);
-                Rect area = screenBounds(screenX, screenY);
-                if (cards.isEmpty()) {
-                    Label.draw(context, Component.translatable(ClientMarketState.ready()
-                                    ? "market.geg.empty" : "market.geg.loading"),
-                            new Rect(area.x(), area.y() + 18, area.width(), 20), SECONDARY_TEXT,
-                            Label.Overflow.CLIP, Label.Horizontal.CENTER, Label.Vertical.CENTER);
-                }
-            }
-        };
+        });
+        publishTabs.onSelect(index -> {
+            requestMode = index == 1;
+            dirty = true;
+        });
+        filterDropdown.onSelect(value -> {
+            grid.scrollToTop();
+            dirty = true;
+        });
+        grid.onItemClick(this::openModal);
         body.policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
         Box column = new Box().add(header).add(publishSlot).add(body).add(footerSlot);
         window.content(column).overlay(overlay);
@@ -180,7 +161,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                         context.getAbsMouseY() - screenY);
                 if (hovered == null || hovered.item().item.isEmpty()) return;
                 Rect viewport = grid.screenBounds(screenX, screenY);
-                Rect card = hovered.bounds().translated(viewport.x(), viewport.y() - grid.scroll());
+                Rect card = hovered.bounds().translated(viewport.x() - grid.horizontalScroll(),
+                        viewport.y() - grid.scroll());
                 if (context.getAbsMouseX() >= card.x() + 24) return;
                 withOverlayDepth(context, 200.0F, () -> context.getGraphics().renderTooltip(
                         context.getFont(), hovered.item().item,
@@ -191,24 +173,18 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             @Override
             public void draw(ModularGuiContext context, int screenX, int screenY) {
                 if (!filterDropdown.isOpen()) return;
-                Rect area = filterSlot.screenBounds(screenX, screenY);
+                Rect area = filterDropdown.screenBounds(screenX, screenY);
                 withOverlayDepth(context, 200.0F, () -> filterDropdown.drawMenu(context,
                         area.x(), area.y(), area.width(), area.height()));
             }
-        });
-        overlay.add(new Control() {
-            @Override
-            public void draw(ModularGuiContext context, int screenX, int screenY) {
-                if (modal == null) return;
-                Rect area = window.screenBounds(screenX, screenY);
-                withOverlayDepth(context, 200.0F, () -> {
-                    drawModal(area.x(), area.y(),
-                            area.width(), area.height());
-                    if (quantityMenu) withOverlayDepth(context, 100.0F, () ->
-                            drawQuantityMenu(area.x(), area.y(), area.width(), area.height()));
-                });
+
+            @Override protected boolean onPointerPressed(int rootX, int rootY) {
+                return filterDropdown.isOpen() && filterDropdown.clickAt(0, 0, rootX, rootY);
             }
         });
+        overlay.add(detailModal).add(quantityModal);
+        detailModal.visible(false);
+        quantityModal.visible(false);
     }
 
     private static Label scrollingCardLabel(int color) {
@@ -288,25 +264,38 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         return item.isEmpty() || id == null ? "" : id.toString().toLowerCase(Locale.ROOT);
     }
 
-    private static Modal.Rect quickButton(Modal.Rect content, int top, int index) {
-        int available = Math.max(1, content.width() - 8);
-        int columns = Math.min(5, Math.max(1, (available + 2) / 30));
-        int buttonWidth = Math.min(38, Math.max(1, (available - (columns - 1) * 2) / columns));
-        int row = index / columns;
-        int column = index % columns;
-        return new Modal.Rect(content.x() + 4 + column * (buttonWidth + 2),
-                top + row * (Button.Size.MEDIUM.height() + 2),
-                buttonWidth, Button.Size.MEDIUM.height());
+    void bindForms(Form detailForm, Form tradeForm) {
+        detailContent.bindForm(detailForm);
+        quantityContent.bindForm(tradeForm);
     }
 
     void prepareLayout(int width, int height, Font font) {
         publishSlot.visible(tab == Tab.SELL);
+        publishTabs.selected(requestMode ? 1 : 0);
+        publishFee.visible(width >= 230);
+        publishFee.text(Component.translatable("market.geg.seller_fee",
+                MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints())));
         marketTitle.setText(Component.translatable(ClientMarketState.marketEnabled()
                 ? "market.geg.title" : "market.geg.title_closed"));
         coinBalance.setText(Component.translatable("market.geg.header_balance",
                 MoneyCurrency.COIN.format(ClientMoneyState.balance().coinMinorUnits())));
+        body.refresh();
+        detailModal.visible(modal != null);
+        quantityModal.visible(modal != null && quantityMenu);
+        if (modal != null) {
+            detailModal.title(modal.title());
+            detailContent.refresh();
+            configureDetailActions();
+        }
+        if (quantityMenu) {
+            MarketDetail offer = selectedDetail();
+            quantityModal.title(offer != null && offer.buyOrder()
+                    ? Component.translatable("market.geg.fulfill_title_fee",
+                    MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints()))
+                    : Component.translatable("market.geg.quantity"));
+        }
         window.layoutViewport(width, height, font);
-        ClientMarketScreen.placeSearch(searchSlot.absoluteBounds());
+        footerTabs.selected(tab.ordinal());
     }
 
     void invalidate() {
@@ -474,65 +463,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         return result;
     }
 
-    private void drawCard(GuiGraphics graphics, Card card, int x, int y,
-                          boolean hover, Panel background,
-                          Label nameLabel, Label countLabel, Label priceLabel) {
-        boolean ended = card.kind == Kind.FAVORITE && card.favorite != null && card.favorite.ended();
-        background.drawAt(getContext(), new Rect(x, y, card.width, card.height));
-        if (ended) {
-            graphics.fill(x, y, x + card.width, y + card.height, 0xA032383D);
-        } else if (hover) {
-            graphics.fill(x, y, x + card.width, y + card.height, 0x24FFFFFF);
-        }
-        if (!card.item.isEmpty()) {
-            graphics.renderItem(card.item, x + 5, y + 6);
-        }
-
-        int textX = x + (card.item.isEmpty() ? 6 : 26);
-        int textWidth = x + card.width - 5 - textX;
-        nameLabel.layout(new Rect(textX, y + 5, textWidth, 10), getContext().getFont());
-        nameLabel.draw(getContext(), 0, 0);
-        Component count = switch (card.kind) {
-            case GROUP -> Component.translatable("market.geg.market_count", card.quantity, card.buyQuantity);
-            case OWN, OWN_REQUEST, FAVORITE -> Component.translatable("market.geg.count", card.quantity);
-            case INVENTORY -> Component.translatable("market.geg.inventory_count", card.quantity);
-            case SAMPLE -> Component.translatable("market.geg.sample");
-            case HISTORY -> Component.translatable("market.geg.bought_count", card.quantity);
-            case DELIVERY -> Component.translatable("market.geg.claim_count", card.quantity);
-            case COIN -> Component.empty();
-        };
-        int nextLineY = y + 16;
-        if (card.kind != Kind.COIN) {
-            countLabel.setText(count);
-            countLabel.layout(new Rect(textX, nextLineY, textWidth, 10), getContext().getFont());
-            countLabel.draw(getContext(), 0, 0);
-            nextLineY += 11;
-        }
-
-        Component price = switch (card.kind) {
-            case GROUP, OWN, OWN_REQUEST, FAVORITE, HISTORY -> card.quantity == 0
-                    ? card.kind == Kind.GROUP && card.buyQuantity > 0 ? Component.empty()
-                    : Component.translatable(card.kind == Kind.FAVORITE
-                    ? "market.geg.ended" : "market.geg.out_of_stock")
-                    : Component.translatable("market.geg.price", MoneyCurrency.COIN.format(card.price));
-            case COIN -> Component.translatable("market.geg.price", MoneyCurrency.COIN.format(card.price));
-            default -> Component.empty();
-        };
-        if (!price.getString().isEmpty()) {
-            priceLabel.setText(price).color(ended ? SECONDARY_TEXT : ACCENT);
-            priceLabel.layout(new Rect(textX, nextLineY, textWidth, 10), getContext().getFont());
-            priceLabel.draw(getContext(), 0, 0);
-        }
-    }
-
     private void drawText(Component text, int x, int y, int width, int height, int color) {
         Label.draw(getContext(), text, new Rect(x, y, Math.max(0, width), Math.max(0, height)),
                 color, Label.Overflow.CLIP, Label.Horizontal.LEFT, Label.Vertical.TOP);
-    }
-
-    private void drawModal(int x, int y, int width, int height) {
-        detailDialog().draw(getContext(), new Modal.Rect(x, y, width, height),
-                this::drawModalContent);
     }
 
     private Table<MarketDetail> createOfferTable() {
@@ -586,7 +519,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 if (buttons[0].contains(mouseX, mouseY)) {
                     selectedDetailId = offer.id();
                     quantityMenu = true;
+                    quantityContent.scroll = 0;
                     ClientMarketScreen.showTradeQuantity(true);
+                    configureQuantityActions();
                     return true;
                 }
                 if (buttons[1].contains(mouseX, mouseY)) {
@@ -613,86 +548,32 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 offer.id(), 0L, 0L, 0, 0);
     }
 
-    private Modal detailDialog() {
-        Modal dialog = new Modal(340, 224, 0, modal.title());
+    private String actionSignature = "";
+
+    private void configureDetailActions() {
+        String signature = modal.kind + ":" + requestMode + ":"
+                + (modal.favorite != null && modal.favorite.ended());
+        if (signature.equals(actionSignature)) return;
+        actionSignature = signature;
+        detailModal.clearActions();
         if (modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE) {
-            if (modal.kind == Kind.FAVORITE && modal.favorite.ended()) {
-                dialog.action(Component.translatable("market.geg.unfavorite"), this::secondaryModalAction);
-            }
-            dialog.action(Component.translatable("market.geg.request_this"), this::primaryModalAction);
+            if (modal.kind == Kind.FAVORITE && modal.favorite.ended())
+                detailModal.action(Component.translatable("market.geg.unfavorite"), this::secondaryModalAction);
+            detailModal.action(Component.translatable("market.geg.request_this"), this::primaryModalAction);
         } else if (modal.kind == Kind.OWN || modal.kind == Kind.OWN_REQUEST) {
-            dialog.action(Component.translatable("market.geg.cancel_listing"), this::secondaryModalAction);
-            dialog.action(Component.translatable("market.geg.reprice"), this::primaryModalAction);
+            detailModal.action(Component.translatable("market.geg.cancel_listing"), this::secondaryModalAction);
+            detailModal.action(Component.translatable("market.geg.reprice"), this::primaryModalAction);
         } else if (modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE) {
-            dialog.action(Component.translatable(requestMode
+            detailModal.action(Component.translatable(requestMode
                     ? "market.geg.confirm_request" : "market.geg.confirm_list"), this::primaryModalAction);
         } else if (modal.kind == Kind.DELIVERY || modal.kind == Kind.COIN) {
-            dialog.action(Component.translatable("market.geg.claim"), this::primaryModalAction);
+            detailModal.action(Component.translatable("market.geg.claim"), this::primaryModalAction);
         }
-        return dialog;
     }
 
-    private void drawModalContent(Modal.Rect content) {
-        int contentX = content.x();
-        int contentY = content.y();
-
-        if (modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE) {
-            offerTable.empty(Component.translatable(modal.quantity > 0 || modal.buyQuantity > 0
-                    ? "market.geg.loading" : "market.geg.out_of_stock"));
-            layoutOfferTable(content, getArea().x, getArea().y);
-            offerTable.draw(getContext(), getArea().x, getArea().y);
-        } else {
-            Component info = switch (modal.kind) {
-                case OWN -> Component.translatable("market.geg.offer", modal.listing.sellerName(),
-                        modal.listing.quantity(), MoneyCurrency.COIN.format(modal.listing.unitPrice()));
-                case OWN_REQUEST -> Component.translatable("market.geg.request_info", modal.order.quantity(),
-                        MoneyCurrency.COIN.format(modal.order.unitPrice()),
-                        MoneyCurrency.COIN.format(modal.order.escrow()));
-                case INVENTORY, SAMPLE -> Component.translatable("market.geg.inventory_count", modal.quantity);
-                case DELIVERY -> Component.translatable("market.geg.claim_count", modal.quantity);
-                case HISTORY -> Component.translatable("market.geg.history_entry", modal.purchase.sellerName(),
-                        modal.purchase.quantity(), MoneyCurrency.COIN.format(modal.purchase.unitPrice()));
-                case COIN -> Component.translatable("market.geg.pending_amount",
-                        MoneyCurrency.COIN.format(modal.credit.amount()));
-                default -> Component.empty();
-            };
-            drawText(info, contentX + 4, contentY + 22, content.width() - 8, 10, SECONDARY_TEXT);
-            if (modal.kind == Kind.OWN || modal.kind == Kind.INVENTORY && !requestMode) {
-                drawText(Component.translatable("market.geg.seller_fee",
-                                MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints())),
-                        contentX + 4, contentY + 35, content.width() - 8, 10, SECONDARY_TEXT);
-            }
-        }
-
-        ClientMarketScreen.drawDetailForm(getContext(), content, getArea().width);
-    }
-
-    private void layoutOfferTable(Modal.Rect content, int originX, int originY) {
-        offerTable.layout(new Rect(content.x() - originX + 2, content.y() - originY + 5,
-                        Math.max(0, content.width() - 4), Math.max(0, content.height() - 10)),
-                getContext().getFont());
-    }
-
-    private void drawQuantityMenu(int x, int y, int width, int height) {
-        quantityDialog().draw(getContext(), new Modal.Rect(x, y, width, height), content -> {
-            int quickTop = ClientMarketScreen.drawTradeForm(getContext(), content, width);
-            String[] labels = {"-16", "-8", "+8", "+16", Component.translatable("market.geg.max").getString()};
-            for (int index = 0; index < labels.length; index++) {
-                Modal.Rect button = quickButton(content, quickTop, index);
-                Button.draw(getContext(), button.x(), button.y(), button.width(), Button.Size.MEDIUM,
-                        Component.literal(labels[index]));
-            }
-        });
-    }
-
-    private Modal quantityDialog() {
+    private void configureQuantityActions() {
         MarketDetail offer = selectedDetail();
-        Component title = offer != null && offer.buyOrder()
-                ? Component.translatable("market.geg.fulfill_title_fee",
-                MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints()))
-                : Component.translatable("market.geg.quantity");
-        return new Modal(224, 167, 8, title)
-                .action(Component.translatable("market.geg.cancel"), this::closeQuantityMenu)
+        quantityModal.clearActions().action(Component.translatable("market.geg.cancel"), this::closeQuantityMenu)
                 .action(Component.translatable(offer != null && offer.buyOrder()
                         ? "market.geg.confirm_fulfill" : "market.geg.confirm_buy"), this::confirmQuantity);
     }
@@ -731,71 +612,10 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         }
         int x = getArea().x;
         int y = getArea().y;
-        int width = getArea().width;
-        int height = getArea().height;
         int mouseX = getContext().getAbsMouseX();
         int mouseY = getContext().getAbsMouseY();
-
-        if (modal != null) {
-            if (quantityMenu) handleQuantityClick(mouseX - x, mouseY - y, width, height);
-            else handleModalClick(mouseX - x, mouseY - y, width, height);
-            return Interactable.Result.STOP;
-        }
-
-        Rect filterBounds = filterSlot.screenBounds(x, y);
-        String previousFilter = filterDropdown.selected();
-        if (filterDropdown.click(filterBounds.x(), filterBounds.y(), filterBounds.width(),
-                filterBounds.height(), mouseX, mouseY)) {
-            if (!Objects.equals(previousFilter, filterDropdown.selected())) {
-                grid.scrollToTop();
-                dirty = true;
-            }
-            return Interactable.Result.STOP;
-        }
-
-        Rect footerBounds = footerSlot.screenBounds(x, y);
-        int footerIndex = FOOTER_TABS.hitIndex(footerBounds.x(), footerBounds.y() + 4,
-                footerBounds.width(), mouseX, mouseY);
-        if (footerIndex >= 0) {
-            Tab nextTab = Tab.values()[footerIndex];
-            if (nextTab != tab) {
-                tab = nextTab;
-                grid.scrollToTop();
-                filterDropdown.select("all");
-                dirty = true;
-            }
-            return Interactable.Result.STOP;
-        }
-
-        if (tab == Tab.SELL) {
-            Rect publishBounds = publishSlot.screenBounds(x, y);
-            int publishIndex = PUBLISH_TABS.hitIndex(publishBounds.x() + 6, publishBounds.y() + 7,
-                    Math.min(134, publishBounds.width() - 12), mouseX, mouseY);
-            if (publishIndex >= 0) {
-                requestMode = publishIndex == 1;
-                return Interactable.Result.STOP;
-            }
-        }
-
-        Grid.Entry<Card> selected = grid.hitItem(mouseX - x, mouseY - y);
-        if (selected != null) {
-            openModal(selected.item());
-            return Interactable.Result.STOP;
-        }
-        return Interactable.Result.IGNORE;
-    }
-
-    private void handleModalClick(int mouseX, int mouseY, int width, int height) {
-        Modal dialog = detailDialog();
-        Modal.Rect bounds = dialog.bounds(0, 0, width, height);
-        if (dialog.click(bounds, mouseX, mouseY, this::closeModal)) {
-            return;
-        }
-        Modal.Rect content = dialog.content(bounds);
-        if (modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE) {
-            layoutOfferTable(content, 0, 0);
-            offerTable.click(mouseX, mouseY);
-        }
+        return window.dispatchPointer(mouseX - x, mouseY - y)
+                ? Interactable.Result.STOP : Interactable.Result.IGNORE;
     }
 
     private MarketDetail selectedDetail() {
@@ -816,36 +636,24 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         return Math.min(offer.quantity(), count);
     }
 
-    private void handleQuantityClick(int mouseX, int mouseY, int width, int height) {
-        Modal dialog = quantityDialog();
-        Modal.Rect bounds = dialog.bounds(0, 0, width, height);
-        if (dialog.click(bounds, mouseX, mouseY, this::closeQuantityMenu)) {
-            return;
-        }
+    private void adjustTradeQuantity(int index) {
         MarketDetail offer = selectedDetail();
         if (offer == null) {
             closeQuantityMenu();
             return;
         }
-        Modal.Rect content = dialog.content(bounds);
-        int quickTop = ClientMarketScreen.tradeFormBottom();
-        for (int index = 0; index < 5; index++) {
-            if (quickButton(content, quickTop, index).contains(mouseX, mouseY)) {
-                int current;
-                try {
-                    String raw = ClientMarketScreen.tradeQuantityText();
-                    current = io.github.luyingyilong.geg.client.ui.DecimalExpression.evaluate(raw).intValueExact();
-                } catch (IllegalArgumentException | ArithmeticException exception) {
-                    current = 1;
-                }
-                int[] deltas = {-16, -8, 8, 16};
-                int max = maxTradeQuantity(offer);
-                int next = index == 4 ? max : Math.max(1, Math.min(max,
-                        (int) Math.max(Integer.MIN_VALUE, Math.min(Integer.MAX_VALUE, (long) current + deltas[index]))));
-                ClientMarketScreen.setTradeQuantity(Math.max(1, next));
-                return;
-            }
+        int current;
+        try {
+            String raw = ClientMarketScreen.tradeQuantityText();
+            current = DecimalExpression.evaluate(raw).intValueExact();
+        } catch (IllegalArgumentException | ArithmeticException exception) {
+            current = 1;
         }
+        int[] deltas = {-16, -8, 8, 16};
+        int max = maxTradeQuantity(offer);
+        int next = index == 4 ? max : Math.max(1, Math.min(max,
+                (int) Math.max(Integer.MIN_VALUE, Math.min(Integer.MAX_VALUE, (long) current + deltas[index]))));
+        ClientMarketScreen.setTradeQuantity(Math.max(1, next));
     }
 
     private void confirmQuantity() {
@@ -871,6 +679,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     private void openModal(Card card) {
         modal = card;
+        detailContent.scroll = 0;
         offerTable.scrollToTop();
         selectedDetailId = 0L;
         quantityMenu = false;
@@ -976,11 +785,20 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             return true;
         }
         if (modal != null) {
-            if (quantityMenu) return true;
+            if (quantityMenu) {
+                quantityContent.scrollBy(-(int) Math.signum(delta) * 24);
+                return true;
+            }
             if (modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE)
                 offerTable.scrollBy(-(int) Math.signum(delta) * (offerTable.compact() ? 36 : 23));
+            else detailContent.scrollBy(-(int) Math.signum(delta) * 24);
             return true;
         }
+        Rect footer = footerTabs.screenBounds(getArea().x, getArea().y);
+        if (footer.contains(getContext().getAbsMouseX(), getContext().getAbsMouseY())
+                && footerTabs.scrollBy(-(int) Math.signum(delta) * 24, getContext().getFont())) return true;
+        if ((Screen.hasShiftDown() || grid.contentHeight() <= grid.bounds().height())
+                && grid.scrollHorizontalBy(-(int) Math.signum(delta) * 28)) return true;
         grid.scrollBy(-(int) Math.signum(delta) * 28);
         return true;
     }
@@ -999,6 +817,167 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             return Interactable.Result.STOP;
         }
         return Interactable.Result.IGNORE;
+    }
+
+    private final class BodyContent extends Container {
+        private final Padding inset = new Padding(new Padding.Insets(4, 4, 0, 4)).child(grid);
+        private final Label empty = new Label().color(SECONDARY_TEXT)
+                .overflow(Label.Overflow.CLIP)
+                .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
+
+        private BodyContent() {
+            addChild(inset);
+            addChild(empty);
+        }
+
+        private void refresh() {
+            empty.visible(cards.isEmpty());
+            empty.text(Component.translatable(ClientMarketState.ready()
+                    ? "market.geg.empty" : "market.geg.loading"));
+        }
+
+        @Override public void layout(Rect bounds, Font font) {
+            super.layout(bounds, font);
+            fitChild(inset, new Rect(0, 0, bounds.width(), bounds.height()), font);
+            fitChild(empty, new Rect(0, 18, bounds.width(), 20), font);
+        }
+    }
+
+    private abstract class ScrollableContent extends Container {
+        protected int scroll;
+        protected int contentHeight;
+
+        public void scrollBy(int amount) {
+            scroll = Math.max(0, Math.min(Math.max(0, contentHeight - bounds().height()), scroll + amount));
+        }
+
+        @Override public boolean dispatchPointer(int rootX, int rootY) {
+            return absoluteBounds().contains(rootX, rootY) && super.dispatchPointer(rootX, rootY);
+        }
+
+        @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+            Rect area = screenBounds(screenX, screenY);
+            if (area.width() <= 0 || area.height() <= 0) return;
+            context.getGraphics().enableScissor(area.x(), area.y(), area.right(), area.bottom());
+            super.draw(context, screenX, screenY);
+            context.getGraphics().disableScissor();
+        }
+    }
+
+    private final class DetailContent extends ScrollableContent {
+        private final Label info = new Label().color(SECONDARY_TEXT).overflow(Label.Overflow.CLIP);
+        private final Label fee = new Label().color(SECONDARY_TEXT).overflow(Label.Overflow.CLIP);
+        private Form form;
+
+        private DetailContent() {
+            addChild(offerTable);
+            addChild(info);
+            addChild(fee);
+        }
+
+        private void bindForm(Form form) {
+            this.form = form;
+            addChild(form);
+        }
+
+        private void refresh() {
+            boolean offers = modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE;
+            offerTable.visible(offers);
+            info.visible(!offers);
+            fee.visible(!offers && (modal.kind == Kind.OWN
+                    || modal.kind == Kind.INVENTORY && !requestMode));
+            if (offers) {
+                offerTable.empty(Component.translatable(modal.quantity > 0 || modal.buyQuantity > 0
+                        ? "market.geg.loading" : "market.geg.out_of_stock"));
+                return;
+            }
+            Component text = switch (modal.kind) {
+                case OWN -> Component.translatable("market.geg.offer", modal.listing.sellerName(),
+                        modal.listing.quantity(), MoneyCurrency.COIN.format(modal.listing.unitPrice()));
+                case OWN_REQUEST -> Component.translatable("market.geg.request_info", modal.order.quantity(),
+                        MoneyCurrency.COIN.format(modal.order.unitPrice()),
+                        MoneyCurrency.COIN.format(modal.order.escrow()));
+                case INVENTORY, SAMPLE -> Component.translatable("market.geg.inventory_count", modal.quantity);
+                case DELIVERY -> Component.translatable("market.geg.claim_count", modal.quantity);
+                case HISTORY -> Component.translatable("market.geg.history_entry", modal.purchase.sellerName(),
+                        modal.purchase.quantity(), MoneyCurrency.COIN.format(modal.purchase.unitPrice()));
+                case COIN -> Component.translatable("market.geg.pending_amount",
+                        MoneyCurrency.COIN.format(modal.credit.amount()));
+                default -> Component.empty();
+            };
+            info.text(text);
+            fee.text(Component.translatable("market.geg.seller_fee",
+                    MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints())));
+        }
+
+        @Override public void layout(Rect bounds, Font font) {
+            super.layout(bounds, font);
+            int width = bounds.width();
+            int height = bounds.height();
+            if (offerTable.visible()) {
+                scroll = 0;
+                contentHeight = height;
+                fitChild(offerTable, new Rect(2, 5, Math.max(1, width - 4),
+                        Math.max(0, height - 10)), font);
+                return;
+            }
+            int formTop = fee.visible() ? 34 : 22;
+            int formHeight = form != null && form.visible()
+                    ? form.measureSize(font, new Size(Math.max(1, width - 8), height)).height() : 0;
+            contentHeight = Math.max(formTop + formHeight + 2, fee.visible() ? 46 : 24);
+            scroll = Math.min(scroll, Math.max(0, contentHeight - height));
+            fitChild(info, new Rect(4, 4 - scroll, Math.max(1, width - 8), 12), font);
+            fitChild(fee, new Rect(4, 18 - scroll, Math.max(1, width - 8), 12), font);
+            if (form != null && form.visible())
+                fitChild(form, new Rect(4, formTop - scroll, Math.max(1, width - 8), formHeight), font);
+            if (form != null && form.visible()) form.clipInputs(absoluteBounds());
+        }
+    }
+
+    private final class QuantityContent extends ScrollableContent {
+        private final List<Button> quickButtons = new ArrayList<>();
+        private Form form;
+
+        private QuantityContent() {
+            String[] labels = {"-16", "-8", "+8", "+16"};
+            for (int index = 0; index < 5; index++) {
+                final int buttonIndex = index;
+                Button button = new Button(index == 4
+                        ? Component.translatable("market.geg.max") : Component.literal(labels[index]))
+                        .onPress(() -> adjustTradeQuantity(buttonIndex));
+                quickButtons.add(button);
+                addChild(button);
+            }
+        }
+
+        private void bindForm(Form form) {
+            this.form = form;
+            addChild(form);
+        }
+
+        @Override public void layout(Rect bounds, Font font) {
+            super.layout(bounds, font);
+            int width = bounds.width();
+            int height = bounds.height();
+            int formHeight = form == null ? 0
+                    : form.measureSize(font, new Size(Math.max(1, width - 8), height)).height();
+            int available = Math.max(1, width - 8);
+            int columns = Math.min(5, Math.max(1, (available + 2) / 30));
+            int buttonWidth = Math.max(1, Math.min(38, (available - (columns - 1) * 2) / columns));
+            int buttonTop = formHeight + 6;
+            contentHeight = buttonTop + ((quickButtons.size() + columns - 1) / columns) * 22 + 2;
+            scroll = Math.min(scroll, Math.max(0, contentHeight - height));
+            if (form != null) fitChild(form, new Rect(4, 2 - scroll,
+                    Math.max(1, width - 8), formHeight), font);
+            if (form != null) form.clipInputs(absoluteBounds());
+            for (int index = 0; index < quickButtons.size(); index++) {
+                int row = index / columns;
+                int column = index % columns;
+                fitChild(quickButtons.get(index), new Rect(4 + column * (buttonWidth + 2),
+                        buttonTop + row * 22 - scroll, buttonWidth, Button.Size.MEDIUM.height()), font);
+            }
+        }
+
     }
 
 
@@ -1050,8 +1029,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         private long quantity;
         private long price;
         private long buyQuantity;
-        private int width;
-        private int height;
 
         private Card(Kind kind, ItemStack item) {
             this.kind = kind;
@@ -1068,25 +1045,84 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         }
     }
 
-    private final class CardView implements Grid.View<Card> {
+    private final class CardView extends Container implements Grid.View<Card> {
         private final Panel background = new Panel(null);
         private final Label name = scrollingCardLabel(TEXT);
         private final Label count = scrollingCardLabel(SECONDARY_TEXT);
         private final Label price = scrollingCardLabel(ACCENT);
+        private final ItemIconControl icon = new ItemIconControl();
+        private final Box textColumn = new Box().gap(1);
+        private final Box row = new Box().orientation(Box.Orientation.HORIZONTAL).gap(5);
         private Card card;
+
+        private CardView() {
+            name.minimum(0, 10).preferred(0, 10).policy(SizePolicy.FILL, SizePolicy.CONTENT);
+            count.minimum(0, 10).preferred(0, 10).policy(SizePolicy.FILL, SizePolicy.CONTENT);
+            price.minimum(0, 10).preferred(0, 10).policy(SizePolicy.FILL, SizePolicy.CONTENT);
+            icon.minimum(16, 20).preferred(16, 20).policy(SizePolicy.CONTENT, SizePolicy.FILL);
+            textColumn.add(name).add(count).add(price);
+            textColumn.policy(SizePolicy.EXPAND, SizePolicy.FILL);
+            row.add(icon).add(textColumn);
+            addChild(row);
+        }
 
         @Override
         public void bind(Card card) {
             this.card = card;
             name.text(card.title());
+            icon.item = card.item;
+            icon.visible(!card.item.isEmpty());
+            count.visible(card.kind != Kind.COIN);
+            count.text(switch (card.kind) {
+                case GROUP -> Component.translatable("market.geg.market_count", card.quantity, card.buyQuantity);
+                case OWN, OWN_REQUEST, FAVORITE -> Component.translatable("market.geg.count", card.quantity);
+                case INVENTORY -> Component.translatable("market.geg.inventory_count", card.quantity);
+                case SAMPLE -> Component.translatable("market.geg.sample");
+                case HISTORY -> Component.translatable("market.geg.bought_count", card.quantity);
+                case DELIVERY -> Component.translatable("market.geg.claim_count", card.quantity);
+                case COIN -> Component.empty();
+            });
+            boolean ended = card.kind == Kind.FAVORITE && card.favorite != null && card.favorite.ended();
+            Component priceText = switch (card.kind) {
+                case GROUP, OWN, OWN_REQUEST, FAVORITE, HISTORY -> card.quantity == 0
+                        ? card.kind == Kind.GROUP && card.buyQuantity > 0 ? Component.empty()
+                        : Component.translatable(ended ? "market.geg.ended" : "market.geg.out_of_stock")
+                        : Component.translatable("market.geg.price", MoneyCurrency.COIN.format(card.price));
+                case COIN -> Component.translatable("market.geg.price", MoneyCurrency.COIN.format(card.price));
+                default -> Component.empty();
+            };
+            price.text(priceText).color(ended ? SECONDARY_TEXT : ACCENT);
+            price.visible(!priceText.getString().isEmpty());
         }
 
-        @Override
-        public void draw(ModularGuiContext context, Rect area, boolean hovered) {
-            card.width = area.width();
-            card.height = area.height();
-            drawCard(context.getGraphics(), card, area.x(), area.y(), hovered, background,
-                    name, count, price);
+        @Override public void layout(Rect bounds, Font font) {
+            super.layout(bounds, font);
+            fitChild(row, new Rect(5, 5, Math.max(0, bounds.width() - 10),
+                    Math.max(0, bounds.height() - 10)), font);
+        }
+
+        @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+            Rect area = screenBounds(screenX, screenY);
+            background.drawAt(context, area);
+            boolean ended = card.kind == Kind.FAVORITE && card.favorite != null && card.favorite.ended();
+            if (ended) context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), 0xA032383D);
+            else if (area.contains(context.getAbsMouseX(), context.getAbsMouseY()))
+                context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), 0x24FFFFFF);
+        }
+
+        @Override public void draw(ModularGuiContext context, Rect area, boolean hovered) {
+            layout(new Rect(area.x(), area.y(), area.width(), area.height()), context.getFont());
+            draw(context, 0, 0);
+        }
+    }
+
+    private static final class ItemIconControl extends Control {
+        private ItemStack item = ItemStack.EMPTY;
+
+        @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+            if (item.isEmpty()) return;
+            Rect area = screenBounds(screenX, screenY);
+            context.getGraphics().renderItem(item, area.x(), area.y() + 1);
         }
     }
 }

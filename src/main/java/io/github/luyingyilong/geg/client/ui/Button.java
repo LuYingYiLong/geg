@@ -6,14 +6,49 @@ import brachy.modularui.theme.WidgetTheme;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.Rect;
 
-public final class Button {
+public final class Button extends Control {
     public static final int HEIGHT = Size.MEDIUM.height();
     public static final int PADDING_X = 8;
     public static final int PADDING_Y = 4;
     private static final int ICON_GAP = 4;
 
-    private Button() {
+    private Component label = Component.empty();
+    private Size buttonSize = Size.MEDIUM;
+    private TextAlignment alignment = TextAlignment.CENTER;
+    private Icon trailingIcon;
+    private Runnable onPress = () -> { };
+
+    public Button() {
+        minimum(0, buttonSize.height());
+    }
+
+    public Button(Component label) {
+        this();
+        label(label);
+    }
+
+    public Button label(Component label) { this.label = java.util.Objects.requireNonNull(label); requestLayout(); return this; }
+    public Button size(Size size) { this.buttonSize = java.util.Objects.requireNonNull(size); minimum(0, size.height()); return this; }
+    public Button alignment(TextAlignment alignment) { this.alignment = java.util.Objects.requireNonNull(alignment); return this; }
+    public Button trailingIcon(Icon icon) { this.trailingIcon = icon; return this; }
+    public Button onPress(Runnable action) { this.onPress = java.util.Objects.requireNonNull(action); return this; }
+
+    @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+        Rect area = screenBounds(screenX, screenY);
+        draw(context, area.x(), area.y(), area.width(), area.height(), label, trailingIcon, alignment);
+    }
+
+    public boolean pressAt(int rootX, int rootY) {
+        if (!hit(rootX, rootY)) return false;
+        onPress.run();
+        return true;
+    }
+
+    @Override protected boolean onPointerPressed(int rootX, int rootY) {
+        return pressAt(rootX, rootY);
     }
 
     public static void draw(ModularGuiContext context, int x, int y, int width,

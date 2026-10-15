@@ -5,11 +5,12 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * A regular or masonry grid with optional view recycling
  */
-public final class Grid<T> extends Control {
+public final class Grid<T> extends Container {
     private final List<Entry<T>> entries = new ArrayList<>();
     private final List<Control> fixedChildren = new ArrayList<>();
     private final Map<Integer, View<T>> active = new HashMap<>();
@@ -21,13 +22,16 @@ public final class Grid<T> extends Control {
     private int maxColumns = 4;
     private int gap = 4;
     private int scroll;
+    private int horizontalScroll;
     private int contentHeight;
+    private int contentWidth;
     private int lastWidth = -1;
     private Object anchorKey;
     private int anchorOffset;
     private boolean resetScrollPending;
     private boolean dirty = true;
     private boolean visibilityDirty = true;
+    private Consumer<T> onItemClick = item -> { };
     private int visibleScroll = -1;
     private int visibleHeight = -1;
 
@@ -46,12 +50,29 @@ public final class Grid<T> extends Control {
         return this;
     }
 
+    public Grid<T> onItemClick(Consumer<T> onItemClick) {
+        this.onItemClick = Objects.requireNonNull(onItemClick);
+        return this;
+    }
+
     public Grid<T> add(Control child) {
+        addChild(child);
+        return this;
+    }
+
+    @Override public Grid<T> addChild(Control child) {
         if (adapter != null) throw new IllegalStateException("A Grid cannot mix fixed children and an adapter");
-        attach(child);
+        super.addChild(child);
         fixedChildren.add(child);
         invalidate();
         return this;
+    }
+
+    @Override public boolean removeChild(Control child) {
+        if (!super.removeChild(child)) return false;
+        fixedChildren.remove(child);
+        invalidate();
+        return true;
     }
 
     public Grid<T> mode(LayoutMode mode) {
@@ -79,6 +100,15 @@ public final class Grid<T> extends Control {
 
     public int contentHeight() {
         return contentHeight;
+    }
+
+    public int contentWidth() { return contentWidth; }
+    public int horizontalScroll() { return horizontalScroll; }
+    public boolean scrollHorizontalBy(int amount) {
+        int maximum = Math.max(0, contentWidth - bounds().width());
+        if (maximum == 0) return false;
+        horizontalScroll = Math.max(0, Math.min(maximum, horizontalScroll + amount));
+        return true;
     }
 
     public int scroll() {
@@ -140,13 +170,17 @@ public final class Grid<T> extends Control {
         }
         if (adapter.size() == 0) {
             contentHeight = 0;
+            contentWidth = 0;
+            horizontalScroll = 0;
             setScroll(0);
             recycleAll();
             resetScrollPending = false;
             return;
         }
         int columns = columns();
-        int cardWidth = Math.max(1, (bounds().width() - (columns - 1) * gap) / columns);
+        int cardWidth = Math.max(minCardWidth, (bounds().width() - (columns - 1) * gap) / columns);
+        contentWidth = columns * cardWidth + (columns - 1) * gap;
+        horizontalScroll = Math.min(horizontalScroll, Math.max(0, contentWidth - bounds().width()));
         int[] heights = new int[columns];
         Arrays.fill(heights, 0);
         int rowY = 0;
@@ -182,7 +216,9 @@ public final class Grid<T> extends Control {
 
     private void relayoutFixed(Font font) {
         int columns = columns();
-        int cardWidth = Math.max(1, (bounds().width() - (columns - 1) * gap) / columns);
+        int cardWidth = Math.max(minCardWidth, (bounds().width() - (columns - 1) * gap) / columns);
+        contentWidth = columns * cardWidth + (columns - 1) * gap;
+        horizontalScroll = Math.min(horizontalScroll, Math.max(0, contentWidth - bounds().width()));
         int[] heights = new int[columns];
         int rowY = 0;
         int rowHeight = 0;
@@ -205,6 +241,8 @@ public final class Grid<T> extends Control {
     }
 
     private void recycleAll() {
+        for (View<T> view : active.values())
+            if (view instanceof Control control) super.removeChild(control);
         recycled.addAll(active.values());
         active.clear();
         visibleIndices.clear();
@@ -229,12 +267,16 @@ public final class Grid<T> extends Control {
         visibleIndices.addAll(visible);
         visibleIndices.sort(Integer::compareTo);
         for (int index : List.copyOf(active.keySet()))
-            if (!visible.contains(index))
-                recycled.add(active.remove(index));
+            if (!visible.contains(index)) {
+                View<T> view = active.remove(index);
+                if (view instanceof Control control) super.removeChild(control);
+                recycled.add(view);
+            }
         for (Entry<T> entry : entries)
             if (visible.contains(entry.index()) && !active.containsKey(entry.index())) {
                 View<T> view = recycled.isEmpty() ? adapter.createView() : recycled.removeFirst();
                 view.bind(entry.item());
+                if (view instanceof Control control) super.addChild(control);
                 active.put(entry.index(), view);
             }
     }
@@ -251,7 +293,7 @@ public final class Grid<T> extends Control {
                 Rect area = child.absoluteBounds();
                 if (area.bottom() >= absoluteBounds().y() + scroll - bounds().height()
                         && area.y() <= absoluteBounds().y() + scroll + 2 * bounds().height()) {
-                    child.draw(context, screenX, screenY - scroll);
+                    child.draw(context, screenX - horizontalScroll, screenY - scroll);
                 }
             }
         } else {
@@ -259,10 +301,16 @@ public final class Grid<T> extends Control {
                 Entry<T> entry = entries.get(index);
                 View<T> view = active.get(index);
                 if (view == null) continue;
-                Rect card = entry.bounds().translated(viewport.x(), viewport.y() - scroll);
+                Rect card = entry.bounds().translated(viewport.x() - horizontalScroll,
+                        viewport.y() - scroll);
                 boolean hovered = viewport.contains(context.getAbsMouseX(), context.getAbsMouseY())
                         && card.contains(context.getAbsMouseX(), context.getAbsMouseY());
-                view.draw(context, card, hovered);
+                if (view instanceof Control control) {
+                    control.layout(new Rect(entry.bounds().x() - horizontalScroll,
+                            entry.bounds().y() - scroll, entry.bounds().width(), entry.bounds().height()),
+                            context.getFont());
+                    control.draw(context, screenX, screenY);
+                } else view.draw(context, card, hovered);
             }
         }
         graphics.disableScissor();
@@ -271,7 +319,7 @@ public final class Grid<T> extends Control {
     public Entry<T> hitItem(int rootX, int rootY) {
         Rect viewport = absoluteBounds();
         if (!viewport.contains(rootX, rootY)) return null;
-        int localX = rootX - viewport.x();
+        int localX = rootX - viewport.x() + horizontalScroll;
         int localY = rootY - viewport.y() + scroll;
         for (int index : visibleIndices) {
             Entry<T> entry = entries.get(index);
@@ -280,11 +328,34 @@ public final class Grid<T> extends Control {
         return null;
     }
 
+    @Override public Control hitTop(int rootX, int rootY) {
+        if (!visible() || !absoluteBounds().contains(rootX, rootY)) return null;
+        Entry<T> entry = hitItem(rootX, rootY);
+        if (entry != null) {
+            View<T> view = active.get(entry.index());
+            if (view instanceof Control control) {
+                Control hit = control.hitTop(rootX, rootY);
+                if (hit != null) return hit;
+            }
+        }
+        return super.hitTop(rootX, rootY);
+    }
+
+    @Override public boolean dispatchPointer(int rootX, int rootY) {
+        if (!visible() || !absoluteBounds().contains(rootX, rootY)) return false;
+        Entry<T> entry = hitItem(rootX, rootY);
+        if (entry == null) return false;
+        View<T> view = active.get(entry.index());
+        if (view instanceof Control control && control.dispatchPointer(rootX, rootY)) return true;
+        onItemClick.accept(entry.item());
+        return true;
+    }
+
     public Control hitFixed(int rootX, int rootY) {
         if (adapter != null || !absoluteBounds().contains(rootX, rootY)) return null;
         for (Control child : fixedChildren)
             if (child.visible()
-                    && child.absoluteBounds().contains(rootX, rootY + scroll)) return child;
+                    && child.absoluteBounds().contains(rootX + horizontalScroll, rootY + scroll)) return child;
         return null;
     }
 

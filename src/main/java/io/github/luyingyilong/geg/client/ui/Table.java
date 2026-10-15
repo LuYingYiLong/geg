@@ -2,6 +2,7 @@ package io.github.luyingyilong.geg.client.ui;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.Container;
 import io.github.luyingyilong.geg.client.ui.layout.Panel;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
 import net.minecraft.client.gui.Font;
@@ -9,14 +10,19 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntUnaryOperator;
 
 /** Fixed-header table whose rows use the Ore list-item theme and shared draw/hit geometry. */
-public final class Table<T> extends Control {
+public final class Table<T> extends Container {
     public interface Cell<T> {
         void draw(ModularGuiContext context, T row, Rect bounds);
 
@@ -58,6 +64,8 @@ public final class Table<T> extends Control {
 
     private final List<Column<T>> columns = new ArrayList<>();
     private final List<Row<T>> layoutRows = new ArrayList<>();
+    private final Map<Integer, RowView> activeViews = new HashMap<>();
+    private final ArrayDeque<RowView> recycledViews = new ArrayDeque<>();
     private Panel rowBackground;
     private List<T> rows = List.of();
     private Function<T, Object> rowKey;
@@ -122,10 +130,12 @@ public final class Table<T> extends Control {
 
     public void setScroll(int pixels) {
         scroll = Math.max(0, Math.min(Math.max(0, contentHeight - bodyHeight()), pixels));
+        if (!dirty) updateVisible(null);
     }
 
     public int scroll() { return scroll; }
     public int contentHeight() { return contentHeight; }
+    public int activeViews() { return activeViews.size(); }
     public boolean compact() { return compact; }
     public int headerHeight() { return compact ? 0 : HEADER_HEIGHT; }
     public List<Row<T>> layoutRows() { return List.copyOf(layoutRows); }
@@ -159,6 +169,7 @@ public final class Table<T> extends Control {
         super.layout(localBounds, font);
         if (!dirty && lastWidth == localBounds.width()) {
             setScroll(scroll);
+            updateVisible(font);
             return;
         }
         lastWidth = localBounds.width();
@@ -183,8 +194,44 @@ public final class Table<T> extends Control {
             }
         }
         setScroll(scroll);
+        recycleAll();
+        updateVisible(font);
         anchorKey = null;
         resetScroll = false;
+    }
+
+    private void recycleAll() {
+        for (RowView view : activeViews.values()) {
+            super.removeChild(view);
+            recycledViews.add(view);
+        }
+        activeViews.clear();
+    }
+
+    private void updateVisible(Font font) {
+        int buffer = bodyHeight();
+        int start = scroll - buffer;
+        int end = scroll + bodyHeight() + buffer;
+        Set<Integer> needed = new HashSet<>();
+        for (Row<T> row : layoutRows)
+            if (row.bounds().bottom() > start && row.bounds().y() < end)
+                needed.add(row.index());
+        for (int index : List.copyOf(activeViews.keySet())) if (!needed.contains(index)) {
+            RowView view = activeViews.remove(index);
+            super.removeChild(view);
+            recycledViews.add(view);
+        }
+        for (Row<T> row : layoutRows) if (needed.contains(row.index())) {
+            RowView view = activeViews.get(row.index());
+            if (view == null) {
+                view = recycledViews.isEmpty() ? new RowView() : recycledViews.removeFirst();
+                view.bind(row);
+                super.addChild(view);
+                activeViews.put(row.index(), view);
+            }
+            view.layout(new Rect(0, headerHeight() + row.bounds().y() - scroll,
+                    row.bounds().width(), row.bounds().height()), font);
+        }
     }
 
     private int[] calculateColumnWidths(int width) {
@@ -230,6 +277,7 @@ public final class Table<T> extends Control {
     public void draw(ModularGuiContext context, int screenX, int screenY) {
         if (bounds().width() <= 0 || bounds().height() <= 0) return;
         if (rowBackground == null) rowBackground = new Panel(OreTheme.LIST_ITEM);
+        updateVisible(context.getFont());
         Rect area = screenBounds(screenX, screenY);
         if (!compact) drawHeader(context, area);
         Rect body = new Rect(area.x(), area.y() + headerHeight(), area.width(), bodyHeight());
@@ -242,10 +290,8 @@ public final class Table<T> extends Control {
                     Label.Overflow.CLIP, Label.Horizontal.LEFT, Label.Vertical.CENTER);
         } else {
             for (Row<T> row : visibleRows()) {
-                Rect item = row.bounds().translated(body.x(), body.y() - scroll);
-                rowBackground.drawAt(context, item);
-                if (compact) drawCompactRow(context, row.item(), item);
-                else drawRegularRow(context, row.item(), item);
+                RowView view = activeViews.get(row.index());
+                if (view != null) view.draw(context, screenX, screenY);
             }
         }
         graphics.disableScissor();
@@ -325,5 +371,26 @@ public final class Table<T> extends Control {
         }
         onRowClick.accept(row.item());
         return true;
+    }
+
+    @Override protected boolean onPointerPressed(int rootX, int rootY) {
+        return click(rootX, rootY);
+    }
+
+    @Override public Control hitTop(int rootX, int rootY) {
+        return hitRow(rootX, rootY) == null ? null : super.hitTop(rootX, rootY);
+    }
+
+    private final class RowView extends Control {
+        private Row<T> row;
+
+        private void bind(Row<T> row) { this.row = row; }
+
+        @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+            Rect area = screenBounds(screenX, screenY);
+            rowBackground.drawAt(context, area);
+            if (compact) drawCompactRow(context, row.item(), area);
+            else drawRegularRow(context, row.item(), area);
+        }
     }
 }

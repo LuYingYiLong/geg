@@ -6,6 +6,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.util.FormattedCharSequence;
 import io.github.luyingyilong.geg.client.ui.layout.Size;
+import io.github.luyingyilong.geg.client.ui.layout.Box;
+import io.github.luyingyilong.geg.client.ui.layout.Rect;
 
 /** Headless text layout checks; the live client still verifies actual glyph rendering. */
 public final class LabelLayoutTest {
@@ -31,6 +33,10 @@ public final class LabelLayoutTest {
         check(english.measureSize(font, new Size(12, 100)).height() == 3 * english.lineHeight(font));
         english.setText(Component.literal("AB"));
         check(english.getText().getString().equals("AB"));
+        Box labelParent = new Box().add(english);
+        labelParent.layout(new Rect(0, 0, 20, 20), font);
+        english.text(Component.literal("Longer label"));
+        check(labelParent.layoutDirty());
 
         Component styled = Component.literal("红字").withStyle(ChatFormatting.RED)
                 .append(Component.literal("普通"));

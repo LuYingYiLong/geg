@@ -9,11 +9,7 @@ import io.github.luyingyilong.geg.client.ui.Input;
 import io.github.luyingyilong.geg.client.ui.Button;
 import io.github.luyingyilong.geg.client.ui.Form;
 import io.github.luyingyilong.geg.client.ui.FormItem;
-import io.github.luyingyilong.geg.client.ui.Modal;
 import io.github.luyingyilong.geg.client.ui.NumberInput;
-import io.github.luyingyilong.geg.client.ui.layout.Rect;
-import brachy.modularui.screen.viewport.ModularGuiContext;
-import brachy.modularui.widget.sizer.Unit;
 import io.github.luyingyilong.geg.market.MarketActionPacket;
 import io.github.luyingyilong.geg.market.MarketNetwork;
 import net.minecraft.core.BlockPos;
@@ -35,9 +31,6 @@ public final class ClientMarketScreen {
     private static StringValue quantityValue;
     private static StringValue priceValue;
     private static StringValue tradeQuantityValue;
-    private static int searchX;
-    private static int searchY;
-    private static int searchWidth;
 
     private ClientMarketScreen() {
     }
@@ -46,17 +39,13 @@ public final class ClientMarketScreen {
         if (isOpen()) {
             return;
         }
-        canvas = new MarketCanvasWidget();
         search = new Input(175.0F);
         search.setInputVisible(true);
         search.placeholder(Component.translatable("market.geg.search"));
         search.setMaxLength(80);
         search.autoUpdateOnChange(true);
         search.controlSize(Button.Size.SMALL);
-        search.left(() -> searchX, Unit.Measure.PIXEL)
-                .top(() -> searchY, Unit.Measure.PIXEL)
-                .width(() -> searchWidth, Unit.Measure.PIXEL)
-                .height(Button.Size.SMALL.height());
+        canvas = new MarketCanvasWidget(search);
 
         quantity = new NumberInput(250.0F, NumberInput.Kind.QUANTITY);
         quantityValue = new StringValue("");
@@ -84,6 +73,7 @@ public final class ClientMarketScreen {
         detailForm = new Form().add(quantityItem).add(priceItem);
         tradeForm = new Form().add(new FormItem("quantity",
                 Component.translatable("market.geg.quantity"), tradeQuantity));
+        canvas.bindForms(detailForm, tradeForm);
         canvas.prepareLayout(Minecraft.getInstance().getWindow().getGuiScaledWidth(),
                 Minecraft.getInstance().getWindow().getGuiScaledHeight(), Minecraft.getInstance().font);
 
@@ -122,15 +112,6 @@ public final class ClientMarketScreen {
         return search == null ? "" : search.getText();
     }
 
-    static void placeSearch(Rect bounds) {
-        if (searchX != bounds.x() || searchY != bounds.y() || searchWidth != bounds.width()) {
-            searchX = bounds.x();
-            searchY = bounds.y();
-            searchWidth = bounds.width();
-            search.scheduleResize();
-        }
-    }
-
     static void setSearchEnabled(boolean enabled) {
         search.setEnabled(enabled);
     }
@@ -151,18 +132,6 @@ public final class ClientMarketScreen {
     static boolean validateTradeForm() { return tradeForm != null && tradeForm.validate(); }
     static void setDetailQuantityMaximum(int maximum) { quantity.maximumQuantity(maximum); }
     static void setTradeQuantityMaximum(int maximum) { tradeQuantity.maximumQuantity(maximum); }
-
-    static void drawDetailForm(ModularGuiContext context, Modal.Rect content, int viewportWidth) {
-        if (detailForm != null) detailForm.draw(context, content.x() + 4,
-                content.y() + 58, Math.max(1, content.width() - 8), viewportWidth);
-    }
-
-    static int drawTradeForm(ModularGuiContext context, Modal.Rect content, int viewportWidth) {
-        return tradeForm == null ? content.y() : tradeForm.draw(context, content.x() + 4,
-                content.y() + 2, Math.max(1, content.width() - 8), viewportWidth);
-    }
-
-    static int tradeFormBottom() { return tradeForm == null ? 0 : tradeForm.bottom(); }
 
     static void showTradeQuantity(boolean show) {
         tradeForm.setVisible(show);

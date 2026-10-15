@@ -1,33 +1,31 @@
 package io.github.luyingyilong.geg.client.ui;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
-import io.github.luyingyilong.geg.client.ui.layout.Box;
-import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.Container;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
+import io.github.luyingyilong.geg.client.ui.layout.Size;
 import net.minecraft.client.gui.Font;
-import net.minecraft.network.chat.Component;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.ArrayList;
-import java.util.List;
 
-/** Small market form: shared field layout, named values, and submit validation. */
-public final class Form {
+/** Named values, submit validation, and field layout share one Ore node. */
+public final class Form extends Container {
     public enum Layout { VERTICAL, HORIZONTAL }
 
-    private static final int LABEL_HEIGHT = 10;
-    private static final int GAP = 3;
-    private static final int ROW_GAP = 6;
-    private static final int ERROR_HEIGHT = 10;
     private final Map<String, FormItem> items = new LinkedHashMap<>();
     private Layout layout = Layout.VERTICAL;
-    private boolean visible;
+    private boolean shown;
     private int lastBottom;
+
+    public Form() {
+        visible(false);
+    }
 
     public Form layout(Layout layout) {
         this.layout = Objects.requireNonNull(layout);
+        requestLayout();
         return this;
     }
 
@@ -36,18 +34,20 @@ public final class Form {
     }
 
     public Form add(FormItem item) {
-        if (items.putIfAbsent(item.name(), item) != null) {
-            throw new IllegalArgumentException("Duplicate field: " + item.name());
-        }
+        if (items.containsKey(item.name())) throw new IllegalArgumentException("Duplicate field: " + item.name());
+        items.put(item.name(), item);
+        addChild(item);
+        item.input().setInputVisible(shown && item.active());
         return this;
     }
 
     public void setVisible(boolean visible) {
-        this.visible = visible;
+        shown = visible;
+        super.visible(visible);
         for (FormItem item : items.values()) item.input().setInputVisible(visible && item.active());
     }
 
-    public boolean visible() { return visible; }
+    @Override public boolean visible() { return shown; }
     public int bottom() { return lastBottom; }
 
     public String value(String name) {
@@ -56,58 +56,61 @@ public final class Form {
         return item.value();
     }
 
+    /** MUI widgets are siblings of the Ore canvas, so hide fields outside a scrolled viewport. */
+    public void clipInputs(Rect viewport) {
+        for (FormItem item : items.values()) {
+            Rect area = item.inputNode().absoluteBounds();
+            boolean fullyVisible = area.x() >= viewport.x() && area.right() <= viewport.right()
+                    && area.y() >= viewport.y() && area.bottom() <= viewport.bottom();
+            item.input().setInputVisible(shown && item.active() && fullyVisible);
+        }
+    }
+
     public boolean validate() {
-        if (!visible) return false;
+        if (!shown) return false;
         for (FormItem item : items.values()) {
             if (item.active() && item.input() instanceof NumberInput number && !number.commit()) {
+                requestLayout();
                 return false;
             }
         }
+        requestLayout();
         return true;
     }
 
+    @Override public Size measureSize(Font font, Size available) {
+        boolean horizontal = effectiveLayout(layout, available.width()) == Layout.HORIZONTAL;
+        int height = 0;
+        for (FormItem item : items.values()) if (item.active()) {
+            item.horizontal(horizontal);
+            height += item.rowHeight();
+        }
+        return new Size(Math.max(minimumWidth(), available.width()),
+                Math.max(minimumHeight(), height));
+    }
+
+    @Override public void layout(Rect bounds, Font font) {
+        super.layout(bounds, font);
+        boolean horizontal = effectiveLayout(layout, bounds.width()) == Layout.HORIZONTAL;
+        int top = 0;
+        for (FormItem item : items.values()) {
+            item.horizontal(horizontal);
+            item.visible(item.active());
+            if (!item.active()) continue;
+            int height = item.rowHeight();
+            fitChild(item, new Rect(0, top, bounds.width(), height), font);
+            top += height;
+        }
+        lastBottom = bounds.y() + top;
+    }
+
+    /** Compatibility entry point until a modal directly owns the Form node. */
     public int draw(ModularGuiContext context, int x, int y, int width, int viewportWidth) {
-        if (!visible) return y;
+        if (!shown) return y;
         Font font = context.getFont();
-        boolean horizontal = effectiveLayout(layout, viewportWidth) == Layout.HORIZONTAL;
-        List<FormItem> active = items.values().stream().filter(FormItem::active).toList();
-        Box rows = new Box();
-        List<Control> rowSlots = new ArrayList<>(active.size());
-        int totalHeight = 0;
-        for (FormItem item : active) {
-            int rowHeight = (horizontal ? 0 : LABEL_HEIGHT + GAP)
-                    + item.input().controlSize().height() + 1
-                    + (item.error() == null ? 0 : ERROR_HEIGHT) + ROW_GAP;
-            Control slot = new Control().minimum(0, rowHeight).preferred(0, rowHeight)
-                    .policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
-            rows.add(slot);
-            rowSlots.add(slot);
-            totalHeight += rowHeight;
-        }
-        rows.layout(new Rect(x, y, width, totalHeight), font);
-        for (int index = 0; index < active.size(); index++) {
-            FormItem item = active.get(index);
-            Rect row = rowSlots.get(index).absoluteBounds();
-            int labelWidth = horizontal ? Math.min(90, Math.max(36, width / 3)) : width;
-            int controlX = horizontal ? row.x() + labelWidth + GAP : row.x();
-            int controlY = horizontal ? row.y() : row.y() + LABEL_HEIGHT + GAP;
-            int controlWidth = horizontal ? width - labelWidth - GAP : width;
-            int errorY = controlY + item.input().controlSize().height() + 1;
-            item.place(row.x(), row.y() + (horizontal ? 5 : 0), labelWidth,
-                    controlX, controlY, controlWidth, errorY);
-            Label.draw(context, item.label(), new Rect(
-                            item.labelX(), item.labelY(), Math.max(0, labelWidth), LABEL_HEIGHT),
-                    0xFFD8D9DC, Label.Overflow.CLIP,
-                    Label.Horizontal.LEFT, Label.Vertical.TOP);
-            Component error = item.error();
-            if (error != null) {
-                Label.draw(context, error, new Rect(
-                                row.x(), item.errorY(), Math.max(0, width), ERROR_HEIGHT),
-                        0xFFFF7777, Label.Overflow.CLIP,
-                        Label.Horizontal.LEFT, Label.Vertical.TOP);
-            }
-        }
-        lastBottom = y + totalHeight;
+        int height = measureSize(font, new Size(width, viewportWidth)).height();
+        layout(new Rect(x, y, width, height), font);
+        super.draw(context, 0, 0);
         return lastBottom;
     }
 }

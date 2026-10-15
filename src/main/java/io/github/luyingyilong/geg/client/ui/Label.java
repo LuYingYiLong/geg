@@ -41,7 +41,10 @@ public final class Label extends Control {
     public Label(Component text) { this.text = Objects.requireNonNull(text); }
     public Label text(Component text) {
         Component next = Objects.requireNonNull(text);
-        if (!this.text.equals(next)) scrollStartMs = Long.MIN_VALUE;
+        if (!this.text.equals(next)) {
+            scrollStartMs = Long.MIN_VALUE;
+            requestLayout();
+        }
         this.text = next;
         return this;
     }
@@ -51,7 +54,7 @@ public final class Label extends Control {
         scrollStartMs = Long.MIN_VALUE;
         return this;
     }
-    public Label wrap(Wrap wrap) { this.wrap = Objects.requireNonNull(wrap); return this; }
+    public Label wrap(Wrap wrap) { this.wrap = Objects.requireNonNull(wrap); requestLayout(); return this; }
     public Label scrollTrigger(ScrollTrigger trigger) {
         scrollTrigger = Objects.requireNonNull(trigger);
         scrollStartMs = Long.MIN_VALUE;
@@ -80,16 +83,19 @@ public final class Label extends Control {
     public Label scale(float scale) {
         if (!(scale > 0.0F) || !Float.isFinite(scale)) throw new IllegalArgumentException("Invalid text scale");
         this.scale = scale;
+        requestLayout();
         return this;
     }
     public Label maxLines(int maxLines) {
         if (maxLines < 1) throw new IllegalArgumentException("At least one line is required");
         this.maxLines = maxLines;
+        requestLayout();
         return this;
     }
     public Label maximumWidth(int maximumWidth) {
         if (maximumWidth < 0) throw new IllegalArgumentException("Maximum width cannot be negative");
         this.maximumWidth = maximumWidth;
+        requestLayout();
         return this;
     }
 

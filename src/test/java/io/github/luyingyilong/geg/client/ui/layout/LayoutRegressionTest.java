@@ -1,6 +1,9 @@
 package io.github.luyingyilong.geg.client.ui.layout;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.geg.client.ui.Tabs;
+import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,36 +18,81 @@ public final class LayoutRegressionTest {
         Control unset = new Control();
         check(unset.minimumSize().equals(new Size(0, 0)));
         check(unset.size().equals(new Size(0, 0)));
-        for (int width : new int[]{127, 128, 129, 320, 427}) {
+        for (int width : new int[]{127, 128, 129, 200, 320, 427}) {
             Control title = new Control().preferred(60, 20).minimum(0, 20)
                     .policy(Control.SizePolicy.EXPAND, Control.SizePolicy.CONTENT);
             Control balance = new Control().preferred(90, 20).minimum(64, 20);
             Control search = new Control().preferred(138, 18).minimum(72, 18);
             Control filter = new Control().preferred(82, 20).minimum(74, 20);
-            Box header = new Box().orientation(Box.Orientation.HORIZONTAL).gap(6)
-                    .add(title).add(balance).add(search).add(filter);
-            header.layout(new Rect(0, 0, width - 10, 25), null);
+            ResponsiveHeader header = new ResponsiveHeader(title, balance, search, filter);
+            int innerWidth = width - 10;
+            int rows = header.rows(innerWidth);
+            header.layout(new Rect(0, 0, innerWidth, 25 * rows), null);
             check(title.size().width() == title.bounds().width());
             check(balance.minimumSize().equals(new Size(64, 20)));
             check(title.bounds().right() + 6 <= balance.bounds().x());
-            check(balance.bounds().right() + 6 <= search.bounds().x());
-            check(search.bounds().height() == 18 && search.bounds().y() == 3);
-            check(filter.bounds().height() == 20 && filter.bounds().y() == 2);
-            check(filter.bounds().right() <= width - 10);
-            check(search.bounds().right() + 6 <= filter.bounds().x());
+            check(search.bounds().height() == 18 && search.bounds().y() == (rows == 1 ? 3 : 28));
+            check(filter.bounds().height() == 20 && filter.bounds().y() == (rows == 3 ? 52 : rows == 2 ? 27 : 2));
+            check(filter.bounds().right() <= innerWidth);
+            if (rows <= 2) check(search.bounds().right() + 6 <= filter.bounds().x());
+            check(rows == (width <= 129 ? 3 : width == 200 ? 2 : 1));
             if (width == 427) {
                 check(title.size().width() > 60);
                 check(balance.size().width() >= balance.minimumWidth());
                 check(search.size().width() >= search.minimumWidth());
                 check(filter.size().width() >= filter.minimumWidth());
             }
-            if (width == 320) {
-                check(title.size().width() == 60);
-                check(balance.size().width() == balance.minimumWidth());
-                check(search.size().width() >= search.minimumWidth());
-                check(filter.size().width() >= filter.minimumWidth());
-            }
         }
+
+        Control freeParent = new Control();
+        Control freeChild = new Control().position(3, 4).requestedSize(11, 12);
+        freeParent.addChild(freeChild);
+        freeParent.layout(new Rect(0, 0, 20, 20), null);
+        check(freeChild.parent() == freeParent && freeChild.bounds().equals(new Rect(3, 4, 11, 12)));
+        check(freeParent.hitTop(4, 5) == freeChild);
+        checkThrows(() -> freeChild.addChild(freeParent));
+        check(freeParent.removeChild(freeChild) && freeChild.parent() == null);
+
+        Box limited = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
+        Control left = new Control().minimum(30, 12);
+        Control right = new Control().minimum(30, 12);
+        limited.addChild(left).addChild(right);
+        limited.layout(new Rect(0, 0, 50, 12), null);
+        check(left.bounds().width() == 30 && right.bounds().width() == 30);
+        check(right.bounds().right() == 64);
+        checkThrows(() -> left.position(5, 5));
+        checkThrows(() -> right.requestedSize(5, 5));
+        check(limited.children().equals(List.of(left, right)));
+        limited.layout(new Rect(0, 0, 80, 12), null);
+        check(!limited.layoutDirty());
+        right.minimum(40, 12);
+        check(limited.layoutDirty());
+
+        Control weightedA = new Control().minimum(10, 10)
+                .policy(Control.SizePolicy.EXPAND, Control.SizePolicy.CONTENT).stretchRatio(1.0F);
+        Control weightedB = new Control().minimum(10, 10)
+                .policy(Control.SizePolicy.EXPAND, Control.SizePolicy.CONTENT).stretchRatio(2.0F);
+        Box weighted = new Box().orientation(Box.Orientation.HORIZONTAL)
+                .add(weightedA).add(weightedB);
+        weighted.layout(new Rect(0, 0, 100, 10), null);
+        check(weightedA.bounds().width() + weightedB.bounds().width() == 100);
+        check(weightedB.bounds().width() > weightedA.bounds().width());
+
+        Font font = new Font(id -> null, false) {
+            @Override public int width(String value) { return value.length() * 6; }
+            @Override public int width(net.minecraft.network.chat.FormattedText value) {
+                return width(value.getString());
+            }
+        };
+        Tabs footer = new Tabs(List.of(Component.literal("Market"), Component.literal("Mine"),
+                Component.literal("Publish"), Component.literal("Favorites"),
+                Component.literal("History"), Component.literal("Claim")));
+        footer.selected(5);
+        footer.layout(new Rect(0, 0, 127, 20), font);
+        check(footer.scrollX() > 0 && footer.bounds().height() == 20);
+        check(footer.clickAt(0, 0, 120, 10, font) == 5);
+        footer.layout(new Rect(0, 0, 427, 20), font);
+        check(footer.scrollX() == 0);
 
         Control inner = new Control().preferred(10, 10);
         Padding padding = new Padding(new Padding.Insets(1, 2, 3, 4)).child(inner);
@@ -84,6 +132,10 @@ public final class LayoutRegressionTest {
                 .filter(entry -> entry.key().equals(anchor)).findFirst().orElseThrow();
         check(restored.bounds().y() <= grid.scroll() && restored.bounds().bottom() > grid.scroll());
         check(grid.activeViews() < 100);
+        grid.layout(new Rect(0, 0, 80, 100), null);
+        check(grid.columns() == 1 && grid.contentWidth() == 96);
+        check(grid.scrollHorizontalBy(16) && grid.horizontalScroll() == 16);
+        check(grid.hitItem(5, 5) != null);
 
         Grid<Object> fixed = new Grid<Object>().mode(Grid.LayoutMode.ROWS).columns(30, 2, 2);
         Control first = new Control().preferred(0, 10);
@@ -101,9 +153,38 @@ public final class LayoutRegressionTest {
         overlay.add(lower).add(upper);
         overlay.layout(new Rect(0, 0, 20, 20), null);
         check(overlay.hitTop(5, 5) == upper);
+        List<String> clicks = new ArrayList<>();
+        Control clickLower = new Control() {
+            @Override protected boolean onPointerPressed(int x, int y) {
+                if (!hit(x, y)) return false;
+                clicks.add("lower");
+                return true;
+            }
+        };
+        Control clickUpper = new Control() {
+            @Override protected boolean onPointerPressed(int x, int y) {
+                if (!hit(x, y)) return false;
+                clicks.add("upper");
+                return true;
+            }
+        };
+        Overlay clickable = new Overlay().add(clickLower).add(clickUpper);
+        clickable.layout(new Rect(0, 0, 20, 20), null);
+        check(clickable.dispatchPointer(5, 5) && clicks.equals(List.of("upper")));
+        clickUpper.visible(false);
+        check(clickable.dispatchPointer(5, 5) && clicks.equals(List.of("upper", "lower")));
     }
 
     private static void check(boolean condition) {
         if (!condition) throw new AssertionError("Unexpected Ore layout result");
+    }
+
+    private static void checkThrows(Runnable operation) {
+        try {
+            operation.run();
+        } catch (IllegalArgumentException | IllegalStateException expected) {
+            return;
+        }
+        throw new AssertionError("Expected an invalid tree or container placement to fail");
     }
 }

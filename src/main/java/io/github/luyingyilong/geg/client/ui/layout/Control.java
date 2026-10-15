@@ -4,13 +4,17 @@ import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.client.gui.Font;
 
 import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 /** A local-coordinate layout node; ModularUI remains responsible for focus and text editing. */
 public class Control {
     public enum SizePolicy { CONTENT, FILL, EXPAND }
 
     private Control parent;
+    private final List<Control> children = new ArrayList<>();
     private Rect bounds = new Rect(0, 0, 0, 0);
+    private Rect requestedBounds = new Rect(0, 0, 0, 0);
     private int minimumWidth;
     private int minimumHeight;
     private int preferredWidth;
@@ -18,10 +22,13 @@ public class Control {
     private SizePolicy horizontal = SizePolicy.CONTENT;
     private SizePolicy vertical = SizePolicy.CONTENT;
     private boolean visible = true;
+    private boolean layoutDirty = true;
+    private float stretchRatio = 1.0F;
 
     public Control minimum(int width, int height) {
         minimumWidth = Math.max(0, width);
         minimumHeight = Math.max(0, height);
+        requestLayout();
         return this;
     }
 
@@ -32,14 +39,74 @@ public class Control {
     public Control preferred(int width, int height) {
         preferredWidth = Math.max(0, width);
         preferredHeight = Math.max(0, height);
+        requestLayout();
         return this;
     }
 
     public Control policy(SizePolicy horizontal, SizePolicy vertical) {
         this.horizontal = Objects.requireNonNull(horizontal);
         this.vertical = Objects.requireNonNull(vertical);
+        requestLayout();
         return this;
     }
+
+    public Control stretchRatio(float ratio) {
+        if (!Float.isFinite(ratio) || ratio <= 0.0F)
+            throw new IllegalArgumentException("Stretch ratio must be positive");
+        stretchRatio = ratio;
+        requestLayout();
+        return this;
+    }
+
+    public float stretchRatio() { return stretchRatio; }
+    public Control parent() { return parent; }
+    public List<Control> children() { return List.copyOf(children); }
+
+    public Control addChild(Control child) {
+        Objects.requireNonNull(child);
+        if (child.parent != null) throw new IllegalStateException("Control already has a parent");
+        if (child == this) throw new IllegalArgumentException("Control cannot parent itself");
+        for (Control ancestor = this; ancestor != null; ancestor = ancestor.parent)
+            if (ancestor == child) throw new IllegalArgumentException("Control tree cannot contain a cycle");
+        child.parent = this;
+        children.add(child);
+        requestLayout();
+        return this;
+    }
+
+    public boolean removeChild(Control child) {
+        if (!children.remove(child)) return false;
+        child.parent = null;
+        requestLayout();
+        return true;
+    }
+
+    /** Free controls can place children; a Container owns its children's rectangles. */
+    public Control position(int x, int y) {
+        requireFreePlacement();
+        requestedBounds = new Rect(x, y, requestedBounds.width(), requestedBounds.height());
+        requestLayout();
+        return this;
+    }
+
+    public Control requestedSize(int width, int height) {
+        requireFreePlacement();
+        requestedBounds = new Rect(requestedBounds.x(), requestedBounds.y(), width, height);
+        requestLayout();
+        return this;
+    }
+
+    private void requireFreePlacement() {
+        if (parent instanceof Container)
+            throw new IllegalStateException("The parent container controls position and size");
+    }
+
+    public void requestLayout() {
+        layoutDirty = true;
+        if (parent != null) parent.requestLayout();
+    }
+
+    public boolean layoutDirty() { return layoutDirty; }
 
     public SizePolicy horizontalPolicy() { return horizontal; }
     public SizePolicy verticalPolicy() { return vertical; }
@@ -47,7 +114,12 @@ public class Control {
     public int minimumHeight() { return minimumHeight; }
     public Size minimumSize() { return new Size(minimumWidth, minimumHeight); }
     public boolean visible() { return visible; }
-    public void visible(boolean visible) { this.visible = visible; }
+    public void visible(boolean visible) {
+        if (this.visible != visible) {
+            this.visible = visible;
+            requestLayout();
+        }
+    }
     public Rect bounds() { return bounds; }
     /** The size assigned by the most recent layout pass. */
     public Size size() { return new Size(bounds.width(), bounds.height()); }
@@ -57,8 +129,7 @@ public class Control {
     }
 
     protected void attach(Control child) {
-        if (child.parent != null) throw new IllegalStateException("Control already has a parent");
-        child.parent = this;
+        addChild(child);
     }
 
     public int measureWidth(Font font, int available) { return Math.max(minimumWidth, preferredWidth); }
@@ -70,14 +141,32 @@ public class Control {
     }
 
     /** Coordinates are relative to the parent control. */
-    public void layout(Rect localBounds, Font font) { bounds = localBounds; }
+    public void layout(Rect localBounds, Font font) {
+        bounds = localBounds;
+        layoutDirty = false;
+        if (!(this instanceof Container))
+            for (Control child : children)
+                if (child.visible()) child.layout(child.requestedBounds, font);
+    }
 
     public void draw(ModularGuiContext context, int screenX, int screenY) {
         render(context, screenX, screenY);
+        for (Control child : children)
+            if (child.visible()) child.draw(context, screenX, screenY);
     }
 
     protected void render(ModularGuiContext context, int screenX, int screenY) {
     }
+
+    /** Dispatches in reverse draw order; clipping containers can narrow this route. */
+    public boolean dispatchPointer(int rootX, int rootY) {
+        if (!visible) return false;
+        for (int index = children.size() - 1; index >= 0; index--)
+            if (children.get(index).dispatchPointer(rootX, rootY)) return true;
+        return onPointerPressed(rootX, rootY);
+    }
+
+    protected boolean onPointerPressed(int rootX, int rootY) { return false; }
 
     public Rect screenBounds(int screenX, int screenY) {
         return absoluteBounds().translated(screenX, screenY);
@@ -85,5 +174,15 @@ public class Control {
 
     public boolean hit(int rootX, int rootY) {
         return visible && absoluteBounds().contains(rootX, rootY);
+    }
+
+    /** Last drawn child is hit first. Children may overflow their parent's bounds. */
+    public Control hitTop(int rootX, int rootY) {
+        if (!visible) return null;
+        for (int index = children.size() - 1; index >= 0; index--) {
+            Control hit = children.get(index).hitTop(rootX, rootY);
+            if (hit != null) return hit;
+        }
+        return hit(rootX, rootY) ? this : null;
     }
 }

@@ -44,6 +44,8 @@ public final class TableLayoutTest {
         check(table.layoutRows().get(0).bounds().equals(new Rect(0, 0, 320, 23)));
         check(table.layoutRows().get(1).bounds().y() == 23);
         check(table.visibleRows().size() == 6);
+        check(table.activeViews() >= table.visibleRows().size()
+                && table.activeViews() < rows.size());
         check(table.hitRow(5, 18) == null);
         check(table.hitRow(5, 19).item() == 0);
         check(table.click(5, 20) && selected.equals(List.of(0)));
@@ -61,7 +63,8 @@ public final class TableLayoutTest {
         check(table.scroll() == 0 && table.visibleRows().size() == 1);
         table.rows(List.of());
         table.layout(new Rect(0, 0, 320, 144), null);
-        check(table.visibleRows().isEmpty() && table.hitRow(5, 19) == null);
+        check(table.visibleRows().isEmpty() && table.activeViews() == 0
+                && table.hitRow(5, 19) == null);
 
         for (int guiWidth : new int[]{127, 128, 129}) {
             int tableWidth = guiWidth - 32;

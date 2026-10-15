@@ -6,17 +6,27 @@ import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.Rect;
+import net.minecraft.client.gui.Font;
 
 import java.util.List;
+import java.util.function.IntConsumer;
 
 /** A single horizontal row of equally sized tabs. */
-public final class Tabs {
+public final class Tabs extends Control {
     private static final int SELECTED_TOP_INSET = 2;
     private static final int INDICATOR_MAX_WIDTH = 64;
     private static final int TEXT_PADDING = 4;
 
     private final List<Component> labels;
     private final Button.Size size;
+    private int selectedIndex;
+    private int scrollX;
+    private boolean revealSelected = true;
+    private int lastViewportWidth = -1;
+    private IntConsumer onSelect = index -> { };
+    private Font layoutFont;
 
     public Tabs(List<Component> labels) {
         this(labels, Button.Size.MEDIUM);
@@ -28,6 +38,91 @@ public final class Tabs {
         }
         this.labels = List.copyOf(labels);
         this.size = java.util.Objects.requireNonNull(size);
+        minimum(0, size.height());
+    }
+
+    public Tabs onSelect(IntConsumer onSelect) {
+        this.onSelect = java.util.Objects.requireNonNull(onSelect);
+        return this;
+    }
+
+    public Tabs selected(int index) {
+        int next = Math.max(0, Math.min(labels.size() - 1, index));
+        if (next != selectedIndex) {
+            selectedIndex = next;
+            revealSelected = true;
+        }
+        return this;
+    }
+
+    public int selected() { return selectedIndex; }
+    public int scrollX() { return scrollX; }
+
+    public int minimumRowWidth(Font font) {
+        int width = 0;
+        for (Component label : labels)
+            width += Math.max(24, font.width(label) + 2 * TEXT_PADDING + 8);
+        return width;
+    }
+
+    @Override public void layout(Rect bounds, Font font) {
+        super.layout(bounds, font);
+        layoutFont = font;
+        if (lastViewportWidth != bounds.width()) {
+            lastViewportWidth = bounds.width();
+            revealSelected = true;
+        }
+        if (font != null && revealSelected && bounds.width() > 0) {
+            int contentWidth = Math.max(bounds.width(), minimumRowWidth(font));
+            ensureSelectedVisible(contentWidth, bounds.width());
+            revealSelected = false;
+        }
+    }
+
+    @Override protected boolean onPointerPressed(int rootX, int rootY) {
+        return layoutFont != null && clickAt(0, 0, rootX, rootY, layoutFont) >= 0;
+    }
+
+    @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+        Rect viewport = screenBounds(screenX, screenY);
+        if (viewport.width() <= 0 || viewport.height() <= 0) return;
+        int contentWidth = Math.max(viewport.width(), minimumRowWidth(context.getFont()));
+        scrollX = Math.min(scrollX, contentWidth - viewport.width());
+        if (revealSelected) {
+            ensureSelectedVisible(contentWidth, viewport.width());
+            revealSelected = false;
+        }
+        GuiGraphics graphics = context.getGraphics();
+        graphics.enableScissor(viewport.x(), viewport.y(), viewport.right(), viewport.bottom());
+        draw(context, viewport.x() - scrollX, viewport.y(), contentWidth, selectedIndex);
+        graphics.disableScissor();
+    }
+
+    private void ensureSelectedVisible(int contentWidth, int viewportWidth) {
+        int left = selectedIndex * contentWidth / labels.size();
+        int right = (selectedIndex + 1) * contentWidth / labels.size();
+        if (left < scrollX) scrollX = left;
+        else if (right > scrollX + viewportWidth) scrollX = right - viewportWidth;
+        scrollX = Math.max(0, Math.min(contentWidth - viewportWidth, scrollX));
+    }
+
+    public int clickAt(int screenX, int screenY, int mouseX, int mouseY, Font font) {
+        Rect viewport = screenBounds(screenX, screenY);
+        if (!viewport.contains(mouseX, mouseY)) return -1;
+        int contentWidth = Math.max(viewport.width(), minimumRowWidth(font));
+        int index = hitIndex(viewport.x() - scrollX, viewport.y(), contentWidth, mouseX, mouseY);
+        if (index >= 0) {
+            selected(index);
+            onSelect.accept(index);
+        }
+        return index;
+    }
+
+    public boolean scrollBy(int amount, Font font) {
+        int max = Math.max(0, minimumRowWidth(font) - bounds().width());
+        if (max == 0) return false;
+        scrollX = Math.max(0, Math.min(max, scrollX + amount));
+        return true;
     }
 
     public void draw(ModularGuiContext context, int x, int y,
