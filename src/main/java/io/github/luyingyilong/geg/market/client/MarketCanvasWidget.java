@@ -51,9 +51,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private final Table<MarketDetail> offerTable = createOfferTable();
     private final DetailContent detailContent = new DetailContent();
     private final QuantityContent quantityContent = new QuantityContent();
-    private final Modal detailModal = new Modal(340, 224, 0, Component.empty())
+    private final Dialog detailDialog = new Dialog(340, 224, 0, Component.empty())
             .content(detailContent).onClose(this::closeModal);
-    private final Modal quantityModal = new Modal(224, 167, 8, Component.empty())
+    private final Dialog quantityDialog = new Dialog(224, 167, 8, Component.empty())
             .content(quantityContent).onClose(this::closeQuantityMenu).depth(300.0F);
     private final Label marketTitle = new Label(Component.translatable("market.geg.title"))
             .color(HEADER_TEXT).overflow(Label.Overflow.CLIP)
@@ -182,9 +182,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 return filterDropdown.isOpen() && filterDropdown.clickAt(0, 0, rootX, rootY);
             }
         });
-        overlay.add(detailModal).add(quantityModal);
-        detailModal.visible(false);
-        quantityModal.visible(false);
+        overlay.add(detailDialog).add(quantityDialog);
+        detailDialog.visible(false);
+        quantityDialog.visible(false);
     }
 
     private static Label scrollingCardLabel(int color) {
@@ -280,16 +280,16 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         coinBalance.setText(Component.translatable("market.geg.header_balance",
                 MoneyCurrency.COIN.format(ClientMoneyState.balance().coinMinorUnits())));
         body.refresh();
-        detailModal.visible(modal != null);
-        quantityModal.visible(modal != null && quantityMenu);
+        detailDialog.visible(modal != null);
+        quantityDialog.visible(modal != null && quantityMenu);
         if (modal != null) {
-            detailModal.title(modal.title());
+            detailDialog.title(modal.title());
             detailContent.refresh();
             configureDetailActions();
         }
         if (quantityMenu) {
             MarketDetail offer = selectedDetail();
-            quantityModal.title(offer != null && offer.buyOrder()
+            quantityDialog.title(offer != null && offer.buyOrder()
                     ? Component.translatable("market.geg.fulfill_title_fee",
                     MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints()))
                     : Component.translatable("market.geg.quantity"));
@@ -555,30 +555,30 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 + (modal.favorite != null && modal.favorite.ended());
         if (signature.equals(actionSignature)) return;
         actionSignature = signature;
-        detailModal.clearActions();
+        detailDialog.clearActions();
         if (modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE) {
             if (modal.kind == Kind.FAVORITE && modal.favorite.ended())
-                detailModal.action(Component.translatable("market.geg.unfavorite"), this::secondaryModalAction);
-            detailModal.action(Component.translatable("market.geg.request_this"), this::primaryModalAction,
+                detailDialog.action(Component.translatable("market.geg.unfavorite"), this::secondaryModalAction);
+            detailDialog.action(Component.translatable("market.geg.request_this"), this::primaryModalAction,
                     Button.Type.PRIMARY);
         } else if (modal.kind == Kind.OWN || modal.kind == Kind.OWN_REQUEST) {
-            detailModal.action(Component.translatable("market.geg.cancel_listing"), this::secondaryModalAction,
+            detailDialog.action(Component.translatable("market.geg.cancel_listing"), this::secondaryModalAction,
                     Button.Type.DESTRUCTIVE);
-            detailModal.action(Component.translatable("market.geg.reprice"), this::primaryModalAction,
+            detailDialog.action(Component.translatable("market.geg.reprice"), this::primaryModalAction,
                     Button.Type.PRIMARY);
         } else if (modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE) {
-            detailModal.action(Component.translatable(requestMode
+            detailDialog.action(Component.translatable(requestMode
                     ? "market.geg.confirm_request" : "market.geg.confirm_list"), this::primaryModalAction,
                     Button.Type.PRIMARY);
         } else if (modal.kind == Kind.DELIVERY || modal.kind == Kind.COIN) {
-            detailModal.action(Component.translatable("market.geg.claim"), this::primaryModalAction,
+            detailDialog.action(Component.translatable("market.geg.claim"), this::primaryModalAction,
                     Button.Type.PRIMARY);
         }
     }
 
     private void configureQuantityActions() {
         MarketDetail offer = selectedDetail();
-        quantityModal.clearActions().action(Component.translatable("market.geg.cancel"), this::closeQuantityMenu)
+        quantityDialog.clearActions().action(Component.translatable("market.geg.cancel"), this::closeQuantityMenu)
                 .action(Component.translatable(offer != null && offer.buyOrder()
                         ? "market.geg.confirm_fulfill" : "market.geg.confirm_buy"), this::confirmQuantity,
                         Button.Type.PRIMARY);

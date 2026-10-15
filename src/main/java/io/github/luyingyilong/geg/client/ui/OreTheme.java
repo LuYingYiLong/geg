@@ -16,7 +16,9 @@ public final class OreTheme {
     public static final WidgetThemeKey<WidgetTheme> DROPDOWN_PANEL =
             PANEL.createSubKey("dropdownPanel");
     public static final WidgetThemeKey<WidgetTheme> MENU_ITEM = PANEL.createSubKey("menuItem");
-    public static final WidgetThemeKey<WidgetTheme> LIST_ITEM = PANEL.createSubKey("listItem");
+    public static final WidgetThemeKey<WidgetTheme> BAR = PANEL.createSubKey("bar");
+    public static final WidgetThemeKey<WidgetTheme> MODAL_BACKGROUND = PANEL.createSubKey("modalBackground");
+    public static final WidgetThemeKey<WidgetTheme> MODAL_HEADER = PANEL.createSubKey("modalHeader");
     private static final WidgetThemeKey<WidgetTheme> BUTTON =
             ITheme.getDefault().getButtonTheme().key();
     public static final WidgetThemeKey<WidgetTheme> BUTTON_DISABLED =

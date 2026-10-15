@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public final class OreIcons {
     public static final ResourceLocation SMALL_CLOSE = icon("small_close");
+    public static final ResourceLocation CLOSE = icon("close");
     public static final ResourceLocation CHECKED = icon("checked");
     public static final ResourceLocation ARROW_DOWN = icon("arrow_down");
     public static final ResourceLocation FLAG = icon("flag");

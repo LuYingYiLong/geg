@@ -22,7 +22,7 @@ public final class Checkbox extends Container {
     private Consumer<Boolean> onChange = value -> { };
 
     public Checkbox(Component text) {
-        label = new Label(Objects.requireNonNull(text)).color(0xFFD8D9DC)
+        label = new Label(Objects.requireNonNull(text))
                 .overflow(Label.Overflow.ELLIPSIS)
                 .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
         addChild(label);

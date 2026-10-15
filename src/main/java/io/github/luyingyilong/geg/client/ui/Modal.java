@@ -18,66 +18,84 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/** A tree-owned overlay measured and laid out as header, content, and footer. */
+/** A positioned overlay with a one-pixel frame and themed header and footer. */
 public final class Modal extends Container {
-    public static final int PADDING = 8;
-    private static final int BODY_HORIZONTAL_INSET = PADDING;
-    private static final int BODY_BOTTOM_INSET = 5;
-    private static final int COMPACT_VERTICAL_PADDING = 2;
-    private static final int SECTION_SPACING = 4;
+    public static final int HEADER_HEIGHT = 25;
+    private static final int FRAME_INSET = 1;
+    private static final int CLOSE_HIT_WIDTH = 20;
+    private static final int CLOSE_ICON_SIZE = 7;
     private static final int BUTTON_GAP = 2;
-    private static final int HEADER_GAP = 4;
-    private static final int CONTENT_MIN_HEIGHT = 24;
-    private static final int CLOSE_SIZE = 18;
-    private static final int CLOSE_ICON_SIZE = 8;
-    private static final int OVERLAY_COLOR = 0xB8000000;
+    private static final int BODY_INSET = 8;
+    private static final int FOOTER_INSET = 8;
 
-    private final int preferredWidth;
-    private final int preferredHeight;
-    private final int verticalOffset;
-    private final Panel panel = new Panel(OreTheme.MODAL);
+    private final Panel background = new Panel(OreTheme.MODAL_BACKGROUND);
     private final Box column = new Box();
-    private final Box header = new Box().orientation(Box.Orientation.HORIZONTAL).gap(HEADER_GAP);
-    private final Padding headerInset = new Padding(new Padding.Insets(PADDING, PADDING, SECTION_SPACING, PADDING))
-            .child(header);
+    private final Panel header = new Panel(OreTheme.MODAL_HEADER);
+    private final Box headerRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
+    private final Control headerSpacer = new Control();
     private final Label titleLabel = new Label().overflow(Label.Overflow.CLIP)
-            .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+            .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
     private final CloseControl close = new CloseControl();
-    private final Box footer = new Box().orientation(Box.Orientation.VERTICAL).gap(BUTTON_GAP);
-    private final Padding footerInset = new Padding(new Padding.Insets(SECTION_SPACING, PADDING, PADDING, PADDING))
-            .child(footer);
-    private final Padding bodyInset = new Padding(new Padding.Insets(PADDING, BODY_HORIZONTAL_INSET,
-            PADDING, BODY_HORIZONTAL_INSET));
+    private final Padding bodyInset = new Padding(Padding.Insets.all(BODY_INSET));
+    private final Panel footer = new Panel(OreTheme.BAR);
+    private final Box footerButtons = new Box().gap(BUTTON_GAP);
+    private final Padding footerInset = new Padding(Padding.Insets.all(FOOTER_INSET)).child(footerButtons);
     private final List<Button> actions = new ArrayList<>();
     private Control content;
     private Runnable onClose = () -> { };
+    private int requestedWidth;
+    private int requestedHeight;
+    private Integer customX;
+    private Integer customY;
     private float depth = 200.0F;
 
     public Modal(Component title) {
-        this(0, 0, 0, title);
-    }
-
-    public Modal(int width, int height, int verticalOffset, Component title) {
-        preferredWidth = Math.max(0, width);
-        preferredHeight = Math.max(0, height);
-        this.verticalOffset = verticalOffset;
         title(title);
         titleLabel.policy(SizePolicy.EXPAND, SizePolicy.FILL);
-        close.minimum(CLOSE_SIZE, CLOSE_SIZE);
-        header.minimum(0, CLOSE_SIZE).policy(SizePolicy.FILL, SizePolicy.CONTENT);
-        header.add(titleLabel).add(close);
-        headerInset.policy(SizePolicy.FILL, SizePolicy.CONTENT);
-        column.add(headerInset);
+        headerSpacer.minimum(CLOSE_HIT_WIDTH, HEADER_HEIGHT);
+        close.minimum(CLOSE_HIT_WIDTH, HEADER_HEIGHT);
+        headerRow.add(headerSpacer).add(titleLabel).add(close);
+        header.child(new Padding(new Padding.Insets(0, 4, 0, 4)).child(headerRow));
+        header.minimum(0, HEADER_HEIGHT).preferred(0, HEADER_HEIGHT)
+                .policy(SizePolicy.FILL, SizePolicy.CONTENT);
+        bodyInset.policy(SizePolicy.FILL, SizePolicy.EXPAND);
+        bodyInset.minimum(0, BODY_INSET * 2);
+        footerButtons.policy(SizePolicy.FILL, SizePolicy.CONTENT);
+        footer.child(footerInset);
         footer.policy(SizePolicy.FILL, SizePolicy.CONTENT);
-        footerInset.policy(SizePolicy.FILL, SizePolicy.CONTENT);
-        footerInset.visible(false);
-        column.add(footerInset);
-        panel.child(column);
-        addChild(panel);
+        footer.visible(false);
+        column.add(header).add(bodyInset).add(footer);
+        background.child(new Padding(Padding.Insets.all(FRAME_INSET)).child(column));
+        addChild(background);
     }
 
-    @Override public Modal minimum(int width, int height) {
-        super.minimum(width, height);
+    public Modal size(int width, int height) {
+        int nextWidth = Math.max(0, width);
+        int nextHeight = Math.max(0, height);
+        if (requestedWidth != nextWidth || requestedHeight != nextHeight) {
+            requestedWidth = nextWidth;
+            requestedHeight = nextHeight;
+            requestLayout();
+        }
+        return this;
+    }
+
+    /** Coordinates are relative to the GUI viewport, not the operating-system window. */
+    public Modal position(int x, int y) {
+        if (!Objects.equals(customX, x) || !Objects.equals(customY, y)) {
+            customX = x;
+            customY = y;
+            requestLayout();
+        }
+        return this;
+    }
+
+    public Modal centered() {
+        if (customX != null || customY != null) {
+            customX = null;
+            customY = null;
+            requestLayout();
+        }
         return this;
     }
 
@@ -100,19 +118,14 @@ public final class Modal extends Container {
         this.content = Objects.requireNonNull(content);
         content.policy(SizePolicy.FILL, SizePolicy.EXPAND);
         bodyInset.child(content);
-        if (bodyInset.parent() == null) {
-            bodyInset.policy(SizePolicy.FILL, SizePolicy.EXPAND);
-            column.removeChild(footerInset);
-            column.add(bodyInset).add(footerInset);
-        }
         return this;
     }
 
     public Modal clearActions() {
-        for (Button action : actions) footer.removeChild(action);
+        for (Button action : actions) footerButtons.removeChild(action);
         actions.clear();
+        footer.visible(false);
         footer.minimum(0, 0);
-        footerInset.visible(false);
         return this;
     }
 
@@ -122,56 +135,57 @@ public final class Modal extends Container {
 
     public Modal action(Component label, Runnable onClick, Button.Type type) {
         Button button = new Button(label).type(type).onPress(onClick);
-        button.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        button.policy(SizePolicy.FILL, SizePolicy.CONTENT);
         actions.add(button);
-        footer.addChild(button);
-        footer.minimum(0, actionHeight(actions.size()));
-        footerInset.visible(true);
+        footerButtons.add(button);
+        footer.visible(true);
+        footer.minimum(0, FOOTER_INSET * 2 + actions.size() * Button.HEIGHT
+                + (actions.size() - 1) * BUTTON_GAP);
         return this;
     }
 
     public Rect panelBounds() {
-        return panel.absoluteBounds();
+        return background.absoluteBounds();
     }
 
     public Rect contentBounds() {
-        return content == null ? new Rect(0, 0, 0, 0)
-                : content.absoluteBounds();
+        return content == null ? new Rect(0, 0, 0, 0) : content.absoluteBounds();
     }
 
-    public static Rect fittedBounds(
-            int preferredWidth, int preferredHeight, int verticalOffset, int viewportWidth, int viewportHeight) {
-        int horizontalMargin = Math.min(6, Math.max(1, viewportWidth / 32));
-        int verticalMargin = viewportHeight < 110 ? 1 : 2;
-        int width = Math.max(1, Math.min(preferredWidth,
-                Math.max(1, viewportWidth - 2 * horizontalMargin)));
-        int height = Math.max(1, Math.min(preferredHeight,
-                Math.max(1, viewportHeight - 2 * verticalMargin)));
-        int x = (viewportWidth - width) / 2;
-        int y = (viewportHeight - height) / 2 + verticalOffset;
-        y = Math.max(0, Math.min(Math.max(0, viewportHeight - height), y));
-        return new Rect(x, y, width, height);
+    public static Rect centeredBounds(int width, int height, int viewportWidth, int viewportHeight) {
+        return fittedBounds(width, height, null, null, viewportWidth, viewportHeight);
+    }
+
+    public static Rect positionedBounds(int width, int height, int x, int y,
+                                        int viewportWidth, int viewportHeight) {
+        return fittedBounds(width, height, x, y, viewportWidth, viewportHeight);
+    }
+
+    private static Rect fittedBounds(int width, int height, Integer x, Integer y,
+                                     int viewportWidth, int viewportHeight) {
+        int fittedWidth = Math.max(1, Math.min(width, Math.max(1, viewportWidth)));
+        int fittedHeight = Math.max(1, Math.min(height, Math.max(1, viewportHeight)));
+        int left = x == null ? (viewportWidth - fittedWidth) / 2 : x;
+        int top = y == null ? (viewportHeight - fittedHeight) / 2 : y;
+        left = Math.max(0, Math.min(Math.max(0, viewportWidth - fittedWidth), left));
+        top = Math.max(0, Math.min(Math.max(0, viewportHeight - fittedHeight), top));
+        return new Rect(left, top, fittedWidth, fittedHeight);
     }
 
     @Override public void layout(Rect viewport, Font font) {
-        int verticalPadding = viewport.height() < 110 ? COMPACT_VERTICAL_PADDING : PADDING;
-        headerInset.insets(new Padding.Insets(verticalPadding, PADDING, SECTION_SPACING, PADDING));
-        footerInset.insets(new Padding.Insets(SECTION_SPACING, PADDING, verticalPadding, PADDING));
         super.layout(viewport, font);
-        Size measured = panel.measureSize(font, new Size(viewport.width(), viewport.height()));
-        int width = Math.max(Math.max(preferredWidth, minimumWidth()), measured.width());
-        int intrinsicContentHeight = content == null ? 0
-                : content.measureSize(font, new Size(viewport.width(), viewport.height())).height();
-        int fallbackBodyHeight = content != null && intrinsicContentHeight == 0 ? CONTENT_MIN_HEIGHT : 0;
-        int height = Math.max(Math.max(preferredHeight, minimumHeight()), measured.height() + fallbackBodyHeight);
-        fitChild(panel, fittedBounds(width, height, verticalOffset,
+        int desiredWidth = requestedWidth > 0 ? requestedWidth
+                : Math.max(minimumWidth(), background.measureSize(font,
+                        new Size(viewport.width(), viewport.height())).width());
+        int desiredHeight = requestedHeight > 0 ? requestedHeight
+                : Math.max(minimumHeight(), background.measureSize(font,
+                        new Size(desiredWidth, viewport.height())).height());
+        fitChild(background, fittedBounds(desiredWidth, desiredHeight, customX, customY,
                 viewport.width(), viewport.height()), font);
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-        Rect area = screenBounds(screenX, screenY);
-        context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), OVERLAY_COLOR);
-        WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.MODAL);
+        WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.MODAL_HEADER);
         WidgetTheme style = entry == null ? context.getTheme().getPanelTheme().theme() : entry.theme();
         titleLabel.color(style.getTextColor()).shadow(style.isTextShadow());
     }
@@ -190,10 +204,10 @@ public final class Modal extends Container {
         }
     }
 
-    /** Returns true for all clicks while open; the topmost modal owns its entire overlay. */
+    /** The topmost modal consumes clicks both inside and outside its panel. */
     public boolean clickAt(int rootX, int rootY) {
         if (!visible()) return false;
-        if (!panel.hit(rootX, rootY) || close.hit(rootX, rootY)) {
+        if (!background.hit(rootX, rootY) || close.hit(rootX, rootY)) {
             onClose.run();
             return true;
         }
@@ -205,20 +219,15 @@ public final class Modal extends Container {
         return clickAt(rootX, rootY);
     }
 
-    private static int actionHeight(int count) {
-        return count == 0 ? 0 : count * Button.Size.MEDIUM.height() + (count - 1) * BUTTON_GAP;
-    }
-
     private static final class CloseControl extends Control {
         @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
             Rect area = screenBounds(screenX, screenY);
-            GuiGraphics graphics = context.getGraphics();
             if (area.contains(context.getAbsMouseX(), context.getAbsMouseY()))
-                graphics.fill(area.x(), area.y(), area.right(), area.bottom(), 0x66303030);
+                context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), 0x44FFFFFF);
             int x = area.x() + (area.width() - CLOSE_ICON_SIZE) / 2;
             int y = area.y() + (area.height() - CLOSE_ICON_SIZE) / 2;
-            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            graphics.blit(OreIcons.SMALL_CLOSE, x, y, 0.0F, 0.0F,
+            context.getGraphics().setColor(1.0F, 1.0F, 1.0F, 1.0F);
+            context.getGraphics().blit(OreIcons.CLOSE, x, y, 0.0F, 0.0F,
                     CLOSE_ICON_SIZE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);
         }
     }

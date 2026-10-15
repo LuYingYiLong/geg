@@ -100,19 +100,49 @@
       "borderY": 1
     }
   },
-  "panel:listItem": {
-    "textColor": "#FFFCFCFC",
+  "panel:bar": {
+    "textColor": "#FFFFFFFF",
     "textShadow": false,
     "background": {
       "type": "texture",
-      "location": "geg:modularui/gui/list_item",
-      "imageWidth": 16,
-      "imageHeight": 16,
+      "location": "geg:modularui/gui/bar",
+      "imageWidth": 3,
+      "imageHeight": 3,
       "x": 0,
       "y": 0,
-      "width": 16,
-      "height": 16,
+      "width": 3,
+      "height": 3,
       "borderX": 0,
+      "borderY": 1
+    }
+  },
+  "panel:modalBackground": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/modal_background",
+      "imageWidth": 3,
+      "imageHeight": 3,
+      "x": 0,
+      "y": 0,
+      "width": 3,
+      "height": 3,
+      "borderX": 1,
+      "borderY": 1
+    }
+  },
+  "panel:modalHeader": {
+    "textColor": "#FFFFFFFF",
+    "textShadow": false,
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/modal_header",
+      "imageWidth": 3,
+      "imageHeight": 3,
+      "x": 0,
+      "y": 0,
+      "width": 3,
+      "height": 3,
+      "borderX": 1,
       "borderY": 1
     }
   },

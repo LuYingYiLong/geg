@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntUnaryOperator;
 
-/** Fixed-header table whose rows use the Ore list-item theme and shared draw/hit geometry. */
+/** Fixed-header table whose rows use the Ore bar theme and shared draw/hit geometry. */
 public final class Table<T> extends Container {
     public interface Cell<T> {
         void draw(ModularGuiContext context, T row, Rect bounds);
@@ -276,7 +276,7 @@ public final class Table<T> extends Container {
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
         if (bounds().width() <= 0 || bounds().height() <= 0) return;
-        if (rowBackground == null) rowBackground = new Panel(OreTheme.LIST_ITEM);
+        if (rowBackground == null) rowBackground = new Panel(OreTheme.BAR);
         updateVisible(context.getFont());
         Rect area = screenBounds(screenX, screenY);
         if (!compact) drawHeader(context, area);

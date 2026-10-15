@@ -6,9 +6,9 @@ import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
 import io.github.luyingyilong.geg.client.ui.Button;
 import io.github.luyingyilong.geg.client.ui.Form;
-import io.github.luyingyilong.geg.client.ui.FormItem;
 import io.github.luyingyilong.geg.client.ui.Input;
 import io.github.luyingyilong.geg.client.ui.Label;
+import io.github.luyingyilong.geg.client.ui.Dialog;
 import io.github.luyingyilong.geg.client.ui.Modal;
 import io.github.luyingyilong.geg.client.ui.OreIcons;
 import io.github.luyingyilong.geg.client.ui.OreTheme;
@@ -30,7 +30,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private final Overlay overlay = new Overlay();
     private final Box options = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
     private final Form createForm;
-    private final Modal emptyModal;
+    private final Dialog emptyDialog;
     private final Modal createModal;
 
     OrganizationCanvasWidget(Form createForm, Input name, Input description) {
@@ -52,7 +52,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                 .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
         emptyText.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
         Box emptyBody = new Box().gap(8).add(emptyText).add(options);
-        emptyModal = new Modal(270, 0, 0, Component.translatable("organization.geg.title"))
+        emptyDialog = new Dialog(270, 0, 0, Component.translatable("organization.geg.title"))
                 .content(emptyBody).onClose(() -> Minecraft.getInstance().setScreen(null));
 
         Label preview = new Label(Component.translatable("organization.geg.preview"))
@@ -61,12 +61,12 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         preview.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
         createForm.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
         Box createBody = new Box().gap(4).add(createForm).add(preview);
-        createModal = new Modal(290, 0, 0, Component.translatable("organization.geg.create"))
+        createModal = new Modal(Component.translatable("organization.geg.create"))
                 .content(createBody).onClose(this::showEmpty)
                 .action(Component.translatable("organization.geg.back"), this::showEmpty)
                 .action(Component.translatable("organization.geg.create_action"),
                         this::showCreateUnavailable, Button.Type.PRIMARY);
-        overlay.add(emptyModal).add(createModal);
+        overlay.add(emptyDialog).add(createModal);
         createModal.visible(false);
         createForm.setVisible(false);
         name.setInputVisible(false);
@@ -74,7 +74,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     void showInitialState() {
-        emptyModal.visible(false);
+        emptyDialog.visible(false);
         createModal.visible(false);
         createForm.setVisible(false);
         if (!ClientOrganizationState.hasOrganizations()) showEmpty();
@@ -94,12 +94,12 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private void showEmpty() {
         createForm.setVisible(false);
         createModal.visible(false);
-        emptyModal.visible(true);
+        emptyDialog.visible(true);
         requestLayout();
     }
 
     private void showCreate() {
-        emptyModal.visible(false);
+        emptyDialog.visible(false);
         createModal.visible(true);
         createForm.setVisible(true);
         requestLayout();
@@ -125,6 +125,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     @Override public void draw(ModularGuiContext context, WidgetThemeEntry<?> theme) {
         Rect area = new Rect(getArea().x, getArea().y, getArea().width, getArea().height);
         if (area.width() == 0 || area.height() == 0) return;
+        int modalWidth = Math.max(1, area.width() / 2);
+        createModal.size(modalWidth, area.height()).position(area.width() - modalWidth, 0);
         options.orientation(area.width() < 252 ? Box.Orientation.VERTICAL : Box.Orientation.HORIZONTAL);
         window.layoutViewport(area.width(), area.height(), context.getFont());
         window.draw(context, area.x(), area.y());
