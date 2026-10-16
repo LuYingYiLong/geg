@@ -15,6 +15,9 @@ public final class NumberInput extends Input {
 
     private final Kind kind;
     private Component error;
+    private boolean allowZero;
+
+    public NumberInput allowZero(boolean allowZero) { this.allowZero = allowZero; return this; }
     private int maximumQuantity = Integer.MAX_VALUE;
 
     public NumberInput(float depth, Kind kind) {
@@ -42,7 +45,7 @@ public final class NumberInput extends Input {
     public boolean commit() {
         try {
             String formatted = kind == Kind.QUANTITY
-                    ? DecimalExpression.quantity(getText()) : DecimalExpression.coin(getText());
+                    ? DecimalExpression.quantity(getText()) : DecimalExpression.coin(getText(), allowZero);
             if (kind == Kind.QUANTITY && Integer.parseInt(formatted) > maximumQuantity) {
                 throw new IllegalArgumentException("Quantity exceeds available amount");
             }

@@ -41,14 +41,14 @@ public final class Drawer extends Container {
     private final LongSupplier clock;
     private final Consumer<OreSounds.Cue> soundPlayer;
     private final Label title = new Label().hero(true).overflow(Label.Overflow.ELLIPSIS)
-            .align(Label.Horizontal.LEFT, Label.Vertical.CENTER).color(0xFFFFFFFF);
+            .align(Label.Horizontal.LEFT, Label.Vertical.CENTER).color(OreTheme.TEXT_WHITE);
     private final Box header = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
     private final Box footer = new Box().gap(2);
     private final Scroll body = new Scroll().embedded(true);
     private final Box column = new Box().gap(4);
     private final Padding frame = new Padding(Padding.Insets.all(PADDING)).child(column);
     private Panel background;
-    private int titleColor = 0xFFFFFFFF;
+    private int titleColor = OreTheme.TEXT_WHITE;
     private Runnable onClose = () -> { };
     private int requestedWidth;
     private float depth = 200.0F;
@@ -132,6 +132,8 @@ public final class Drawer extends Container {
     }
 
     public Drawer onClose(Runnable callback) { onClose = Objects.requireNonNull(callback); return this; }
+    @Override public float contentDepth() { return depth; }
+
     public Drawer depth(float depth) { this.depth = depth; return this; }
     public float depth() { return depth; }
 

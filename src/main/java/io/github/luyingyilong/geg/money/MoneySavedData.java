@@ -19,6 +19,7 @@ public final class MoneySavedData extends SavedData {
     private static final String WALLETS_KEY = "wallets";
 
     private final Map<UUID, MoneyBalance> wallets = new HashMap<>();
+    private io.github.luyingyilong.geg.mail.MailState mail = new io.github.luyingyilong.geg.mail.MailState();
     private MarketState market = new MarketState();
     private int marketFeeBasisPoints;
     private final List<CoinAuditEntry> audit = new ArrayList<>();
@@ -62,6 +63,7 @@ public final class MoneySavedData extends SavedData {
         if (root.contains("market", Tag.TAG_COMPOUND)) {
             data.market = MarketState.load(root.getCompound("market"));
         }
+        data.mail = io.github.luyingyilong.geg.mail.MailState.load(root.getCompound("mail"));
         data.marketFeeBasisPoints = Math.max(0, Math.min(10000, root.getInt("marketFeeBasisPoints")));
 
         data.auditInitialized = root.getBoolean("auditInitialized");
@@ -103,6 +105,13 @@ public final class MoneySavedData extends SavedData {
         setDirty();
     }
 
+
+    public io.github.luyingyilong.geg.mail.MailState mail() { return mail; }
+
+    public void requireAuditCapacity(int entries) {
+        if (entries < 0 || entries > Long.MAX_VALUE - nextAuditSequence)
+            throw new IllegalStateException("Audit sequence exhausted");
+    }
 
     public MarketState market() {
         return market;
@@ -197,6 +206,7 @@ public final class MoneySavedData extends SavedData {
         });
         root.put(WALLETS_KEY, entries);
         root.put("market", market.save());
+        root.put("mail", mail.save());
         root.putInt("marketFeeBasisPoints", marketFeeBasisPoints);
         root.putBoolean("auditInitialized", auditInitialized);
         root.putLong("nextAuditSequence", nextAuditSequence);

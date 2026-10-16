@@ -90,6 +90,10 @@ public final class Scroll extends Container {
     public VScrollBar verticalBar() { return verticalBar; }
     public HScrollBar horizontalBar() { return horizontalBar; }
     public boolean embedded() { return embedded; }
+    /** Uses the same rectangles as pointer dispatch, including embedded bars. */
+    public boolean scrollbarAt(int rootX, int rootY) {
+        return showVertical && verticalBar.hit(rootX, rootY) || showHorizontal && horizontalBar.hit(rootX, rootY);
+    }
     public boolean verticalVisible() { return showVertical; }
     public boolean horizontalVisible() { return showHorizontal; }
     public Rect viewport() { return viewport; }
@@ -222,8 +226,15 @@ public final class Scroll extends Container {
                 graphics.disableScissor();
             }
         }
-        if (showVertical) verticalBar.draw(context, screenX, screenY);
-        if (showHorizontal) horizontalBar.draw(context, screenX, screenY);
+        GuiGraphics graphics = context.getGraphics();
+        graphics.flush();
+        graphics.pose().pushPose();
+        graphics.pose().translate(0.0F, 0.0F, io.github.luyingyilong.geg.client.ui.util.OreLayers.SCROLLBAR);
+        try {
+            if (showVertical) verticalBar.draw(context, screenX, screenY);
+            if (showHorizontal) horizontalBar.draw(context, screenX, screenY);
+            graphics.flush();
+        } finally { graphics.pose().popPose(); }
     }
 
     @Override public boolean dispatchPointer(int rootX, int rootY) {

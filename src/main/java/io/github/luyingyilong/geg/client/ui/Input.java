@@ -4,6 +4,7 @@ import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
+import brachy.modularui.theme.TextFieldTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widgets.textfield.TextFieldWidget;
 import net.minecraft.client.gui.GuiGraphics;
@@ -11,6 +12,10 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
+import io.github.luyingyilong.geg.client.ui.util.NativePaintPass;
+import io.github.luyingyilong.geg.client.ui.util.OreLayers;
+import brachy.modularui.widget.WidgetTree;
+import org.joml.Matrix4f;
 
 import java.util.function.IntPredicate;
 
@@ -22,6 +27,7 @@ public class Input extends TextFieldWidget {
     private Runnable mousePressHandler = () -> { };
     private Runnable focusLostHandler = () -> { };
     private InputControl layoutControl;
+    private final NativePaintPass paintPass = new NativePaintPass();
 
     public Input() {
         this(0.0F);
@@ -31,6 +37,10 @@ public class Input extends TextFieldWidget {
         this.depth = depth;
         renderer = new OreTextFieldRenderer(handler);
         handler.setRenderer(renderer);
+        getScrollArea().setScrollX(io.github.luyingyilong.geg.client.ui.util.HiddenInputScroll.horizontal());
+        // An explicit empty builder prevents TextFieldWidget.onInit from adding its overflow tooltip.
+        tooltipBuilder(tooltip -> { });
+        showScrollShadows(false);
     }
 
     public Input controlSize(Button.Size size) {
@@ -39,13 +49,15 @@ public class Input extends TextFieldWidget {
         return this;
     }
 
+    public int preferredInputHeight() { return controlSize.height(); }
+
     public Button.Size controlSize() {
         return controlSize;
     }
 
     public Input placeholder(Component placeholder) {
         hintText(java.util.Objects.requireNonNull(placeholder));
-        hintColor(0xFFA9AAAC);
+        hintColor(OreTheme.TEXT_SECONDARY);
         return this;
     }
 
@@ -91,13 +103,14 @@ public class Input extends TextFieldWidget {
         var cursor = ((OreTextFieldRenderer) renderer).caretPosition();
         return new Caret(
                 area.x() + Math.max(0, Math.min(area.width() - 2, (int) cursor.x)),
-                area.y() + Math.max(0, Math.min(area.height(), (int) cursor.y + inputMethodFontHeight())));
+                area.y() + Math.max(0, Math.min(area.height(), (int) cursor.y - getScrollY() + inputMethodFontHeight())));
     }
 
     @Override public boolean canHover() { return layoutInteractive() && super.canHover(); }
 
     @Override public boolean isBelowMouseFor(int button) {
         if (!layoutInteractive()) return false;
+        if (layoutControl != null && !layoutControl.pointerInteractive(getContext().getAbsMouseX(), getContext().getAbsMouseY())) return false;
         Rect clip = layoutControl == null ? null : layoutControl.drawingClip();
         if (clip != null && !clip.contains(getContext().getAbsMouseX(), getContext().getAbsMouseY())) return false;
         return super.isBelowMouseFor(button);
@@ -130,9 +143,11 @@ public class Input extends TextFieldWidget {
 
     @Override public void onRemoveFocus(ModularGuiContext context) {
         OreInputMethod.release(this);
-        super.onRemoveFocus(context);
+        removeNativeFocus(context);
         focusLostHandler.run();
     }
+
+    protected void removeNativeFocus(ModularGuiContext context) { super.onRemoveFocus(context); }
 
     @Override public void dispose() {
         OreInputMethod.release(this);
@@ -140,7 +155,8 @@ public class Input extends TextFieldWidget {
     }
 
     @Override public @NotNull Interactable.Result onMousePressed(int button) {
-        if (!layoutInteractive()) return Interactable.Result.IGNORE;
+        if (!layoutInteractive() || layoutControl != null
+                && !layoutControl.pointerInteractive(getContext().getAbsMouseX(), getContext().getAbsMouseY())) return Interactable.Result.IGNORE;
         if (isFocused() && composing()) cancelPreedit();
         Interactable.Result result = super.onMousePressed(button);
         if (result != Interactable.Result.IGNORE) mousePressHandler.run();
@@ -170,6 +186,7 @@ public class Input extends TextFieldWidget {
 
     @Override
     public void preDraw(ModularGuiContext context, boolean drawText) {
+        if (!paintPass.accepts(layoutControl != null)) return;
         if (inputVisible()) refreshPreeditDisplay();
         if (drawText) {
             if (inputVisible()) {
@@ -181,13 +198,56 @@ public class Input extends TextFieldWidget {
     }
 
     @Override
+    public void postDraw(ModularGuiContext context, boolean drawText) {
+        // Pair the native text clip, but omit AbstractScrollWidget's scrollbar/shadow painting.
+        if (paintPass.accepts(layoutControl != null) && !drawText) context.getStencil().pop();
+    }
+
+    /** Paint at the InputControl's position in the tree, before its Scroll paints the bars. */
+    void drawInTree(ModularGuiContext context) {
+        if (!inputVisible()) return;
+        GuiGraphics graphics = context.getGraphics();
+        graphics.flush();
+        graphics.pose().pushPose();
+        try {
+            // drawTree applies the MUI context matrix itself. Remove only that matrix here,
+            // retaining the enclosing Drawer/Dialog pose and the active Ore viewport clips.
+            graphics.pose().mulPoseMatrix(new Matrix4f(context.peek().getMatrix()).invert());
+            paintPass.paint(() -> WidgetTree.drawTree(this, context));
+            graphics.flush();
+        } finally {
+            graphics.pose().popPose();
+        }
+    }
+
+    /** All hints occupy the first standard input row, including a taller multiline editor. */
+    protected int firstLineTop() {
+        return io.github.luyingyilong.geg.client.ui.util.InputGeometry.firstLineTop(
+                getArea().getPadding().top(), getArea().paddedHeight(), controlSize.height(), renderer.getFontHeight());
+    }
+
+    @Override protected void drawText(ModularGuiContext context, TextFieldTheme theme) {
+        Component placeholder = hintText;
+        hintText = null;
+        try { super.drawText(context, theme); }
+        finally { hintText = placeholder; }
+        if (placeholder == null || !handler.isTextEmpty() || composing()) return;
+        int top = firstLineTop();
+        int color = hintTextColor == null ? OreTheme.TEXT_SECONDARY : hintTextColor;
+        Label label = new Label(placeholder).color(color).scale(scale).overflow(Label.Overflow.VISIBLE);
+        label.layout(new Rect(getArea().getPadding().left(), top, getArea().paddedWidth(),
+                Math.max(0, Math.min(controlSize.height(), getArea().height - top))), context.getFont());
+        label.draw(context, 0, 0);
+    }
+
+    @Override
     public void drawBackground(ModularGuiContext context, WidgetThemeEntry<?> theme) {
-        // The parent canvas may draw after the widget background pass.
+        // Background and text belong to the same Ore-owned pass, not MUI's sibling background pass.
     }
 
     @Override
     public void draw(ModularGuiContext context, WidgetThemeEntry<?> theme) {
-        if (inputVisible()) {
+        if (inputVisible() && paintPass.accepts(layoutControl != null)) {
             refreshPreeditDisplay();
             withDepth(context, () -> {
                 WidgetThemeEntry<WidgetTheme> inputEntry = context.getTheme()
@@ -206,7 +266,7 @@ public class Input extends TextFieldWidget {
 
     @Override
     public void drawOverlay(ModularGuiContext context, WidgetThemeEntry<?> theme) {
-        if (inputVisible()) {
+        if (inputVisible() && paintPass.accepts(layoutControl != null)) {
             withDepth(context, () -> super.drawOverlay(context, theme));
         }
     }
@@ -223,7 +283,7 @@ public class Input extends TextFieldWidget {
         graphics.flush();
         graphics.pose().pushPose();
         graphics.pose().translate(0.0F, 0.0F,
-                layoutControl == null ? depth : layoutControl.drawingDepth(depth));
+                paintPass.active() ? OreLayers.INPUT : layoutControl == null ? depth : layoutControl.drawingDepth());
         Rect clip = layoutControl == null ? null : layoutControl.drawingClip();
         if (clip != null) graphics.enableScissor(clip.x(), clip.y(), clip.right(), clip.bottom());
         Rect fieldClip = inputMethodBounds();

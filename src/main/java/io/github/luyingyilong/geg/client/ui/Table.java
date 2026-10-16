@@ -185,7 +185,7 @@ public final class Table<T> extends Container {
     private Function<T, Object> rowKey;
     private Consumer<T> onRowClick = row -> { };
     private Component empty = Component.empty();
-    private int headerColor = 0xFFD8D9DC;
+    private int headerColor = OreTheme.TEXT_SECONDARY;
     private int[] columnWidths = new int[0];
     private int scroll;
     private int contentHeight;

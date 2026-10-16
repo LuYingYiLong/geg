@@ -22,6 +22,19 @@ public final class OrganizationSavedData extends SavedData {
     private final Map<UUID, Organization> organizations = new HashMap<>();
     private final Map<UUID, Map<UUID, Long>> applications = new HashMap<>();
 
+    public record MailEvent(UUID id, UUID recipient, String organization, String action) {
+        public CompoundTag save() {
+            CompoundTag tag = new CompoundTag(); tag.putUUID("id", id); tag.putUUID("recipient", recipient);
+            tag.putString("organization", organization); tag.putString("action", action); return tag;
+        }
+    }
+    // Retained for replay after independent save-file failures; mail delivery deduplicates by event ID.
+    private final List<MailEvent> mailEvents = new ArrayList<>();
+    public List<MailEvent> mailEvents() { return List.copyOf(mailEvents); }
+    private void notifyMail(Organization organization, UUID recipient, Operation operation) {
+        mailEvents.add(new MailEvent(UUID.randomUUID(), recipient, organization.name(), operation.name().toLowerCase(Locale.ROOT)));
+    }
+
     public enum CreateResult { CREATED, INVALID_NAME, INVALID_DESCRIPTION, DUPLICATE_NAME, TOO_MANY }
     public enum Operation { DISBAND, PROMOTE, DEMOTE, REMOVE, LEAVE, APPLY, APPROVE, REJECT, CANCEL_APPLICATION }
     public enum OperationResult {
@@ -57,6 +70,11 @@ public final class OrganizationSavedData extends SavedData {
             if (pending.size() < MAX_APPLICATIONS)
                 pending.putIfAbsent(applicant, tag.getLong("appliedAt"));
         }
+        for (Tag raw : root.getList("mailEvents", Tag.TAG_COMPOUND)) {
+            CompoundTag tag = (CompoundTag) raw;
+            if (tag.hasUUID("id") && tag.hasUUID("recipient")) data.mailEvents.add(new MailEvent(
+                    tag.getUUID("id"), tag.getUUID("recipient"), tag.getString("organization"), tag.getString("action")));
+        }
         return data;
     }
 
@@ -76,6 +94,7 @@ public final class OrganizationSavedData extends SavedData {
                             pending.add(tag);
                         }));
         root.put("applications", pending);
+        ListTag events = new ListTag(); mailEvents.forEach(event -> events.add(event.save())); root.put("mailEvents", events);
         return root;
     }
 
@@ -148,6 +167,7 @@ public final class OrganizationSavedData extends SavedData {
             }
             pending.remove(target);
             if (pending.isEmpty()) applications.remove(organizationId);
+            notifyMail(organization, target, operation);
             setDirty();
             return OperationResult.SUCCESS;
         }
@@ -179,6 +199,8 @@ public final class OrganizationSavedData extends SavedData {
                 organizations.put(organizationId, organization.withoutMember(target));
             }
         }
+        if (operation == Operation.PROMOTE || operation == Operation.DEMOTE || operation == Operation.REMOVE)
+            notifyMail(organization, target, operation);
         setDirty();
         return OperationResult.SUCCESS;
     }

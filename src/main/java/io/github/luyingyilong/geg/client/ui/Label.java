@@ -32,7 +32,7 @@ public final class Label extends Control {
     private Wrap wrap = Wrap.NONE;
     private Horizontal horizontal = Horizontal.LEFT;
     private Vertical vertical = Vertical.TOP;
-    private int color = 0xFFFFFFFF;
+    private int color = OreTheme.TEXT_WHITE;
     private boolean shadow;
     private float scale = 1.0F;
     private float fontSize = DEFAULT_FONT_SIZE;
@@ -279,12 +279,12 @@ public final class Label extends Control {
                 boolean hovered = area.contains(context.getAbsMouseX(), context.getAbsMouseY());
                 lineX = area.x() - marqueeOffset(font, area.width(), System.nanoTime() / 1_000_000L, hovered);
             }
-            if (textScale == 1.0F) graphics.drawString(font, line, lineX, startY + index * lineHeight, color, shadow);
+            if (textScale == 1.0F) OreFonts.draw(graphics, font, line, lineX, startY + index * lineHeight, color, shadow);
             else {
                 graphics.pose().pushPose();
                 graphics.pose().translate(lineX, startY + index * lineHeight, 0.0F);
                 graphics.pose().scale(textScale, textScale, 1.0F);
-                graphics.drawString(font, line, 0, 0, color, shadow);
+                OreFonts.draw(graphics, font, line, 0, 0, color, shadow);
                 graphics.pose().popPose();
             }
         }

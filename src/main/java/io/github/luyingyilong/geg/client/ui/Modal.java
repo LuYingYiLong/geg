@@ -117,6 +117,8 @@ public final class Modal extends Container {
         return this;
     }
 
+    @Override public float contentDepth() { return depth; }
+
     public Modal depth(float depth) {
         this.depth = depth;
         return this;

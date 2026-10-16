@@ -26,10 +26,10 @@ import java.util.*;
 
 
 final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Interactable {
-    private static final int ACCENT = 0xFF52BEA8;
-    private static final int TEXT = 0xFFFCFCFC;
-    private static final int HEADER_TEXT = 0xFF1E1E1F;
-    private static final int SECONDARY_TEXT = 0xFFD8D9DC;
+    private static final int ACCENT = OreTheme.TEXT_ACCENT;
+    private static final int TEXT = OreTheme.TEXT_WHITE;
+    private static final int HEADER_TEXT = OreTheme.TEXT_DARK;
+    private static final int SECONDARY_TEXT = OreTheme.TEXT_SECONDARY;
     private static final int CARD_GAP = 4;
     private static final int MIN_CARD_WIDTH = 96;
     private static final int FOOTER_HEIGHT = Button.Size.MEDIUM.height();

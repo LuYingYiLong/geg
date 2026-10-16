@@ -44,8 +44,8 @@ public final class FormItem extends Container {
         this.input = input;
         this.field = Objects.requireNonNull(field);
         this.value = Objects.requireNonNull(value);
-        labelNode = new Label(label).color(0xFFD8D9DC).overflow(Label.Overflow.CLIP);
-        errorNode = new Label().color(0xFFFF7777).overflow(Label.Overflow.CLIP);
+        labelNode = new Label(label).color(OreTheme.TEXT_WHITE).overflow(Label.Overflow.CLIP);
+        errorNode = new Label().color(OreTheme.TEXT_ERROR).overflow(Label.Overflow.CLIP);
         inputNode = field instanceof InputControl node ? node : null;
         addChild(labelNode);
         addChild(field);

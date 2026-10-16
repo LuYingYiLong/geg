@@ -27,7 +27,7 @@ public final class Checkbox extends Container {
     private final ReleaseGesture<Boolean> gesture = new ReleaseGesture<>();
 
     public Checkbox(Component text) {
-        label = new Label(Objects.requireNonNull(text))
+        label = new Label(Objects.requireNonNull(text)).color(OreTheme.TEXT_WHITE)
                 .overflow(Label.Overflow.ELLIPSIS)
                 .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
         addChild(label);
@@ -54,7 +54,7 @@ public final class Checkbox extends Container {
     public Checkbox enabled(boolean enabled) {
         this.enabled = enabled;
         if (!enabled) cancelInteraction();
-        label.color(enabled ? 0xFFD8D9DC : 0xFF858585);
+        label.color(enabled ? OreTheme.TEXT_WHITE : OreTheme.TEXT_DISABLED);
         return this;
     }
 

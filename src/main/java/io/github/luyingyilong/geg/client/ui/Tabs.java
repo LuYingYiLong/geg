@@ -255,7 +255,7 @@ public final class Tabs extends Control {
                 int lineWidth = Math.min(INDICATOR_MAX_WIDTH, Math.max(1, tabWidth / 3));
                 int lineX = tabX + (tabWidth - lineWidth) / 2;
                 graphics.fill(lineX, y + height - 2,
-                        lineX + lineWidth, y + height - 1, 0xFFFFFFFF);
+                        lineX + lineWidth, y + height - 1, OreTheme.TEXT_WHITE);
             }
         }
     }

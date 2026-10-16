@@ -7,6 +7,7 @@ import io.github.luyingyilong.geg.client.ui.layout.Window;
 import io.github.luyingyilong.geg.client.ui.layout.Scroll;
 import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.gui.Font;
+import brachy.modularui.screen.viewport.ModularGuiContext;
 
 /** Ore layout proxy for a ModularUI text field. ModularUI retains focus and editing. */
 public final class InputControl extends Control {
@@ -16,7 +17,7 @@ public final class InputControl extends Control {
     public InputControl(Input widget) {
         this.widget = widget;
         widget.layoutControl(this);
-        minimum(1, widget.controlSize().height());
+        minimum(1, widget.preferredInputHeight());
         focusable(true);
         focusExpansion(2);
         widget.tabNavigation(modifiers -> {
@@ -45,6 +46,10 @@ public final class InputControl extends Control {
 
     public Input widget() { return widget; }
 
+    @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+        widget.drawInTree(context);
+    }
+
     Rect displayedBounds() {
         Rect area = absoluteBounds();
         for (Control node = parent(); node != null; node = node.parent())
@@ -66,13 +71,31 @@ public final class InputControl extends Control {
         return true;
     }
 
-    float drawingDepth(float defaultDepth) {
-        for (Control node = parent(); node != null; node = node.parent())
-            if (node instanceof Drawer drawer) return Math.max(defaultDepth, drawer.depth() + 20.0F);
-        return defaultDepth;
+    float drawingDepth() {
+        return drawingDepth(this);
     }
 
-    /** Native widgets are drawn separately, so inherit the Ore ancestors' viewport clips. */
+    /** The layout tree, rather than legacy widget constructor depths, owns the rendered layer. */
+    public static float drawingDepth(Control node) {
+        float depth = io.github.luyingyilong.geg.client.ui.util.OreLayers.INPUT;
+        for (Control parent = node.parent(); parent != null; parent = parent.parent()) depth += parent.contentDepth();
+        return depth;
+    }
+
+    boolean pointerInteractive(int x, int y) { return pointerInteractive(this, x, y); }
+
+    public static boolean pointerInteractive(Control target, int x, int y) {
+        for (Control node = target.parent(); node != null; node = node.parent()) {
+            if (!(node instanceof Scroll scroll)) continue;
+            int localX = x, localY = y;
+            for (Control outer = node.parent(); outer != null; outer = outer.parent())
+                if (outer instanceof Scroll ancestor) { localX += ancestor.scrollX(); localY += ancestor.scrollY(); }
+            if (scroll.scrollbarAt(localX, localY)) return false;
+        }
+        return true;
+    }
+
+    /** Share Ore viewport clips with the native field's drawing and pointer checks. */
     Rect drawingClip() {
         Rect clip = null;
         for (Control node = parent(); node != null; node = node.parent()) {

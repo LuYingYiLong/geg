@@ -34,9 +34,11 @@ public final class DecimalExpression {
         return Integer.toString(value);
     }
 
-    public static String coin(String source) {
+    public static String coin(String source) { return coin(source, false); }
+
+    public static String coin(String source, boolean allowZero) {
         long minor = evaluate(source).movePointRight(2).longValueExact();
-        if (minor <= 0) throw new IllegalArgumentException("Nonpositive coin amount");
+        if (minor < 0 || minor == 0 && !allowZero) throw new IllegalArgumentException("Nonpositive coin amount");
         return BigDecimal.valueOf(minor, 2).toPlainString();
     }
 

@@ -99,6 +99,8 @@ public final class Dialog extends Container {
         return this;
     }
 
+    @Override public float contentDepth() { return depth; }
+
     public Dialog depth(float depth) {
         this.depth = depth;
         return this;

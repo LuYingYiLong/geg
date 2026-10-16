@@ -117,7 +117,8 @@ public final class CoinAuditService {
     private static boolean involves(String account, String wallet, String escrow,
                                     String pending, String questPending) {
         return account.equals(wallet) || account.startsWith(escrow)
-                || account.startsWith(pending) || account.startsWith(questPending);
+                || account.startsWith(pending) || account.startsWith(questPending)
+                || account.startsWith("mail_pending:" + wallet.substring("wallet:".length()) + ":");
     }
 
     private static Path folder(MinecraftServer server) {

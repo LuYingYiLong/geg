@@ -81,6 +81,9 @@ public class Control {
 
     public boolean focusScope() { return false; }
 
+    /** Z translation applied by this node when it paints its subtree. */
+    public float contentDepth() { return 0.0F; }
+
     /** Bounds in Window coordinates; virtual controls may return their active item's bounds. */
     public Rect focusBounds() { return absoluteBounds(); }
 

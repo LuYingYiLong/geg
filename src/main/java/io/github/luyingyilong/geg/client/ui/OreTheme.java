@@ -5,6 +5,13 @@ import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeKey;
 
 public final class OreTheme {
+    public static final int TEXT_DARK = 0xFF1E1E1F;
+    public static final int TEXT_WHITE = 0xFFFFFFFF;
+    public static final int TEXT_SECONDARY = 0xFFD0D1D4;
+    public static final int TEXT_DISABLED = 0x80D0D1D4;
+    public static final int TEXT_ERROR = 0xFFFF7777;
+    public static final int TEXT_ACCENT = 0xFF52BEA8;
+
     public static final String NAME = "geg_ore";
     private static final WidgetThemeKey<WidgetTheme> PANEL = ITheme.getDefault().getPanelTheme().key();
 

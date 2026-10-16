@@ -38,7 +38,8 @@
       "height": 16,
       "borderX": 0,
       "borderY": 3
-    }
+    },
+    "textColor": "#FF1E1E1F"
   },
   "panel:inputBox": {
     "background": {
@@ -55,7 +56,7 @@
     }
   },
   "panel:modal": {
-    "textColor": "#FFFCFCFC",
+    "textColor": "#FFFFFFFF",
     "textShadow": false,
     "background": {
       "type": "texture",
@@ -85,7 +86,7 @@
     }
   },
   "panel:menuItem": {
-    "textColor": "#FFFCFCFC",
+    "textColor": "#FFFFFFFF",
     "textShadow": false,
     "background": {
       "type": "texture",
@@ -177,8 +178,9 @@
     }
   },
   "textField": {
-    "textColor": "#FFEAE8EC",
-    "markedColor": "#FFA9AAAC"
+    "textColor": "#FFFFFFFF",
+    "markedColor": "#FFA9AAAC",
+    "hintColor": "#FFD0D1D4"
   },
   "button:disabled": {
     "background": {
@@ -193,7 +195,7 @@
       "borderX": 2,
       "borderY": 4
     },
-    "textColor": "#FF48494A",
+    "textColor": "#801E1E1F",
     "textShadow": false
   },
   "button:secondary:normal": {

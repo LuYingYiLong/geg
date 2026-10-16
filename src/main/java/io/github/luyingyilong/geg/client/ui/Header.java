@@ -18,7 +18,7 @@ public final class Header extends Container {
     private static final int GAP = 6;
     private static final int PADDING = 0;
     private Panel background;
-    private final Label title = new Label().hero(true).overflow(Label.Overflow.ELLIPSIS)
+    private final Label title = new Label().color(OreTheme.TEXT_DARK).hero(true).overflow(Label.Overflow.ELLIPSIS)
             .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
     private final List<Control> extra = new ArrayList<>();
 

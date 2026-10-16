@@ -88,7 +88,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         joinDrawer = new Drawer(Component.translatable("organization.geg.join"))
                 .content(joinTable).onClose(this::onJoinClosed);
         Label warning = new Label(Component.translatable("organization.geg.confirm_disband_body"))
-                .wrap(Label.Wrap.WORD).color(0xFFD8D9DC);
+                .wrap(Label.Wrap.WORD).color(OreTheme.TEXT_SECONDARY);
         warning.policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
         disbandConfirmation = new Modal(Component.translatable("organization.geg.confirm_disband"))
                 .content(warning).onClose(this::closeDisbandConfirmation)
@@ -132,13 +132,13 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                 .column(new Table.Column<>("member", Component.translatable("organization.geg.member"),
                         48, 110, 2, width -> 20,
                         new Table.TextCell<OrganizationSyncPacket.Member>(
-                                member -> Component.literal(member.name()), 0xFFFFFFFF)
+                                member -> Component.literal(member.name()), OreTheme.TEXT_WHITE)
                                 .wrap(Label.Wrap.CHARACTER).maxLines(2)
                                 .overflow(Label.Overflow.ELLIPSIS)))
                 .column(new Table.Column<>("role", Component.translatable("organization.geg.role"),
                         42, 64, 1, width -> 20,
                         new Table.TextCell<OrganizationSyncPacket.Member>(
-                                member -> roleLabel(member.role()), 0xFFFFFFFF)
+                                member -> roleLabel(member.role()), OreTheme.TEXT_WHITE)
                                 .overflow(Label.Overflow.ELLIPSIS)))
                 .column(new Table.Column<>("action", Component.translatable("organization.geg.actions"),
                         70, 82, 1, width -> 20, new Table.Cell<>() {
@@ -194,7 +194,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                         Component.translatable("organization.geg.player"),
                         48, 120, 1, width -> 20,
                         new Table.TextCell<OrganizationSyncPacket.Application>(
-                                application -> Component.literal(application.name()), 0xFFFFFFFF)
+                                application -> Component.literal(application.name()), OreTheme.TEXT_WHITE)
                                 .overflow(Label.Overflow.ELLIPSIS)))
                 .column(new Table.Column<>("action",
                         Component.translatable("organization.geg.actions"),
@@ -240,7 +240,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                         Component.translatable("organization.geg.name"),
                         50, 120, 1, width -> 20,
                         new Table.TextCell<OrganizationSyncPacket.Directory>(
-                                entry -> Component.literal(entry.name()), 0xFFFFFFFF)
+                                entry -> Component.literal(entry.name()), OreTheme.TEXT_WHITE)
                                 .overflow(Label.Overflow.ELLIPSIS)))
                 .column(new Table.Column<>("action",
                         Component.translatable("organization.geg.actions"),
@@ -430,6 +430,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         if (ownRole == Organization.Role.LEADER || ownRole == Organization.Role.OFFICER) {
             detailDrawer.action(Component.translatable("organization.geg.applications"),
                     this::showApplications);
+            detailDrawer.action(Component.translatable("mail.geg.announce"),
+                    () -> io.github.luyingyilong.geg.mail.client.ClientMailScreen.open(summary.id()));
             applicationTable.rows(summary.applications());
         } else {
             applicationsModal.visible(false);
@@ -622,7 +624,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private void rebuildMemberships() {
         for (Control child : memberships.children()) memberships.removeChild(child);
         Header header = new Header(Component.translatable("organization.geg.your_organizations"))
-                .titleColor(0xFF000000);
+                .titleColor(OreTheme.TEXT_DARK);
         memberships.add(header);
         Button createButton = new Button(Component.translatable("organization.geg.create"))
                 .type(Button.Type.PRIMARY).onPress(this::showCreate);
@@ -645,12 +647,12 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
             row.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
             Box details = new Box();
             details.policy(Control.SizePolicy.EXPAND, Control.SizePolicy.CONTENT);
-            Label name = new Label(Component.literal(summary.name())).color(0xFFFFFFFF);
+            Label name = new Label(Component.literal(summary.name())).color(OreTheme.TEXT_WHITE);
             name.minimum(0, 16).policy(Control.SizePolicy.EXPAND, Control.SizePolicy.CONTENT);
             details.add(name);
             if (!summary.description().isBlank()) {
                 Label description = new Label(Component.literal(summary.description()))
-                        .color(0xFFD8D9DC).overflow(Label.Overflow.ELLIPSIS);
+                        .color(OreTheme.TEXT_SECONDARY).overflow(Label.Overflow.ELLIPSIS);
                 description.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
                 details.add(description);
             }
