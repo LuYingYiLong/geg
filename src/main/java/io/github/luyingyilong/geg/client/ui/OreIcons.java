@@ -10,6 +10,7 @@ public final class OreIcons {
     public static final ResourceLocation ARROW_DOWN = icon("arrow_down");
     public static final ResourceLocation FLAG = icon("flag");
     public static final ResourceLocation ORG = icon("org");
+    public static final ResourceLocation LOADING = icon("loading");
     public static final ResourceLocation CHECKBOX_NORMAL = icon("checkbox_normal");
     public static final ResourceLocation CHECKBOX_HOVERED = icon("checkbox_hovered");
     public static final ResourceLocation CHECKBOX_DISABLED = icon("checkbox_disabled");

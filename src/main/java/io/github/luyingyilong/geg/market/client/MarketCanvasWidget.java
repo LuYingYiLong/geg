@@ -841,17 +841,21 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     private final class BodyContent extends Container {
         private final Padding inset = new Padding(new Padding.Insets(4, 4, 0, 4)).child(gridScroll);
+        private final Spin loadingSpin = new Spin();
         private final Label empty = new Label().color(SECONDARY_TEXT)
                 .overflow(Label.Overflow.CLIP)
-                .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
+                .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+        private final Box status = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4)
+                .add(loadingSpin).add(empty);
 
         private BodyContent() {
             addChild(inset);
-            addChild(empty);
+            addChild(status);
         }
 
         private void refresh() {
-            empty.visible(cards.isEmpty());
+            status.visible(cards.isEmpty());
+            loadingSpin.visible(!ClientMarketState.ready());
             empty.text(Component.translatable(ClientMarketState.ready()
                     ? "market.geg.empty" : "market.geg.loading"));
         }
@@ -859,7 +863,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         @Override public void layout(Rect bounds, Font font) {
             super.layout(bounds, font);
             fitChild(inset, new Rect(0, 0, bounds.width(), bounds.height()), font);
-            fitChild(empty, new Rect(0, 18, bounds.width(), 20), font);
+            int statusWidth = Math.min(bounds.width(), status.measureWidth(font, bounds.width()));
+            fitChild(status, new Rect(Math.max(0, (bounds.width() - statusWidth) / 2),
+                    18, statusWidth, 20), font);
         }
     }
 
@@ -887,10 +893,17 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private final class DetailContent extends ScrollableContent {
         private final Label info = new Label().color(SECONDARY_TEXT).overflow(Label.Overflow.CLIP);
         private final Label fee = new Label().color(SECONDARY_TEXT).overflow(Label.Overflow.CLIP);
+        private final Spin loadingSpin = new Spin();
+        private final Label loadingLabel = new Label(Component.translatable("market.geg.loading"))
+                .color(SECONDARY_TEXT).overflow(Label.Overflow.CLIP)
+                .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+        private final Box loadingRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4)
+                .add(loadingSpin).add(loadingLabel);
         private Form form;
 
         private DetailContent() {
             addChild(offerTable);
+            addChild(loadingRow);
             addChild(info);
             addChild(fee);
         }
@@ -906,9 +919,12 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             info.visible(!offers);
             fee.visible(!offers && (modal.kind == Kind.OWN
                     || modal.kind == Kind.INVENTORY && !requestMode));
+            boolean loading = offers && modal.offers.isEmpty()
+                    && ClientMarketState.isDetailLoading(modal.item);
+            loadingRow.visible(loading);
             if (offers) {
-                offerTable.empty(Component.translatable(modal.quantity > 0 || modal.buyQuantity > 0
-                        ? "market.geg.loading" : "market.geg.out_of_stock"));
+                offerTable.empty(loading ? Component.empty()
+                        : Component.translatable("market.geg.out_of_stock"));
                 return;
             }
             Component text = switch (modal.kind) {
@@ -938,6 +954,10 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 scroll = 0;
                 contentHeight = height;
                 fitChild(offerTable, new Rect(0, 0, width, height), font);
+                int loadingWidth = Math.min(Math.max(0, width - 4),
+                        loadingRow.measureWidth(font, width));
+                fitChild(loadingRow, new Rect(2, offerTable.headerHeight() + 8,
+                        loadingWidth, 12), font);
                 return;
             }
             int formTop = fee.visible() ? 30 : 18;
