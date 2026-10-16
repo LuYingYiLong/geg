@@ -168,6 +168,14 @@ public class Control {
 
     protected boolean onPointerPressed(int rootX, int rootY) { return false; }
 
+    /** Routes wheel input through the same tree, with the topmost child first. */
+    public boolean dispatchScroll(int rootX, int rootY, double delta, boolean horizontal) {
+        if (!visible) return false;
+        for (int index = children.size() - 1; index >= 0; index--)
+            if (children.get(index).dispatchScroll(rootX, rootY, delta, horizontal)) return true;
+        return false;
+    }
+
     public Rect screenBounds(int screenX, int screenY) {
         return absoluteBounds().translated(screenX, screenY);
     }

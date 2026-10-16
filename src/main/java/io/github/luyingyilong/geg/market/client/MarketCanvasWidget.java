@@ -46,6 +46,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private final Dropdown<String> filterDropdown = new Dropdown<>("all", 8);
     private final Window window = new Window(true);
     private final Grid<Card> grid = new Grid<>();
+    private final Scroll gridScroll = new Scroll().content(grid).embedded(true);
     private final BodyContent body = new BodyContent();
     private final Table<MarketDetail> offerTable = createOfferTable();
     private final DetailContent detailContent = new DetailContent();
@@ -105,7 +106,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             Tab next = Tab.values()[index];
             if (next != tab) {
                 tab = next;
-                grid.scrollToTop();
+                gridScroll.scrollToTop();
                 filterDropdown.select("all");
                 dirty = true;
             }
@@ -115,7 +116,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             dirty = true;
         });
         filterDropdown.onSelect(value -> {
-            grid.scrollToTop();
+            gridScroll.scrollToTop();
             dirty = true;
         });
         grid.onItemClick(this::openModal);
@@ -156,12 +157,17 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             @Override
             public void draw(ModularGuiContext context, int screenX, int screenY) {
                 if (modal != null || filterDropdown.isOpen()) return;
-                Grid.Entry<Card> hovered = grid.hitItem(context.getAbsMouseX() - screenX,
-                        context.getAbsMouseY() - screenY);
+                int rootX = context.getAbsMouseX() - screenX;
+                int rootY = context.getAbsMouseY() - screenY;
+                Rect clip = gridScroll.viewport().translated(gridScroll.absoluteBounds().x(),
+                        gridScroll.absoluteBounds().y());
+                if (!clip.contains(rootX, rootY)) return;
+                Grid.Entry<Card> hovered = grid.hitItem(rootX + gridScroll.scrollX(),
+                        rootY + gridScroll.scrollY());
                 if (hovered == null || hovered.item().item.isEmpty()) return;
-                Rect viewport = grid.screenBounds(screenX, screenY);
-                Rect card = hovered.bounds().translated(viewport.x() - grid.horizontalScroll(),
-                        viewport.y() - grid.scroll());
+                Rect origin = grid.screenBounds(screenX - gridScroll.scrollX(),
+                        screenY - gridScroll.scrollY());
+                Rect card = hovered.bounds().translated(origin.x(), origin.y());
                 if (context.getAbsMouseX() >= card.x() + 24) return;
                 withOverlayDepth(context, 200.0F, () -> context.getGraphics().renderTooltip(
                         context.getFont(), hovered.item().item,
@@ -802,10 +808,19 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         Rect footer = footerTabs.screenBounds(getArea().x, getArea().y);
         if (footer.contains(getContext().getAbsMouseX(), getContext().getAbsMouseY())
                 && footerTabs.scrollBy(-(int) Math.signum(delta) * 24, getContext().getFont())) return true;
-        if ((Screen.hasShiftDown() || grid.contentHeight() <= grid.bounds().height())
-                && grid.scrollHorizontalBy(-(int) Math.signum(delta) * 28)) return true;
-        grid.scrollBy(-(int) Math.signum(delta) * 28);
+        window.dispatchScroll(getContext().getAbsMouseX() - getArea().x,
+                getContext().getAbsMouseY() - getArea().y, delta, Screen.hasShiftDown());
         return true;
+    }
+
+    @Override public void onMouseDrag(int button, double dragX, double dragY) {
+        if (button == 0) gridScroll.dragTo(getContext().getAbsMouseX() - getArea().x,
+                getContext().getAbsMouseY() - getArea().y);
+    }
+
+    @Override public boolean onMouseReleased(int button) {
+        if (button != 0) return false;
+        return gridScroll.endDrag();
     }
 
     @Override
@@ -825,7 +840,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     private final class BodyContent extends Container {
-        private final Padding inset = new Padding(new Padding.Insets(4, 4, 0, 4)).child(grid);
+        private final Padding inset = new Padding(new Padding.Insets(4, 4, 0, 4)).child(gridScroll);
         private final Label empty = new Label().color(SECONDARY_TEXT)
                 .overflow(Label.Overflow.CLIP)
                 .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);

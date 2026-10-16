@@ -146,6 +146,36 @@
       "borderY": 1
     }
   },
+  "panel:VGrabber": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/v_grabber",
+      "nonOpaque": true,
+      "imageWidth": 6,
+      "imageHeight": 12,
+      "x": 0,
+      "y": 0,
+      "width": 6,
+      "height": 12,
+      "borderX": 2,
+      "borderY": 5
+    }
+  },
+  "panel:HGrabber": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/h_grabber",
+      "nonOpaque": true,
+      "imageWidth": 6,
+      "imageHeight": 6,
+      "x": 0,
+      "y": 0,
+      "width": 6,
+      "height": 6,
+      "borderX": 2,
+      "borderY": 2
+    }
+  },
   "textField": {
     "textColor": "#FFEAE8EC",
     "markedColor": "#FFA9AAAC"

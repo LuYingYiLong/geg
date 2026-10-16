@@ -19,6 +19,8 @@ public final class OreTheme {
     public static final WidgetThemeKey<WidgetTheme> BAR = PANEL.createSubKey("bar");
     public static final WidgetThemeKey<WidgetTheme> MODAL_BACKGROUND = PANEL.createSubKey("modalBackground");
     public static final WidgetThemeKey<WidgetTheme> MODAL_HEADER = PANEL.createSubKey("modalHeader");
+    public static final WidgetThemeKey<WidgetTheme> V_GRABBER = PANEL.createSubKey("VGrabber");
+    public static final WidgetThemeKey<WidgetTheme> H_GRABBER = PANEL.createSubKey("HGrabber");
     private static final WidgetThemeKey<WidgetTheme> BUTTON =
             ITheme.getDefault().getButtonTheme().key();
     public static final WidgetThemeKey<WidgetTheme> BUTTON_DISABLED =

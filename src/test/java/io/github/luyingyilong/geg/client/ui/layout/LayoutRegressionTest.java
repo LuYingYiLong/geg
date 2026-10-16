@@ -92,24 +92,95 @@ public final class LayoutRegressionTest {
                         };
                     }
                 });
-        grid.layout(new Rect(0, 0, 400, 100), null);
+        Scroll gridScroll = new Scroll().content(grid).embedded(true);
+        gridScroll.layout(new Rect(0, 0, 400, 100), null);
         check(grid.columns() == 4 && grid.entries().size() == 400);
         check(grid.activeViews() > 0 && grid.activeViews() < 100);
         check(grid.hitItem(5, 5) != null);
-        grid.setScroll(150);
-        Object anchor = grid.entries().stream().filter(entry -> entry.bounds().y() <= grid.scroll()
-                && entry.bounds().bottom() > grid.scroll()).findFirst().orElseThrow().key();
+        gridScroll.setScroll(0, 150);
+        Object anchor = grid.entries().stream().filter(entry -> entry.bounds().y() <= gridScroll.scrollY()
+                && entry.bounds().bottom() > gridScroll.scrollY()).findFirst().orElseThrow().key();
         Collections.reverse(items);
         grid.invalidate();
-        grid.layout(new Rect(0, 0, 400, 100), null);
+        gridScroll.layout(new Rect(0, 0, 400, 100), null);
         Grid.Entry<Integer> restored = grid.entries().stream()
                 .filter(entry -> entry.key().equals(anchor)).findFirst().orElseThrow();
-        check(restored.bounds().y() <= grid.scroll() && restored.bounds().bottom() > grid.scroll());
+        check(restored.bounds().y() <= gridScroll.scrollY()
+                && restored.bounds().bottom() > gridScroll.scrollY());
         check(grid.activeViews() < 100);
-        grid.layout(new Rect(0, 0, 80, 100), null);
+        gridScroll.scrollToTop();
+        Collections.reverse(items);
+        grid.invalidate();
+        gridScroll.layout(new Rect(0, 0, 400, 100), null);
+        check(gridScroll.scrollY() == 0);
+        gridScroll.layout(new Rect(0, 0, 80, 100), null);
         check(grid.columns() == 1 && grid.contentWidth() == 96);
-        check(grid.scrollHorizontalBy(16) && grid.horizontalScroll() == 16);
-        check(grid.hitItem(5, 5) != null);
+        check(gridScroll.horizontalVisible() && gridScroll.verticalVisible());
+        check(gridScroll.scrollBy(16, 0) && gridScroll.scrollX() == 16);
+        gridScroll.scrollToTop();
+        check(grid.hitItem(5 + gridScroll.scrollX(), 5 + gridScroll.scrollY()) != null);
+        check(gridScroll.dispatchScroll(5, 5, -1.0D, false) && gridScroll.scrollY() == 28);
+        gridScroll.scrollToTop();
+        List<Integer> chosen = new ArrayList<>();
+        grid.onItemClick(chosen::add);
+        check(gridScroll.dispatchPointer(5, 5) && chosen.equals(List.of(items.get(0))));
+
+        Box tall = new Box().add(new Control().minimum(30, 80));
+        Scroll scroll = new Scroll().content(tall).horizontal(Scroll.BarMode.DISABLED);
+        scroll.layout(new Rect(0, 0, 50, 50), null);
+        check(scroll.verticalVisible() && scroll.viewport().width() == 44);
+        check(scroll.maxScrollY() == 30 && scroll.scrollBy(0, 10));
+        scroll.scrollToTop();
+        check(scroll.dispatchScroll(5, 5, -1.0D, false) && scroll.scrollY() == 28);
+        scroll.embedded(true);
+        scroll.layout(new Rect(0, 0, 50, 50), null);
+        check(scroll.viewport().width() == 50 && scroll.verticalVisible());
+        scroll.scrollToTop();
+        check(scroll.dispatchPointer(47, 6));
+        check(scroll.dragTo(47, 45) && scroll.scrollY() > 0);
+        check(scroll.endDrag() && !scroll.endDrag());
+        scroll.vertical(Scroll.BarMode.NEVER);
+        scroll.layout(new Rect(0, 0, 50, 50), null);
+        scroll.scrollToTop();
+        check(!scroll.verticalVisible() && scroll.scrollBy(0, 5));
+        scroll.vertical(Scroll.BarMode.DISABLED);
+        scroll.layout(new Rect(0, 0, 50, 50), null);
+        check(scroll.scrollY() == 0 && !scroll.scrollBy(0, 5));
+        Box wide = new Box().orientation(Box.Orientation.HORIZONTAL)
+                .add(new Control().minimum(40, 20)).add(new Control().minimum(40, 20));
+        Scroll sideways = new Scroll().content(wide).vertical(Scroll.BarMode.DISABLED);
+        sideways.layout(new Rect(0, 0, 50, 50), null);
+        check(sideways.horizontalVisible() && sideways.viewport().height() == 44
+                && sideways.maxScrollX() == 30);
+        sideways.horizontal(Scroll.BarMode.NEVER);
+        sideways.layout(new Rect(0, 0, 50, 50), null);
+        check(!sideways.horizontalVisible() && sideways.scrollBy(5, 0));
+        sideways.horizontal(Scroll.BarMode.DISABLED);
+        sideways.layout(new Rect(0, 0, 50, 50), null);
+        check(sideways.scrollX() == 0 && !sideways.scrollBy(5, 0));
+        List<String> scrolledClicks = new ArrayList<>();
+        Control target = new Control() {
+            @Override protected boolean onPointerPressed(int x, int y) {
+                if (!hit(x, y)) return false;
+                scrolledClicks.add("target");
+                return true;
+            }
+        };
+        target.minimum(30, 20);
+        Scroll withChild = new Scroll().content(new Box()
+                .add(new Control().minimum(30, 80)).add(target));
+        withChild.layout(new Rect(0, 0, 50, 50), null);
+        withChild.setScroll(0, 60);
+        check(withChild.scrollY() == 50 && withChild.dispatchPointer(10, 35)
+                && scrolledClicks.equals(List.of("target")));
+        Scroll always = new Scroll().content(new Control().minimum(10, 10))
+                .vertical(Scroll.BarMode.ALWAYS).horizontal(Scroll.BarMode.ALWAYS);
+        always.layout(new Rect(0, 0, 50, 50), null);
+        check(always.verticalVisible() && always.horizontalVisible()
+                && always.viewport().equals(new Rect(0, 0, 44, 44)));
+        Scroll emptyGrid = new Scroll().content(new Grid<>());
+        emptyGrid.layout(new Rect(0, 0, 50, 50), null);
+        check(!emptyGrid.verticalVisible() && !emptyGrid.horizontalVisible());
 
         Grid<Object> fixed = new Grid<Object>().mode(Grid.LayoutMode.ROWS).columns(30, 2, 2);
         Control first = new Control().preferred(0, 10);

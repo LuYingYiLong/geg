@@ -2,7 +2,6 @@ package io.github.luyingyilong.geg.client.ui.layout;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -10,7 +9,7 @@ import java.util.function.Consumer;
 /**
  * A regular or masonry grid with optional view recycling
  */
-public final class Grid<T> extends Container {
+public final class Grid<T> extends Container implements ScrollContent {
     private final List<Entry<T>> entries = new ArrayList<>();
     private final List<Control> fixedChildren = new ArrayList<>();
     private final Map<Integer, View<T>> active = new HashMap<>();
@@ -21,19 +20,17 @@ public final class Grid<T> extends Container {
     private int minCardWidth = 96;
     private int maxColumns = 4;
     private int gap = 4;
-    private int scroll;
-    private int horizontalScroll;
     private int contentHeight;
     private int contentWidth;
     private int lastWidth = -1;
     private Object anchorKey;
     private int anchorOffset;
+    private int restoredScrollY = -1;
     private boolean resetScrollPending;
     private boolean dirty = true;
     private boolean visibilityDirty = true;
     private Consumer<T> onItemClick = item -> { };
-    private int visibleScroll = -1;
-    private int visibleHeight = -1;
+    private Rect visibleRegion = new Rect(0, 0, 0, 0);
 
     private static int shortest(int[] heights) {
         int index = 0;
@@ -92,6 +89,7 @@ public final class Grid<T> extends Container {
     public void invalidate() {
         if (!resetScrollPending) saveAnchor();
         dirty = true;
+        requestLayout();
     }
 
     public List<Entry<T>> entries() {
@@ -103,16 +101,33 @@ public final class Grid<T> extends Container {
     }
 
     public int contentWidth() { return contentWidth; }
-    public int horizontalScroll() { return horizontalScroll; }
-    public boolean scrollHorizontalBy(int amount) {
-        int maximum = Math.max(0, contentWidth - bounds().width());
-        if (maximum == 0) return false;
-        horizontalScroll = Math.max(0, Math.min(maximum, horizontalScroll + amount));
-        return true;
+
+    @Override public Size contentExtent() { return new Size(contentWidth, contentHeight); }
+
+    @Override public void visibleRegion(Rect region) {
+        Rect next = new Rect(Math.max(0, region.x()), Math.max(0, region.y()),
+                Math.max(0, region.width()), Math.max(0, region.height()));
+        if (!next.equals(visibleRegion)) {
+            visibleRegion = next;
+            visibilityDirty = true;
+            updateVisible();
+        }
     }
 
-    public int scroll() {
-        return scroll;
+    @Override public int consumeRestoredScrollY() {
+        int result = restoredScrollY;
+        restoredScrollY = -1;
+        anchorKey = null;
+        resetScrollPending = false;
+        return result;
+    }
+
+    @Override public void clearScrollAnchor() {
+        anchorKey = null;
+        restoredScrollY = -1;
+        resetScrollPending = true;
+        dirty = true;
+        requestLayout();
     }
 
     public int activeViews() {
@@ -124,34 +139,22 @@ public final class Grid<T> extends Container {
         return Math.max(1, Math.min(maxColumns, (width + gap) / (minCardWidth + gap)));
     }
 
-    public void scrollBy(int amount) {
-        setScroll(scroll + amount);
-    }
-
-    public void setScroll(int scroll) {
-        this.scroll = Math.max(0, Math.min(Math.max(0, contentHeight - bounds().height()), scroll));
-        if (!dirty && adapter != null) updateVisible();
-    }
-
-    public void scrollToTop() {
-        anchorKey = null;
-        resetScrollPending = true;
-        scroll = 0;
-    }
-
     @Override
     public void layout(Rect localBounds, Font font) {
         super.layout(localBounds, font);
         if (dirty || lastWidth != localBounds.width()) relayout(font);
-        else setScroll(scroll);
+        if (visibleRegion.width() == 0 && visibleRegion.height() == 0)
+            visibleRegion(new Rect(0, 0, localBounds.width(), localBounds.height()));
         if (adapter != null) updateVisible();
     }
 
     private void saveAnchor() {
+        if (anchorKey != null) return;
         for (Entry<T> entry : entries) {
-            if (entry.bounds().bottom() > scroll && entry.bounds().y() <= scroll) {
+            if (entry.bounds().bottom() > visibleRegion.y()
+                    && entry.bounds().y() <= visibleRegion.y()) {
                 anchorKey = entry.key();
-                anchorOffset = scroll - entry.bounds().y();
+                anchorOffset = visibleRegion.y() - entry.bounds().y();
                 return;
             }
         }
@@ -159,28 +162,25 @@ public final class Grid<T> extends Container {
     }
 
     private void relayout(Font font) {
-        if (!resetScrollPending && lastWidth != -1 && lastWidth != bounds().width()) saveAnchor();
+        if (!resetScrollPending && lastWidth != -1 && lastWidth != bounds().width()
+                && !dirty) saveAnchor();
         entries.clear();
         lastWidth = bounds().width();
         dirty = false;
         if (adapter == null) {
             relayoutFixed(font);
-            resetScrollPending = false;
             return;
         }
         if (adapter.size() == 0) {
             contentHeight = 0;
             contentWidth = 0;
-            horizontalScroll = 0;
-            setScroll(0);
             recycleAll();
-            resetScrollPending = false;
+            restoredScrollY = 0;
             return;
         }
         int columns = columns();
         int cardWidth = Math.max(minCardWidth, (bounds().width() - (columns - 1) * gap) / columns);
         contentWidth = columns * cardWidth + (columns - 1) * gap;
-        horizontalScroll = Math.min(horizontalScroll, Math.max(0, contentWidth - bounds().width()));
         int[] heights = new int[columns];
         Arrays.fill(heights, 0);
         int rowY = 0;
@@ -201,24 +201,26 @@ public final class Grid<T> extends Container {
         }
         contentHeight = mode == LayoutMode.ROWS ? rowY + rowHeight
                 : Math.max(0, Arrays.stream(heights).max().orElse(0) - gap);
-        if (anchorKey != null) {
+        if (resetScrollPending) restoredScrollY = 0;
+        else if (anchorKey != null) {
             for (Entry<T> entry : entries)
                 if (anchorKey.equals(entry.key())) {
-                    scroll = entry.bounds().y() + anchorOffset;
+                    restoredScrollY = entry.bounds().y() + anchorOffset;
                     break;
                 }
         }
         recycleAll();
-        setScroll(scroll);
-        anchorKey = null;
-        resetScrollPending = false;
     }
 
     private void relayoutFixed(Font font) {
+        if (fixedChildren.isEmpty()) {
+            contentWidth = 0;
+            contentHeight = 0;
+            return;
+        }
         int columns = columns();
         int cardWidth = Math.max(minCardWidth, (bounds().width() - (columns - 1) * gap) / columns);
         contentWidth = columns * cardWidth + (columns - 1) * gap;
-        horizontalScroll = Math.min(horizontalScroll, Math.max(0, contentWidth - bounds().width()));
         int[] heights = new int[columns];
         int rowY = 0;
         int rowHeight = 0;
@@ -237,7 +239,6 @@ public final class Grid<T> extends Container {
         }
         contentHeight = mode == LayoutMode.ROWS ? rowY + rowHeight
                 : Math.max(0, Arrays.stream(heights).max().orElse(0) - gap);
-        setScroll(scroll);
     }
 
     private void recycleAll() {
@@ -250,14 +251,11 @@ public final class Grid<T> extends Container {
     }
 
     private void updateVisible() {
-        if (adapter == null) return;
-        if (!visibilityDirty && visibleScroll == scroll && visibleHeight == bounds().height()) return;
-        visibleScroll = scroll;
-        visibleHeight = bounds().height();
+        if (adapter == null || dirty || !visibilityDirty) return;
         visibilityDirty = false;
-        int buffer = bounds().height();
-        int start = scroll - buffer;
-        int end = scroll + bounds().height() + buffer;
+        int buffer = visibleRegion.height();
+        int start = visibleRegion.y() - buffer;
+        int end = visibleRegion.bottom() + buffer;
         Set<Integer> visible = new HashSet<>();
         for (Entry<T> entry : entries)
             if (entry.bounds().bottom() >= start && entry.bounds().y() <= end) {
@@ -285,15 +283,14 @@ public final class Grid<T> extends Container {
     public void draw(ModularGuiContext context, int screenX, int screenY) {
         if (bounds().width() <= 0 || bounds().height() <= 0) return;
         if (adapter != null) updateVisible();
-        Rect viewport = screenBounds(screenX, screenY);
-        GuiGraphics graphics = context.getGraphics();
-        graphics.enableScissor(viewport.x(), viewport.y(), viewport.right(), viewport.bottom());
+        Rect origin = screenBounds(screenX, screenY);
+        Rect viewport = visibleRegion.translated(origin.x(), origin.y());
         if (adapter == null) {
             for (Control child : fixedChildren) {
                 Rect area = child.absoluteBounds();
-                if (area.bottom() >= absoluteBounds().y() + scroll - bounds().height()
-                        && area.y() <= absoluteBounds().y() + scroll + 2 * bounds().height()) {
-                    child.draw(context, screenX - horizontalScroll, screenY - scroll);
+                if (area.bottom() >= absoluteBounds().y() + visibleRegion.y() - visibleRegion.height()
+                        && area.y() <= absoluteBounds().y() + visibleRegion.bottom() + visibleRegion.height()) {
+                    child.draw(context, screenX, screenY);
                 }
             }
         } else {
@@ -301,26 +298,24 @@ public final class Grid<T> extends Container {
                 Entry<T> entry = entries.get(index);
                 View<T> view = active.get(index);
                 if (view == null) continue;
-                Rect card = entry.bounds().translated(viewport.x() - horizontalScroll,
-                        viewport.y() - scroll);
+                Rect card = entry.bounds().translated(origin.x(), origin.y());
                 boolean hovered = viewport.contains(context.getAbsMouseX(), context.getAbsMouseY())
                         && card.contains(context.getAbsMouseX(), context.getAbsMouseY());
                 if (view instanceof Control control) {
-                    control.layout(new Rect(entry.bounds().x() - horizontalScroll,
-                            entry.bounds().y() - scroll, entry.bounds().width(), entry.bounds().height()),
+                    control.layout(new Rect(entry.bounds().x(), entry.bounds().y(),
+                            entry.bounds().width(), entry.bounds().height()),
                             context.getFont());
                     control.draw(context, screenX, screenY);
                 } else view.draw(context, card, hovered);
             }
         }
-        graphics.disableScissor();
     }
 
     public Entry<T> hitItem(int rootX, int rootY) {
-        Rect viewport = absoluteBounds();
-        if (!viewport.contains(rootX, rootY)) return null;
-        int localX = rootX - viewport.x() + horizontalScroll;
-        int localY = rootY - viewport.y() + scroll;
+        Rect origin = absoluteBounds();
+        int localX = rootX - origin.x();
+        int localY = rootY - origin.y();
+        if (!visibleRegion.contains(localX, localY)) return null;
         for (int index : visibleIndices) {
             Entry<T> entry = entries.get(index);
             if (entry.bounds().contains(localX, localY)) return entry;
@@ -329,7 +324,7 @@ public final class Grid<T> extends Container {
     }
 
     @Override public Control hitTop(int rootX, int rootY) {
-        if (!visible() || !absoluteBounds().contains(rootX, rootY)) return null;
+        if (!visible()) return null;
         Entry<T> entry = hitItem(rootX, rootY);
         if (entry != null) {
             View<T> view = active.get(entry.index());
@@ -342,7 +337,8 @@ public final class Grid<T> extends Container {
     }
 
     @Override public boolean dispatchPointer(int rootX, int rootY) {
-        if (!visible() || !absoluteBounds().contains(rootX, rootY)) return false;
+        if (!visible()) return false;
+        if (adapter == null) return super.dispatchPointer(rootX, rootY);
         Entry<T> entry = hitItem(rootX, rootY);
         if (entry == null) return false;
         View<T> view = active.get(entry.index());
@@ -352,10 +348,10 @@ public final class Grid<T> extends Container {
     }
 
     public Control hitFixed(int rootX, int rootY) {
-        if (adapter != null || !absoluteBounds().contains(rootX, rootY)) return null;
+        if (adapter != null) return null;
         for (Control child : fixedChildren)
             if (child.visible()
-                    && child.absoluteBounds().contains(rootX + horizontalScroll, rootY + scroll)) return child;
+                    && child.absoluteBounds().contains(rootX, rootY)) return child;
         return null;
     }
 
