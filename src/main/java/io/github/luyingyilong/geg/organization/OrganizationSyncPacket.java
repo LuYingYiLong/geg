@@ -11,23 +11,38 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
-public record OrganizationSyncPacket(List<Summary> organizations, String resultKey) {
+public record OrganizationSyncPacket(List<Summary> organizations, List<Directory> directory,
+                                     String resultKey) {
     public record Member(UUID id, String name, Organization.Role role) { }
+    public record Application(UUID id, String name, long appliedAt) { }
+    public record Directory(UUID id, String name, Organization.JoinPolicy joinPolicy,
+                            boolean pending) { }
 
     public record Summary(UUID id, String name, String description,
-                          Organization.JoinPolicy joinPolicy, UUID founder, List<Member> members) {
-        public static Summary from(Organization organization, MinecraftServer server) {
+                          Organization.JoinPolicy joinPolicy, UUID founder, List<Member> members,
+                          List<Application> applications) {
+        public static Summary from(Organization organization, MinecraftServer server,
+                                   OrganizationSavedData data, UUID viewer) {
             List<Member> members = organization.members().stream().map(id -> {
-                var player = server.getPlayerList().getPlayer(id);
-                String name = player != null ? player.getGameProfile().getName()
-                        : server.getProfileCache().get(id).map(profile -> profile.getName())
-                        .orElse(id.toString());
-                return new Member(id, name, organization.roleOf(id));
+                return new Member(id, playerName(server, id), organization.roleOf(id));
             }).sorted(java.util.Comparator.comparing(Member::role)
                     .thenComparing(Member::name, String.CASE_INSENSITIVE_ORDER)).toList();
+            List<Application> applications = organization.roleOf(viewer) == Organization.Role.LEADER
+                    || organization.roleOf(viewer) == Organization.Role.OFFICER
+                    ? data.applications(organization.id()).stream()
+                    .map(entry -> new Application(entry.applicant(),
+                            playerName(server, entry.applicant()), entry.appliedAt())).toList()
+                    : List.of();
             return new Summary(organization.id(), organization.name(), organization.description(),
-                    organization.joinPolicy(), organization.founder(), members);
+                    organization.joinPolicy(), organization.founder(), members, applications);
         }
+    }
+
+    private static String playerName(MinecraftServer server, UUID id) {
+        var player = server.getPlayerList().getPlayer(id);
+        return player != null ? player.getGameProfile().getName()
+                : server.getProfileCache().get(id).map(profile -> profile.getName())
+                .orElse(id.toString());
     }
 
     public static void encode(OrganizationSyncPacket packet, FriendlyByteBuf buffer) {
@@ -44,6 +59,19 @@ public record OrganizationSyncPacket(List<Summary> organizations, String resultK
                 buffer.writeUtf(member.name, 40);
                 buffer.writeEnum(member.role);
             }
+            buffer.writeVarInt(summary.applications.size());
+            for (Application application : summary.applications) {
+                buffer.writeUUID(application.id);
+                buffer.writeUtf(application.name, 40);
+                buffer.writeLong(application.appliedAt);
+            }
+        }
+        buffer.writeVarInt(packet.directory.size());
+        for (Directory entry : packet.directory) {
+            buffer.writeUUID(entry.id);
+            buffer.writeUtf(entry.name, 48);
+            buffer.writeEnum(entry.joinPolicy);
+            buffer.writeBoolean(entry.pending);
         }
         buffer.writeUtf(packet.resultKey, 80);
     }
@@ -65,9 +93,25 @@ public record OrganizationSyncPacket(List<Summary> organizations, String resultK
             for (int memberIndex = 0; memberIndex < memberCount; memberIndex++)
                 members.add(new Member(buffer.readUUID(), buffer.readUtf(40),
                         buffer.readEnum(Organization.Role.class)));
-            organizations.add(new Summary(id, name, description, policy, founder, List.copyOf(members)));
+            int applicationCount = buffer.readVarInt();
+            if (applicationCount < 0 || applicationCount > 256)
+                throw new IllegalArgumentException("Invalid application count");
+            List<Application> applications = new ArrayList<>(applicationCount);
+            for (int applicationIndex = 0; applicationIndex < applicationCount; applicationIndex++)
+                applications.add(new Application(buffer.readUUID(), buffer.readUtf(40),
+                        buffer.readLong()));
+            organizations.add(new Summary(id, name, description, policy, founder,
+                    List.copyOf(members), List.copyOf(applications)));
         }
-        return new OrganizationSyncPacket(List.copyOf(organizations), buffer.readUtf(80));
+        int directoryCount = buffer.readVarInt();
+        if (directoryCount < 0 || directoryCount > 4096)
+            throw new IllegalArgumentException("Invalid organization directory count");
+        List<Directory> directory = new ArrayList<>(directoryCount);
+        for (int index = 0; index < directoryCount; index++)
+            directory.add(new Directory(buffer.readUUID(), buffer.readUtf(48),
+                    buffer.readEnum(Organization.JoinPolicy.class), buffer.readBoolean()));
+        return new OrganizationSyncPacket(List.copyOf(organizations), List.copyOf(directory),
+                buffer.readUtf(80));
     }
 
     public static void handle(OrganizationSyncPacket packet,

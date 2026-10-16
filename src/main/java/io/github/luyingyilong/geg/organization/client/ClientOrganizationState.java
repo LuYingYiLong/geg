@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = GegMod.MODID, value = Dist.CLIENT)
 public final class ClientOrganizationState {
     private static List<OrganizationSyncPacket.Summary> organizations = List.of();
+    private static List<OrganizationSyncPacket.Directory> directory = List.of();
     private static boolean loaded;
 
     private ClientOrganizationState() {
@@ -29,14 +30,20 @@ public final class ClientOrganizationState {
         return organizations;
     }
 
-    static void acceptOrganizations(List<OrganizationSyncPacket.Summary> summaries) {
-        organizations = List.copyOf(summaries);
+    static List<OrganizationSyncPacket.Directory> directory() {
+        return directory;
+    }
+
+    static void acceptOrganizations(OrganizationSyncPacket packet) {
+        organizations = List.copyOf(packet.organizations());
+        directory = List.copyOf(packet.directory());
         loaded = true;
     }
 
     @SubscribeEvent
     public static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         organizations = List.of();
+        directory = List.of();
         loaded = false;
     }
 }

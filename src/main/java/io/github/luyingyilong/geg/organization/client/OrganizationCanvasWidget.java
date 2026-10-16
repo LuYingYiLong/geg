@@ -32,7 +32,11 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private final Dialog emptyDialog;
     private final Modal createModal;
     private final Table<OrganizationSyncPacket.Member> memberTable = createMemberTable();
+    private final Table<OrganizationSyncPacket.Application> applicationTable = createApplicationTable();
+    private final Table<OrganizationSyncPacket.Directory> joinTable = createJoinTable();
     private final Modal detailModal;
+    private final Modal applicationsModal;
+    private final Modal joinModal;
     private final Modal disbandConfirmation;
     private final Map<UUID, Dropdown<OrganizationSavedData.Operation>> memberMenus = new HashMap<>();
     private UUID selectedOrganizationId;
@@ -51,7 +55,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         options.add(option(OreIcons.FLAG, "organization.geg.create",
                 this::showCreate));
         options.add(option(OreIcons.ORG, "organization.geg.join",
-                this::showJoinUnavailable));
+                this::showJoin));
         emptyText = new Label(Component.translatable("organization.geg.none"))
                 .wrap(Label.Wrap.WORD).overflow(Label.Overflow.CLIP)
                 .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
@@ -69,6 +73,14 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         memberTable.minimum(0, 60).policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
         detailModal = new Modal(Component.empty()).content(memberTable)
                 .onClose(this::closeDetails);
+        applicationTable.headerVisible(false).minimum(0, 60)
+                .policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
+        applicationsModal = new Modal(Component.translatable("organization.geg.applications"))
+                .content(applicationTable).onClose(this::closeApplications).depth(300.0F);
+        joinTable.headerVisible(false).minimum(0, 60)
+                .policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
+        joinModal = new Modal(Component.translatable("organization.geg.join"))
+                .content(joinTable).onClose(this::closeJoin).depth(300.0F);
         Label warning = new Label(Component.translatable("organization.geg.confirm_disband_body"))
                 .wrap(Label.Wrap.WORD).color(0xFFD8D9DC);
         warning.policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
@@ -78,10 +90,13 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                         this::closeDisbandConfirmation)
                 .action(Component.translatable("organization.geg.disband"),
                         this::confirmDisband, Button.Type.DESTRUCTIVE)
-                .depth(300.0F);
-        overlay.add(emptyDialog).add(createModal).add(detailModal).add(disbandConfirmation);
+                .depth(400.0F);
+        overlay.add(emptyDialog).add(createModal).add(detailModal)
+                .add(joinModal).add(applicationsModal).add(disbandConfirmation);
         createModal.visible(false);
         detailModal.visible(false);
+        joinModal.visible(false);
+        applicationsModal.visible(false);
         disbandConfirmation.visible(false);
         createForm.setVisible(false);
         name.setInputVisible(false);
@@ -143,6 +158,93 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                                 mouseX, mouseY);
                         activeMenuMember = menu.isOpen() ? member.id() : null;
                         activeMenuBounds = menu.isOpen() ? trigger : null;
+                        return true;
+                    }
+                }));
+    }
+
+    private Table<OrganizationSyncPacket.Application> createApplicationTable() {
+        return new Table<OrganizationSyncPacket.Application>()
+                .headerVisible(false)
+                .rowKey(OrganizationSyncPacket.Application::id)
+                .empty(Component.translatable("organization.geg.no_applications"))
+                .column(new Table.Column<>("player",
+                        Component.translatable("organization.geg.player"),
+                        48, 120, 1, width -> 20,
+                        new Table.TextCell<OrganizationSyncPacket.Application>(
+                                application -> Component.literal(application.name()), 0xFFFFFFFF)
+                                .overflow(Label.Overflow.ELLIPSIS)))
+                .column(new Table.Column<>("action",
+                        Component.translatable("organization.geg.actions"),
+                        112, 128, 0, width -> 20, new Table.Cell<>() {
+                    @Override public void draw(ModularGuiContext context,
+                                               OrganizationSyncPacket.Application application,
+                                               Rect bounds) {
+                        Rect reject = reviewButtonBounds(bounds, false);
+                        Rect approve = reviewButtonBounds(bounds, true);
+                        Button.draw(context, reject.x(), reject.y(), reject.width(), reject.height(),
+                                Component.translatable("organization.geg.reject"),
+                                Button.Type.DESTRUCTIVE);
+                        Button.draw(context, approve.x(), approve.y(), approve.width(), approve.height(),
+                                Component.translatable("organization.geg.approve"), Button.Type.PRIMARY);
+                    }
+
+                    @Override public boolean click(OrganizationSyncPacket.Application application,
+                                                   Rect bounds, int mouseX, int mouseY) {
+                        if (selectedOrganizationId == null) return false;
+                        if (reviewButtonBounds(bounds, false).contains(mouseX, mouseY)) {
+                            OrganizationNetwork.operate(OrganizationSavedData.Operation.REJECT,
+                                    selectedOrganizationId, application.id());
+                            return true;
+                        }
+                        if (reviewButtonBounds(bounds, true).contains(mouseX, mouseY)) {
+                            OrganizationNetwork.operate(OrganizationSavedData.Operation.APPROVE,
+                                    selectedOrganizationId, application.id());
+                            return true;
+                        }
+                        return false;
+                    }
+                }));
+    }
+
+    private static Rect reviewButtonBounds(Rect cell, boolean right) {
+        int width = Math.max(1, (cell.width() - 6) / 2);
+        return new Rect(cell.x() + (right ? width + 4 : 2), cell.y() + 2,
+                width, Math.min(Button.Size.SMALL.height(), Math.max(1, cell.height() - 4)));
+    }
+
+    private Table<OrganizationSyncPacket.Directory> createJoinTable() {
+        return new Table<OrganizationSyncPacket.Directory>()
+                .headerVisible(false)
+                .rowKey(OrganizationSyncPacket.Directory::id)
+                .empty(Component.translatable("organization.geg.no_available_organizations"))
+                .column(new Table.Column<>("organization",
+                        Component.translatable("organization.geg.name"),
+                        50, 120, 1, width -> 20,
+                        new Table.TextCell<OrganizationSyncPacket.Directory>(
+                                entry -> Component.literal(entry.name()), 0xFFFFFFFF)
+                                .overflow(Label.Overflow.ELLIPSIS)))
+                .column(new Table.Column<>("action",
+                        Component.translatable("organization.geg.actions"),
+                        72, 92, 0, width -> 20, new Table.Cell<>() {
+                    @Override public void draw(ModularGuiContext context,
+                                               OrganizationSyncPacket.Directory entry,
+                                               Rect bounds) {
+                        Rect button = actionBounds(bounds);
+                        Button.draw(context, button.x(), button.y(), button.width(), button.height(),
+                                Component.translatable(entry.pending()
+                                        ? "organization.geg.pending_application"
+                                        : entry.joinPolicy() == Organization.JoinPolicy.APPROVAL
+                                        ? "organization.geg.apply" : "organization.geg.join"),
+                                Button.Type.SECONDARY);
+                    }
+
+                    @Override public boolean click(OrganizationSyncPacket.Directory entry,
+                                                   Rect bounds, int mouseX, int mouseY) {
+                        if (entry.pending() || !actionBounds(bounds).contains(mouseX, mouseY)
+                                || Minecraft.getInstance().player == null) return false;
+                        OrganizationNetwork.operate(OrganizationSavedData.Operation.APPLY,
+                                entry.id(), Minecraft.getInstance().player.getUUID());
                         return true;
                     }
                 }));
@@ -254,13 +356,62 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         memberMenus.clear();
         detailModal.title(Component.literal(summary.name()));
         memberTable.rows(summary.members());
-        detailModal.clearActions().action(Component.translatable("organization.geg.apply"),
-                () -> notifyUnavailable("organization.geg.applications_unavailable"));
+        detailModal.clearActions();
+        Organization.Role ownRole = ownRole(summary);
+        if (ownRole == Organization.Role.LEADER || ownRole == Organization.Role.OFFICER) {
+            detailModal.action(Component.translatable("organization.geg.applications"),
+                    this::showApplications);
+            applicationTable.rows(summary.applications());
+        } else {
+            applicationsModal.visible(false);
+        }
         requestLayout();
+    }
+
+    private Organization.Role ownRole(OrganizationSyncPacket.Summary summary) {
+        if (Minecraft.getInstance().player == null) return null;
+        UUID self = Minecraft.getInstance().player.getUUID();
+        return summary.members().stream().filter(member -> member.id().equals(self))
+                .map(OrganizationSyncPacket.Member::role).findFirst().orElse(null);
+    }
+
+    private void showApplications() {
+        OrganizationSyncPacket.Summary summary = selectedSummary();
+        if (summary == null) return;
+        Organization.Role ownRole = ownRole(summary);
+        if (ownRole != Organization.Role.LEADER && ownRole != Organization.Role.OFFICER) return;
+        closeMenu();
+        applicationTable.rows(summary.applications());
+        applicationTable.scrollToTop();
+        applicationsModal.visible(true);
+        requestLayout();
+    }
+
+    private void closeApplications() {
+        applicationsModal.visible(false);
+        requestLayout();
+    }
+
+    private void showJoin() {
+        emptyDialog.visible(false);
+        createModal.visible(false);
+        detailModal.visible(false);
+        closeMenu();
+        joinTable.rows(ClientOrganizationState.directory());
+        joinTable.scrollToTop();
+        joinModal.visible(true);
+        requestLayout();
+    }
+
+    private void closeJoin() {
+        joinModal.visible(false);
+        if (ClientOrganizationState.hasOrganizations()) showMemberships();
+        else showEmpty();
     }
 
     private void closeDetails() {
         detailModal.visible(false);
+        applicationsModal.visible(false);
         closeDisbandConfirmation();
         selectedOrganizationId = null;
         closeMenu();
@@ -278,6 +429,12 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     void acceptSnapshot(String resultKey) {
         if (!resultKey.isEmpty()) pendingCreate = false;
+        if (joinModal.visible()) {
+            joinTable.rows(ClientOrganizationState.directory());
+            rebuildMemberships();
+            requestLayout();
+            return;
+        }
         if (detailModal.visible()) {
             OrganizationSyncPacket.Summary selected = selectedSummary();
             if (selected != null) {
@@ -306,6 +463,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         createForm.setVisible(false);
         createModal.visible(false);
         detailModal.visible(false);
+        joinModal.visible(false);
+        applicationsModal.visible(false);
         if (!ClientOrganizationState.loaded()) {
             showLoading();
             return;
@@ -326,13 +485,11 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private void showCreate() {
         emptyDialog.visible(false);
         detailModal.visible(false);
+        joinModal.visible(false);
+        applicationsModal.visible(false);
         createModal.visible(true);
         createForm.setVisible(true);
         requestLayout();
-    }
-
-    private void showJoinUnavailable() {
-        notifyUnavailable("organization.geg.join_unavailable");
     }
 
     private void submitCreate() {
@@ -353,6 +510,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         createForm.setVisible(false);
         createModal.visible(false);
         detailModal.visible(false);
+        joinModal.visible(false);
+        applicationsModal.visible(false);
         emptyDialog.visible(false);
         requestLayout();
     }
@@ -368,10 +527,16 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         memberships.add(header);
         Button createButton = new Button(Component.translatable("organization.geg.create"))
                 .type(Button.Type.PRIMARY).onPress(this::showCreate);
-        createButton.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        createButton.policy(Control.SizePolicy.EXPAND, Control.SizePolicy.CONTENT);
+        Button joinButton = new Button(Component.translatable("organization.geg.join"))
+                .onPress(this::showJoin);
+        joinButton.policy(Control.SizePolicy.EXPAND, Control.SizePolicy.CONTENT);
+        Box actions = new Box().orientation(Box.Orientation.HORIZONTAL).gap(2)
+                .add(createButton).add(joinButton);
+        actions.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
         Padding createInset = new Padding(new Padding.Insets(0, 4, 0, 4));
         createInset.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
-        createInset.child(createButton);
+        createInset.child(actions);
         memberships.add(createInset);
         Box orgList = new Box().gap(0);
         orgList.policy(Control.SizePolicy.FILL, Control.SizePolicy.FILL);
@@ -411,11 +576,14 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         int modalWidth = Math.max(1, area.width() / 2);
         createModal.size(modalWidth, area.height()).position(area.width() - modalWidth, 0);
         detailModal.size(modalWidth, area.height()).position(area.width() - modalWidth, 0);
+        applicationsModal.size(Math.min(320, area.width()), Math.min(220, area.height())).centered();
+        joinModal.size(Math.min(280, area.width()), Math.min(240, area.height())).centered();
         disbandConfirmation.size(Math.min(240, area.width()), Math.min(120, area.height())).centered();
         options.orientation(area.width() < 252 ? Box.Orientation.VERTICAL : Box.Orientation.HORIZONTAL);
         window.layoutViewport(area.width(), area.height(), context.getFont());
         window.draw(context, area.x(), area.y());
-        if (detailModal.visible() && !disbandConfirmation.visible() && activeMenuMember != null
+        if (detailModal.visible() && !applicationsModal.visible()
+                && !disbandConfirmation.visible() && activeMenuMember != null
                 && activeMenuBounds != null) {
             Dropdown<OrganizationSavedData.Operation> menu = memberMenus.get(activeMenuMember);
             if (menu != null && menu.isOpen()) {
@@ -460,6 +628,15 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     @Override public boolean onMouseScrolled(double delta) {
+        if (applicationsModal.visible()) {
+            applicationTable.scrollBy(-(int) Math.signum(delta) *
+                    (applicationTable.compact() ? 36 : 23));
+            return true;
+        }
+        if (joinModal.visible()) {
+            joinTable.scrollBy(-(int) Math.signum(delta) * (joinTable.compact() ? 36 : 23));
+            return true;
+        }
         if (activeMenuMember != null) {
             Dropdown<OrganizationSavedData.Operation> menu = memberMenus.get(activeMenuMember);
             if (menu != null && menu.scroll(delta)) return true;
@@ -476,6 +653,14 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == 256 && disbandConfirmation.visible()) {
             closeDisbandConfirmation();
+            return Interactable.Result.STOP;
+        }
+        if (keyCode == 256 && applicationsModal.visible()) {
+            closeApplications();
+            return Interactable.Result.STOP;
+        }
+        if (keyCode == 256 && joinModal.visible()) {
+            closeJoin();
             return Interactable.Result.STOP;
         }
         if (keyCode == 256 && detailModal.visible()) {

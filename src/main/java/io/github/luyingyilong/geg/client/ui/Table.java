@@ -151,6 +151,7 @@ public final class Table<T> extends Container {
     private int lastWidth = -1;
     private Font lastFont;
     private boolean compact;
+    private boolean headerVisible = true;
     private boolean dirty = true;
     private boolean resetScroll;
     private Object anchorKey;
@@ -186,6 +187,14 @@ public final class Table<T> extends Container {
         return this;
     }
 
+    public Table<T> headerVisible(boolean visible) {
+        if (headerVisible != visible) {
+            headerVisible = visible;
+            requestLayout();
+        }
+        return this;
+    }
+
     public void rows(List<T> rows) {
         if (!resetScroll) saveAnchor();
         this.rows = List.copyOf(rows);
@@ -211,7 +220,7 @@ public final class Table<T> extends Container {
     public int contentHeight() { return contentHeight; }
     public int activeViews() { return activeViews.size(); }
     public boolean compact() { return compact; }
-    public int headerHeight() { return compact ? 0 : HEADER_HEIGHT; }
+    public int headerHeight() { return !headerVisible || compact ? 0 : HEADER_HEIGHT; }
     public List<Row<T>> layoutRows() { return List.copyOf(layoutRows); }
     public int[] columnWidths() { return columnWidths.clone(); }
 
@@ -367,7 +376,7 @@ public final class Table<T> extends Container {
         if (rowBackground == null) rowBackground = new Panel(OreTheme.BAR);
         updateVisible(context.getFont());
         Rect area = screenBounds(screenX, screenY);
-        if (!compact) drawHeader(context, area);
+        if (headerVisible && !compact) drawHeader(context, area);
         Rect body = new Rect(area.x(), area.y() + headerHeight(), area.width(), bodyHeight());
         if (body.height() <= 0) return;
         GuiGraphics graphics = context.getGraphics();

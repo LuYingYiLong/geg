@@ -68,7 +68,7 @@ public final class ClientOrganizationScreen {
     }
 
     public static void acceptSnapshot(OrganizationSyncPacket packet) {
-        ClientOrganizationState.acceptOrganizations(packet.organizations());
+        ClientOrganizationState.acceptOrganizations(packet);
         if (canvas != null) canvas.acceptSnapshot(packet.resultKey());
         if (!packet.resultKey().isEmpty() && Minecraft.getInstance().player != null)
             Minecraft.getInstance().player.displayClientMessage(Component.translatable(packet.resultKey()), false);

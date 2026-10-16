@@ -39,7 +39,56 @@ public final class OrganizationSavedDataTest {
         check(organization.roleOf(founder) == Organization.Role.LEADER);
 
         testRolePermissions();
+        testApplications();
         testLegacyMembers();
+    }
+
+    private static void testApplications() {
+        UUID leader = UUID.randomUUID();
+        UUID officer = UUID.randomUUID();
+        UUID member = UUID.randomUUID();
+        UUID applicant = UUID.randomUUID();
+        UUID rejected = UUID.randomUUID();
+        Organization organization = new Organization(UUID.randomUUID(), "Applicants", "", leader,
+                Organization.JoinPolicy.APPROVAL, 1L, Map.of(leader, Organization.Role.LEADER,
+                officer, Organization.Role.OFFICER, member, Organization.Role.MEMBER));
+        OrganizationSavedData data = seeded(organization);
+        UUID id = organization.id();
+        check(data.operate(applicant, id, applicant, OrganizationSavedData.Operation.APPLY)
+                == OrganizationSavedData.OperationResult.SUCCESS);
+        check(data.operate(applicant, id, applicant, OrganizationSavedData.Operation.APPLY)
+                == OrganizationSavedData.OperationResult.ALREADY_APPLIED);
+        check(data.operate(applicant, id, rejected, OrganizationSavedData.Operation.APPLY)
+                == OrganizationSavedData.OperationResult.FORBIDDEN);
+        check(data.organization(id).roleOf(applicant) == null);
+        data = OrganizationSavedData.load(data.save(new CompoundTag()));
+        check(data.hasApplication(id, applicant));
+        check(data.operate(member, id, applicant, OrganizationSavedData.Operation.APPROVE)
+                == OrganizationSavedData.OperationResult.FORBIDDEN);
+        check(data.operate(officer, id, applicant, OrganizationSavedData.Operation.APPROVE)
+                == OrganizationSavedData.OperationResult.SUCCESS);
+        check(data.organization(id).roleOf(applicant) == Organization.Role.MEMBER);
+        check(!data.hasApplication(id, applicant));
+        check(data.operate(leader, id, applicant, OrganizationSavedData.Operation.APPROVE)
+                == OrganizationSavedData.OperationResult.NO_APPLICATION);
+        check(data.operate(rejected, id, rejected, OrganizationSavedData.Operation.APPLY)
+                == OrganizationSavedData.OperationResult.SUCCESS);
+        check(data.operate(leader, id, rejected, OrganizationSavedData.Operation.REJECT)
+                == OrganizationSavedData.OperationResult.SUCCESS);
+        check(data.organization(id).roleOf(rejected) == null && !data.hasApplication(id, rejected));
+        check(data.operate(rejected, id, rejected, OrganizationSavedData.Operation.APPLY)
+                == OrganizationSavedData.OperationResult.SUCCESS);
+        check(data.operate(leader, id, leader, OrganizationSavedData.Operation.DISBAND)
+                == OrganizationSavedData.OperationResult.SUCCESS);
+        check(data.applications(id).isEmpty());
+
+        Organization open = new Organization(UUID.randomUUID(), "Open", "", leader,
+                Organization.JoinPolicy.UNRESTRICTED, 2L, Map.of(leader, Organization.Role.LEADER));
+        OrganizationSavedData openData = seeded(open);
+        check(openData.operate(applicant, open.id(), applicant, OrganizationSavedData.Operation.APPLY)
+                == OrganizationSavedData.OperationResult.SUCCESS);
+        check(openData.organization(open.id()).roleOf(applicant) == Organization.Role.MEMBER);
+        check(openData.applications(open.id()).isEmpty());
     }
 
     private static void testRolePermissions() {

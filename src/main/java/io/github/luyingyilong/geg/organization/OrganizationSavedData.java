@@ -17,12 +17,18 @@ import net.minecraft.world.level.saveddata.SavedData;
 public final class OrganizationSavedData extends SavedData {
     private static final String DATA_NAME = "geg_organizations";
     private static final int MAX_MEMBERSHIPS = 128;
+    private static final int MAX_APPLICATIONS = 256;
 
     private final Map<UUID, Organization> organizations = new HashMap<>();
+    private final Map<UUID, Map<UUID, Long>> applications = new HashMap<>();
 
     public enum CreateResult { CREATED, INVALID_NAME, INVALID_DESCRIPTION, DUPLICATE_NAME, TOO_MANY }
-    public enum Operation { DISBAND, PROMOTE, DEMOTE, REMOVE, LEAVE }
-    public enum OperationResult { SUCCESS, NOT_FOUND, NOT_MEMBER, FORBIDDEN, INVALID_TARGET }
+    public enum Operation { DISBAND, PROMOTE, DEMOTE, REMOVE, LEAVE, APPLY, APPROVE, REJECT }
+    public enum OperationResult {
+        SUCCESS, NOT_FOUND, NOT_MEMBER, FORBIDDEN, INVALID_TARGET,
+        ALREADY_MEMBER, ALREADY_APPLIED, TOO_MANY, NO_APPLICATION
+    }
+    public record Application(UUID applicant, long appliedAt) { }
 
     public static OrganizationSavedData get(MinecraftServer server) {
         return server.overworld().getDataStorage().computeIfAbsent(
@@ -38,6 +44,19 @@ public final class OrganizationSavedData extends SavedData {
                 data.organizations.put(organization.id(), organization);
             }
         }
+        for (Tag raw : root.getList("applications", Tag.TAG_COMPOUND)) {
+            CompoundTag tag = (CompoundTag) raw;
+            if (!tag.hasUUID("organization") || !tag.hasUUID("applicant")) continue;
+            UUID organizationId = tag.getUUID("organization");
+            UUID applicant = tag.getUUID("applicant");
+            Organization organization = data.organizations.get(organizationId);
+            if (organization == null || organization.joinPolicy() != Organization.JoinPolicy.APPROVAL
+                    || organization.roleOf(applicant) != null) continue;
+            Map<UUID, Long> pending = data.applications.computeIfAbsent(
+                    organizationId, ignored -> new HashMap<>());
+            if (pending.size() < MAX_APPLICATIONS)
+                pending.putIfAbsent(applicant, tag.getLong("appliedAt"));
+        }
         return data;
     }
 
@@ -46,7 +65,34 @@ public final class OrganizationSavedData extends SavedData {
         organizations.values().stream().sorted(Comparator.comparing(Organization::createdAt)
                 .thenComparing(Organization::id)).forEach(organization -> list.add(organization.save()));
         root.put("organizations", list);
+        ListTag pending = new ListTag();
+        applications.entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> entry.getValue().entrySet().stream()
+                        .sorted(Map.Entry.comparingByKey()).forEach(application -> {
+                            CompoundTag tag = new CompoundTag();
+                            tag.putUUID("organization", entry.getKey());
+                            tag.putUUID("applicant", application.getKey());
+                            tag.putLong("appliedAt", application.getValue());
+                            pending.add(tag);
+                        }));
+        root.put("applications", pending);
         return root;
+    }
+
+    public List<Organization> directory() {
+        return organizations.values().stream().sorted(Comparator.comparing(Organization::name,
+                String.CASE_INSENSITIVE_ORDER).thenComparing(Organization::id)).toList();
+    }
+
+    public List<Application> applications(UUID organizationId) {
+        return applications.getOrDefault(organizationId, Map.of()).entrySet().stream()
+                .map(entry -> new Application(entry.getKey(), entry.getValue()))
+                .sorted(Comparator.comparingLong(Application::appliedAt)
+                        .thenComparing(Application::applicant)).toList();
+    }
+
+    public boolean hasApplication(UUID organizationId, UUID applicant) {
+        return applications.getOrDefault(organizationId, Map.of()).containsKey(applicant);
     }
 
     public List<Organization> memberships(UUID player) {
@@ -64,13 +110,44 @@ public final class OrganizationSavedData extends SavedData {
     public OperationResult operate(UUID actor, UUID organizationId, UUID target, Operation operation) {
         Organization organization = organizations.get(organizationId);
         if (organization == null) return OperationResult.NOT_FOUND;
+        if (operation == Operation.APPLY) {
+            if (!actor.equals(target)) return OperationResult.FORBIDDEN;
+            if (organization.roleOf(actor) != null) return OperationResult.ALREADY_MEMBER;
+            if (memberships(actor).size() >= MAX_MEMBERSHIPS) return OperationResult.TOO_MANY;
+            if (organization.joinPolicy() == Organization.JoinPolicy.UNRESTRICTED) {
+                organizations.put(organizationId, organization.withMember(actor));
+            } else {
+                Map<UUID, Long> pending = applications.computeIfAbsent(
+                        organizationId, ignored -> new HashMap<>());
+                if (pending.containsKey(actor)) return OperationResult.ALREADY_APPLIED;
+                if (pending.size() >= MAX_APPLICATIONS) return OperationResult.TOO_MANY;
+                pending.put(actor, System.currentTimeMillis());
+            }
+            setDirty();
+            return OperationResult.SUCCESS;
+        }
         Organization.Role actorRole = organization.roleOf(actor);
         if (actorRole == null) return OperationResult.NOT_MEMBER;
+        if (operation == Operation.APPROVE || operation == Operation.REJECT) {
+            if (actorRole == Organization.Role.MEMBER) return OperationResult.FORBIDDEN;
+            Map<UUID, Long> pending = applications.get(organizationId);
+            if (pending == null || !pending.containsKey(target)) return OperationResult.NO_APPLICATION;
+            if (operation == Operation.APPROVE) {
+                if (organization.roleOf(target) != null) return OperationResult.ALREADY_MEMBER;
+                if (memberships(target).size() >= MAX_MEMBERSHIPS) return OperationResult.TOO_MANY;
+                organizations.put(organizationId, organization.withMember(target));
+            }
+            pending.remove(target);
+            if (pending.isEmpty()) applications.remove(organizationId);
+            setDirty();
+            return OperationResult.SUCCESS;
+        }
         Organization.Role targetRole = organization.roleOf(target);
         if (operation == Operation.DISBAND) {
             if (actorRole != Organization.Role.LEADER || !actor.equals(target))
                 return OperationResult.FORBIDDEN;
             organizations.remove(organizationId);
+            applications.remove(organizationId);
         } else if (operation == Operation.LEAVE) {
             if (!actor.equals(target) || actorRole == Organization.Role.LEADER)
                 return OperationResult.FORBIDDEN;

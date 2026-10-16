@@ -72,7 +72,12 @@ public final class Button extends Control {
 
     public static void draw(ModularGuiContext context, int x, int y, int width,
                             Size size, Component label) {
-        draw(context, x, y, width, size.height(), label, null);
+        draw(context, x, y, width, size.height(), label, (Icon) null);
+    }
+
+    public static void draw(ModularGuiContext context, int x, int y, int width,
+                            int height, Component label, Type type) {
+        draw(context, x, y, width, height, label, null, TextAlignment.CENTER, type);
     }
 
     public static void draw(ModularGuiContext context, int x, int y, int width,

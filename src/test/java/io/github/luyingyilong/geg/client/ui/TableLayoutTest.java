@@ -50,6 +50,11 @@ public final class TableLayoutTest {
         check(table.hitRow(5, 19).item() == 0);
         check(table.click(5, 20) && selected.equals(List.of(0)));
         check(table.click(218, 20) && acted.equals(List.of(0)));
+        table.headerVisible(false);
+        table.layout(new Rect(0, 0, 320, 144), null);
+        check(table.headerHeight() == 0 && table.hitRow(5, 0).item() == 0);
+        table.headerVisible(true);
+        table.layout(new Rect(0, 0, 320, 144), null);
 
         table.setScroll(46);
         check(table.hitRow(5, 19).item() == 2);

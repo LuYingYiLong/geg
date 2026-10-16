@@ -9,7 +9,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public final class OrganizationNetwork {
-    private static final String PROTOCOL_VERSION = "2";
+    private static final String PROTOCOL_VERSION = "3";
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.fromNamespaceAndPath(GegMod.MODID, "organizations"),
             () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
@@ -44,10 +44,18 @@ public final class OrganizationNetwork {
     }
 
     static void sync(ServerPlayer player, String resultKey) {
-        List<OrganizationSyncPacket.Summary> summaries = OrganizationSavedData.get(player.server)
+        OrganizationSavedData data = OrganizationSavedData.get(player.server);
+        List<OrganizationSyncPacket.Summary> summaries = data
                 .memberships(player.getUUID()).stream()
-                .map(organization -> OrganizationSyncPacket.Summary.from(organization, player.server)).toList();
+                .map(organization -> OrganizationSyncPacket.Summary.from(organization,
+                        player.server, data, player.getUUID())).toList();
+        List<OrganizationSyncPacket.Directory> directory = data.directory().stream()
+                .filter(organization -> organization.roleOf(player.getUUID()) == null)
+                .limit(4096)
+                .map(organization -> new OrganizationSyncPacket.Directory(organization.id(),
+                        organization.name(), organization.joinPolicy(),
+                        data.hasApplication(organization.id(), player.getUUID()))).toList();
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
-                new OrganizationSyncPacket(summaries, resultKey));
+                new OrganizationSyncPacket(summaries, directory, resultKey));
     }
 }

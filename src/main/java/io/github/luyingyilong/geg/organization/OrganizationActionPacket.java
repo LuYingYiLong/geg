@@ -12,7 +12,10 @@ public record OrganizationActionPacket(Action action, String name, String descri
                                        Organization.JoinPolicy joinPolicy,
                                        UUID organizationId, UUID targetId) {
     private static final UUID EMPTY_ID = new UUID(0L, 0L);
-    public enum Action { REQUEST, CREATE, DISBAND, PROMOTE, DEMOTE, REMOVE, LEAVE }
+    public enum Action {
+        REQUEST, CREATE, DISBAND, PROMOTE, DEMOTE, REMOVE, LEAVE,
+        APPLY, APPROVE, REJECT
+    }
 
     public static OrganizationActionPacket request() {
         return new OrganizationActionPacket(Action.REQUEST, "", "",
@@ -59,13 +62,18 @@ public record OrganizationActionPacket(Action action, String name, String descri
             if (packet.action == Action.CREATE) {
                 OrganizationSavedData.CreateResult result = data.create(player.getUUID(),
                         packet.name, packet.description, packet.joinPolicy);
-                OrganizationNetwork.sync(player, switch (result) {
+                String createResultKey = switch (result) {
                     case CREATED -> "organization.geg.created";
                     case INVALID_NAME -> "organization.geg.invalid_name";
                     case INVALID_DESCRIPTION -> "organization.geg.invalid_description";
                     case DUPLICATE_NAME -> "organization.geg.duplicate_name";
                     case TOO_MANY -> "organization.geg.too_many";
-                });
+                };
+                if (result == OrganizationSavedData.CreateResult.CREATED) {
+                    for (ServerPlayer online : player.server.getPlayerList().getPlayers())
+                        OrganizationNetwork.sync(online,
+                                online.getUUID().equals(player.getUUID()) ? createResultKey : "");
+                } else OrganizationNetwork.sync(player, createResultKey);
                 return;
             }
             Organization old = data.organization(packet.organizationId);
@@ -74,11 +82,18 @@ public record OrganizationActionPacket(Action action, String name, String descri
             OrganizationSavedData.OperationResult result = data.operate(player.getUUID(),
                     packet.organizationId, packet.targetId, operation);
             String resultKey = switch (result) {
-                case SUCCESS -> "organization.geg.result." + operation.name().toLowerCase(java.util.Locale.ROOT);
+                case SUCCESS -> operation == OrganizationSavedData.Operation.APPLY
+                        && old != null && old.joinPolicy() == Organization.JoinPolicy.APPROVAL
+                        ? "organization.geg.result.application_sent"
+                        : "organization.geg.result." + operation.name().toLowerCase(java.util.Locale.ROOT);
                 case NOT_FOUND -> "organization.geg.result.not_found";
                 case NOT_MEMBER -> "organization.geg.result.not_member";
                 case FORBIDDEN -> "organization.geg.result.forbidden";
                 case INVALID_TARGET -> "organization.geg.result.invalid_target";
+                case ALREADY_MEMBER -> "organization.geg.result.already_member";
+                case ALREADY_APPLIED -> "organization.geg.result.already_applied";
+                case TOO_MANY -> "organization.geg.result.too_many";
+                case NO_APPLICATION -> "organization.geg.result.no_application";
             };
             if (result != OrganizationSavedData.OperationResult.SUCCESS) {
                 OrganizationNetwork.sync(player, resultKey);
@@ -86,17 +101,31 @@ public record OrganizationActionPacket(Action action, String name, String descri
             }
             Organization updated = data.organization(packet.organizationId);
             Set<UUID> affected = new HashSet<>();
+            affected.add(player.getUUID());
             if (old != null) affected.addAll(old.members());
             if (updated != null) affected.addAll(updated.members());
+            if (operation == OrganizationSavedData.Operation.APPROVE
+                    || operation == OrganizationSavedData.Operation.REJECT)
+                affected.add(packet.targetId);
+            if (operation == OrganizationSavedData.Operation.DISBAND)
+                for (ServerPlayer online : player.server.getPlayerList().getPlayers())
+                    affected.add(online.getUUID());
             for (UUID member : affected) {
                 ServerPlayer online = player.server.getPlayerList().getPlayer(member);
                 if (online != null) {
                     String notice = member.equals(player.getUUID()) ? resultKey
                             : operation == OrganizationSavedData.Operation.DISBAND
+                            && old != null && old.members().contains(member)
                             ? "organization.geg.result.disbanded_notice"
                             : operation == OrganizationSavedData.Operation.REMOVE
                             && member.equals(packet.targetId)
-                            ? "organization.geg.result.removed_notice" : "";
+                            ? "organization.geg.result.removed_notice"
+                            : operation == OrganizationSavedData.Operation.APPROVE
+                            && member.equals(packet.targetId)
+                            ? "organization.geg.result.approved_notice"
+                            : operation == OrganizationSavedData.Operation.REJECT
+                            && member.equals(packet.targetId)
+                            ? "organization.geg.result.rejected_notice" : "";
                     OrganizationNetwork.sync(online, notice);
                 }
             }

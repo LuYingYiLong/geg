@@ -17,8 +17,11 @@ public final class OrganizationPacketTest {
         OrganizationSyncPacket.Summary summary = new OrganizationSyncPacket.Summary(
                 organizationId, "Builders", "Build together", Organization.JoinPolicy.APPROVAL,
                 leader, List.of(new OrganizationSyncPacket.Member(leader, "Alice", Organization.Role.LEADER),
-                        new OrganizationSyncPacket.Member(officer, "Bob", Organization.Role.OFFICER)));
-        OrganizationSyncPacket snapshot = new OrganizationSyncPacket(List.of(summary), "");
+                        new OrganizationSyncPacket.Member(officer, "Bob", Organization.Role.OFFICER)),
+                List.of(new OrganizationSyncPacket.Application(UUID.randomUUID(), "Cara", 123L)));
+        OrganizationSyncPacket snapshot = new OrganizationSyncPacket(List.of(summary),
+                List.of(new OrganizationSyncPacket.Directory(UUID.randomUUID(), "Other",
+                        Organization.JoinPolicy.APPROVAL, true)), "");
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         OrganizationSyncPacket.encode(snapshot, buffer);
         check(OrganizationSyncPacket.decode(buffer).equals(snapshot));
@@ -28,6 +31,11 @@ public final class OrganizationPacketTest {
         FriendlyByteBuf actionBuffer = new FriendlyByteBuf(Unpooled.buffer());
         OrganizationActionPacket.encode(action, actionBuffer);
         check(OrganizationActionPacket.decode(actionBuffer).equals(action));
+        OrganizationActionPacket approval = OrganizationActionPacket.operate(
+                OrganizationSavedData.Operation.APPROVE, organizationId, officer);
+        FriendlyByteBuf approvalBuffer = new FriendlyByteBuf(Unpooled.buffer());
+        OrganizationActionPacket.encode(approval, approvalBuffer);
+        check(OrganizationActionPacket.decode(approvalBuffer).equals(approval));
     }
 
     private static void check(boolean condition) {

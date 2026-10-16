@@ -46,6 +46,13 @@ public record Organization(UUID id, String name, String description, UUID founde
         return new Organization(id, name, description, founder, joinPolicy, createdAt, updated);
     }
 
+    public Organization withMember(UUID member) {
+        if (roles.containsKey(member)) throw new IllegalArgumentException("Already a member");
+        Map<UUID, Role> updated = new HashMap<>(roles);
+        updated.put(member, Role.MEMBER);
+        return new Organization(id, name, description, founder, joinPolicy, createdAt, updated);
+    }
+
     public CompoundTag save() {
         CompoundTag tag = new CompoundTag();
         tag.putUUID("id", id);
