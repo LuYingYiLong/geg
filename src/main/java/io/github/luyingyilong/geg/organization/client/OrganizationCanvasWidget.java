@@ -200,11 +200,13 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                                                    Rect bounds, int mouseX, int mouseY) {
                         if (selectedOrganizationId == null) return false;
                         if (reviewButtonBounds(bounds, false).contains(mouseX, mouseY)) {
+                            OreSounds.play(OreSounds.Cue.CLICK);
                             OrganizationNetwork.operate(OrganizationSavedData.Operation.REJECT,
                                     selectedOrganizationId, application.id());
                             return true;
                         }
                         if (reviewButtonBounds(bounds, true).contains(mouseX, mouseY)) {
+                            OreSounds.play(OreSounds.Cue.CLICK);
                             OrganizationNetwork.operate(OrganizationSavedData.Operation.APPROVE,
                                     selectedOrganizationId, application.id());
                             return true;
@@ -258,6 +260,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                                                    Rect bounds, int mouseX, int mouseY) {
                         if (!joinDrawer.isOpen() || !actionBounds(bounds).contains(mouseX, mouseY)
                                 || Minecraft.getInstance().player == null) return false;
+                        OreSounds.play(OreSounds.Cue.CLICK);
                         OrganizationNetwork.operate(entry.pending()
                                         ? OrganizationSavedData.Operation.CANCEL_APPLICATION
                                         : OrganizationSavedData.Operation.APPLY,
@@ -726,10 +729,21 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     @Override public boolean onMouseReleased(int button) {
         if (button != 0) return false;
+        boolean released = window.pointerReleased(getContext().getAbsMouseX() - getArea().x,
+                getContext().getAbsMouseY() - getArea().y);
         boolean details = detailDrawer.bodyScroll().endDrag();
         boolean create = createDrawer.bodyScroll().endDrag();
         boolean join = joinDrawer.bodyScroll().endDrag();
-        return details || create || join;
+        return details || create || join || released;
+    }
+
+    @Override public boolean onKeyReleased(int keyCode, int scanCode, int modifiers) {
+        return window.keyReleased(keyCode, modifiers, getContext());
+    }
+
+    @Override public void dispose() {
+        window.cancelInteractions();
+        super.dispose();
     }
 
     @Override

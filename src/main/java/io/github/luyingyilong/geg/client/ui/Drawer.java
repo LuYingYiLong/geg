@@ -17,6 +17,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
 import java.util.function.LongSupplier;
+import java.util.function.Consumer;
 
 /**
  * A right-hand overlay, initially closed. Add it to Window's Overlay, then call open().
@@ -35,6 +36,7 @@ public final class Drawer extends Container {
     private static final int CLOSE_ICON_SIZE = 7;
 
     private final LongSupplier clock;
+    private final Consumer<OreSounds.Cue> soundPlayer;
     private final Label title = new Label().hero(true).overflow(Label.Overflow.ELLIPSIS)
             .align(Label.Horizontal.LEFT, Label.Vertical.CENTER).color(0xFFFFFFFF);
     private final Box header = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
@@ -60,11 +62,17 @@ public final class Drawer extends Container {
 
     /** Injectable monotonic clock keeps transition and interaction tests deterministic. */
     Drawer(Component title, LongSupplier clock) {
+        this(title, clock, OreSounds::play);
+    }
+
+    Drawer(Component title, LongSupplier clock, Consumer<OreSounds.Cue> soundPlayer) {
         this.clock = Objects.requireNonNull(clock);
+        this.soundPlayer = Objects.requireNonNull(soundPlayer);
         title(title);
         this.title.policy(SizePolicy.EXPAND, SizePolicy.FILL);
-        CloseControl close = new CloseControl();
-        close.minimum(CLOSE_SIZE, CLOSE_SIZE).focusable(true).focusExpansion(1);
+        Button close = new Button().type(Button.Type.TEXT)
+                .icon(OreIcons.CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE).onPress(this::close);
+        close.minimum(CLOSE_SIZE, CLOSE_SIZE);
         header.add(this.title).add(close);
         header.minimum(0, CLOSE_SIZE).policy(SizePolicy.FILL, SizePolicy.CONTENT);
         body.policy(SizePolicy.FILL, SizePolicy.EXPAND);
@@ -140,6 +148,8 @@ public final class Drawer extends Container {
         advanceAnimation();
         if (targetOpen == open) return this;
         targetOpen = open;
+        if (!open) frame.cancelInteractions();
+        soundPlayer.accept(open ? OreSounds.Cue.DRAWER_OPEN : OreSounds.Cue.DRAWER_CLOSE);
         transitionFrom = progress;
         transitionStart = clock.getAsLong();
         animating = true;
@@ -244,21 +254,4 @@ public final class Drawer extends Container {
         return true;
     }
 
-    private final class CloseControl extends Control {
-        @Override public boolean activate() { close(); return true; }
-        @Override protected boolean onPointerPressed(int rootX, int rootY) {
-            return hit(rootX, rootY) && activate();
-        }
-        @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-            Rect area = screenBounds(screenX, screenY);
-            GuiGraphics graphics = context.getGraphics();
-            if (area.contains(context.getAbsMouseX(), context.getAbsMouseY()))
-                graphics.fill(area.x(), area.y(), area.right(), area.bottom(), 0x16FFFFFF);
-            int x = area.x() + (area.width() - CLOSE_ICON_SIZE) / 2;
-            int y = area.y() + (area.height() - CLOSE_ICON_SIZE) / 2;
-            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            graphics.blit(OreIcons.CLOSE, x, y, 0.0F, 0.0F,
-                    CLOSE_ICON_SIZE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);
-        }
-    }
 }

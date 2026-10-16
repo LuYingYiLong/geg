@@ -104,6 +104,7 @@ public final class Tabs extends Control {
     }
 
     @Override public boolean activate() {
+        OreSounds.play(OreSounds.Cue.CLICK);
         selected(focusedIndex);
         onSelect.accept(selectedIndex);
         return true;
@@ -164,6 +165,7 @@ public final class Tabs extends Control {
         int contentWidth = Math.max(viewport.width(), minimumRowWidth(font));
         int index = hitIndex(viewport.x() - scrollX, viewport.y(), contentWidth, mouseX, mouseY);
         if (index >= 0) {
+            OreSounds.play(OreSounds.Cue.CLICK);
             selected(index);
             onSelect.accept(index);
         }

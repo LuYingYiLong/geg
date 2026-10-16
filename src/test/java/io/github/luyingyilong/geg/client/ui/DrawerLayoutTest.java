@@ -12,6 +12,8 @@ import org.lwjgl.glfw.GLFW;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 
 import java.util.stream.IntStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /** Standalone checks for the animated panel's actual layout, mask and input isolation. */
 public final class DrawerLayoutTest {
@@ -58,6 +60,8 @@ public final class DrawerLayoutTest {
         check(drawer.bodyScroll().maxScrollY() > 0);
         Rect hit = inside.absoluteBounds();
         check(window.pointerPressed(hit.x() + 1, hit.y() + 1, null));
+        check(clicked[0] == 0);
+        check(window.pointerReleased(hit.x() + 1, hit.y() + 1));
         check(clicked[0] == 1);
 
         check(window.pointerPressed(5, 5, null));
@@ -118,6 +122,90 @@ public final class DrawerLayoutTest {
         check(!drawer.visible() && closed[0] == 3);
         fontSizesFollowLabels(font);
         tableAndNestedOverlay(font);
+        transitionSounds();
+        closingCancelsPendingAction(font);
+        closeButtonRelease(font);
+    }
+
+    private static void closeButtonRelease(Font font) {
+        for (int width : new int[]{127, 128, 129, 640}) {
+            int[] closed = {0};
+            int[] closeSounds = {0};
+            Drawer drawer = new Drawer(Component.literal("Close"), () -> 0L, cue -> {
+                if (cue == OreSounds.Cue.DRAWER_CLOSE) closeSounds[0]++;
+            }).animationDuration(0).onClose(() -> closed[0]++);
+            Window window = new Window(true).content(new Control()).overlay(new Overlay().add(drawer));
+            drawer.open();
+            window.layoutViewport(width, 150, font);
+            Button close = findIconButton(drawer);
+            check(close != null && close.type() == Button.Type.TEXT);
+            check(close.actionMode() == Button.ACTION_MODE.BUTTON_RELEASE && close.focusExpansion() == 1);
+            check(close.icon().equals(new Button.Icon(OreIcons.CLOSE, 7, 7)));
+            Rect bounds = close.absoluteBounds();
+            check(bounds.width() == 20 && bounds.height() == 20);
+            int x = bounds.x() + 1;
+            int y = bounds.y() + 1; // The blank padding also belongs to the button.
+            check(window.pointerPressed(x, y, null) && closed[0] == 0);
+            check(window.pointerReleased(bounds.x() - 1, y) && closed[0] == 0);
+            check(window.pointerPressed(x, y, null) && closed[0] == 0);
+            check(window.pointerReleased(x, y) && closed[0] == 1);
+            check(!window.pointerReleased(x, y) && closed[0] == 1);
+
+            drawer.open();
+            window.layoutViewport(width, 150, font);
+            window.focusManager().requestFocus(close, null);
+            check(window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null) && closed[0] == 1);
+            check(window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null) && closed[0] == 1);
+            check(window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null) && closed[0] == 2);
+            check(closeSounds[0] == 2);
+        }
+    }
+
+    private static Button findIconButton(Control node) {
+        if (node instanceof Button button && button.icon() != null) return button;
+        for (Control child : node.children()) {
+            Button found = findIconButton(child);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    private static void closingCancelsPendingAction(Font font) {
+        long[] now = {0};
+        int[] actions = {0};
+        Button button = new Button(cue -> { }).onPress(() -> actions[0]++);
+        button.position(0, 0).requestedSize(40, 20);
+        Drawer drawer = new Drawer(Component.literal("Pending"), () -> now[0], cue -> { })
+                .content(new Control().preferred(40, 20).addChild(button));
+        Window window = new Window(true).content(new Control()).overlay(new Overlay().add(drawer));
+        drawer.open();
+        now[0] = 200;
+        window.layoutViewport(200, 120, font);
+        window.focusManager().requestFocus(button, null);
+        window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null);
+        drawer.close();
+        window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
+        check(drawer.visible() && !drawer.isOpen() && actions[0] == 0);
+    }
+
+    private static void transitionSounds() {
+        long[] now = {0};
+        List<OreSounds.Cue> sounds = new ArrayList<>();
+        Drawer drawer = new Drawer(Component.literal("Sound"), () -> now[0], sounds::add);
+        drawer.close();
+        check(sounds.isEmpty());
+        drawer.open().open();
+        check(sounds.equals(List.of(OreSounds.Cue.DRAWER_OPEN)));
+        now[0] = 50;
+        drawer.close().close();
+        check(sounds.equals(List.of(OreSounds.Cue.DRAWER_OPEN, OreSounds.Cue.DRAWER_CLOSE)));
+        drawer.open(); // Reversing a transition is a new opening, not a second frame sound.
+        check(sounds.size() == 3 && sounds.get(2) == OreSounds.Cue.DRAWER_OPEN);
+        now[0] = 1000;
+        drawer.open();
+        check(sounds.size() == 3);
+        drawer.animationDuration(0).close().close();
+        check(sounds.size() == 4 && sounds.get(3) == OreSounds.Cue.DRAWER_CLOSE);
     }
 
     private static void tableAndNestedOverlay(Font font) {

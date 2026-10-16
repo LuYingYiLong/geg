@@ -11,6 +11,7 @@ import io.github.luyingyilong.geg.money.MoneyNetwork;
 import io.github.luyingyilong.geg.money.MoneyRules;
 import io.github.luyingyilong.geg.organization.OrganizationNetwork;
 import io.github.luyingyilong.geg.organization.OrganizationEvents;
+import io.github.luyingyilong.geg.sound.GegSounds;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
@@ -27,6 +28,7 @@ public final class GegMod {
         MoneyRules.register();
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> OreTheme::register);
         MarketBlocks.register(context.getModEventBus());
+        GegSounds.register(context.getModEventBus());
         MoneyNetwork.register();
         MarketNetwork.register();
         OrganizationNetwork.register();

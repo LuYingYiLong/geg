@@ -514,6 +514,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 Rect[] buttons = OfferActionLayout.bounds(area, 50,
                         FAVORITE_BUTTON_WIDTH, FAVORITE_BUTTON_HEIGHT);
                 if (buttons[0].contains(mouseX, mouseY)) {
+                    OreSounds.play(OreSounds.Cue.CLICK);
                     selectedDetailId = offer.id();
                     quantityMenu = true;
                     quantityContent.scroll = 0;
@@ -522,6 +523,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                     return true;
                 }
                 if (buttons[1].contains(mouseX, mouseY)) {
+                    OreSounds.play(OreSounds.Cue.CLICK);
                     toggleOfferFavorite(offer);
                     return true;
                 }
@@ -818,7 +820,18 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     @Override public boolean onMouseReleased(int button) {
         if (button != 0) return false;
-        return gridScroll.endDrag();
+        boolean released = window.pointerReleased(getContext().getAbsMouseX() - getArea().x,
+                getContext().getAbsMouseY() - getArea().y);
+        return gridScroll.endDrag() || released;
+    }
+
+    @Override public boolean onKeyReleased(int keyCode, int scanCode, int modifiers) {
+        return window.keyReleased(keyCode, modifiers, getContext());
+    }
+
+    @Override public void dispose() {
+        window.cancelInteractions();
+        super.dispose();
     }
 
     @Override

@@ -119,6 +119,7 @@ public final class FocusNavigationTest {
         check(window.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, null));
         check(window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null));
         check(activated[0] == 1);
+        window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
         check(window.keyPressed(GLFW.GLFW_KEY_DOWN, 0, null));
         check(window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null));
         check(activated[0] == 2);

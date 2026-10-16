@@ -1,0 +1,6 @@
+{
+  "click": { "sounds": ["geg:click"] },
+  "button": { "sounds": ["geg:button"] },
+  "drawer_open": { "sounds": ["geg:drawer_open"] },
+  "drawer_close": { "sounds": ["geg:drawer_close"] }
+}

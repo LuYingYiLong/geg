@@ -35,7 +35,8 @@ public final class Modal extends Container {
     private final Control headerSpacer = new Control();
     private final Label titleLabel = new Label().overflow(Label.Overflow.ELLIPSIS)
             .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
-    private final CloseControl close = new CloseControl();
+    private final Button close = new Button().type(Button.Type.TEXT)
+            .icon(OreIcons.CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);
     private final Padding bodyInset = new Padding(Padding.Insets.all(BODY_INSET));
     private final Panel footer = new Panel(OreTheme.BAR);
     private final Box footerButtons = new Box().gap(BUTTON_GAP);
@@ -54,8 +55,7 @@ public final class Modal extends Container {
         titleLabel.policy(SizePolicy.EXPAND, SizePolicy.FILL);
         headerSpacer.minimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
         close.minimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
-        close.focusable(true);
-        close.focusExpansion(1);
+        close.onPress(() -> onClose.run());
         headerRow.add(headerSpacer).add(titleLabel).add(close);
         header.child(new Padding(new Padding.Insets(0, 4, 0, 4)).child(headerRow));
         header.minimum(0, HEADER_HEIGHT).preferred(0, HEADER_HEIGHT)
@@ -214,10 +214,12 @@ public final class Modal extends Container {
     /** The topmost modal consumes clicks both inside and outside its panel. */
     public boolean clickAt(int rootX, int rootY) {
         if (!visible()) return false;
-        if (!background.hit(rootX, rootY) || close.hit(rootX, rootY)) {
+        if (!background.hit(rootX, rootY)) {
+            OreSounds.play(OreSounds.Cue.CLICK);
             onClose.run();
             return true;
         }
+        if (close.pressAt(rootX, rootY)) return true;
         for (Button action : actions) if (action.pressAt(rootX, rootY)) return true;
         return true;
     }
@@ -226,20 +228,4 @@ public final class Modal extends Container {
         return clickAt(rootX, rootY);
     }
 
-    private final class CloseControl extends Control {
-        @Override public boolean activate() {
-            onClose.run();
-            return true;
-        }
-        @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-            Rect area = screenBounds(screenX, screenY);
-            if (area.contains(context.getAbsMouseX(), context.getAbsMouseY()))
-                context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), 0x16FFFFFF);
-            int x = area.x() + (area.width() - CLOSE_ICON_SIZE) / 2;
-            int y = area.y() + (area.height() - CLOSE_ICON_SIZE) / 2;
-            context.getGraphics().setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            context.getGraphics().blit(OreIcons.CLOSE, x, y, 0.0F, 0.0F,
-                    CLOSE_ICON_SIZE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);
-        }
-    }
 }

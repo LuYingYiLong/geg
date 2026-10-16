@@ -42,7 +42,8 @@ public final class Dialog extends Container {
             .child(header);
     private final Label titleLabel = new Label().hero(true).overflow(Label.Overflow.CLIP)
             .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
-    private final CloseControl close = new CloseControl();
+    private final Button close = new Button().size(Button.Size.SMALL).type(Button.Type.TEXT)
+            .icon(OreIcons.SMALL_CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);
     private final Box footer = new Box().orientation(Box.Orientation.VERTICAL).gap(BUTTON_GAP);
     private final Padding footerInset = new Padding(new Padding.Insets(SECTION_SPACING, PADDING, PADDING, PADDING))
             .child(footer);
@@ -64,8 +65,7 @@ public final class Dialog extends Container {
         title(title);
         titleLabel.policy(SizePolicy.EXPAND, SizePolicy.FILL);
         close.minimum(CLOSE_SIZE, CLOSE_SIZE);
-        close.focusable(true);
-        close.focusExpansion(1);
+        close.onPress(() -> onClose.run());
         header.minimum(0, CLOSE_SIZE).policy(SizePolicy.FILL, SizePolicy.CONTENT);
         header.add(titleLabel).add(close);
         headerInset.policy(SizePolicy.FILL, SizePolicy.CONTENT);
@@ -200,10 +200,12 @@ public final class Dialog extends Container {
     /** Returns true for all clicks while open; the topmost dialog owns its entire overlay. */
     public boolean clickAt(int rootX, int rootY) {
         if (!visible()) return false;
-        if (!panel.hit(rootX, rootY) || close.hit(rootX, rootY)) {
+        if (!panel.hit(rootX, rootY)) {
+            OreSounds.play(OreSounds.Cue.CLICK);
             onClose.run();
             return true;
         }
+        if (close.pressAt(rootX, rootY)) return true;
         for (Button action : actions) if (action.pressAt(rootX, rootY)) return true;
         return true;
     }
@@ -216,21 +218,4 @@ public final class Dialog extends Container {
         return count == 0 ? 0 : count * Button.Size.MEDIUM.height() + (count - 1) * BUTTON_GAP;
     }
 
-    private final class CloseControl extends Control {
-        @Override public boolean activate() {
-            onClose.run();
-            return true;
-        }
-        @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-            Rect area = screenBounds(screenX, screenY);
-            GuiGraphics graphics = context.getGraphics();
-            if (area.contains(context.getAbsMouseX(), context.getAbsMouseY()))
-                graphics.fill(area.x(), area.y(), area.right(), area.bottom(), 0x66303030);
-            int x = area.x() + (area.width() - CLOSE_ICON_SIZE) / 2;
-            int y = area.y() + (area.height() - CLOSE_ICON_SIZE) / 2;
-            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            graphics.blit(OreIcons.SMALL_CLOSE, x, y, 0.0F, 0.0F,
-                    CLOSE_ICON_SIZE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);
-        }
-    }
 }

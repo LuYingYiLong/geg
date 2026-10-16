@@ -12,6 +12,7 @@ public final class Window extends Container {
     private Control content;
     private Overlay overlay;
     private int fontRevision = -1;
+    private Control pointerCapture;
 
     public Window(boolean fullscreen) { this.fullscreen = fullscreen; }
     public Window content(Control content) {
@@ -48,14 +49,55 @@ public final class Window extends Container {
     Overlay overlayLayer() { return overlay; }
 
     public boolean pointerPressed(int rootX, int rootY, ModularGuiContext context) {
-        Control hit = overlay == null ? null : overlay.hitTop(rootX, rootY);
-        if (hit == null && content != null) hit = content.hitTop(rootX, rootY);
+        cancelPointer();
+        focusManager.cancelActivation();
+        Control hit = pointerTarget(rootX, rootY);
         focusManager.pointerPressed(hit, context);
+        pointerCapture = hit;
         return dispatchPointer(rootX, rootY);
+    }
+
+    private Control pointerTarget(int rootX, int rootY) {
+        Control hit = overlay == null ? null : overlay.hitTop(rootX, rootY);
+        return hit == null && content != null ? content.hitTop(rootX, rootY) : hit;
+    }
+
+    public boolean pointerReleased(int rootX, int rootY) {
+        Control captured = pointerCapture;
+        pointerCapture = null;
+        if (captured == null) return false;
+        Control hit = pointerTarget(rootX, rootY);
+        boolean over = false;
+        for (Control node = hit; node != null; node = node.parent())
+            if (node == captured) { over = true; break; }
+        return captured.releasePointer(over && attachedAndVisible(captured)
+                && focusManager.allowsNativeInput(captured));
+    }
+
+    private boolean attachedAndVisible(Control target) {
+        for (Control node = target; node != null; node = node.parent()) {
+            if (!node.visible()) return false;
+            if (node == this) return true;
+        }
+        return false;
+    }
+
+    private void cancelPointer() {
+        if (pointerCapture != null) pointerCapture.cancelInteraction();
+        pointerCapture = null;
+    }
+
+    @Override public void cancelInteraction() {
+        cancelPointer();
+        focusManager.resetInput();
     }
 
     public boolean keyPressed(int keyCode, int modifiers, ModularGuiContext context) {
         return focusManager.keyPressed(keyCode, modifiers, context);
+    }
+
+    public boolean keyReleased(int keyCode, int modifiers, ModularGuiContext context) {
+        return focusManager.keyReleased(keyCode, modifiers, context);
     }
 
     public void layoutViewport(int width, int height, Font font) {

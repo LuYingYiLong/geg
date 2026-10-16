@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /** One keyboard focus per Ore window, restricted to the topmost visible popup. */
 public final class FocusManager {
@@ -18,6 +20,9 @@ public final class FocusManager {
     private Control focused;
     private boolean keyboardFocusVisible;
     private boolean inputPointerFocusVisible;
+    private Control activationOwner;
+    private int activationKey = -1;
+    private final Set<Integer> activationKeysDown = new HashSet<>();
 
     FocusManager(Window window) {
         this.window = window;
@@ -35,6 +40,7 @@ public final class FocusManager {
         validate();
         if (target != null && !eligible(target)) return;
         if (focused == target) return;
+        cancelActivation();
         if (focused != null) focused.onFocusChanged(false);
         focused = target;
         if (!(target instanceof io.github.luyingyilong.geg.client.ui.InputControl))
@@ -99,6 +105,8 @@ public final class FocusManager {
 
     public boolean keyPressed(int keyCode, int modifiers, ModularGuiContext context) {
         synchronizeNativeFocus(context);
+        // Keep the physical key latched even if its action opens a new focus scope.
+        if (activationKeysDown.contains(keyCode)) return true;
         if (keyCode == GLFW.GLFW_KEY_ESCAPE
                 && focused instanceof io.github.luyingyilong.geg.client.ui.InputControl input
                 && nativeInputFocused()) {
@@ -128,9 +136,41 @@ public final class FocusManager {
             return move(direction, context);
         }
         if (focused != null && (keyCode == GLFW.GLFW_KEY_ENTER
-                || keyCode == GLFW.GLFW_KEY_KP_ENTER || keyCode == GLFW.GLFW_KEY_SPACE))
-            return focused.activate();
+                || keyCode == GLFW.GLFW_KEY_KP_ENTER || keyCode == GLFW.GLFW_KEY_SPACE)) {
+            activationKeysDown.add(keyCode);
+            if (activationOwner != focused || activationKey != keyCode) {
+                cancelActivation();
+                activationOwner = focused;
+                activationKey = keyCode;
+            }
+            return focused.onActivationPressed(keyCode);
+        }
         return false;
+    }
+
+    public boolean keyReleased(int keyCode, int modifiers, ModularGuiContext context) {
+        boolean held = activationKeysDown.remove(keyCode);
+        if (activationOwner == null || activationKey != keyCode) return held;
+        Control captured = activationOwner;
+        activationOwner = null;
+        activationKey = -1;
+        synchronizeNativeFocus(context);
+        if (focused != captured || !eligible(captured)) {
+            captured.cancelInteraction();
+            return true;
+        }
+        return captured.onActivationReleased(keyCode);
+    }
+
+    public void cancelActivation() {
+        if (activationOwner != null) activationOwner.cancelInteraction();
+        activationOwner = null;
+        activationKey = -1;
+    }
+
+    public void resetInput() {
+        cancelActivation();
+        activationKeysDown.clear();
     }
 
     public Rect outlineBounds() {
@@ -209,6 +249,7 @@ public final class FocusManager {
     private void validate() {
         Control nextScope = topScope();
         if (nextScope != scope) {
+            cancelActivation();
             if (focused != null) {
                 remembered.put(scope, focused);
                 focused.onFocusChanged(false);
@@ -225,6 +266,7 @@ public final class FocusManager {
                 focused.onFocusChanged(true);
             }
         } else if (focused != null && !eligible(focused)) {
+            cancelActivation();
             focused.onFocusChanged(false);
             focused = null;
         }

@@ -90,6 +90,7 @@ public final class Checkbox extends Container {
 
     @Override public boolean activate() {
         if (!enabled) return false;
+        OreSounds.play(OreSounds.Cue.CLICK);
         checked = !checked;
         onChange.accept(checked);
         return true;

@@ -90,6 +90,17 @@ public class Control {
 
     public boolean activate() { return false; }
 
+    /** Paired keyboard activation; simple controls may still activate on the initial press. */
+    public boolean onActivationPressed(int keyCode) { return activate(); }
+    public boolean onActivationReleased(int keyCode) { return false; }
+    public boolean releasePointer(boolean over) { return false; }
+    public void cancelInteraction() { }
+
+    public final void cancelInteractions() {
+        cancelInteraction();
+        for (Control child : children) child.cancelInteractions();
+    }
+
     public void onFocusChanged(boolean focused) { }
     public Control parent() { return parent; }
     public List<Control> children() { return List.copyOf(children); }
@@ -108,6 +119,7 @@ public class Control {
 
     public boolean removeChild(Control child) {
         if (!children.remove(child)) return false;
+        child.cancelInteractions();
         child.parent = null;
         requestLayout();
         return true;
@@ -155,6 +167,7 @@ public class Control {
     public void visible(boolean visible) {
         if (this.visible != visible) {
             this.visible = visible;
+            if (!visible) cancelInteractions();
             requestLayout();
         }
     }

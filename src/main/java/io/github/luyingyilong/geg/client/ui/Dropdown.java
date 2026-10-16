@@ -116,6 +116,7 @@ public final class Dropdown<T> extends Control {
     }
 
     @Override public boolean activate() {
+        if (!options.isEmpty()) OreSounds.play(OreSounds.Cue.CLICK);
         if (open && !options.isEmpty()) select(options.get(highlighted).value);
         else {
             open = !options.isEmpty();
@@ -213,6 +214,7 @@ public final class Dropdown<T> extends Control {
     public boolean click(int x, int y, int width, int triggerHeight,
                          int mouseX, int mouseY) {
         if (Button.contains(x, y, width, triggerHeight, mouseX, mouseY)) {
+            if (!options.isEmpty()) OreSounds.play(OreSounds.Cue.CLICK);
             open = !open && !options.isEmpty();
             if (open) { highlighted = selectedIndex(); revealHighlight(); }
             return true;
@@ -224,6 +226,7 @@ public final class Dropdown<T> extends Control {
         if (panel.contains(mouseX, mouseY)) {
             for (int index = visibleCount() - 1; index >= 0; index--) {
                 if (itemBounds(panel, index).contains(mouseX, mouseY)) {
+                    OreSounds.play(OreSounds.Cue.CLICK);
                     select(options.get(offset + index).value);
                     break;
                 }
