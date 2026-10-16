@@ -1,5 +1,9 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.util.OreIcons;
+import io.github.luyingyilong.geg.client.ui.util.OreSounds;
+import io.github.luyingyilong.geg.client.ui.util.ReleaseGesture;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.layout.Container;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
@@ -20,6 +24,7 @@ public final class Checkbox extends Container {
     private boolean checked;
     private boolean enabled = true;
     private Consumer<Boolean> onChange = value -> { };
+    private final ReleaseGesture<Boolean> gesture = new ReleaseGesture<>();
 
     public Checkbox(Component text) {
         label = new Label(Objects.requireNonNull(text))
@@ -48,6 +53,7 @@ public final class Checkbox extends Container {
 
     public Checkbox enabled(boolean enabled) {
         this.enabled = enabled;
+        if (!enabled) cancelInteraction();
         label.color(enabled ? 0xFFD8D9DC : 0xFF858585);
         return this;
     }
@@ -74,7 +80,8 @@ public final class Checkbox extends Container {
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
         Rect area = screenBounds(screenX, screenY);
         boolean hovered = area.contains(context.getAbsMouseX(), context.getAbsMouseY());
-        ResourceLocation texture = texture(hovered, hovered && Button.leftMousePressed());
+        ResourceLocation texture = texture(hovered, gesture.keyPressed(true)
+                || hovered && gesture.pointerPending());
         int y = area.y() + (area.height() - ICON_SIZE) / 2;
         context.getGraphics().setColor(1.0F, 1.0F, 1.0F, 1.0F);
         context.getGraphics().blit(texture, area.x(), y, 0.0F, 0.0F,
@@ -83,13 +90,36 @@ public final class Checkbox extends Container {
 
     @Override protected boolean onPointerPressed(int rootX, int rootY) {
         if (!enabled || !hit(rootX, rootY)) return false;
-        return activate();
+        capturePointer();
+        gesture.pointerDown(true);
+        return true;
     }
+
+    @Override public boolean releasePointer(boolean over) {
+        var release = gesture.pointerUp(true, over && enabled && visible());
+        if (release.target() != null) activate();
+        return release.handled();
+    }
+
+    @Override public boolean onActivationPressed(int keyCode) {
+        if (!enabled || !visible()) return false;
+        gesture.keyDown(keyCode, true);
+        return true;
+    }
+
+    @Override public boolean onActivationReleased(int keyCode) {
+        var release = gesture.keyUp(keyCode, enabled && visible() ? true : null);
+        if (release.target() != null) activate();
+        return release.handled();
+    }
+
+    @Override public void cancelInteraction() { gesture.cancel(); }
+    @Override public void onFocusChanged(boolean focused) { if (!focused) cancelInteraction(); }
 
     @Override public boolean acceptsFocus() { return enabled && super.acceptsFocus(); }
 
     @Override public boolean activate() {
-        if (!enabled) return false;
+        if (!enabled || !visible()) return false;
         OreSounds.play(OreSounds.Cue.CLICK);
         checked = !checked;
         onChange.accept(checked);

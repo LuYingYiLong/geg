@@ -118,10 +118,13 @@ public final class FocusNavigationTest {
         window.focusManager().requestFocus(table, null);
         check(window.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, null));
         check(window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null));
-        check(activated[0] == 1);
+        check(activated[0] == 0);
         window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
+        check(activated[0] == 1);
         check(window.keyPressed(GLFW.GLFW_KEY_DOWN, 0, null));
         check(window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null));
+        check(activated[0] == 1);
+        window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
         check(activated[0] == 2);
     }
 
@@ -150,6 +153,8 @@ public final class FocusNavigationTest {
         check(tabs.focusBounds().equals(new Rect(0, 2, 51, 18)));
         check(window.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, null));
         check(window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null));
+        check(tabs.selected() == 0 && selected[0] == 0);
+        check(window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null));
         check(tabs.selected() == 1 && selected[0] == 1);
         check(tabs.focusBounds().equals(new Rect(50, 2, 51, 18)));
     }

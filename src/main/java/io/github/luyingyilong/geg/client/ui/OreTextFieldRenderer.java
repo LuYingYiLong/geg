@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.util.OreFonts;
+
 import brachy.modularui.widgets.textfield.TextFieldHandler;
 import brachy.modularui.widgets.textfield.TextFieldRenderer;
 import brachy.modularui.utils.Point;

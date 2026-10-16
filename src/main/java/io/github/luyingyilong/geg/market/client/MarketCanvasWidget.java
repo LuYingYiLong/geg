@@ -1,10 +1,10 @@
 package io.github.luyingyilong.geg.market.client;
 
-import brachy.modularui.api.drawable.IDrawable;
+import io.github.luyingyilong.geg.client.ui.util.DecimalExpression;
+import io.github.luyingyilong.geg.client.ui.util.OreIcons;
+
 import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
-import brachy.modularui.theme.SelectableTheme;
-import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
 import io.github.luyingyilong.geg.client.ui.*;
@@ -32,17 +32,17 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private static final int SECONDARY_TEXT = 0xFFD8D9DC;
     private static final int CARD_GAP = 4;
     private static final int MIN_CARD_WIDTH = 96;
-    private static final int FILTER_WIDTH = 82;
     private static final int FOOTER_HEIGHT = Button.Size.MEDIUM.height();
     private static final int FAVORITE_BUTTON_WIDTH = 51;
-    private static final int FAVORITE_BUTTON_HEIGHT = 19;
     private final Tabs footerTabs = new Tabs(Arrays.stream(Tab.values())
             .map(Tab::title).toList());
     private final Tabs publishTabs = new Tabs(List.of(
             Component.translatable("market.geg.selling"),
             Component.translatable("market.geg.buying")), Button.Size.SMALL);
     private final List<Card> cards = new ArrayList<>();
-    private final Dropdown<String> filterDropdown = new Dropdown<>("all", 8);
+    private final Dropdown<String> filterDropdown = new Dropdown<>("all", 8)
+            .triggerLabel(Component.empty()).icon(OreIcons.FILTER, 16, 16)
+            .showArrow(false).type(Button.Type.TEXT);
     private final Window window = new Window(true);
     private final Grid<Card> grid = new Grid<>();
     private final Scroll gridScroll = new Scroll().content(grid).embedded(true);
@@ -81,11 +81,12 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     MarketCanvasWidget(Input search) {
         searchSlot = new InputControl(search);
-        coinBalance.minimum(64, Button.Size.MEDIUM.height());
-        searchSlot.minimum(72, Button.Size.SMALL.height()).preferred(138, Button.Size.SMALL.height());
-        filterDropdown.minimum(74, Button.Size.MEDIUM.height())
-                .preferred(FILTER_WIDTH, Button.Size.MEDIUM.height());
-        header.extra(coinBalance, searchSlot, filterDropdown);
+        coinBalance.minimum(32, Button.Size.MEDIUM.height());
+        searchSlot.minimum(64, Button.Size.SMALL.height()).preferred(138, Button.Size.SMALL.height());
+        filterDropdown.minimum(Button.Size.MEDIUM.height(), Button.Size.MEDIUM.height());
+        Box spaceCompactBox = new Box().orientation(Box.Orientation.HORIZONTAL).gap(0);
+        spaceCompactBox.add(searchSlot).add(filterDropdown);
+        header.extra(coinBalance, spaceCompactBox);
         publishSlot.minimum(0, 27).preferred(0, 27)
                 .policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
         publishTabs.minimum(96, Button.Size.SMALL.height()).preferred(134, Button.Size.SMALL.height())
@@ -146,6 +147,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                     }
                 });
         overlay.add(new Control() {
+            @Override public Control hitTop(int rootX, int rootY) { return null; }
             @Override
             public void draw(ModularGuiContext context, int screenX, int screenY) {
                 if (modal != null || filterDropdown.isOpen()) return;
@@ -167,6 +169,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             }
         });
         overlay.add(new Control() {
+            @Override public Control hitTop(int rootX, int rootY) {
+                return filterDropdown.isOpen() && hit(rootX, rootY) ? this : null;
+            }
             @Override
             public void draw(ModularGuiContext context, int screenX, int screenY) {
                 if (!filterDropdown.isOpen()) return;
@@ -178,6 +183,13 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             @Override protected boolean onPointerPressed(int rootX, int rootY) {
                 return filterDropdown.isOpen() && filterDropdown.clickAt(0, 0, rootX, rootY);
             }
+
+            @Override public boolean releasePointer(int rootX, int rootY, boolean over) {
+                if (!over) { filterDropdown.cancelInteraction(); return true; }
+                return filterDropdown.releaseAt(rootX, rootY);
+            }
+
+            @Override public void cancelInteraction() { filterDropdown.cancelInteraction(); }
         });
         overlay.add(detailDialog).add(quantityDialog);
         detailDialog.visible(false);
@@ -493,48 +505,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             }
         }));
         table.column(new Table.Column<>("action", Component.translatable("market.geg.operation"),
-                104, 104, 0, width -> width >= 104 ? 19 : 39, new Table.Cell<>() {
-            @Override
-            public void draw(ModularGuiContext context, MarketDetail offer, Rect area) {
-                Rect[] buttons = OfferActionLayout.bounds(area, 50,
-                        FAVORITE_BUTTON_WIDTH, FAVORITE_BUTTON_HEIGHT);
-                Button.draw(context, buttons[0].x(), buttons[0].y(), buttons[0].width(),
-                        Button.Size.SMALL, Component.translatable(offer.buyOrder()
-                                ? "market.geg.fulfill" : "market.geg.buy"));
-                boolean favorite = ClientMarketState.favorites().stream()
-                        .anyMatch(value -> value.orderId() == offer.id());
-                drawFavoriteToggleButton(buttons[1].x(), buttons[1].y(),
-                        Component.translatable(favorite
-                                ? "market.geg.favorited" : "market.geg.favorite"), favorite,
-                        buttons[1].width());
-            }
+                104, 104, 0, width -> width >= 104 ? Button.Size.SMALL.height()
+                        : Button.Size.SMALL.height() * 2 + 2, new Table.ControlCell<>(OfferActions::new, OfferActions::bind)));
 
-            @Override
-            public boolean click(MarketDetail offer, Rect area, int mouseX, int mouseY) {
-                Rect[] buttons = OfferActionLayout.bounds(area, 50,
-                        FAVORITE_BUTTON_WIDTH, FAVORITE_BUTTON_HEIGHT);
-                if (buttons[0].contains(mouseX, mouseY)) {
-                    OreSounds.play(OreSounds.Cue.CLICK);
-                    selectedDetailId = offer.id();
-                    quantityMenu = true;
-                    quantityContent.scroll = 0;
-                    ClientMarketScreen.showTradeQuantity(true);
-                    configureQuantityActions();
-                    return true;
-                }
-                if (buttons[1].contains(mouseX, mouseY)) {
-                    OreSounds.play(OreSounds.Cue.CLICK);
-                    toggleOfferFavorite(offer);
-                    return true;
-                }
-                return false;
-            }
-
-            @Override public List<Rect> focusTargets(MarketDetail offer, Rect area) {
-                return Arrays.asList(OfferActionLayout.bounds(area, 50,
-                        FAVORITE_BUTTON_WIDTH, FAVORITE_BUTTON_HEIGHT));
-            }
-        }));
         return table;
     }
 
@@ -593,26 +566,45 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         ClientMarketScreen.showTradeQuantity(false);
     }
 
-    private void drawFavoriteToggleButton(int x, int y,
-                                          Component text, boolean selected, int width) {
-        ModularGuiContext context = getContext();
-        SelectableTheme toggle = context.getTheme().getToggleButtonTheme()
-                .getTheme(isHovered(x, y, width, FAVORITE_BUTTON_HEIGHT));
-        WidgetTheme style = selected ? toggle.getSelected() : toggle;
-        IDrawable background = style.getBackground();
-        if (background != null) {
-            background.draw(context, x, y, width, FAVORITE_BUTTON_HEIGHT, style);
-        }
-        Label.draw(context, text, new Rect(x + 4, y, Math.max(0, width - 8),
-                        FAVORITE_BUTTON_HEIGHT), style.getTextColor(), style.isTextShadow(), Label.Overflow.CLIP,
-                Label.Horizontal.CENTER, Label.Vertical.CENTER);
-    }
+    /** Each virtual row retains two real Buttons, with callbacks rebound to the current order. */
+    private final class OfferActions extends Container {
+        private MarketDetail offer;
+        private final Button trade = new Button().size(Button.Size.SMALL).onPressed(() -> {
+            selectedDetailId = offer.id();
+            quantityMenu = true;
+            quantityContent.scroll = 0;
+            ClientMarketScreen.showTradeQuantity(true);
+            configureQuantityActions();
+        });
+        private final Button favorite = new Button().size(Button.Size.SMALL).toggleButton(true)
+                .onPressed(() -> toggleOfferFavorite(offer));
 
-    private boolean isHovered(int x, int y, int width, int height) {
-        ModularGuiContext context = getContext();
-        int mouseX = context.getAbsMouseX();
-        int mouseY = context.getAbsMouseY();
-        return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
+        private OfferActions() { addChild(trade); addChild(favorite); }
+
+        private void bind(MarketDetail offer) {
+            this.offer = offer;
+            trade.label(Component.translatable(offer.buyOrder() ? "market.geg.fulfill" : "market.geg.buy"));
+            syncFavorite();
+        }
+
+        private void syncFavorite() {
+            boolean selected = ClientMarketState.favorites().stream()
+                    .anyMatch(value -> value.orderId() == offer.id());
+            favorite.buttonPressedNoSignal(selected).label(Component.translatable(selected
+                    ? "market.geg.favorited" : "market.geg.favorite"));
+        }
+
+        @Override public void layout(Rect bounds, Font font) {
+            super.layout(bounds, font);
+            Rect[] areas = OfferActionLayout.bounds(new Rect(0, 0, bounds.width(), bounds.height()),
+                    50, FAVORITE_BUTTON_WIDTH);
+            fitChild(trade, areas[0], font);
+            fitChild(favorite, areas[1], font);
+        }
+
+        @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+            syncFavorite();
+        }
     }
 
     @Override

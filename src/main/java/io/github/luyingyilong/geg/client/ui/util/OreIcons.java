@@ -1,4 +1,4 @@
-package io.github.luyingyilong.geg.client.ui;
+package io.github.luyingyilong.geg.client.ui.util;
 
 import io.github.luyingyilong.geg.GegMod;
 import net.minecraft.resources.ResourceLocation;
@@ -18,6 +18,7 @@ public final class OreIcons {
     public static final ResourceLocation CHECKBOX_CHECKED_HOVERED = icon("checkbox_checked_hovered");
     public static final ResourceLocation CHECKBOX_CHECKED_PRESSED = icon("checkbox_checked_pressed");
     public static final ResourceLocation CHECKBOX_CHECKED_DISABLED = icon("checkbox_checked_disabled");
+    public static final ResourceLocation FILTER = icon("filter");
 
     private OreIcons() {
     }

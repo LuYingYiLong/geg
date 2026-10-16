@@ -2,7 +2,7 @@ package io.github.luyingyilong.geg.client.ui.layout;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.client.gui.Font;
-import io.github.luyingyilong.geg.client.ui.OreFonts;
+import io.github.luyingyilong.geg.client.ui.util.OreFonts;
 
 /** GUI-viewport root, not a native operating-system window. */
 public final class Window extends Container {
@@ -62,6 +62,10 @@ public final class Window extends Container {
         return hit == null && content != null ? content.hitTop(rootX, rootY) : hit;
     }
 
+    public void capturePointer(Control control) {
+        if (attachedAndVisible(control)) pointerCapture = control;
+    }
+
     public boolean pointerReleased(int rootX, int rootY) {
         Control captured = pointerCapture;
         pointerCapture = null;
@@ -70,7 +74,11 @@ public final class Window extends Container {
         boolean over = false;
         for (Control node = hit; node != null; node = node.parent())
             if (node == captured) { over = true; break; }
-        return captured.releasePointer(over && attachedAndVisible(captured)
+        int localX = rootX;
+        int localY = rootY;
+        for (Control node = captured.parent(); node != null; node = node.parent())
+            if (node instanceof Scroll scroll) { localX += scroll.scrollX(); localY += scroll.scrollY(); }
+        return captured.releasePointer(localX, localY, over && attachedAndVisible(captured)
                 && focusManager.allowsNativeInput(captured));
     }
 

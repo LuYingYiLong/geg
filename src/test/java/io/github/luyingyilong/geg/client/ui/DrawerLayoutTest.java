@@ -1,5 +1,8 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.util.OreIcons;
+import io.github.luyingyilong.geg.client.ui.util.OreSounds;
+
 import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Overlay;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
@@ -244,6 +247,7 @@ public final class DrawerLayoutTest {
             int y = table.absoluteBounds().y() + table.headerHeight() + 1;
             Table.Row<Integer> row = table.hitRow(x, y);
             check(row != null && window.pointerPressed(x, y, null));
+            check(window.pointerReleased(x, y));
             check(selected[0] == row.item());
         }
         window.focusManager().requestFocus(table, null);

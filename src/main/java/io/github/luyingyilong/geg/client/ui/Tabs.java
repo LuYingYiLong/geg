@@ -1,5 +1,9 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.util.OreFonts;
+import io.github.luyingyilong.geg.client.ui.util.OreSounds;
+import io.github.luyingyilong.geg.client.ui.util.ReleaseGesture;
+
 import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
@@ -30,6 +34,7 @@ public final class Tabs extends Control {
     private int lastViewportWidth = -1;
     private IntConsumer onSelect = index -> { };
     private Font layoutFont;
+    private final ReleaseGesture<Integer> gesture = new ReleaseGesture<>();
 
     public Tabs(List<Component> labels) {
         this(labels, Button.Size.MEDIUM);
@@ -54,6 +59,7 @@ public final class Tabs extends Control {
     public Tabs selected(int index) {
         int next = Math.max(0, Math.min(labels.size() - 1, index));
         if (next != selectedIndex) {
+            cancelInteraction();
             selectedIndex = next;
             focusedIndex = next;
             revealSelected = true;
@@ -76,13 +82,14 @@ public final class Tabs extends Control {
         int index = focused ? focusedIndex : selectedIndex;
         int left = index * width / labels.size();
         int right = (index + 1) * width / labels.size();
-        int inset = index == selectedIndex ? SELECTED_TOP_INSET : 0;
+        int inset = topInset(index, true);
         return new Rect(area.x() + left - scrollX, area.y() + inset,
                 right - left + 1, Math.max(0, size.height() - inset));
     }
 
     @Override public void onFocusChanged(boolean focused) {
         this.focused = focused;
+        if (!focused) cancelInteraction();
         if (focused) {
             focusedIndex = selectedIndex;
             revealSelected = true;
@@ -96,6 +103,7 @@ public final class Tabs extends Control {
             default -> focusedIndex;
         };
         if (next == focusedIndex) return false;
+        cancelInteraction();
         focusedIndex = next;
         revealSelected = true;
         if (layoutFont != null && bounds().width() > 0)
@@ -104,8 +112,14 @@ public final class Tabs extends Control {
     }
 
     @Override public boolean activate() {
+        return selectFromInput(focusedIndex);
+    }
+
+    private boolean selectFromInput(int index) {
+        if (!visible()) return false;
         OreSounds.play(OreSounds.Cue.CLICK);
-        selected(focusedIndex);
+        selected(index);
+        focusedIndex = index;
         onSelect.accept(selectedIndex);
         return true;
     }
@@ -132,8 +146,31 @@ public final class Tabs extends Control {
     }
 
     @Override protected boolean onPointerPressed(int rootX, int rootY) {
-        return layoutFont != null && clickAt(0, 0, rootX, rootY, layoutFont) >= 0;
+        if (layoutFont == null || clickAt(0, 0, rootX, rootY, layoutFont) < 0) return false;
+        capturePointer();
+        return true;
     }
+
+    @Override public boolean releasePointer(int rootX, int rootY, boolean over) {
+        int index = layoutFont == null ? -1 : indexAt(0, 0, rootX, rootY, layoutFont);
+        var release = gesture.pointerUp(index < 0 ? null : index, over && visible());
+        if (release.target() != null) selectFromInput(release.target());
+        return release.handled();
+    }
+
+    @Override public boolean onActivationPressed(int keyCode) {
+        if (!visible()) return false;
+        gesture.keyDown(keyCode, focusedIndex);
+        return true;
+    }
+
+    @Override public boolean onActivationReleased(int keyCode) {
+        var release = gesture.keyUp(keyCode, visible() ? focusedIndex : null);
+        if (release.target() != null) selectFromInput(release.target());
+        return release.handled();
+    }
+
+    @Override public void cancelInteraction() { gesture.cancel(); }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
         Rect viewport = screenBounds(screenX, screenY);
@@ -159,22 +196,24 @@ public final class Tabs extends Control {
         scrollX = Math.max(0, Math.min(contentWidth - viewportWidth, scrollX));
     }
 
+    /** Arms the tab under the pointer; selection is deferred until a matching release. */
     public int clickAt(int screenX, int screenY, int mouseX, int mouseY, Font font) {
+        int index = indexAt(screenX, screenY, mouseX, mouseY, font);
+        if (index >= 0) gesture.pointerDown(index);
+        return index;
+    }
+
+    private int indexAt(int screenX, int screenY, int mouseX, int mouseY, Font font) {
         Rect viewport = screenBounds(screenX, screenY);
         if (!viewport.contains(mouseX, mouseY)) return -1;
         int contentWidth = Math.max(viewport.width(), minimumRowWidth(font));
-        int index = hitIndex(viewport.x() - scrollX, viewport.y(), contentWidth, mouseX, mouseY);
-        if (index >= 0) {
-            OreSounds.play(OreSounds.Cue.CLICK);
-            selected(index);
-            onSelect.accept(index);
-        }
-        return index;
+        return hitIndex(viewport.x() - scrollX, viewport.y(), contentWidth, mouseX, mouseY);
     }
 
     public boolean scrollBy(int amount, Font font) {
         int max = Math.max(0, minimumRowWidth(font) - bounds().width());
         if (max == 0) return false;
+        cancelInteraction();
         scrollX = Math.max(0, Math.min(max, scrollX + amount));
         return true;
     }
@@ -195,18 +234,19 @@ public final class Tabs extends Control {
             int tabWidth = tabEnd - tabX + (index < labels.size() - 1 ? 1 : 0);
             boolean selected = index == selectedIndex;
             boolean hovered = index == hoveredIndex;
+            int topInset = topInset(index, hovered);
             WidgetTheme style = selected && selectedEntry != null ? selectedEntry.theme()
                     : Button.theme(context.getTheme(), Button.Type.SECONDARY,
-                    hovered, hovered && Button.leftMousePressed());
+                    hovered, gesture.keyPressed(index) || hovered && gesture.pointerPressed(index));
             IDrawable background = style.getBackground();
             if (background != null) {
-                int inset = selected ? Math.min(SELECTED_TOP_INSET, height) : 0;
+                int inset = Math.min(topInset, height);
                 background.draw(context, tabX, y + inset,
                         tabWidth, height - inset, style);
             }
 
             Label.draw(context, labels.get(index), new io.github.luyingyilong.geg.client.ui.layout.Rect(
-                            tabX + TEXT_PADDING, y + (selected ? SELECTED_TOP_INSET : 0),
+                            tabX + TEXT_PADDING, y + topInset,
                             Math.max(0, tabWidth - 2 * TEXT_PADDING), height),
                     style.getTextColor(), style.isTextShadow(), Label.Overflow.CLIP,
                     Label.Horizontal.CENTER, Label.Vertical.CENTER);
@@ -229,9 +269,15 @@ public final class Tabs extends Control {
             int left = x + index * width / labels.size();
             int right = x + (index + 1) * width / labels.size();
             if (mouseX >= left && mouseX < right) {
+                if (index == selectedIndex && mouseY < y + SELECTED_TOP_INSET) return -1;
                 return index;
             }
         }
         return -1;
+    }
+
+    int topInset(int index, boolean hovered) {
+        return index == selectedIndex || gesture.keyPressed(index)
+                || hovered && gesture.pointerPressed(index) ? SELECTED_TOP_INSET : 0;
     }
 }

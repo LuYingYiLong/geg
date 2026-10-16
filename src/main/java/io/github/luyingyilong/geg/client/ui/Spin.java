@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.util.OreIcons;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.luyingyilong.geg.client.ui.layout.Control;

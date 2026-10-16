@@ -1,4 +1,4 @@
-package io.github.luyingyilong.geg.client.ui;
+package io.github.luyingyilong.geg.client.ui.util;
 
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraftforge.api.distmarker.Dist;

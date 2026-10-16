@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.organization.client;
 
+import io.github.luyingyilong.geg.client.ui.util.OreIcons;
+
 import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetThemeEntry;
@@ -43,6 +45,9 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private UUID selectedOrganizationId;
     private UUID activeMenuMember;
     private Rect activeMenuBounds;
+    private MemberMenuPress pendingMenuPress;
+    private Dropdown<OrganizationSavedData.Operation> pendingKeyMenu;
+    private int heldMenuKey = -1;
     private UUID pendingDisbandId;
     private boolean pendingCreate;
 
@@ -139,11 +144,19 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                         70, 82, 1, width -> 20, new Table.Cell<>() {
                     @Override public void draw(ModularGuiContext context,
                                                OrganizationSyncPacket.Member member, Rect bounds) {
+                        draw(context, member, bounds, Table.CellState.IDLE);
+                    }
+
+                    @Override public void draw(ModularGuiContext context,
+                                               OrganizationSyncPacket.Member member, Rect bounds, Table.CellState state) {
                         if (actionsFor(member).isEmpty()) return;
                         Rect trigger = actionBounds(bounds);
                         Dropdown<OrganizationSavedData.Operation> menu = menuFor(member);
                         menu.drawTrigger(context, trigger.x(), trigger.y(),
-                                trigger.width(), trigger.height());
+                                trigger.width(), trigger.height(), state.pressed(0));
+                        Rect localTrigger = trigger.translated(-getArea().x, -getArea().y);
+                        if (pendingMenuPress != null && pendingMenuPress.member().equals(member.id())
+                                && !pendingMenuPress.trigger().equals(localTrigger)) cancelPendingMenuInteraction();
                         if (member.id().equals(activeMenuMember))
                             activeMenuBounds = trigger.translated(-getArea().x, -getArea().y);
                     }
@@ -152,11 +165,13 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                                                    int mouseX, int mouseY) {
                         if (actionsFor(member).isEmpty()) return false;
                         Rect trigger = actionBounds(bounds);
+                        if (!trigger.contains(mouseX, mouseY)) return false;
                         Dropdown<OrganizationSavedData.Operation> menu = menuFor(member);
                         if (activeMenuMember != null && !activeMenuMember.equals(member.id()))
                             closeMenu();
-                        menu.click(trigger.x(), trigger.y(), trigger.width(), trigger.height(),
-                                mouseX, mouseY);
+                        cancelPendingMenuInteraction();
+                        if (!menu.click(trigger.x(), trigger.y(), trigger.width(), trigger.height(), mouseX, mouseY)) return false;
+                        menu.releaseAt(mouseX, mouseY);
                         activeMenuMember = menu.isOpen() ? member.id() : null;
                         activeMenuBounds = menu.isOpen() ? trigger : null;
                         return true;
@@ -183,49 +198,37 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                                 .overflow(Label.Overflow.ELLIPSIS)))
                 .column(new Table.Column<>("action",
                         Component.translatable("organization.geg.actions"),
-                        112, 128, 0, width -> 20, new Table.Cell<>() {
-                    @Override public void draw(ModularGuiContext context,
-                                               OrganizationSyncPacket.Application application,
-                                               Rect bounds) {
-                        Rect reject = reviewButtonBounds(bounds, false);
-                        Rect approve = reviewButtonBounds(bounds, true);
-                        Button.draw(context, reject.x(), reject.y(), reject.width(), reject.height(),
-                                Component.translatable("organization.geg.reject"),
-                                Button.Type.DESTRUCTIVE);
-                        Button.draw(context, approve.x(), approve.y(), approve.width(), approve.height(),
-                                Component.translatable("organization.geg.approve"), Button.Type.PRIMARY);
-                    }
-
-                    @Override public boolean click(OrganizationSyncPacket.Application application,
-                                                   Rect bounds, int mouseX, int mouseY) {
-                        if (selectedOrganizationId == null) return false;
-                        if (reviewButtonBounds(bounds, false).contains(mouseX, mouseY)) {
-                            OreSounds.play(OreSounds.Cue.CLICK);
-                            OrganizationNetwork.operate(OrganizationSavedData.Operation.REJECT,
-                                    selectedOrganizationId, application.id());
-                            return true;
-                        }
-                        if (reviewButtonBounds(bounds, true).contains(mouseX, mouseY)) {
-                            OreSounds.play(OreSounds.Cue.CLICK);
-                            OrganizationNetwork.operate(OrganizationSavedData.Operation.APPROVE,
-                                    selectedOrganizationId, application.id());
-                            return true;
-                        }
-                        return false;
-                    }
-
-                    @Override public List<Rect> focusTargets(OrganizationSyncPacket.Application application,
-                                                              Rect bounds) {
-                        return List.of(reviewButtonBounds(bounds, false),
-                                reviewButtonBounds(bounds, true));
-                    }
-                }));
+                        112, 128, 0, width -> 20, new Table.ControlCell<>(ApplicationActions::new, ApplicationActions::bind)));
     }
 
-    private static Rect reviewButtonBounds(Rect cell, boolean right) {
-        int width = Math.max(1, (cell.width() - 6) / 2);
-        return new Rect(cell.x() + (right ? width + 4 : 2), cell.y() + 2,
-                width, Math.min(Button.Size.SMALL.height(), Math.max(1, cell.height() - 4)));
+    private final class ApplicationActions extends Container {
+        private OrganizationSyncPacket.Application application;
+        private final Button reject = new Button(Component.translatable("organization.geg.reject"))
+                .size(Button.Size.SMALL).type(Button.Type.DESTRUCTIVE)
+                .onPressed(() -> review(OrganizationSavedData.Operation.REJECT));
+        private final Button approve = new Button(Component.translatable("organization.geg.approve"))
+                .size(Button.Size.SMALL).type(Button.Type.PRIMARY)
+                .onPressed(() -> review(OrganizationSavedData.Operation.APPROVE));
+
+        private ApplicationActions() { addChild(reject); addChild(approve); }
+        private void bind(OrganizationSyncPacket.Application application) { this.application = application; }
+        private void review(OrganizationSavedData.Operation operation) {
+            if (selectedOrganizationId != null)
+                OrganizationNetwork.operate(operation, selectedOrganizationId, application.id());
+        }
+
+        @Override public void layout(Rect bounds, Font font) {
+            super.layout(bounds, font);
+            int width = Math.max(1, (bounds.width() - 6) / 2);
+            int top = Math.max(0, (bounds.height() - Button.Size.SMALL.height()) / 2);
+            fitChild(reject, new Rect(2, top, width, Button.Size.SMALL.height()), font);
+            fitChild(approve, new Rect(width + 4, top, width, Button.Size.SMALL.height()), font);
+        }
+
+        @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+            reject.disabled(selectedOrganizationId == null);
+            approve.disabled(selectedOrganizationId == null);
+        }
     }
 
     private Table<OrganizationSyncPacket.Directory> createJoinTable() {
@@ -241,38 +244,42 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                                 .overflow(Label.Overflow.ELLIPSIS)))
                 .column(new Table.Column<>("action",
                         Component.translatable("organization.geg.actions"),
-                        72, 92, 0, width -> 20, new Table.Cell<>() {
-                    @Override public void draw(ModularGuiContext context,
-                                               OrganizationSyncPacket.Directory entry,
-                                               Rect bounds) {
-                        Rect button = actionBounds(bounds);
-                        boolean hovered = button.contains(context.getAbsMouseX(), context.getAbsMouseY());
-                        Button.draw(context, button.x(), button.y(), button.width(), button.height(),
-                                Component.translatable(entry.pending()
-                                        ? hovered ? "organization.geg.cancel_application"
-                                        : "organization.geg.pending_application"
-                                        : entry.joinPolicy() == Organization.JoinPolicy.APPROVAL
-                                        ? "organization.geg.apply" : "organization.geg.join"),
-                                entry.pending() && hovered ? Button.Type.DESTRUCTIVE : Button.Type.SECONDARY);
-                    }
+                        72, 92, 0, width -> 20, new Table.ControlCell<>(JoinAction::new, JoinAction::bind)));
+    }
 
-                    @Override public boolean click(OrganizationSyncPacket.Directory entry,
-                                                   Rect bounds, int mouseX, int mouseY) {
-                        if (!joinDrawer.isOpen() || !actionBounds(bounds).contains(mouseX, mouseY)
-                                || Minecraft.getInstance().player == null) return false;
-                        OreSounds.play(OreSounds.Cue.CLICK);
-                        OrganizationNetwork.operate(entry.pending()
-                                        ? OrganizationSavedData.Operation.CANCEL_APPLICATION
-                                        : OrganizationSavedData.Operation.APPLY,
-                                entry.id(), Minecraft.getInstance().player.getUUID());
-                        return true;
-                    }
+    private final class JoinAction extends Container {
+        private OrganizationSyncPacket.Directory entry;
+        private final Button button = new Button().onPressed(() -> {
+            if (joinDrawer.isOpen() && Minecraft.getInstance().player != null)
+                OrganizationNetwork.operate(entry.pending()
+                                ? OrganizationSavedData.Operation.CANCEL_APPLICATION
+                                : OrganizationSavedData.Operation.APPLY,
+                        entry.id(), Minecraft.getInstance().player.getUUID());
+        });
 
-                    @Override public List<Rect> focusTargets(OrganizationSyncPacket.Directory entry,
-                                                              Rect bounds) {
-                        return List.of(actionBounds(bounds));
-                    }
-                }));
+        private JoinAction() { addChild(button); }
+        private void bind(OrganizationSyncPacket.Directory entry) {
+            this.entry = entry;
+            update(false);
+        }
+
+        private void update(boolean hovered) {
+            button.label(Component.translatable(entry.pending()
+                            ? hovered ? "organization.geg.cancel_application" : "organization.geg.pending_application"
+                            : entry.joinPolicy() == Organization.JoinPolicy.APPROVAL
+                            ? "organization.geg.apply" : "organization.geg.join"))
+                    .type(entry.pending() && hovered ? Button.Type.DESTRUCTIVE : Button.Type.SECONDARY);
+        }
+
+        @Override public void layout(Rect bounds, Font font) {
+            super.layout(bounds, font);
+            fitChild(button, actionBounds(new Rect(0, 0, bounds.width(), bounds.height())), font);
+        }
+
+        @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+            update(button.screenBounds(screenX, screenY).contains(context.getAbsMouseX(), context.getAbsMouseY()));
+            button.disabled(!joinDrawer.isOpen() || Minecraft.getInstance().player == null);
+        }
     }
 
     private static Rect actionBounds(Rect cell) {
@@ -352,12 +359,49 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     private void closeMenu() {
+        cancelPendingMenuInteraction();
         if (activeMenuMember != null) {
             Dropdown<OrganizationSavedData.Operation> menu = memberMenus.get(activeMenuMember);
             if (menu != null) menu.close();
         }
         activeMenuMember = null;
         activeMenuBounds = null;
+    }
+
+    private record MemberMenuPress(Dropdown<OrganizationSavedData.Operation> menu, UUID member,
+                                   Rect trigger) { }
+
+    private void cancelPendingMenuInteraction() {
+        if (pendingMenuPress != null) pendingMenuPress.menu().cancelInteraction();
+        if (pendingKeyMenu != null) pendingKeyMenu.cancelInteraction();
+        pendingMenuPress = null;
+        pendingKeyMenu = null;
+    }
+
+    private boolean beginMenuPress(Dropdown<OrganizationSavedData.Operation> menu, UUID member,
+                                   Rect trigger, Rect anchor, int x, int y) {
+        cancelPendingMenuInteraction();
+        window.focusManager().cancelActivation();
+        if (!menu.click(anchor.x(), anchor.y(), anchor.width(), anchor.height(), x, y)) return false;
+        pendingMenuPress = new MemberMenuPress(menu, member, trigger);
+        return true;
+    }
+
+    private boolean finishMenuPress(int x, int y) {
+        MemberMenuPress press = pendingMenuPress;
+        pendingMenuPress = null;
+        if (press == null) return false;
+        if (!detailDrawer.isOpen() || joinDrawer.visible() || applicationsModal.visible()
+                || disbandConfirmation.visible()) {
+            press.menu().cancelInteraction();
+            return true;
+        }
+        boolean released = press.menu().releaseAt(x, y);
+        if (press.menu().isOpen()) {
+            activeMenuMember = press.member();
+            activeMenuBounds = press.trigger();
+        } else closeMenu();
+        return released;
     }
 
     private void showDetails(UUID organizationId) {
@@ -665,15 +709,17 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     public @NotNull Interactable.Result onMousePressed(int button) {
         window.focusManager().pointerActivity();
         if (button != 0) return Interactable.Result.IGNORE;
+        cancelPendingMenuInteraction();
         int mouseX = getContext().getAbsMouseX() - getArea().x;
         int mouseY = getContext().getAbsMouseY() - getArea().y;
         if (!detailDrawer.isOpen() || joinDrawer.visible()) closeMenu();
         if (activeMenuMember != null && activeMenuBounds != null) {
             Dropdown<OrganizationSavedData.Operation> menu = memberMenus.get(activeMenuMember);
             if (menu != null && menu.isOpen()) {
-                menu.click(activeMenuBounds.x(), menuY(menu, activeMenuBounds),
-                        activeMenuBounds.width(), activeMenuBounds.height(), mouseX, mouseY);
-                if (!menu.isOpen()) closeMenu();
+                Rect anchor = activeMenuBounds.contains(mouseX, mouseY) ? activeMenuBounds
+                        : new Rect(activeMenuBounds.x(), menuY(menu, activeMenuBounds),
+                                activeMenuBounds.width(), activeMenuBounds.height());
+                beginMenuPress(menu, activeMenuMember, activeMenuBounds, anchor, mouseX, mouseY);
                 return Interactable.Result.STOP;
             }
         }
@@ -682,6 +728,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     @Override public boolean onMouseScrolled(double delta) {
+        cancelPendingMenuInteraction();
         if (createDrawer.visible() && !applicationsModal.visible() && !joinDrawer.visible()
                 && !detailDrawer.visible() && !disbandConfirmation.visible()) {
             return createDrawer.dispatchScroll(getContext().getAbsMouseX() - getArea().x,
@@ -731,6 +778,11 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         if (button != 0) return false;
         boolean released = window.pointerReleased(getContext().getAbsMouseX() - getArea().x,
                 getContext().getAbsMouseY() - getArea().y);
+        if (pendingMenuPress != null) {
+            boolean menuReleased = finishMenuPress(getContext().getAbsMouseX() - getArea().x,
+                    getContext().getAbsMouseY() - getArea().y);
+            released |= menuReleased;
+        }
         boolean details = detailDrawer.bodyScroll().endDrag();
         boolean create = createDrawer.bodyScroll().endDrag();
         boolean join = joinDrawer.bodyScroll().endDrag();
@@ -738,16 +790,32 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     @Override public boolean onKeyReleased(int keyCode, int scanCode, int modifiers) {
-        return window.keyReleased(keyCode, modifiers, getContext());
+        boolean released = window.keyReleased(keyCode, modifiers, getContext());
+        if (heldMenuKey == keyCode) {
+            heldMenuKey = -1;
+            Dropdown<OrganizationSavedData.Operation> menu = pendingKeyMenu;
+            pendingKeyMenu = null;
+            if (menu != null) {
+                if (detailDrawer.isOpen() && !joinDrawer.visible() && !applicationsModal.visible()
+                        && !disbandConfirmation.visible()) menu.onActivationReleased(keyCode);
+                else menu.cancelInteraction();
+                if (!menu.isOpen()) closeMenu();
+            }
+            released = true;
+        }
+        return released;
     }
 
     @Override public void dispose() {
+        closeMenu();
+        heldMenuKey = -1;
         window.cancelInteractions();
         super.dispose();
     }
 
     @Override
     public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
+        if (heldMenuKey == keyCode) return Interactable.Result.STOP;
         if (keyCode == GLFW.GLFW_KEY_ESCAPE && activeMenuMember != null
                 && !applicationsModal.visible() && !joinDrawer.visible() && !disbandConfirmation.visible()) {
             closeMenu();
@@ -766,7 +834,10 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                 }
                 if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER
                         || keyCode == GLFW.GLFW_KEY_SPACE) {
-                    menu.activate();
+                    if (heldMenuKey != -1) return Interactable.Result.STOP;
+                    heldMenuKey = keyCode;
+                    pendingKeyMenu = menu;
+                    menu.onActivationPressed(keyCode);
                     return Interactable.Result.STOP;
                 }
             }

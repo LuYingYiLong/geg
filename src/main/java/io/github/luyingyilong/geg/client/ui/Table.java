@@ -1,11 +1,14 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.util.ReleaseGesture;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Container;
 import io.github.luyingyilong.geg.client.ui.layout.Panel;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
 import io.github.luyingyilong.geg.client.ui.layout.FocusManager;
+import io.github.luyingyilong.geg.client.ui.layout.Window;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -21,22 +24,56 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntUnaryOperator;
+import java.util.function.Supplier;
+import java.util.function.BiConsumer;
 
 /** Fixed-header table whose rows use the Ore bar theme and shared draw/hit geometry. */
 public final class Table<T> extends Container {
     public interface Cell<T> {
         void draw(ModularGuiContext context, T row, Rect bounds);
 
+        default void draw(ModularGuiContext context, T row, Rect bounds, CellState state) {
+            draw(context, row, bounds);
+        }
+
         default int measureHeight(Font font, T row, int width) {
             return 0;
         }
 
+        /** Completed activation, called after a valid release or explicit programmatic click. */
         default boolean click(T row, Rect bounds, int mouseX, int mouseY) {
             return false;
         }
 
-        /** Keyboard-focusable areas inside this cell, in left-to-right order. */
+        /** Separate clickable/focusable action rectangles, in left-to-right order. */
         default List<Rect> focusTargets(T row, Rect bounds) { return List.of(); }
+
+        /** One control per buffered row; instances survive recycling and are rebound to the new row. */
+        default Control createControl() { return null; }
+        default void bindControl(Control control, T row) { }
+    }
+
+    /** A retained cell: its child controls own drawing, focus, sounds and input handling. */
+    public static final class ControlCell<T, C extends Control> implements Cell<T> {
+        private final Supplier<C> factory;
+        private final BiConsumer<C, T> binder;
+
+        public ControlCell(Supplier<C> factory, BiConsumer<C, T> binder) {
+            this.factory = Objects.requireNonNull(factory);
+            this.binder = Objects.requireNonNull(binder);
+        }
+
+        @Override public Control createControl() { return Objects.requireNonNull(factory.get()); }
+        @Override @SuppressWarnings("unchecked") public void bindControl(Control control, T row) {
+            binder.accept((C) control, row);
+        }
+        @Override public void draw(ModularGuiContext context, T row, Rect bounds) { }
+    }
+
+    /** Indices use the same order as Cell.focusTargets, so painting and activation agree. */
+    public record CellState(int pointerIndex, int keyIndex) {
+        public static final CellState IDLE = new CellState(-1, -1);
+        public boolean pressed(int index) { return index >= 0 && (pointerIndex == index || keyIndex == index); }
     }
 
     /** Text cell with configurable clipping and wrapping; its measured height feeds row layout. */
@@ -162,6 +199,8 @@ public final class Table<T> extends Container {
     private int anchorOffset;
     private Object focusedKey;
     private int focusedAction = -1;
+    private final ReleaseGesture<PressTarget> gesture = new ReleaseGesture<>();
+    private Rect drawingBody;
 
     public Table() {
         focusable(true);
@@ -169,7 +208,8 @@ public final class Table<T> extends Container {
     }
 
     @Override public boolean acceptsFocus() {
-        return super.acceptsFocus() && !layoutRows.isEmpty();
+        return super.acceptsFocus() && !layoutRows.isEmpty()
+                && columns.stream().noneMatch(column -> column.cell instanceof ControlCell<?, ?>);
     }
 
     private Row<T> focusedRow() {
@@ -195,6 +235,7 @@ public final class Table<T> extends Container {
     }
 
     @Override public boolean onFocusMove(FocusManager.Direction direction) {
+        cancelInteraction();
         Row<T> current = focusedRow();
         if (current == null) return false;
         if (direction == FocusManager.Direction.RIGHT) {
@@ -233,6 +274,38 @@ public final class Table<T> extends Container {
         return true;
     }
 
+    @Override public boolean onActivationPressed(int keyCode) {
+        PressTarget target = keyTarget();
+        if (target == null || !visible()) return false;
+        gesture.keyDown(keyCode, target);
+        return true;
+    }
+
+    @Override public boolean onActivationReleased(int keyCode) {
+        var release = gesture.keyUp(keyCode, visible() ? keyTarget() : null);
+        if (release.target() != null) activate();
+        return release.handled();
+    }
+
+    private PressTarget keyTarget() {
+        Row<T> row = focusedRow();
+        if (row == null) return null;
+        List<ActionTarget<T>> targets = focusTargets(row);
+        if (focusedAction >= 0 && focusedAction < targets.size()) {
+            ActionTarget<T> target = targets.get(focusedAction);
+            return new PressTarget(row.key(), target.columnKey(), target.index(), row.item());
+        }
+        return new PressTarget(row.key(), null, -1, row.item());
+    }
+
+    @Override public void cancelInteraction() {
+        gesture.cancel();
+        for (Control child : children()) child.cancelInteractions();
+    }
+    @Override public void onFocusChanged(boolean focused) { if (!focused) cancelInteraction(); }
+
+    private record PressTarget(Object rowKey, String columnKey, int index, Object snapshot) { }
+
     private List<ActionTarget<T>> focusTargets(Row<T> row) {
         List<ActionTarget<T>> targets = new ArrayList<>();
         Rect bounds = row.bounds().translated(absoluteBounds().x(),
@@ -245,8 +318,7 @@ public final class Table<T> extends Container {
                 y += COMPACT_LABEL_HEIGHT;
                 int height = compactCellHeight(column, row.item(), lastFont, width);
                 Rect cell = new Rect(x, y, width, height);
-                for (Rect target : column.cell.focusTargets(row.item(), cell))
-                    targets.add(new ActionTarget<>(column.cell, cell, target));
+                addTargets(targets, column, row.item(), cell);
                 y += height;
             }
         } else {
@@ -254,17 +326,23 @@ public final class Table<T> extends Container {
             for (int index = 0; index < columns.size(); index++) {
                 Column<T> column = columns.get(index);
                 Rect cell = new Rect(x, bounds.y(), columnWidths[index], bounds.height());
-                for (Rect target : column.cell.focusTargets(row.item(), cell))
-                    targets.add(new ActionTarget<>(column.cell, cell, target));
+                addTargets(targets, column, row.item(), cell);
                 x += columnWidths[index];
             }
         }
         return targets;
     }
 
-    private record ActionTarget<T>(Cell<T> cell, Rect cellBounds, Rect bounds) { }
+    private void addTargets(List<ActionTarget<T>> targets, Column<T> column, T item, Rect cell) {
+        List<Rect> areas = column.cell.focusTargets(item, cell);
+        for (int index = 0; index < areas.size(); index++)
+            targets.add(new ActionTarget<>(column.key, index, column.cell, cell, areas.get(index)));
+    }
+
+    private record ActionTarget<T>(String columnKey, int index, Cell<T> cell, Rect cellBounds, Rect bounds) { }
 
     public Table<T> column(Column<T> column) {
+        cancelInteraction();
         Objects.requireNonNull(column);
         if (columns.stream().anyMatch(existing -> existing.key.equals(column.key)))
             throw new IllegalArgumentException("Duplicate table column: " + column.key);
@@ -274,6 +352,7 @@ public final class Table<T> extends Container {
     }
 
     public Table<T> rowKey(Function<T, Object> rowKey) {
+        cancelInteraction();
         this.rowKey = Objects.requireNonNull(rowKey);
         dirty = true;
         return this;
@@ -296,6 +375,7 @@ public final class Table<T> extends Container {
 
     public Table<T> headerVisible(boolean visible) {
         if (headerVisible != visible) {
+            cancelInteraction();
             headerVisible = visible;
             requestLayout();
         }
@@ -303,18 +383,23 @@ public final class Table<T> extends Container {
     }
 
     public void rows(List<T> rows) {
+        List<T> next = List.copyOf(rows);
+        if (this.rows.equals(next)) return;
+        cancelInteraction();
         if (!resetScroll) saveAnchor();
-        this.rows = List.copyOf(rows);
+        this.rows = next;
         dirty = true;
     }
 
     @Override public void invalidateTextLayout() {
+        cancelInteraction();
         if (!resetScroll) saveAnchor();
         dirty = true;
         super.invalidateTextLayout();
     }
 
     public void scrollToTop() {
+        cancelInteraction();
         scroll = 0;
         anchorKey = null;
         resetScroll = true;
@@ -325,7 +410,9 @@ public final class Table<T> extends Container {
     }
 
     public void setScroll(int pixels) {
-        scroll = Math.max(0, Math.min(Math.max(0, contentHeight - bodyHeight()), pixels));
+        int next = Math.max(0, Math.min(Math.max(0, contentHeight - bodyHeight()), pixels));
+        if (scroll != next) cancelInteraction();
+        scroll = next;
         if (!dirty) updateVisible(null);
     }
 
@@ -337,6 +424,12 @@ public final class Table<T> extends Container {
     public List<Row<T>> layoutRows() { return List.copyOf(layoutRows); }
     public int[] columnWidths() { return columnWidths.clone(); }
 
+    @Override public List<Control> children() {
+        // Recycled views may be attached in a different order; keyboard Tab still follows row order.
+        return activeViews.entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .map(entry -> (Control) entry.getValue()).toList();
+    }
+
     public List<Row<T>> visibleRows() {
         List<Row<T>> visible = new ArrayList<>();
         int bottom = scroll + bodyHeight();
@@ -346,6 +439,19 @@ public final class Table<T> extends Container {
     }
 
     private int bodyHeight() { return Math.max(0, bounds().height() - headerHeight()); }
+
+    /** The same viewport clips painting, pointer input and keyboard focus outlines. */
+    public Rect bodyBounds() {
+        Rect area = absoluteBounds();
+        return new Rect(area.x(), area.y() + headerHeight(), area.width(), bodyHeight());
+    }
+
+    public void revealControl(Control control) {
+        Rect area = control.absoluteBounds();
+        Rect body = bodyBounds();
+        if (area.y() < body.y()) setScroll(scroll + area.y() - body.y());
+        else if (area.bottom() > body.bottom()) setScroll(scroll + area.bottom() - body.bottom());
+    }
 
     private void saveAnchor() {
         for (Row<T> row : layoutRows) {
@@ -360,6 +466,7 @@ public final class Table<T> extends Container {
 
     @Override
     public void layout(Rect localBounds, Font font) {
+        if (!bounds().equals(localBounds)) cancelInteraction();
         if (rowKey == null) throw new IllegalStateException("A table requires a row key");
         if (lastWidth >= 0 && lastWidth != localBounds.width() && !dirty && !resetScroll) saveAnchor();
         super.layout(localBounds, font);
@@ -390,19 +497,38 @@ public final class Table<T> extends Container {
                 break;
             }
         }
+        rebindViews();
         setScroll(scroll);
-        recycleAll();
         updateVisible(font);
         anchorKey = null;
         resetScroll = false;
     }
 
-    private void recycleAll() {
-        for (RowView view : activeViews.values()) {
-            super.removeChild(view);
-            recycledViews.add(view);
-        }
+    private void rebindViews() {
+        Map<Object, Row<T>> next = new HashMap<>();
+        for (Row<T> row : layoutRows) next.put(row.key(), row);
+        List<RowView> previous = List.copyOf(activeViews.values());
         activeViews.clear();
+        for (RowView view : previous) {
+            Row<T> row = next.get(view.row.key());
+            if (row == null) recycle(view);
+            else {
+                view.bind(row);
+                activeViews.put(row.index(), view);
+            }
+        }
+    }
+
+    private void recycle(RowView view) {
+        // A pooled Button must not silently inherit focus when it is rebound to another record.
+        for (Control node = parent(); node != null; node = node.parent()) {
+            if (node instanceof Window window) {
+                window.focusManager().forgetSubtree(view);
+                break;
+            }
+        }
+        super.removeChild(view);
+        recycledViews.add(view);
     }
 
     private void updateVisible(Font font) {
@@ -415,8 +541,7 @@ public final class Table<T> extends Container {
                 needed.add(row.index());
         for (int index : List.copyOf(activeViews.keySet())) if (!needed.contains(index)) {
             RowView view = activeViews.remove(index);
-            super.removeChild(view);
-            recycledViews.add(view);
+            recycle(view);
         }
         for (Row<T> row : layoutRows) if (needed.contains(row.index())) {
             RowView view = activeViews.get(row.index());
@@ -427,7 +552,7 @@ public final class Table<T> extends Container {
                 activeViews.put(row.index(), view);
             }
             view.layout(new Rect(0, headerHeight() + row.bounds().y() - scroll,
-                    row.bounds().width(), row.bounds().height()), font);
+                    row.bounds().width(), row.bounds().height()), font == null ? lastFont : font);
         }
     }
 
@@ -491,6 +616,7 @@ public final class Table<T> extends Container {
         Rect area = screenBounds(screenX, screenY);
         if (headerVisible && !compact) drawHeader(context, area);
         Rect body = new Rect(area.x(), area.y() + headerHeight(), area.width(), bodyHeight());
+        drawingBody = body;
         if (body.height() <= 0) return;
         GuiGraphics graphics = context.getGraphics();
         graphics.enableScissor(body.x(), body.y(), body.right(), body.bottom());
@@ -532,7 +658,17 @@ public final class Table<T> extends Container {
         GuiGraphics graphics = context.getGraphics();
         graphics.enableScissor(bounds.x(), bounds.y(), bounds.right(), bounds.bottom());
         try {
-            column.cell.draw(context, item, bounds);
+            List<Rect> targets = column.cell.focusTargets(item, bounds);
+            int pointerIndex = -1;
+            int keyIndex = -1;
+            Object key = rowKey.apply(item);
+            for (int index = 0; index < targets.size(); index++) {
+                PressTarget target = new PressTarget(key, column.key, index, item);
+                if (gesture.pointerPressed(target) && targets.get(index).contains(context.getAbsMouseX(), context.getAbsMouseY())
+                        && drawingBody != null && drawingBody.contains(context.getAbsMouseX(), context.getAbsMouseY())) pointerIndex = index;
+                if (gesture.keyPressed(target)) keyIndex = index;
+            }
+            column.cell.draw(context, item, bounds, new CellState(pointerIndex, keyIndex));
         } finally {
             graphics.disableScissor();
         }
@@ -603,17 +739,105 @@ public final class Table<T> extends Container {
     }
 
     @Override protected boolean onPointerPressed(int rootX, int rootY) {
-        return click(rootX, rootY);
+        PressTarget target = pointerTarget(rootX, rootY);
+        if (target == null) return false;
+        Row<T> row = hitRow(rootX, rootY);
+        focusedKey = row.key();
+        focusedAction = -1;
+        List<ActionTarget<T>> targets = focusTargets(row);
+        for (int index = 0; index < targets.size(); index++)
+            if (targets.get(index).columnKey().equals(target.columnKey())
+                    && targets.get(index).index() == target.index()) { focusedAction = index; break; }
+        capturePointer();
+        gesture.pointerDown(target);
+        return true;
+    }
+
+    @Override public boolean releasePointer(int rootX, int rootY, boolean over) {
+        var release = gesture.pointerUp(pointerTarget(rootX, rootY), over && visible());
+        if (release.target() != null) click(rootX, rootY);
+        return release.handled();
+    }
+
+    private PressTarget pointerTarget(int rootX, int rootY) {
+        Row<T> row = hitRow(rootX, rootY);
+        if (row == null) return null;
+        List<ActionTarget<T>> actions = focusTargets(row);
+        for (ActionTarget<T> action : actions) if (action.bounds().contains(rootX, rootY))
+            return new PressTarget(row.key(), action.columnKey(), action.index(), row.item());
+        Rect bounds = row.bounds().translated(absoluteBounds().x(), absoluteBounds().y() + headerHeight() - scroll);
+        if (compact) {
+            int y = bounds.y() + COMPACT_INSET;
+            for (Column<T> column : columns) {
+                y += COMPACT_LABEL_HEIGHT;
+                int height = compactCellHeight(column, row.item(), lastFont, Math.max(0, bounds.width() - 2 * COMPACT_INSET));
+                if (new Rect(bounds.x() + COMPACT_INSET, y, Math.max(0, bounds.width() - 2 * COMPACT_INSET), height)
+                        .contains(rootX, rootY)) return new PressTarget(row.key(), column.key, -1, row.item());
+                y += height;
+            }
+        } else {
+            int x = bounds.x();
+            for (int index = 0; index < columns.size(); index++) {
+                if (new Rect(x, bounds.y(), columnWidths[index], bounds.height()).contains(rootX, rootY))
+                    return new PressTarget(row.key(), columns.get(index).key, -1, row.item());
+                x += columnWidths[index];
+            }
+        }
+        return new PressTarget(row.key(), null, -1, row.item());
     }
 
     @Override public Control hitTop(int rootX, int rootY) {
         return hitRow(rootX, rootY) == null ? null : super.hitTop(rootX, rootY);
     }
 
-    private final class RowView extends Control {
-        private Row<T> row;
+    @Override public boolean dispatchPointer(int rootX, int rootY) {
+        return hitRow(rootX, rootY) != null && super.dispatchPointer(rootX, rootY);
+    }
 
-        private void bind(Row<T> row) { this.row = row; }
+    private final class RowView extends Container {
+        private Row<T> row;
+        private final Map<String, Control> controls = new HashMap<>();
+
+        private void bind(Row<T> row) {
+            cancelInteractions();
+            this.row = row;
+            for (Column<T> column : columns) {
+                Control control = controls.get(column.key);
+                if (control == null) {
+                    control = column.cell.createControl();
+                    if (control != null) { controls.put(column.key, control); addChild(control); }
+                }
+                if (control != null) column.cell.bindControl(control, row.item());
+            }
+        }
+
+        @Override public void layout(Rect bounds, Font font) {
+            super.layout(bounds, font);
+            int x = compact ? COMPACT_INSET : 0;
+            int y = compact ? COMPACT_INSET : 0;
+            for (int index = 0; index < columns.size(); index++) {
+                Column<T> column = columns.get(index);
+                int width = compact ? Math.max(0, bounds.width() - 2 * COMPACT_INSET) : columnWidths[index];
+                if (compact) y += COMPACT_LABEL_HEIGHT;
+                int height = compact ? compactCellHeight(column, row.item(), font, width) : bounds.height();
+                Control control = controls.get(column.key);
+                if (control != null) fitChild(control, new Rect(x, y, width, height), font);
+                if (compact) y += height;
+                else x += width;
+            }
+        }
+
+        @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+            render(context, screenX, screenY);
+            for (Column<T> column : columns) {
+                Control control = controls.get(column.key);
+                if (control == null || !control.visible()) continue;
+                Rect area = control.screenBounds(screenX, screenY);
+                context.getGraphics().enableScissor(area.x(), area.y(), area.right(), area.bottom());
+                try { control.draw(context, screenX, screenY); }
+                finally { context.getGraphics().disableScissor(); }
+            }
+        }
 
         @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
             Rect area = screenBounds(screenX, screenY);

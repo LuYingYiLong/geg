@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.util.DecimalExpression;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.network.chat.Component;
 

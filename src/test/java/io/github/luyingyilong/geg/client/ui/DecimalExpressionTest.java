@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.util.DecimalExpression;
+
 /** Standalone parser regression checks; run with java -ea. */
 public final class DecimalExpressionTest {
     private DecimalExpressionTest() {

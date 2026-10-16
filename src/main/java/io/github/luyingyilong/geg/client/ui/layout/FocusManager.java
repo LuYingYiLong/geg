@@ -1,6 +1,7 @@
 package io.github.luyingyilong.geg.client.ui.layout;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.geg.client.ui.Table;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -74,6 +75,14 @@ public final class FocusManager {
     /** Called by the MUI widget when Esc or another widget releases its native focus. */
     public void nativeFocusLost(Control input) {
         if (focused == input) requestFocus(null, null);
+    }
+
+    /** Virtualized controls call this before reusing a subtree for a different logical record. */
+    public void forgetSubtree(Control subtree) {
+        java.util.Objects.requireNonNull(subtree);
+        if (inside(focused, subtree)) requestFocus(null, null);
+        if (inside(activationOwner, subtree)) cancelActivation();
+        remembered.entrySet().removeIf(entry -> inside(entry.getValue(), subtree));
     }
 
     /** Any mouse button switches away from visible keyboard navigation. */
@@ -207,7 +216,7 @@ public final class FocusManager {
         long bestScore = Long.MAX_VALUE;
         for (Control candidate : candidates) {
             if (candidate == focused) continue;
-            Rect to = visibleBounds(candidate);
+            Rect to = navigationBounds(candidate);
             if (to == null) continue;
             long dx = (long) to.x() * 2 + to.width() - ((long) from.x() * 2 + from.width());
             long dy = (long) to.y() * 2 + to.height() - ((long) from.y() * 2 + from.height());
@@ -242,7 +251,7 @@ public final class FocusManager {
 
     private void collect(Control node, List<Control> result) {
         if (!node.visible()) return;
-        if (node.acceptsFocus() && visibleBounds(node) != null) result.add(node);
+        if (node.acceptsFocus() && navigationBounds(node) != null) result.add(node);
         for (Control child : node.children()) collect(child, result);
     }
 
@@ -301,7 +310,10 @@ public final class FocusManager {
     }
 
     private Rect visibleBounds(Control target) {
-        Rect area = target.focusBounds();
+        return visibleBounds(target, target.focusBounds());
+    }
+
+    private Rect visibleBounds(Control target, Rect area) {
         for (Control node = target.parent(); node != null; node = node.parent()) {
             if (node instanceof Scroll scroll) {
                 area = area.translated(-scroll.scrollX(), -scroll.scrollY());
@@ -310,9 +322,30 @@ public final class FocusManager {
                 area = intersection(area, viewport);
                 if (area == null) return null;
             }
+            if (node instanceof Table<?> table) {
+                area = intersection(area, table.bodyBounds());
+                if (area == null) return null;
+            }
             if (node != target && !node.visible()) return null;
         }
         return intersection(area, window.absoluteBounds());
+    }
+
+    /** Buffered table buttons are navigation targets too; focusing one scrolls its row into view. */
+    private Rect navigationBounds(Control target) {
+        Rect visible = visibleBounds(target);
+        if (visible != null) return visible;
+        Rect area = target.focusBounds();
+        boolean buffered = false;
+        for (Control node = target.parent(); node != null; node = node.parent()) {
+            if (!node.visible()) return null;
+            if (node instanceof Table<?> table) {
+                if (visibleBounds(table, table.bodyBounds()) == null) return null;
+                buffered = true;
+            }
+            if (node instanceof Scroll scroll) area = area.translated(-scroll.scrollX(), -scroll.scrollY());
+        }
+        return buffered ? area : null;
     }
 
     private static boolean intersects(Rect a, Rect b) {
@@ -331,6 +364,10 @@ public final class FocusManager {
     private void reveal(Control target) {
         Rect area = target.focusBounds();
         for (Control node = target.parent(); node != null; node = node.parent()) {
+            if (node instanceof Table<?> table) {
+                table.revealControl(target);
+                area = target.focusBounds();
+            }
             if (node instanceof Scroll scroll) {
                 Rect origin = scroll.absoluteBounds();
                 scroll.ensureVisible(new Rect(area.x() - origin.x(), area.y() - origin.y(),

@@ -94,6 +94,12 @@ public class Control {
     public boolean onActivationPressed(int keyCode) { return activate(); }
     public boolean onActivationReleased(int keyCode) { return false; }
     public boolean releasePointer(boolean over) { return false; }
+    public boolean releasePointer(int rootX, int rootY, boolean over) { return releasePointer(over); }
+    /** A composite control captures itself even when a non-interactive child was hit. */
+    protected final void capturePointer() {
+        for (Control node = this; node != null; node = node.parent())
+            if (node instanceof Window window) { window.capturePointer(this); return; }
+    }
     public void cancelInteraction() { }
 
     public final void cancelInteractions() {

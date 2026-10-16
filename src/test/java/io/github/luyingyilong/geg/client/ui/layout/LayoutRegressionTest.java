@@ -2,7 +2,7 @@ package io.github.luyingyilong.geg.client.ui.layout;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.Tabs;
-import io.github.luyingyilong.geg.client.ui.OreFonts;
+import io.github.luyingyilong.geg.client.ui.util.OreFonts;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 
@@ -66,6 +66,7 @@ public final class LayoutRegressionTest {
         footer.layout(new Rect(0, 0, 127, 20), font);
         check(footer.scrollX() > 0 && footer.bounds().height() == 20);
         check(footer.clickAt(0, 0, 120, 10, font) == 5);
+        check(footer.releasePointer(120, 10, true));
         footer.layout(new Rect(0, 0, 427, 20), font);
         check(footer.scrollX() == 0);
 

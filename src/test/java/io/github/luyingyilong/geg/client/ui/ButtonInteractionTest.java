@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.util.OreIcons;
+
 import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Overlay;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
@@ -119,6 +121,52 @@ public final class ButtonInteractionTest {
         check(Button.textBackgroundColor(true, true) == 0x1A000000);
         scrolledCapture();
         iconLayout();
+        controlledState();
+    }
+
+    private static void controlledState() {
+        List<String> events = new ArrayList<>();
+        Button button = new Button(cue -> events.add(cue.name()));
+        button.onPressed(() -> events.add("pressed:" + button.buttonPressed()));
+        check(!button.disabled() && !button.toggleButton() && !button.buttonPressed());
+        button.buttonPressed(true);
+        check(!button.buttonPressed() && events.equals(List.of("pressed:false")));
+        button.buttonPressed(false);
+        check(events.size() == 1);
+        button.toggleButton(true).buttonPressed(true).buttonPressed(true);
+        check(button.buttonPressed() && events.equals(List.of("pressed:false", "pressed:true")));
+        button.onFocusChanged(false);
+        check(button.buttonPressed()); // Focus loss cancels gestures, not retained state.
+        button.buttonPressedNoSignal(false).buttonPressedNoSignal(true);
+        check(events.size() == 2);
+        button.activate();
+        check(!button.buttonPressed() && events.equals(List.of("pressed:false", "pressed:true", "CLICK", "pressed:false")));
+
+        events.clear();
+        button.position(0, 0).requestedSize(30, 20);
+        Window window = new Window(true).content(new Control().addChild(button));
+        window.layoutViewport(60, 60, null);
+        window.pointerPressed(5, 5, null);
+        window.pointerReleased(50, 50);
+        check(events.isEmpty() && !button.buttonPressed());
+        window.pointerPressed(5, 5, null);
+        window.pointerReleased(5, 5);
+        check(button.buttonPressed() && events.equals(List.of("CLICK", "pressed:true")));
+        events.clear();
+        window.pointerPressed(5, 5, null);
+        button.disabled(true).disabled(false); // Disabling while held must disarm the release.
+        window.pointerReleased(5, 5);
+        check(button.buttonPressed() && events.isEmpty());
+        button.disabled(true);
+        check(!button.acceptsFocus() && !button.activate());
+        check(!button.onActivationPressed(GLFW.GLFW_KEY_ENTER));
+        window.pointerPressed(5, 5, null);
+        window.pointerReleased(5, 5);
+        check(events.isEmpty());
+        button.buttonPressedNoSignal(false);
+        check(!button.buttonPressed());
+        button.disabled(false).buttonPressedNoSignal(true).toggleButton(false);
+        check(!button.buttonPressed());
     }
 
     private static void iconLayout() {

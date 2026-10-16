@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.util.OreSounds;
+
 import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.api.ITheme;
 import brachy.modularui.screen.viewport.ModularGuiContext;
@@ -35,6 +37,9 @@ public final class Button extends Control {
     private ACTION_MODE actionMode = ACTION_MODE.BUTTON_RELEASE;
     private boolean pointerPressed;
     private int activationKey = -1;
+    private boolean toggleButton;
+    private boolean buttonPressed;
+    private boolean disabled;
 
     public Button() {
         this(OreSounds::play);
@@ -52,7 +57,10 @@ public final class Button extends Control {
         label(label);
     }
 
-    public Button label(Component label) { this.label.text(label); requestLayout(); return this; }
+    public Button label(Component label) {
+        if (!this.label.getText().equals(label)) { this.label.text(label); requestLayout(); }
+        return this;
+    }
     public Button hero(boolean hero) { label.hero(hero); requestLayout(); return this; }
     public boolean hero() { return label.hero(); }
     public Button fontSize(float fontSize) { label.fontSize(fontSize); requestLayout(); return this; }
@@ -75,6 +83,37 @@ public final class Button extends Control {
     public Icon icon() { return icon; }
     public Button trailingIcon(Icon icon) { this.trailingIcon = icon; requestLayout(); return this; }
     public Button onPress(Runnable action) { this.onPress = java.util.Objects.requireNonNull(action); return this; }
+    public Button onPressed(Runnable action) { return onPress(action); }
+
+    public Button toggleButton(boolean toggleButton) {
+        this.toggleButton = toggleButton;
+        if (!toggleButton) buttonPressed = false;
+        return this;
+    }
+    public boolean toggleButton() { return toggleButton; }
+    public boolean buttonPressed() { return buttonPressed; }
+
+    /** Emits pressed on a state change (or a momentary true pulse), without playing a user-input sound. */
+    public Button buttonPressed(boolean pressed) {
+        boolean changed = toggleButton ? buttonPressed != pressed : pressed;
+        buttonPressedNoSignal(pressed);
+        if (changed) onPress.run();
+        return this;
+    }
+
+    /** Applies authoritative state without invoking callbacks or playing sounds. */
+    public Button buttonPressedNoSignal(boolean pressed) {
+        buttonPressed = toggleButton && pressed;
+        return this;
+    }
+
+    public Button disabled(boolean disabled) {
+        this.disabled = disabled;
+        if (disabled) cancelInteraction();
+        return this;
+    }
+    public boolean disabled() { return disabled; }
+    @Override public boolean acceptsFocus() { return !disabled && super.acceptsFocus(); }
 
     @Override public int measureWidth(Font font, int available) {
         if (icon != null && !hasLabel() && trailingIcon == null)
@@ -94,13 +133,20 @@ public final class Button extends Control {
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
         Rect area = screenBounds(screenX, screenY);
         boolean hovered = area.contains(context.getAbsMouseX(), context.getAbsMouseY());
+        drawPresentation(context, area, hovered, buttonPressed || activationKey != -1 || pointerPressed && hovered);
+    }
+
+    /** Composite controls reuse Button's appearance while retaining their own activation behavior. */
+    void drawPresentation(ModularGuiContext context, Rect area, boolean hovered, boolean pressed) {
         drawLabelled(context, area.x(), area.y(), area.width(), area.height(), label, icon, trailingIcon,
-                alignment, type, hovered, activationKey != -1 || pointerPressed && hovered);
+                alignment, type, !disabled && hovered, !disabled && pressed, disabled);
     }
 
     public boolean pressAt(int rootX, int rootY) {
         if (!hit(rootX, rootY)) return false;
+        if (disabled) return true;
         if (pointerPressed) return true;
+        capturePointer();
         pointerPressed = true;
         if (actionMode == ACTION_MODE.BUTTON_PRESS) activate();
         return true;
@@ -111,9 +157,9 @@ public final class Button extends Control {
     }
 
     @Override public boolean activate() {
-        if (!visible()) return false;
+        if (!visible() || disabled) return false;
         soundPlayer.accept(emphasizedSound ? OreSounds.Cue.BUTTON : OreSounds.Cue.CLICK);
-        onPress.run();
+        buttonPressed(toggleButton ? !buttonPressed : true);
         return true;
     }
 
@@ -125,6 +171,7 @@ public final class Button extends Control {
     }
 
     @Override public boolean onActivationPressed(int keyCode) {
+        if (!visible() || disabled) return false;
         if (activationKey != -1) return true;
         activationKey = keyCode;
         if (actionMode == ACTION_MODE.BUTTON_PRESS) activate();
@@ -184,6 +231,12 @@ public final class Button extends Control {
         drawLabelled(context, x, y, width, height, new Label(label), trailingIcon, alignment, type);
     }
 
+    static void draw(ModularGuiContext context, int x, int y, int width, int height,
+                     Component label, Icon trailingIcon, TextAlignment alignment, boolean hovered, boolean pressed) {
+        drawLabelled(context, x, y, width, height, new Label(label), null, trailingIcon,
+                alignment, Type.SECONDARY, hovered, pressed);
+    }
+
     private static void drawLabelled(ModularGuiContext context, int x, int y, int width,
                                      int height, Label label, Icon trailingIcon,
                                      TextAlignment alignment, Type type) {
@@ -196,8 +249,18 @@ public final class Button extends Control {
     private static void drawLabelled(ModularGuiContext context, int x, int y, int width,
                                      int height, Label label, Icon icon, Icon trailingIcon, TextAlignment alignment,
                                      Type type, boolean hovered, boolean pressed) {
+        drawLabelled(context, x, y, width, height, label, icon, trailingIcon, alignment,
+                type, hovered, pressed, false);
+    }
+
+    private static void drawLabelled(ModularGuiContext context, int x, int y, int width,
+                                     int height, Label label, Icon icon, Icon trailingIcon, TextAlignment alignment,
+                                     Type type, boolean hovered, boolean pressed, boolean disabled) {
         GuiGraphics graphics = context.getGraphics();
-        WidgetTheme style = theme(context.getTheme(), type, hovered, pressed);
+        WidgetThemeEntry<WidgetTheme> disabledEntry = disabled
+                ? context.getTheme().getWidgetTheme(OreTheme.BUTTON_DISABLED) : null;
+        WidgetTheme style = disabledEntry != null ? disabledEntry.theme()
+                : theme(context.getTheme(), type, hovered, pressed);
         IDrawable background = style.getBackground();
         if (type == Type.TEXT) {
             int color = textBackgroundColor(hovered, pressed);

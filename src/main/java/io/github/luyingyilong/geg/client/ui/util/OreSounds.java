@@ -1,4 +1,4 @@
-package io.github.luyingyilong.geg.client.ui;
+package io.github.luyingyilong.geg.client.ui.util;
 
 import io.github.luyingyilong.geg.sound.GegSounds;
 import net.minecraft.client.Minecraft;

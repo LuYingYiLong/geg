@@ -16,7 +16,7 @@ import java.util.List;
 public final class Header extends Container {
     public static final int ROW_HEIGHT = 25;
     private static final int GAP = 6;
-    private static final int PADDING = 4;
+    private static final int PADDING = 0;
     private Panel background;
     private final Label title = new Label().hero(true).overflow(Label.Overflow.ELLIPSIS)
             .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
