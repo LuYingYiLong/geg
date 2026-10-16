@@ -27,6 +27,8 @@ public final class NumberInput extends Input {
         return error;
     }
 
+    @Override protected boolean supportsInputMethod() { return false; }
+
     public void maximumQuantity(int maximum) {
         maximumQuantity = maximum;
     }

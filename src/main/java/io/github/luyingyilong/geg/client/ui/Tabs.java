@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
+import io.github.luyingyilong.geg.client.ui.layout.FocusManager;
 import net.minecraft.client.gui.Font;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public final class Tabs extends Control {
     private final List<Component> labels;
     private final Button.Size size;
     private int selectedIndex;
+    private int focusedIndex;
+    private boolean focused;
     private int scrollX;
     private boolean revealSelected = true;
     private int lastViewportWidth = -1;
@@ -39,6 +42,8 @@ public final class Tabs extends Control {
         this.labels = List.copyOf(labels);
         this.size = java.util.Objects.requireNonNull(size);
         minimum(0, size.height());
+        focusable(true);
+        focusExpansion(1);
     }
 
     public Tabs onSelect(IntConsumer onSelect) {
@@ -50,18 +55,64 @@ public final class Tabs extends Control {
         int next = Math.max(0, Math.min(labels.size() - 1, index));
         if (next != selectedIndex) {
             selectedIndex = next;
+            focusedIndex = next;
             revealSelected = true;
-        }
+        } else if (!focused) focusedIndex = next;
         return this;
     }
 
     public int selected() { return selectedIndex; }
     public int scrollX() { return scrollX; }
 
+    @Override public void invalidateTextLayout() {
+        revealSelected = true;
+        super.invalidateTextLayout();
+    }
+
+    @Override public Rect focusBounds() {
+        Rect area = absoluteBounds();
+        int width = layoutFont == null ? area.width()
+                : Math.max(area.width(), minimumRowWidth(layoutFont));
+        int index = focused ? focusedIndex : selectedIndex;
+        int left = index * width / labels.size();
+        int right = (index + 1) * width / labels.size();
+        int inset = index == selectedIndex ? SELECTED_TOP_INSET : 0;
+        return new Rect(area.x() + left - scrollX, area.y() + inset,
+                right - left + 1, Math.max(0, size.height() - inset));
+    }
+
+    @Override public void onFocusChanged(boolean focused) {
+        this.focused = focused;
+        if (focused) {
+            focusedIndex = selectedIndex;
+            revealSelected = true;
+        }
+    }
+
+    @Override public boolean onFocusMove(FocusManager.Direction direction) {
+        int next = switch (direction) {
+            case LEFT -> Math.max(0, focusedIndex - 1);
+            case RIGHT -> Math.min(labels.size() - 1, focusedIndex + 1);
+            default -> focusedIndex;
+        };
+        if (next == focusedIndex) return false;
+        focusedIndex = next;
+        revealSelected = true;
+        if (layoutFont != null && bounds().width() > 0)
+            ensureSelectedVisible(Math.max(bounds().width(), minimumRowWidth(layoutFont)), bounds().width());
+        return true;
+    }
+
+    @Override public boolean activate() {
+        selected(focusedIndex);
+        onSelect.accept(selectedIndex);
+        return true;
+    }
+
     public int minimumRowWidth(Font font) {
         int width = 0;
         for (Component label : labels)
-            width += Math.max(24, font.width(label) + 2 * TEXT_PADDING + 8);
+            width += Math.max(24, font.width(OreFonts.text(label)) + 2 * TEXT_PADDING + 8);
         return width;
     }
 
@@ -99,8 +150,9 @@ public final class Tabs extends Control {
     }
 
     private void ensureSelectedVisible(int contentWidth, int viewportWidth) {
-        int left = selectedIndex * contentWidth / labels.size();
-        int right = (selectedIndex + 1) * contentWidth / labels.size();
+        int index = focused ? focusedIndex : selectedIndex;
+        int left = index * contentWidth / labels.size();
+        int right = (index + 1) * contentWidth / labels.size();
         if (left < scrollX) scrollX = left;
         else if (right > scrollX + viewportWidth) scrollX = right - viewportWidth;
         scrollX = Math.max(0, Math.min(contentWidth - viewportWidth, scrollX));

@@ -21,7 +21,7 @@ public final class Button extends Control {
     public static final int PADDING_Y = 4;
     private static final int ICON_GAP = 4;
 
-    private Component label = Component.empty();
+    private final Label label = new Label();
     private Size buttonSize = Size.MEDIUM;
     private Type type = Type.SECONDARY;
     private TextAlignment alignment = TextAlignment.CENTER;
@@ -30,6 +30,8 @@ public final class Button extends Control {
 
     public Button() {
         minimum(0, buttonSize.height());
+        focusable(true);
+        focusExpansion(1);
     }
 
     public Button(Component label) {
@@ -37,7 +39,11 @@ public final class Button extends Control {
         label(label);
     }
 
-    public Button label(Component label) { this.label = java.util.Objects.requireNonNull(label); requestLayout(); return this; }
+    public Button label(Component label) { this.label.text(label); requestLayout(); return this; }
+    public Button hero(boolean hero) { label.hero(hero); requestLayout(); return this; }
+    public boolean hero() { return label.hero(); }
+    public Button fontSize(float fontSize) { label.fontSize(fontSize); requestLayout(); return this; }
+    public float fontSize() { return label.fontSize(); }
     public Button size(Size size) { this.buttonSize = java.util.Objects.requireNonNull(size); minimum(0, size.height()); return this; }
     public Button type(Type type) { this.type = java.util.Objects.requireNonNull(type); return this; }
     public Type type() { return type; }
@@ -46,13 +52,13 @@ public final class Button extends Control {
     public Button onPress(Runnable action) { this.onPress = java.util.Objects.requireNonNull(action); return this; }
 
     @Override public int measureWidth(Font font, int available) {
-        return Math.max(minimumWidth(), font.width(label) + 2 * PADDING_X
+        return Math.max(minimumWidth(), label.measureWidth(font, available) + 2 * PADDING_X
                 + (trailingIcon == null ? 0 : trailingIcon.width + ICON_GAP));
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
         Rect area = screenBounds(screenX, screenY);
-        draw(context, area.x(), area.y(), area.width(), area.height(), label, trailingIcon, alignment, type);
+        drawLabelled(context, area.x(), area.y(), area.width(), area.height(), label, trailingIcon, alignment, type);
     }
 
     public boolean pressAt(int rootX, int rootY) {
@@ -63,6 +69,11 @@ public final class Button extends Control {
 
     @Override protected boolean onPointerPressed(int rootX, int rootY) {
         return pressAt(rootX, rootY);
+    }
+
+    @Override public boolean activate() {
+        onPress.run();
+        return true;
     }
 
     public static void draw(ModularGuiContext context, int x, int y, int width,
@@ -105,6 +116,12 @@ public final class Button extends Control {
     static void draw(ModularGuiContext context, int x, int y, int width,
                      int height, Component label, Icon trailingIcon,
                      TextAlignment alignment, Type type) {
+        drawLabelled(context, x, y, width, height, new Label(label), trailingIcon, alignment, type);
+    }
+
+    private static void drawLabelled(ModularGuiContext context, int x, int y, int width,
+                                     int height, Label label, Icon trailingIcon,
+                                     TextAlignment alignment, Type type) {
         GuiGraphics graphics = context.getGraphics();
         boolean hovered = contains(x, y, width, height,
                 context.getAbsMouseX(), context.getAbsMouseY());
@@ -116,13 +133,14 @@ public final class Button extends Control {
 
         int iconSpace = trailingIcon == null ? 0 : trailingIcon.width + ICON_GAP;
         int labelWidth = Math.max(0, width - 2 * PADDING_X - iconSpace);
-        Label.draw(context, label, new io.github.luyingyilong.geg.client.ui.layout.Rect(
-                        x + PADDING_X, y, labelWidth, height), style.getTextColor(), style.isTextShadow(),
-                Label.Overflow.ELLIPSIS, switch (alignment) {
+        label.color(style.getTextColor()).shadow(style.isTextShadow())
+                .overflow(Label.Overflow.ELLIPSIS).align(switch (alignment) {
                     case LEFT -> Label.Horizontal.LEFT;
                     case CENTER -> Label.Horizontal.CENTER;
                     case RIGHT -> Label.Horizontal.RIGHT;
                 }, Label.Vertical.CENTER);
+        label.layout(new Rect(x + PADDING_X, y, labelWidth, height), context.getFont());
+        label.draw(context, 0, 0);
 
         if (trailingIcon != null) {
             int iconX = x + width - PADDING_X - trailingIcon.width;

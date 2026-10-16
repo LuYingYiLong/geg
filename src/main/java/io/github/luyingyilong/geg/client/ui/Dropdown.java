@@ -7,6 +7,8 @@ import brachy.modularui.theme.WidgetThemeEntry;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.FocusManager;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +31,7 @@ public final class Dropdown<T> extends Control {
     private boolean checkable = true;
     private int offset;
     private boolean open;
+    private int highlighted;
     private Consumer<T> onSelect = value -> { };
 
     public Dropdown(T initialValue, int maxVisibleItems) {
@@ -40,6 +43,8 @@ public final class Dropdown<T> extends Control {
         this.maxVisibleItems = Math.max(1, maxVisibleItems);
         this.size = Objects.requireNonNull(size);
         minimum(0, size.height());
+        focusable(true);
+        focusExpansion(1);
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
@@ -86,6 +91,7 @@ public final class Dropdown<T> extends Control {
         if (this.options.isEmpty()) {
             open = false;
         }
+        highlighted = Math.max(0, Math.min(highlighted, this.options.size() - 1));
     }
 
     public T selected() {
@@ -107,6 +113,46 @@ public final class Dropdown<T> extends Control {
 
     public void close() {
         open = false;
+    }
+
+    @Override public boolean activate() {
+        if (open && !options.isEmpty()) select(options.get(highlighted).value);
+        else {
+            open = !options.isEmpty();
+            highlighted = selectedIndex();
+            revealHighlight();
+        }
+        return true;
+    }
+
+    @Override public boolean onFocusKey(int keyCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE && open) {
+            close();
+            return true;
+        }
+        return false;
+    }
+
+    @Override public boolean onFocusMove(FocusManager.Direction direction) {
+        if (!open || options.isEmpty()) return false;
+        if (direction == FocusManager.Direction.UP) highlighted = Math.max(0, highlighted - 1);
+        else if (direction == FocusManager.Direction.DOWN)
+            highlighted = Math.min(options.size() - 1, highlighted + 1);
+        else return false;
+        revealHighlight();
+        return true;
+    }
+
+    private int selectedIndex() {
+        for (int index = 0; index < options.size(); index++)
+            if (Objects.equals(options.get(index).value, selected)) return index;
+        return 0;
+    }
+
+    private void revealHighlight() {
+        if (highlighted < offset) offset = highlighted;
+        else if (highlighted >= offset + maxVisibleItems)
+            offset = highlighted - maxVisibleItems + 1;
     }
 
     public void drawTrigger(ModularGuiContext context, int x, int y, int width, int height) {
@@ -142,7 +188,8 @@ public final class Dropdown<T> extends Control {
             Option<T> option = options.get(offset + index);
             Rect item = itemBounds(panel, index);
             drawBackground(context, item, itemStyle);
-            if (item.contains(context.getAbsMouseX(), context.getAbsMouseY())) {
+            if (item.contains(context.getAbsMouseX(), context.getAbsMouseY())
+                    || offset + index == highlighted) {
                 graphics.fill(item.x + 1, item.y + 1,
                         item.right() - 1, item.bottom() - 1, 0x28FFFFFF);
             }
@@ -167,6 +214,7 @@ public final class Dropdown<T> extends Control {
                          int mouseX, int mouseY) {
         if (Button.contains(x, y, width, triggerHeight, mouseX, mouseY)) {
             open = !open && !options.isEmpty();
+            if (open) { highlighted = selectedIndex(); revealHighlight(); }
             return true;
         }
         if (!open) {

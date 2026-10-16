@@ -2,12 +2,16 @@ package io.github.luyingyilong.geg.client.ui.layout;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.client.gui.Font;
+import io.github.luyingyilong.geg.client.ui.OreFonts;
 
 /** GUI-viewport root, not a native operating-system window. */
 public final class Window extends Container {
     private final boolean fullscreen;
+    private final FocusManager focusManager = new FocusManager(this);
+    private final FocusOverlay focusOverlay = new FocusOverlay(focusManager);
     private Control content;
     private Overlay overlay;
+    private int fontRevision = -1;
 
     public Window(boolean fullscreen) { this.fullscreen = fullscreen; }
     public Window content(Control content) {
@@ -39,8 +43,26 @@ public final class Window extends Container {
         return true;
     }
     public boolean fullscreen() { return fullscreen; }
+    public FocusManager focusManager() { return focusManager; }
+    Control contentNode() { return content; }
+    Overlay overlayLayer() { return overlay; }
+
+    public boolean pointerPressed(int rootX, int rootY, ModularGuiContext context) {
+        Control hit = overlay == null ? null : overlay.hitTop(rootX, rootY);
+        if (hit == null && content != null) hit = content.hitTop(rootX, rootY);
+        focusManager.pointerPressed(hit, context);
+        return dispatchPointer(rootX, rootY);
+    }
+
+    public boolean keyPressed(int keyCode, int modifiers, ModularGuiContext context) {
+        return focusManager.keyPressed(keyCode, modifiers, context);
+    }
 
     public void layoutViewport(int width, int height, Font font) {
+        if (fontRevision != OreFonts.revision()) {
+            fontRevision = OreFonts.revision();
+            invalidateTextLayout();
+        }
         int actualWidth = fullscreen ? width : Math.min(width, measureWidth(font, width));
         int actualHeight = fullscreen ? height : Math.min(height, measureHeight(font, height));
         layout(new Rect(0, 0, actualWidth, actualHeight), font);
@@ -68,5 +90,7 @@ public final class Window extends Container {
     public void draw(ModularGuiContext context, int screenX, int screenY) {
         if (content != null) content.draw(context, screenX, screenY);
         if (overlay != null) overlay.draw(context, screenX, screenY);
+        focusManager.synchronizeNativeFocus(context);
+        focusOverlay.draw(context, screenX, screenY);
     }
 }

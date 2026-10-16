@@ -2,6 +2,7 @@ package io.github.luyingyilong.geg.client.ui.layout;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.Tabs;
+import io.github.luyingyilong.geg.client.ui.OreFonts;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 
@@ -191,6 +192,13 @@ public final class LayoutRegressionTest {
         check(first.bounds().equals(new Rect(0, 0, 30, 10)));
         check(second.bounds().equals(new Rect(32, 0, 30, 20)));
         check(third.bounds().equals(new Rect(0, 22, 30, 10)));
+        Window fontWindow = new Window(true).content(new Scroll().content(fixed));
+        fontWindow.layoutViewport(62, 60, null);
+        second.preferred(0, 30);
+        OreFonts.resourcesReloaded();
+        fontWindow.layoutViewport(62, 60, null);
+        check(second.bounds().height() == 30);
+        check(third.bounds().y() == 32);
 
         Overlay overlay = new Overlay();
         Control lower = new Control();

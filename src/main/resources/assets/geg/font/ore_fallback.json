@@ -1,0 +1,16 @@
+{
+  "providers": [
+    {
+      "type": "ttf",
+      "file": "geg:noto_sans_cjk_sc_medium.otf",
+      "size": 12,
+      "shift": [0, 0.1],
+      "oversample": 4
+    },
+    {
+      "id": "minecraft:default",
+      "size": 12,
+      "type": "reference"
+    }
+  ]
+}

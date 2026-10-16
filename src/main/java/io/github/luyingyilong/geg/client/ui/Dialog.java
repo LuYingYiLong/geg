@@ -40,7 +40,7 @@ public final class Dialog extends Container {
     private final Box header = new Box().orientation(Box.Orientation.HORIZONTAL).gap(HEADER_GAP);
     private final Padding headerInset = new Padding(new Padding.Insets(PADDING, PADDING, SECTION_SPACING, PADDING))
             .child(header);
-    private final Label titleLabel = new Label().overflow(Label.Overflow.CLIP)
+    private final Label titleLabel = new Label().hero(true).overflow(Label.Overflow.CLIP)
             .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
     private final CloseControl close = new CloseControl();
     private final Box footer = new Box().orientation(Box.Orientation.VERTICAL).gap(BUTTON_GAP);
@@ -64,6 +64,8 @@ public final class Dialog extends Container {
         title(title);
         titleLabel.policy(SizePolicy.EXPAND, SizePolicy.FILL);
         close.minimum(CLOSE_SIZE, CLOSE_SIZE);
+        close.focusable(true);
+        close.focusExpansion(1);
         header.minimum(0, CLOSE_SIZE).policy(SizePolicy.FILL, SizePolicy.CONTENT);
         header.add(titleLabel).add(close);
         headerInset.policy(SizePolicy.FILL, SizePolicy.CONTENT);
@@ -86,6 +88,9 @@ public final class Dialog extends Container {
         return this;
     }
 
+    public Dialog fontSize(float fontSize) { titleLabel.fontSize(fontSize); return this; }
+    public float fontSize() { return titleLabel.fontSize(); }
+
     public Dialog onClose(Runnable onClose) {
         this.onClose = Objects.requireNonNull(onClose);
         return this;
@@ -95,6 +100,8 @@ public final class Dialog extends Container {
         this.depth = depth;
         return this;
     }
+
+    @Override public boolean focusScope() { return true; }
 
     public Dialog content(Control content) {
         this.content = Objects.requireNonNull(content);
@@ -209,7 +216,11 @@ public final class Dialog extends Container {
         return count == 0 ? 0 : count * Button.Size.MEDIUM.height() + (count - 1) * BUTTON_GAP;
     }
 
-    private static final class CloseControl extends Control {
+    private final class CloseControl extends Control {
+        @Override public boolean activate() {
+            onClose.run();
+            return true;
+        }
         @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
             Rect area = screenBounds(screenX, screenY);
             GuiGraphics graphics = context.getGraphics();

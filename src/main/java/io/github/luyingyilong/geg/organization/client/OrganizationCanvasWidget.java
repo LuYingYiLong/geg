@@ -16,6 +16,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,13 +31,13 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private final Label emptyText;
     private final Form createForm;
     private final Dialog emptyDialog;
-    private final Modal createModal;
+    private final Drawer createDrawer;
     private final Table<OrganizationSyncPacket.Member> memberTable = createMemberTable();
     private final Table<OrganizationSyncPacket.Application> applicationTable = createApplicationTable();
     private final Table<OrganizationSyncPacket.Directory> joinTable = createJoinTable();
-    private final Modal detailModal;
+    private final Drawer detailDrawer;
     private final Modal applicationsModal;
-    private final Modal joinModal;
+    private final Drawer joinDrawer;
     private final Modal disbandConfirmation;
     private final Map<UUID, Dropdown<OrganizationSavedData.Operation>> memberMenus = new HashMap<>();
     private UUID selectedOrganizationId;
@@ -65,22 +66,22 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                 .content(emptyBody).onClose(() -> Minecraft.getInstance().setScreen(null));
 
         createForm.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
-        createModal = new Modal(Component.translatable("organization.geg.create"))
-                .content(createForm).onClose(this::showEmpty)
-                .action(Component.translatable("organization.geg.back"), this::showEmpty)
+        createDrawer = new Drawer(Component.translatable("organization.geg.create"))
+                .content(createForm).onClose(this::onCreateClosed)
+                .action(Component.translatable("organization.geg.back"), this::closeCreate)
                 .action(Component.translatable("organization.geg.create_action"),
                         this::submitCreate, Button.Type.PRIMARY);
         memberTable.minimum(0, 60).policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
-        detailModal = new Modal(Component.empty()).content(memberTable)
-                .onClose(this::closeDetails);
+        detailDrawer = new Drawer(Component.empty()).content(memberTable)
+                .onClose(this::onDetailsClosed);
         applicationTable.headerVisible(false).minimum(0, 60)
                 .policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
         applicationsModal = new Modal(Component.translatable("organization.geg.applications"))
                 .content(applicationTable).onClose(this::closeApplications).depth(300.0F);
         joinTable.headerVisible(false).minimum(0, 60)
                 .policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
-        joinModal = new Modal(Component.translatable("organization.geg.join"))
-                .content(joinTable).onClose(this::closeJoin).depth(300.0F);
+        joinDrawer = new Drawer(Component.translatable("organization.geg.join"))
+                .content(joinTable).onClose(this::onJoinClosed);
         Label warning = new Label(Component.translatable("organization.geg.confirm_disband_body"))
                 .wrap(Label.Wrap.WORD).color(0xFFD8D9DC);
         warning.policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
@@ -91,11 +92,11 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                 .action(Component.translatable("organization.geg.disband"),
                         this::confirmDisband, Button.Type.DESTRUCTIVE)
                 .depth(400.0F);
-        overlay.add(emptyDialog).add(createModal).add(detailModal)
-                .add(joinModal).add(applicationsModal).add(disbandConfirmation);
-        createModal.visible(false);
-        detailModal.visible(false);
-        joinModal.visible(false);
+        overlay.add(emptyDialog).add(createDrawer).add(detailDrawer)
+                .add(joinDrawer).add(applicationsModal).add(disbandConfirmation);
+        createDrawer.visible(false);
+        detailDrawer.visible(false);
+        joinDrawer.visible(false);
         applicationsModal.visible(false);
         disbandConfirmation.visible(false);
         createForm.setVisible(false);
@@ -160,6 +161,12 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                         activeMenuBounds = menu.isOpen() ? trigger : null;
                         return true;
                     }
+
+                    @Override public List<Rect> focusTargets(OrganizationSyncPacket.Member member,
+                                                              Rect bounds) {
+                        return actionsFor(member).isEmpty() ? List.of()
+                                : List.of(actionBounds(bounds));
+                    }
                 }));
     }
 
@@ -204,6 +211,12 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                         }
                         return false;
                     }
+
+                    @Override public List<Rect> focusTargets(OrganizationSyncPacket.Application application,
+                                                              Rect bounds) {
+                        return List.of(reviewButtonBounds(bounds, false),
+                                reviewButtonBounds(bounds, true));
+                    }
                 }));
     }
 
@@ -231,21 +244,30 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                                                OrganizationSyncPacket.Directory entry,
                                                Rect bounds) {
                         Rect button = actionBounds(bounds);
+                        boolean hovered = button.contains(context.getAbsMouseX(), context.getAbsMouseY());
                         Button.draw(context, button.x(), button.y(), button.width(), button.height(),
                                 Component.translatable(entry.pending()
-                                        ? "organization.geg.pending_application"
+                                        ? hovered ? "organization.geg.cancel_application"
+                                        : "organization.geg.pending_application"
                                         : entry.joinPolicy() == Organization.JoinPolicy.APPROVAL
                                         ? "organization.geg.apply" : "organization.geg.join"),
-                                Button.Type.SECONDARY);
+                                entry.pending() && hovered ? Button.Type.DESTRUCTIVE : Button.Type.SECONDARY);
                     }
 
                     @Override public boolean click(OrganizationSyncPacket.Directory entry,
                                                    Rect bounds, int mouseX, int mouseY) {
-                        if (entry.pending() || !actionBounds(bounds).contains(mouseX, mouseY)
+                        if (!joinDrawer.isOpen() || !actionBounds(bounds).contains(mouseX, mouseY)
                                 || Minecraft.getInstance().player == null) return false;
-                        OrganizationNetwork.operate(OrganizationSavedData.Operation.APPLY,
+                        OrganizationNetwork.operate(entry.pending()
+                                        ? OrganizationSavedData.Operation.CANCEL_APPLICATION
+                                        : OrganizationSavedData.Operation.APPLY,
                                 entry.id(), Minecraft.getInstance().player.getUUID());
                         return true;
+                    }
+
+                    @Override public List<Rect> focusTargets(OrganizationSyncPacket.Directory entry,
+                                                              Rect bounds) {
+                        return List.of(actionBounds(bounds));
                     }
                 }));
     }
@@ -304,7 +326,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     private void chooseOperation(OrganizationSavedData.Operation operation, UUID targetId) {
         closeMenu();
-        if (selectedOrganizationId == null) return;
+        if (!detailDrawer.isOpen() || selectedOrganizationId == null) return;
         if (operation == OrganizationSavedData.Operation.DISBAND) {
             pendingDisbandId = selectedOrganizationId;
             disbandConfirmation.visible(true);
@@ -336,17 +358,17 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     private void showDetails(UUID organizationId) {
+        OrganizationSyncPacket.Summary summary = ClientOrganizationState.organizations().stream()
+                .filter(entry -> entry.id().equals(organizationId)).findFirst().orElse(null);
+        if (summary == null) return;
+        // Finish a previous close callback before assigning the newly selected organization.
+        detailDrawer.open();
         selectedOrganizationId = organizationId;
-        OrganizationSyncPacket.Summary summary = selectedSummary();
-        if (summary == null) {
-            selectedOrganizationId = null;
-            return;
-        }
         emptyDialog.visible(false);
-        createModal.visible(false);
-        createForm.setVisible(false);
+        createDrawer.visible(false);
+        joinDrawer.close();
         memberTable.scrollToTop();
-        detailModal.visible(true);
+        detailDrawer.bodyScroll().scrollToTop();
         refreshDetails(summary);
         requestLayout();
     }
@@ -354,12 +376,12 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private void refreshDetails(OrganizationSyncPacket.Summary summary) {
         closeMenu();
         memberMenus.clear();
-        detailModal.title(Component.literal(summary.name()));
+        detailDrawer.title(Component.literal(summary.name()));
         memberTable.rows(summary.members());
-        detailModal.clearActions();
+        detailDrawer.clearActions();
         Organization.Role ownRole = ownRole(summary);
         if (ownRole == Organization.Role.LEADER || ownRole == Organization.Role.OFFICER) {
-            detailModal.action(Component.translatable("organization.geg.applications"),
+            detailDrawer.action(Component.translatable("organization.geg.applications"),
                     this::showApplications);
             applicationTable.rows(summary.applications());
         } else {
@@ -376,6 +398,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     private void showApplications() {
+        if (!detailDrawer.isOpen()) return;
         OrganizationSyncPacket.Summary summary = selectedSummary();
         if (summary == null) return;
         Organization.Role ownRole = ownRole(summary);
@@ -393,34 +416,48 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     private void showJoin() {
+        joinDrawer.open();
         emptyDialog.visible(false);
-        createModal.visible(false);
-        detailModal.visible(false);
+        createDrawer.visible(false);
+        detailDrawer.visible(false);
+        applicationsModal.visible(false);
+        closeDisbandConfirmation();
         closeMenu();
         joinTable.rows(ClientOrganizationState.directory());
         joinTable.scrollToTop();
-        joinModal.visible(true);
+        joinDrawer.bodyScroll().scrollToTop();
         requestLayout();
     }
 
-    private void closeJoin() {
-        joinModal.visible(false);
-        if (ClientOrganizationState.hasOrganizations()) showMemberships();
+    private void onJoinClosed() {
+        if (createDrawer.visible() || detailDrawer.visible() || applicationsModal.visible()
+                || disbandConfirmation.visible()) return;
+        if (!ClientOrganizationState.loaded()) showLoading();
+        else if (ClientOrganizationState.hasOrganizations()) showMemberships();
         else showEmpty();
     }
 
     private void closeDetails() {
-        detailModal.visible(false);
         applicationsModal.visible(false);
         closeDisbandConfirmation();
+        closeMenu();
+        detailDrawer.close();
+        requestLayout();
+    }
+
+    private void onDetailsClosed() {
         selectedOrganizationId = null;
         closeMenu();
-        requestLayout();
+        if (createDrawer.visible() || joinDrawer.visible() || applicationsModal.visible()
+                || disbandConfirmation.visible()) return;
+        if (!ClientOrganizationState.loaded()) showLoading();
+        else if (ClientOrganizationState.hasOrganizations()) showMemberships();
+        else showEmpty();
     }
 
     void showInitialState() {
         emptyDialog.visible(false);
-        createModal.visible(false);
+        createDrawer.visible(false);
         createForm.setVisible(false);
         if (!ClientOrganizationState.loaded()) showLoading();
         else if (!ClientOrganizationState.hasOrganizations()) showEmpty();
@@ -429,13 +466,18 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     void acceptSnapshot(String resultKey) {
         if (!resultKey.isEmpty()) pendingCreate = false;
-        if (joinModal.visible()) {
+        if (joinDrawer.isOpen()) {
             joinTable.rows(ClientOrganizationState.directory());
-            rebuildMemberships();
-            requestLayout();
+            if ("organization.geg.result.apply".equals(resultKey)
+                    || "organization.geg.result.approved_notice".equals(resultKey)) {
+                showMemberships();
+            } else {
+                rebuildMemberships();
+                requestLayout();
+            }
             return;
         }
-        if (detailModal.visible()) {
+        if (detailDrawer.isOpen()) {
             OrganizationSyncPacket.Summary selected = selectedSummary();
             if (selected != null) {
                 rebuildMemberships();
@@ -453,17 +495,16 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                 && ClientOrganizationState.organizations().stream().anyMatch(summary ->
                 summary.name().equalsIgnoreCase(createForm.value("name").strip()))) {
             showMemberships();
-        } else if (resultKey.isEmpty() && !createModal.visible()) {
+        } else if (resultKey.isEmpty() && !createDrawer.visible()) {
             if (ClientOrganizationState.hasOrganizations()) showMemberships();
             else showEmpty();
         }
     }
 
     private void showEmpty() {
-        createForm.setVisible(false);
-        createModal.visible(false);
-        detailModal.visible(false);
-        joinModal.visible(false);
+        createDrawer.visible(false);
+        detailDrawer.visible(false);
+        joinDrawer.visible(false);
         applicationsModal.visible(false);
         if (!ClientOrganizationState.loaded()) {
             showLoading();
@@ -483,17 +524,33 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     private void showCreate() {
+        createDrawer.open();
         emptyDialog.visible(false);
-        detailModal.visible(false);
-        joinModal.visible(false);
+        detailDrawer.visible(false);
+        joinDrawer.visible(false);
         applicationsModal.visible(false);
-        createModal.visible(true);
         createForm.setVisible(true);
+        createDrawer.bodyScroll().scrollToTop();
         requestLayout();
     }
 
+    private void closeCreate() {
+        createDrawer.close();
+        requestLayout();
+    }
+
+    private void onCreateClosed() {
+        // Keep the form visible throughout the exit animation, then restore the current base view.
+        createForm.setVisible(false);
+        if (detailDrawer.visible() || joinDrawer.visible() || applicationsModal.visible()
+                || disbandConfirmation.visible()) return;
+        if (!ClientOrganizationState.loaded()) showLoading();
+        else if (ClientOrganizationState.hasOrganizations()) showMemberships();
+        else showEmpty();
+    }
+
     private void submitCreate() {
-        if (pendingCreate || !createForm.validate()) return;
+        if (!createDrawer.isOpen() || pendingCreate || !createForm.validate()) return;
         String name = createForm.value("name").strip();
         if (name.isBlank()) {
             notifyUnavailable("organization.geg.invalid_name");
@@ -507,10 +564,9 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     private void showMemberships() {
         rebuildMemberships();
-        createForm.setVisible(false);
-        createModal.visible(false);
-        detailModal.visible(false);
-        joinModal.visible(false);
+        createDrawer.visible(false);
+        detailDrawer.visible(false);
+        joinDrawer.visible(false);
         applicationsModal.visible(false);
         emptyDialog.visible(false);
         requestLayout();
@@ -518,12 +574,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     private void rebuildMemberships() {
         for (Control child : memberships.children()) memberships.removeChild(child);
-        Label heading = new Label(Component.translatable("organization.geg.your_organizations"))
-                .color(0x000000).align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
-        Panel header = new Panel(OreTheme.HEADER_PANEL).child(heading);
-        header.minimum(0, 25).preferred(0, 25)
-                .policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
-        heading.minimum(0, 20).policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        Header header = new Header(Component.translatable("organization.geg.your_organizations"))
+                .titleColor(0xFF000000);
         memberships.add(header);
         Button createButton = new Button(Component.translatable("organization.geg.create"))
                 .type(Button.Type.PRIMARY).onPress(this::showCreate);
@@ -573,16 +625,13 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     public void draw(ModularGuiContext context, WidgetThemeEntry<?> theme) {
         Rect area = new Rect(getArea().x, getArea().y, getArea().width, getArea().height);
         if (area.width() == 0 || area.height() == 0) return;
-        int modalWidth = Math.max(1, area.width() / 2);
-        createModal.size(modalWidth, area.height()).position(area.width() - modalWidth, 0);
-        detailModal.size(modalWidth, area.height()).position(area.width() - modalWidth, 0);
         applicationsModal.size(Math.min(320, area.width()), Math.min(220, area.height())).centered();
-        joinModal.size(Math.min(280, area.width()), Math.min(240, area.height())).centered();
         disbandConfirmation.size(Math.min(240, area.width()), Math.min(120, area.height())).centered();
         options.orientation(area.width() < 252 ? Box.Orientation.VERTICAL : Box.Orientation.HORIZONTAL);
         window.layoutViewport(area.width(), area.height(), context.getFont());
         window.draw(context, area.x(), area.y());
-        if (detailModal.visible() && !applicationsModal.visible()
+        if (!detailDrawer.isOpen()) closeMenu();
+        if (detailDrawer.isOpen() && !joinDrawer.visible() && !applicationsModal.visible()
                 && !disbandConfirmation.visible() && activeMenuMember != null
                 && activeMenuBounds != null) {
             Dropdown<OrganizationSavedData.Operation> menu = memberMenus.get(activeMenuMember);
@@ -604,16 +653,18 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     private int menuY(Dropdown<OrganizationSavedData.Operation> menu, Rect anchor) {
-        int bottom = detailModal.panelBounds().bottom();
+        int bottom = detailDrawer.panelBounds().bottom();
         return anchor.bottom() + menu.menuHeight() <= bottom ? anchor.y()
                 : anchor.y() - menu.menuHeight() - anchor.height();
     }
 
     @Override
     public @NotNull Interactable.Result onMousePressed(int button) {
+        window.focusManager().pointerActivity();
         if (button != 0) return Interactable.Result.IGNORE;
         int mouseX = getContext().getAbsMouseX() - getArea().x;
         int mouseY = getContext().getAbsMouseY() - getArea().y;
+        if (!detailDrawer.isOpen() || joinDrawer.visible()) closeMenu();
         if (activeMenuMember != null && activeMenuBounds != null) {
             Dropdown<OrganizationSavedData.Operation> menu = memberMenus.get(activeMenuMember);
             if (menu != null && menu.isOpen()) {
@@ -623,34 +674,89 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                 return Interactable.Result.STOP;
             }
         }
-        return window.dispatchPointer(mouseX, mouseY)
+        return window.pointerPressed(mouseX, mouseY, getContext())
                 ? Interactable.Result.STOP : Interactable.Result.IGNORE;
     }
 
     @Override public boolean onMouseScrolled(double delta) {
+        if (createDrawer.visible() && !applicationsModal.visible() && !joinDrawer.visible()
+                && !detailDrawer.visible() && !disbandConfirmation.visible()) {
+            return createDrawer.dispatchScroll(getContext().getAbsMouseX() - getArea().x,
+                    getContext().getAbsMouseY() - getArea().y, delta, false);
+        }
         if (applicationsModal.visible()) {
             applicationTable.scrollBy(-(int) Math.signum(delta) *
                     (applicationTable.compact() ? 36 : 23));
             return true;
         }
-        if (joinModal.visible()) {
-            joinTable.scrollBy(-(int) Math.signum(delta) * (joinTable.compact() ? 36 : 23));
-            return true;
+        if (joinDrawer.visible()) {
+            return scrollTableDrawer(joinDrawer, joinTable, delta);
         }
         if (activeMenuMember != null) {
             Dropdown<OrganizationSavedData.Operation> menu = memberMenus.get(activeMenuMember);
             if (menu != null && menu.scroll(delta)) return true;
         }
-        if (detailModal.visible()) {
-            memberTable.scrollBy(-(int) Math.signum(delta) * (memberTable.compact() ? 36 : 23));
+        if (detailDrawer.visible()) {
             closeMenu();
-            return true;
+            return scrollTableDrawer(detailDrawer, memberTable, delta);
         }
         return false;
     }
 
+    private boolean scrollTableDrawer(Drawer drawer, Table<?> table, double delta) {
+        Scroll body = drawer.bodyScroll();
+        int mouseX = getContext().getAbsMouseX() - getArea().x;
+        int mouseY = getContext().getAbsMouseY() - getArea().y;
+        if (drawer.isOpen() && body.hit(mouseX, mouseY)) {
+            if (body.maxScrollY() > 0 || body.maxScrollX() > 0)
+                drawer.dispatchScroll(mouseX, mouseY, delta, false);
+            else table.scrollBy(-(int) Math.signum(delta) * (table.compact() ? 36 : 23));
+        }
+        return true;
+    }
+
+    @Override public void onMouseDrag(int button, double dragX, double dragY) {
+        if (button != 0 || applicationsModal.visible()
+                || disbandConfirmation.visible()) return;
+        Drawer drawer = joinDrawer.visible() ? joinDrawer : detailDrawer.visible() ? detailDrawer
+                : createDrawer.visible() ? createDrawer : null;
+        if (drawer != null && drawer.isOpen()) drawer.bodyScroll().dragTo(getContext().getAbsMouseX() - getArea().x,
+                getContext().getAbsMouseY() - getArea().y);
+    }
+
+    @Override public boolean onMouseReleased(int button) {
+        if (button != 0) return false;
+        boolean details = detailDrawer.bodyScroll().endDrag();
+        boolean create = createDrawer.bodyScroll().endDrag();
+        boolean join = joinDrawer.bodyScroll().endDrag();
+        return details || create || join;
+    }
+
     @Override
     public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE && activeMenuMember != null
+                && !applicationsModal.visible() && !joinDrawer.visible() && !disbandConfirmation.visible()) {
+            closeMenu();
+            return Interactable.Result.STOP;
+        }
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE && window.keyPressed(keyCode, modifiers, getContext()))
+            return Interactable.Result.STOP;
+        if (activeMenuMember != null) {
+            Dropdown<OrganizationSavedData.Operation> menu = memberMenus.get(activeMenuMember);
+            if (menu != null && menu.isOpen()) {
+                if (keyCode == GLFW.GLFW_KEY_UP || keyCode == GLFW.GLFW_KEY_DOWN) {
+                    window.focusManager().keyboardNavigation();
+                    menu.onFocusMove(keyCode == GLFW.GLFW_KEY_UP
+                            ? FocusManager.Direction.UP : FocusManager.Direction.DOWN);
+                    return Interactable.Result.STOP;
+                }
+                if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER
+                        || keyCode == GLFW.GLFW_KEY_SPACE) {
+                    menu.activate();
+                    return Interactable.Result.STOP;
+                }
+            }
+        }
         if (keyCode == 256 && disbandConfirmation.visible()) {
             closeDisbandConfirmation();
             return Interactable.Result.STOP;
@@ -659,20 +765,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
             closeApplications();
             return Interactable.Result.STOP;
         }
-        if (keyCode == 256 && joinModal.visible()) {
-            closeJoin();
-            return Interactable.Result.STOP;
-        }
-        if (keyCode == 256 && detailModal.visible()) {
-            if (activeMenuMember != null) closeMenu();
-            else closeDetails();
-            return Interactable.Result.STOP;
-        }
-        if (keyCode == 256 && createModal.visible()) {
-            showEmpty();
-            return Interactable.Result.STOP;
-        }
-        return Interactable.Result.IGNORE;
+        return window.keyPressed(keyCode, modifiers, getContext())
+                ? Interactable.Result.STOP : Interactable.Result.IGNORE;
     }
 
     private static final class IconControl extends Control {

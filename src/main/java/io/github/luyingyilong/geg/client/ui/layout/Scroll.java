@@ -117,6 +117,17 @@ public final class Scroll extends Container {
         return scrollX != beforeX || scrollY != beforeY;
     }
 
+    /** Bring a rectangle in content coordinates into the visible viewport. */
+    public void ensureVisible(Rect area) {
+        int x = scrollX;
+        int y = scrollY;
+        if (area.x() < x) x = area.x();
+        else if (area.right() > x + viewport.width()) x = area.right() - viewport.width();
+        if (area.y() < y) y = area.y();
+        else if (area.bottom() > y + viewport.height()) y = area.bottom() - viewport.height();
+        setScroll(x, y);
+    }
+
     @Override public Size measureSize(Font font, Size available) {
         if (content == null) return minimumSize();
         Size measured = content.measureSize(font, available);

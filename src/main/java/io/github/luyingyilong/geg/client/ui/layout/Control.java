@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
 
-/** A local-coordinate layout node; ModularUI remains responsible for focus and text editing. */
+/** A local-coordinate layout node. Window owns keyboard focus; ModularUI edits text. */
 public class Control {
     public enum SizePolicy { CONTENT, FILL, EXPAND }
 
@@ -23,6 +23,8 @@ public class Control {
     private SizePolicy vertical = SizePolicy.CONTENT;
     private boolean visible = true;
     private boolean layoutDirty = true;
+    private boolean focusable;
+    private int focusExpansion;
     private float stretchRatio = 1.0F;
 
     public Control minimum(int width, int height) {
@@ -59,6 +61,36 @@ public class Control {
     }
 
     public float stretchRatio() { return stretchRatio; }
+
+    public Control focusable(boolean focusable) {
+        this.focusable = focusable;
+        return this;
+    }
+
+    public boolean focusable() { return focusable; }
+
+    /** Pixels added to each side of the focused outline. */
+    public Control focusExpansion(int pixels) {
+        focusExpansion = Math.max(0, pixels);
+        return this;
+    }
+
+    public int focusExpansion() { return focusExpansion; }
+
+    public boolean acceptsFocus() { return focusable && visible; }
+
+    public boolean focusScope() { return false; }
+
+    /** Bounds in Window coordinates; virtual controls may return their active item's bounds. */
+    public Rect focusBounds() { return absoluteBounds(); }
+
+    public boolean onFocusKey(int keyCode, int modifiers) { return false; }
+
+    public boolean onFocusMove(FocusManager.Direction direction) { return false; }
+
+    public boolean activate() { return false; }
+
+    public void onFocusChanged(boolean focused) { }
     public Control parent() { return parent; }
     public List<Control> children() { return List.copyOf(children); }
 
@@ -107,6 +139,12 @@ public class Control {
     }
 
     public boolean layoutDirty() { return layoutDirty; }
+
+    /** Resource reloads can change glyph advances without changing the text itself. */
+    public void invalidateTextLayout() {
+        requestLayout();
+        for (Control child : children) child.invalidateTextLayout();
+    }
 
     public SizePolicy horizontalPolicy() { return horizontal; }
     public SizePolicy verticalPolicy() { return vertical; }

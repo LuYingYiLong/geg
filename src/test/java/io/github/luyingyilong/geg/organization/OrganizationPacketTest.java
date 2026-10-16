@@ -36,6 +36,17 @@ public final class OrganizationPacketTest {
         FriendlyByteBuf approvalBuffer = new FriendlyByteBuf(Unpooled.buffer());
         OrganizationActionPacket.encode(approval, approvalBuffer);
         check(OrganizationActionPacket.decode(approvalBuffer).equals(approval));
+        OrganizationActionPacket cancellation = OrganizationActionPacket.operate(
+                OrganizationSavedData.Operation.CANCEL_APPLICATION, organizationId, officer);
+        FriendlyByteBuf cancellationBuffer = new FriendlyByteBuf(Unpooled.buffer());
+        OrganizationActionPacket.encode(cancellation, cancellationBuffer);
+        check(OrganizationActionPacket.decode(cancellationBuffer).equals(cancellation));
+        OrganizationSyncPacket cancelled = new OrganizationSyncPacket(List.of(summary),
+                List.of(new OrganizationSyncPacket.Directory(organizationId, "Other",
+                        Organization.JoinPolicy.APPROVAL, false)), "organization.geg.result.cancel_application");
+        FriendlyByteBuf cancelledBuffer = new FriendlyByteBuf(Unpooled.buffer());
+        OrganizationSyncPacket.encode(cancelled, cancelledBuffer);
+        check(OrganizationSyncPacket.decode(cancelledBuffer).equals(cancelled));
     }
 
     private static void check(boolean condition) {

@@ -116,10 +116,10 @@
       "borderY": 1
     }
   },
-  "panel:modalBackground": {
+  "panel:floatingBackground": {
     "background": {
       "type": "texture",
-      "location": "geg:modularui/gui/modal_background",
+      "location": "geg:modularui/gui/floating_background",
       "imageWidth": 3,
       "imageHeight": 3,
       "x": 0,
@@ -130,12 +130,12 @@
       "borderY": 1
     }
   },
-  "panel:modalHeader": {
+  "panel:floatingHeader": {
     "textColor": "#FFFFFFFF",
     "textShadow": false,
     "background": {
       "type": "texture",
-      "location": "geg:modularui/gui/modal_header",
+      "location": "geg:modularui/gui/floating_header",
       "imageWidth": 3,
       "imageHeight": 3,
       "x": 0,

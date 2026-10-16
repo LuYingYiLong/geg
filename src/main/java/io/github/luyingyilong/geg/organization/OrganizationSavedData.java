@@ -23,7 +23,7 @@ public final class OrganizationSavedData extends SavedData {
     private final Map<UUID, Map<UUID, Long>> applications = new HashMap<>();
 
     public enum CreateResult { CREATED, INVALID_NAME, INVALID_DESCRIPTION, DUPLICATE_NAME, TOO_MANY }
-    public enum Operation { DISBAND, PROMOTE, DEMOTE, REMOVE, LEAVE, APPLY, APPROVE, REJECT }
+    public enum Operation { DISBAND, PROMOTE, DEMOTE, REMOVE, LEAVE, APPLY, APPROVE, REJECT, CANCEL_APPLICATION }
     public enum OperationResult {
         SUCCESS, NOT_FOUND, NOT_MEMBER, FORBIDDEN, INVALID_TARGET,
         ALREADY_MEMBER, ALREADY_APPLIED, TOO_MANY, NO_APPLICATION
@@ -110,6 +110,15 @@ public final class OrganizationSavedData extends SavedData {
     public OperationResult operate(UUID actor, UUID organizationId, UUID target, Operation operation) {
         Organization organization = organizations.get(organizationId);
         if (organization == null) return OperationResult.NOT_FOUND;
+        if (operation == Operation.CANCEL_APPLICATION) {
+            if (!actor.equals(target)) return OperationResult.FORBIDDEN;
+            Map<UUID, Long> pending = applications.get(organizationId);
+            if (pending == null || !pending.containsKey(actor)) return OperationResult.NO_APPLICATION;
+            pending.remove(actor);
+            if (pending.isEmpty()) applications.remove(organizationId);
+            setDirty();
+            return OperationResult.SUCCESS;
+        }
         if (operation == Operation.APPLY) {
             if (!actor.equals(target)) return OperationResult.FORBIDDEN;
             if (organization.roleOf(actor) != null) return OperationResult.ALREADY_MEMBER;

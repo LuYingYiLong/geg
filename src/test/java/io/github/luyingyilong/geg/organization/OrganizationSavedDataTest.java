@@ -40,7 +40,56 @@ public final class OrganizationSavedDataTest {
 
         testRolePermissions();
         testApplications();
+        testCancelApplications();
         testLegacyMembers();
+    }
+
+    private static void testCancelApplications() {
+        UUID leader = UUID.randomUUID();
+        UUID applicant = UUID.randomUUID();
+        UUID other = UUID.randomUUID();
+        UUID outsider = UUID.randomUUID();
+        Organization organization = new Organization(UUID.randomUUID(), "Cancel requests", "", leader,
+                Organization.JoinPolicy.APPROVAL, 1L, Map.of(leader, Organization.Role.LEADER));
+        UUID id = organization.id();
+        OrganizationSavedData data = seeded(organization);
+        check(data.operate(applicant, id, applicant, OrganizationSavedData.Operation.APPLY)
+                == OrganizationSavedData.OperationResult.SUCCESS);
+        check(data.operate(other, id, other, OrganizationSavedData.Operation.APPLY)
+                == OrganizationSavedData.OperationResult.SUCCESS);
+        for (UUID actor : new UUID[]{outsider, leader, other}) {
+            check(data.operate(actor, id, applicant, OrganizationSavedData.Operation.CANCEL_APPLICATION)
+                    == OrganizationSavedData.OperationResult.FORBIDDEN);
+            check(data.hasApplication(id, applicant) && data.hasApplication(id, other));
+        }
+        data.setDirty(false);
+        check(data.operate(applicant, id, applicant, OrganizationSavedData.Operation.CANCEL_APPLICATION)
+                == OrganizationSavedData.OperationResult.SUCCESS);
+        check(data.isDirty());
+        check(!data.hasApplication(id, applicant) && data.hasApplication(id, other));
+        check(data.organization(id).roleOf(applicant) == null);
+        data = OrganizationSavedData.load(data.save(new CompoundTag()));
+        check(!data.hasApplication(id, applicant) && data.hasApplication(id, other));
+        check(data.operate(applicant, id, applicant, OrganizationSavedData.Operation.CANCEL_APPLICATION)
+                == OrganizationSavedData.OperationResult.NO_APPLICATION);
+        // Cancellation wins: a later stale approval cannot add the withdrawn applicant.
+        check(data.operate(leader, id, applicant, OrganizationSavedData.Operation.APPROVE)
+                == OrganizationSavedData.OperationResult.NO_APPLICATION);
+        check(data.organization(id).roleOf(applicant) == null);
+        check(data.operate(applicant, id, applicant, OrganizationSavedData.Operation.APPLY)
+                == OrganizationSavedData.OperationResult.SUCCESS);
+        // Approval wins: cancellation must not remove a player who has already joined.
+        check(data.operate(leader, id, applicant, OrganizationSavedData.Operation.APPROVE)
+                == OrganizationSavedData.OperationResult.SUCCESS);
+        check(data.operate(applicant, id, applicant, OrganizationSavedData.Operation.CANCEL_APPLICATION)
+                == OrganizationSavedData.OperationResult.NO_APPLICATION);
+        check(data.organization(id).roleOf(applicant) == Organization.Role.MEMBER);
+        check(data.operate(other, id, other, OrganizationSavedData.Operation.CANCEL_APPLICATION)
+                == OrganizationSavedData.OperationResult.SUCCESS);
+        check(data.applications(id).isEmpty());
+        check(OrganizationSavedData.load(data.save(new CompoundTag())).applications(id).isEmpty());
+        check(data.operate(other, UUID.randomUUID(), other, OrganizationSavedData.Operation.CANCEL_APPLICATION)
+                == OrganizationSavedData.OperationResult.NOT_FOUND);
     }
 
     private static void testApplications() {

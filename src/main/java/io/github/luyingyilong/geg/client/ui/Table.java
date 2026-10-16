@@ -5,6 +5,7 @@ import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Container;
 import io.github.luyingyilong.geg.client.ui.layout.Panel;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
+import io.github.luyingyilong.geg.client.ui.layout.FocusManager;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -33,6 +34,9 @@ public final class Table<T> extends Container {
         default boolean click(T row, Rect bounds, int mouseX, int mouseY) {
             return false;
         }
+
+        /** Keyboard-focusable areas inside this cell, in left-to-right order. */
+        default List<Rect> focusTargets(T row, Rect bounds) { return List.of(); }
     }
 
     /** Text cell with configurable clipping and wrapping; its measured height feeds row layout. */
@@ -156,6 +160,109 @@ public final class Table<T> extends Container {
     private boolean resetScroll;
     private Object anchorKey;
     private int anchorOffset;
+    private Object focusedKey;
+    private int focusedAction = -1;
+
+    public Table() {
+        focusable(true);
+        focusExpansion(1);
+    }
+
+    @Override public boolean acceptsFocus() {
+        return super.acceptsFocus() && !layoutRows.isEmpty();
+    }
+
+    private Row<T> focusedRow() {
+        for (Row<T> row : layoutRows)
+            if (Objects.equals(row.key(), focusedKey)) return row;
+        if (layoutRows.isEmpty()) return null;
+        for (Row<T> row : layoutRows)
+            if (row.bounds().bottom() > scroll) return row;
+        return layoutRows.get(0);
+    }
+
+    @Override public Rect focusBounds() {
+        Row<T> row = focusedRow();
+        if (row == null) return absoluteBounds();
+        Rect origin = absoluteBounds();
+        List<ActionTarget<T>> targets = focusTargets(row);
+        Rect area = focusedAction >= 0 && focusedAction < targets.size()
+                ? targets.get(focusedAction).bounds()
+                : row.bounds().translated(origin.x(), origin.y() + headerHeight() - scroll);
+        int top = Math.max(area.y(), origin.y() + headerHeight());
+        int bottom = Math.min(area.bottom(), origin.bottom());
+        return new Rect(area.x(), top, area.width(), Math.max(0, bottom - top));
+    }
+
+    @Override public boolean onFocusMove(FocusManager.Direction direction) {
+        Row<T> current = focusedRow();
+        if (current == null) return false;
+        if (direction == FocusManager.Direction.RIGHT) {
+            if (focusedAction + 1 >= focusTargets(current).size()) return false;
+            focusedAction++;
+            return true;
+        }
+        if (direction == FocusManager.Direction.LEFT) {
+            if (focusedAction < 0) return false;
+            focusedAction--;
+            return true;
+        }
+        int next = current.index() + (direction == FocusManager.Direction.UP ? -1 : 1);
+        if (next < 0 || next >= layoutRows.size()) return false;
+        Row<T> row = layoutRows.get(next);
+        focusedKey = row.key();
+        if (focusedAction >= focusTargets(row).size()) focusedAction = -1;
+        int top = row.bounds().y();
+        int bottom = row.bounds().bottom();
+        if (top < scroll) setScroll(top);
+        else if (bottom > scroll + bodyHeight()) setScroll(bottom - bodyHeight());
+        return true;
+    }
+
+    @Override public boolean activate() {
+        Row<T> row = focusedRow();
+        if (row == null) return false;
+        List<ActionTarget<T>> targets = focusTargets(row);
+        if (focusedAction >= 0 && focusedAction < targets.size()) {
+            ActionTarget<T> target = targets.get(focusedAction);
+            Rect bounds = target.bounds();
+            return target.cell().click(row.item(), target.cellBounds(),
+                    bounds.x() + bounds.width() / 2, bounds.y() + bounds.height() / 2);
+        }
+        onRowClick.accept(row.item());
+        return true;
+    }
+
+    private List<ActionTarget<T>> focusTargets(Row<T> row) {
+        List<ActionTarget<T>> targets = new ArrayList<>();
+        Rect bounds = row.bounds().translated(absoluteBounds().x(),
+                absoluteBounds().y() + headerHeight() - scroll);
+        if (compact) {
+            int x = bounds.x() + COMPACT_INSET;
+            int width = Math.max(0, bounds.width() - 2 * COMPACT_INSET);
+            int y = bounds.y() + COMPACT_INSET;
+            for (Column<T> column : columns) {
+                y += COMPACT_LABEL_HEIGHT;
+                int height = compactCellHeight(column, row.item(), lastFont, width);
+                Rect cell = new Rect(x, y, width, height);
+                for (Rect target : column.cell.focusTargets(row.item(), cell))
+                    targets.add(new ActionTarget<>(column.cell, cell, target));
+                y += height;
+            }
+        } else {
+            int x = bounds.x();
+            for (int index = 0; index < columns.size(); index++) {
+                Column<T> column = columns.get(index);
+                Rect cell = new Rect(x, bounds.y(), columnWidths[index], bounds.height());
+                for (Rect target : column.cell.focusTargets(row.item(), cell))
+                    targets.add(new ActionTarget<>(column.cell, cell, target));
+                x += columnWidths[index];
+            }
+        }
+        return targets;
+    }
+
+    private record ActionTarget<T>(Cell<T> cell, Rect cellBounds, Rect bounds) { }
 
     public Table<T> column(Column<T> column) {
         Objects.requireNonNull(column);
@@ -199,6 +306,12 @@ public final class Table<T> extends Container {
         if (!resetScroll) saveAnchor();
         this.rows = List.copyOf(rows);
         dirty = true;
+    }
+
+    @Override public void invalidateTextLayout() {
+        if (!resetScroll) saveAnchor();
+        dirty = true;
+        super.invalidateTextLayout();
     }
 
     public void scrollToTop() {
@@ -453,6 +566,14 @@ public final class Table<T> extends Container {
     public boolean click(int rootX, int rootY) {
         Row<T> row = hitRow(rootX, rootY);
         if (row == null) return false;
+        focusedKey = row.key();
+        focusedAction = -1;
+        List<ActionTarget<T>> targets = focusTargets(row);
+        for (int index = 0; index < targets.size(); index++)
+            if (targets.get(index).bounds().contains(rootX, rootY)) {
+                focusedAction = index;
+                break;
+            }
         Rect bounds = row.bounds().translated(absoluteBounds().x(),
                 absoluteBounds().y() + headerHeight() - scroll);
         if (compact) {

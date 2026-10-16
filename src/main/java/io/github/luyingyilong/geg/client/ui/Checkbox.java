@@ -27,6 +27,8 @@ public final class Checkbox extends Container {
                 .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
         addChild(label);
         minimum(ICON_SIZE, HEIGHT);
+        focusable(true);
+        focusExpansion(1);
     }
 
     public Checkbox text(Component text) {
@@ -81,6 +83,13 @@ public final class Checkbox extends Container {
 
     @Override protected boolean onPointerPressed(int rootX, int rootY) {
         if (!enabled || !hit(rootX, rootY)) return false;
+        return activate();
+    }
+
+    @Override public boolean acceptsFocus() { return enabled && super.acceptsFocus(); }
+
+    @Override public boolean activate() {
+        if (!enabled) return false;
         checked = !checked;
         onChange.accept(checked);
         return true;

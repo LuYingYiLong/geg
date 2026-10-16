@@ -14,7 +14,7 @@ public record OrganizationActionPacket(Action action, String name, String descri
     private static final UUID EMPTY_ID = new UUID(0L, 0L);
     public enum Action {
         REQUEST, CREATE, DISBAND, PROMOTE, DEMOTE, REMOVE, LEAVE,
-        APPLY, APPROVE, REJECT
+        APPLY, APPROVE, REJECT, CANCEL_APPLICATION
     }
 
     public static OrganizationActionPacket request() {

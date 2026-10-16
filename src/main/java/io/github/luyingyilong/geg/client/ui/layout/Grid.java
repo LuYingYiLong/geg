@@ -31,6 +31,70 @@ public final class Grid<T> extends Container implements ScrollContent {
     private boolean visibilityDirty = true;
     private Consumer<T> onItemClick = item -> { };
     private Rect visibleRegion = new Rect(0, 0, 0, 0);
+    private Object focusedKey;
+
+    public Grid() {
+        focusable(true);
+        focusExpansion(1);
+    }
+
+    @Override public boolean acceptsFocus() {
+        return super.acceptsFocus() && !entries.isEmpty();
+    }
+
+    private Entry<T> focusedEntry() {
+        for (Entry<T> entry : entries)
+            if (Objects.equals(entry.key(), focusedKey)) return entry;
+        if (entries.isEmpty()) return null;
+        for (Entry<T> entry : entries)
+            if (entry.bounds().right() > visibleRegion.x()
+                    && entry.bounds().x() < visibleRegion.right()
+                    && entry.bounds().bottom() > visibleRegion.y()
+                    && entry.bounds().y() < visibleRegion.bottom()) return entry;
+        return entries.get(0);
+    }
+
+    @Override public Rect focusBounds() {
+        Entry<T> entry = focusedEntry();
+        return entry == null ? absoluteBounds()
+                : entry.bounds().translated(absoluteBounds().x(), absoluteBounds().y());
+    }
+
+    @Override public boolean onFocusMove(FocusManager.Direction direction) {
+        Entry<T> current = focusedEntry();
+        if (current == null) return false;
+        Entry<T> best = null;
+        long bestScore = Long.MAX_VALUE;
+        Rect from = current.bounds();
+        for (Entry<T> candidate : entries) {
+            if (candidate == current) continue;
+            Rect to = candidate.bounds();
+            long dx = (long) to.x() * 2 + to.width() - ((long) from.x() * 2 + from.width());
+            long dy = (long) to.y() * 2 + to.height() - ((long) from.y() * 2 + from.height());
+            long primary = switch (direction) {
+                case LEFT -> -dx;
+                case RIGHT -> dx;
+                case UP -> -dy;
+                case DOWN -> dy;
+            };
+            if (primary <= 0) continue;
+            long secondary = direction == FocusManager.Direction.LEFT
+                    || direction == FocusManager.Direction.RIGHT ? Math.abs(dy) : Math.abs(dx);
+            long score = primary * 1000 + secondary;
+            if (score < bestScore) { best = candidate; bestScore = score; }
+        }
+        if (best == null) return false;
+        focusedKey = best.key();
+        if (parent() instanceof Scroll scroll) scroll.ensureVisible(best.bounds());
+        return true;
+    }
+
+    @Override public boolean activate() {
+        Entry<T> entry = focusedEntry();
+        if (entry == null) return false;
+        onItemClick.accept(entry.item());
+        return true;
+    }
 
     private static int shortest(int[] heights) {
         int index = 0;
@@ -90,6 +154,11 @@ public final class Grid<T> extends Container implements ScrollContent {
         if (!resetScrollPending) saveAnchor();
         dirty = true;
         requestLayout();
+    }
+
+    @Override public void invalidateTextLayout() {
+        invalidate();
+        super.invalidateTextLayout();
     }
 
     public List<Entry<T>> entries() {
@@ -341,6 +410,7 @@ public final class Grid<T> extends Container implements ScrollContent {
         if (adapter == null) return super.dispatchPointer(rootX, rootY);
         Entry<T> entry = hitItem(rootX, rootY);
         if (entry == null) return false;
+        focusedKey = entry.key();
         View<T> view = active.get(entry.index());
         if (view instanceof Control control && control.dispatchPointer(rootX, rootY)) return true;
         onItemClick.accept(entry.item());

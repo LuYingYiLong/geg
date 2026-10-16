@@ -28,12 +28,12 @@ public final class Modal extends Container {
     private static final int BODY_INSET = 8;
     private static final int FOOTER_INSET = 8;
 
-    private final Panel background = new Panel(OreTheme.MODAL_BACKGROUND);
+    private final Panel background = new Panel(OreTheme.FLOATING_BACKGROUND);
     private final Box column = new Box();
-    private final Panel header = new Panel(OreTheme.MODAL_HEADER);
+    private final Panel header = new Panel(OreTheme.FLOATING_HEADER);
     private final Box headerRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
     private final Control headerSpacer = new Control();
-    private final Label titleLabel = new Label().overflow(Label.Overflow.CLIP)
+    private final Label titleLabel = new Label().overflow(Label.Overflow.ELLIPSIS)
             .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
     private final CloseControl close = new CloseControl();
     private final Padding bodyInset = new Padding(Padding.Insets.all(BODY_INSET));
@@ -54,6 +54,8 @@ public final class Modal extends Container {
         titleLabel.policy(SizePolicy.EXPAND, SizePolicy.FILL);
         headerSpacer.minimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
         close.minimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
+        close.focusable(true);
+        close.focusExpansion(1);
         headerRow.add(headerSpacer).add(titleLabel).add(close);
         header.child(new Padding(new Padding.Insets(0, 4, 0, 4)).child(headerRow));
         header.minimum(0, HEADER_HEIGHT).preferred(0, HEADER_HEIGHT)
@@ -104,6 +106,9 @@ public final class Modal extends Container {
         return this;
     }
 
+    public Modal fontSize(float fontSize) { titleLabel.fontSize(fontSize); return this; }
+    public float fontSize() { return titleLabel.fontSize(); }
+
     public Modal onClose(Runnable onClose) {
         this.onClose = Objects.requireNonNull(onClose);
         return this;
@@ -148,6 +153,8 @@ public final class Modal extends Container {
         return background.absoluteBounds();
     }
 
+    @Override public boolean focusScope() { return true; }
+
     public Rect contentBounds() {
         return content == null ? new Rect(0, 0, 0, 0) : content.absoluteBounds();
     }
@@ -185,7 +192,7 @@ public final class Modal extends Container {
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-        WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.MODAL_HEADER);
+        WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.FLOATING_HEADER);
         WidgetTheme style = entry == null ? context.getTheme().getPanelTheme().theme() : entry.theme();
         titleLabel.color(style.getTextColor()).shadow(style.isTextShadow());
     }
@@ -219,11 +226,15 @@ public final class Modal extends Container {
         return clickAt(rootX, rootY);
     }
 
-    private static final class CloseControl extends Control {
+    private final class CloseControl extends Control {
+        @Override public boolean activate() {
+            onClose.run();
+            return true;
+        }
         @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
             Rect area = screenBounds(screenX, screenY);
             if (area.contains(context.getAbsMouseX(), context.getAbsMouseY()))
-                context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), 0x44FFFFFF);
+                context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), 0x16FFFFFF);
             int x = area.x() + (area.width() - CLOSE_ICON_SIZE) / 2;
             int y = area.y() + (area.height() - CLOSE_ICON_SIZE) / 2;
             context.getGraphics().setColor(1.0F, 1.0F, 1.0F, 1.0F);
