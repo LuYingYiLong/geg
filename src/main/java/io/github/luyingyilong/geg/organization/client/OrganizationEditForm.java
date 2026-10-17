@@ -8,7 +8,6 @@ import io.github.luyingyilong.geg.client.ui.input.TextArea;
 import io.github.luyingyilong.geg.client.ui.layout.Box;
 import io.github.luyingyilong.geg.client.ui.layout.Scroll;
 import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
-import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import io.github.luyingyilong.geg.organization.Organization;
 import io.github.luyingyilong.geg.organization.OrganizationSavedData;
 import io.github.luyingyilong.geg.organization.OrganizationSyncPacket;
@@ -20,7 +19,6 @@ final class OrganizationEditForm {
     private final TextArea description = new TextArea(0.0F).rows(4);
     private final Checkbox unrestricted = new Checkbox(Component.translatable("organization.geg.join_unrestricted")).checked(true);
     private final Checkbox approval = new Checkbox(Component.translatable("organization.geg.join_approval"));
-    private final Label error = new Label().color(OreTheme.TEXT_ERROR).wrap(Label.Wrap.CHARACTER);
     private final Form form;
     private final Scroll scroll;
 
@@ -45,11 +43,7 @@ final class OrganizationEditForm {
                 .add(new FormItem("join_policy", Component.translatable("organization.geg.join_policy"), choices,
                         () -> policy().name()));
         form.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        error.visible(false);
-        error.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        Box body = new Box().gap(6).add(form).add(error);
-        body.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        scroll = new Scroll().horizontal(Scroll.BarMode.DISABLED).content(body);
+        scroll = new Scroll().horizontal(Scroll.BarMode.DISABLED).content(form);
     }
 
     TextArea descriptionInput() { return description; }
@@ -62,7 +56,6 @@ final class OrganizationEditForm {
         description.setText(summary.description());
         approval.checked(summary.joinPolicy() == Organization.JoinPolicy.APPROVAL);
         unrestricted.checked(summary.joinPolicy() == Organization.JoinPolicy.UNRESTRICTED);
-        error.visible(false);
         form.setVisible(true);
         scroll.scrollToTop();
     }
@@ -72,15 +65,9 @@ final class OrganizationEditForm {
     boolean validate() {
         if (!form.validate()) return false;
         if (!OrganizationSavedData.validDescription(form.value("description"))) {
-            error("organization.geg.invalid_description");
+            OrganizationFeedback.show("organization.geg.invalid_description");
             return false;
         }
-        error.visible(false);
         return true;
-    }
-
-    void error(String key) {
-        error.text(Component.translatable(key));
-        error.visible(true);
     }
 }

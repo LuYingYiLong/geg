@@ -13,7 +13,6 @@ import io.github.luyingyilong.geg.client.ui.screen.OreScreen;
 import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import io.github.luyingyilong.geg.organization.OrganizationNetwork;
 import io.github.luyingyilong.geg.organization.OrganizationSyncPacket;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
 public final class ClientOrganizationScreen {
@@ -74,8 +73,7 @@ public final class ClientOrganizationScreen {
     public static void acceptSnapshot(OrganizationSyncPacket packet) {
         ClientOrganizationState.acceptOrganizations(packet);
         if (canvas != null) canvas.acceptSnapshot(packet.resultKey());
-        if (!packet.resultKey().isEmpty() && Minecraft.getInstance().player != null)
-            Minecraft.getInstance().player.displayClientMessage(Component.translatable(packet.resultKey()), false);
+        OrganizationFeedback.show(packet.resultKey());
     }
 
     private static final class InstantOrganizationPanel extends ModularPanel<InstantOrganizationPanel> {

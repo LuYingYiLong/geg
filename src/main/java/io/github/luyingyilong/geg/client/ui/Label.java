@@ -254,10 +254,13 @@ public final class Label extends Control {
     }
 
     private void drawAt(ModularGuiContext context, Rect area) {
+        paint(context.getGraphics(), context.getFont(), area, context.getAbsMouseX(), context.getAbsMouseY());
+    }
+
+    /** Internal shared painter for Ore components hosted outside a ModularUI screen. */
+    void paint(GuiGraphics graphics, Font font, Rect area, int mouseX, int mouseY) {
         if (!visible() || area.width() <= 0 || area.height() <= 0) return;
-        Font font = context.getFont();
         float textScale = textScale();
-        GuiGraphics graphics = context.getGraphics();
         List<FormattedCharSequence> lines = displayedLines(font, area.width(), area.height());
         int lineHeight = lineHeight(font);
         int visibleLines = lines.size();
@@ -277,7 +280,7 @@ public final class Label extends Control {
                 case RIGHT -> area.width() - lineWidth;
             };
             if (overflow == Overflow.MARQUEE && lineWidth > area.width()) {
-                boolean hovered = area.contains(context.getAbsMouseX(), context.getAbsMouseY());
+                boolean hovered = area.contains(mouseX, mouseY);
                 lineX = area.x() - marqueeOffset(font, area.width(), System.nanoTime() / 1_000_000L, hovered);
             }
             if (textScale == 1.0F) OreFonts.draw(graphics, font, line, lineX, startY + index * lineHeight, color, shadow);

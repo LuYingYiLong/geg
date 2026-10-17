@@ -4,6 +4,7 @@ package io.github.luyingyilong.geg.market;
 public enum MarketResult {
     LISTED("listed"),
     BOUGHT("bought"),
+    SOLD("sold"),
     REPRICED("repriced"),
     CANCELLED("cancelled"),
     CLAIMED("claimed"),
@@ -33,5 +34,13 @@ public enum MarketResult {
 
     public String translationKey() {
         return "market.geg.result." + id;
+    }
+
+    public boolean success() {
+        return switch (this) {
+            case LISTED, BOUGHT, SOLD, REPRICED, CANCELLED, CLAIMED,
+                    FAVORITED, UNFAVORITED, REQUESTED, FULFILLED -> true;
+            default -> false;
+        };
     }
 }

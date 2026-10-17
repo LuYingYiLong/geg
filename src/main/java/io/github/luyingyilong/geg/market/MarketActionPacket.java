@@ -3,7 +3,6 @@ package io.github.luyingyilong.geg.market;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
@@ -103,7 +102,7 @@ public record MarketActionPacket(Action action, long id, long version, long pric
                 case CANCEL_REQUEST -> MarketService.cancelRequest(player, packet.id, packet.version);
                 case OPEN, REQUEST, DETAIL, CLOSE -> MarketResult.INVALID;
             };
-            player.sendSystemMessage(Component.translatable(result.translationKey()));
+            MarketNetwork.feedback(player, result);
             if (result == MarketResult.STALE) {
                 MarketNetwork.sync(player);
             }

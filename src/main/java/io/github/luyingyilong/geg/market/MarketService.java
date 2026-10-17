@@ -140,11 +140,12 @@ public final class MarketService {
             state.listings.put(listingId, listing.withQuantity(listing.quantity() - quantity));
         }
         updateFavorites(state, listingId);
-        changed(server, listing.item());
+        changed(server, listing.item(), buyer.getUUID(), listing.seller());
         MarketNetwork.sync(buyer);
         ServerPlayer onlineSeller = server.getPlayerList().getPlayer(listing.seller());
         if (onlineSeller != null) {
             MarketNetwork.sync(onlineSeller);
+            MarketNetwork.feedback(onlineSeller, MarketResult.SOLD);
         }
         return MarketResult.BOUGHT;
     }
@@ -183,7 +184,7 @@ public final class MarketService {
                 .add(new MarketDelivery(state.nextId++, listing.item(), listing.quantity()));
         state.listings.remove(listingId);
         updateFavorites(state, listingId);
-        changed(server, listing.item());
+        changed(server, listing.item(), seller.getUUID());
         MarketNetwork.sync(seller);
         return MarketResult.CANCELLED;
     }
@@ -318,7 +319,7 @@ public final class MarketService {
         if (quantity == order.quantity()) state.buyOrders.remove(orderId);
         else state.buyOrders.put(orderId, order.withQuantity(order.quantity() - quantity));
         updateFavorites(state, orderId);
-        changed(server, order.item());
+        changed(server, order.item(), seller.getUUID());
         MarketNetwork.sync(seller);
         ServerPlayer onlineBuyer = server.getPlayerList().getPlayer(order.buyer());
         if (onlineBuyer != null) MarketNetwork.sync(onlineBuyer);
@@ -356,7 +357,7 @@ public final class MarketService {
         }
         state.buyOrders.put(orderId, order.withPrice(price));
         updateFavorites(state, orderId);
-        changed(server, order.item());
+        changed(server, order.item(), buyer.getUUID());
         MarketNetwork.sync(buyer);
         return MarketResult.REPRICED;
     }
@@ -378,7 +379,7 @@ public final class MarketService {
                 .add(new MarketCoinCredit(creditId, order.escrow()));
         state.buyOrders.remove(orderId);
         updateFavorites(state, orderId);
-        changed(server, order.item());
+        changed(server, order.item(), buyer.getUUID());
         MarketNetwork.sync(buyer);
         return MarketResult.CANCELLED;
     }
@@ -402,11 +403,13 @@ public final class MarketService {
     }
 
 
-    private static void changed(MinecraftServer server, ItemStack item) {
+    private static void changed(MinecraftServer server, ItemStack item, UUID... notifiedPlayers) {
         MoneySavedData data = MoneySavedData.get(server);
+        // Only these recipients have a matching operation toast; other deliveries keep their notification.
+        var covered = java.util.Set.copyOf(java.util.Arrays.asList(notifiedPlayers));
         for (UUID recipient : data.market().migrateClaims(data)) {
             ServerPlayer online = server.getPlayerList().getPlayer(recipient);
-            if (online != null) io.github.luyingyilong.geg.mail.MailNetwork.status(online);
+            if (online != null) io.github.luyingyilong.geg.mail.MailNetwork.status(online, !covered.contains(recipient));
         }
         MarketState state = data.market();
         state.revision++;

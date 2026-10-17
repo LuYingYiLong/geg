@@ -20,6 +20,14 @@ public final class MailPacketTest {
                     List.of(new MailSyncPacket.Row(id, Component.literal("Hello"), "OP", MailMessage.Kind.ADMIN, 123, 100, false, false, MailActionPacket.Scope.PLAYER)),
                     message, true, id, 1, Long.MAX_VALUE, "92233720368547758.07", "");
             MailSyncPacket.encode(sync, buffer); check(MailSyncPacket.decode(buffer).equals(sync));
+            for (MailSyncPacket.Kind kind : List.of(MailSyncPacket.Kind.STATUS, MailSyncPacket.Kind.STATUS_SILENT)) {
+                buffer.clear();
+                MailSyncPacket status = new MailSyncPacket(kind, 8, 4, false, MailState.Filter.ALL,
+                        0, false, List.of(), null, false, MailActionPacket.EMPTY, 0, 0, "", "");
+                MailSyncPacket.encode(status, buffer);
+                MailSyncPacket decoded = MailSyncPacket.decode(buffer);
+                check(decoded.equals(status) && decoded.kind().isStatus());
+            }
             UUID author = UUID.randomUUID();
             MailMessage authored = new MailMessage(id, 124, MailMessage.Kind.ORGANIZATION, "Builders", "Title",
                     "Body", List.of(), 0, MailActionPacket.Scope.ORGANIZATION, author, "Alice");

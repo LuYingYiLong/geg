@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.UUID;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,7 +23,7 @@ import org.slf4j.Logger;
 
 public final class MarketNetwork {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final String PROTOCOL_VERSION = "5";
+    private static final String PROTOCOL_VERSION = "6";
     private static final int CHUNK_SIZE = 8;
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.fromNamespaceAndPath(GegMod.MODID, "market"),
@@ -52,7 +51,7 @@ public final class MarketNetwork {
     public static void open(ServerPlayer player) {
         LOGGER.debug("Opening market for {}", player.getGameProfile().getName());
         if (!MarketRules.enabled(player.server)) {
-            player.sendSystemMessage(Component.translatable(MarketResult.DISABLED.translationKey()));
+            feedback(player, MarketResult.DISABLED);
         }
         VIEWERS.add(player.getUUID());
         send(player, new MarketOpenPacket());
@@ -80,6 +79,14 @@ public final class MarketNetwork {
 
     public static void sendAction(MarketActionPacket packet) {
         CHANNEL.sendToServer(packet);
+    }
+
+    /** Result notifications also reach online owners who are not viewing the market. */
+    public static void feedback(ServerPlayer player, MarketResult result) {
+        CompoundTag payload = new CompoundTag();
+        payload.putString("kind", "result");
+        payload.putString("result", result.name());
+        send(player, new MarketSnapshotPacket(payload));
     }
 
 

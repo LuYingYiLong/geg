@@ -155,11 +155,6 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         return panel;
     }
 
-    private static void notifyUnavailable(String key) {
-        if (Minecraft.getInstance().player != null)
-            Minecraft.getInstance().player.displayClientMessage(Component.translatable(key), false);
-    }
-
     private Table<OrganizationSyncPacket.Member> createMemberTable() {
         return new Table<OrganizationSyncPacket.Member>()
                 .rowKey(OrganizationSyncPacket.Member::id)
@@ -579,7 +574,6 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         if (pendingEdit && !resultKey.isEmpty()) {
             pendingEdit = false;
             if ("organization.geg.updated".equals(resultKey)) closeEdit();
-            else if (editModal.visible()) editor.error(resultKey);
         }
         if (!resultKey.isEmpty()) pendingCreate = false;
         if (joinDrawer.isOpen()) {
@@ -677,7 +671,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         if (!createDrawer.isOpen() || pendingCreate || !createForm.validate()) return;
         String name = createForm.value("name").strip();
         if (name.isBlank()) {
-            notifyUnavailable("organization.geg.invalid_name");
+            OrganizationFeedback.show("organization.geg.invalid_name");
             return;
         }
         Organization.JoinPolicy policy = "approval".equals(createForm.value("join_policy"))

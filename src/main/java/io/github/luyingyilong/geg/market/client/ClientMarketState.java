@@ -9,6 +9,7 @@ import io.github.luyingyilong.geg.market.MarketKey;
 import io.github.luyingyilong.geg.market.MarketListing;
 import io.github.luyingyilong.geg.market.MarketNetwork;
 import io.github.luyingyilong.geg.market.MarketPurchase;
+import io.github.luyingyilong.geg.market.MarketResult;
 import io.github.luyingyilong.geg.market.MarketSummary;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -51,6 +52,7 @@ public final class ClientMarketState {
 
     public static void accept(CompoundTag payload) {
         switch (payload.getString("kind")) {
+            case "result" -> MarketFeedback.show(MarketResult.valueOf(payload.getString("result")));
             case "start" -> {
                 SUMMARIES.clear();
                 MINE.clear();

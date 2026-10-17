@@ -8,6 +8,7 @@ import io.github.luyingyilong.geg.client.ui.input.NumberInput;
 import io.github.luyingyilong.geg.client.ui.input.TextArea;
 import io.github.luyingyilong.geg.client.ui.screen.OreScreen;
 import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
+import io.github.luyingyilong.geg.client.ui.util.OreToasts;
 import io.github.luyingyilong.geg.mail.*;
 import io.github.luyingyilong.geg.mail.MailSyncPacket;
 import net.minecraft.network.chat.Component;
@@ -23,6 +24,7 @@ public final class ClientMailScreen {
     private static MailCanvasWidget canvas;
     private static int unread;
     private static boolean admin;
+    private static final MailNotificationTracker NOTIFICATIONS = new MailNotificationTracker();
     public static int unread() { return unread; }
     public static boolean admin() { return admin; }
     private ClientMailScreen() { }
@@ -44,6 +46,8 @@ public final class ClientMailScreen {
         next.initialize();
     }
     public static void accept(MailSyncPacket packet) {
+        if (NOTIFICATIONS.accept(packet)) OreToasts.show("geg:new_mail",
+                new Toast(Component.translatable("mail.geg.new_mail")).type(Toast.Type.INFORMATIVE));
         unread = packet.unread(); admin = packet.admin();
         if (canvas != null) canvas.accept(packet);
     }
@@ -53,5 +57,6 @@ public final class ClientMailScreen {
     }
     @SubscribeEvent public static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         if (canvas != null) canvas.close(); canvas = null; unread = 0; admin = false;
+        NOTIFICATIONS.reset();
     }
 }

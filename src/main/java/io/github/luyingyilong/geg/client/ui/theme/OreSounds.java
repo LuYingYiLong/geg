@@ -11,6 +11,7 @@ public final class OreSounds {
         BUTTON,
         DRAWER_OPEN,
         DRAWER_CLOSE,
+        TOAST,
     }
 
     private OreSounds() { }
@@ -23,6 +24,7 @@ public final class OreSounds {
             case BUTTON -> GegSounds.BUTTON;
             case DRAWER_OPEN -> GegSounds.DRAWER_OPEN;
             case DRAWER_CLOSE -> GegSounds.DRAWER_CLOSE;
+            case TOAST -> GegSounds.TOAST;
         };
         minecraft.getSoundManager().play(SimpleSoundInstance.forUI(sound.get(), 1.0F));
     }

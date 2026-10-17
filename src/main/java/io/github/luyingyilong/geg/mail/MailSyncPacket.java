@@ -11,7 +11,11 @@ import net.minecraftforge.network.NetworkEvent;
 public record MailSyncPacket(Kind kind, long revision, int unread, boolean admin, MailState.Filter filter,
         int offset, boolean more, List<Row> rows, MailMessage detail, boolean claimed,
         UUID token, int recipients, long coin, String total, String result) {
-    public enum Kind { STATUS, LIST, DETAIL, PREVIEW, RESULT }
+    public enum Kind {
+        STATUS, LIST, DETAIL, PREVIEW, RESULT, STATUS_SILENT;
+
+        public boolean isStatus() { return this == STATUS || this == STATUS_SILENT; }
+    }
     public record Row(UUID id, Component title, String sender, MailMessage.Kind kind, long sentAt, long coin,
                       boolean read, boolean claimed, MailActionPacket.Scope scope, boolean hasItems) {
         public Row(UUID id, Component title, String sender, MailMessage.Kind kind, long sentAt, long coin,

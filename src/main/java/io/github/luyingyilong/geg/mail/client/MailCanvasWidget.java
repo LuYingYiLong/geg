@@ -28,6 +28,7 @@ import io.github.luyingyilong.geg.client.ui.layout.Size;
 import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
 import io.github.luyingyilong.geg.client.ui.layout.Window;
 import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
+import io.github.luyingyilong.geg.client.ui.util.OreToasts;
 import io.github.luyingyilong.geg.mail.*;
 import io.github.luyingyilong.geg.mail.MailActionPacket;
 import io.github.luyingyilong.geg.mail.MailMessage;
@@ -59,7 +60,6 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     private final Box detailAuthor = new Box().orientation(Box.Orientation.HORIZONTAL).gap(6);
     private final Label detailSender = new Label().overflow(Label.Overflow.ELLIPSIS);
     private final Label detailDate = new Label().color(OreTheme.TEXT_SECONDARY).overflow(Label.Overflow.ELLIPSIS);
-    private final Label detailNotice = new Label().color(OreTheme.TEXT_ERROR).wrap(Label.Wrap.WORD);
     private boolean revealPreview;
     private final Label detailText = new Label().color(OreTheme.TEXT_WHITE).wrap(Label.Wrap.WORD);
     private final Label attachment = new Label().color(OreTheme.TEXT_SECONDARY).wrap(Label.Wrap.WORD);
@@ -90,6 +90,15 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     private boolean busy;
     private String previewSignature;
     private static Component tr(String key, Object... args) { return Component.translatable(key, args); }
+    private static void feedback(String key) {
+        if (key.isEmpty()) return;
+        Toast.Type type = switch (key) {
+            case "mail.geg.success", "mail.geg.sent" -> Toast.Type.PRIMARY;
+            case "mail.geg.partial" -> Toast.Type.NOTICE;
+            default -> Toast.Type.WARNING;
+        };
+        OreToasts.show("geg:mail:feedback", new Toast(tr(key)).type(type));
+    }
 
     MailCanvasWidget(Input title, TextArea body, Input target, NumberInput coin, UUID initialOrganization) {
         this.title = title; this.body = body; this.target = target; this.coin = coin; this.initialOrganization = initialOrganization;
@@ -103,14 +112,14 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         audiences.onSelect(index -> selectInbox(MailActionPacket.Scope.values()[index]));
         Box audienceRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4).add(audiences).add(send);
         audienceRow.minimum(0, Button.HEIGHT).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        for (Control label : List.of(detailTitle, detailSender, detailDate, detailText, attachment, detailNotice))
+        for (Control label : List.of(detailTitle, detailSender, detailDate, detailText, attachment))
             label.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Box authorInfo = new Box().gap(2).add(detailSender).add(detailDate);
         authorInfo.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         detailAuthor.add(detailAvatar).add(authorInfo);
         detailAuthor.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         detailScroll = new Scroll().horizontal(Scroll.BarMode.DISABLED).content(new MailDetailBody(
-                detailText, attachmentDivider, attachment, rewards, detailNotice, detailActions));
+                detailText, attachmentDivider, attachment, rewards, detailActions));
         detailScroll.minimum(0, 16).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         detailActions.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Panel detailPanel = new Panel(null).child(new Padding(Padding.Insets.all(4))
@@ -122,7 +131,6 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         window.content(new Box().gap(0).add(navbar).add(
                 padding.child(new Box().gap(4).add(audienceRow).add(columnsScroll))
         )).overlay(overlay);
-        detailNotice.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         clearDetail();
         renderInbox();
         scopeItem = new FormItem("scope", tr("mail.geg.scope"), scopes, () -> scope().name());
@@ -163,7 +171,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         MailNetwork.send(MailActionPacket.query(action, id, inbox.filter(), 0, inbox.scope()));
     }
     private void showDetail(UUID id) {
-        selected = id; selectedMessage = null; detailNotice.text(Component.empty()); detailText.text(tr("mail.geg.loading"));
+        selected = id; selectedMessage = null; detailText.text(tr("mail.geg.loading"));
         detailTitle.text(Component.empty()); detailSender.text(Component.empty()); detailDate.text(Component.empty()); attachment.text(Component.empty());
         detailAuthor.visible(false); detailAvatar.initials("");
         rewards.attachments(List.of(), false); attachmentDivider.visible(false);
@@ -176,7 +184,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     private void clearDetail() {
         selected = null; selectedItemKey = null; selectedMessage = null;
         detailTitle.text(tr("mail.geg.detail")); detailSender.text(Component.empty()); detailDate.text(Component.empty());
-        detailText.text(tr("mail.geg.select_message")); attachment.text(Component.empty()); detailNotice.text(Component.empty());
+        detailText.text(tr("mail.geg.select_message")); attachment.text(Component.empty());
         detailAuthor.visible(false); detailAvatar.initials("");
         rewards.attachments(List.of(), false); attachmentDivider.visible(false);
         clearDetailActions();
@@ -226,21 +234,25 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     }
     private void preview() {
         if (busy) return;
-        if (!form.validate()) { revealPreview = true; return; }
+        if (!form.validate()) {
+            Component error = coin.error();
+            OreToasts.show("geg:mail:feedback", new Toast(error == null ? tr("mail.geg.invalid_coin") : error).type(Toast.Type.WARNING));
+            return;
+        }
         if (!MailPolicy.validText(title.getText(), 64, false) || !MailPolicy.validText(body.getText(), 2048, true)) {
-            previewText.text(tr("mail.geg.invalid_text")); revealPreview = true; return;
+            feedback("mail.geg.invalid_text"); return;
         }
         long amount;
         try { amount = organization == null ? new BigDecimal(coin.getText()).movePointRight(2).longValueExact() : 0; }
-        catch (ArithmeticException | NumberFormatException exception) { previewText.text(tr("mail.geg.invalid_coin")); revealPreview = true; return; }
-        if (amount < 0) { previewText.text(tr("mail.geg.invalid_coin")); revealPreview = true; return; }
-        token = UUID.randomUUID(); previewSignature = signature(); busy = true; previewText.text(tr("mail.geg.loading"));
+        catch (ArithmeticException | NumberFormatException exception) { feedback("mail.geg.invalid_coin"); return; }
+        if (amount < 0) { feedback("mail.geg.invalid_coin"); return; }
+        token = UUID.randomUUID(); previewSignature = signature(); busy = true; previewText.text(Component.empty());
         MailNetwork.send(new MailActionPacket(MailActionPacket.Action.PREVIEW, token, inbox.filter(), 0, scope(), organization != null,
                 organization == null ? MailActionPacket.EMPTY : organization, target.getText(), title.getText(), body.getText(), amount));
     }
     private void confirm() {
         if (busy || token == null) return;
-        if (!Objects.equals(previewSignature, signature())) { editAgain(); previewText.text(tr("mail.geg.preview_again")); return; }
+        if (!Objects.equals(previewSignature, signature())) { editAgain(); feedback("mail.geg.preview_again"); return; }
         busy = true; query(MailActionPacket.Action.CONFIRM, token);
     }
     void accept(MailSyncPacket packet) {
@@ -249,25 +261,24 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
             MailInbox.Update update = inbox.accept(packet);
             if (update == MailInbox.Update.RESTART) refreshInbox();
             else if (update == MailInbox.Update.UPDATED) renderInbox();
-        } else if (packet.kind() == MailSyncPacket.Kind.STATUS && packet.revision() != inbox.revision()) refreshInbox();
+        } else if (packet.kind().isStatus() && packet.revision() != inbox.revision()) refreshInbox();
         else if (packet.kind() == MailSyncPacket.Kind.DETAIL && packet.detail() != null && Objects.equals(selected, packet.detail().id())) {
             selectedMessage = packet.detail(); selectedClaimed = packet.claimed(); updateDetail(); refreshInbox();
         } else if (packet.kind() == MailSyncPacket.Kind.PREVIEW && editor.isOpen() && Objects.equals(token, packet.token())) {
             busy = false; revealPreview = true;
-            if (!Objects.equals(previewSignature, signature())) { editAgain(); return; }
-            previewText.text(tr("mail.geg.preview_summary", packet.recipients(), MoneyCurrency.COIN.format(packet.coin()), packet.total())
-                    .copy().append(packet.result().isEmpty() ? Component.empty() : Component.literal("\n").append(tr(packet.result()))));
+            if (!Objects.equals(previewSignature, signature())) { editAgain(); feedback("mail.geg.preview_again"); return; }
+            previewText.text(tr("mail.geg.preview_summary", packet.recipients(), MoneyCurrency.COIN.format(packet.coin()), packet.total()));
+            feedback(packet.result());
             editor.clearActions().action(tr("mail.geg.confirm_send"), this::confirm, Button.Type.PRIMARY)
                     .action(tr("mail.geg.edit"), this::editAgain);
         } else if (packet.kind() == MailSyncPacket.Kind.RESULT) {
+            feedback(packet.result());
             if (editor.isOpen() && Objects.equals(token, packet.token())) {
                 busy = false;
                 if (packet.result().equals("mail.geg.sent")) { editor.close(); form.setVisible(false); refreshInbox(); }
-                else { previewText.text(tr(packet.result())); revealPreview = true; }
             } else {
                 inbox.failed(packet.token());
                 if (Objects.equals(selected, packet.token())) {
-                    detailNotice.text(packet.result().equals("mail.geg.success") ? Component.empty() : tr(packet.result()));
                     if (packet.result().equals("mail.geg.not_found")) clearDetail();
                     if (packet.result().equals("mail.geg.success") && Objects.equals(deleting, selected)) {
                         deleting = null; clearDetail();
@@ -284,7 +295,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         int width = getArea().width, height = getArea().height;
         int drawerWidth = width < 320 ? width : width / 2;
         editor.width(drawerWidth);
-        for (Label label : List.of(detailTitle, detailSender, detailDate, attachment, detailNotice))
+        for (Label label : List.of(detailTitle, detailSender, detailDate, attachment, previewText))
             label.visible(!label.text().getString().isEmpty());
         // Clear the previous minimum so a two-row navbar can return to one row on resize.
         navbar.minimum(0, 0);

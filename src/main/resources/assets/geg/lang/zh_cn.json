@@ -89,6 +89,7 @@
   "market.geg.reprice": "修改价格",
   "market.geg.result.listed": "上架成功",
   "market.geg.result.bought": "购买成功，物品已通过邮件发送",
+  "market.geg.result.sold": "你的挂单物品已售出，所得收益通过邮件领取",
   "market.geg.result.repriced": "价格已更新",
   "market.geg.result.cancelled": "挂单已撤销，退回的物品或款项已通过邮件发送",
   "market.geg.result.claimed": "已领取可存入背包的物品或金币",
@@ -277,5 +278,6 @@
   "mail.geg.market.coin_title": "市场款项待领取",
   "mail.geg.market.coin_body": "你的自由市场交易收益或订单退款已送达，请在下方领取附件。",
   "mail.geg.partial": "已领取部分附件，剩余物品保留在邮件中",
-  "mail.geg.no_room": "背包已满，附件仍保留在邮件中"
+  "mail.geg.no_room": "背包已满，附件仍保留在邮件中",
+  "mail.geg.new_mail": "你收到了新邮件"
 }

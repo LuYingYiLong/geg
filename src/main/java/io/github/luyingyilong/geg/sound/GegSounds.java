@@ -16,6 +16,7 @@ public final class GegSounds {
     public static final RegistryObject<SoundEvent> BUTTON = sound("button");
     public static final RegistryObject<SoundEvent> DRAWER_OPEN = sound("drawer_open");
     public static final RegistryObject<SoundEvent> DRAWER_CLOSE = sound("drawer_close");
+    public static final RegistryObject<SoundEvent> TOAST = sound("toast");
 
     private GegSounds() { }
 

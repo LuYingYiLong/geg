@@ -26,6 +26,7 @@ public final class Tag extends Container {
         private final int textColor;
         Type(int color, int textColor) { this.color = color; this.textColor = textColor; }
         public int color() { return color; }
+        int textColor() { return textColor; }
     }
 
     private static final int PADDING_X = 4;

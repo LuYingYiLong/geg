@@ -89,6 +89,7 @@
   "market.geg.reprice": "Change price",
   "market.geg.result.listed": "Listing created.",
   "market.geg.result.bought": "Purchase complete. Your items have been sent by mail.",
+  "market.geg.result.sold": "Your listed items were purchased. Claim your proceeds by mail.",
   "market.geg.result.repriced": "Price updated.",
   "market.geg.result.cancelled": "Order cancelled. Returned items or funds have been sent by mail.",
   "market.geg.result.claimed": "Claimed available items or coin.",
@@ -277,5 +278,6 @@
   "mail.geg.market.coin_title": "Market payment ready to claim",
   "mail.geg.market.coin_body": "Your market proceeds or order refund have arrived. Claim the attachment below.",
   "mail.geg.partial": "Some attachments claimed. Remaining items stay in this mail.",
-  "mail.geg.no_room": "Your inventory is full. The attachments stay in this mail."
+  "mail.geg.no_room": "Your inventory is full. The attachments stay in this mail.",
+  "mail.geg.new_mail": "You have new mail"
 }

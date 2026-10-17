@@ -20,6 +20,7 @@ public final class OreTheme {
     public static final int TAG_WARNING = 0xFFF46D6D;
     public static final int TAG_REALMS_INFORMATIVE = 0xFFAC90F3;
     public static final int TAG_OUTLINE = TEXT_DARK;
+    public static final int TOAST_SHADOW = 0x4D000000;
 
     public static final String NAME = "geg_ore";
     private static final WidgetThemeKey<WidgetTheme> PANEL = ITheme.getDefault().getPanelTheme().key();

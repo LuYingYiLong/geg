@@ -688,8 +688,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             closeQuantityMenu();
             ClientMarketState.requestDetails(modal.detailId, modal.item);
         } catch (IllegalArgumentException exception) {
-            if (Minecraft.getInstance().player != null) Minecraft.getInstance().player.displayClientMessage(
-                    Component.translatable("market.geg.result.invalid"), false);
+            MarketFeedback.show(MarketResult.INVALID);
         }
     }
 
@@ -785,10 +784,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             }
             closeModal();
         } catch (IllegalArgumentException exception) {
-            if (Minecraft.getInstance().player != null) {
-                Minecraft.getInstance().player.displayClientMessage(
-                        Component.translatable("market.geg.result.invalid"), false);
-            }
+            MarketFeedback.show(MarketResult.INVALID);
         }
     }
 

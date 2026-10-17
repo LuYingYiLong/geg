@@ -9,7 +9,7 @@ import net.minecraftforge.network.*;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public final class MailNetwork {
-    private static final String VERSION = "3";
+    private static final String VERSION = "4";
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.fromNamespaceAndPath(GegMod.MODID, "mail"), () -> VERSION, VERSION::equals, VERSION::equals);
     private MailNetwork() { }
@@ -28,5 +28,9 @@ public final class MailNetwork {
         return new MailSyncPacket(kind, state.revision(), state.unread(player.getUUID()), player.hasPermissions(2),
                 MailState.Filter.ALL, 0, false, List.of(), null, false, MailActionPacket.EMPTY, 0, 0, "", result);
     }
-    public static void status(ServerPlayer player) { reply(player, packet(player, MailSyncPacket.Kind.STATUS, "")); }
+    public static void status(ServerPlayer player) { status(player, true); }
+    /** Synchronize counters even when a related operation already supplies the visible notification. */
+    public static void status(ServerPlayer player, boolean notify) {
+        reply(player, packet(player, notify ? MailSyncPacket.Kind.STATUS : MailSyncPacket.Kind.STATUS_SILENT, ""));
+    }
 }
