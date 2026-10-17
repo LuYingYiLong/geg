@@ -1,0 +1,77 @@
+package io.github.luyingyilong.geg.organization.client;
+
+import io.github.luyingyilong.geg.client.ui.Drawer;
+import io.github.luyingyilong.geg.client.ui.PlayerIdentityCell;
+import io.github.luyingyilong.geg.client.ui.Table;
+import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.Overlay;
+import io.github.luyingyilong.geg.client.ui.layout.Window;
+import io.github.luyingyilong.geg.organization.Organization;
+import io.github.luyingyilong.geg.organization.OrganizationSyncPacket;
+import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.util.FormattedCharSequence;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.IntStream;
+
+/** Real drawer composition: facts precede the retained member table and remain reachable on narrow screens. */
+public final class OrganizationDetailsLayoutTest {
+    public static void main(String[] args) {
+        Font font = font();
+        List<OrganizationSyncPacket.Member> members = IntStream.range(0, 100).mapToObj(index ->
+                new OrganizationSyncPacket.Member(UUID.randomUUID(), "Member" + index, Organization.Role.MEMBER)).toList();
+        Table<OrganizationSyncPacket.Member> table = new Table<OrganizationSyncPacket.Member>()
+                .rowKey(OrganizationSyncPacket.Member::id)
+                .column(new Table.Column<>("member", Component.literal("成员"), 60, 60, 1, width -> 20,
+                        new PlayerIdentityCell<>(OrganizationSyncPacket.Member::id, OrganizationSyncPacket.Member::name)));
+        table.rows(members);
+        OrganizationDetailsContent content = new OrganizationDetailsContent(table);
+        OrganizationSyncPacket.Summary summary = new OrganizationSyncPacket.Summary(UUID.randomUUID(), "公社", "共同建设",
+                Organization.JoinPolicy.APPROVAL, members.get(0).id(), members, List.of());
+        content.update(summary);
+        check(content.descriptions().item("name").content().getString().equals("公社"), "Bind the organization name");
+        check(content.descriptions().item("description").content().getString().equals("共同建设"), "Bind the original description");
+        check(((TranslatableContents) content.descriptions().item("joinPolicy").content().getContents()).getKey()
+                .equals("organization.geg.join_approval"), "Joining policy remains localized");
+
+        Drawer drawer = new Drawer(Component.literal("公社")).animationDuration(0).content(content)
+                .action(Component.literal("加入申请"), () -> { });
+        Window window = new Window(true).content(new Control()).overlay(new Overlay().add(drawer));
+        drawer.open();
+        for (int width : new int[]{127, 128, 129, 427, 640}) {
+            drawer.width(Math.max(1, width / 2));
+            window.layoutViewport(width, 240, font);
+            check(content.descriptions().absoluteBounds().bottom() + 8 <= table.absoluteBounds().y(),
+                    "Facts are above the member table at width " + width);
+            check(table.size().height() >= 60, "Keep the member table's minimum height");
+            int top = content.descriptions().absoluteBounds().y();
+            table.scrollBy(46);
+            check(table.scroll() > 0 && content.descriptions().absoluteBounds().y() == top,
+                    "Member scrolling does not move the description fields");
+            table.scrollToTop();
+        }
+        content.update(new OrganizationSyncPacket.Summary(summary.id(), "新名称", "详细介绍".repeat(150),
+                Organization.JoinPolicy.UNRESTRICTED, summary.founder(), members, List.of()));
+        window.layoutViewport(320, 200, font);
+        check(drawer.bodyScroll().maxScrollY() > 0, "A long introduction uses the existing drawer body scroll");
+        check(table.absoluteBounds().y() >= content.descriptions().absoluteBounds().bottom(), "Long text does not overlap members");
+        content.update(new OrganizationSyncPacket.Summary(summary.id(), "新名称", " ", Organization.JoinPolicy.UNRESTRICTED,
+                summary.founder(), members, List.of()));
+        check(((TranslatableContents) content.descriptions().item("description").content().getContents()).getKey()
+                .equals("organization.geg.no_description"), "Blank descriptions have a localized fallback");
+    }
+
+    private static Font font() {
+        return new Font(id -> null, false) {
+            @Override public int width(FormattedText text) { return text.getString().codePointCount(0, text.getString().length()) * 6; }
+            @Override public int width(FormattedCharSequence text) {
+                int[] count = {0}; text.accept((index, style, codepoint) -> { count[0]++; return true; }); return count[0] * 6;
+            }
+        };
+    }
+    private static void check(boolean condition, String message) { if (!condition) throw new AssertionError(message); }
+}

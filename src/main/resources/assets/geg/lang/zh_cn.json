@@ -259,5 +259,12 @@
   "mail.geg.system.remove": "你已被移出「%s」。",
   "mail.geg.kind.admin": "管理",
   "mail.geg.kind.organization": "组织",
-  "mail.geg.kind.system": "系统"
+  "mail.geg.kind.system": "系统",
+  "organization.geg.no_description": "暂无简介",
+  "market.geg.seller": "卖家",
+  "market.geg.escrow": "托管金币",
+  "market.geg.inventory_quantity": "背包数量",
+  "market.geg.claim_quantity": "待领取数量",
+  "market.geg.claim_amount": "待领取金币",
+  "market.geg.seller_fee_rate": "卖方手续费"
 }

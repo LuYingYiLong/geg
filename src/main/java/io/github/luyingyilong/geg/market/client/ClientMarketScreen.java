@@ -112,10 +112,6 @@ public final class ClientMarketScreen {
         return search == null ? "" : search.getText();
     }
 
-    static void setSearchEnabled(boolean enabled) {
-        search.setEnabled(enabled);
-    }
-
     static String quantityText() {
         return detailForm == null ? "" : detailForm.value("quantity");
     }

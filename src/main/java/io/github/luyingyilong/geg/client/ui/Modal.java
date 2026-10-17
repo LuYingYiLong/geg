@@ -25,7 +25,7 @@ import java.util.Objects;
 
 /** A positioned overlay with a one-pixel frame and themed header and footer. */
 public final class Modal extends Container {
-    public static final int HEADER_HEIGHT = 24;
+    public static final int HEADER_HEIGHT = 22;
     private static final int FRAME_INSET = 1;
     private static final int CLOSE_HIT_WIDTH = 20;
     private static final int CLOSE_ICON_SIZE = 7;
@@ -71,7 +71,7 @@ public final class Modal extends Container {
         close.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         close.onPress(() -> onClose.run());
         headerRow.add(headerSpacer).add(titleLabel).add(close);
-        header.child(new Padding(new Padding.Insets(0, 4, 0, 4)).child(headerRow));
+        header.child(new Padding(new Padding.Insets(0, 1, 0, 1)).child(headerRow));
         header.minimum(0, HEADER_HEIGHT).preferred(0, HEADER_HEIGHT)
                 .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         bodyInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
@@ -200,9 +200,10 @@ public final class Modal extends Container {
         int desiredWidth = requestedWidth > 0 ? requestedWidth
                 : Math.max(minimumWidth(), background.measureSize(font,
                         new Size(viewport.width(), viewport.height())).width());
+        int fittedWidth = Math.max(1, Math.min(desiredWidth, Math.max(1, viewport.width())));
         int desiredHeight = requestedHeight > 0 ? requestedHeight
                 : Math.max(minimumHeight(), background.measureSize(font,
-                        new Size(desiredWidth, viewport.height())).height());
+                        new Size(fittedWidth, viewport.height())).height());
         fitChild(background, fittedBounds(desiredWidth, desiredHeight, customX, customY,
                 viewport.width(), viewport.height()), font);
     }

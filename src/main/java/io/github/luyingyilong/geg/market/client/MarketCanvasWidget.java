@@ -6,11 +6,11 @@ import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
 import io.github.luyingyilong.geg.client.ui.*;
 import io.github.luyingyilong.geg.client.ui.Button;
-import io.github.luyingyilong.geg.client.ui.Dialog;
 import io.github.luyingyilong.geg.client.ui.Dropdown;
 import io.github.luyingyilong.geg.client.ui.Form;
 import io.github.luyingyilong.geg.client.ui.Header;
 import io.github.luyingyilong.geg.client.ui.Label;
+import io.github.luyingyilong.geg.client.ui.Modal;
 import io.github.luyingyilong.geg.client.ui.Segmented;
 import io.github.luyingyilong.geg.client.ui.Spin;
 import io.github.luyingyilong.geg.client.ui.Table;
@@ -57,6 +57,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.IntConsumer;
 
 
 final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Interactable {
@@ -83,10 +84,10 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private final BodyContent body = new BodyContent();
     private final Table<MarketDetail> offerTable = createOfferTable();
     private final DetailContent detailContent = new DetailContent();
-    private final QuantityContent quantityContent = new QuantityContent();
-    private final Dialog detailDialog = new Dialog(340, 224, 0, Component.empty())
+    private final QuantityContent quantityContent = new QuantityContent(this::adjustTradeQuantity);
+    private final Modal detailModal = new Modal(Component.empty()).size(340, 224).centered()
             .content(detailContent).onClose(this::closeModal);
-    private final Dialog quantityDialog = new Dialog(224, 167, 8, Component.empty())
+    private final Modal quantityModal = new Modal(Component.empty()).size(224, 0).centered()
             .content(quantityContent).onClose(this::closeQuantityMenu).depth(300.0F);
     private final Header header = new Header(Component.translatable("market.geg.title"))
             .titleColor(HEADER_TEXT);
@@ -226,9 +227,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
             @Override public void cancelInteraction() { filterDropdown.cancelInteraction(); }
         });
-        overlay.add(detailDialog).add(quantityDialog);
-        detailDialog.visible(false);
-        quantityDialog.visible(false);
+        overlay.add(detailModal).add(quantityModal);
+        detailModal.visible(false);
+        quantityModal.visible(false);
     }
 
     private static Label scrollingCardLabel(int color) {
@@ -324,16 +325,16 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         coinBalance.setText(Component.translatable("market.geg.header_balance",
                 MoneyCurrency.COIN.format(ClientMoneyState.balance().coinMinorUnits())));
         body.refresh();
-        detailDialog.visible(modal != null);
-        quantityDialog.visible(modal != null && quantityMenu);
+        detailModal.visible(modal != null);
+        quantityModal.visible(modal != null && quantityMenu);
         if (modal != null) {
-            detailDialog.title(modal.title());
+            detailModal.title(modal.title());
             detailContent.refresh();
             configureDetailActions();
         }
         if (quantityMenu) {
             MarketDetail offer = selectedDetail();
-            quantityDialog.title(offer != null && offer.buyOrder()
+            quantityModal.title(offer != null && offer.buyOrder()
                     ? Component.translatable("market.geg.fulfill_title_fee",
                     MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints()))
                     : Component.translatable("market.geg.quantity"));
@@ -567,30 +568,30 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 + (modal.favorite != null && modal.favorite.ended());
         if (signature.equals(actionSignature)) return;
         actionSignature = signature;
-        detailDialog.clearActions();
+        detailModal.clearActions();
         if (modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE) {
             if (modal.kind == Kind.FAVORITE && modal.favorite.ended())
-                detailDialog.action(Component.translatable("market.geg.unfavorite"), this::secondaryModalAction);
-            detailDialog.action(Component.translatable("market.geg.request_this"), this::primaryModalAction,
+                detailModal.action(Component.translatable("market.geg.unfavorite"), this::secondaryModalAction);
+            detailModal.action(Component.translatable("market.geg.request_this"), this::primaryModalAction,
                     Button.Type.PRIMARY);
         } else if (modal.kind == Kind.OWN || modal.kind == Kind.OWN_REQUEST) {
-            detailDialog.action(Component.translatable("market.geg.cancel_listing"), this::secondaryModalAction,
+            detailModal.action(Component.translatable("market.geg.cancel_listing"), this::secondaryModalAction,
                     Button.Type.DESTRUCTIVE);
-            detailDialog.action(Component.translatable("market.geg.reprice"), this::primaryModalAction,
+            detailModal.action(Component.translatable("market.geg.reprice"), this::primaryModalAction,
                     Button.Type.PRIMARY);
         } else if (modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE) {
-            detailDialog.action(Component.translatable(requestMode
+            detailModal.action(Component.translatable(requestMode
                     ? "market.geg.confirm_request" : "market.geg.confirm_list"), this::primaryModalAction,
                     Button.Type.PRIMARY);
         } else if (modal.kind == Kind.DELIVERY || modal.kind == Kind.COIN) {
-            detailDialog.action(Component.translatable("market.geg.claim"), this::primaryModalAction,
+            detailModal.action(Component.translatable("market.geg.claim"), this::primaryModalAction,
                     Button.Type.PRIMARY);
         }
     }
 
     private void configureQuantityActions() {
         MarketDetail offer = selectedDetail();
-        quantityDialog.clearActions().action(Component.translatable("market.geg.cancel"), this::closeQuantityMenu)
+        quantityModal.clearActions().action(Component.translatable("market.geg.cancel"), this::closeQuantityMenu)
                 .action(Component.translatable(offer != null && offer.buyOrder()
                         ? "market.geg.confirm_fulfill" : "market.geg.confirm_buy"), this::confirmQuantity,
                         Button.Type.PRIMARY);
@@ -716,12 +717,12 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     private void openModal(Card card) {
+        // Overlay focus scopes block the header input; disabling it would also hide its MUI rendering.
         modal = card;
         detailContent.scroll = 0;
         offerTable.scrollToTop();
         selectedDetailId = 0L;
         quantityMenu = false;
-        ClientMarketScreen.setSearchEnabled(false);
         switch (card.kind) {
             case GROUP, FAVORITE -> {
                 ClientMarketScreen.showFields(false, false, 0, 0L);
@@ -743,7 +744,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         offerTable.scrollToTop();
         quantityMenu = false;
         ClientMarketScreen.showTradeQuantity(false);
-        ClientMarketScreen.setSearchEnabled(true);
         ClientMarketScreen.showFields(false, false, 0, 0L);
     }
 
@@ -910,7 +910,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         }
     }
 
-    private abstract class ScrollableContent extends Container {
+    private abstract static class ScrollableContent extends Container {
         protected int scroll;
         protected int contentHeight;
 
@@ -932,8 +932,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     private final class DetailContent extends ScrollableContent {
-        private final Label info = new Label().color(SECONDARY_TEXT).overflow(Label.Overflow.CLIP);
-        private final Label fee = new Label().color(SECONDARY_TEXT).overflow(Label.Overflow.CLIP);
+        private final MarketDetailDescriptions info = new MarketDetailDescriptions();
         private final Spin loadingSpin = new Spin();
         private final Label loadingLabel = new Label(Component.translatable("market.geg.loading"))
                 .color(SECONDARY_TEXT).overflow(Label.Overflow.CLIP)
@@ -946,7 +945,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             addChild(offerTable);
             addChild(loadingRow);
             addChild(info);
-            addChild(fee);
         }
 
         private void bindForm(Form form) {
@@ -958,8 +956,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             boolean offers = modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE;
             offerTable.visible(offers);
             info.visible(!offers);
-            fee.visible(!offers && (modal.kind == Kind.OWN
-                    || modal.kind == Kind.INVENTORY && !requestMode));
             boolean loading = offers && modal.offers.isEmpty()
                     && ClientMarketState.isDetailLoading(modal.item);
             loadingRow.visible(loading);
@@ -968,23 +964,35 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                         : Component.translatable("market.geg.out_of_stock"));
                 return;
             }
-            Component text = switch (modal.kind) {
-                case OWN -> Component.translatable("market.geg.offer", modal.listing.sellerName(),
-                        modal.listing.quantity(), MoneyCurrency.COIN.format(modal.listing.unitPrice()));
-                case OWN_REQUEST -> Component.translatable("market.geg.request_info", modal.order.quantity(),
-                        MoneyCurrency.COIN.format(modal.order.unitPrice()),
-                        MoneyCurrency.COIN.format(modal.order.escrow()));
-                case INVENTORY, SAMPLE -> Component.translatable("market.geg.inventory_count", modal.quantity);
-                case DELIVERY -> Component.translatable("market.geg.claim_count", modal.quantity);
-                case HISTORY -> Component.translatable("market.geg.history_entry", modal.purchase.sellerName(),
-                        modal.purchase.quantity(), MoneyCurrency.COIN.format(modal.purchase.unitPrice()));
-                case COIN -> Component.translatable("market.geg.pending_amount",
-                        MoneyCurrency.COIN.format(modal.credit.amount()));
-                default -> Component.empty();
-            };
-            info.text(text);
-            fee.text(Component.translatable("market.geg.seller_fee",
-                    MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints())));
+            Map<MarketDetailDescriptions.Field, Component> values = new EnumMap<>(MarketDetailDescriptions.Field.class);
+            switch (modal.kind) {
+                case OWN -> {
+                    values.put(MarketDetailDescriptions.Field.STATUS, Component.translatable("market.geg.selling"));
+                    values.put(MarketDetailDescriptions.Field.SELLER, Component.literal(modal.listing.sellerName()));
+                    values.put(MarketDetailDescriptions.Field.QUANTITY, Component.literal(Long.toString(modal.quantity)));
+                    values.put(MarketDetailDescriptions.Field.PRICE, Component.literal(MoneyCurrency.COIN.format(modal.price)));
+                }
+                case OWN_REQUEST -> {
+                    values.put(MarketDetailDescriptions.Field.STATUS, Component.translatable("market.geg.buying"));
+                    values.put(MarketDetailDescriptions.Field.QUANTITY, Component.literal(Long.toString(modal.quantity)));
+                    values.put(MarketDetailDescriptions.Field.PRICE, Component.literal(MoneyCurrency.COIN.format(modal.price)));
+                    values.put(MarketDetailDescriptions.Field.ESCROW, Component.literal(MoneyCurrency.COIN.format(modal.order.escrow())));
+                }
+                case INVENTORY, SAMPLE -> values.put(MarketDetailDescriptions.Field.INVENTORY, Component.literal(Long.toString(modal.quantity)));
+                case DELIVERY -> values.put(MarketDetailDescriptions.Field.CLAIM_ITEMS, Component.literal(Long.toString(modal.quantity)));
+                case HISTORY -> {
+                    values.put(MarketDetailDescriptions.Field.SELLER, Component.literal(modal.purchase.sellerName()));
+                    values.put(MarketDetailDescriptions.Field.QUANTITY, Component.literal(Long.toString(modal.quantity)));
+                    values.put(MarketDetailDescriptions.Field.PRICE, Component.literal(MoneyCurrency.COIN.format(modal.price)));
+                }
+                case COIN -> values.put(MarketDetailDescriptions.Field.CLAIM_COIN, Component.literal(MoneyCurrency.COIN.format(modal.credit.amount())));
+                default -> { }
+            }
+            if (modal.kind == Kind.OWN || modal.kind == Kind.INVENTORY && !requestMode) {
+                values.put(MarketDetailDescriptions.Field.FEE, Component.literal(
+                        MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints()) + "%"));
+            }
+            info.show(values);
         }
 
         @Override public void layout(Rect bounds, Font font) {
@@ -1001,41 +1009,57 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                         loadingWidth, 12), font);
                 return;
             }
-            int formTop = fee.visible() ? 30 : 18;
+            int infoHeight = info.measureSize(font, new Size(width, height)).height();
+            int formTop = infoHeight + 6;
             int formHeight = form != null && form.visible()
                     ? form.measureSize(font, new Size(width, height)).height() : 0;
-            contentHeight = Math.max(formTop + formHeight, fee.visible() ? 26 : 12);
+            contentHeight = formHeight > 0 ? formTop + formHeight : infoHeight;
             scroll = Math.min(scroll, Math.max(0, contentHeight - height));
-            fitChild(info, new Rect(0, -scroll, width, 12), font);
-            fitChild(fee, new Rect(0, 14 - scroll, width, 12), font);
+            fitChild(info, new Rect(0, -scroll, width, infoHeight), font);
             if (form != null && form.visible())
                 fitChild(form, new Rect(0, formTop - scroll, width, formHeight), font);
             if (form != null && form.visible()) form.clipInputs(absoluteBounds());
         }
     }
 
-    private final class QuantityContent extends ScrollableContent {
+    static final class QuantityContent extends ScrollableContent {
         private static final int QUICK_BUTTON_GAP = 2;
         private static final int QUICK_BUTTON_MIN_WIDTH = 30;
         private static final int QUICK_BUTTON_ROW_HEIGHT = Button.Size.MEDIUM.height() + QUICK_BUTTON_GAP;
         private final List<Button> quickButtons = new ArrayList<>();
         private Form form;
 
-        private QuantityContent() {
+        QuantityContent(IntConsumer adjustQuantity) {
             String[] labels = {"-16", "-8", "+8", "+16"};
             for (int index = 0; index < 5; index++) {
                 final int buttonIndex = index;
                 Button button = new Button(index == 4
                         ? Component.translatable("market.geg.max") : Component.literal(labels[index]))
-                        .onPress(() -> adjustTradeQuantity(buttonIndex));
+                        .onPress(() -> adjustQuantity.accept(buttonIndex));
                 quickButtons.add(button);
                 addChild(button);
             }
         }
 
-        private void bindForm(Form form) {
+        void bindForm(Form form) {
             this.form = form;
             addChild(form);
+        }
+
+        private int columns(int width) {
+            return Math.min(quickButtons.size(), Math.max(1,
+                    (Math.max(1, width) + QUICK_BUTTON_GAP) / (QUICK_BUTTON_MIN_WIDTH + QUICK_BUTTON_GAP)));
+        }
+
+        private int contentHeight(int formHeight, int columns) {
+            int rows = (quickButtons.size() + columns - 1) / columns;
+            return formHeight + 4 + rows * QUICK_BUTTON_ROW_HEIGHT - QUICK_BUTTON_GAP;
+        }
+
+        @Override public Size measureSize(Font font, Size available) {
+            int width = Math.max(minimumWidth(), available.width());
+            int formHeight = form == null ? 0 : form.measureSize(font, new Size(width, available.height())).height();
+            return new Size(width, Math.max(minimumHeight(), contentHeight(formHeight, columns(width))));
         }
 
         @Override public void layout(Rect bounds, Font font) {
@@ -1045,11 +1069,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             int formHeight = form == null ? 0
                     : form.measureSize(font, new Size(width, height)).height();
             int available = Math.max(1, width);
-            int columns = Math.min(quickButtons.size(), Math.max(1,
-                    (available + QUICK_BUTTON_GAP) / (QUICK_BUTTON_MIN_WIDTH + QUICK_BUTTON_GAP)));
+            int columns = columns(width);
             int buttonTop = formHeight + 4;
-            contentHeight = buttonTop + ((quickButtons.size() + columns - 1) / columns)
-                    * QUICK_BUTTON_ROW_HEIGHT;
+            contentHeight = contentHeight(formHeight, columns);
             scroll = Math.min(scroll, Math.max(0, contentHeight - height));
             if (form != null) fitChild(form, new Rect(0, -scroll, width, formHeight), font);
             if (form != null) form.clipInputs(absoluteBounds());

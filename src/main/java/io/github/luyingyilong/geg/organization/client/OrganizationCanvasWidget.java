@@ -59,6 +59,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private final Dialog emptyDialog;
     private final Drawer createDrawer;
     private final Table<OrganizationSyncPacket.Member> memberTable = createMemberTable();
+    private final OrganizationDetailsContent organizationDetails = new OrganizationDetailsContent(memberTable);
     private final Table<OrganizationSyncPacket.Application> applicationTable = createApplicationTable();
     private final Table<OrganizationSyncPacket.Directory> joinTable = createJoinTable();
     private final Drawer detailDrawer;
@@ -100,8 +101,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                 .action(Component.translatable("organization.geg.back"), this::closeCreate)
                 .action(Component.translatable("organization.geg.create_action"),
                         this::submitCreate, Button.Type.PRIMARY);
-        memberTable.minimum(0, 60).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        detailDrawer = new Drawer(Component.empty()).content(memberTable)
+        detailDrawer = new Drawer(Component.empty()).content(organizationDetails)
                 .onClose(this::onDetailsClosed);
         applicationTable.headerVisible(false).minimum(0, 60)
                 .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
@@ -443,6 +443,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         closeMenu();
         memberMenus.clear();
         detailDrawer.title(Component.literal(summary.name()));
+        organizationDetails.update(summary);
         memberTable.rows(summary.members());
         detailDrawer.clearActions();
         Organization.Role ownRole = ownRole(summary);
@@ -783,9 +784,14 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         int mouseX = getContext().getAbsMouseX() - getArea().x;
         int mouseY = getContext().getAbsMouseY() - getArea().y;
         if (drawer.isOpen() && body.hit(mouseX, mouseY)) {
-            if (body.maxScrollY() > 0 || body.maxScrollX() > 0)
-                drawer.dispatchScroll(mouseX, mouseY, delta, false);
-            else table.scrollBy(-(int) Math.signum(delta) * (table.compact() ? 36 : 23));
+            boolean horizontal = net.minecraft.client.gui.screens.Screen.hasShiftDown();
+            if (!horizontal && !body.scrollbarAt(mouseX, mouseY)
+                    && table.hit(mouseX + body.scrollX(), mouseY + body.scrollY())) {
+                int previous = table.scroll();
+                table.scrollBy(-(int) Math.signum(delta) * (table.compact() ? 36 : 23));
+                if (table.scroll() != previous) return true;
+            }
+            drawer.dispatchScroll(mouseX, mouseY, delta, horizontal);
         }
         return true;
     }

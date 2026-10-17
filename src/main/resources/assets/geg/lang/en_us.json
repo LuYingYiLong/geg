@@ -259,5 +259,12 @@
   "mail.geg.system.remove": "You were removed from %s.",
   "mail.geg.kind.admin": "Admin",
   "mail.geg.kind.organization": "Organization",
-  "mail.geg.kind.system": "System"
+  "mail.geg.kind.system": "System",
+  "organization.geg.no_description": "No description",
+  "market.geg.seller": "Seller",
+  "market.geg.escrow": "Coin held in escrow",
+  "market.geg.inventory_quantity": "Inventory quantity",
+  "market.geg.claim_quantity": "Items to claim",
+  "market.geg.claim_amount": "Coin to claim",
+  "market.geg.seller_fee_rate": "Seller fee"
 }
