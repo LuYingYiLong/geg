@@ -269,7 +269,7 @@ public final class DrawerLayoutTest {
         button.fontSize(16.0F);
         check(button.fontSize() == 16.0F && parent.layoutDirty());
         check(button.measureWidth(font, 200) == 2 * originalWidth - 2 * Button.PADDING_X);
-        Header header = new Header(Component.literal("Font")).fontSize(40.0F);
+        Navbar header = new Navbar(Component.literal("Font")).fontSize(40.0F);
         check(header.fontSize() == 40.0F);
         int height = header.measureSize(font, new Size(200, 100)).height();
         header.layout(new Rect(0, 0, 200, height), font);

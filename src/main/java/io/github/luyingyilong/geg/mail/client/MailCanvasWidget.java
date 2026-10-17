@@ -10,7 +10,7 @@ import io.github.luyingyilong.geg.client.ui.Button;
 import io.github.luyingyilong.geg.client.ui.Drawer;
 import io.github.luyingyilong.geg.client.ui.Form;
 import io.github.luyingyilong.geg.client.ui.FormItem;
-import io.github.luyingyilong.geg.client.ui.Header;
+import io.github.luyingyilong.geg.client.ui.Navbar;
 import io.github.luyingyilong.geg.client.ui.Label;
 import io.github.luyingyilong.geg.client.ui.Menu;
 import io.github.luyingyilong.geg.client.ui.Segmented;
@@ -49,7 +49,7 @@ import java.util.*;
 final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interactable {
     private final Window window = new Window(true);
     private final Overlay overlay = new Overlay();
-    private final Header header = new Header(tr("mail.geg.title"));
+    private final Navbar navbar = new Navbar(tr("mail.geg.title"));
     private final Label notice = new Label().color(OreTheme.TEXT_SECONDARY).wrap(Label.Wrap.WORD);
     private final Button send = new Button(tr("mail.geg.compose")).onPressed(() -> compose(null));
     private final Segmented audiences = new Segmented(List.of(tr("mail.geg.player"), tr("mail.geg.organization"), tr("mail.geg.everyone")));
@@ -96,7 +96,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         send.minimum(56, Button.HEIGHT);
         send.visible(ClientMailScreen.admin());
         mailMenu.onSelect(item -> { selectedItemKey = item.key(); showDetail(MailListItem.messageId(item)); });
-        header.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        navbar.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         audiences.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND | SizeFlags.SIZE_SHRINK_BEGIN)
                 .sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         send.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
@@ -120,7 +120,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         columnsScroll.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL); columnsScroll.minimum(0, 41);
         Padding padding = new Padding(Padding.Insets.all(4));
         padding.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        window.content(new Box().gap(0).add(header).add(
+        window.content(new Box().gap(0).add(navbar).add(
                 padding.child(new Box().gap(4).add(audienceRow).add(notice).add(columnsScroll))
         )).overlay(overlay);
         detailText.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
@@ -282,9 +282,9 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         notice.visible(!notice.text().getString().isEmpty());
         for (Label label : List.of(detailTitle, detailSender, detailDate, attachment, detailNotice))
             label.visible(!label.text().getString().isEmpty());
-        // Clear the previous minimum so a two-row header can return to one row on resize.
-        header.minimum(0, 0);
-        header.minimum(0, header.measureHeight(context.getFont(), width));
+        // Clear the previous minimum so a two-row navbar can return to one row on resize.
+        navbar.minimum(0, 0);
+        navbar.minimum(0, navbar.measureHeight(context.getFont(), width));
         window.layoutViewport(width, height, context.getFont());
         if (inbox.catchingUp() || mailScroll.scrollY() + mailScroll.viewport().height() * 2 >= mailMenu.contentExtent().height()) {
             MailActionPacket next = inbox.nextBatch();

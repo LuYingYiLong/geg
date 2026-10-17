@@ -8,6 +8,7 @@ public final class OreIcons {
     public static final ResourceLocation CLOSE = icon("close");
     public static final ResourceLocation CHECKED = icon("checked");
     public static final ResourceLocation ARROW_DOWN = icon("arrow_down");
+    public static final ResourceLocation ARROW_LEFT = icon("arrow_left");
     public static final ResourceLocation FLAG = icon("flag");
     public static final ResourceLocation ORG = icon("org");
     public static final ResourceLocation LOADING = icon("loading");

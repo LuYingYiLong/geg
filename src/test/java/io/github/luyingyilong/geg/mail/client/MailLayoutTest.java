@@ -2,7 +2,7 @@ package io.github.luyingyilong.geg.mail.client;
 
 import io.github.luyingyilong.geg.client.ui.Avatar;
 import io.github.luyingyilong.geg.client.ui.Button;
-import io.github.luyingyilong.geg.client.ui.Header;
+import io.github.luyingyilong.geg.client.ui.Navbar;
 import io.github.luyingyilong.geg.client.ui.MenuItem;
 import io.github.luyingyilong.geg.client.ui.Segmented;
 import io.github.luyingyilong.geg.client.ui.layout.*;
@@ -47,7 +47,7 @@ public final class MailLayoutTest {
         };
         Button send = new Button(Component.literal("Compose"));
         send.minimum(56, Button.HEIGHT);
-        Header header = new Header(Component.literal("Mail"));
+        Navbar header = new Navbar(Component.literal("Mail"));
         Segmented audiences = new Segmented(List.of(Component.literal("Player"), Component.literal("Organization"), Component.literal("Server")));
         audiences.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND | SizeFlags.SIZE_SHRINK_BEGIN)
                 .sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
@@ -62,7 +62,7 @@ public final class MailLayoutTest {
             header.minimum(0, 0);
             header.minimum(0, header.measureHeight(font, width));
             window.layoutViewport(width, height, font);
-            check(header.bounds().y() == 0 && header.size().height() >= Header.ROW_HEIGHT);
+            check(header.bounds().y() == 0 && header.size().height() >= Navbar.ROW_HEIGHT);
             check(header.size().height() == 25);
             check(audiences.absoluteBounds().x() == 4);
             check(audiences.size().width() == Math.min(width - 12 - send.size().width(), audiences.minimumRowWidth(font)));

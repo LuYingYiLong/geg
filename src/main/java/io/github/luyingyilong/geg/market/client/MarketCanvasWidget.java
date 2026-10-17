@@ -8,7 +8,7 @@ import io.github.luyingyilong.geg.client.ui.*;
 import io.github.luyingyilong.geg.client.ui.Button;
 import io.github.luyingyilong.geg.client.ui.Dropdown;
 import io.github.luyingyilong.geg.client.ui.Form;
-import io.github.luyingyilong.geg.client.ui.Header;
+import io.github.luyingyilong.geg.client.ui.Navbar;
 import io.github.luyingyilong.geg.client.ui.Label;
 import io.github.luyingyilong.geg.client.ui.Modal;
 import io.github.luyingyilong.geg.client.ui.Segmented;
@@ -89,7 +89,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             .content(detailContent).onClose(this::closeModal);
     private final Modal quantityModal = new Modal(Component.empty()).size(224, 0).centered()
             .content(quantityContent).onClose(this::closeQuantityMenu).depth(300.0F);
-    private final Header header = new Header(Component.translatable("market.geg.title"))
+    private final Navbar navbar = new Navbar(Component.translatable("market.geg.title"))
             .titleColor(HEADER_TEXT);
     private final InputControl searchSlot;
     private final Label coinBalance = new Label().color(HEADER_TEXT)
@@ -122,7 +122,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         filterDropdown.minimum(Button.Size.MEDIUM.height(), Button.Size.MEDIUM.height());
         Box spaceCompactBox = new Box().orientation(Box.Orientation.HORIZONTAL).gap(0);
         spaceCompactBox.add(searchSlot).add(filterDropdown);
-        header.extra(coinBalance, spaceCompactBox);
+        navbar.extra(coinBalance, spaceCompactBox);
         publishSlot.minimum(0, 27).preferred(0, 27)
                 .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         publishOptions.minimum(96, Button.Size.SMALL.height()).preferred(134, Button.Size.SMALL.height())
@@ -150,7 +150,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         });
         grid.onItemClick(this::openModal);
         body.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Box column = new Box().add(header).add(publishSlot).add(body).add(footerSlot);
+        Box column = new Box().add(navbar).add(publishSlot).add(body).add(footerSlot);
         window.content(column).overlay(overlay);
         grid.columns(MIN_CARD_WIDTH, 4, CARD_GAP).mode(Grid.LayoutMode.MASONRY)
                 .adapter(new Grid.Adapter<>() {
@@ -320,7 +320,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         publishFee.visible(width >= 230);
         publishFee.text(Component.translatable("market.geg.seller_fee",
                 MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints())));
-        header.title(Component.translatable(ClientMarketState.marketEnabled()
+        navbar.title(Component.translatable(ClientMarketState.marketEnabled()
                 ? "market.geg.title" : "market.geg.title_closed"));
         coinBalance.setText(Component.translatable("market.geg.header_balance",
                 MoneyCurrency.COIN.format(ClientMoneyState.balance().coinMinorUnits())));
@@ -717,7 +717,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     private void openModal(Card card) {
-        // Overlay focus scopes block the header input; disabling it would also hide its MUI rendering.
+        // Overlay focus scopes block the navbar input; disabling it would also hide its MUI rendering.
         modal = card;
         detailContent.scroll = 0;
         offerTable.scrollToTop();

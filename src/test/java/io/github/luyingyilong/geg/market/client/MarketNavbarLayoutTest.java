@@ -5,13 +5,13 @@ import io.github.luyingyilong.geg.client.ui.layout.Rect;
 import io.github.luyingyilong.geg.client.ui.layout.Size;
 import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
 import io.github.luyingyilong.geg.client.ui.layout.Box;
-import io.github.luyingyilong.geg.client.ui.Header;
+import io.github.luyingyilong.geg.client.ui.Navbar;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 
-/** The common header centers its title and preserves market action minimum sizes. */
-public final class MarketHeaderLayoutTest {
-    private MarketHeaderLayoutTest() {
+/** The common navbar centers its title and preserves market action minimum sizes. */
+public final class MarketNavbarLayoutTest {
+    private MarketNavbarLayoutTest() {
     }
 
     public static void main(String[] args) {
@@ -24,10 +24,10 @@ public final class MarketHeaderLayoutTest {
             Control balance = new Control().preferred(90, 20).minimum(64, 20);
             Control search = new Control().preferred(138, 18).minimum(72, 18);
             Control filter = new Control().preferred(82, 20).minimum(74, 20);
-            Header header = new Header(Component.literal("Market")).extra(balance, search, filter);
-            int height = header.measureSize(font, new Size(width, 300)).height();
-            header.layout(new Rect(0, 0, width, height), font);
-            Control title = header.children().get(0);
+            Navbar navbar = new Navbar(Component.literal("Market")).extra(balance, search, filter);
+            int height = navbar.measureSize(font, new Size(width, 300)).height();
+            navbar.layout(new Rect(0, 0, width, height), font);
+            Control title = navbar.children().get(0);
             check(title.bounds().x() * 2 + title.bounds().width() == width);
             check(balance.minimumSize().equals(new Size(64, 20)));
             check(search.bounds().height() == 18);
@@ -36,7 +36,7 @@ public final class MarketHeaderLayoutTest {
                 check(action.bounds().width() >= action.minimumWidth());
                 check(action.bounds().right() <= width);
                 check(action.bounds().bottom() <= height);
-                check(header.hitTop(action.bounds().x(), action.bounds().y()) == action);
+                check(navbar.hitTop(action.bounds().x(), action.bounds().y()) == action);
             }
             if (height == 25) check(title.bounds().right() + 6 <= balance.bounds().x());
             else check(balance.bounds().y() >= 25);
@@ -44,19 +44,19 @@ public final class MarketHeaderLayoutTest {
             if (balance.bounds().y() == filter.bounds().y())
                 check(search.bounds().right() + 6 <= filter.bounds().x());
             filter.visible(false);
-            check(header.layoutDirty());
+            check(navbar.layoutDirty());
         }
         Control search = new Control().minimum(64, 18).preferred(138, 18)
                 .sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Control filter = new Control().minimum(20, 20);
         Box compact = new Box().orientation(Box.Orientation.HORIZONTAL).add(search).add(filter);
-        Header header = new Header(Component.literal("Market")).extra(compact);
-        header.layout(new Rect(0, 0, 640, 25), font);
+        Navbar navbar = new Navbar(Component.literal("Market")).extra(compact);
+        navbar.layout(new Rect(0, 0, 640, 25), font);
         check(search.size().height() == 18 && filter.size().height() == 20);
         check(search.absoluteBounds().y() == filter.absoluteBounds().y() + 1);
     }
 
     private static void check(boolean condition) {
-        if (!condition) throw new AssertionError("Unexpected market header layout");
+        if (!condition) throw new AssertionError("Unexpected market navbar layout");
     }
 }

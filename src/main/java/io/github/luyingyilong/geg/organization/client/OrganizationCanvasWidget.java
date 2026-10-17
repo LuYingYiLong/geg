@@ -10,7 +10,7 @@ import io.github.luyingyilong.geg.client.ui.Dialog;
 import io.github.luyingyilong.geg.client.ui.Drawer;
 import io.github.luyingyilong.geg.client.ui.Dropdown;
 import io.github.luyingyilong.geg.client.ui.Form;
-import io.github.luyingyilong.geg.client.ui.Header;
+import io.github.luyingyilong.geg.client.ui.Navbar;
 import io.github.luyingyilong.geg.client.ui.Label;
 import io.github.luyingyilong.geg.client.ui.Modal;
 import io.github.luyingyilong.geg.client.ui.PlayerIdentityCell;
@@ -693,9 +693,9 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     private void rebuildMemberships() {
         for (Control child : memberships.children()) memberships.removeChild(child);
-        Header header = new Header(Component.translatable("organization.geg.your_organizations"))
+        Navbar navbar = new Navbar(Component.translatable("organization.geg.your_organizations"))
                 .titleColor(OreTheme.TEXT_DARK);
-        memberships.add(header);
+        memberships.add(navbar);
         Button createButton = new Button(Component.translatable("organization.geg.create"))
                 .type(Button.Type.PRIMARY).onPress(this::showCreate);
         createButton.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
