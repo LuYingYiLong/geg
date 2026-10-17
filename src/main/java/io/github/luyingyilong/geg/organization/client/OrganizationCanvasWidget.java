@@ -30,6 +30,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private final Overlay overlay = new Overlay();
     private final Box options = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
     private final Box memberships = new Box().gap(4);
+    private final Scroll membershipsScroll = new Scroll().horizontal(Scroll.BarMode.DISABLED);
     private final Label emptyText;
     private final Form createForm;
     private final Dialog emptyDialog;
@@ -55,6 +56,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         this.createForm = createForm;
 
         memberships.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
+        membershipsScroll.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         window.content(memberships).overlay(overlay);
 
         options.add(option(OreIcons.FLAG, "organization.geg.create",
@@ -640,7 +642,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         memberships.add(createInset);
         Box orgList = new Box().gap(0);
         orgList.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
-        memberships.add(orgList);
+        membershipsScroll.content(orgList);
+        memberships.add(membershipsScroll);
         for (OrganizationSyncPacket.Summary summary : ClientOrganizationState.organizations()) {
             Box row = new Box().orientation(Box.Orientation.HORIZONTAL);
             row.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
@@ -658,6 +661,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
             row.add(details);
             Button detailsButton = new Button(Component.translatable("organization.geg.details"))
                     .onPress(() -> showDetails(summary.id()));
+            detailsButton.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
             row.add(detailsButton);
             Panel panel = new Panel(OreTheme.BAR).child(new Padding(Padding.Insets.all(4)).child(row));
             panel.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
@@ -730,6 +734,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     @Override public boolean onMouseScrolled(double delta) {
         cancelPendingMenuInteraction();
+        if (emptyDialog.visible() || disbandConfirmation.visible()) return true;
         if (createDrawer.visible() && !applicationsModal.visible() && !joinDrawer.visible()
                 && !detailDrawer.visible() && !disbandConfirmation.visible()) {
             return createDrawer.dispatchScroll(getContext().getAbsMouseX() - getArea().x,
@@ -751,7 +756,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
             closeMenu();
             return scrollTableDrawer(detailDrawer, memberTable, delta);
         }
-        return false;
+        return membershipsScroll.dispatchScroll(getContext().getAbsMouseX() - getArea().x,
+                getContext().getAbsMouseY() - getArea().y, delta, false);
     }
 
     private boolean scrollTableDrawer(Drawer drawer, Table<?> table, double delta) {
