@@ -34,7 +34,7 @@ public final class MailDetailBodyLayoutTest {
         Label body = new Label(Component.literal(TEXT)).wrap(Label.Wrap.WORD);
         int[] claims = {0};
         MailAttachmentsView rewards = new MailAttachmentsView(() -> claims[0]++);
-        rewards.attachments(List.of(), true);
+        rewards.attachments(List.of(), true, false);
         rewards.claimButton().label(Component.literal("领取附件")).sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_END);
         Scroll itemScroll = rewards.scroll();
         Box items = (Box) itemScroll.children().stream().filter(Box.class::isInstance).findFirst().orElseThrow();

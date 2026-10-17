@@ -232,6 +232,7 @@
   "mail.geg.preview_again": "The content changed. Preview it again.",
   "mail.geg.preview_summary": "Recipients: %s\nCoin each: %s\nTotal coin issued: %s",
   "mail.geg.claim": "Claim attachment",
+  "mail.geg.claimed": "Claimed",
   "mail.geg.delete": "Delete",
   "mail.geg.attachment_amount": "Unclaimed coin: %s",
   "mail.geg.claimed_amount": "Claimed coin: %s",

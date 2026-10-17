@@ -28,6 +28,8 @@ public final class Toast extends Container {
     public static final long EXIT_DURATION = 160L;
     private static final int INSET_X = 4;
     private static final int INSET_Y = 2;
+    // Label's line box includes trailing leading below the visible Mojangles/Noto glyphs.
+    private static final int TEXT_BASELINE_OFFSET = 1;
     private final Label label = new Label().wrap(Label.Wrap.WORD).maxLines(3).overflow(Label.Overflow.ELLIPSIS)
             .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
     private final LongSupplier clock;
@@ -101,8 +103,11 @@ public final class Toast extends Container {
     }
     @Override public void layout(Rect bounds, Font font) {
         super.layout(bounds, font);
-        fitChild(label, new Rect(INSET_X, INSET_Y, Math.max(0, bounds.width() - INSET_X * 2),
-                Math.max(0, bounds.height() - INSET_Y * 2)), font);
+        fitChild(label, textBounds(new Rect(0, 0, bounds.width(), bounds.height())), font);
+    }
+    Rect textBounds(Rect area) {
+        return new Rect(area.x() + INSET_X, area.y() + INSET_Y + TEXT_BASELINE_OFFSET,
+                Math.max(0, area.width() - INSET_X * 2), Math.max(0, area.height() - INSET_Y * 2));
     }
     public static Rect shadowBounds(Rect area) { return area.translated(1, 1); }
 
@@ -115,8 +120,7 @@ public final class Toast extends Container {
         graphics.fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.TEXT_DARK);
         if (area.width() > 2 && area.height() > 2)
             graphics.fill(area.x() + 1, area.y() + 1, area.right() - 1, area.bottom() - 1, type.color());
-        label.paint(graphics, font, new Rect(area.x() + INSET_X, area.y() + INSET_Y,
-                Math.max(0, area.width() - INSET_X * 2), Math.max(0, area.height() - INSET_Y * 2)), -1, -1);
+        label.paint(graphics, font, textBounds(area), -1, -1);
     }
     @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
         drawGui(context.getGraphics(), context.getFont(), screenBounds(screenX, screenY));

@@ -18,7 +18,10 @@ public final class Badge extends Container {
     public static final int MIN_COUNT_SIZE = 12;
     public static final int SHADOW_HEIGHT = 1;
     private static final int PADDING_X = 2;
-    private final Label label = new Label().align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
+    // Mojangles digits are seven pixels high; their advance includes one trailing spacing pixel.
+    private static final int DIGIT_HEIGHT = 7;
+    private static final int TRAILING_SPACING = 1;
+    private final Label label = new Label();
     private Long count;
     private long overflowCount = 99L;
     private Tag.Type type = Tag.Type.PRIMARY;
@@ -83,7 +86,12 @@ public final class Badge extends Container {
     @Override public int measureHeight(Font font, int available) { return measureSize(font, new Size(available, available)).height(); }
     @Override public void layout(Rect bounds, Font font) {
         super.layout(bounds, font);
-        fitChild(label, new Rect(0, 0, bounds.width(), Math.max(0, bounds.height() - SHADOW_HEIGHT)), font);
+        Rect face = faceBounds(new Rect(0, 0, bounds.width(), bounds.height()));
+        int advance = label.measureWidth(font, Integer.MAX_VALUE);
+        int inkWidth = Math.max(0, advance - TRAILING_SPACING);
+        // Center the visible number, excluding both the line's leading and the badge's shadow.
+        layoutChild(label, new Rect(Math.round((face.width() - inkWidth) / 2.0F),
+                Math.round((face.height() - DIGIT_HEIGHT) / 2.0F), advance, label.lineHeight(font)), font);
     }
     Rect faceBounds(Rect area) { return new Rect(area.x(), area.y(), area.width(), Math.max(0, area.height() - SHADOW_HEIGHT)); }
     Rect shadowBounds(Rect area) { return new Rect(area.x(), Math.max(area.y(), area.bottom() - SHADOW_HEIGHT), area.width(), Math.min(SHADOW_HEIGHT, area.height())); }

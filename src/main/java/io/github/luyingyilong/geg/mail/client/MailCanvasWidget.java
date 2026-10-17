@@ -174,7 +174,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         selected = id; selectedMessage = null; detailText.text(tr("mail.geg.loading"));
         detailTitle.text(Component.empty()); detailSender.text(Component.empty()); detailDate.text(Component.empty()); attachment.text(Component.empty());
         detailAuthor.visible(false); detailAvatar.initials("");
-        rewards.attachments(List.of(), false); attachmentDivider.visible(false);
+        rewards.attachments(List.of(), false, false); attachmentDivider.visible(false);
         clearDetailActions(); detailScroll.scrollToTop(); query(MailActionPacket.Action.DETAIL, id);
     }
     private void clearDetailActions() {
@@ -186,7 +186,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         detailTitle.text(tr("mail.geg.detail")); detailSender.text(Component.empty()); detailDate.text(Component.empty());
         detailText.text(tr("mail.geg.select_message")); attachment.text(Component.empty());
         detailAuthor.visible(false); detailAvatar.initials("");
-        rewards.attachments(List.of(), false); attachmentDivider.visible(false);
+        rewards.attachments(List.of(), false, false); attachmentDivider.visible(false);
         clearDetailActions();
     }
     private void updateDetail() {
@@ -210,7 +210,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
                 MoneyCurrency.COIN.format(mail.coin())));
         clearDetailActions();
         boolean claimable = mail.hasAttachments() && !selectedClaimed;
-        rewards.attachments(mail.items(), claimable);
+        rewards.attachments(mail.items(), mail.hasAttachments(), selectedClaimed);
         attachmentDivider.visible(mail.hasAttachments());
         if (claimable) return;
         Button action = new Button(tr("mail.geg.delete")).type(Button.Type.DESTRUCTIVE)

@@ -232,6 +232,7 @@
   "mail.geg.preview_again": "内容已更改，请重新预览",
   "mail.geg.preview_summary": "收件人：%s\n每人 coin：%s\n总发行 coin：%s",
   "mail.geg.claim": "领取附件",
+  "mail.geg.claimed": "已领取",
   "mail.geg.delete": "删除",
   "mail.geg.attachment_amount": "待领取 coin：%s",
   "mail.geg.claimed_amount": "已领取 coin：%s",

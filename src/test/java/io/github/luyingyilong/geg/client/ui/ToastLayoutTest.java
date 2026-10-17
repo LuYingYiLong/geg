@@ -16,6 +16,11 @@ public final class ToastLayoutTest {
     public static void main(String[] args) {
         Font font = new Font(id -> null, false) {
             @Override public int width(FormattedText text) { return text.getString().length() * 6; }
+            @Override public int width(FormattedCharSequence text) {
+                int[] count = {0};
+                text.accept((index, style, codepoint) -> { count[0]++; return true; });
+                return count[0] * 6;
+            }
             @Override public List<FormattedCharSequence> split(FormattedText text, int width) {
                 String value = text.getString(); List<FormattedCharSequence> lines = new ArrayList<>();
                 int count = Math.max(1, width / 6);
@@ -71,8 +76,32 @@ public final class ToastLayoutTest {
             check(type.color() == Tag.Type.valueOf(type.name()).color());
             check(((Label) first.children().get(0)).color() == Tag.Type.valueOf(type.name()).textColor());
         }
+        textCentering(font);
         queue.clear(); check(queue.size() == 0);
         try { first.duration(-1); throw new AssertionError("Negative duration accepted"); } catch (IllegalArgumentException expected) { }
+    }
+    private static void textCentering(Font font) {
+        Toast toast = new Toast(() -> 0L, cue -> { }).open();
+        Label label = (Label) toast.children().get(0);
+        for (String text : new String[]{"Success", "领取成功", "邮件附件领取成功，请检查背包"}) {
+            toast.text(Component.literal(text));
+            for (int width : new int[]{64, 127, 128, 129, 320}) {
+                Size size = toast.measureSize(font, new Size(width, 200));
+                for (int extraHeight : new int[]{0, 1, 12}) {
+                    Rect face = new Rect(10, 20, size.width(), size.height() + extraHeight);
+                    toast.layout(face, font);
+                    Rect textArea = toast.textBounds(face);
+                    check(label.absoluteBounds().equals(textArea));
+                    int lines = label.displayedLines(font, textArea.width(), textArea.height()).size();
+                    int startY = textArea.y() + (textArea.height() - lines * label.lineHeight(font)) / 2;
+                    // Typical Ore body glyphs occupy 8px; extra pixels belong to line spacing.
+                    int visibleHeight = (lines - 1) * label.lineHeight(font) + 8;
+                    check(Math.abs(2 * startY + visibleHeight - (2 * face.y() + face.height())) <= 1);
+                    check(startY >= face.y() + 1 && startY + visibleHeight <= face.bottom() - 1);
+                    check(textArea.bottom() == face.bottom() - 1);
+                }
+            }
+        }
     }
     private static void check(boolean value) { if (!value) throw new AssertionError("Toast lifecycle or geometry regression"); }
 }

@@ -23,13 +23,14 @@ final class MailAttachmentsView extends Container {
         sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
     }
 
-    void attachments(List<MailItem> values, boolean claimable) {
+    void attachments(List<MailItem> values, boolean hasAttachments, boolean claimed) {
         for (Control child : items.children()) items.removeChild(child);
         for (MailItem value : values) items.add(new Slot().item(value.item(), value.quantity()));
         scroll.visible(!values.isEmpty());
-        claim.visible(claimable);
+        claim.label(Component.translatable(claimed ? "mail.geg.claimed" : "mail.geg.claim"))
+                .disabled(!hasAttachments || claimed).visible(hasAttachments);
         claim.sizeFlagsHorizontal(values.isEmpty() ? SizeFlags.SIZE_EXPAND_FILL : SizeFlags.SIZE_SHRINK_END);
-        visible(!values.isEmpty() || claimable);
+        visible(hasAttachments);
         requestLayout();
     }
 

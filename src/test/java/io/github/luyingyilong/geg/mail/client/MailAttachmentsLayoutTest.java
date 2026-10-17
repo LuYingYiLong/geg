@@ -12,8 +12,10 @@ public final class MailAttachmentsLayoutTest {
         Font font = new Font(id -> null, false) {
             @Override public int width(FormattedText text) { return text.getString().length() * 6; }
         };
-        MailAttachmentsView rewards = new MailAttachmentsView(() -> { });
-        rewards.attachments(List.of(), true);
+        int[] claims = {0};
+        MailAttachmentsView rewards = new MailAttachmentsView(() -> claims[0]++);
+        rewards.attachments(List.of(), true, false);
+        check(rewards.visible() && rewards.claimButton().visible() && !rewards.claimButton().disabled());
         Scroll scroll = rewards.scroll();
         Box items = (Box) scroll.children().stream().filter(Box.class::isInstance).findFirst().orElseThrow();
         // Geometry is independent of item registries; the server GameTest verifies item binding and NBT.
@@ -35,7 +37,19 @@ public final class MailAttachmentsLayoutTest {
             scroll.setScroll(Integer.MAX_VALUE, 0);
             check(scroll.scrollX() == scroll.maxScrollX());
         }
-        rewards.attachments(List.of(), false);
+        // A completed attachment, including coin-only mail, retains its disabled claim button.
+        rewards.attachments(List.of(), true, true);
+        check(rewards.visible() && rewards.claimButton().visible() && rewards.claimButton().disabled());
+        check(!rewards.claimButton().acceptsFocus());
+        rewards.layout(new Rect(0, 0, 300, Slot.SIZE), font);
+        Rect button = rewards.claimButton().absoluteBounds();
+        rewards.claimButton().pressAt(button.x() + 1, button.y() + 1);
+        check(!rewards.claimButton().activate() && claims[0] == 0);
+        check(rewards.claimButton().bounds().width() == 300);
+        // Switching to an unclaimed or partially claimed mail re-enables the same button.
+        rewards.attachments(List.of(), true, false);
+        check(rewards.claimButton().visible() && !rewards.claimButton().disabled());
+        rewards.attachments(List.of(), false, false);
         check(!rewards.visible() && !rewards.claimButton().visible() && items.children().isEmpty());
     }
     private static void check(boolean condition) {
