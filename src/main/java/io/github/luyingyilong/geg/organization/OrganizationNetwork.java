@@ -9,7 +9,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public final class OrganizationNetwork {
-    private static final String PROTOCOL_VERSION = "4";
+    private static final String PROTOCOL_VERSION = "5";
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.fromNamespaceAndPath(GegMod.MODID, "organizations"),
             () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
@@ -32,6 +32,10 @@ public final class OrganizationNetwork {
 
     public static void create(String name, String description, Organization.JoinPolicy policy) {
         CHANNEL.sendToServer(OrganizationActionPacket.create(name, description, policy));
+    }
+
+    public static void update(java.util.UUID organizationId, String description, Organization.JoinPolicy policy) {
+        CHANNEL.sendToServer(OrganizationActionPacket.update(organizationId, description, policy));
     }
 
     public static void operate(OrganizationSavedData.Operation operation, java.util.UUID organizationId,

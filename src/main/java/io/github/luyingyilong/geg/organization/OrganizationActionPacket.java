@@ -14,7 +14,7 @@ public record OrganizationActionPacket(Action action, String name, String descri
     private static final UUID EMPTY_ID = new UUID(0L, 0L);
     public enum Action {
         REQUEST, CREATE, DISBAND, PROMOTE, DEMOTE, REMOVE, LEAVE,
-        APPLY, APPROVE, REJECT, CANCEL_APPLICATION
+        APPLY, APPROVE, REJECT, CANCEL_APPLICATION, UPDATE
     }
 
     public static OrganizationActionPacket request() {
@@ -25,6 +25,11 @@ public record OrganizationActionPacket(Action action, String name, String descri
     public static OrganizationActionPacket create(String name, String description,
                                                   Organization.JoinPolicy policy) {
         return new OrganizationActionPacket(Action.CREATE, name, description, policy, EMPTY_ID, EMPTY_ID);
+    }
+
+    public static OrganizationActionPacket update(UUID organizationId, String description,
+                                                  Organization.JoinPolicy policy) {
+        return new OrganizationActionPacket(Action.UPDATE, "", description, policy, organizationId, EMPTY_ID);
     }
 
     public static OrganizationActionPacket operate(OrganizationSavedData.Operation operation,
@@ -74,6 +79,22 @@ public record OrganizationActionPacket(Action action, String name, String descri
                         OrganizationNetwork.sync(online,
                                 online.getUUID().equals(player.getUUID()) ? createResultKey : "");
                 } else OrganizationNetwork.sync(player, createResultKey);
+                return;
+            }
+            if (packet.action == Action.UPDATE) {
+                OrganizationSavedData.UpdateResult result = data.update(player.getUUID(),
+                        packet.organizationId, packet.description, packet.joinPolicy);
+                String resultKey = switch (result) {
+                    case UPDATED -> "organization.geg.updated";
+                    case NOT_FOUND -> "organization.geg.result.not_found";
+                    case NOT_MEMBER -> "organization.geg.result.not_member";
+                    case FORBIDDEN -> "organization.geg.result.forbidden";
+                    case INVALID_DESCRIPTION -> "organization.geg.invalid_description";
+                };
+                if (result == OrganizationSavedData.UpdateResult.UPDATED) {
+                    for (ServerPlayer online : player.server.getPlayerList().getPlayers())
+                        OrganizationNetwork.sync(online, online == player ? resultKey : "");
+                } else OrganizationNetwork.sync(player, resultKey);
                 return;
             }
             Organization old = data.organization(packet.organizationId);

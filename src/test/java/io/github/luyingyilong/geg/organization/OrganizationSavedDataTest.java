@@ -20,7 +20,7 @@ public final class OrganizationSavedDataTest {
                 Organization.JoinPolicy.UNRESTRICTED) == OrganizationSavedData.CreateResult.DUPLICATE_NAME);
         check(data.create(founder, "   ", "",
                 Organization.JoinPolicy.UNRESTRICTED) == OrganizationSavedData.CreateResult.INVALID_NAME);
-        check(data.create(founder, "Another", "\ninvalid",
+        check(data.create(founder, "Another", "\tinvalid",
                 Organization.JoinPolicy.UNRESTRICTED) == OrganizationSavedData.CreateResult.INVALID_DESCRIPTION);
         check(data.create(founder, "Explorers", "",
                 Organization.JoinPolicy.UNRESTRICTED) == OrganizationSavedData.CreateResult.CREATED);
@@ -42,6 +42,68 @@ public final class OrganizationSavedDataTest {
         testApplications();
         testCancelApplications();
         testLegacyMembers();
+        testProfileUpdates();
+        testMultilineDescriptions();
+    }
+
+    private static void testProfileUpdates() {
+        UUID leader = UUID.randomUUID();
+        UUID officer = UUID.randomUUID();
+        UUID member = UUID.randomUUID();
+        UUID outsider = UUID.randomUUID();
+        Organization original = new Organization(UUID.randomUUID(), "Permanent name", "Old description", leader,
+                Organization.JoinPolicy.APPROVAL, 123L, Map.of(leader, Organization.Role.LEADER,
+                officer, Organization.Role.OFFICER, member, Organization.Role.MEMBER));
+        UUID id = original.id();
+        OrganizationSavedData data = seeded(original);
+        check(data.update(outsider, id, "Injected", Organization.JoinPolicy.UNRESTRICTED) == OrganizationSavedData.UpdateResult.NOT_MEMBER);
+        check(data.update(member, id, "Injected", Organization.JoinPolicy.UNRESTRICTED) == OrganizationSavedData.UpdateResult.FORBIDDEN);
+        for (String invalid : new String[]{null, "a".repeat(121), "line\tbreak", "\u00a7cColor"}) {
+            check(data.update(leader, id, invalid, Organization.JoinPolicy.UNRESTRICTED) == OrganizationSavedData.UpdateResult.INVALID_DESCRIPTION);
+            check(data.organization(id).equals(original));
+        }
+        check(data.update(leader, id, "Fine", null) == OrganizationSavedData.UpdateResult.INVALID_DESCRIPTION);
+        check(data.operate(outsider, id, outsider, OrganizationSavedData.Operation.APPLY) == OrganizationSavedData.OperationResult.SUCCESS);
+        check(data.update(officer, id, "  New description  ", Organization.JoinPolicy.UNRESTRICTED) == OrganizationSavedData.UpdateResult.UPDATED);
+        Organization updated = data.organization(id);
+        check(updated.name().equals(original.name()) && updated.id().equals(id));
+        check(updated.founder().equals(leader) && updated.roles().equals(original.roles()) && updated.createdAt() == 123L);
+        check(updated.description().equals("New description") && updated.joinPolicy() == Organization.JoinPolicy.UNRESTRICTED);
+        data = OrganizationSavedData.load(data.save(new CompoundTag()));
+        check(data.organization(id).equals(updated) && data.hasApplication(id, outsider));
+        check(data.organization(id).roleOf(outsider) == null);
+        check(data.operate(outsider, id, outsider, OrganizationSavedData.Operation.APPLY) == OrganizationSavedData.OperationResult.SUCCESS);
+        check(!data.hasApplication(id, outsider) && data.organization(id).roleOf(outsider) == Organization.Role.MEMBER);
+        check(data.update(leader, id, "", Organization.JoinPolicy.APPROVAL) == OrganizationSavedData.UpdateResult.UPDATED);
+        check(data.organization(id).description().isEmpty());
+        check(data.operate(leader, id, officer, OrganizationSavedData.Operation.DEMOTE) == OrganizationSavedData.OperationResult.SUCCESS);
+        check(data.update(officer, id, "After demotion", Organization.JoinPolicy.UNRESTRICTED) == OrganizationSavedData.UpdateResult.FORBIDDEN);
+        check(data.update(leader, UUID.randomUUID(), "Missing", Organization.JoinPolicy.APPROVAL) == OrganizationSavedData.UpdateResult.NOT_FOUND);
+        check(OrganizationSavedData.load(data.save(new CompoundTag())).organization(id).name().equals(original.name()));
+    }
+
+    private static void testMultilineDescriptions() {
+        UUID leader = UUID.randomUUID();
+        OrganizationSavedData data = new OrganizationSavedData();
+        check(data.create(leader, "Multiline", "  第一行\r\n第二行\r第三行  ", Organization.JoinPolicy.APPROVAL)
+                == OrganizationSavedData.CreateResult.CREATED);
+        Organization created = data.memberships(leader).get(0);
+        check(created.description().equals("第一行\n第二行\n第三行"));
+        data = OrganizationSavedData.load(data.save(new CompoundTag()));
+        check(data.organization(created.id()).description().equals(created.description()));
+        check(data.update(leader, created.id(), "更新后\r\n\r\n保留空行", Organization.JoinPolicy.UNRESTRICTED)
+                == OrganizationSavedData.UpdateResult.UPDATED);
+        data = OrganizationSavedData.load(data.save(new CompoundTag()));
+        check(data.organization(created.id()).description().equals("更新后\n\n保留空行"));
+        check(data.organization(created.id()).name().equals("Multiline"));
+        check(data.create(leader, "Name\nLine", "", Organization.JoinPolicy.APPROVAL)
+                == OrganizationSavedData.CreateResult.INVALID_NAME);
+        check(OrganizationSavedData.validDescription("a".repeat(59) + "\n" + "b".repeat(60)));
+        check(!OrganizationSavedData.validDescription("a".repeat(60) + "\n" + "b".repeat(60)));
+        for (String invalid : new String[]{"bad\ttext", "bad\u0000text", "bad\u00a7ctext"}) {
+            check(data.update(leader, created.id(), invalid, Organization.JoinPolicy.APPROVAL)
+                    == OrganizationSavedData.UpdateResult.INVALID_DESCRIPTION);
+        }
     }
 
     private static void testCancelApplications() {

@@ -36,6 +36,7 @@ public final class OrganizationSavedData extends SavedData {
     }
 
     public enum CreateResult { CREATED, INVALID_NAME, INVALID_DESCRIPTION, DUPLICATE_NAME, TOO_MANY }
+    public enum UpdateResult { UPDATED, NOT_FOUND, NOT_MEMBER, FORBIDDEN, INVALID_DESCRIPTION }
     public enum Operation { DISBAND, PROMOTE, DEMOTE, REMOVE, LEAVE, APPLY, APPROVE, REJECT, CANCEL_APPLICATION }
     public enum OperationResult {
         SUCCESS, NOT_FOUND, NOT_MEMBER, FORBIDDEN, INVALID_TARGET,
@@ -63,8 +64,7 @@ public final class OrganizationSavedData extends SavedData {
             UUID organizationId = tag.getUUID("organization");
             UUID applicant = tag.getUUID("applicant");
             Organization organization = data.organizations.get(organizationId);
-            if (organization == null || organization.joinPolicy() != Organization.JoinPolicy.APPROVAL
-                    || organization.roleOf(applicant) != null) continue;
+            if (organization == null || organization.roleOf(applicant) != null) continue;
             Map<UUID, Long> pending = data.applications.computeIfAbsent(
                     organizationId, ignored -> new HashMap<>());
             if (pending.size() < MAX_APPLICATIONS)
@@ -126,6 +126,21 @@ public final class OrganizationSavedData extends SavedData {
         return organizations.get(id);
     }
 
+    /** Profile updates intentionally have no organization name parameter. */
+    public UpdateResult update(UUID actor, UUID organizationId, String rawDescription,
+                               Organization.JoinPolicy policy) {
+        Organization organization = organizations.get(organizationId);
+        if (organization == null) return UpdateResult.NOT_FOUND;
+        Organization.Role role = organization.roleOf(actor);
+        if (role == null) return UpdateResult.NOT_MEMBER;
+        if (role == Organization.Role.MEMBER) return UpdateResult.FORBIDDEN;
+        if (!validDescription(rawDescription) || policy == null) return UpdateResult.INVALID_DESCRIPTION;
+        organizations.put(organizationId, organization.withProfile(normalizeDescription(rawDescription), policy));
+        // Changing admission rules does not discard applications already awaiting review.
+        setDirty();
+        return UpdateResult.UPDATED;
+    }
+
     public OperationResult operate(UUID actor, UUID organizationId, UUID target, Operation operation) {
         Organization organization = organizations.get(organizationId);
         if (organization == null) return OperationResult.NOT_FOUND;
@@ -144,6 +159,11 @@ public final class OrganizationSavedData extends SavedData {
             if (memberships(actor).size() >= MAX_MEMBERSHIPS) return OperationResult.TOO_MANY;
             if (organization.joinPolicy() == Organization.JoinPolicy.UNRESTRICTED) {
                 organizations.put(organizationId, organization.withMember(actor));
+                Map<UUID, Long> pending = applications.get(organizationId);
+                if (pending != null) {
+                    pending.remove(actor);
+                    if (pending.isEmpty()) applications.remove(organizationId);
+                }
             } else {
                 Map<UUID, Long> pending = applications.computeIfAbsent(
                         organizationId, ignored -> new HashMap<>());
@@ -208,9 +228,9 @@ public final class OrganizationSavedData extends SavedData {
     public CreateResult create(UUID founder, String rawName, String rawDescription,
                                Organization.JoinPolicy policy) {
         if (rawName == null || !safeText(rawName)) return CreateResult.INVALID_NAME;
-        if (rawDescription == null || !safeText(rawDescription)) return CreateResult.INVALID_DESCRIPTION;
+        if (rawDescription == null || !safeDescription(rawDescription)) return CreateResult.INVALID_DESCRIPTION;
         String name = rawName.strip();
-        String description = rawDescription.strip();
+        String description = normalizeDescription(rawDescription);
         if (!validName(name)) return CreateResult.INVALID_NAME;
         if (!validDescription(description)) return CreateResult.INVALID_DESCRIPTION;
         if (memberships(founder).size() >= MAX_MEMBERSHIPS) return CreateResult.TOO_MANY;
@@ -231,7 +251,16 @@ public final class OrganizationSavedData extends SavedData {
 
     public static boolean validDescription(String description) {
         return description != null && description.codePointCount(0, description.length()) <= 120
-                && safeText(description);
+                && safeDescription(description);
+    }
+
+    private static String normalizeDescription(String description) {
+        return description.replace("\r\n", "\n").replace('\r', '\n').strip();
+    }
+
+    private static boolean safeDescription(String description) {
+        return description.codePoints().noneMatch(c -> c == '\u00a7'
+                || (Character.isISOControl(c) && c != '\n' && c != '\r'));
     }
 
     private static boolean safeText(String text) {

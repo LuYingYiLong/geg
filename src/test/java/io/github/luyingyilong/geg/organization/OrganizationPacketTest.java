@@ -15,7 +15,7 @@ public final class OrganizationPacketTest {
         UUID leader = UUID.randomUUID();
         UUID officer = UUID.randomUUID();
         OrganizationSyncPacket.Summary summary = new OrganizationSyncPacket.Summary(
-                organizationId, "Builders", "Build together", Organization.JoinPolicy.APPROVAL,
+                organizationId, "Builders", "Build together\n共同建设", Organization.JoinPolicy.APPROVAL,
                 leader, List.of(new OrganizationSyncPacket.Member(leader, "Alice", Organization.Role.LEADER),
                         new OrganizationSyncPacket.Member(officer, "Bob", Organization.Role.OFFICER)),
                 List.of(new OrganizationSyncPacket.Application(UUID.randomUUID(), "Cara", 123L)));
@@ -41,6 +41,17 @@ public final class OrganizationPacketTest {
         FriendlyByteBuf cancellationBuffer = new FriendlyByteBuf(Unpooled.buffer());
         OrganizationActionPacket.encode(cancellation, cancellationBuffer);
         check(OrganizationActionPacket.decode(cancellationBuffer).equals(cancellation));
+        OrganizationActionPacket update = OrganizationActionPacket.update(organizationId, "新的简介\n第二行\n\n第四行",
+                Organization.JoinPolicy.UNRESTRICTED);
+        FriendlyByteBuf updateBuffer = new FriendlyByteBuf(Unpooled.buffer());
+        OrganizationActionPacket.encode(update, updateBuffer);
+        check(OrganizationActionPacket.decode(updateBuffer).equals(update));
+        check(update.name().isEmpty() && update.action() == OrganizationActionPacket.Action.UPDATE);
+        OrganizationActionPacket create = OrganizationActionPacket.create("Builders", "第一行\n第二行",
+                Organization.JoinPolicy.APPROVAL);
+        FriendlyByteBuf createBuffer = new FriendlyByteBuf(Unpooled.buffer());
+        OrganizationActionPacket.encode(create, createBuffer);
+        check(OrganizationActionPacket.decode(createBuffer).equals(create));
         OrganizationSyncPacket cancelled = new OrganizationSyncPacket(List.of(summary),
                 List.of(new OrganizationSyncPacket.Directory(organizationId, "Other",
                         Organization.JoinPolicy.APPROVAL, false)), "organization.geg.result.cancel_application");

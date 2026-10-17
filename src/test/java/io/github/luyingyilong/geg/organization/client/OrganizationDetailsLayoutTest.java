@@ -33,6 +33,8 @@ public final class OrganizationDetailsLayoutTest {
         OrganizationSyncPacket.Summary summary = new OrganizationSyncPacket.Summary(UUID.randomUUID(), "公社", "共同建设",
                 Organization.JoinPolicy.APPROVAL, members.get(0).id(), members, List.of());
         content.update(summary);
+        check(!content.editButton().visible(), "Read-only viewers do not receive an edit action");
+        content.editable(true);
         check(content.descriptions().item("name").content().getString().equals("公社"), "Bind the organization name");
         check(content.descriptions().item("description").content().getString().equals("共同建设"), "Bind the original description");
         check(((TranslatableContents) content.descriptions().item("joinPolicy").content().getContents()).getKey()
@@ -48,6 +50,11 @@ public final class OrganizationDetailsLayoutTest {
             check(content.descriptions().absoluteBounds().bottom() + 8 <= table.absoluteBounds().y(),
                     "Facts are above the member table at width " + width);
             check(table.size().height() >= 60, "Keep the member table's minimum height");
+            var edit = content.editButton().absoluteBounds();
+            var facts = content.descriptions().absoluteBounds();
+            check(edit.x() >= facts.right() + 8, "Edit button remains to the right of descriptions");
+            check(Math.abs(edit.y() * 2 + edit.height() - facts.y() * 2 - facts.height()) <= 1,
+                    "Edit button shrinks and centers vertically beside the facts");
             int top = content.descriptions().absoluteBounds().y();
             table.scrollBy(46);
             check(table.scroll() > 0 && content.descriptions().absoluteBounds().y() == top,
@@ -59,6 +66,15 @@ public final class OrganizationDetailsLayoutTest {
         window.layoutViewport(320, 200, font);
         check(drawer.bodyScroll().maxScrollY() > 0, "A long introduction uses the existing drawer body scroll");
         check(table.absoluteBounds().y() >= content.descriptions().absoluteBounds().bottom(), "Long text does not overlap members");
+        var fullDescription = content.descriptions().item("description").contentNode();
+        var descriptionArea = fullDescription.absoluteBounds();
+        check(fullDescription.displayedLines(font, descriptionArea.width(), descriptionArea.height()).size()
+                        == fullDescription.lines(font, descriptionArea.width()).size(),
+                "Descriptions keeps every wrapped line, without the list preview's two-line limit");
+        check(descriptionArea.bottom() <= content.descriptions().item("joinPolicy").absoluteBounds().y(),
+                "The full introduction leaves enough space before the next fact");
+        check(content.descriptions().item("joinPolicy").absoluteBounds().bottom() <= table.absoluteBounds().y(),
+                "The edit action's reserved width is included when measuring the full profile");
         content.update(new OrganizationSyncPacket.Summary(summary.id(), "新名称", " ", Organization.JoinPolicy.UNRESTRICTED,
                 summary.founder(), members, List.of()));
         check(((TranslatableContents) content.descriptions().item("description").content().getContents()).getKey()

@@ -30,6 +30,10 @@ public record Organization(UUID id, String name, String description, UUID founde
     public Set<UUID> members() { return roles.keySet(); }
     public Role roleOf(UUID member) { return roles.get(member); }
 
+    public Organization withProfile(String description, JoinPolicy policy) {
+        return new Organization(id, name, description, founder, policy, createdAt, roles);
+    }
+
     public Organization withRole(UUID member, Role role) {
         if (member.equals(founder) || !roles.containsKey(member) || role == Role.LEADER)
             throw new IllegalArgumentException("Invalid role change");

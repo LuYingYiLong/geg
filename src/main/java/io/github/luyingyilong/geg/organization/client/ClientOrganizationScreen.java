@@ -6,6 +6,7 @@ import io.github.luyingyilong.geg.client.ui.Checkbox;
 import io.github.luyingyilong.geg.client.ui.Form;
 import io.github.luyingyilong.geg.client.ui.FormItem;
 import io.github.luyingyilong.geg.client.ui.input.Input;
+import io.github.luyingyilong.geg.client.ui.input.TextArea;
 import io.github.luyingyilong.geg.client.ui.layout.Box;
 import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
 import io.github.luyingyilong.geg.client.ui.screen.OreScreen;
@@ -25,8 +26,8 @@ public final class ClientOrganizationScreen {
         if (canvas != null && ModularScreen.isActive("geg", "organizations")) return;
         Input name = new Input(250.0F).placeholder(Component.translatable("organization.geg.name_hint"));
         name.setMaxLength(48);
-        Input description = new Input(250.0F)
-                .placeholder(Component.translatable("organization.geg.description_hint"));
+        TextArea description = new TextArea(250.0F).rows(4);
+        description.placeholder(Component.translatable("organization.geg.description_hint"));
         description.setMaxLength(120);
         Checkbox unrestricted = new Checkbox(Component.translatable("organization.geg.join_unrestricted"))
                 .checked(true);
@@ -50,7 +51,8 @@ public final class ClientOrganizationScreen {
                 .add(new FormItem("join_policy",
                         Component.translatable("organization.geg.join_policy"), joinChoices,
                         () -> approval.checked() ? "approval" : "unrestricted"));
-        canvas = new OrganizationCanvasWidget(form, name, description);
+        OrganizationEditForm editor = new OrganizationEditForm();
+        canvas = new OrganizationCanvasWidget(form, name, description, editor);
         canvas.showInitialState();
 
         ModularPanel<?> panel = new InstantOrganizationPanel();
@@ -59,8 +61,10 @@ public final class ClientOrganizationScreen {
         panel.child(canvas.full().disableThemeBackground(true));
         panel.child(name);
         panel.child(description);
+        panel.child(editor.descriptionInput());
         panel.onCloseAction(() -> {
             form.setVisible(false);
+            editor.hide();
             canvas = null;
         });
         OreScreen.open(new ModularScreen("geg", panel).useTheme(OreTheme.NAME).pausesGame(false));
