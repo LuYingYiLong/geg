@@ -91,6 +91,10 @@ public class Input extends TextFieldWidget {
     }
 
     void layoutControl(InputControl control) { layoutControl = control; }
+    /** Validation text can change the owning FormItem's measured height. */
+    protected final void invalidateInputLayout() {
+        if (layoutControl != null) layoutControl.requestLayout();
+    }
 
     @Override public boolean isEnabled() { return super.isEnabled() && inputVisible(); }
 

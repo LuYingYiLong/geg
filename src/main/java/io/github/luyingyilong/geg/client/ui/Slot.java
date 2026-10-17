@@ -8,11 +8,12 @@ import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
-/** Read-only reward preview. It never moves items or participates in inventory clicks. */
+/** Read-only item preview. It never moves items or participates in inventory clicks. */
 public final class Slot extends Control {
     public static final int SIZE = 26;
     private ItemStack item = ItemStack.EMPTY;
     private int quantity;
+    private boolean backgroundVisible = true;
     private final Label count = new Label().color(OreTheme.TEXT_WHITE).shadow(true)
             .align(Label.Horizontal.RIGHT, Label.Vertical.BOTTOM).fontSize(8);
 
@@ -31,6 +32,12 @@ public final class Slot extends Control {
     public ItemStack item() { return item.copy(); }
     public int quantity() { return quantity; }
 
+    public Slot backgroundVisible(boolean visible) {
+        backgroundVisible = visible;
+        return this;
+    }
+    public boolean backgroundVisible() { return backgroundVisible; }
+
     @Override public boolean hasTooltip() { return !item.isEmpty(); }
 
     @Override public void renderTooltip(ModularGuiContext context, int mouseX, int mouseY) {
@@ -44,9 +51,11 @@ public final class Slot extends Control {
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
         Rect area = screenBounds(screenX, screenY);
-        var style = context.getTheme().getItemSlotTheme().theme();
-        if (style.getBackground() != null)
-            style.getBackground().draw(context, area.x(), area.y(), area.width(), area.height(), style);
+        if (backgroundVisible) {
+            var style = context.getTheme().getItemSlotTheme().theme();
+            if (style.getBackground() != null)
+                style.getBackground().draw(context, area.x(), area.y(), area.width(), area.height(), style);
+        }
         if (item.isEmpty()) return;
         context.getGraphics().renderItem(item, area.x() + (area.width() - 16) / 2, area.y() + 3);
     }

@@ -47,21 +47,24 @@ public final class ClientMarketScreen {
         search.controlSize(Button.Size.SMALL);
         canvas = new MarketCanvasWidget(search);
 
-        quantity = new NumberInput(250.0F, NumberInput.Kind.QUANTITY);
+        quantity = new NumberInput(250.0F, NumberInput.Kind.QUANTITY)
+                .minimumValue(1).boundaryStrategy(NumberInput.BoundaryStrategy.CLAMP);
         quantityValue = new StringValue("");
         quantity.value(quantityValue);
         quantity.placeholder(Component.translatable("market.geg.quantity"));
         quantity.controlSize(Button.Size.MEDIUM);
         quantity.setInputVisible(false);
 
-        price = new NumberInput(250.0F, NumberInput.Kind.COIN);
+        price = new NumberInput(250.0F, NumberInput.Kind.COIN)
+                .minimumValue("0.01").boundaryStrategy(NumberInput.BoundaryStrategy.CLAMP);
         priceValue = new StringValue("");
         price.value(priceValue);
         price.placeholder(Component.translatable("market.geg.unit_price"));
         price.controlSize(Button.Size.MEDIUM);
         price.setInputVisible(false);
 
-        tradeQuantity = new NumberInput(320.0F, NumberInput.Kind.QUANTITY);
+        tradeQuantity = new NumberInput(320.0F, NumberInput.Kind.QUANTITY)
+                .minimumValue(1).boundaryStrategy(NumberInput.BoundaryStrategy.CLAMP);
         tradeQuantityValue = new StringValue("1");
         tradeQuantity.value(tradeQuantityValue);
         tradeQuantity.placeholder(Component.translatable("market.geg.quantity"));

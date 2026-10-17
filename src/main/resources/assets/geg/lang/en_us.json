@@ -125,6 +125,7 @@
   "market.geg.buying_item": "Buy: %s",
   "market.geg.selling_item": "Sell: %s",
   "market.geg.sample": "Selected sample",
+  "ore.geg.number.out_of_bounds": "Enter a number from %s to %s",
   "market.geg.form.invalid_quantity": "Enter a positive whole number within the limit",
   "market.geg.form.invalid_coin": "Enter a positive coin amount with at most two decimals",
   "organization.geg.entry": "Org",

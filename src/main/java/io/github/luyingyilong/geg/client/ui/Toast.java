@@ -26,8 +26,8 @@ public final class Toast extends Container {
     public static final long DEFAULT_DURATION = 3000L;
     public static final long ENTER_DURATION = 180L;
     public static final long EXIT_DURATION = 160L;
-    private static final int INSET_X = 6;
-    private static final int INSET_Y = 4;
+    private static final int INSET_X = 4;
+    private static final int INSET_Y = 2;
     private final Label label = new Label().wrap(Label.Wrap.WORD).maxLines(3).overflow(Label.Overflow.ELLIPSIS)
             .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
     private final LongSupplier clock;

@@ -322,12 +322,14 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         detailModal.visible(modal != null);
         quantityModal.visible(modal != null && quantityMenu);
         if (modal != null) {
+            updatePublishQuantityLimit();
             detailModal.title(modal.title());
             detailContent.refresh();
             configureDetailActions();
         }
         if (quantityMenu) {
             MarketDetail offer = selectedDetail();
+            ClientMarketScreen.setTradeQuantityMaximum(maxTradeQuantity(offer));
             quantityModal.title(offer != null && offer.buyOrder()
                     ? Component.translatable("market.geg.fulfill_title_fee",
                     MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints()))
@@ -587,6 +589,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             quantityMenu = true;
             quantityContent.scroll = 0;
             ClientMarketScreen.showTradeQuantity(true);
+            ClientMarketScreen.setTradeQuantityMaximum(maxTradeQuantity(offer));
             configureQuantityActions();
         });
         private final Button favorite = new Button().size(Button.Size.SMALL).toggleButton(true)
@@ -640,16 +643,21 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     private int maxTradeQuantity(MarketDetail offer) {
-        if (offer == null) return 0;
+        if (offer == null || offer.quantity() <= 0 || offer.unitPrice() <= 0L) return 0;
         if (!offer.buyOrder()) {
             return (int) Math.min(offer.quantity(),
-                    ClientMoneyState.balance().coinMinorUnits() / offer.unitPrice());
+                    Math.max(0L, ClientMoneyState.balance().coinMinorUnits()) / offer.unitPrice());
         }
-        int count = 0;
-        for (ClientMarketState.InventoryEntry entry : ClientMarketState.inventory()) {
-            if (MarketKey.of(entry.item()).equals(MarketKey.of(offer.item()))) count += entry.item().getCount();
+        var player = Minecraft.getInstance().player;
+        if (player == null) return 0;
+        MarketKey key = MarketKey.of(offer.item());
+        long count = 0L;
+        for (int slot = 0; slot < 36; slot++) {
+            ItemStack item = player.getInventory().getItem(slot);
+            if (!item.isEmpty() && MarketKey.of(item).equals(key)) count += item.getCount();
+            if (count >= offer.quantity()) return offer.quantity();
         }
-        return Math.min(offer.quantity(), count);
+        return (int) Math.min(offer.quantity(), count);
     }
 
     private void adjustTradeQuantity(int index) {
@@ -707,7 +715,11 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                     ClientMarketState.requestDetails(card.detailId, card.item);
                 }
             }
-            case INVENTORY, SAMPLE -> ClientMarketScreen.showFields(true, true, 1, 1L);
+            case INVENTORY, SAMPLE -> {
+                ClientMarketScreen.showFields(true, true, 1,
+                        MarketPrices.suggestedUnitPrice(card.item, ClientMarketState.summaries()));
+                updatePublishQuantityLimit();
+            }
             case OWN, OWN_REQUEST -> ClientMarketScreen.showFields(false, true, 0, card.price);
             default -> ClientMarketScreen.showFields(false, false, 0, 0L);
         }
@@ -736,13 +748,18 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         }
     }
 
-    private void primaryModalAction() {
+    private void updatePublishQuantityLimit() {
+        if (modal == null) return;
         if (modal.kind == Kind.INVENTORY) {
             ClientMarketScreen.setDetailQuantityMaximum(requestMode
                     ? Integer.MAX_VALUE : (int) modal.quantity);
         } else if (modal.kind == Kind.SAMPLE) {
             ClientMarketScreen.setDetailQuantityMaximum(Integer.MAX_VALUE);
         }
+    }
+
+    private void primaryModalAction() {
+        updatePublishQuantityLimit();
         if ((modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE
                 || modal.kind == Kind.OWN || modal.kind == Kind.OWN_REQUEST)
                 && !ClientMarketScreen.validateDetailForm()) return;
@@ -1115,7 +1132,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         private final Label name = scrollingCardLabel(TEXT);
         private final Label count = scrollingCardLabel(SECONDARY_TEXT);
         private final Label price = scrollingCardLabel(ACCENT);
-        private final ItemIconControl icon = new ItemIconControl();
+        private final Slot icon = new Slot().backgroundVisible(false);
         private final Box textColumn = new Box().gap(1);
         private final Box row = new Box().orientation(Box.Orientation.HORIZONTAL).gap(5);
         private Card card;
@@ -1135,7 +1152,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         public void bind(Card card) {
             this.card = card;
             name.text(card.title());
-            icon.item = card.item;
+            icon.item(card.item, 1);
             icon.visible(!card.item.isEmpty());
             count.text(switch (card.kind) {
                 case GROUP -> Component.translatable("market.geg.market_count", card.quantity, card.buyQuantity);
@@ -1177,13 +1194,4 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         }
     }
 
-    private static final class ItemIconControl extends Control {
-        private ItemStack item = ItemStack.EMPTY;
-
-        @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-            if (item.isEmpty()) return;
-            Rect area = screenBounds(screenX, screenY);
-            context.getGraphics().renderItem(item, area.x(), area.y() + 1);
-        }
-    }
 }

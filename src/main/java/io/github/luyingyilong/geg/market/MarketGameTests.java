@@ -32,6 +32,29 @@ public final class MarketGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void priceSuggestionsRespectFullItemData(GameTestHelper helper) {
+        ItemStack normal = new ItemStack(Items.PAPER);
+        ItemStack tagged = normal.copy();
+        tagged.getOrCreateTag().putString("edition", "special");
+        List<MarketSummary> summaries = List.of(
+                new MarketSummary(normal, 5, 250, 0, 0, 1),
+                new MarketSummary(normal, 3, 150, 0, 0, 2),
+                new MarketSummary(tagged, 8, 10, 0, 0, 3),
+                new MarketSummary(new ItemStack(Items.DIAMOND), 0, 0, 50, 999, 4));
+        helper.assertTrue(MarketPrices.suggestedUnitPrice(normal, summaries) == 150,
+                "Expected the lowest active sale, excluding different full item data");
+        helper.assertTrue(MarketPrices.suggestedUnitPrice(tagged, summaries) == 10,
+                "A tagged item should use its own price");
+        helper.assertTrue(MarketPrices.suggestedUnitPrice(new ItemStack(Items.DIAMOND), summaries) == 1,
+                "Buy-only markets must not supply a sale price");
+        helper.assertTrue(MarketPrices.suggestedUnitPrice(new ItemStack(Items.STICK), summaries) == 1,
+                "Missing sales should default to 0.01 coin");
+        helper.assertTrue(MarketPrices.suggestedUnitPrice(ItemStack.EMPTY, summaries) == 1,
+                "An empty sample cannot use another item's price");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void marketFeeAndTradingPause(GameTestHelper helper) {
         var server = helper.getLevel().getServer();
         MoneySavedData data = MoneySavedData.get(server);
