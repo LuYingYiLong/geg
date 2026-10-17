@@ -7,9 +7,17 @@ import net.minecraft.network.chat.Component;
 
 /** Human mail is literal text; only trusted server events may contain translation keys. */
 public record MailMessage(UUID id, long sentAt, Kind kind, String sender, String title,
-                          String body, List<String> arguments, long coin, MailActionPacket.Scope scope) {
+                          String body, List<String> arguments, long coin, MailActionPacket.Scope scope,
+                          UUID authorId, String authorName) {
     public enum Kind { ADMIN, ORGANIZATION, SYSTEM }
-    public MailMessage { arguments = List.copyOf(arguments); }
+    public MailMessage {
+        arguments = List.copyOf(arguments);
+        authorName = java.util.Objects.requireNonNullElse(authorName, "");
+    }
+    public MailMessage(UUID id, long sentAt, Kind kind, String sender, String title,
+                       String body, List<String> arguments, long coin, MailActionPacket.Scope scope) {
+        this(id, sentAt, kind, sender, title, body, arguments, coin, scope, null, kind == Kind.ADMIN ? sender : "");
+    }
     public MailMessage(UUID id, long sentAt, Kind kind, String sender, String title,
                        String body, List<String> arguments, long coin) {
         this(id, sentAt, kind, sender, title, body, arguments, coin, legacyScope(kind));
@@ -26,6 +34,8 @@ public record MailMessage(UUID id, long sentAt, Kind kind, String sender, String
         tag.putUUID("id", id); tag.putLong("sentAt", sentAt); tag.putString("kind", kind.name());
         tag.putString("scope", scope.name());
         tag.putString("sender", sender); tag.putString("title", title); tag.putString("body", body); tag.putLong("coin", coin);
+        if (authorId != null) tag.putUUID("authorId", authorId);
+        if (!authorName.isEmpty()) tag.putString("authorName", authorName);
         ListTag args = new ListTag(); arguments.forEach(value -> args.add(StringTag.valueOf(value))); tag.put("args", args);
         return tag;
     }
@@ -35,6 +45,9 @@ public record MailMessage(UUID id, long sentAt, Kind kind, String sender, String
         Kind kind = Kind.valueOf(tag.getString("kind"));
         return new MailMessage(tag.getUUID("id"), tag.getLong("sentAt"), kind,
                 tag.getString("sender"), tag.getString("title"), tag.getString("body"), args, tag.getLong("coin"),
-                tag.contains("scope", Tag.TAG_STRING) ? MailActionPacket.Scope.valueOf(tag.getString("scope")) : legacyScope(kind));
+                tag.contains("scope", Tag.TAG_STRING) ? MailActionPacket.Scope.valueOf(tag.getString("scope")) : legacyScope(kind),
+                tag.hasUUID("authorId") ? tag.getUUID("authorId") : null,
+                tag.contains("authorName", Tag.TAG_STRING) ? tag.getString("authorName")
+                        : kind == Kind.ADMIN ? tag.getString("sender") : "");
     }
 }

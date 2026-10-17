@@ -1,6 +1,9 @@
 package io.github.luyingyilong.geg.mail.client;
 
 import io.github.luyingyilong.geg.mail.*;
+import io.github.luyingyilong.geg.mail.MailActionPacket;
+import io.github.luyingyilong.geg.mail.MailState;
+import io.github.luyingyilong.geg.mail.MailSyncPacket;
 
 import java.util.*;
 

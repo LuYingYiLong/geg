@@ -1,16 +1,29 @@
 package io.github.luyingyilong.geg.mail.client;
 
-import io.github.luyingyilong.geg.client.ui.MenuItem;
-import io.github.luyingyilong.geg.client.ui.Header;
+import io.github.luyingyilong.geg.client.ui.Avatar;
 import io.github.luyingyilong.geg.client.ui.Button;
+import io.github.luyingyilong.geg.client.ui.Header;
+import io.github.luyingyilong.geg.client.ui.MenuItem;
 import io.github.luyingyilong.geg.client.ui.Segmented;
 import io.github.luyingyilong.geg.client.ui.layout.*;
-import io.github.luyingyilong.geg.client.ui.util.OreIcons;
+import io.github.luyingyilong.geg.client.ui.layout.Box;
+import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.Padding;
+import io.github.luyingyilong.geg.client.ui.layout.Panel;
+import io.github.luyingyilong.geg.client.ui.layout.Scroll;
+import io.github.luyingyilong.geg.client.ui.layout.Size;
+import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
+import io.github.luyingyilong.geg.client.ui.layout.Window;
+import io.github.luyingyilong.geg.client.ui.theme.OreIcons;
 import io.github.luyingyilong.geg.mail.*;
+import io.github.luyingyilong.geg.mail.MailActionPacket;
+import io.github.luyingyilong.geg.mail.MailMessage;
+import io.github.luyingyilong.geg.mail.MailState;
+import io.github.luyingyilong.geg.mail.MailSyncPacket;
 import io.github.luyingyilong.geg.money.MoneySavedData;
+import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.client.gui.Font;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +33,13 @@ public final class MailLayoutTest {
         Scroll messages = new Scroll().content(new Control().preferred(100, 1200));
         Scroll detail = new Scroll().content(new Control().preferred(120, 1600));
         detail.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Panel detailPanel = new Panel(null).child(new Padding(Padding.Insets.all(4)).child(new Box().add(detail)));
+        Control detailTitle = new Control().preferred(40, 12);
+        Avatar avatar = new Avatar().initials("Sender");
+        Box senderInfo = new Box().gap(2).add(new Control().minimum(0, 10)).add(new Control().minimum(0, 10));
+        senderInfo.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        Box senderRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(6).add(avatar).add(senderInfo);
+        Panel detailPanel = new Panel(null).child(new Padding(Padding.Insets.all(4))
+                .child(new Box().gap(4).add(detailTitle).add(senderRow).add(detail)));
         Scroll horizontal = new Scroll().content(new MailColumns(messages, detailPanel)).vertical(Scroll.BarMode.DISABLED);
         horizontal.minimum(0, 41).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         Font font = new Font(id -> null, false) {
@@ -52,7 +71,12 @@ public final class MailLayoutTest {
             check(content.absoluteBounds().y() == header.bounds().bottom());
             check(content.absoluteBounds().bottom() == height);
             check(messages.size().width() >= 100 && detailPanel.size().width() >= 120);
-            check(detail.size().height() == detailPanel.size().height() - 8);
+            check(detail.size().height() == detailPanel.size().height() - 52);
+            check(avatar.size().equals(new Size(24, 24)) && senderInfo.size().width() == senderRow.size().width() - 30);
+            int titleTop = detailTitle.absoluteBounds().y(), senderTop = senderRow.absoluteBounds().y();
+            detail.scrollBy(0, 100);
+            check(detailTitle.absoluteBounds().y() == titleTop && senderRow.absoluteBounds().y() == senderTop);
+            check(detail.absoluteBounds().y() == senderRow.absoluteBounds().bottom() + 4);
             check(messages.maxScrollY() > 0 && detail.maxScrollY() > 0);
             check(messages.size().height() == horizontal.viewport().height());
             check(horizontal.maxScrollX() == Math.max(0, 224 - (width - 8)));

@@ -1,11 +1,10 @@
 package io.github.luyingyilong.geg.client.ui;
 
-import io.github.luyingyilong.geg.client.ui.util.OreIcons;
-
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
+import io.github.luyingyilong.geg.client.ui.theme.OreIcons;
 import net.minecraft.client.gui.GuiGraphics;
 
 /** A 16-frame loading indicator from a vertical 7x7 sprite strip. */

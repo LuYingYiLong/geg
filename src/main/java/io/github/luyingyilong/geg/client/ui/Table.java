@@ -1,31 +1,31 @@
 package io.github.luyingyilong.geg.client.ui;
 
-import io.github.luyingyilong.geg.client.ui.util.ReleaseGesture;
-
 import brachy.modularui.screen.viewport.ModularGuiContext;
-import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Container;
+import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.FocusManager;
 import io.github.luyingyilong.geg.client.ui.layout.Panel;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
-import io.github.luyingyilong.geg.client.ui.layout.FocusManager;
 import io.github.luyingyilong.geg.client.ui.layout.Window;
+import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
+import io.github.luyingyilong.geg.client.ui.util.ReleaseGesture;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
-import java.util.ArrayList;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
-import java.util.function.BiConsumer;
 
 /** Fixed-header table whose rows use the Ore bar theme and shared draw/hit geometry. */
 public final class Table<T> extends Container {

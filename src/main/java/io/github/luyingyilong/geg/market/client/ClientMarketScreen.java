@@ -1,19 +1,19 @@
 package io.github.luyingyilong.geg.market.client;
 
-import io.github.luyingyilong.geg.client.ui.OreScreen;
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
 import brachy.modularui.value.StringValue;
-import io.github.luyingyilong.geg.client.ui.OreTheme;
-import io.github.luyingyilong.geg.client.ui.Input;
 import io.github.luyingyilong.geg.client.ui.Button;
 import io.github.luyingyilong.geg.client.ui.Form;
 import io.github.luyingyilong.geg.client.ui.FormItem;
-import io.github.luyingyilong.geg.client.ui.NumberInput;
+import io.github.luyingyilong.geg.client.ui.input.Input;
+import io.github.luyingyilong.geg.client.ui.input.NumberInput;
+import io.github.luyingyilong.geg.client.ui.screen.OreScreen;
+import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import io.github.luyingyilong.geg.market.MarketActionPacket;
 import io.github.luyingyilong.geg.market.MarketNetwork;
-import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 

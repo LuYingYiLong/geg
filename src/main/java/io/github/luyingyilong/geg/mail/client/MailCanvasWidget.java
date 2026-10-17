@@ -5,12 +5,41 @@ import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
 import io.github.luyingyilong.geg.client.ui.*;
+import io.github.luyingyilong.geg.client.ui.Avatar;
+import io.github.luyingyilong.geg.client.ui.Button;
+import io.github.luyingyilong.geg.client.ui.Drawer;
+import io.github.luyingyilong.geg.client.ui.Form;
+import io.github.luyingyilong.geg.client.ui.FormItem;
+import io.github.luyingyilong.geg.client.ui.Header;
+import io.github.luyingyilong.geg.client.ui.Label;
+import io.github.luyingyilong.geg.client.ui.Menu;
+import io.github.luyingyilong.geg.client.ui.Segmented;
+import io.github.luyingyilong.geg.client.ui.input.Input;
+import io.github.luyingyilong.geg.client.ui.input.NumberInput;
+import io.github.luyingyilong.geg.client.ui.input.TextArea;
 import io.github.luyingyilong.geg.client.ui.layout.*;
+import io.github.luyingyilong.geg.client.ui.layout.Box;
+import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.Overlay;
+import io.github.luyingyilong.geg.client.ui.layout.Padding;
+import io.github.luyingyilong.geg.client.ui.layout.Panel;
+import io.github.luyingyilong.geg.client.ui.layout.Scroll;
+import io.github.luyingyilong.geg.client.ui.layout.Size;
+import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
+import io.github.luyingyilong.geg.client.ui.layout.Window;
+import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import io.github.luyingyilong.geg.mail.*;
+import io.github.luyingyilong.geg.mail.MailActionPacket;
+import io.github.luyingyilong.geg.mail.MailMessage;
+import io.github.luyingyilong.geg.mail.MailNetwork;
+import io.github.luyingyilong.geg.mail.MailPolicy;
+import io.github.luyingyilong.geg.mail.MailState;
+import io.github.luyingyilong.geg.mail.MailSyncPacket;
 import io.github.luyingyilong.geg.money.MoneyCurrency;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
+
 import java.math.BigDecimal;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -27,9 +56,11 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     private final MailInbox inbox = new MailInbox();
     private final Menu mailMenu = new Menu().empty(tr("mail.geg.loading"));
     private final Scroll mailScroll = new Scroll().content(mailMenu).horizontal(Scroll.BarMode.DISABLED);
-    private final Label detailTitle = new Label().hero(true).wrap(Label.Wrap.WORD);
-    private final Label detailSender = new Label().color(OreTheme.TEXT_SECONDARY).wrap(Label.Wrap.WORD);
-    private final Label detailDate = new Label().color(OreTheme.TEXT_SECONDARY);
+    private final Label detailTitle = new Label().hero(true).wrap(Label.Wrap.WORD).overflow(Label.Overflow.ELLIPSIS);
+    private final Avatar detailAvatar = new Avatar();
+    private final Box detailAuthor = new Box().orientation(Box.Orientation.HORIZONTAL).gap(6);
+    private final Label detailSender = new Label().overflow(Label.Overflow.ELLIPSIS);
+    private final Label detailDate = new Label().color(OreTheme.TEXT_SECONDARY).overflow(Label.Overflow.ELLIPSIS);
     private final Label detailNotice = new Label().color(OreTheme.TEXT_ERROR).wrap(Label.Wrap.WORD);
     private boolean revealPreview;
     private final Label detailText = new Label().color(OreTheme.TEXT_WHITE).wrap(Label.Wrap.WORD);
@@ -75,12 +106,16 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         notice.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         for (Control label : List.of(detailTitle, detailSender, detailDate, detailText, attachment, detailNotice))
             label.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        Box authorInfo = new Box().gap(2).add(detailSender).add(detailDate);
+        authorInfo.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        detailAuthor.add(detailAvatar).add(authorInfo);
+        detailAuthor.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         detailScroll = new Scroll().horizontal(Scroll.BarMode.DISABLED).content(new Box().gap(4)
-                .add(detailTitle).add(detailSender).add(detailDate).add(detailText).add(attachment).add(detailNotice).add(detailActions));
+                .add(detailText).add(attachment).add(detailNotice).add(detailActions));
         detailScroll.minimum(0, 16).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         detailActions.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Panel detailPanel = new Panel(null).child(new Padding(Padding.Insets.all(4))
-                .child(new Box().add(detailScroll)));
+                .child(new Box().gap(4).add(detailTitle).add(detailAuthor).add(detailScroll)));
         columnsScroll = new Scroll().vertical(Scroll.BarMode.DISABLED).content(new MailColumns(mailScroll, detailPanel));
         columnsScroll.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL); columnsScroll.minimum(0, 41);
         Padding padding = new Padding(Padding.Insets.all(4));
@@ -132,6 +167,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     private void showDetail(UUID id) {
         selected = id; selectedMessage = null; detailNotice.text(Component.empty()); detailText.text(tr("mail.geg.loading"));
         detailTitle.text(Component.empty()); detailSender.text(Component.empty()); detailDate.text(Component.empty()); attachment.text(Component.empty());
+        detailAuthor.visible(false); detailAvatar.initials("");
         clearDetailActions(); detailScroll.scrollToTop(); query(MailActionPacket.Action.DETAIL, id);
     }
     private void clearDetailActions() {
@@ -142,6 +178,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         selected = null; selectedItemKey = null; selectedMessage = null;
         detailTitle.text(tr("mail.geg.detail")); detailSender.text(Component.empty()); detailDate.text(Component.empty());
         detailText.text(tr("mail.geg.select_message")); attachment.text(Component.empty()); detailNotice.text(Component.empty());
+        detailAuthor.visible(false); detailAvatar.initials("");
         clearDetailActions();
     }
     private void updateDetail() {
@@ -150,7 +187,15 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         detailTitle.text(mail.titleText());
         Component source = mail.kind() == MailMessage.Kind.SYSTEM ? tr("mail.geg.system_source", mail.sender())
                 : tr(mail.kind() == MailMessage.Kind.ADMIN ? "mail.geg.admin_source" : "mail.geg.organization_source", mail.sender());
-        detailSender.text(source); detailDate.text(Component.literal(time(mail.sentAt()))); detailText.text(mail.bodyText());
+        if (!mail.authorName().isBlank()) {
+            detailSender.text(Component.literal(mail.authorName()));
+            detailAvatar.player(mail.authorId(), mail.authorName());
+        } else {
+            detailSender.text(source);
+            detailAvatar.initials(mail.sender());
+        }
+        detailAuthor.visible(true);
+        detailDate.text(Component.literal(time(mail.sentAt()))); detailText.text(mail.bodyText());
         attachment.text(mail.coin() == 0 ? Component.empty() : tr(selectedClaimed ? "mail.geg.claimed_amount" : "mail.geg.attachment_amount",
                 MoneyCurrency.COIN.format(mail.coin())));
         clearDetailActions();

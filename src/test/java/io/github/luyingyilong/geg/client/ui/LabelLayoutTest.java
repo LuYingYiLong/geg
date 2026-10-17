@@ -1,7 +1,9 @@
 package io.github.luyingyilong.geg.client.ui;
 
-import io.github.luyingyilong.geg.client.ui.util.OreFonts;
-
+import io.github.luyingyilong.geg.client.ui.layout.Box;
+import io.github.luyingyilong.geg.client.ui.layout.Rect;
+import io.github.luyingyilong.geg.client.ui.layout.Size;
+import io.github.luyingyilong.geg.client.ui.theme.OreFonts;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
@@ -9,9 +11,6 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import io.github.luyingyilong.geg.client.ui.layout.Size;
-import io.github.luyingyilong.geg.client.ui.layout.Box;
-import io.github.luyingyilong.geg.client.ui.layout.Rect;
 
 /** Headless text layout checks; the live client still verifies actual glyph rendering. */
 public final class LabelLayoutTest {

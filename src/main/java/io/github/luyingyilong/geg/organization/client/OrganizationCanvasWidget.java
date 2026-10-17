@@ -1,13 +1,36 @@
 package io.github.luyingyilong.geg.organization.client;
 
-import io.github.luyingyilong.geg.client.ui.util.OreIcons;
-
 import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
 import io.github.luyingyilong.geg.client.ui.*;
+import io.github.luyingyilong.geg.client.ui.Button;
+import io.github.luyingyilong.geg.client.ui.Dialog;
+import io.github.luyingyilong.geg.client.ui.Drawer;
+import io.github.luyingyilong.geg.client.ui.Dropdown;
+import io.github.luyingyilong.geg.client.ui.Form;
+import io.github.luyingyilong.geg.client.ui.Header;
+import io.github.luyingyilong.geg.client.ui.Label;
+import io.github.luyingyilong.geg.client.ui.Modal;
+import io.github.luyingyilong.geg.client.ui.PlayerIdentityCell;
+import io.github.luyingyilong.geg.client.ui.Table;
+import io.github.luyingyilong.geg.client.ui.input.Input;
 import io.github.luyingyilong.geg.client.ui.layout.*;
+import io.github.luyingyilong.geg.client.ui.layout.Box;
+import io.github.luyingyilong.geg.client.ui.layout.Container;
+import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.FocusManager;
+import io.github.luyingyilong.geg.client.ui.layout.Overlay;
+import io.github.luyingyilong.geg.client.ui.layout.Padding;
+import io.github.luyingyilong.geg.client.ui.layout.Panel;
+import io.github.luyingyilong.geg.client.ui.layout.Rect;
+import io.github.luyingyilong.geg.client.ui.layout.Scroll;
+import io.github.luyingyilong.geg.client.ui.layout.Size;
+import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
+import io.github.luyingyilong.geg.client.ui.layout.Window;
+import io.github.luyingyilong.geg.client.ui.theme.OreIcons;
+import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import io.github.luyingyilong.geg.organization.Organization;
 import io.github.luyingyilong.geg.organization.OrganizationNetwork;
 import io.github.luyingyilong.geg.organization.OrganizationSavedData;
@@ -131,11 +154,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                 .rowKey(OrganizationSyncPacket.Member::id)
                 .empty(Component.translatable("organization.geg.no_members"))
                 .column(new Table.Column<>("member", Component.translatable("organization.geg.member"),
-                        48, 110, 2, width -> 20,
-                        new Table.TextCell<OrganizationSyncPacket.Member>(
-                                member -> Component.literal(member.name()), OreTheme.TEXT_WHITE)
-                                .wrap(Label.Wrap.CHARACTER).maxLines(2)
-                                .overflow(Label.Overflow.ELLIPSIS)))
+                        48, 110, 2, width -> 20, new PlayerIdentityCell<>(
+                                OrganizationSyncPacket.Member::id, OrganizationSyncPacket.Member::name)))
                 .column(new Table.Column<>("role", Component.translatable("organization.geg.role"),
                         42, 64, 1, width -> 20,
                         new Table.TextCell<OrganizationSyncPacket.Member>(
@@ -193,10 +213,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                 .empty(Component.translatable("organization.geg.no_applications"))
                 .column(new Table.Column<>("player",
                         Component.translatable("organization.geg.player"),
-                        48, 120, 1, width -> 20,
-                        new Table.TextCell<OrganizationSyncPacket.Application>(
-                                application -> Component.literal(application.name()), OreTheme.TEXT_WHITE)
-                                .overflow(Label.Overflow.ELLIPSIS)))
+                        48, 120, 1, width -> 20, new PlayerIdentityCell<>(
+                                OrganizationSyncPacket.Application::id, OrganizationSyncPacket.Application::name)))
                 .column(new Table.Column<>("action",
                         Component.translatable("organization.geg.actions"),
                         112, 128, 0, width -> 20, new Table.ControlCell<>(ApplicationActions::new, ApplicationActions::bind)));

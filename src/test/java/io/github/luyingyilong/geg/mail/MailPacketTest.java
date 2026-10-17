@@ -20,6 +20,21 @@ public final class MailPacketTest {
                     List.of(new MailSyncPacket.Row(id, Component.literal("Hello"), "OP", MailMessage.Kind.ADMIN, 123, 100, false, false, MailActionPacket.Scope.PLAYER)),
                     message, true, id, 1, Long.MAX_VALUE, "92233720368547758.07", "");
             MailSyncPacket.encode(sync, buffer); check(MailSyncPacket.decode(buffer).equals(sync));
+            UUID author = UUID.randomUUID();
+            MailMessage authored = new MailMessage(id, 124, MailMessage.Kind.ORGANIZATION, "Builders", "Title",
+                    "Body", List.of(), 0, MailActionPacket.Scope.ORGANIZATION, author, "Alice");
+            check(MailMessage.load(authored.save()).equals(authored));
+            buffer.clear();
+            MailSyncPacket senderSync = new MailSyncPacket(sync.kind(), sync.revision(), sync.unread(), sync.admin(), sync.filter(),
+                    sync.offset(), sync.more(), sync.rows(), authored, false, id, 0, 0, "", "");
+            MailSyncPacket.encode(senderSync, buffer); check(MailSyncPacket.decode(buffer).equals(senderSync));
+            var legacy = authored.save(); legacy.remove("authorId"); legacy.remove("authorName");
+            MailMessage oldOrganization = MailMessage.load(legacy);
+            check(oldOrganization.authorId() == null && oldOrganization.authorName().isEmpty()
+                    && oldOrganization.sender().equals("Builders"));
+            legacy.putString("kind", "ADMIN"); legacy.putString("sender", "OldAdmin");
+            check(MailMessage.load(legacy).authorId() == null && MailMessage.load(legacy).authorName().equals("OldAdmin"));
+            check(MailMessage.load(message.save()).authorId() == null && MailMessage.load(message.save()).authorName().isEmpty());
             buffer.clear();
             buffer.writeEnum(MailSyncPacket.Kind.LIST); buffer.writeLong(0); buffer.writeVarInt(0); buffer.writeBoolean(false);
             buffer.writeEnum(MailState.Filter.ALL); buffer.writeVarInt(0); buffer.writeBoolean(false); buffer.writeVarInt(51);

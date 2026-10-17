@@ -1,6 +1,9 @@
 package io.github.luyingyilong.geg.mail;
 
 import io.github.luyingyilong.geg.organization.*;
+import io.github.luyingyilong.geg.organization.Organization;
+import io.github.luyingyilong.geg.organization.OrganizationSavedData;
+
 import java.util.*;
 
 public final class MailPolicyTest {

@@ -1,7 +1,8 @@
 package io.github.luyingyilong.geg.client.ui.util;
 
+import io.github.luyingyilong.geg.client.ui.input.InputPreedit;
+
 import java.util.List;
-import io.github.luyingyilong.geg.client.ui.InputPreedit;
 
 public final class WrappedTextTest {
     public static void main(String[] args) {

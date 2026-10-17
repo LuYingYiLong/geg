@@ -1,22 +1,21 @@
 package io.github.luyingyilong.geg.client.ui;
 
-import io.github.luyingyilong.geg.client.ui.util.OreIcons;
-import io.github.luyingyilong.geg.client.ui.util.OreSounds;
-
+import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Overlay;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
 import io.github.luyingyilong.geg.client.ui.layout.Size;
 import io.github.luyingyilong.geg.client.ui.layout.Window;
+import io.github.luyingyilong.geg.client.ui.theme.OreIcons;
+import io.github.luyingyilong.geg.client.ui.theme.OreSounds;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import org.lwjgl.glfw.GLFW;
-import brachy.modularui.screen.viewport.ModularGuiContext;
 
-import java.util.stream.IntStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /** Standalone checks for the animated panel's actual layout, mask and input isolation. */
 public final class DrawerLayoutTest {

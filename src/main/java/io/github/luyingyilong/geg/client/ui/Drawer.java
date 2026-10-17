@@ -1,9 +1,5 @@
 package io.github.luyingyilong.geg.client.ui;
 
-import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
-import io.github.luyingyilong.geg.client.ui.util.OreIcons;
-import io.github.luyingyilong.geg.client.ui.util.OreSounds;
-
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
@@ -14,14 +10,18 @@ import io.github.luyingyilong.geg.client.ui.layout.Padding;
 import io.github.luyingyilong.geg.client.ui.layout.Panel;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
 import io.github.luyingyilong.geg.client.ui.layout.Scroll;
+import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
+import io.github.luyingyilong.geg.client.ui.theme.OreIcons;
+import io.github.luyingyilong.geg.client.ui.theme.OreSounds;
+import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
-import java.util.function.LongSupplier;
 import java.util.function.Consumer;
+import java.util.function.LongSupplier;
 
 /**
  * A right-hand overlay, initially closed. Add it to Window's Overlay, then call open().

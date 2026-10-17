@@ -1,6 +1,13 @@
 package io.github.luyingyilong.geg.mail.client;
 
 import io.github.luyingyilong.geg.client.ui.layout.*;
+import io.github.luyingyilong.geg.client.ui.layout.Box;
+import io.github.luyingyilong.geg.client.ui.layout.Container;
+import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.Rect;
+import io.github.luyingyilong.geg.client.ui.layout.ScrollContent;
+import io.github.luyingyilong.geg.client.ui.layout.Size;
+import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
 import net.minecraft.client.gui.Font;
 
 /** Preserve usable column widths in narrow GUIs; the surrounding Scroll exposes overflow. */

@@ -1,11 +1,11 @@
 package io.github.luyingyilong.geg.mail;
 
+import com.mojang.logging.LogUtils;
 import io.github.luyingyilong.geg.money.*;
+import io.github.luyingyilong.geg.money.MoneyNetwork;
+import io.github.luyingyilong.geg.money.MoneySavedData;
 import io.github.luyingyilong.geg.organization.*;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
-import java.util.*;
+import io.github.luyingyilong.geg.organization.OrganizationSavedData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.LevelResource;
@@ -13,7 +13,11 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.*;
 import org.slf4j.Logger;
-import com.mojang.logging.LogUtils;
+
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
 
 /** All public server operations execute on the Minecraft server thread. */
 public final class MailService {
@@ -95,7 +99,8 @@ public final class MailService {
                     var p = original.request;
                     MailMessage mail = new MailMessage(UUID.nameUUIDFromBytes(key.getBytes(StandardCharsets.UTF_8)), now,
                             p.organizationMail() ? MailMessage.Kind.ORGANIZATION : MailMessage.Kind.ADMIN,
-                            current.sender, p.title().strip(), p.body(), List.of(), p.coin(), p.scope());
+                            current.sender, p.title().strip(), p.body(), List.of(), p.coin(), p.scope(),
+                            player.getUUID(), player.getGameProfile().getName());
                     state.deliver(data, key, mail, current.recipients);
                     if (p.organizationMail()) state.announcementSent(player.getUUID(), now);
                     data.markChanged(); session.drafts.remove(key);

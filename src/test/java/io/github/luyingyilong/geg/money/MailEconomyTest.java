@@ -1,8 +1,11 @@
 package io.github.luyingyilong.geg.money;
 
 import io.github.luyingyilong.geg.mail.*;
-import java.util.*;
+import io.github.luyingyilong.geg.mail.MailMessage;
+import io.github.luyingyilong.geg.mail.MailState;
 import net.minecraft.nbt.CompoundTag;
+
+import java.util.*;
 
 public final class MailEconomyTest {
     public static void main(String[] args) {

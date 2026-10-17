@@ -1,6 +1,7 @@
 package io.github.luyingyilong.geg.client.ui;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.geg.client.ui.input.NumberInput;
 import io.github.luyingyilong.geg.client.ui.layout.Container;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
 import io.github.luyingyilong.geg.client.ui.layout.Size;

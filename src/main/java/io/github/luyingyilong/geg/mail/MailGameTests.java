@@ -2,9 +2,12 @@ package io.github.luyingyilong.geg.mail;
 
 import io.github.luyingyilong.geg.GegMod;
 import io.github.luyingyilong.geg.money.*;
-import java.util.*;
+import io.github.luyingyilong.geg.money.MoneyBalance;
+import io.github.luyingyilong.geg.money.MoneySavedData;
 import net.minecraft.gametest.framework.*;
 import net.minecraftforge.gametest.*;
+
+import java.util.*;
 
 @GameTestHolder(GegMod.MODID)
 @PrefixGameTestTemplate(false)

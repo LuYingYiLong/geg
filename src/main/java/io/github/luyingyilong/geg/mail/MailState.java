@@ -1,8 +1,13 @@
 package io.github.luyingyilong.geg.mail;
 
 import io.github.luyingyilong.geg.money.*;
-import java.util.*;
+import io.github.luyingyilong.geg.money.MoneyBalance;
+import io.github.luyingyilong.geg.money.MoneyCurrency;
+import io.github.luyingyilong.geg.money.MoneySavedData;
+import io.github.luyingyilong.geg.money.MoneyService;
 import net.minecraft.nbt.*;
+
+import java.util.*;
 
 /** Wallet, receipt, deduplication and journal mutations share the geg_money save boundary. */
 public final class MailState {

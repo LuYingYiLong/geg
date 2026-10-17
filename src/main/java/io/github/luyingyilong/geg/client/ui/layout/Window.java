@@ -1,8 +1,8 @@
 package io.github.luyingyilong.geg.client.ui.layout;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.geg.client.ui.theme.OreFonts;
 import net.minecraft.client.gui.Font;
-import io.github.luyingyilong.geg.client.ui.util.OreFonts;
 
 /** GUI-viewport root, not a native operating-system window. */
 public final class Window extends Container {

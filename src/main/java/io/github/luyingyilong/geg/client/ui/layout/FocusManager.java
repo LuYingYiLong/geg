@@ -5,10 +5,10 @@ import io.github.luyingyilong.geg.client.ui.Table;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashSet;
 import java.util.Set;
 
 /** One keyboard focus per Ore window, restricted to the topmost visible popup. */
@@ -44,7 +44,7 @@ public final class FocusManager {
         cancelActivation();
         if (focused != null) focused.onFocusChanged(false);
         focused = target;
-        if (!(target instanceof io.github.luyingyilong.geg.client.ui.InputControl))
+        if (!(target instanceof io.github.luyingyilong.geg.client.ui.input.InputControl))
             inputPointerFocusVisible = false;
         if (target != null) {
             remembered.put(scope, target);
@@ -52,7 +52,7 @@ public final class FocusManager {
             target.onFocusChanged(true);
         }
         if (context != null) {
-            if (target instanceof io.github.luyingyilong.geg.client.ui.InputControl input) {
+            if (target instanceof io.github.luyingyilong.geg.client.ui.input.InputControl input) {
                 if (!input.widget().isFocused()) context.focus(input.widget());
             } else if (context.isFocused()) context.removeFocus();
         }
@@ -64,11 +64,11 @@ public final class FocusManager {
         for (Control control = hit; control != null; control = control.parent()) {
             if (control.acceptsFocus() && inside(control, scope)) {
                 requestFocus(control, context);
-                inputPointerFocusVisible = control instanceof io.github.luyingyilong.geg.client.ui.InputControl;
+                inputPointerFocusVisible = control instanceof io.github.luyingyilong.geg.client.ui.input.InputControl;
                 return;
             }
         }
-        if (focused instanceof io.github.luyingyilong.geg.client.ui.InputControl)
+        if (focused instanceof io.github.luyingyilong.geg.client.ui.input.InputControl)
             requestFocus(null, context);
     }
 
@@ -102,7 +102,7 @@ public final class FocusManager {
         if (nativeField != null) {
             if (nativeField != focused) requestFocus(nativeField, context);
         } else {
-            if (focused instanceof io.github.luyingyilong.geg.client.ui.InputControl)
+            if (focused instanceof io.github.luyingyilong.geg.client.ui.input.InputControl)
                 requestFocus(null, null);
             if (context.isFocused()) context.removeFocus();
         }
@@ -117,7 +117,7 @@ public final class FocusManager {
         // Keep the physical key latched even if its action opens a new focus scope.
         if (activationKeysDown.contains(keyCode)) return true;
         if (keyCode == GLFW.GLFW_KEY_ESCAPE
-                && focused instanceof io.github.luyingyilong.geg.client.ui.InputControl input
+                && focused instanceof io.github.luyingyilong.geg.client.ui.input.InputControl input
                 && nativeInputFocused()) {
             input.widget().onKeyPressed(keyCode, 0, modifiers);
             return true;
@@ -186,7 +186,7 @@ public final class FocusManager {
         validate();
         if (focused == null || !keyboardFocusVisible
                 && !(inputPointerFocusVisible
-                && focused instanceof io.github.luyingyilong.geg.client.ui.InputControl)) return null;
+                && focused instanceof io.github.luyingyilong.geg.client.ui.input.InputControl)) return null;
         Rect area = visibleBounds(focused);
         if (area == null) return null;
         int pad = focused.focusExpansion();
@@ -379,7 +379,7 @@ public final class FocusManager {
 
     private Control nativeField(Control node) {
         if (node == null || !node.visible()) return null;
-        if (node instanceof io.github.luyingyilong.geg.client.ui.InputControl input
+        if (node instanceof io.github.luyingyilong.geg.client.ui.input.InputControl input
                 && input.widget().isFocused() && input.acceptsFocus()) return input;
         for (Control child : node.children()) {
             Control found = nativeField(child);

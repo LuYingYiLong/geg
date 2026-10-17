@@ -1,19 +1,19 @@
 package io.github.luyingyilong.geg.client.ui;
 
-import io.github.luyingyilong.geg.client.ui.util.OreFonts;
-import io.github.luyingyilong.geg.client.ui.util.OreSounds;
-import io.github.luyingyilong.geg.client.ui.util.ReleaseGesture;
-
 import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
+import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.FocusManager;
+import io.github.luyingyilong.geg.client.ui.layout.Rect;
+import io.github.luyingyilong.geg.client.ui.theme.OreFonts;
+import io.github.luyingyilong.geg.client.ui.theme.OreSounds;
+import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
+import io.github.luyingyilong.geg.client.ui.util.ReleaseGesture;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import io.github.luyingyilong.geg.client.ui.layout.Control;
-import io.github.luyingyilong.geg.client.ui.layout.Rect;
-import io.github.luyingyilong.geg.client.ui.layout.FocusManager;
-import net.minecraft.client.gui.Font;
 
 import java.util.List;
 import java.util.function.IntConsumer;

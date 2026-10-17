@@ -4,8 +4,8 @@ import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
-import io.github.luyingyilong.geg.client.ui.OreTheme;
-import io.github.luyingyilong.geg.client.ui.util.OreDrawables;
+import io.github.luyingyilong.geg.client.ui.theme.OreDrawables;
+import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 

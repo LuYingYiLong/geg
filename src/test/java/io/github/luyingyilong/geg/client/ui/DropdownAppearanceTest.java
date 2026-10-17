@@ -1,7 +1,7 @@
 package io.github.luyingyilong.geg.client.ui;
 
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
-import io.github.luyingyilong.geg.client.ui.util.OreIcons;
+import io.github.luyingyilong.geg.client.ui.theme.OreIcons;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;

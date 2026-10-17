@@ -5,8 +5,8 @@ import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.theme.WidgetThemeKey;
+import io.github.luyingyilong.geg.client.ui.theme.OreDrawables;
 import net.minecraft.client.gui.Font;
-import io.github.luyingyilong.geg.client.ui.util.OreDrawables;
 
 /** Themed background; space allocation is inherited from Control. */
 public final class Panel extends Container {

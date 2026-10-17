@@ -1,12 +1,12 @@
 package io.github.luyingyilong.geg.client.ui;
 
-import io.github.luyingyilong.geg.client.ui.util.OreIcons;
-import io.github.luyingyilong.geg.client.ui.util.OreSounds;
-import io.github.luyingyilong.geg.client.ui.util.ReleaseGesture;
-
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.layout.Container;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
+import io.github.luyingyilong.geg.client.ui.theme.OreIcons;
+import io.github.luyingyilong.geg.client.ui.theme.OreSounds;
+import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
+import io.github.luyingyilong.geg.client.ui.util.ReleaseGesture;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

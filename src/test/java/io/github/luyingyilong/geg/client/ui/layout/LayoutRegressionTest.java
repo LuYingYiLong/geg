@@ -2,7 +2,7 @@ package io.github.luyingyilong.geg.client.ui.layout;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.Segmented;
-import io.github.luyingyilong.geg.client.ui.util.OreFonts;
+import io.github.luyingyilong.geg.client.ui.theme.OreFonts;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 

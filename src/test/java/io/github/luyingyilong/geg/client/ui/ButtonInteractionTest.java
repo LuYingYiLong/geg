@@ -1,15 +1,14 @@
 package io.github.luyingyilong.geg.client.ui;
 
-import io.github.luyingyilong.geg.client.ui.util.OreIcons;
-
 import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Overlay;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
 import io.github.luyingyilong.geg.client.ui.layout.Scroll;
 import io.github.luyingyilong.geg.client.ui.layout.Window;
+import io.github.luyingyilong.geg.client.ui.theme.OreIcons;
 import net.minecraft.client.gui.Font;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;

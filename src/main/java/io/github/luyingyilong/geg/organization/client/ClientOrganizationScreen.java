@@ -1,16 +1,15 @@
 package io.github.luyingyilong.geg.organization.client;
 
-import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
-import io.github.luyingyilong.geg.client.ui.OreScreen;
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
+import io.github.luyingyilong.geg.client.ui.Checkbox;
 import io.github.luyingyilong.geg.client.ui.Form;
 import io.github.luyingyilong.geg.client.ui.FormItem;
-import io.github.luyingyilong.geg.client.ui.Input;
-import io.github.luyingyilong.geg.client.ui.Checkbox;
-import io.github.luyingyilong.geg.client.ui.OreTheme;
+import io.github.luyingyilong.geg.client.ui.input.Input;
 import io.github.luyingyilong.geg.client.ui.layout.Box;
-import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
+import io.github.luyingyilong.geg.client.ui.screen.OreScreen;
+import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import io.github.luyingyilong.geg.organization.OrganizationNetwork;
 import io.github.luyingyilong.geg.organization.OrganizationSyncPacket;
 import net.minecraft.client.Minecraft;

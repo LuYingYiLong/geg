@@ -1,0 +1,73 @@
+package io.github.luyingyilong.geg.client.ui;
+
+import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.geg.client.ui.layout.Box;
+import io.github.luyingyilong.geg.client.ui.layout.Container;
+import io.github.luyingyilong.geg.client.ui.layout.Control;
+import io.github.luyingyilong.geg.client.ui.layout.Padding;
+import io.github.luyingyilong.geg.client.ui.layout.Rect;
+import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
+import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
+import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.Component;
+
+import java.util.Objects;
+import java.util.UUID;
+import java.util.function.Function;
+
+/** Retained, non-interactive identity cell; the table keeps its existing action-column focus. */
+public final class PlayerIdentityCell<T> implements Table.Cell<T> {
+    private static final int AVATAR_SIZE = 16;
+    private static final int GAP = 4;
+    private static final int INSET_X = 4;
+    private static final int INSET_Y = 2;
+    private final Function<T, UUID> playerId;
+    private final Function<T, String> playerName;
+
+    public PlayerIdentityCell(Function<T, UUID> playerId, Function<T, String> playerName) {
+        this.playerId = Objects.requireNonNull(playerId);
+        this.playerName = Objects.requireNonNull(playerName);
+    }
+
+    private static Label nameLabel() {
+        return new Label().color(OreTheme.TEXT_WHITE).wrap(Label.Wrap.CHARACTER).maxLines(2)
+                .overflow(Label.Overflow.ELLIPSIS).align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+    }
+
+    @Override public int measureHeight(Font font, T row, int width) {
+        int textHeight = font == null ? 0 : nameLabel().text(Component.literal(playerName.apply(row)))
+                .measureHeight(font, Math.max(1, width - 2 * INSET_X - AVATAR_SIZE - GAP));
+        return Math.max(AVATAR_SIZE, textHeight) + 2 * INSET_Y;
+    }
+
+    @Override public Control createControl() { return new Identity(); }
+
+    @Override public void bindControl(Control control, T row) {
+        Identity identity = (Identity) control;
+        String name = playerName.apply(row);
+        identity.avatar.player(playerId.apply(row), name);
+        identity.name.text(Component.literal(name));
+    }
+
+    @Override public void draw(ModularGuiContext context, T row, Rect bounds) {
+        // The retained subtree is rendered and clipped by Table.RowView.
+    }
+
+    private static final class Identity extends Container {
+        private final Avatar avatar = new Avatar().size(AVATAR_SIZE);
+        private final Label name = nameLabel();
+        private final Padding content;
+
+        private Identity() {
+            name.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
+            content = new Padding(new Padding.Insets(INSET_Y, INSET_X, INSET_Y, INSET_X))
+                    .child(new Box().orientation(Box.Orientation.HORIZONTAL).gap(GAP).add(avatar).add(name));
+            addChild(content);
+        }
+
+        @Override public void layout(Rect bounds, Font font) {
+            super.layout(bounds, font);
+            fitChild(content, new Rect(0, 0, bounds.width(), bounds.height()), font);
+        }
+    }
+}
