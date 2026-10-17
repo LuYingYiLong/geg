@@ -12,6 +12,15 @@ public final class OreTheme {
     public static final int TEXT_ERROR = 0xFFFF7777;
     public static final int TEXT_ACCENT = 0xFF52BEA8;
 
+    public static final int TAG_PRIMARY = 0xFF6CC349;
+    public static final int TAG_NEUTRAL = 0xFF1E1E1F;
+    public static final int TAG_SECONDARY = 0xFF313233;
+    public static final int TAG_INFORMATIVE = 0xFF8CB3FF;
+    public static final int TAG_NOTICE = 0xFFFFE866;
+    public static final int TAG_WARNING = 0xFFF46D6D;
+    public static final int TAG_REALMS_INFORMATIVE = 0xFFAC90F3;
+    public static final int TAG_OUTLINE = TEXT_DARK;
+
     public static final String NAME = "geg_ore";
     private static final WidgetThemeKey<WidgetTheme> PANEL = ITheme.getDefault().getPanelTheme().key();
 

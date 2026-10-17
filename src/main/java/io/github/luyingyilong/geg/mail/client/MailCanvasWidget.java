@@ -49,7 +49,6 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     private final Window window = new Window(true);
     private final Overlay overlay = new Overlay();
     private final Navbar navbar = new Navbar(tr("mail.geg.title"));
-    private final Label notice = new Label().color(OreTheme.TEXT_SECONDARY).wrap(Label.Wrap.WORD);
     private final Button send = new Button(tr("mail.geg.compose")).onPressed(() -> compose(null));
     private final Segmented audiences = new Segmented(List.of(tr("mail.geg.player"), tr("mail.geg.organization"), tr("mail.geg.everyone")));
     private final MailInbox inbox = new MailInbox();
@@ -104,7 +103,6 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         audiences.onSelect(index -> selectInbox(MailActionPacket.Scope.values()[index]));
         Box audienceRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4).add(audiences).add(send);
         audienceRow.minimum(0, Button.HEIGHT).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        notice.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         for (Control label : List.of(detailTitle, detailSender, detailDate, detailText, attachment, detailNotice))
             label.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Box authorInfo = new Box().gap(2).add(detailSender).add(detailDate);
@@ -122,7 +120,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         Padding padding = new Padding(Padding.Insets.all(4));
         padding.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         window.content(new Box().gap(0).add(navbar).add(
-                padding.child(new Box().gap(4).add(audienceRow).add(notice).add(columnsScroll))
+                padding.child(new Box().gap(4).add(audienceRow).add(columnsScroll))
         )).overlay(overlay);
         detailNotice.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         clearDetail();
@@ -264,11 +262,10 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         } else if (packet.kind() == MailSyncPacket.Kind.RESULT) {
             if (editor.isOpen() && Objects.equals(token, packet.token())) {
                 busy = false;
-                if (packet.result().equals("mail.geg.sent")) { editor.close(); form.setVisible(false); notice.text(tr(packet.result())); refreshInbox(); }
+                if (packet.result().equals("mail.geg.sent")) { editor.close(); form.setVisible(false); refreshInbox(); }
                 else { previewText.text(tr(packet.result())); revealPreview = true; }
             } else {
                 inbox.failed(packet.token());
-                notice.text(tr(packet.result()));
                 if (Objects.equals(selected, packet.token())) {
                     detailNotice.text(packet.result().equals("mail.geg.success") ? Component.empty() : tr(packet.result()));
                     if (packet.result().equals("mail.geg.not_found")) clearDetail();
@@ -287,7 +284,6 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         int width = getArea().width, height = getArea().height;
         int drawerWidth = width < 320 ? width : width / 2;
         editor.width(drawerWidth);
-        notice.visible(!notice.text().getString().isEmpty());
         for (Label label : List.of(detailTitle, detailSender, detailDate, attachment, detailNotice))
             label.visible(!label.text().getString().isEmpty());
         // Clear the previous minimum so a two-row navbar can return to one row on resize.
