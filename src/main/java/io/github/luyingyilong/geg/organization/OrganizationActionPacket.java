@@ -2,6 +2,7 @@ package io.github.luyingyilong.geg.organization;
 
 import java.util.function.Supplier;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.network.FriendlyByteBuf;
@@ -100,6 +101,7 @@ public record OrganizationActionPacket(Action action, String name, String descri
             Organization old = data.organization(packet.organizationId);
             OrganizationSavedData.Operation operation = OrganizationSavedData.Operation.valueOf(
                     packet.action.name());
+            int firstMailEvent = data.mailEvents().size();
             OrganizationSavedData.OperationResult result = data.operate(player.getUUID(),
                     packet.organizationId, packet.targetId, operation);
             String resultKey = switch (result) {
@@ -121,6 +123,8 @@ public record OrganizationActionPacket(Action action, String name, String descri
                 return;
             }
             Organization updated = data.organization(packet.organizationId);
+            List<OrganizationSavedData.MailEvent> events = data.mailEvents();
+            List<OrganizationSavedData.MailEvent> newEvents = events.subList(firstMailEvent, events.size());
             Set<UUID> affected = new HashSet<>();
             affected.add(player.getUUID());
             if (old != null) affected.addAll(old.members());
@@ -148,6 +152,12 @@ public record OrganizationActionPacket(Action action, String name, String descri
                             && member.equals(packet.targetId)
                             ? "organization.geg.result.rejected_notice" : "";
                     OrganizationNetwork.sync(online, notice);
+                    if (!notice.isEmpty()) {
+                        for (OrganizationSavedData.MailEvent event : newEvents) {
+                            if (event.recipient().equals(member))
+                                io.github.luyingyilong.geg.mail.MailService.coverSystemNotification(online, event.id());
+                        }
+                    }
                 }
             }
         });

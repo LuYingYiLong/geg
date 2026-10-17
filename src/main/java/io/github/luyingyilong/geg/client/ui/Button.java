@@ -32,6 +32,7 @@ public final class Button extends Control {
     private TextAlignment alignment = TextAlignment.CENTER;
     private Icon icon;
     private Icon trailingIcon;
+    private Badge badge;
     private Runnable onPress = () -> { };
     private final Consumer<OreSounds.Cue> soundPlayer;
     private boolean emphasizedSound;
@@ -84,6 +85,22 @@ public final class Button extends Control {
     public Button icon(ResourceLocation texture, int width, int height) { return icon(new Icon(texture, width, height)); }
     public Icon icon() { return icon; }
     public Button trailingIcon(Icon icon) { this.trailingIcon = icon; requestLayout(); return this; }
+    /** Right-aligned decoration inside the button; null removes it. */
+    public Button badge(Badge badge) {
+        if (this.badge == badge) return this;
+        if (badge != null && badge.parent() != null) throw new IllegalStateException("Badge already has a parent");
+        if (this.badge != null) removeChild(this.badge);
+        this.badge = badge;
+        if (badge != null) addChild(badge);
+        requestLayout();
+        return this;
+    }
+    public Badge badge() { return badge; }
+    @Override public boolean removeChild(Control child) {
+        boolean removed = super.removeChild(child);
+        if (removed && child == badge) badge = null;
+        return removed;
+    }
     public Button onPress(Runnable action) { this.onPress = java.util.Objects.requireNonNull(action); return this; }
     public Button onPressed(Runnable action) { return onPress(action); }
 
@@ -118,16 +135,36 @@ public final class Button extends Control {
     @Override public boolean acceptsFocus() { return !disabled && super.acceptsFocus(); }
 
     @Override public int measureWidth(Font font, int available) {
+        int reserved = badgeReservation(font);
         if (icon != null && !hasLabel() && trailingIcon == null)
-            return Math.max(minimumWidth(), Math.max(buttonSize.height(), icon.width + 2 * ICON_PADDING));
+            return Math.max(minimumWidth(), Math.max(buttonSize.height(), icon.width
+                    + 2 * (hasBadge() ? PADDING_X : ICON_PADDING)) + reserved);
         return Math.max(minimumWidth(), label.measureWidth(font, available) + 2 * PADDING_X
                 + (icon == null ? 0 : icon.width + (hasLabel() ? ICON_GAP : 0))
-                + (trailingIcon == null ? 0 : trailingIcon.width + ICON_GAP));
+                + (trailingIcon == null ? 0 : trailingIcon.width + ICON_GAP) + reserved);
     }
 
     @Override public int measureHeight(Font font, int available) {
         int iconHeight = Math.max(icon == null ? 0 : icon.height, trailingIcon == null ? 0 : trailingIcon.height);
-        return Math.max(super.measureHeight(font, available), iconHeight == 0 ? 0 : iconHeight + 2 * ICON_PADDING);
+        int height = Math.max(super.measureHeight(font, available), iconHeight == 0 ? 0 : iconHeight + 2 * ICON_PADDING);
+        return Math.max(height, hasBadge() ? badge.measureHeight(font, available) + 4 : 0);
+    }
+
+    private boolean hasBadge() { return badge != null && badge.visible(); }
+    private int badgeReservation(Font font) { return hasBadge() ? badge.measureWidth(font, Integer.MAX_VALUE) + ICON_GAP : 0; }
+
+    @Override public void layout(Rect bounds, Font font) {
+        super.layout(bounds, font);
+        layoutBadge(font);
+    }
+
+    private void layoutBadge(Font font) {
+        if (!hasBadge()) return;
+        io.github.luyingyilong.geg.client.ui.layout.Size natural = badge.measureSize(font,
+                new io.github.luyingyilong.geg.client.ui.layout.Size(size().width(), size().height()));
+        badge.layout(new Rect(size().width() - PADDING_X - natural.width(),
+                (size().height() - natural.height()) / 2 + pressedOffset(type, visuallyPressed()),
+                natural.width(), natural.height()), font);
     }
 
     private boolean hasLabel() { return !label.getText().getString().isEmpty(); }
@@ -144,13 +181,14 @@ public final class Button extends Control {
         Rect area = screenBounds(screenX, screenY);
         boolean hovered = area.contains(context.getAbsMouseX(), context.getAbsMouseY());
         pointerHovered = hovered;
+        layoutBadge(context.getFont());
         drawPresentation(context, area, hovered, visuallyPressed());
     }
 
     /** Composite controls reuse Button's appearance while retaining their own activation behavior. */
     void drawPresentation(ModularGuiContext context, Rect area, boolean hovered, boolean pressed) {
         drawLabelled(context, area.x(), area.y(), area.width(), area.height(), label, icon, trailingIcon,
-                alignment, type, !disabled && hovered, !disabled && pressed, disabled);
+                alignment, type, !disabled && hovered, !disabled && pressed, disabled, badgeReservation(context.getFont()));
     }
 
     public boolean pressAt(int rootX, int rootY) {
@@ -274,6 +312,12 @@ public final class Button extends Control {
     private static void drawLabelled(ModularGuiContext context, int x, int y, int width,
                                      int height, Label label, Icon icon, Icon trailingIcon, TextAlignment alignment,
                                      Type type, boolean hovered, boolean pressed, boolean disabled) {
+        drawLabelled(context, x, y, width, height, label, icon, trailingIcon, alignment, type, hovered, pressed, disabled, 0);
+    }
+
+    private static void drawLabelled(ModularGuiContext context, int x, int y, int width,
+                                     int height, Label label, Icon icon, Icon trailingIcon, TextAlignment alignment,
+                                     Type type, boolean hovered, boolean pressed, boolean disabled, int reservedRight) {
         pressed = pressed && !disabled;
         GuiGraphics graphics = context.getGraphics();
         WidgetThemeEntry<WidgetTheme> disabledEntry = disabled
@@ -291,7 +335,7 @@ public final class Button extends Control {
         }
 
         boolean hasLabel = !label.getText().getString().isEmpty();
-        ContentLayout content = contentLayout(area,
+        ContentLayout content = contentLayout(new Rect(x, y, Math.max(0, width - reservedRight), height),
                 hasLabel ? label.measureWidth(context.getFont(), width) : 0, hasLabel, icon, trailingIcon, alignment, type, pressed);
         if (hasLabel) {
             label.color(style.getTextColor()).shadow(style.isTextShadow())

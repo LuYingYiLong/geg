@@ -3,7 +3,13 @@ package io.github.luyingyilong.geg.client;
 import io.github.luyingyilong.geg.organization.client.ClientOrganizationScreen;
 
 import io.github.luyingyilong.geg.GegMod;
-import net.minecraft.client.gui.components.Button;
+import io.github.luyingyilong.geg.client.ui.Badge;
+import io.github.luyingyilong.geg.client.ui.Button;
+import io.github.luyingyilong.geg.client.ui.Tag;
+import io.github.luyingyilong.geg.client.ui.screen.OreButtonWidget;
+import io.github.luyingyilong.geg.mail.client.ClientMailScreen;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
@@ -17,15 +23,11 @@ import net.minecraftforge.fml.common.Mod;
 public final class InventoryEntries {
     private static final int ENTRY_WIDTH = 32;
     private static final int ENTRY_GAP = 4;
-    private static final java.util.Map<net.minecraft.client.gui.screens.Screen, Button> MAIL_BUTTONS = new java.util.WeakHashMap<>();
-    private static Component mailLabel() {
-        int unread = io.github.luyingyilong.geg.mail.client.ClientMailScreen.unread();
-        return unread == 0 ? Component.translatable("mail.geg.entry")
-                : Component.translatable("mail.geg.entry_badge", unread > 99 ? "99+" : Integer.toString(unread));
-    }
+    private static final java.util.Map<Screen, Entries> ENTRIES = new java.util.WeakHashMap<>();
+
     @SubscribeEvent public static void onRender(ScreenEvent.Render.Pre event) {
-        Button button = MAIL_BUTTONS.get(event.getScreen());
-        if (button != null) button.setMessage(mailLabel());
+        Entries entries = ENTRIES.get(event.getScreen());
+        if (entries != null) entries.layout(event.getScreen());
     }
 
     private InventoryEntries() {
@@ -35,12 +37,75 @@ public final class InventoryEntries {
     public static void onScreenInit(ScreenEvent.Init.Post event) {
         if (!(event.getScreen() instanceof InventoryScreen)
                 && !(event.getScreen() instanceof CreativeModeInventoryScreen)) return;
-        int x = 4;
-        int y = Math.max(0, event.getScreen().height - 24);
-        event.addListener(Button.builder(Component.translatable("organization.geg.entry"),
-                button -> ClientOrganizationScreen.open()).bounds(x, y, ENTRY_WIDTH, 20).build());
-        Button mail = Button.builder(mailLabel(), button -> io.github.luyingyilong.geg.mail.client.ClientMailScreen.open())
-                .bounds(x + ENTRY_WIDTH + ENTRY_GAP, y, ENTRY_WIDTH, 20).build();
-        event.addListener(mail); MAIL_BUTTONS.put(event.getScreen(), mail);
+        Entries entries = new Entries();
+        Entries previous = ENTRIES.put(event.getScreen(), entries);
+        if (previous != null) previous.cancel();
+        entries.layout(event.getScreen());
+        event.addListener(entries.organization);
+        event.addListener(entries.mail);
+    }
+
+    // Consume only these buttons' input before container slot/drop handling. All other input stays native.
+    @SubscribeEvent public static void onPress(ScreenEvent.MouseButtonPressed.Pre event) {
+        Entries entries = ENTRIES.get(event.getScreen());
+        if (entries == null) return;
+        entries.layout(event.getScreen());
+        for (OreButtonWidget widget : entries.widgets()) {
+            if (!widget.mouseClicked(event.getMouseX(), event.getMouseY(), event.getButton())) continue;
+            event.getScreen().setFocused(widget);
+            event.getScreen().setDragging(event.getButton() == 0);
+            event.setCanceled(true);
+            return;
+        }
+    }
+
+    @SubscribeEvent public static void onRelease(ScreenEvent.MouseButtonReleased.Pre event) {
+        Entries entries = ENTRIES.get(event.getScreen());
+        if (entries == null) return;
+        for (OreButtonWidget widget : entries.widgets()) {
+            if (!widget.mouseReleased(event.getMouseX(), event.getMouseY(), event.getButton())) continue;
+            event.getScreen().setDragging(false);
+            event.setCanceled(true);
+            return;
+        }
+    }
+
+    @SubscribeEvent public static void onDrag(ScreenEvent.MouseDragged.Pre event) {
+        Entries entries = ENTRIES.get(event.getScreen());
+        if (entries == null) return;
+        for (OreButtonWidget widget : entries.widgets()) {
+            if (widget.mouseDragged(event.getMouseX(), event.getMouseY(), event.getMouseButton(), event.getDragX(), event.getDragY())) {
+                event.setCanceled(true);
+                return;
+            }
+        }
+    }
+
+    @SubscribeEvent public static void onClose(ScreenEvent.Closing event) {
+        Entries entries = ENTRIES.remove(event.getScreen());
+        if (entries != null) entries.cancel();
+    }
+
+    private static final class Entries {
+        private final Badge unread = new Badge().type(Tag.Type.PRIMARY);
+        private final OreButtonWidget organization = new OreButtonWidget(
+                new Button(Component.translatable("organization.geg.entry")).onPressed(ClientOrganizationScreen::open),
+                Component.translatable("organization.geg.entry"));
+        private final OreButtonWidget mail = new OreButtonWidget(
+                new Button(Component.translatable("mail.geg.entry")).badge(unread).onPressed(ClientMailScreen::open),
+                Component.translatable("mail.geg.entry"));
+
+        private java.util.List<OreButtonWidget> widgets() { return java.util.List.of(organization, mail); }
+        private void cancel() { widgets().forEach(OreButtonWidget::cancelInput); }
+        private void layout(Screen screen) {
+            int count = ClientMailScreen.unread();
+            unread.count(count).visible(count > 0);
+            mail.setMessage(count == 0 ? Component.translatable("mail.geg.entry")
+                    : Component.translatable("mail.geg.entry_badge", unread.displayText()));
+            var font = Minecraft.getInstance().font;
+            int y = Math.max(0, screen.height - Button.HEIGHT - 4);
+            organization.place(font, 4, y, ENTRY_WIDTH);
+            mail.place(font, organization.getX() + organization.getWidth() + ENTRY_GAP, y, ENTRY_WIDTH);
+        }
     }
 }

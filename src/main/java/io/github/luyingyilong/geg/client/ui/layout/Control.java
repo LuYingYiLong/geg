@@ -13,6 +13,7 @@ public class Control {
     private final List<Control> children = new ArrayList<>();
     private Rect bounds = new Rect(0, 0, 0, 0);
     private Rect requestedBounds = new Rect(0, 0, 0, 0);
+    private Offset offset = Offset.ZERO;
     private int minimumWidth;
     private int minimumHeight;
     private int preferredWidth;
@@ -193,12 +194,25 @@ public class Control {
             requestLayout();
         }
     }
-    public Rect bounds() { return bounds; }
+    /** Layout translation shared by rendering, descendants, hit testing and focus. */
+    public Control offset(Offset offset) {
+        Offset next = Objects.requireNonNull(offset);
+        if (!this.offset.equals(next)) { this.offset = next; requestLayout(); }
+        return this;
+    }
+    public Control offset(int x, int y) { return offset(new Offset(x, y)); }
+    public Offset offset() { return offset; }
+    /** The parent's assigned rectangle, before this control's Offset is applied. */
+    public Rect layoutBounds() { return bounds; }
+    public Rect bounds() { return bounds.translated(offset.x(), offset.y()); }
     /** The size assigned by the most recent layout pass. */
     public Size size() { return new Size(bounds.width(), bounds.height()); }
 
     public Rect absoluteBounds() {
-        return parent == null ? bounds : bounds.translated(parent.absoluteBounds().x(), parent.absoluteBounds().y());
+        Rect local = bounds();
+        if (parent == null) return local;
+        Rect origin = parent.absoluteBounds();
+        return local.translated(origin.x(), origin.y());
     }
 
     protected void attach(Control child) {

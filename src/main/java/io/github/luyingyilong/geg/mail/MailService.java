@@ -8,6 +8,7 @@ import io.github.luyingyilong.geg.organization.*;
 import io.github.luyingyilong.geg.organization.OrganizationSavedData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -26,6 +27,7 @@ public final class MailService {
     private static final class Session {
         final Map<String, Draft> drafts = new HashMap<>();
         final Map<UUID, long[]> requests = new HashMap<>();
+        final MailNotificationCoverage<ServerGamePacketListenerImpl> systemNotifications = new MailNotificationCoverage<>();
         int eventCursor;
     }
     private record Draft(MailActionPacket request, List<UUID> recipients, String sender, long createdAt) { }
@@ -142,16 +144,26 @@ public final class MailService {
                 player.hasPermissions(2), MailState.Filter.ALL, 0, false, List.of(), null, false,
                 draft.request.id(), draft.recipients.size(), coin, total, result));
     }
+    /** Called only after sending a result toast to this online recipient for this persisted event. */
+    public static void coverSystemNotification(ServerPlayer recipient, UUID event) {
+        thread(recipient.server);
+        session(recipient.server).systemNotifications.cover(event, recipient.connection);
+    }
+
     public static void system(MinecraftServer server, UUID event, UUID recipient, String organization, String action) {
         thread(server);
         String key = "organization:" + event;
         MoneySavedData data = MoneySavedData.get(server);
-        if (data.mail().sent(key) != null) return;
+        if (data.mail().sent(key) != null) {
+            session(server).systemNotifications.consume(event, null);
+            return;
+        }
         var mail = new MailMessage(event, System.currentTimeMillis(), MailMessage.Kind.SYSTEM, organization,
                 "mail.geg.system.title", "mail.geg.system." + action, List.of(organization), 0);
         data.mail().deliver(data, key, mail, List.of(recipient));
         ServerPlayer player = server.getPlayerList().getPlayer(recipient);
-        if (player != null) MailNetwork.status(player);
+        boolean covered = session(server).systemNotifications.consume(event, player == null ? null : player.connection);
+        if (player != null) MailNetwork.status(player, !covered);
     }
     public static void onStarted(ServerStartedEvent event) {
         MinecraftServer server = event.getServer();
@@ -180,6 +192,7 @@ public final class MailService {
     public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             var session = session(player.server); session.requests.remove(player.getUUID());
+            session.systemNotifications.forget(player.connection);
             session.drafts.keySet().removeIf(key -> key.startsWith("manual:" + player.getUUID() + ":"));
         }
     }

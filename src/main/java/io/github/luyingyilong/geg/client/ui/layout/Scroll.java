@@ -177,7 +177,7 @@ public final class Scroll extends Container {
                 Math.max(0, embedded ? localBounds.width() - corner : viewport.width()), BAR_SIZE), font);
         if (content instanceof ScrollContent virtual) {
             int restored = virtual.consumeRestoredScrollY();
-            if (restored >= 0) scrollY = restored;
+            if (restored >= 0) scrollY = restored + content.bounds().y();
         }
         setScroll(scrollX, scrollY);
     }
@@ -193,7 +193,8 @@ public final class Scroll extends Container {
         if (content instanceof ScrollContent virtual) {
             fitChild(content, new Rect(0, 0, width, height), font);
             Size size = virtual.contentExtent();
-            extent = new Size(Math.max(width, size.width()), Math.max(height, size.height()));
+            extent = new Size(Math.max(width, content.bounds().x() + size.width()),
+                    Math.max(height, content.bounds().y() + size.height()));
         } else {
             Size measured = content.measureSize(font, new Size(width, height));
             int contentWidth = Math.max(width, measured.width());
@@ -205,7 +206,8 @@ public final class Scroll extends Container {
 
     private void updateVisibleRegion() {
         if (content instanceof ScrollContent virtual)
-            virtual.visibleRegion(new Rect(scrollX, scrollY, viewport.width(), viewport.height()));
+            virtual.visibleRegion(new Rect(scrollX - content.bounds().x(), scrollY - content.bounds().y(),
+                    viewport.width(), viewport.height()));
     }
 
     private static boolean visibleFor(BarMode mode, boolean overflow) {

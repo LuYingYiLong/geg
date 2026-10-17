@@ -87,7 +87,7 @@ public final class Grid<T> extends Container implements ScrollContent {
         }
         if (best == null) return false;
         focusedKey = best.key();
-        if (parent() instanceof Scroll scroll) scroll.ensureVisible(best.bounds());
+        if (parent() instanceof Scroll scroll) scroll.ensureVisible(best.bounds().translated(bounds().x(), bounds().y()));
         return true;
     }
 
