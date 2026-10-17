@@ -863,16 +863,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     @Override
     public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 256 && window.keyPressed(keyCode, modifiers, getContext()))
-            return Interactable.Result.STOP;
-        if (keyCode == 256 && modal != null) {
-            if (quantityMenu) {
-                quantityMenu = false;
-                ClientMarketScreen.showTradeQuantity(false);
-            } else closeModal();
-            return Interactable.Result.STOP;
-        }
-        if (keyCode == 256 && filterDropdown.isOpen()) {
+        if (keyCode == 256 && modal == null && filterDropdown.isOpen()
+                && !window.focusManager().nativeInputFocused()) {
             filterDropdown.close();
             return Interactable.Result.STOP;
         }

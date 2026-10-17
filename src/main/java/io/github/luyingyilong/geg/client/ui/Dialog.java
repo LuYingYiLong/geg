@@ -17,6 +17,7 @@ import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,6 +110,12 @@ public final class Dialog extends Container {
     }
 
     @Override public boolean focusScope() { return true; }
+
+    @Override public boolean onFocusKey(int keyCode, int modifiers) {
+        if (keyCode != GLFW.GLFW_KEY_ESCAPE) return false;
+        onClose.run();
+        return true;
+    }
 
     public Dialog content(Control content) {
         this.content = Objects.requireNonNull(content);

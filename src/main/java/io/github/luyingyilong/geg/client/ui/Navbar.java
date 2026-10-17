@@ -9,7 +9,7 @@ import io.github.luyingyilong.geg.client.ui.layout.Size;
 import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
 import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import io.github.luyingyilong.geg.client.ui.theme.OreIcons;
-import net.minecraft.client.Minecraft;
+import io.github.luyingyilong.geg.client.ui.screen.OreScreen;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 
@@ -18,24 +18,22 @@ import java.util.List;
 
 /** A centered navigation title, optional back action, and right-aligned actions that wrap. */
 public final class Navbar extends Container {
-    public static final int ROW_HEIGHT = 25;
+    public static final int ROW_HEIGHT = 22;
+    public static final int BOTTOM_PADDING = 3;
     private static final int GAP = 6;
     private static final int PADDING = 0;
-    private static final int BACK_BUTTON_SIZE = 20;
+    private static final int BACK_BUTTON_SIZE = 22;
     private Panel background;
     private final Label title = new Label().color(OreTheme.TEXT_DARK).hero(true).overflow(Label.Overflow.ELLIPSIS)
             .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
     private final Button back = new Button().type(Button.Type.TEXT).icon(OreIcons.ARROW_LEFT, 7, 7)
-            .onPress(() -> {
-                Minecraft minecraft = Minecraft.getInstance();
-                if (minecraft != null) minecraft.setScreen(null);
-            });
+            .onPress(OreScreen::back);
     private final List<Control> extra = new ArrayList<>();
 
     public Navbar(Component title) {
         this.title.text(title);
         back.minimum(BACK_BUTTON_SIZE, BACK_BUTTON_SIZE);
-        back.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        back.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         addChild(this.title);
         addChild(back);
         sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
@@ -121,7 +119,7 @@ public final class Navbar extends Container {
 
     @Override public int measureWidth(Font font, int available) { return Math.max(minimumWidth(), available); }
     @Override public int measureHeight(Font font, int available) {
-        return Math.max(minimumHeight(), arrange(font, available).height());
+        return Math.max(minimumHeight(), arrange(font, available).height() + BOTTOM_PADDING);
     }
     @Override public Size measureSize(Font font, Size available) {
         return new Size(measureWidth(font, available.width()), measureHeight(font, available.width()));
@@ -173,6 +171,7 @@ public final class Navbar extends Container {
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
         if (background == null) background = new Panel(OreTheme.HEADER_PANEL);
-        background.drawAt(context, screenBounds(screenX, screenY));
+        Rect area = screenBounds(screenX, screenY);
+        background.drawAt(context, new Rect(area.x(), area.y(), area.width(), Math.max(0, area.height() - BOTTOM_PADDING)));
     }
 }

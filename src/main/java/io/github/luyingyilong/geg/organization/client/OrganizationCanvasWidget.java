@@ -97,7 +97,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         emptyText.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Box emptyBody = new Box().gap(8).add(emptyText).add(options);
         emptyDialog = new Dialog(270, 0, 0, Component.translatable("organization.geg.title"))
-                .content(emptyBody).onClose(() -> Minecraft.getInstance().setScreen(null));
+                .content(emptyBody).onClose(this::closeEmptyDialog);
 
         createForm.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         createDrawer = new Drawer(Component.translatable("organization.geg.create"))
@@ -633,6 +633,12 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         requestLayout();
     }
 
+    private void closeEmptyDialog() {
+        emptyDialog.visible(false);
+        rebuildMemberships();
+        requestLayout();
+    }
+
     private void showLoading() {
         emptyText.text(Component.translatable("organization.geg.loading"));
         options.visible(false);
@@ -879,7 +885,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
         if (heldMenuKey == keyCode) return Interactable.Result.STOP;
         if (keyCode == GLFW.GLFW_KEY_ESCAPE && activeMenuMember != null
-                && !applicationsModal.visible() && !joinDrawer.visible() && !disbandConfirmation.visible() && !editModal.visible()) {
+                && !applicationsModal.visible() && !joinDrawer.visible() && !disbandConfirmation.visible() && !editModal.visible()
+                && !window.focusManager().nativeInputFocused()) {
             closeMenu();
             return Interactable.Result.STOP;
         }
@@ -903,18 +910,6 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                     return Interactable.Result.STOP;
                 }
             }
-        }
-        if (keyCode == 256 && editModal.visible()) {
-            closeEdit();
-            return Interactable.Result.STOP;
-        }
-        if (keyCode == 256 && disbandConfirmation.visible()) {
-            closeDisbandConfirmation();
-            return Interactable.Result.STOP;
-        }
-        if (keyCode == 256 && applicationsModal.visible()) {
-            closeApplications();
-            return Interactable.Result.STOP;
         }
         return window.keyPressed(keyCode, modifiers, getContext())
                 ? Interactable.Result.STOP : Interactable.Result.IGNORE;

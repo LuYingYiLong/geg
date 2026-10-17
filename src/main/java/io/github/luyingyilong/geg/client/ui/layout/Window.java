@@ -2,7 +2,9 @@ package io.github.luyingyilong.geg.client.ui.layout;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.theme.OreFonts;
+import io.github.luyingyilong.geg.client.ui.screen.OreScreen;
 import net.minecraft.client.gui.Font;
+import org.lwjgl.glfw.GLFW;
 
 /** GUI-viewport root, not a native operating-system window. */
 public final class Window extends Container {
@@ -14,6 +16,7 @@ public final class Window extends Container {
     private Overlay overlay;
     private int fontRevision = -1;
     private Control pointerCapture;
+    private Runnable onBack = OreScreen::back;
 
     public Window(boolean fullscreen) { this.fullscreen = fullscreen; }
     public Window content(Control content) {
@@ -46,6 +49,7 @@ public final class Window extends Container {
     }
     public boolean fullscreen() { return fullscreen; }
     public FocusManager focusManager() { return focusManager; }
+    public Window onBack(Runnable action) { onBack = java.util.Objects.requireNonNull(action); return this; }
     Control contentNode() { return content; }
     Overlay overlayLayer() { return overlay; }
 
@@ -123,7 +127,12 @@ public final class Window extends Container {
     }
 
     public boolean keyPressed(int keyCode, int modifiers, ModularGuiContext context) {
-        return focusManager.keyPressed(keyCode, modifiers, context);
+        if (focusManager.keyPressed(keyCode, modifiers, context)) return true;
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            onBack.run();
+            return true;
+        }
+        return false;
     }
 
     public boolean keyReleased(int keyCode, int modifiers, ModularGuiContext context) {

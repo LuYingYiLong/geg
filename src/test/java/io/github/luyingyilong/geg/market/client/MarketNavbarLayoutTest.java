@@ -39,8 +39,11 @@ public final class MarketNavbarLayoutTest {
                 check(navbar.hitTop(action.bounds().x(), action.bounds().y()) == action);
             }
             if (height == 25) check(title.bounds().right() + 6 <= balance.bounds().x());
-            else check(balance.bounds().y() >= 25);
-            check(height == (width <= 129 ? 100 : width == 200 ? 75 : width < 640 ? 50 : 25));
+            else check(balance.bounds().y() >= Navbar.ROW_HEIGHT);
+            int rows = width <= 129 ? 4 : width == 200 ? 3 : width < 640 ? 2 : 1;
+            check(height == rows * Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING);
+            for (Control action : new Control[]{balance, search, filter})
+                check(action.bounds().bottom() <= height - Navbar.BOTTOM_PADDING);
             if (balance.bounds().y() == filter.bounds().y())
                 check(search.bounds().right() + 6 <= filter.bounds().x());
             filter.visible(false);

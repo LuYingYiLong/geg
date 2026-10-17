@@ -29,8 +29,10 @@ public final class NavbarLayoutTest {
             int height = navbar.measureSize(font, new Size(width, 240)).height();
             navbar.layout(new Rect(0, 0, width, height), font);
             check(title.bounds().x() * 2 + title.bounds().width() == width, "Title stays centered across the entire navbar");
-            check(back.bounds().x() == 0 && back.size().equals(new Size(20, 20)), "Back stays square at the far left");
-            check(Math.abs(back.bounds().y() * 2 + back.bounds().height() - height) <= 1, "Back is vertically centered");
+            check(back.bounds().x() == 0 && back.size().equals(new Size(22, 22)), "Back stays 22px square at the far left");
+            check(height == 25 && title.bounds().height() == 22, "A 22px content row reserves 3px below it");
+            check(back.bounds().y() == 0, "Back shrinks to the top of the content row");
+            check(back.bounds().bottom() <= height - Navbar.BOTTOM_PADDING, "Navigation controls leave the bottom gap clear");
         }
         Control action = new Control().minimum(40, 20);
         navbar.extra(action);
@@ -64,6 +66,10 @@ public final class NavbarLayoutTest {
         navbar.showBackButton(true);
         window.layoutViewport(200, 120, font);
         check(back.visible() && title.bounds().x() > 0, "Showing back restores its reserved space");
+        navbar.fontSize(40.0F);
+        window.layoutViewport(200, 120, font);
+        check(title.size().height() > back.size().height() && back.bounds().y() == 0,
+                "A taller title does not vertically center the top-aligned back button");
     }
 
     private static void check(boolean condition, String message) { if (!condition) throw new AssertionError(message); }

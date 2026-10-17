@@ -38,7 +38,6 @@ import io.github.luyingyilong.geg.mail.MailSyncPacket;
 import io.github.luyingyilong.geg.money.MoneyCurrency;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.GLFW;
 
 import java.math.BigDecimal;
 import java.time.*;
@@ -316,11 +315,8 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         return false;
     }
     @Override public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
-        if (window.keyPressed(keyCode, modifiers, getContext())) return Interactable.Result.STOP;
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
-            if (editor.visible()) { editor.close(); return Interactable.Result.STOP; }
-        }
-        return Interactable.Result.IGNORE;
+        return window.keyPressed(keyCode, modifiers, getContext())
+                ? Interactable.Result.STOP : Interactable.Result.IGNORE;
     }
     @Override public boolean onKeyReleased(int keyCode, int scanCode, int modifiers) { return window.keyReleased(keyCode, modifiers, getContext()); }
     private int mx() { return getContext().getAbsMouseX() - getArea().x; }

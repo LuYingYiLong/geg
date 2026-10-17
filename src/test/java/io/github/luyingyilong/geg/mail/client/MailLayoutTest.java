@@ -63,7 +63,7 @@ public final class MailLayoutTest {
             header.minimum(0, header.measureHeight(font, width));
             window.layoutViewport(width, height, font);
             check(header.bounds().y() == 0 && header.size().height() >= Navbar.ROW_HEIGHT);
-            check(header.size().height() == 25);
+            check(header.size().height() == Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING);
             check(audiences.absoluteBounds().x() == 4);
             check(audiences.size().width() == Math.min(width - 12 - send.size().width(), audiences.minimumRowWidth(font)));
             check(send.absoluteBounds().right() == width - 4 && send.parent() == audiences.parent());

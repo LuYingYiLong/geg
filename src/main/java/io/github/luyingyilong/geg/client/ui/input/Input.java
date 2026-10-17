@@ -196,8 +196,9 @@ public class Input extends TextFieldWidget {
             onEditShortcut();
             return Interactable.Result.SUCCESS;
         }
-        if (isFocused() && keyCode == GLFW.GLFW_KEY_ESCAPE && composing()) {
-            cancelPreedit();
+        if (isFocused() && keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            if (composing()) cancelPreedit();
+            getContext().removeFocus();
             return Interactable.Result.STOP;
         }
         if (isFocused() && (keyCode >= GLFW.GLFW_KEY_ESCAPE && keyCode <= GLFW.GLFW_KEY_END
