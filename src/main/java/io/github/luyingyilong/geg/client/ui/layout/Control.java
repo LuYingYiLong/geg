@@ -231,6 +231,10 @@ public class Control {
     protected void render(ModularGuiContext context, int screenX, int screenY) {
     }
 
+    /** Window paints only the topmost eligible tooltip after all scrolling clips have closed. */
+    public boolean hasTooltip() { return false; }
+    public void renderTooltip(ModularGuiContext context, int mouseX, int mouseY) { }
+
     /** Dispatches in reverse draw order; clipping containers can narrow this route. */
     public boolean dispatchPointer(int rootX, int rootY) {
         if (!visible) return false;

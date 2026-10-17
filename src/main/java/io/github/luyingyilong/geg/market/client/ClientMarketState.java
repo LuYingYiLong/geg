@@ -3,10 +3,8 @@ package io.github.luyingyilong.geg.market.client;
 import io.github.luyingyilong.geg.GegMod;
 import io.github.luyingyilong.geg.market.MarketActionPacket;
 import io.github.luyingyilong.geg.market.MarketBuyOrder;
-import io.github.luyingyilong.geg.market.MarketCoinCredit;
 import io.github.luyingyilong.geg.market.MarketDetail;
 import io.github.luyingyilong.geg.market.MarketFavorite;
-import io.github.luyingyilong.geg.market.MarketDelivery;
 import io.github.luyingyilong.geg.market.MarketKey;
 import io.github.luyingyilong.geg.market.MarketListing;
 import io.github.luyingyilong.geg.market.MarketNetwork;
@@ -33,8 +31,6 @@ public final class ClientMarketState {
     private static final List<MarketListing> MINE = new ArrayList<>();
     private static final List<MarketBuyOrder> MINE_REQUESTS = new ArrayList<>();
     private static final List<MarketDetail> DETAILS = new ArrayList<>();
-    private static final List<MarketCoinCredit> COIN_CREDITS = new ArrayList<>();
-    private static final List<MarketDelivery> DELIVERIES = new ArrayList<>();
     private static final List<MarketPurchase> HISTORY = new ArrayList<>();
     private static final List<MarketFavorite> FAVORITES = new ArrayList<>();
     private static final List<InventoryEntry> INVENTORY = new ArrayList<>();
@@ -60,9 +56,7 @@ public final class ClientMarketState {
                 MINE.clear();
                 MINE_REQUESTS.clear();
                 DETAILS.clear();
-                COIN_CREDITS.clear();
                 detailLoading = !detailItem.isEmpty();
-                DELIVERIES.clear();
                 HISTORY.clear();
                 FAVORITES.clear();
                 INVENTORY.clear();
@@ -92,20 +86,6 @@ public final class ClientMarketState {
                 for (Tag raw : payload.getList("entries", Tag.TAG_COMPOUND)) {
                     MarketBuyOrder order = MarketBuyOrder.load((CompoundTag) raw);
                     if (order != null) MINE_REQUESTS.add(order);
-                }
-            }
-            case "coinCredits" -> {
-                for (Tag raw : payload.getList("entries", Tag.TAG_COMPOUND)) {
-                    MarketCoinCredit credit = MarketCoinCredit.load((CompoundTag) raw);
-                    if (credit != null) COIN_CREDITS.add(credit);
-                }
-            }
-            case "deliveries" -> {
-                for (Tag raw : payload.getList("entries", Tag.TAG_COMPOUND)) {
-                    MarketDelivery delivery = MarketDelivery.load((CompoundTag) raw);
-                    if (delivery != null) {
-                        DELIVERIES.add(delivery);
-                    }
                 }
             }
             case "history" -> {
@@ -236,11 +216,6 @@ public final class ClientMarketState {
     }
 
 
-    public static List<MarketCoinCredit> coinCredits() {
-        return COIN_CREDITS;
-    }
-
-
     public static void requestDetails(long listingId, ItemStack item) {
         detailRequestedId = listingId;
         detailItem = item.copyWithCount(1);
@@ -288,11 +263,6 @@ public final class ClientMarketState {
     }
 
 
-    public static List<MarketDelivery> deliveries() {
-        return DELIVERIES;
-    }
-
-
     public static List<MarketPurchase> history() {
         return HISTORY;
     }
@@ -306,14 +276,6 @@ public final class ClientMarketState {
         return INVENTORY;
     }
 
-    public static long pendingCoin() {
-        long amount = 0L;
-        for (MarketCoinCredit credit : COIN_CREDITS) {
-            if (Long.MAX_VALUE - amount < credit.amount()) return Long.MAX_VALUE;
-            amount += credit.amount();
-        }
-        return amount;
-    }
 
     public static boolean ready() {
         return ready;
@@ -333,8 +295,6 @@ public final class ClientMarketState {
         MINE.clear();
         MINE_REQUESTS.clear();
         DETAILS.clear();
-        COIN_CREDITS.clear();
-        DELIVERIES.clear();
         HISTORY.clear();
         FAVORITES.clear();
         INVENTORY.clear();

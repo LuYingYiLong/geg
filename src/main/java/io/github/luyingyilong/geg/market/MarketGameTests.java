@@ -2,6 +2,7 @@ package io.github.luyingyilong.geg.market;
 
 import com.mojang.authlib.GameProfile;
 import io.github.luyingyilong.geg.GegMod;
+import io.github.luyingyilong.geg.mail.*;
 import io.github.luyingyilong.geg.money.MoneyBalance;
 import io.github.luyingyilong.geg.money.MoneySavedData;
 import io.github.luyingyilong.geg.money.CoinAuditService;
@@ -73,7 +74,7 @@ public final class MarketGameTests {
             helper.assertTrue(MarketService.buy(buyer, listingId, 1L, 101L, 2) == MarketResult.BOUGHT,
                     "Reopened market did not allow a purchase");
             helper.assertTrue(data.balance(buyer.getUUID()).coinMinorUnits() == 9798L
-                            && MarketService.pendingCoin(server, seller.getUUID()) == 197L,
+                            && pendingMailCoin(server, seller.getUUID()) == 197L,
                     "Sale fee did not come out of seller proceeds");
             helper.assertTrue(data.audit().stream().anyMatch(entry -> entry.reason().equals("market_fee")
                             && entry.reference().equals("listing:" + listingId)
@@ -88,7 +89,7 @@ public final class MarketGameTests {
             seller.getInventory().setItem(1, item.copyWithCount(1));
             helper.assertTrue(MarketService.fulfillRequest(seller, orderId, 1L, 101L, 3)
                     == MarketResult.FULFILLED, "Fee test buy order was not fulfilled");
-            helper.assertTrue(MarketService.pendingCoin(server, seller.getUUID()) == 493L,
+            helper.assertTrue(pendingMailCoin(server, seller.getUUID()) == 493L,
                     "Buy-order fulfillment fee did not come out of seller proceeds");
             helper.assertTrue(data.audit().stream().anyMatch(entry -> entry.reason().equals("market_fee")
                             && entry.reference().equals("order:" + orderId)
@@ -101,7 +102,7 @@ public final class MarketGameTests {
             server.overworld().getGameRules().getRule(MarketRules.ENABLED).set(false, server);
             helper.assertTrue(MarketService.cancelRequest(buyer, cancelId, 1L) == MarketResult.CANCELLED,
                     "Closed market prevented a buy-order refund");
-            helper.assertTrue(MarketService.claimCoin(seller) == MarketResult.CLAIMED,
+            helper.assertTrue(claimMailCoin(seller) == MailState.Result.SUCCESS,
                     "Closed market prevented claiming earned coin");
             helper.succeed();
         } finally {
@@ -203,7 +204,7 @@ public final class MarketGameTests {
                 "Partial purchase failed");
         helper.assertTrue(data.balance(buyer.getUUID()).coinMinorUnits() == 875L,
                 "Buyer was not charged the unit price");
-        helper.assertTrue(MarketService.pendingCoin(helper.getLevel().getServer(), seller.getUUID()) == 125L,
+        helper.assertTrue(pendingMailCoin(helper.getLevel().getServer(), seller.getUUID()) == 125L,
                 "Offline seller proceeds were not queued");
         helper.assertTrue(data.audit().stream().anyMatch(entry -> entry.reason().equals("market_sale")
                         && entry.reference().equals("listing:" + listingId) && entry.amount() == 125L
@@ -226,13 +227,13 @@ public final class MarketGameTests {
                 "Total debit was incorrect");
         helper.assertTrue(MarketService.favorites(helper.getLevel().getServer(), buyer.getUUID()).size() == 1,
                 "Favorite disappeared after sellout");
-        helper.assertTrue(MarketService.claimCoin(seller) == MarketResult.CLAIMED,
+        helper.assertTrue(claimMailCoin(seller) == MailState.Result.SUCCESS,
                 "Offline seller proceeds could not be claimed");
-        helper.assertTrue(MarketService.claimCoin(seller) == MarketResult.CLAIMED,
+        helper.assertTrue(claimMailCoin(seller) == MailState.Result.SUCCESS,
                 "Second sale proceeds could not be claimed");
         helper.assertTrue(data.balance(seller.getUUID()).coinMinorUnits() == 725L,
                 "Seller proceeds were incorrect");
-        helper.assertTrue(data.audit().stream().filter(entry -> entry.reason().equals("market_claim")
+        helper.assertTrue(data.audit().stream().filter(entry -> entry.reason().equals("mail_claim")
                         && entry.to().equals("wallet:" + seller.getUUID()))
                         .mapToLong(entry -> entry.amount()).sum() == 725L,
                 "Seller claims were not fully audited");
@@ -247,28 +248,28 @@ public final class MarketGameTests {
         data.put(seller.getUUID(), new MoneyBalance(Long.MAX_VALUE, 0L));
         data.market().coinCredits.put(seller.getUUID(), new ArrayList<>(List.of(
                 new MarketCoinCredit(data.market().nextId++, 1L))));
-        helper.assertTrue(MarketService.claimCoin(seller) == MarketResult.OVERFLOW,
+        helper.assertTrue(claimMailCoin(seller) == MailState.Result.WALLET_FULL,
                 "Overflowing proceeds claim succeeded");
-        helper.assertTrue(MarketService.pendingCoin(helper.getLevel().getServer(), seller.getUUID()) == 1L,
+        helper.assertTrue(pendingMailCoin(helper.getLevel().getServer(), seller.getUUID()) == 1L,
                 "Overflowing claim lost pending proceeds");
         data.put(seller.getUUID(), new MoneyBalance(725L, 0L));
         data.market().coinCredits.remove(seller.getUUID());
 
-        List<MarketDelivery> deliveries = MarketService.deliveries(helper.getLevel().getServer(), buyer.getUUID());
+        List<ItemMail> deliveries = itemMail(helper.getLevel().getServer(), buyer.getUUID());
         for (int slot = 0; slot < 36; slot++) {
             buyer.getInventory().setItem(slot, new ItemStack(Items.STONE, 64));
         }
         buyer.getInventory().setItem(0, item.copyWithCount(63));
-        helper.assertTrue(MarketService.claimItems(buyer, deliveries.get(1).id()) == MarketResult.CLAIMED,
+        helper.assertTrue(claimMailItems(buyer, deliveries.get(1).id()) == MailState.Result.PARTIAL,
                 "Partial inventory claim failed");
         helper.assertTrue(buyer.getInventory().getItem(0).getCount() == 64,
                 "Partial claim did not fill the available slot");
-        helper.assertTrue(MarketService.deliveries(helper.getLevel().getServer(), buyer.getUUID()).get(1).quantity() == 2,
+        helper.assertTrue(data.mail().detail(buyer.getUUID(), deliveries.get(1).id()).items().get(0).quantity() == 2,
                 "Unclaimed remainder was lost");
-        helper.assertTrue(MarketService.claimItems(buyer, deliveries.get(1).id()) == MarketResult.NO_ROOM,
+        helper.assertTrue(claimMailItems(buyer, deliveries.get(1).id()) == MailState.Result.NO_ROOM,
                 "Full inventory accepted a claim");
         buyer.getInventory().setItem(1, ItemStack.EMPTY);
-        helper.assertTrue(MarketService.claimItems(buyer, deliveries.get(1).id()) == MarketResult.CLAIMED,
+        helper.assertTrue(claimMailItems(buyer, deliveries.get(1).id()) == MailState.Result.SUCCESS,
                 "Remaining items could not be claimed");
         helper.assertTrue(buyer.getInventory().getItem(1).getCount() == 2,
                 "Remaining claim quantity was incorrect");
@@ -283,7 +284,7 @@ public final class MarketGameTests {
                 "Seller bought own listing");
         helper.assertTrue(MarketService.cancel(seller, secondId, 1L) == MarketResult.CANCELLED,
                 "Cancellation failed");
-        helper.assertTrue(MarketService.deliveries(helper.getLevel().getServer(), seller.getUUID()).size() == 1,
+        helper.assertTrue(itemMail(helper.getLevel().getServer(), seller.getUUID()).size() == 1,
                 "Cancelled items were not moved to Claim");
         seller.getInventory().setItem(0, item.copyWithCount(1));
         long thirdId = data.market().nextId;
@@ -340,9 +341,9 @@ public final class MarketGameTests {
         helper.assertTrue(data.market().buyOrders.get(id).quantity() == 1
                 && data.market().buyOrders.get(id).escrow() == 100L,
                 "Partial delivery left the wrong escrow or quantity");
-        helper.assertTrue(MarketService.pendingCoin(helper.getLevel().getServer(), seller.getUUID()) == 400L,
+        helper.assertTrue(pendingMailCoin(helper.getLevel().getServer(), seller.getUUID()) == 400L,
                 "Offline seller credit was lost");
-        helper.assertTrue(MarketService.deliveries(helper.getLevel().getServer(), buyer.getUUID())
+        helper.assertTrue(itemMail(helper.getLevel().getServer(), buyer.getUUID())
                 .get(0).quantity() == 4, "Buyer delivery was not queued");
         helper.assertTrue(MarketService.fulfillRequest(rival, id, 1L, 100L, 1)
                 == MarketResult.STALE, "Outdated delivery succeeded");
@@ -354,11 +355,11 @@ public final class MarketGameTests {
                 == MarketResult.STALE, "Old-price delivery succeeded");
         helper.assertTrue(MarketService.repriceRequest(buyer, id, 3L, 50L)
                 == MarketResult.REPRICED, "Buy order decrease failed");
-        helper.assertTrue(MarketService.pendingCoin(helper.getLevel().getServer(), buyer.getUUID()) == 150L,
+        helper.assertTrue(pendingMailCoin(helper.getLevel().getServer(), buyer.getUUID()) == 150L,
                 "Price reduction refund was not recorded");
         helper.assertTrue(MarketService.cancelRequest(buyer, id, 4L) == MarketResult.CANCELLED,
                 "Buy order cancellation failed");
-        helper.assertTrue(MarketService.pendingCoin(helper.getLevel().getServer(), buyer.getUUID()) == 200L,
+        helper.assertTrue(pendingMailCoin(helper.getLevel().getServer(), buyer.getUUID()) == 200L,
                 "Cancellation refund was not recorded");
         helper.assertTrue(data.audit().stream().filter(entry -> entry.reference().equals("order:" + id)
                         && entry.reason().startsWith("market_"))
@@ -372,8 +373,10 @@ public final class MarketGameTests {
         MarketState restored = MarketState.load(data.market().save());
         helper.assertTrue(restored.buyOrders.isEmpty() || !restored.buyOrders.containsKey(id),
                 "Cancelled order reappeared after reload");
-        helper.assertTrue(restored.coinCredits.get(buyer.getUUID()).size() == 2,
-                "Separate refunds were merged after reload");
+        MailState restoredMail = MailState.load(data.mail().save());
+        helper.assertTrue(restoredMail.list(buyer.getUUID(), MailState.Filter.PENDING).stream()
+                        .filter(mail -> mail.coin() > 0).count() == 2 && restored.coinCredits.isEmpty(),
+                "Separate refund mails were merged or retained a second market claim path after reload");
         helper.assertTrue(restored.favorites.get(rival.getUUID()).get(0).ended(),
                 "Ended favorite was not persisted");
 
@@ -412,7 +415,7 @@ public final class MarketGameTests {
 
 
     @GameTest(template = "empty")
-    public static void oldPendingCoinMigrationAndPartialCoinClaim(GameTestHelper helper) {
+    public static void oldPendingCoinMigrationAndMailOverflow(GameTestHelper helper) {
         UUID owner = UUID.randomUUID();
         CompoundTag old = new CompoundTag();
         ListTag accounts = new ListTag();
@@ -436,13 +439,44 @@ public final class MarketGameTests {
                 new MarketCoinCredit(data.market().nextId++, 10L))));
         data.put(player.getUUID(), new MoneyBalance(Long.MAX_VALUE - 3L, 0L));
         long creditId = data.market().coinCredits.get(player.getUUID()).get(0).id();
-        helper.assertTrue(MarketService.claimCoin(player, creditId) == MarketResult.CLAIMED,
-                "Partial coin claim failed");
-        helper.assertTrue(data.balance(player.getUUID()).coinMinorUnits() == Long.MAX_VALUE
-                && data.market().coinCredits.get(player.getUUID()).get(0).amount() == 7L,
-                "Partial coin claim lost the remainder");
-        helper.assertTrue(MarketService.claimCoin(player, creditId) == MarketResult.OVERFLOW,
+        helper.assertTrue(claimMailCoin(player, creditId) == MailState.Result.WALLET_FULL,
+                "Overflowing mail attachment was consumed");
+        helper.assertTrue(data.balance(player.getUUID()).coinMinorUnits() == Long.MAX_VALUE - 3L
+                && pendingMailCoin(player.server, player.getUUID()) == 10L,
+                "Rejected mail claim lost its attachment");
+        helper.assertTrue(claimMailCoin(player, creditId) == MailState.Result.WALLET_FULL,
                 "Full wallet accepted more coin");
         helper.succeed();
     }
+    private static long pendingMailCoin(net.minecraft.server.MinecraftServer server, UUID player) {
+        var data = MoneySavedData.get(server);
+        data.market().migrateClaims(data);
+        return data.mail().list(player, MailState.Filter.PENDING).stream()
+                .map(mail -> data.mail().detail(player, mail.id())).mapToLong(MailMessage::coin).sum();
+    }
+    private record ItemMail(UUID id, int quantity) { }
+    private static List<ItemMail> itemMail(net.minecraft.server.MinecraftServer server, UUID player) {
+        var data = MoneySavedData.get(server);
+        return data.mail().list(player, MailState.Filter.PENDING).stream()
+                .map(mail -> data.mail().detail(player, mail.id())).filter(mail -> !mail.items().isEmpty())
+                .map(mail -> new ItemMail(mail.id(), mail.items().get(0).quantity()))
+                .sorted(java.util.Comparator.comparingInt(ItemMail::quantity)).toList();
+    }
+    private static MailState.Result claimMailItems(FakePlayer player, UUID id) {
+        var data = MoneySavedData.get(player.server);
+        return data.mail().claim(data, player.getUUID(), id, player.getInventory());
+    }
+    private static MailState.Result claimMailCoin(FakePlayer player) {
+        var data = MoneySavedData.get(player.server);
+        data.market().migrateClaims(data);
+        var mail = data.mail().list(player.getUUID(), MailState.Filter.PENDING).stream()
+                .filter(value -> value.coin() > 0).findFirst().orElseThrow();
+        return data.mail().claim(data, player.getUUID(), mail.id(), player.getInventory());
+    }
+    private static MailState.Result claimMailCoin(FakePlayer player, long oldCreditId) {
+        var data = MoneySavedData.get(player.server);
+        data.market().migrateClaims(data);
+        return data.mail().claim(data, player.getUUID(), MarketState.mailId(player.getUUID(), oldCreditId, true), player.getInventory());
+    }
+
 }

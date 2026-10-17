@@ -35,8 +35,6 @@ import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import io.github.luyingyilong.geg.market.*;
 import io.github.luyingyilong.geg.market.MarketActionPacket;
 import io.github.luyingyilong.geg.market.MarketBuyOrder;
-import io.github.luyingyilong.geg.market.MarketCoinCredit;
-import io.github.luyingyilong.geg.market.MarketDelivery;
 import io.github.luyingyilong.geg.market.MarketDetail;
 import io.github.luyingyilong.geg.market.MarketFavorite;
 import io.github.luyingyilong.geg.market.MarketKey;
@@ -173,8 +171,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                     public int measureHeight(Card card, int cardWidth, Font font) {
                         boolean hasPrice = card.kind == Kind.GROUP || card.kind == Kind.OWN
                                 || card.kind == Kind.OWN_REQUEST || card.kind == Kind.FAVORITE
-                                || card.kind == Kind.HISTORY || card.kind == Kind.COIN;
-                        return hasPrice && card.kind != Kind.COIN ? 42 : 32;
+                                || card.kind == Kind.HISTORY;
+                        return hasPrice ? 42 : 32;
                     }
 
                     @Override
@@ -259,8 +257,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             case OWN_REQUEST -> List.of(card.kind, card.order.id());
             case FAVORITE -> List.of(card.kind, card.favorite.orderId(), card.favoriteIndex);
             case HISTORY -> List.of(card.kind, card.purchase.purchasedAt(), MarketKey.of(card.item));
-            case DELIVERY -> List.of(card.kind, card.delivery.id());
-            case COIN -> List.of(card.kind, card.credit.id());
         };
     }
 
@@ -280,8 +276,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             case INVENTORY -> left.slot == right.slot && MarketKey.of(left.item).equals(MarketKey.of(right.item));
             case HISTORY -> left.purchase.purchasedAt() == right.purchase.purchasedAt()
                     && MarketKey.of(left.item).equals(MarketKey.of(right.item));
-            case DELIVERY -> left.delivery.id() == right.delivery.id();
-            case COIN -> left.credit.id() == right.credit.id();
         };
     }
 
@@ -490,20 +484,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                     result.add(card);
                 }
             }
-            case CLAIM -> {
-                for (MarketCoinCredit credit : ClientMarketState.coinCredits()) {
-                    Card card = new Card(Kind.COIN, ItemStack.EMPTY);
-                    card.credit = credit;
-                    card.price = credit.amount();
-                    result.add(card);
-                }
-                for (MarketDelivery delivery : ClientMarketState.deliveries()) {
-                    Card card = new Card(Kind.DELIVERY, delivery.item());
-                    card.delivery = delivery;
-                    card.quantity = delivery.quantity();
-                    result.add(card);
-                }
-            }
         }
         return result;
     }
@@ -582,9 +562,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         } else if (modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE) {
             detailModal.action(Component.translatable(requestMode
                     ? "market.geg.confirm_request" : "market.geg.confirm_list"), this::primaryModalAction,
-                    Button.Type.PRIMARY);
-        } else if (modal.kind == Kind.DELIVERY || modal.kind == Kind.COIN) {
-            detailModal.action(Component.translatable("market.geg.claim"), this::primaryModalAction,
                     Button.Type.PRIMARY);
         }
     }
@@ -803,8 +780,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                     long price = MoneyCurrency.COIN.parseAmount(ClientMarketScreen.priceText(), false);
                     send(MarketActionPacket.Action.REPRICE_REQUEST, modal.order.id(), modal.order.version(), price, 0, 0);
                 }
-                case DELIVERY -> send(MarketActionPacket.Action.CLAIM_ITEM, modal.delivery.id(), 0L, 0L, 0, 0);
-                case COIN -> send(MarketActionPacket.Action.CLAIM_COIN, modal.credit.id(), 0L, 0L, 0, 0);
                 default -> {
                 }
             }
@@ -971,13 +946,11 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                     values.put(MarketDetailDescriptions.Field.ESCROW, Component.literal(MoneyCurrency.COIN.format(modal.order.escrow())));
                 }
                 case INVENTORY, SAMPLE -> values.put(MarketDetailDescriptions.Field.INVENTORY, Component.literal(Long.toString(modal.quantity)));
-                case DELIVERY -> values.put(MarketDetailDescriptions.Field.CLAIM_ITEMS, Component.literal(Long.toString(modal.quantity)));
                 case HISTORY -> {
                     values.put(MarketDetailDescriptions.Field.SELLER, Component.literal(modal.purchase.sellerName()));
                     values.put(MarketDetailDescriptions.Field.QUANTITY, Component.literal(Long.toString(modal.quantity)));
                     values.put(MarketDetailDescriptions.Field.PRICE, Component.literal(MoneyCurrency.COIN.format(modal.price)));
                 }
-                case COIN -> values.put(MarketDetailDescriptions.Field.CLAIM_COIN, Component.literal(MoneyCurrency.COIN.format(modal.credit.amount())));
                 default -> { }
             }
             if (modal.kind == Kind.OWN || modal.kind == Kind.INVENTORY && !requestMode) {
@@ -1089,7 +1062,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         SELL("sell"),
         FAVORITES("favorites"),
         HISTORY("history"),
-        CLAIM("claim"),
         ;
 
         private final String id;
@@ -1111,8 +1083,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         INVENTORY,
         FAVORITE,
         HISTORY,
-        DELIVERY,
-        COIN,
     }
 
     private static final class Card {
@@ -1121,9 +1091,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         private final List<MarketDetail> offers = new ArrayList<>();
         private MarketListing listing;
         private MarketBuyOrder order;
-        private MarketCoinCredit credit;
         private MarketFavorite favorite;
-        private MarketDelivery delivery;
         private MarketPurchase purchase;
         private long detailId;
         private int slot = -1;
@@ -1139,7 +1107,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
         private Component title() {
             return switch (kind) {
-                case COIN -> Component.translatable("market.geg.pending_coin");
                 case OWN_REQUEST -> Component.translatable("market.geg.buying_item", item.getHoverName());
                 case OWN -> Component.translatable("market.geg.selling_item", item.getHoverName());
                 default -> item.getHoverName();
@@ -1174,15 +1141,12 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             name.text(card.title());
             icon.item = card.item;
             icon.visible(!card.item.isEmpty());
-            count.visible(card.kind != Kind.COIN);
             count.text(switch (card.kind) {
                 case GROUP -> Component.translatable("market.geg.market_count", card.quantity, card.buyQuantity);
                 case OWN, OWN_REQUEST, FAVORITE -> Component.translatable("market.geg.count", card.quantity);
                 case INVENTORY -> Component.translatable("market.geg.inventory_count", card.quantity);
                 case SAMPLE -> Component.translatable("market.geg.sample");
                 case HISTORY -> Component.translatable("market.geg.bought_count", card.quantity);
-                case DELIVERY -> Component.translatable("market.geg.claim_count", card.quantity);
-                case COIN -> Component.empty();
             });
             boolean ended = card.kind == Kind.FAVORITE && card.favorite != null && card.favorite.ended();
             Component priceText = switch (card.kind) {
@@ -1190,7 +1154,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                         ? card.kind == Kind.GROUP && card.buyQuantity > 0 ? Component.empty()
                         : Component.translatable(ended ? "market.geg.ended" : "market.geg.out_of_stock")
                         : Component.translatable("market.geg.price", MoneyCurrency.COIN.format(card.price));
-                case COIN -> Component.translatable("market.geg.price", MoneyCurrency.COIN.format(card.price));
                 default -> Component.empty();
             };
             price.text(priceText).color(ended ? SECONDARY_TEXT : ACCENT);

@@ -1,5 +1,11 @@
 package io.github.luyingyilong.geg.market;
 
+import io.github.luyingyilong.geg.mail.MailActionPacket;
+import io.github.luyingyilong.geg.mail.MailItem;
+import io.github.luyingyilong.geg.mail.MailMessage;
+import io.github.luyingyilong.geg.money.MoneySavedData;
+import io.github.luyingyilong.geg.money.MoneyService;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -27,6 +33,49 @@ public final class MarketState {
 
     public long revision() {
         return revision;
+    }
+
+    public static String mailKey(UUID player, long id, boolean coin) {
+        return "market:" + (coin ? "coin:" : "item:") + player + ":" + id;
+    }
+
+    public static UUID mailId(UUID player, long id, boolean coin) {
+        return UUID.nameUUIDFromBytes(mailKey(player, id, coin).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    }
+
+    /** Drain legacy custody records into the same SavedData's mailbox, keeping stable deduplication keys. */
+    public java.util.Set<UUID> migrateClaims(MoneySavedData data) {
+        java.util.Set<UUID> recipients = new java.util.HashSet<>();
+        int credits = coinCredits.values().stream().mapToInt(List::size).sum();
+        data.requireAuditCapacity(credits);
+        deliveries.forEach((player, values) -> {
+            var iterator = values.iterator();
+            while (iterator.hasNext()) {
+                MarketDelivery delivery = iterator.next();
+                var mail = new MailMessage(mailId(player, delivery.id(), false),
+                        System.currentTimeMillis(), MailMessage.Kind.SYSTEM,
+                        "", "mail.geg.market.items_title", "mail.geg.market.items_body", List.of(), 0,
+                        MailActionPacket.Scope.PLAYER, null, "",
+                        List.of(new MailItem(delivery.item(), delivery.quantity())));
+                data.mail().deliverMarket(data, mailKey(player, delivery.id(), false), mail, player, "");
+                iterator.remove(); recipients.add(player);
+            }
+        });
+        coinCredits.forEach((player, values) -> {
+            var iterator = values.iterator();
+            while (iterator.hasNext()) {
+                MarketCoinCredit credit = iterator.next();
+                var mail = new MailMessage(mailId(player, credit.id(), true),
+                        System.currentTimeMillis(), MailMessage.Kind.SYSTEM,
+                        "", "mail.geg.market.coin_title", "mail.geg.market.coin_body", List.of(), credit.amount(),
+                        MailActionPacket.Scope.PLAYER);
+                data.mail().deliverMarket(data, mailKey(player, credit.id(), true), mail, player,
+                        MoneyService.pending(player, credit.id()));
+                iterator.remove(); recipients.add(player);
+            }
+        });
+        if (!recipients.isEmpty()) { deliveries.clear(); coinCredits.clear(); data.markChanged(); }
+        return recipients;
     }
 
     public void forEachCoinHolding(BiConsumer<String, Long> consumer) {

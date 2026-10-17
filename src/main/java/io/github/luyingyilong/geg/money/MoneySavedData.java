@@ -21,6 +21,7 @@ public final class MoneySavedData extends SavedData {
     private final Map<UUID, MoneyBalance> wallets = new HashMap<>();
     private io.github.luyingyilong.geg.mail.MailState mail = new io.github.luyingyilong.geg.mail.MailState();
     private MarketState market = new MarketState();
+    private boolean marketMailInitialized;
     private int marketFeeBasisPoints;
     private final List<CoinAuditEntry> audit = new ArrayList<>();
     private long nextAuditSequence = 1L;
@@ -37,6 +38,10 @@ public final class MoneySavedData extends SavedData {
                 DATA_NAME
         );
         data.initializeAudit();
+        if (!data.marketMailInitialized) {
+            data.market.migrateClaims(data);
+            data.marketMailInitialized = true;
+        }
         return data;
     }
 
@@ -64,6 +69,7 @@ public final class MoneySavedData extends SavedData {
             data.market = MarketState.load(root.getCompound("market"));
         }
         data.mail = io.github.luyingyilong.geg.mail.MailState.load(root.getCompound("mail"));
+        if (data.mail.revision() != root.getCompound("mail").getLong("revision")) data.markChanged();
         data.marketFeeBasisPoints = Math.max(0, Math.min(10000, root.getInt("marketFeeBasisPoints")));
 
         data.auditInitialized = root.getBoolean("auditInitialized");
@@ -183,6 +189,8 @@ public final class MoneySavedData extends SavedData {
             }
         });
         market.forEachCoinHolding((account, amount) -> record("opening", MoneyCurrency.COIN,
+                "system:opening", account, amount, "legacy"));
+        mail.forEachCoinHolding((account, amount) -> record("opening", MoneyCurrency.COIN,
                 "system:opening", account, amount, "legacy"));
         questCredits.values().forEach(credit -> {
             if (credit.pending() && credit.amount() > 0L) {

@@ -120,7 +120,75 @@ public final class ButtonInteractionTest {
         check(Button.textBackgroundColor(true, true) == 0x1A000000);
         scrolledCapture();
         iconLayout();
+        pressedLayout();
+        pressedFocus();
         controlledState();
+    }
+
+    private static void pressedLayout() {
+        Button.Icon icon = new Button.Icon(OreIcons.SMALL_CLOSE, 7, 7);
+        for (int height : new int[]{18, 20, 22, 32}) {
+            Rect area = new Rect(10, 30, 120, height);
+            check(Button.backgroundBounds(area, Button.Type.SECONDARY, false).equals(area));
+            Rect pressedBackground = Button.backgroundBounds(area, Button.Type.SECONDARY, true);
+            check(pressedBackground.y() == area.y() + 2 && pressedBackground.height() == height - 2);
+            check(pressedBackground.bottom() == area.bottom());
+            for (Button.TextAlignment alignment : Button.TextAlignment.values()) {
+                Button.ContentLayout normal = Button.contentLayout(area, 24, true, icon, icon, alignment, Button.Type.SECONDARY, false);
+                Button.ContentLayout pressed = Button.contentLayout(area, 24, true, icon, icon, alignment, Button.Type.SECONDARY, true);
+                check(pressed.label().equals(normal.label().translated(0, 2)));
+                check(pressed.icon().equals(normal.icon().translated(0, 2)));
+                check(pressed.trailingIcon().equals(normal.trailingIcon().translated(0, 2)));
+            }
+            Button.ContentLayout iconOnly = Button.contentLayout(area, 0, false, icon, null, Button.TextAlignment.CENTER, Button.Type.SECONDARY, true);
+            Button.ContentLayout normalIcon = Button.contentLayout(area, 0, false, icon, null, Button.TextAlignment.CENTER);
+            check(iconOnly.icon().equals(normalIcon.icon().translated(0, 2)));
+        }
+        check(Button.backgroundBounds(new Rect(0, 0, 10, 1), Button.Type.SECONDARY, true).height() == 0);
+    }
+
+    private static void pressedFocus() {
+        Button.Icon icon = new Button.Icon(OreIcons.SMALL_CLOSE, 7, 7);
+        for (Button.Type type : Button.Type.values()) {
+            int offset = type == Button.Type.TEXT || type == Button.Type.MENU ? 0 : 2;
+            Button button = new Button(cue -> { }).type(type);
+            button.position(20, 20).requestedSize(100, 20);
+            Window window = new Window(true).content(new Control().addChild(button));
+            window.layoutViewport(160, 80, null);
+            window.focusManager().requestFocus(button, null);
+            window.focusManager().keyboardNavigation();
+            Rect normal = window.focusManager().outlineBounds();
+            check(normal.equals(new Rect(19, 19, 102, 22)));
+            window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null);
+            Rect held = window.focusManager().outlineBounds();
+            check(held.y() == normal.y() + offset && held.bottom() == normal.bottom());
+            check(held.x() == normal.x() && held.width() == normal.width());
+            window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
+            check(window.focusManager().outlineBounds().equals(normal));
+
+            button.toggleButton(true).buttonPressedNoSignal(true);
+            check(window.focusManager().outlineBounds().y() == normal.y() + offset);
+            check(window.focusManager().outlineBounds().bottom() == normal.bottom());
+            button.buttonPressedNoSignal(false).toggleButton(false);
+            window.pointerPressed(25, 25, null);
+            check(button.focusBounds().y() == 20 + offset);
+            window.pointerDragged(159, 70);
+            check(button.focusBounds().equals(button.absoluteBounds()));
+            window.pointerDragged(25, 25);
+            check(button.focusBounds().y() == 20 + offset);
+            window.pointerReleased(159, 70);
+            check(button.focusBounds().equals(button.absoluteBounds()));
+
+            Rect area = button.absoluteBounds();
+            Button.ContentLayout before = Button.contentLayout(area, 24, true, icon, icon, Button.TextAlignment.CENTER);
+            Button.ContentLayout pressed = Button.contentLayout(area, 24, true, icon, icon, Button.TextAlignment.CENTER, type, true);
+            check(pressed.label().equals(before.label().translated(0, offset)));
+            check(pressed.icon().equals(before.icon().translated(0, offset)));
+            check(pressed.trailingIcon().equals(before.trailingIcon().translated(0, offset)));
+            if (offset == 0) check(Button.backgroundBounds(area, type, true).equals(area));
+            button.toggleButton(true).buttonPressedNoSignal(true).disabled(true);
+            check(button.focusBounds().equals(area));
+        }
     }
 
     private static void controlledState() {

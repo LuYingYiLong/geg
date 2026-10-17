@@ -20,8 +20,6 @@ public record MarketActionPacket(Action action, long id, long version, long pric
         BUY,
         REPRICE,
         CANCEL,
-        CLAIM_ITEM,
-        CLAIM_COIN,
         FAVORITE_ADD,
         FAVORITE_REMOVE,
         CREATE_REQUEST,
@@ -95,8 +93,6 @@ public record MarketActionPacket(Action action, long id, long version, long pric
                 case BUY -> MarketService.buy(player, packet.id, packet.version, packet.price, packet.quantity);
                 case REPRICE -> MarketService.reprice(player, packet.id, packet.version, packet.price);
                 case CANCEL -> MarketService.cancel(player, packet.id, packet.version);
-                case CLAIM_ITEM -> MarketService.claimItems(player, packet.id);
-                case CLAIM_COIN -> MarketService.claimCoin(player, packet.id);
                 case FAVORITE_ADD -> MarketService.addFavorite(player, packet.id);
                 case FAVORITE_REMOVE -> MarketService.removeFavorite(player, packet.slot);
                 case CREATE_REQUEST -> MarketService.createRequest(player, packet.slot, packet.id,

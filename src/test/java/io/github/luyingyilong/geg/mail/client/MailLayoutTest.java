@@ -91,12 +91,13 @@ public final class MailLayoutTest {
             check(audiences.size().width() == Math.min(width - 8, audiences.minimumRowWidth(font)));
             send.visible(true);
         }
-        for (boolean read : new boolean[]{false, true}) for (long coin : new long[]{0, 100}) {
+        for (boolean read : new boolean[]{false, true}) for (long coin : new long[]{0, 100})
+                for (boolean hasItems : new boolean[]{false, true}) {
             var row = new MailSyncPacket.Row(UUID.randomUUID(), Component.literal("Only title"), "Sender",
-                    MailMessage.Kind.ADMIN, 123, coin, read, false, MailActionPacket.Scope.PLAYER);
+                    MailMessage.Kind.ADMIN, 123, coin, read, false, MailActionPacket.Scope.PLAYER, hasItems);
             MenuItem item = MailListItem.create(row);
             check(item.label().getString().equals("Only title") && item.key().equals(row.id().toString()));
-            check(item.icon().texture().equals(coin > 0 ? read ? OreIcons.GIFT_OPENED : OreIcons.GIFT
+            check(item.icon().texture().equals(coin > 0 || hasItems ? read ? OreIcons.GIFT_OPENED : OreIcons.GIFT
                     : read ? OreIcons.EMAIL_READED : OreIcons.EMAIL));
         }
         for (MailActionPacket.Scope scope : MailActionPacket.Scope.values()) {
@@ -116,10 +117,12 @@ public final class MailLayoutTest {
         List<MailSyncPacket.Row> rows = List.of(
                 new MailSyncPacket.Row(gift, Component.literal("Gift"), "OP", MailMessage.Kind.ADMIN, 3, 100, false, false, MailActionPacket.Scope.PLAYER),
                 new MailSyncPacket.Row(plain, Component.literal("Notice"), "OP", MailMessage.Kind.ADMIN, 2, 0, false, false, MailActionPacket.Scope.PLAYER),
-                new MailSyncPacket.Row(read, Component.literal("Read"), "OP", MailMessage.Kind.ADMIN, 1, 0, true, false, MailActionPacket.Scope.PLAYER));
+                new MailSyncPacket.Row(read, Component.literal("Read"), "OP", MailMessage.Kind.ADMIN, 1, 0, true, false, MailActionPacket.Scope.PLAYER),
+                new MailSyncPacket.Row(UUID.randomUUID(), Component.literal("Market items"), "", MailMessage.Kind.SYSTEM,
+                        0, 0, false, false, MailActionPacket.Scope.PLAYER, true));
         List<MenuItem> groups = MailListItem.groups(rows, false);
         check(groups.size() == 3 && groups.stream().allMatch(group -> group.type() == MenuItem.Type.GROUP));
-        check(groups.get(0).children().size() == 3 && groups.get(1).children().size() == 2 && groups.get(2).children().size() == 1);
+        check(groups.get(0).children().size() == 4 && groups.get(1).children().size() == 3 && groups.get(2).children().size() == 2);
         List<MenuItem> children = groups.stream().flatMap(group -> group.children().stream()).toList();
         check(children.stream().map(MenuItem::key).distinct().count() == children.size());
         check(groups.get(0).children().get(0).label().getString().equals("Gift"));

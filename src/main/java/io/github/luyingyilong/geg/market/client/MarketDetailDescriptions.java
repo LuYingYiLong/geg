@@ -9,12 +9,11 @@ import net.minecraft.network.chat.Component;
 
 import java.util.Map;
 
-/** Stable read-only fields shared by listing, posting, history and claim detail views. */
+/** Stable read-only fields shared by listing, posting and history detail views. */
 final class MarketDetailDescriptions extends Container {
     enum Field {
         STATUS("status"), SELLER("seller"), QUANTITY("quantity"), PRICE("unit_price"),
-        ESCROW("escrow"), INVENTORY("inventory_quantity"), CLAIM_ITEMS("claim_quantity"),
-        CLAIM_COIN("claim_amount"), FEE("seller_fee_rate");
+        ESCROW("escrow"), INVENTORY("inventory_quantity"), FEE("seller_fee_rate");
 
         final String label;
         Field(String label) { this.label = "market.geg." + label; }

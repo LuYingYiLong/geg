@@ -45,8 +45,8 @@ public final class MarketDetailLayoutTest {
                 check(field.contentNode().absoluteBounds().bottom() <= field.absoluteBounds().bottom(), "Wrapped field values remain inside the row");
             }
         }
-        details.show(Map.of(MarketDetailDescriptions.Field.CLAIM_COIN, Component.literal("12.34")));
-        check(!seller.visible() && details.descriptions().item("CLAIM_COIN").visible(), "Switching detail kinds hides unrelated fields");
+        details.show(Map.of(MarketDetailDescriptions.Field.ESCROW, Component.literal("12.34")));
+        check(!seller.visible() && details.descriptions().item("ESCROW").visible(), "Switching detail kinds hides unrelated fields");
         details.show(own);
         check(details.descriptions().item("SELLER") == seller, "Refresh keeps stable keyed field controls");
 

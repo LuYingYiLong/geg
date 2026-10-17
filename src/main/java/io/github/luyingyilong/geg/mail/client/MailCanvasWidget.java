@@ -64,6 +64,8 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     private boolean revealPreview;
     private final Label detailText = new Label().color(OreTheme.TEXT_WHITE).wrap(Label.Wrap.WORD);
     private final Label attachment = new Label().color(OreTheme.TEXT_SECONDARY).wrap(Label.Wrap.WORD);
+    private final Divider attachmentDivider = new Divider();
+    private final MailAttachmentsView rewards = new MailAttachmentsView(() -> query(MailActionPacket.Action.CLAIM, this.selected));
     private final Box detailActions = new Box().gap(2);
     private final Scroll detailScroll;
     private final Scroll columnsScroll;
@@ -109,8 +111,8 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         authorInfo.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         detailAuthor.add(detailAvatar).add(authorInfo);
         detailAuthor.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        detailScroll = new Scroll().horizontal(Scroll.BarMode.DISABLED).content(new Box().gap(4)
-                .add(detailText).add(attachment).add(detailNotice).add(detailActions));
+        detailScroll = new Scroll().horizontal(Scroll.BarMode.DISABLED).content(new MailDetailBody(
+                detailText, attachmentDivider, attachment, rewards, detailNotice, detailActions));
         detailScroll.minimum(0, 16).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         detailActions.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Panel detailPanel = new Panel(null).child(new Padding(Padding.Insets.all(4))
@@ -122,7 +124,6 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         window.content(new Box().gap(0).add(navbar).add(
                 padding.child(new Box().gap(4).add(audienceRow).add(notice).add(columnsScroll))
         )).overlay(overlay);
-        detailText.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         detailNotice.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         clearDetail();
         renderInbox();
@@ -167,6 +168,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         selected = id; selectedMessage = null; detailNotice.text(Component.empty()); detailText.text(tr("mail.geg.loading"));
         detailTitle.text(Component.empty()); detailSender.text(Component.empty()); detailDate.text(Component.empty()); attachment.text(Component.empty());
         detailAuthor.visible(false); detailAvatar.initials("");
+        rewards.attachments(List.of(), false); attachmentDivider.visible(false);
         clearDetailActions(); detailScroll.scrollToTop(); query(MailActionPacket.Action.DETAIL, id);
     }
     private void clearDetailActions() {
@@ -178,13 +180,15 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         detailTitle.text(tr("mail.geg.detail")); detailSender.text(Component.empty()); detailDate.text(Component.empty());
         detailText.text(tr("mail.geg.select_message")); attachment.text(Component.empty()); detailNotice.text(Component.empty());
         detailAuthor.visible(false); detailAvatar.initials("");
+        rewards.attachments(List.of(), false); attachmentDivider.visible(false);
         clearDetailActions();
     }
     private void updateDetail() {
         if (selectedMessage == null) return;
         MailMessage mail = selectedMessage;
         detailTitle.text(mail.titleText());
-        Component source = mail.kind() == MailMessage.Kind.SYSTEM ? tr("mail.geg.system_source", mail.sender())
+        Component source = mail.kind() == MailMessage.Kind.SYSTEM ? (mail.sender().isEmpty()
+                ? tr("mail.geg.market.source") : tr("mail.geg.system_source", mail.sender()))
                 : tr(mail.kind() == MailMessage.Kind.ADMIN ? "mail.geg.admin_source" : "mail.geg.organization_source", mail.sender());
         if (!mail.authorName().isBlank()) {
             detailSender.text(Component.literal(mail.authorName()));
@@ -193,14 +197,18 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
             detailSender.text(source);
             detailAvatar.initials(mail.sender());
         }
+        detailAvatar.visible(mail.kind() != MailMessage.Kind.SYSTEM);
         detailAuthor.visible(true);
         detailDate.text(Component.literal(time(mail.sentAt()))); detailText.text(mail.bodyText());
         attachment.text(mail.coin() == 0 ? Component.empty() : tr(selectedClaimed ? "mail.geg.claimed_amount" : "mail.geg.attachment_amount",
                 MoneyCurrency.COIN.format(mail.coin())));
         clearDetailActions();
-        Button action = mail.coin() > 0 && !selectedClaimed
-                ? new Button(tr("mail.geg.claim")).type(Button.Type.PRIMARY).onPressed(() -> query(MailActionPacket.Action.CLAIM, selected))
-                : new Button(tr("mail.geg.delete")).type(Button.Type.DESTRUCTIVE).onPressed(() -> { deleting = selected; query(MailActionPacket.Action.DELETE, selected); });
+        boolean claimable = mail.hasAttachments() && !selectedClaimed;
+        rewards.attachments(mail.items(), claimable);
+        attachmentDivider.visible(mail.hasAttachments());
+        if (claimable) return;
+        Button action = new Button(tr("mail.geg.delete")).type(Button.Type.DESTRUCTIVE)
+                .onPressed(() -> { deleting = selected; query(MailActionPacket.Action.DELETE, selected); });
         action.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         detailActions.add(action); detailActions.minimum(0, action.minimumHeight()); detailActions.visible(true);
     }
@@ -266,9 +274,10 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
                     if (packet.result().equals("mail.geg.not_found")) clearDetail();
                     if (packet.result().equals("mail.geg.success") && Objects.equals(deleting, selected)) {
                         deleting = null; clearDetail();
-                    } else if (packet.result().equals("mail.geg.success")) query(MailActionPacket.Action.DETAIL, selected);
+                    } else if (packet.result().equals("mail.geg.success") || packet.result().equals("mail.geg.partial"))
+                        query(MailActionPacket.Action.DETAIL, selected);
                 }
-                if (packet.result().equals("mail.geg.success")) refreshInbox();
+                if (packet.result().equals("mail.geg.success") || packet.result().equals("mail.geg.partial")) refreshInbox();
             }
         }
     }

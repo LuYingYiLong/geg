@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.UUID;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
 
@@ -39,11 +38,6 @@ public final class MarketService {
     }
 
 
-    public static List<MarketDelivery> deliveries(MinecraftServer server, UUID playerId) {
-        return List.copyOf(state(server).deliveries.getOrDefault(playerId, List.of()));
-    }
-
-
     public static List<MarketPurchase> history(MinecraftServer server, UUID playerId) {
         return List.copyOf(state(server).history.getOrDefault(playerId, List.of()));
     }
@@ -51,21 +45,6 @@ public final class MarketService {
 
     public static List<MarketFavorite> favorites(MinecraftServer server, UUID playerId) {
         return List.copyOf(state(server).favorites.getOrDefault(playerId, List.of()));
-    }
-
-
-    public static long pendingCoin(MinecraftServer server, UUID playerId) {
-        long total = 0L;
-        for (MarketCoinCredit credit : coinCredits(server, playerId)) {
-            if (Long.MAX_VALUE - total < credit.amount()) return Long.MAX_VALUE;
-            total += credit.amount();
-        }
-        return total;
-    }
-
-
-    public static List<MarketCoinCredit> coinCredits(MinecraftServer server, UUID playerId) {
-        return List.copyOf(state(server).coinCredits.getOrDefault(playerId, List.of()));
     }
 
 
@@ -135,6 +114,7 @@ public final class MarketService {
             return MarketResult.LIMIT;
         }
 
+        data.requireAuditCapacity(3);
         MarketDelivery delivery = new MarketDelivery(state.nextId++, listing.item(), quantity);
         MarketCoinCredit credit = proceeds > 0L ? new MarketCoinCredit(state.nextId++, proceeds) : null;
         MarketPurchase purchase = new MarketPurchase(listing.item(), quantity, listing.unitPrice(),
@@ -209,66 +189,6 @@ public final class MarketService {
     }
 
 
-    public static MarketResult claimItems(ServerPlayer player, long deliveryId) {
-        MinecraftServer server = player.server;
-        MarketState state = state(server);
-        List<MarketDelivery> values = state.deliveries.get(player.getUUID());
-        if (values == null) {
-            return MarketResult.EMPTY;
-        }
-        MarketDelivery delivery = values.stream().filter(value -> value.id() == deliveryId).findFirst().orElse(null);
-        if (delivery == null) {
-            return MarketResult.STALE;
-        }
-
-        int remaining = insertIntoInventory(player.getInventory(), delivery.item(), delivery.quantity());
-        if (remaining == delivery.quantity()) {
-            return MarketResult.NO_ROOM;
-        }
-        if (remaining == 0) {
-            values.remove(delivery);
-        } else {
-            values.set(values.indexOf(delivery), delivery.withQuantity(remaining));
-        }
-        player.getInventory().setChanged();
-        player.inventoryMenu.broadcastChanges();
-        MoneySavedData.get(server).markChanged();
-        MarketNetwork.sync(player);
-        return MarketResult.CLAIMED;
-    }
-
-
-    public static MarketResult claimCoin(ServerPlayer player) {
-        List<MarketCoinCredit> credits = coinCredits(player.server, player.getUUID());
-        return credits.isEmpty() ? MarketResult.EMPTY : claimCoin(player, credits.get(0).id());
-    }
-
-
-    public static MarketResult claimCoin(ServerPlayer player, long creditId) {
-        MinecraftServer server = player.server;
-        MarketState state = state(server);
-        List<MarketCoinCredit> credits = state.coinCredits.get(player.getUUID());
-        if (credits == null || credits.isEmpty()) return MarketResult.EMPTY;
-        MarketCoinCredit credit = credits.stream().filter(value -> value.id() == creditId).findFirst().orElse(null);
-        if (credit == null) return MarketResult.STALE;
-        MoneySavedData data = MoneySavedData.get(server);
-        MoneyBalance current = data.balance(player.getUUID());
-        long room = Long.MAX_VALUE - current.coinMinorUnits();
-        if (room <= 0L) return MarketResult.OVERFLOW;
-        long claimed = Math.min(room, credit.amount());
-        data.record("market_claim", MoneyCurrency.COIN,
-                MoneyService.pending(player.getUUID(), creditId), MoneyService.wallet(player.getUUID()),
-                claimed, "credit:" + creditId);
-        data.put(player.getUUID(), current.with(MoneyCurrency.COIN, current.coinMinorUnits() + claimed));
-        if (claimed == credit.amount()) credits.remove(credit);
-        else credits.set(credits.indexOf(credit), credit.withAmount(credit.amount() - claimed));
-        data.markChanged();
-        MoneyNetwork.sync(player, data.balance(player.getUUID()));
-        MarketNetwork.sync(player);
-        return MarketResult.CLAIMED;
-    }
-
-
     public static MarketResult addFavorite(ServerPlayer player, long listingId) {
         MinecraftServer server = player.server;
         MarketState state = state(server);
@@ -331,6 +251,7 @@ public final class MarketService {
         MoneySavedData data = MoneySavedData.get(server);
         MoneyBalance balance = data.balance(buyer.getUUID());
         if (balance.coinMinorUnits() < escrow) return MarketResult.INSUFFICIENT;
+        data.requireAuditCapacity(1);
         MarketBuyOrder order = new MarketBuyOrder(state.nextId++, buyer.getUUID(),
                 buyer.getGameProfile().getName(), item, quantity, unitPrice, escrow, 1L,
                 System.currentTimeMillis());
@@ -367,6 +288,7 @@ public final class MarketService {
         long fee = fee(total, data.marketFeeBasisPoints());
         long proceeds = total - fee;
         if (state.nextId > Long.MAX_VALUE - (proceeds > 0L ? 2L : 1L)) return MarketResult.LIMIT;
+        data.requireAuditCapacity(3);
         long deliveryId = state.nextId++;
         long creditId = proceeds > 0L ? state.nextId++ : 0L;
         if (proceeds > 0L) data.record("market_fulfill", MoneyCurrency.COIN,
@@ -419,6 +341,7 @@ public final class MarketService {
         long delta = newEscrow - order.escrow();
         if (delta > 0 && balance.coinMinorUnits() < delta) return MarketResult.INSUFFICIENT;
         if (delta < 0 && state.nextId == Long.MAX_VALUE) return MarketResult.LIMIT;
+        data.requireAuditCapacity(delta < 0 ? 2 : delta > 0 ? 1 : 0);
         if (delta > 0) {
             data.record("market_reprice", MoneyCurrency.COIN, MoneyService.wallet(buyer.getUUID()),
                     MoneyService.escrow(buyer.getUUID(), orderId), delta, "order:" + orderId);
@@ -446,6 +369,7 @@ public final class MarketService {
         if (order == null || order.version() != version) return MarketResult.STALE;
         if (!order.buyer().equals(buyer.getUUID())) return MarketResult.INVALID;
         if (state.nextId == Long.MAX_VALUE) return MarketResult.LIMIT;
+        MoneySavedData.get(server).requireAuditCapacity(2);
         long creditId = state.nextId++;
         MoneySavedData.get(server).record("market_cancel_refund", MoneyCurrency.COIN,
                 MoneyService.escrow(buyer.getUUID(), orderId), MoneyService.pending(buyer.getUUID(), creditId),
@@ -478,32 +402,12 @@ public final class MarketService {
     }
 
 
-    private static int insertIntoInventory(Inventory inventory, ItemStack item, int count) {
-        int remaining = count;
-        for (int slot = 0; slot < 36 && remaining > 0; slot++) {
-            ItemStack current = inventory.getItem(slot);
-            if (!current.isEmpty() && MarketKey.of(current).equals(MarketKey.of(item))) {
-                int space = Math.min(current.getMaxStackSize(), inventory.getMaxStackSize()) - current.getCount();
-                int inserted = Math.min(Math.max(space, 0), remaining);
-                if (inserted > 0) {
-                    current.grow(inserted);
-                    remaining -= inserted;
-                }
-            }
-        }
-        for (int slot = 0; slot < 36 && remaining > 0; slot++) {
-            if (inventory.getItem(slot).isEmpty()) {
-                int inserted = Math.min(Math.min(item.getMaxStackSize(), inventory.getMaxStackSize()), remaining);
-                inventory.setItem(slot, item.copyWithCount(inserted));
-                remaining -= inserted;
-            }
-        }
-        return remaining;
-    }
-
-
     private static void changed(MinecraftServer server, ItemStack item) {
         MoneySavedData data = MoneySavedData.get(server);
+        for (UUID recipient : data.market().migrateClaims(data)) {
+            ServerPlayer online = server.getPlayerList().getPlayer(recipient);
+            if (online != null) io.github.luyingyilong.geg.mail.MailNetwork.status(online);
+        }
         MarketState state = data.market();
         state.revision++;
         data.markChanged();

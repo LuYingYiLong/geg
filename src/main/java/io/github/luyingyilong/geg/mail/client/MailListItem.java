@@ -17,7 +17,7 @@ final class MailListItem {
     private MailListItem() { }
 
     static MenuItem create(MailSyncPacket.Row row) {
-        var icon = row.coin() > 0 ? row.read() ? OreIcons.GIFT_OPENED : OreIcons.GIFT
+        var icon = row.hasAttachments() ? row.read() ? OreIcons.GIFT_OPENED : OreIcons.GIFT
                 : row.read() ? OreIcons.EMAIL_READED : OreIcons.EMAIL;
         return MenuItem.item(row.id().toString(), row.title()).icon(new Button.Icon(icon, 16, 16));
     }
@@ -31,7 +31,7 @@ final class MailListItem {
             List<MenuItem> children = rows.stream().filter(row -> switch (group) {
                 case ALL -> true;
                 case UNREAD -> !row.read();
-                case PENDING -> row.coin() > 0 && !row.claimed();
+                case PENDING -> row.hasAttachments() && !row.claimed();
             }).map(row -> {
                 MenuItem item = create(row);
                 return MenuItem.item(key(group, row.id()), item.label()).icon(item.icon());

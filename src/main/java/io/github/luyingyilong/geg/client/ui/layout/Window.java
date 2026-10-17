@@ -67,6 +67,30 @@ public final class Window extends Container {
         return hit == null && content != null ? content.hitTop(rootX, rootY) : hit;
     }
 
+    public Control tooltipTarget(int rootX, int rootY) {
+        if (!visible() || !hit(rootX, rootY)) return null;
+        for (Control node = pointerTarget(rootX, rootY); node != null && node != this; node = node.parent()) {
+            if (!node.visible()) return null;
+            if (node.hasTooltip() && focusManager.allowsNativeInput(node)) return node;
+        }
+        return null;
+    }
+
+    private void drawTooltip(ModularGuiContext context, int screenX, int screenY) {
+        int mouseX = context.getAbsMouseX(), mouseY = context.getAbsMouseY();
+        Control target = tooltipTarget(mouseX - screenX, mouseY - screenY);
+        if (target == null) return;
+        float depth = 0.0F;
+        for (Control node = target; node != null && node != this; node = node.parent()) depth += node.contentDepth();
+        var graphics = context.getGraphics();
+        graphics.flush(); graphics.pose().pushPose();
+        try {
+            graphics.pose().translate(0.0F, 0.0F, depth);
+            target.renderTooltip(context, mouseX, mouseY);
+            graphics.flush();
+        } finally { graphics.pose().popPose(); }
+    }
+
     public void capturePointer(Control control) {
         if (attachedAndVisible(control)) pointerCapture = control;
     }
@@ -178,5 +202,6 @@ public final class Window extends Container {
         if (overlay != null) overlay.draw(context, screenX, screenY);
         focusManager.synchronizeNativeFocus(context);
         focusOverlay.draw(context, screenX, screenY);
+        drawTooltip(context, screenX, screenY);
     }
 }

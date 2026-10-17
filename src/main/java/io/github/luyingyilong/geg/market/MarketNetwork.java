@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 
 public final class MarketNetwork {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final String PROTOCOL_VERSION = "4";
+    private static final String PROTOCOL_VERSION = "5";
     private static final int CHUNK_SIZE = 8;
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             ResourceLocation.fromNamespaceAndPath(GegMod.MODID, "market"),
@@ -104,10 +104,6 @@ public final class MarketNetwork {
         sendChunks(player, "mineRequests", state.buyOrders.values().stream()
                 .filter(order -> order.buyer().equals(player.getUUID()))
                 .map(MarketBuyOrder::save).toList());
-        sendChunks(player, "coinCredits", MarketService.coinCredits(server, player.getUUID()).stream()
-                .map(MarketCoinCredit::save).toList());
-        sendChunks(player, "deliveries", MarketService.deliveries(server, player.getUUID()).stream()
-                .map(MarketDelivery::save).toList());
         sendChunks(player, "history", MarketService.history(server, player.getUUID()).stream()
                 .map(MarketPurchase::save).toList());
         sendChunks(player, "favorites", MarketService.favorites(server, player.getUUID()).stream()

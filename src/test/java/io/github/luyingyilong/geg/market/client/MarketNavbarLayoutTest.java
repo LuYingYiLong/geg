@@ -38,7 +38,7 @@ public final class MarketNavbarLayoutTest {
                 check(action.bounds().bottom() <= height);
                 check(navbar.hitTop(action.bounds().x(), action.bounds().y()) == action);
             }
-            if (height == 25) check(title.bounds().right() + 6 <= balance.bounds().x());
+            if (height == Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING) check(title.bounds().right() + 6 <= balance.bounds().x());
             else check(balance.bounds().y() >= Navbar.ROW_HEIGHT);
             int rows = width <= 129 ? 4 : width == 200 ? 3 : width < 640 ? 2 : 1;
             check(height == rows * Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING);
@@ -54,7 +54,7 @@ public final class MarketNavbarLayoutTest {
         Control filter = new Control().minimum(20, 20);
         Box compact = new Box().orientation(Box.Orientation.HORIZONTAL).add(search).add(filter);
         Navbar navbar = new Navbar(Component.literal("Market")).extra(compact);
-        navbar.layout(new Rect(0, 0, 640, 25), font);
+        navbar.layout(new Rect(0, 0, 640, Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING), font);
         check(search.size().height() == 18 && filter.size().height() == 20);
         check(search.absoluteBounds().y() == filter.absoluteBounds().y() + 1);
     }

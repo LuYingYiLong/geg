@@ -30,7 +30,8 @@ public final class NavbarLayoutTest {
             navbar.layout(new Rect(0, 0, width, height), font);
             check(title.bounds().x() * 2 + title.bounds().width() == width, "Title stays centered across the entire navbar");
             check(back.bounds().x() == 0 && back.size().equals(new Size(22, 22)), "Back stays 22px square at the far left");
-            check(height == 25 && title.bounds().height() == 22, "A 22px content row reserves 3px below it");
+            check(height == Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING && title.bounds().height() == Navbar.ROW_HEIGHT,
+                    "The configured content row reserves the navbar's bottom padding");
             check(back.bounds().y() == 0, "Back shrinks to the top of the content row");
             check(back.bounds().bottom() <= height - Navbar.BOTTOM_PADDING, "Navigation controls leave the bottom gap clear");
         }

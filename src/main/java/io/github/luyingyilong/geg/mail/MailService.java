@@ -57,7 +57,7 @@ public final class MailService {
                     List<MailSyncPacket.Row> rows = all.subList(start, end).stream().map(mail -> {
                         var receipt = state.receipt(player.getUUID(), mail.id());
                         return new MailSyncPacket.Row(mail.id(), mail.titleText(), mail.sender(), mail.kind(), mail.sentAt(),
-                                mail.coin(), receipt.read(), receipt.claimed(), mail.scope());
+                                mail.coin(), receipt.read(), receipt.claimed(), mail.scope(), !mail.items().isEmpty());
                     }).toList();
                     MailNetwork.reply(player, new MailSyncPacket(MailSyncPacket.Kind.LIST, state.revision(), state.unread(player.getUUID()),
                             player.hasPermissions(2), request.filter(), request.offset(), end < all.size(), rows, null, false,
@@ -72,8 +72,11 @@ public final class MailService {
                             state.receipt(player.getUUID(), mail.id()).claimed(), MailActionPacket.EMPTY, 0, 0, "", ""));
                 }
                 case CLAIM -> {
-                    MailState.Result result = state.claim(data, player.getUUID(), request.id());
-                    if (result == MailState.Result.SUCCESS) MoneyNetwork.sync(player, data.balance(player.getUUID()));
+                    MailState.Result result = state.claim(data, player.getUUID(), request.id(), player.getInventory());
+                    if (result == MailState.Result.SUCCESS || result == MailState.Result.PARTIAL) {
+                        MoneyNetwork.sync(player, data.balance(player.getUUID()));
+                        player.inventoryMenu.broadcastChanges();
+                    }
                     result(player, result.name().toLowerCase(Locale.ROOT), request.id());
                 }
                 case DELETE -> result(player, state.delete(data, player.getUUID(), request.id()).name().toLowerCase(Locale.ROOT), request.id());

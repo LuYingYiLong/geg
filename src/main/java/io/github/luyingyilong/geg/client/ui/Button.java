@@ -24,6 +24,7 @@ public final class Button extends Control {
     public static final int PADDING_X = 8;
     private static final int ICON_GAP = 4;
     private static final int ICON_PADDING = 4;
+    private static final int PRESSED_OFFSET = 2;
 
     private final Label label = new Label();
     private Size buttonSize = Size.MEDIUM;
@@ -36,6 +37,7 @@ public final class Button extends Control {
     private boolean emphasizedSound;
     private ACTION_MODE actionMode = ACTION_MODE.BUTTON_RELEASE;
     private boolean pointerPressed;
+    private boolean pointerHovered;
     private int activationKey = -1;
     private boolean toggleButton;
     private boolean buttonPressed;
@@ -130,10 +132,19 @@ public final class Button extends Control {
 
     private boolean hasLabel() { return !label.getText().getString().isEmpty(); }
 
+    private boolean visuallyPressed() {
+        return !disabled && (buttonPressed || activationKey != -1 || pointerPressed && pointerHovered);
+    }
+
+    @Override public Rect focusBounds() {
+        return backgroundBounds(absoluteBounds(), type, visuallyPressed());
+    }
+
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
         Rect area = screenBounds(screenX, screenY);
         boolean hovered = area.contains(context.getAbsMouseX(), context.getAbsMouseY());
-        drawPresentation(context, area, hovered, buttonPressed || activationKey != -1 || pointerPressed && hovered);
+        pointerHovered = hovered;
+        drawPresentation(context, area, hovered, visuallyPressed());
     }
 
     /** Composite controls reuse Button's appearance while retaining their own activation behavior. */
@@ -148,6 +159,7 @@ public final class Button extends Control {
         if (pointerPressed) return true;
         capturePointer();
         pointerPressed = true;
+        pointerHovered = true;
         if (actionMode == ACTION_MODE.BUTTON_PRESS) activate();
         return true;
     }
@@ -170,6 +182,12 @@ public final class Button extends Control {
         return armed;
     }
 
+    @Override public boolean dragPointer(int rootX, int rootY) {
+        if (!pointerPressed) return false;
+        pointerHovered = hit(rootX, rootY);
+        return true;
+    }
+
     @Override public boolean onActivationPressed(int keyCode) {
         if (!visible() || disabled) return false;
         if (activationKey != -1) return true;
@@ -185,7 +203,7 @@ public final class Button extends Control {
         return true;
     }
 
-    @Override public void cancelInteraction() { pointerPressed = false; activationKey = -1; }
+    @Override public void cancelInteraction() { pointerPressed = false; pointerHovered = false; activationKey = -1; }
     @Override public void onFocusChanged(boolean focused) { if (!focused) cancelInteraction(); }
 
     public static void draw(ModularGuiContext context, int x, int y, int width,
@@ -256,22 +274,25 @@ public final class Button extends Control {
     private static void drawLabelled(ModularGuiContext context, int x, int y, int width,
                                      int height, Label label, Icon icon, Icon trailingIcon, TextAlignment alignment,
                                      Type type, boolean hovered, boolean pressed, boolean disabled) {
+        pressed = pressed && !disabled;
         GuiGraphics graphics = context.getGraphics();
         WidgetThemeEntry<WidgetTheme> disabledEntry = disabled
                 ? context.getTheme().getWidgetTheme(OreTheme.BUTTON_DISABLED) : null;
         WidgetTheme style = disabledEntry != null ? disabledEntry.theme()
                 : theme(context.getTheme(), type, hovered, pressed);
         IDrawable background = style.getBackground();
+        Rect area = new Rect(x, y, width, height);
+        Rect backgroundArea = backgroundBounds(area, type, pressed);
         if (type == Type.TEXT) {
             int color = textBackgroundColor(hovered, pressed);
-            if (color != 0) graphics.fill(x, y, x + width, y + height, color);
+            if (color != 0) graphics.fill(backgroundArea.x(), backgroundArea.y(), backgroundArea.right(), backgroundArea.bottom(), color);
         } else if (background != null && paintsThemedBackground(type, hovered, pressed)) {
-            background.draw(context, x, y, width, height, style);
+            background.draw(context, backgroundArea.x(), backgroundArea.y(), backgroundArea.width(), backgroundArea.height(), style);
         }
 
         boolean hasLabel = !label.getText().getString().isEmpty();
-        ContentLayout content = contentLayout(new Rect(x, y, width, height),
-                hasLabel ? label.measureWidth(context.getFont(), width) : 0, hasLabel, icon, trailingIcon, alignment);
+        ContentLayout content = contentLayout(area,
+                hasLabel ? label.measureWidth(context.getFont(), width) : 0, hasLabel, icon, trailingIcon, alignment, type, pressed);
         if (hasLabel) {
             label.color(style.getTextColor()).shadow(style.isTextShadow())
                 .overflow(Label.Overflow.ELLIPSIS).align(switch (alignment) {
@@ -284,6 +305,22 @@ public final class Button extends Control {
         }
         drawIcon(graphics, icon, content.icon());
         drawIcon(graphics, trailingIcon, content.trailingIcon());
+    }
+
+    private static int pressedOffset(Type type, boolean pressed) {
+        return pressed && type != Type.TEXT && type != Type.MENU ? PRESSED_OFFSET : 0;
+    }
+
+    static Rect backgroundBounds(Rect area, Type type, boolean pressed) {
+        int inset = Math.min(pressedOffset(type, pressed), area.height());
+        return new Rect(area.x(), area.y() + inset, area.width(), area.height() - inset);
+    }
+
+    static ContentLayout contentLayout(Rect area, int textWidth, boolean hasLabel,
+                                       Icon icon, Icon trailingIcon, TextAlignment alignment, Type type, boolean pressed) {
+        // Translate the original content box so centering does not halve the requested 2px movement.
+        return contentLayout(area.translated(0, pressedOffset(type, pressed)), textWidth, hasLabel,
+                icon, trailingIcon, alignment);
     }
 
     static ContentLayout contentLayout(Rect area, int textWidth, boolean hasLabel,

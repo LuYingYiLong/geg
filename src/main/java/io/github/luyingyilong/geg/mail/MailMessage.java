@@ -8,11 +8,22 @@ import net.minecraft.network.chat.Component;
 /** Human mail is literal text; only trusted server events may contain translation keys. */
 public record MailMessage(UUID id, long sentAt, Kind kind, String sender, String title,
                           String body, List<String> arguments, long coin, MailActionPacket.Scope scope,
-                          UUID authorId, String authorName) {
+                          UUID authorId, String authorName, List<MailItem> items) {
     public enum Kind { ADMIN, ORGANIZATION, SYSTEM }
     public MailMessage {
         arguments = List.copyOf(arguments);
+        items = List.copyOf(items);
         authorName = java.util.Objects.requireNonNullElse(authorName, "");
+    }
+    public MailMessage(UUID id, long sentAt, Kind kind, String sender, String title,
+                       String body, List<String> arguments, long coin, MailActionPacket.Scope scope,
+                       UUID authorId, String authorName) {
+        this(id, sentAt, kind, sender, title, body, arguments, coin, scope, authorId, authorName, List.of());
+    }
+    public boolean hasAttachments() { return coin > 0 || !items.isEmpty(); }
+    public MailMessage attachments(long remainingCoin, List<MailItem> remainingItems) {
+        return new MailMessage(id, sentAt, kind, sender, title, body, arguments, remainingCoin,
+                scope, authorId, authorName, remainingItems);
     }
     public MailMessage(UUID id, long sentAt, Kind kind, String sender, String title,
                        String body, List<String> arguments, long coin, MailActionPacket.Scope scope) {
@@ -37,6 +48,7 @@ public record MailMessage(UUID id, long sentAt, Kind kind, String sender, String
         if (authorId != null) tag.putUUID("authorId", authorId);
         if (!authorName.isEmpty()) tag.putString("authorName", authorName);
         ListTag args = new ListTag(); arguments.forEach(value -> args.add(StringTag.valueOf(value))); tag.put("args", args);
+        ListTag attachments = new ListTag(); items.forEach(value -> attachments.add(value.save())); tag.put("items", attachments);
         return tag;
     }
     public static MailMessage load(CompoundTag tag) {
@@ -48,6 +60,7 @@ public record MailMessage(UUID id, long sentAt, Kind kind, String sender, String
                 tag.contains("scope", Tag.TAG_STRING) ? MailActionPacket.Scope.valueOf(tag.getString("scope")) : legacyScope(kind),
                 tag.hasUUID("authorId") ? tag.getUUID("authorId") : null,
                 tag.contains("authorName", Tag.TAG_STRING) ? tag.getString("authorName")
-                        : kind == Kind.ADMIN ? tag.getString("sender") : "");
+                        : kind == Kind.ADMIN ? tag.getString("sender") : "",
+                tag.getList("items", Tag.TAG_COMPOUND).stream().map(raw -> MailItem.load((CompoundTag) raw)).toList());
     }
 }
