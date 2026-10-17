@@ -105,6 +105,7 @@ public final class Label extends Control {
         return this;
     }
     public Label color(int color) { this.color = color; return this; }
+    public int color() { return color; }
     public Label shadow(boolean shadow) { this.shadow = shadow; return this; }
     /** Sets the logical text size; scale remains an additional relative multiplier. */
     public Label fontSize(float fontSize) {

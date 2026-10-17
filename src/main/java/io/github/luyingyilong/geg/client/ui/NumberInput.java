@@ -5,12 +5,8 @@ import io.github.luyingyilong.geg.client.ui.util.DecimalExpression;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.network.chat.Component;
 
-import java.util.regex.Pattern;
-
 /** An Input whose committed value is an exact integer or coin amount. */
 public final class NumberInput extends Input {
-    private static final Pattern ALLOWED = Pattern.compile("[0-9.\\s+*/()\\-]*");
-
     public enum Kind { QUANTITY, COIN }
 
     private final Kind kind;
@@ -24,7 +20,7 @@ public final class NumberInput extends Input {
         super(depth);
         this.kind = kind;
         setMaxLength(DecimalExpression.MAX_LENGTH);
-        setPattern(ALLOWED);
+        setPattern(DecimalExpression.INPUT_PATTERN);
         autoUpdateOnChange(false);
     }
 
@@ -49,7 +45,7 @@ public final class NumberInput extends Input {
             if (kind == Kind.QUANTITY && Integer.parseInt(formatted) > maximumQuantity) {
                 throw new IllegalArgumentException("Quantity exceeds available amount");
             }
-            setText(formatted);
+            if (!editingHandler().replaceAll(formatted)) throw new IllegalArgumentException("Invalid formatted value");
             error = null;
             return true;
         } catch (ArithmeticException | IllegalArgumentException exception) {
@@ -57,6 +53,11 @@ public final class NumberInput extends Input {
                     ? "market.geg.form.invalid_quantity" : "market.geg.form.invalid_coin");
             return false;
         }
+    }
+
+    @Override protected void onTextChanged() {
+        super.onTextChanged();
+        error = null;
     }
 
     @Override

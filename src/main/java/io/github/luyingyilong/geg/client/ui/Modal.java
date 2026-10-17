@@ -1,11 +1,13 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
 import io.github.luyingyilong.geg.client.ui.util.OreIcons;
 import io.github.luyingyilong.geg.client.ui.util.OreSounds;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
+import brachy.modularui.theme.WidgetThemeKey;
 import io.github.luyingyilong.geg.client.ui.layout.Box;
 import io.github.luyingyilong.geg.client.ui.layout.Container;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
@@ -31,9 +33,9 @@ public final class Modal extends Container {
     private static final int BODY_INSET = 8;
     private static final int FOOTER_INSET = 8;
 
-    private final Panel background = new Panel(OreTheme.FLOATING_BACKGROUND);
+    private final Panel background;
     private final Box column = new Box();
-    private final Panel header = new Panel(OreTheme.FLOATING_HEADER);
+    private final Panel header;
     private final Box headerRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
     private final Control headerSpacer = new Control();
     private final Label titleLabel = new Label().overflow(Label.Overflow.ELLIPSIS)
@@ -41,7 +43,7 @@ public final class Modal extends Container {
     private final Button close = new Button().type(Button.Type.TEXT)
             .icon(OreIcons.CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);
     private final Padding bodyInset = new Padding(Padding.Insets.all(BODY_INSET));
-    private final Panel footer = new Panel(OreTheme.BAR);
+    private final Panel footer;
     private final Box footerButtons = new Box().gap(BUTTON_GAP);
     private final Padding footerInset = new Padding(Padding.Insets.all(FOOTER_INSET)).child(footerButtons);
     private final List<Button> actions = new ArrayList<>();
@@ -54,20 +56,29 @@ public final class Modal extends Container {
     private float depth = 200.0F;
 
     public Modal(Component title) {
+        this(title, OreTheme.FLOATING_BACKGROUND, OreTheme.FLOATING_HEADER, OreTheme.BAR);
+    }
+
+    Modal(Component title, WidgetThemeKey<WidgetTheme> backgroundTheme,
+          WidgetThemeKey<WidgetTheme> headerTheme, WidgetThemeKey<WidgetTheme> footerTheme) {
+        background = new Panel(backgroundTheme);
+        header = new Panel(headerTheme);
+        footer = new Panel(footerTheme);
         title(title);
-        titleLabel.policy(SizePolicy.EXPAND, SizePolicy.FILL);
+        titleLabel.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
         headerSpacer.minimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
         close.minimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
+        close.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         close.onPress(() -> onClose.run());
         headerRow.add(headerSpacer).add(titleLabel).add(close);
         header.child(new Padding(new Padding.Insets(0, 4, 0, 4)).child(headerRow));
         header.minimum(0, HEADER_HEIGHT).preferred(0, HEADER_HEIGHT)
-                .policy(SizePolicy.FILL, SizePolicy.CONTENT);
-        bodyInset.policy(SizePolicy.FILL, SizePolicy.EXPAND);
+                .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        bodyInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         bodyInset.minimum(0, BODY_INSET * 2);
-        footerButtons.policy(SizePolicy.FILL, SizePolicy.CONTENT);
+        footerButtons.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         footer.child(footerInset);
-        footer.policy(SizePolicy.FILL, SizePolicy.CONTENT);
+        footer.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         footer.visible(false);
         column.add(header).add(bodyInset).add(footer);
         background.child(new Padding(Padding.Insets.all(FRAME_INSET)).child(column));
@@ -126,7 +137,7 @@ public final class Modal extends Container {
 
     public Modal content(Control content) {
         this.content = Objects.requireNonNull(content);
-        content.policy(SizePolicy.FILL, SizePolicy.EXPAND);
+        content.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         bodyInset.child(content);
         return this;
     }
@@ -145,7 +156,7 @@ public final class Modal extends Container {
 
     public Modal action(Component label, Runnable onClick, Button.Type type) {
         Button button = new Button(label).type(type).onPress(onClick);
-        button.policy(SizePolicy.FILL, SizePolicy.CONTENT);
+        button.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         actions.add(button);
         footerButtons.add(button);
         footer.visible(true);

@@ -6,6 +6,7 @@ import io.github.luyingyilong.geg.client.ui.util.OreFonts;
 
 /** GUI-viewport root, not a native operating-system window. */
 public final class Window extends Container {
+    public static final int BACKGROUND_COLOR = 0x80000000;
     private final boolean fullscreen;
     private final FocusManager focusManager = new FocusManager(this);
     private final FocusOverlay focusOverlay = new FocusOverlay(focusManager);
@@ -66,6 +67,27 @@ public final class Window extends Container {
         if (attachedAndVisible(control)) pointerCapture = control;
     }
 
+    public boolean pointerDragged(int rootX, int rootY) {
+        if (pointerCapture == null) return false;
+        if (!attachedAndVisible(pointerCapture) || !focusManager.allowsNativeInput(pointerCapture)) {
+            cancelPointer();
+            return false;
+        }
+        Rect point = capturedCoordinates(pointerCapture, rootX, rootY);
+        return pointerCapture.dragPointer(point.x(), point.y());
+    }
+
+    /** A Scroll transforms its content branch, not its own scrollbar branch. */
+    private Rect capturedCoordinates(Control captured, int rootX, int rootY) {
+        for (Control child = captured, node = captured.parent(); node != null;
+             child = node, node = node.parent())
+            if (node instanceof Scroll scroll && scroll.isContentChild(child)) {
+                rootX += scroll.scrollX();
+                rootY += scroll.scrollY();
+            }
+        return new Rect(rootX, rootY, 0, 0);
+    }
+
     public boolean pointerReleased(int rootX, int rootY) {
         Control captured = pointerCapture;
         pointerCapture = null;
@@ -74,12 +96,12 @@ public final class Window extends Container {
         boolean over = false;
         for (Control node = hit; node != null; node = node.parent())
             if (node == captured) { over = true; break; }
-        int localX = rootX;
-        int localY = rootY;
-        for (Control node = captured.parent(); node != null; node = node.parent())
-            if (node instanceof Scroll scroll) { localX += scroll.scrollX(); localY += scroll.scrollY(); }
-        return captured.releasePointer(localX, localY, over && attachedAndVisible(captured)
-                && focusManager.allowsNativeInput(captured));
+        if (!attachedAndVisible(captured) || !focusManager.allowsNativeInput(captured)) {
+            captured.cancelInteraction();
+            return false;
+        }
+        Rect point = capturedCoordinates(captured, rootX, rootY);
+        return captured.releasePointer(point.x(), point.y(), over);
     }
 
     private boolean attachedAndVisible(Control target) {
@@ -109,6 +131,8 @@ public final class Window extends Container {
     }
 
     public void layoutViewport(int width, int height, Font font) {
+        if (pointerCapture != null && (!attachedAndVisible(pointerCapture)
+                || !focusManager.allowsNativeInput(pointerCapture))) cancelPointer();
         if (fontRevision != OreFonts.revision()) {
             fontRevision = OreFonts.revision();
             invalidateTextLayout();
@@ -133,11 +157,14 @@ public final class Window extends Container {
         super.layout(localBounds, font);
         Rect full = new Rect(0, 0, localBounds.width(), localBounds.height());
         if (content != null) fitChild(content, full, font);
-        if (overlay != null) fitChild(overlay, full, font);
+        if (overlay != null) layoutChild(overlay, full, font);
     }
 
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
+        if (!visible()) return;
+        Rect area = screenBounds(screenX, screenY);
+        context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), BACKGROUND_COLOR);
         if (content != null) content.draw(context, screenX, screenY);
         if (overlay != null) overlay.draw(context, screenX, screenY);
         focusManager.synchronizeNativeFocus(context);

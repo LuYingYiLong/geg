@@ -32,6 +32,11 @@ public final class TextArea extends Input {
         renderer.setPos(getArea().getPadding().left(), firstLineTop());
         updateTextScroll();
     }
+    /** Multiline editors keep both the hint and caret on the first row, even when expanded. */
+    @Override protected int firstLineTop() {
+        return io.github.luyingyilong.geg.client.ui.util.InputGeometry.firstLineTop(
+                getArea().getPadding().top(), getArea().paddedHeight(), controlSize().height(), renderer.getFontHeight());
+    }
     @Override public int preferredInputHeight() { return rows * 12 + 8; }
     @Override public void onUpdate() {
         super.onUpdate();
@@ -63,11 +68,17 @@ public final class TextArea extends Input {
         lastTextHeight = textHeight;
     }
 
+    @Override protected void onEditShortcut() {
+        super.onEditShortcut();
+        updateTextScroll();
+    }
+
     @Override public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
         if (inputMethodInteractive() && isFocused() && !composing()
                 && (modifiers & (GLFW.GLFW_MOD_CONTROL | GLFW.GLFW_MOD_ALT)) == 0
                 && (keyCode == GLFW.GLFW_KEY_UP || keyCode == GLFW.GLFW_KEY_DOWN
                 || keyCode == GLFW.GLFW_KEY_HOME || keyCode == GLFW.GLFW_KEY_END)) {
+            editingHandler().endEditGroup();
             var point = ((OreTextFieldRenderer) renderer).moveVisual(
                     keyCode == GLFW.GLFW_KEY_UP ? -1 : keyCode == GLFW.GLFW_KEY_DOWN ? 1 : 0,
                     keyCode == GLFW.GLFW_KEY_HOME || keyCode == GLFW.GLFW_KEY_END, keyCode == GLFW.GLFW_KEY_END);
@@ -99,7 +110,8 @@ public final class TextArea extends Input {
     @Override public void setText(String text) {
         var lines = handler.getText(); lines.clear();
         lines.addAll(TextLines.split(text));
-        handler.setMainCursor(new brachy.modularui.utils.Point(0, 0), false);
+        editingHandler().clearHistory();
+        handler.setCursor(new brachy.modularui.utils.Point(0, 0), false);
         lastCaret = null;
         scheduleResize();
     }

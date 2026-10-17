@@ -54,9 +54,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     OrganizationCanvasWidget(Form createForm, Input name, Input description) {
         this.createForm = createForm;
 
-        memberships.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
-        Panel background = new Panel(OreTheme.BACKGROUND).child(memberships);
-        window.content(background).overlay(overlay);
+        memberships.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
+        window.content(memberships).overlay(overlay);
 
         options.add(option(OreIcons.FLAG, "organization.geg.create",
                 this::showCreate));
@@ -65,31 +64,31 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         emptyText = new Label(Component.translatable("organization.geg.none"))
                 .wrap(Label.Wrap.WORD).overflow(Label.Overflow.CLIP)
                 .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
-        emptyText.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        emptyText.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Box emptyBody = new Box().gap(8).add(emptyText).add(options);
         emptyDialog = new Dialog(270, 0, 0, Component.translatable("organization.geg.title"))
                 .content(emptyBody).onClose(() -> Minecraft.getInstance().setScreen(null));
 
-        createForm.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        createForm.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         createDrawer = new Drawer(Component.translatable("organization.geg.create"))
                 .content(createForm).onClose(this::onCreateClosed)
                 .action(Component.translatable("organization.geg.back"), this::closeCreate)
                 .action(Component.translatable("organization.geg.create_action"),
                         this::submitCreate, Button.Type.PRIMARY);
-        memberTable.minimum(0, 60).policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
+        memberTable.minimum(0, 60).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         detailDrawer = new Drawer(Component.empty()).content(memberTable)
                 .onClose(this::onDetailsClosed);
         applicationTable.headerVisible(false).minimum(0, 60)
-                .policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
+                .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         applicationsModal = new Modal(Component.translatable("organization.geg.applications"))
                 .content(applicationTable).onClose(this::closeApplications).depth(300.0F);
         joinTable.headerVisible(false).minimum(0, 60)
-                .policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
+                .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         joinDrawer = new Drawer(Component.translatable("organization.geg.join"))
                 .content(joinTable).onClose(this::onJoinClosed);
         Label warning = new Label(Component.translatable("organization.geg.confirm_disband_body"))
                 .wrap(Label.Wrap.WORD).color(OreTheme.TEXT_SECONDARY);
-        warning.policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
+        warning.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         disbandConfirmation = new Modal(Component.translatable("organization.geg.confirm_disband"))
                 .content(warning).onClose(this::closeDisbandConfirmation)
                 .action(Component.translatable("organization.geg.back"),
@@ -111,12 +110,12 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     private static Panel option(ResourceLocation icon, String label, Runnable action) {
         IconControl image = new IconControl(icon);
-        image.policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
+        image.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         Button button = new Button(Component.translatable(label)).onPress(action);
-        button.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        button.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Box column = new Box().gap(6).add(image).add(button);
         Panel panel = new Panel(null).child(new Padding(Padding.Insets.all(4)).child(column));
-        panel.minimum(106, 130).policy(Control.SizePolicy.EXPAND, Control.SizePolicy.CONTENT);
+        panel.minimum(106, 130).sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         return panel;
     }
 
@@ -628,32 +627,32 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         memberships.add(header);
         Button createButton = new Button(Component.translatable("organization.geg.create"))
                 .type(Button.Type.PRIMARY).onPress(this::showCreate);
-        createButton.policy(Control.SizePolicy.EXPAND, Control.SizePolicy.CONTENT);
+        createButton.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Button joinButton = new Button(Component.translatable("organization.geg.join"))
                 .onPress(this::showJoin);
-        joinButton.policy(Control.SizePolicy.EXPAND, Control.SizePolicy.CONTENT);
+        joinButton.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Box actions = new Box().orientation(Box.Orientation.HORIZONTAL).gap(2)
                 .add(createButton).add(joinButton);
-        actions.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        actions.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Padding createInset = new Padding(new Padding.Insets(0, 4, 0, 4));
-        createInset.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        createInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         createInset.child(actions);
         memberships.add(createInset);
         Box orgList = new Box().gap(0);
-        orgList.policy(Control.SizePolicy.FILL, Control.SizePolicy.FILL);
+        orgList.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
         memberships.add(orgList);
         for (OrganizationSyncPacket.Summary summary : ClientOrganizationState.organizations()) {
             Box row = new Box().orientation(Box.Orientation.HORIZONTAL);
-            row.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+            row.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
             Box details = new Box();
-            details.policy(Control.SizePolicy.EXPAND, Control.SizePolicy.CONTENT);
+            details.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
             Label name = new Label(Component.literal(summary.name())).color(OreTheme.TEXT_WHITE);
-            name.minimum(0, 16).policy(Control.SizePolicy.EXPAND, Control.SizePolicy.CONTENT);
+            name.minimum(0, 16).sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
             details.add(name);
             if (!summary.description().isBlank()) {
                 Label description = new Label(Component.literal(summary.description()))
                         .color(OreTheme.TEXT_SECONDARY).overflow(Label.Overflow.ELLIPSIS);
-                description.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+                description.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
                 details.add(description);
             }
             row.add(details);
@@ -661,7 +660,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                     .onPress(() -> showDetails(summary.id()));
             row.add(detailsButton);
             Panel panel = new Panel(OreTheme.BAR).child(new Padding(Padding.Insets.all(4)).child(row));
-            panel.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+            panel.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
             orgList.add(panel);
         }
     }
@@ -722,11 +721,11 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                         : new Rect(activeMenuBounds.x(), menuY(menu, activeMenuBounds),
                                 activeMenuBounds.width(), activeMenuBounds.height());
                 beginMenuPress(menu, activeMenuMember, activeMenuBounds, anchor, mouseX, mouseY);
-                return Interactable.Result.STOP;
+                return Interactable.Result.SUCCESS;
             }
         }
         return window.pointerPressed(mouseX, mouseY, getContext())
-                ? Interactable.Result.STOP : Interactable.Result.IGNORE;
+                ? Interactable.Result.SUCCESS : Interactable.Result.IGNORE;
     }
 
     @Override public boolean onMouseScrolled(double delta) {
@@ -768,11 +767,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     @Override public void onMouseDrag(int button, double dragX, double dragY) {
-        if (button != 0 || applicationsModal.visible()
-                || disbandConfirmation.visible()) return;
-        Drawer drawer = joinDrawer.visible() ? joinDrawer : detailDrawer.visible() ? detailDrawer
-                : createDrawer.visible() ? createDrawer : null;
-        if (drawer != null && drawer.isOpen()) drawer.bodyScroll().dragTo(getContext().getAbsMouseX() - getArea().x,
+        if (button == 0) window.pointerDragged(getContext().getAbsMouseX() - getArea().x,
                 getContext().getAbsMouseY() - getArea().y);
     }
 
@@ -785,10 +780,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                     getContext().getAbsMouseY() - getArea().y);
             released |= menuReleased;
         }
-        boolean details = detailDrawer.bodyScroll().endDrag();
-        boolean create = createDrawer.bodyScroll().endDrag();
-        boolean join = joinDrawer.bodyScroll().endDrag();
-        return details || create || join || released;
+        return released;
     }
 
     @Override public boolean onKeyReleased(int keyCode, int scanCode, int modifiers) {

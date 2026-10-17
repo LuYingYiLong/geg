@@ -6,6 +6,7 @@ import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.theme.WidgetThemeKey;
 import net.minecraft.client.gui.Font;
+import io.github.luyingyilong.geg.client.ui.util.OreDrawables;
 
 /** Themed background; space allocation is inherited from Control. */
 public final class Panel extends Container {
@@ -57,8 +58,6 @@ public final class Panel extends Container {
                 : context.getTheme().getWidgetTheme(themeKey);
         WidgetTheme style = entry == null ? context.getTheme().getPanelTheme().theme() : entry.theme();
         IDrawable background = style.getBackground();
-        if (background != null && area.width() > 0 && area.height() > 0) {
-            background.draw(context, area.x(), area.y(), area.width(), area.height(), style);
-        }
+        OreDrawables.draw(context, background, area, style);
     }
 }

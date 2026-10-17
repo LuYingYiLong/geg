@@ -37,6 +37,9 @@ public final class MailState {
                 .filter(mail -> filter != Filter.PENDING || mail.coin() > 0 && !receipt(player, mail.id()).claimed)
                 .sorted(Comparator.comparingLong(MailMessage::sentAt).reversed().thenComparing(MailMessage::id)).toList();
     }
+    public List<MailMessage> list(UUID player, Filter filter, MailActionPacket.Scope scope) {
+        return list(player, filter).stream().filter(mail -> mail.scope() == scope).toList();
+    }
     public int unread(UUID player) { return (int) inboxes.getOrDefault(player, Map.of()).values().stream()
             .filter(r -> !r.deleted && !r.read).count(); }
     public UUID deliver(MoneySavedData data, String key, MailMessage message, Collection<UUID> recipients) {

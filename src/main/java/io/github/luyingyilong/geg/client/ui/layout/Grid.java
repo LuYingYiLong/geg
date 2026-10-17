@@ -32,6 +32,7 @@ public final class Grid<T> extends Container implements ScrollContent {
     private Consumer<T> onItemClick = item -> { };
     private Rect visibleRegion = new Rect(0, 0, 0, 0);
     private Object focusedKey;
+    private Font layoutFont;
 
     public Grid() {
         focusable(true);
@@ -56,6 +57,7 @@ public final class Grid<T> extends Container implements ScrollContent {
 
     @Override public Rect focusBounds() {
         Entry<T> entry = focusedEntry();
+        if (entry != null && active.get(entry.index()) instanceof Control control) return control.absoluteBounds();
         return entry == null ? absoluteBounds()
                 : entry.bounds().translated(absoluteBounds().x(), absoluteBounds().y());
     }
@@ -210,8 +212,11 @@ public final class Grid<T> extends Container implements ScrollContent {
 
     @Override
     public void layout(Rect localBounds, Font font) {
+        boolean childLayoutChanged = layoutDirty();
+        layoutFont = font;
         super.layout(localBounds, font);
-        if (dirty || lastWidth != localBounds.width()) relayout(font);
+        if (dirty || lastWidth != localBounds.width() || childLayoutChanged && adapter == null) relayout(font);
+        if (childLayoutChanged) visibilityDirty = true;
         if (visibleRegion.width() == 0 && visibleRegion.height() == 0)
             visibleRegion(new Rect(0, 0, localBounds.width(), localBounds.height()));
         if (adapter != null) updateVisible();
@@ -302,7 +307,7 @@ public final class Grid<T> extends Container implements ScrollContent {
             }
             int height = Math.max(1, child.measureSize(font, new Size(cardWidth, cardWidth)).height());
             int top = mode == LayoutMode.ROWS ? rowY : heights[column];
-            child.layout(new Rect(column * (cardWidth + gap), top, cardWidth, height), font);
+            fitChild(child, new Rect(column * (cardWidth + gap), top, cardWidth, height), font);
             if (mode == LayoutMode.ROWS) rowHeight = Math.max(rowHeight, height);
             else heights[column] += height + gap;
         }
@@ -346,6 +351,9 @@ public final class Grid<T> extends Container implements ScrollContent {
                 if (view instanceof Control control) super.addChild(control);
                 active.put(entry.index(), view);
             }
+        for (int index : visibleIndices)
+            if (active.get(index) instanceof Control control)
+                fitChild(control, entries.get(index).bounds(), layoutFont);
     }
 
     @Override
@@ -371,9 +379,6 @@ public final class Grid<T> extends Container implements ScrollContent {
                 boolean hovered = viewport.contains(context.getAbsMouseX(), context.getAbsMouseY())
                         && card.contains(context.getAbsMouseX(), context.getAbsMouseY());
                 if (view instanceof Control control) {
-                    control.layout(new Rect(entry.bounds().x(), entry.bounds().y(),
-                            entry.bounds().width(), entry.bounds().height()),
-                            context.getFont());
                     control.draw(context, screenX, screenY);
                 } else view.draw(context, card, hovered);
             }
@@ -394,6 +399,7 @@ public final class Grid<T> extends Container implements ScrollContent {
 
     @Override public Control hitTop(int rootX, int rootY) {
         if (!visible()) return null;
+        if (adapter == null) return super.hitTop(rootX, rootY);
         Entry<T> entry = hitItem(rootX, rootY);
         if (entry != null) {
             View<T> view = active.get(entry.index());
@@ -402,7 +408,8 @@ public final class Grid<T> extends Container implements ScrollContent {
                 if (hit != null) return hit;
             }
         }
-        return super.hitTop(rootX, rootY);
+        return hit(rootX, rootY) && visibleRegion.contains(rootX - absoluteBounds().x(),
+                rootY - absoluteBounds().y()) ? this : null;
     }
 
     @Override public boolean dispatchPointer(int rootX, int rootY) {
@@ -412,7 +419,10 @@ public final class Grid<T> extends Container implements ScrollContent {
         if (entry == null) return false;
         focusedKey = entry.key();
         View<T> view = active.get(entry.index());
-        if (view instanceof Control control && control.dispatchPointer(rootX, rootY)) return true;
+        if (view instanceof Control control) {
+            if (control.dispatchPointer(rootX, rootY)) return true;
+            if (!control.hit(rootX, rootY)) return false;
+        }
         onItemClick.accept(entry.item());
         return true;
     }

@@ -22,7 +22,9 @@ public final class OreTheme {
     public static final WidgetThemeKey<WidgetTheme> MODAL = PANEL.createSubKey("modal");
     public static final WidgetThemeKey<WidgetTheme> DROPDOWN_PANEL =
             PANEL.createSubKey("dropdownPanel");
-    public static final WidgetThemeKey<WidgetTheme> MENU_ITEM = PANEL.createSubKey("menuItem");
+    public static final WidgetThemeKey<WidgetTheme> DROPDOWN_ITEM = PANEL.createSubKey("dropdownItem");
+    public static final WidgetThemeKey<WidgetTheme> MENU_PANEL = PANEL.createSubKey("menuPanel");
+    public static final WidgetThemeKey<WidgetTheme> MENU_DIVIDER = PANEL.createSubKey("menuDivider");
     public static final WidgetThemeKey<WidgetTheme> BAR = PANEL.createSubKey("bar");
     public static final WidgetThemeKey<WidgetTheme> FLOATING_BACKGROUND = PANEL.createSubKey("floatingBackground");
     public static final WidgetThemeKey<WidgetTheme> FLOATING_HEADER = PANEL.createSubKey("floatingHeader");
@@ -32,6 +34,10 @@ public final class OreTheme {
             ITheme.getDefault().getButtonTheme().key();
     public static final WidgetThemeKey<WidgetTheme> BUTTON_DISABLED =
             BUTTON.createSubKey("disabled");
+    public static final WidgetThemeKey<WidgetTheme> BUTTON_MENU_HOVERED =
+            BUTTON.createSubKey("menuItem:hovered");
+    public static final WidgetThemeKey<WidgetTheme> BUTTON_MENU_PRESSED =
+            BUTTON.createSubKey("menuItem:pressed");
     public static final WidgetThemeKey<WidgetTheme> BUTTON_SECONDARY_NORMAL =
             BUTTON.createSubKey("secondary:normal");
     public static final WidgetThemeKey<WidgetTheme> BUTTON_SECONDARY_HOVERED =
@@ -50,8 +56,8 @@ public final class OreTheme {
             BUTTON.createSubKey("destructive:hovered");
     public static final WidgetThemeKey<WidgetTheme> BUTTON_DESTRUCTIVE_PRESSED =
             BUTTON.createSubKey("destructive:pressed");
-    public static final WidgetThemeKey<WidgetTheme> TAB_BUTTON_SELECTED =
-            BUTTON.createSubKey("tabButtonSelected");
+    public static final WidgetThemeKey<WidgetTheme> SEGMENTED_BUTTON_SELECTED =
+            BUTTON.createSubKey("segmentedButtonSelected");
 
     private OreTheme() {
     }

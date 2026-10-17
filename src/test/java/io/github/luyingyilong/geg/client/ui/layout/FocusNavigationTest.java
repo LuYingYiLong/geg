@@ -4,7 +4,7 @@ import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.Button;
 import io.github.luyingyilong.geg.client.ui.Checkbox;
 import io.github.luyingyilong.geg.client.ui.Table;
-import io.github.luyingyilong.geg.client.ui.Tabs;
+import io.github.luyingyilong.geg.client.ui.Segmented;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
@@ -63,7 +63,7 @@ public final class FocusNavigationTest {
         check(focus.focused() == right);
         virtualGridKeepsItsItem();
         tableActionsCanBeFocused();
-        selectedTabFocusFollowsTexture();
+        selectedOptionFocusFollowsTexture();
         nativeFocusLossClearsOreFocus();
     }
 
@@ -134,29 +134,29 @@ public final class FocusNavigationTest {
         return button;
     }
 
-    private static void selectedTabFocusFollowsTexture() {
-        Tabs tabs = new Tabs(List.of(Component.literal("First"), Component.literal("Second")));
+    private static void selectedOptionFocusFollowsTexture() {
+        Segmented segmented = new Segmented(List.of(Component.literal("First"), Component.literal("Second")));
         int[] selected = {0};
-        tabs.onSelect(index -> selected[0]++);
-        Window window = new Window(true).content(tabs);
+        segmented.onSelect(index -> selected[0]++);
+        Window window = new Window(true).content(segmented);
         window.layoutViewport(100, 20, null);
-        check(tabs.focusBounds().equals(new Rect(0, 2, 51, 18)));
-        window.focusManager().requestFocus(tabs, null);
+        check(segmented.focusBounds().equals(new Rect(0, 2, 51, 18)));
+        window.focusManager().requestFocus(segmented, null);
         check(selected[0] == 0);
         check(window.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, null));
-        check(tabs.selected() == 0 && selected[0] == 0);
-        check(tabs.focusBounds().equals(new Rect(50, 0, 51, 20)));
-        tabs.selected(0); // Market synchronizes the active page on every layout pass.
+        check(segmented.selected() == 0 && selected[0] == 0);
+        check(segmented.focusBounds().equals(new Rect(50, 0, 51, 20)));
+        segmented.selected(0); // Market synchronizes the active page on every layout pass.
         window.layoutViewport(100, 20, null);
-        check(tabs.focusBounds().equals(new Rect(50, 0, 51, 20)));
+        check(segmented.focusBounds().equals(new Rect(50, 0, 51, 20)));
         check(window.keyPressed(GLFW.GLFW_KEY_LEFT, 0, null));
-        check(tabs.focusBounds().equals(new Rect(0, 2, 51, 18)));
+        check(segmented.focusBounds().equals(new Rect(0, 2, 51, 18)));
         check(window.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, null));
         check(window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null));
-        check(tabs.selected() == 0 && selected[0] == 0);
+        check(segmented.selected() == 0 && selected[0] == 0);
         check(window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null));
-        check(tabs.selected() == 1 && selected[0] == 1);
-        check(tabs.focusBounds().equals(new Rect(50, 2, 51, 18)));
+        check(segmented.selected() == 1 && selected[0] == 1);
+        check(segmented.focusBounds().equals(new Rect(50, 2, 51, 18)));
     }
 
     private static void nativeFocusLossClearsOreFocus() {

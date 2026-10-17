@@ -1,6 +1,5 @@
 package io.github.luyingyilong.geg.mail.client;
 
-import brachy.modularui.factory.ClientGUI;
 import brachy.modularui.screen.*;
 import io.github.luyingyilong.geg.GegMod;
 import io.github.luyingyilong.geg.client.ui.*;
@@ -31,11 +30,11 @@ public final class ClientMailScreen {
         MailCanvasWidget next = new MailCanvasWidget(title, body, target, coin, organization);
         canvas = next;
         ModularPanel<?> panel = new MailPanel();
-        panel.widgetTheme(OreTheme.BACKGROUND); panel.full();
+        panel.disableThemeBackground(true); panel.full();
         panel.child(next.full().disableThemeBackground(true));
         panel.child(title); panel.child(body); panel.child(target); panel.child(coin);
         panel.onCloseAction(() -> { next.close(); if (canvas == next) canvas = null; });
-        ClientGUI.open(new ModularScreen("geg", panel).useTheme(OreTheme.NAME).pausesGame(false));
+        OreScreen.open(new ModularScreen("geg", panel).useTheme(OreTheme.NAME).pausesGame(false));
         next.initialize();
     }
     public static void accept(MailSyncPacket packet) {

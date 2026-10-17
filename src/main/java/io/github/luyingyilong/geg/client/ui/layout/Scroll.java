@@ -5,6 +5,7 @@ import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import io.github.luyingyilong.geg.client.ui.OreTheme;
+import io.github.luyingyilong.geg.client.ui.util.OreDrawables;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -71,6 +72,7 @@ public final class Scroll extends Container {
         return true;
     }
 
+    /** False by default: visible bars reserve 6px and draw a track; true overlays only the grabbers. */
     public Scroll embedded(boolean embedded) {
         if (this.embedded != embedded) {
             this.embedded = embedded;
@@ -102,6 +104,7 @@ public final class Scroll extends Container {
     public int scrollY() { return scrollY; }
     public int maxScrollX() { return Math.max(0, extent.width() - viewport.width()); }
     public int maxScrollY() { return Math.max(0, extent.height() - viewport.height()); }
+    boolean isContentChild(Control child) { return child == content; }
 
     public void scrollToTop() {
         if (content instanceof ScrollContent virtual) virtual.clearScrollAnchor();
@@ -168,9 +171,9 @@ public final class Scroll extends Container {
         verticalBar.visible(showVertical);
         horizontalBar.visible(showHorizontal);
         int corner = showVertical && showHorizontal ? BAR_SIZE : 0;
-        fitChild(verticalBar, new Rect(localBounds.width() - BAR_SIZE, 0, BAR_SIZE,
+        layoutChild(verticalBar, new Rect(localBounds.width() - BAR_SIZE, 0, BAR_SIZE,
                 Math.max(0, embedded ? localBounds.height() - corner : viewport.height())), font);
-        fitChild(horizontalBar, new Rect(0, localBounds.height() - BAR_SIZE,
+        layoutChild(horizontalBar, new Rect(0, localBounds.height() - BAR_SIZE,
                 Math.max(0, embedded ? localBounds.width() - corner : viewport.width()), BAR_SIZE), font);
         if (content instanceof ScrollContent virtual) {
             int restored = virtual.consumeRestoredScrollY();
@@ -196,7 +199,7 @@ public final class Scroll extends Container {
             int contentWidth = Math.max(width, measured.width());
             int contentHeight = Math.max(height, measured.height());
             fitChild(content, new Rect(0, 0, contentWidth, contentHeight), font);
-            extent = new Size(contentWidth, contentHeight);
+            extent = new Size(Math.max(width, content.bounds().right()), Math.max(height, content.bounds().bottom()));
         }
     }
 
@@ -291,6 +294,8 @@ public final class Scroll extends Container {
         return wasDragging;
     }
 
+    @Override public void cancelInteraction() { endDrag(); }
+
     private void beginDrag(ScrollBar bar, int rootX, int rootY) {
         Rect thumb = bar.grabberBounds();
         int coordinate = bar.vertical ? rootY : rootX;
@@ -298,7 +303,7 @@ public final class Scroll extends Container {
         grabOffset = thumb.contains(rootX, rootY) ? coordinate - thumbStart
                 : (bar.vertical ? thumb.height() : thumb.width()) / 2;
         dragging = bar;
-        dragTo(rootX, rootY);
+        if (!thumb.contains(rootX, rootY)) dragTo(rootX, rootY);
     }
 
     public abstract static class ScrollBar extends Control {
@@ -317,7 +322,9 @@ public final class Scroll extends Container {
         public ScrollBar mode(BarMode mode) {
             BarMode next = Objects.requireNonNull(mode);
             if (this.mode != next) {
+                if (owner.dragging == this) owner.endDrag();
                 this.mode = next;
+                if (next == BarMode.DISABLED) owner.setScroll(owner.scrollX, owner.scrollY);
                 owner.requestLayout();
             }
             return this;
@@ -336,7 +343,7 @@ public final class Scroll extends Container {
                     (int) Math.round((double) track * viewport / extent)));
         }
 
-        private Rect grabberBounds() {
+        Rect grabberBounds() {
             Rect bar = absoluteBounds();
             int length = grabberLength();
             int travel = Math.max(0, trackLength() - length);
@@ -347,29 +354,43 @@ public final class Scroll extends Container {
                     : new Rect(bar.x() + position, bar.y(), length, BAR_SIZE);
         }
 
+        /** The 2px end inset is visual only; the grabber still travels over the whole bar. */
+        Rect trackBounds() {
+            Rect bar = absoluteBounds();
+            if (owner.embedded || trackLength() <= 2 * TRACK_INSET)
+                return new Rect(bar.x(), bar.y(), 0, 0);
+            return vertical
+                    ? new Rect(bar.x() + (BAR_SIZE - 2) / 2, bar.y() + TRACK_INSET, 2, bar.height() - 2 * TRACK_INSET)
+                    : new Rect(bar.x() + TRACK_INSET, bar.y() + (BAR_SIZE - 2) / 2, bar.width() - 2 * TRACK_INSET, 2);
+        }
+
         @Override protected boolean onPointerPressed(int rootX, int rootY) {
             if (!hit(rootX, rootY)) return false;
+            capturePointer();
             owner.beginDrag(this, rootX, rootY);
             return true;
         }
 
+        @Override public boolean dragPointer(int rootX, int rootY) {
+            return visible() && mode != BarMode.DISABLED && owner.dragTo(rootX, rootY);
+        }
+
+        @Override public boolean releasePointer(int rootX, int rootY, boolean over) {
+            return owner.endDrag();
+        }
+
+        @Override public void cancelInteraction() {
+            if (owner.dragging == this) owner.endDrag();
+        }
+
         @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-            Rect bar = screenBounds(screenX, screenY);
             int length = trackLength();
             if (length <= 0) return;
             GuiGraphics graphics = context.getGraphics();
             graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            if (!owner.embedded) {
-                if (vertical) {
-                    int x = bar.x() + (BAR_SIZE - 2) / 2;
-                    graphics.fill(x, bar.y() + TRACK_INSET, x + 2,
-                            bar.bottom() - TRACK_INSET, TRACK_COLOR);
-                } else {
-                    int y = bar.y() + (BAR_SIZE - 2) / 2;
-                    graphics.fill(bar.x() + TRACK_INSET, y,
-                            bar.right() - TRACK_INSET, y + 2, TRACK_COLOR);
-                }
-            }
+            Rect track = trackBounds().translated(screenX, screenY);
+            if (track.width() > 0 && track.height() > 0)
+                graphics.fill(track.x(), track.y(), track.right(), track.bottom(), TRACK_COLOR);
             Rect thumb = grabberBounds().translated(screenX, screenY);
             if (thumb.width() <= 0 || thumb.height() <= 0) return;
             WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(
@@ -377,8 +398,7 @@ public final class Scroll extends Container {
             if (entry == null) return;
             WidgetTheme style = entry.theme();
             IDrawable background = style.getBackground();
-            if (background != null)
-                background.draw(context, thumb.x(), thumb.y(), thumb.width(), thumb.height(), style);
+            OreDrawables.draw(context, background, thumb, style);
         }
     }
 

@@ -9,8 +9,6 @@ import java.util.List;
 
 /** A local-coordinate layout node. Window owns keyboard focus; ModularUI edits text. */
 public class Control {
-    public enum SizePolicy { CONTENT, FILL, EXPAND }
-
     private Control parent;
     private final List<Control> children = new ArrayList<>();
     private Rect bounds = new Rect(0, 0, 0, 0);
@@ -19,13 +17,13 @@ public class Control {
     private int minimumHeight;
     private int preferredWidth;
     private int preferredHeight;
-    private SizePolicy horizontal = SizePolicy.CONTENT;
-    private SizePolicy vertical = SizePolicy.CONTENT;
+    private int sizeFlagsHorizontal = SizeFlags.SIZE_FILL;
+    private int sizeFlagsVertical = SizeFlags.SIZE_FILL;
     private boolean visible = true;
     private boolean layoutDirty = true;
     private boolean focusable;
     private int focusExpansion;
-    private float stretchRatio = 1.0F;
+    private float sizeFlagsStretchRatio = 1.0F;
 
     public Control minimum(int width, int height) {
         minimumWidth = Math.max(0, width);
@@ -45,22 +43,37 @@ public class Control {
         return this;
     }
 
-    public Control policy(SizePolicy horizontal, SizePolicy vertical) {
-        this.horizontal = Objects.requireNonNull(horizontal);
-        this.vertical = Objects.requireNonNull(vertical);
-        requestLayout();
+    public Control sizeFlagsHorizontal(int flags) {
+        SizeFlags.validate(flags);
+        if (sizeFlagsHorizontal != flags) {
+            sizeFlagsHorizontal = flags;
+            requestLayout();
+        }
         return this;
     }
 
-    public Control stretchRatio(float ratio) {
+    public Control sizeFlagsVertical(int flags) {
+        SizeFlags.validate(flags);
+        if (sizeFlagsVertical != flags) {
+            sizeFlagsVertical = flags;
+            requestLayout();
+        }
+        return this;
+    }
+
+    public Control sizeFlagsStretchRatio(float ratio) {
         if (!Float.isFinite(ratio) || ratio <= 0.0F)
             throw new IllegalArgumentException("Stretch ratio must be positive");
-        stretchRatio = ratio;
-        requestLayout();
+        if (sizeFlagsStretchRatio != ratio) {
+            sizeFlagsStretchRatio = ratio;
+            requestLayout();
+        }
         return this;
     }
 
-    public float stretchRatio() { return stretchRatio; }
+    public int sizeFlagsHorizontal() { return sizeFlagsHorizontal; }
+    public int sizeFlagsVertical() { return sizeFlagsVertical; }
+    public float sizeFlagsStretchRatio() { return sizeFlagsStretchRatio; }
 
     public Control focusable(boolean focusable) {
         this.focusable = focusable;
@@ -98,6 +111,8 @@ public class Control {
     public boolean onActivationReleased(int keyCode) { return false; }
     public boolean releasePointer(boolean over) { return false; }
     public boolean releasePointer(int rootX, int rootY, boolean over) { return releasePointer(over); }
+    /** Coordinates use the same unscrolled tree space as pointer presses and releases. */
+    public boolean dragPointer(int rootX, int rootY) { return false; }
     /** A composite control captures itself even when a non-interactive child was hit. */
     protected final void capturePointer() {
         for (Control node = this; node != null; node = node.parent())
@@ -167,8 +182,6 @@ public class Control {
         for (Control child : children) child.invalidateTextLayout();
     }
 
-    public SizePolicy horizontalPolicy() { return horizontal; }
-    public SizePolicy verticalPolicy() { return vertical; }
     public int minimumWidth() { return minimumWidth; }
     public int minimumHeight() { return minimumHeight; }
     public Size minimumSize() { return new Size(minimumWidth, minimumHeight); }

@@ -30,12 +30,13 @@
     "background": {
       "type": "texture",
       "location": "geg:modularui/gui/header_panel",
-      "imageWidth": 16,
-      "imageHeight": 16,
+      "nonOpaque": true,
+      "imageWidth": 1,
+      "imageHeight": 7,
       "x": 0,
       "y": 0,
-      "width": 16,
-      "height": 16,
+      "width": 1,
+      "height": 7,
       "borderX": 0,
       "borderY": 3
     },
@@ -85,12 +86,12 @@
       "borderY": 1
     }
   },
-  "panel:menuItem": {
+  "panel:dropdownItem": {
     "textColor": "#FFFFFFFF",
     "textShadow": false,
     "background": {
       "type": "texture",
-      "location": "geg:modularui/gui/menu_item",
+      "location": "geg:modularui/gui/dropdown_item",
       "imageWidth": 16,
       "imageHeight": 16,
       "x": 0,
@@ -145,6 +146,34 @@
       "height": 3,
       "borderX": 1,
       "borderY": 1
+    }
+  },
+  "panel:menuPanel": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/menu_panel",
+      "imageWidth": 3,
+      "imageHeight": 3,
+      "x": 0,
+      "y": 0,
+      "width": 3,
+      "height": 3,
+      "borderX": 1,
+      "borderY": 1
+    }
+  },
+  "panel:menuDivider": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/menu_divider",
+      "imageWidth": 1,
+      "imageHeight": 2,
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 2,
+      "borderX": 0,
+      "borderY": 0
     }
   },
   "panel:VGrabber": {
@@ -342,7 +371,39 @@
     "textColor": "#FFFFFFFF",
     "textShadow": false
   },
-  "button:tabButtonSelected": {
+  "button:menuItem:hovered": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/menu_item_hovered",
+      "imageWidth": 1,
+      "imageHeight": 3,
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 3,
+      "borderX": 0,
+      "borderY": 1
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
+  },
+  "button:menuItem:pressed": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/menu_item_pressed",
+      "imageWidth": 1,
+      "imageHeight": 3,
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 3,
+      "borderX": 0,
+      "borderY": 1
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
+  },
+  "button:segmentedButtonSelected": {
     "textColor": "#FFFFFFFF",
     "background": {
       "type": "texture",

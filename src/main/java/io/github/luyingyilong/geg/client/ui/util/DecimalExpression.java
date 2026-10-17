@@ -1,9 +1,11 @@
 package io.github.luyingyilong.geg.client.ui.util;
 
 import java.math.BigDecimal;
+import java.util.regex.Pattern;
 
 /** Exact, deliberately small arithmetic grammar for market fields. */
 public final class DecimalExpression {
+    public static final Pattern INPUT_PATTERN = Pattern.compile("[0-9.\\s+*/()\\-]*");
     public static final int MAX_LENGTH = 64;
     public static final int MAX_DEPTH = 8;
 

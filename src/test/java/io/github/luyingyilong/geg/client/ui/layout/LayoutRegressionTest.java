@@ -1,7 +1,7 @@
 package io.github.luyingyilong.geg.client.ui.layout;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
-import io.github.luyingyilong.geg.client.ui.Tabs;
+import io.github.luyingyilong.geg.client.ui.Segmented;
 import io.github.luyingyilong.geg.client.ui.util.OreFonts;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
@@ -44,9 +44,9 @@ public final class LayoutRegressionTest {
         check(limited.layoutDirty());
 
         Control weightedA = new Control().minimum(10, 10)
-                .policy(Control.SizePolicy.EXPAND, Control.SizePolicy.CONTENT).stretchRatio(1.0F);
+                .sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsStretchRatio(1.0F);
         Control weightedB = new Control().minimum(10, 10)
-                .policy(Control.SizePolicy.EXPAND, Control.SizePolicy.CONTENT).stretchRatio(2.0F);
+                .sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsStretchRatio(2.0F);
         Box weighted = new Box().orientation(Box.Orientation.HORIZONTAL)
                 .add(weightedA).add(weightedB);
         weighted.layout(new Rect(0, 0, 100, 10), null);
@@ -59,7 +59,7 @@ public final class LayoutRegressionTest {
                 return width(value.getString());
             }
         };
-        Tabs footer = new Tabs(List.of(Component.literal("Market"), Component.literal("Mine"),
+        Segmented footer = new Segmented(List.of(Component.literal("Market"), Component.literal("Mine"),
                 Component.literal("Publish"), Component.literal("Favorites"),
                 Component.literal("History"), Component.literal("Claim")));
         footer.selected(5);

@@ -46,18 +46,18 @@ public final class MailService {
         try {
             switch (request.action()) {
                 case LIST -> {
-                    if (request.offset() < 0) throw new Failure("invalid_target");
-                    var all = state.list(player.getUUID(), request.filter());
-                    int start = Math.min(request.offset() / 50 * 50, all.isEmpty() ? 0 : (all.size() - 1) / 50 * 50);
+                    if (request.offset() < 0 || request.offset() % 50 != 0) throw new Failure("invalid_target");
+                    var all = state.list(player.getUUID(), request.filter(), request.scope());
+                    int start = Math.min(request.offset(), all.size());
                     int end = Math.min(start + 50, all.size());
                     List<MailSyncPacket.Row> rows = all.subList(start, end).stream().map(mail -> {
                         var receipt = state.receipt(player.getUUID(), mail.id());
                         return new MailSyncPacket.Row(mail.id(), mail.titleText(), mail.sender(), mail.kind(), mail.sentAt(),
-                                mail.coin(), receipt.read(), receipt.claimed());
+                                mail.coin(), receipt.read(), receipt.claimed(), mail.scope());
                     }).toList();
                     MailNetwork.reply(player, new MailSyncPacket(MailSyncPacket.Kind.LIST, state.revision(), state.unread(player.getUUID()),
-                            player.hasPermissions(2), request.filter(), start, end < all.size(), rows, null, false,
-                            MailActionPacket.EMPTY, 0, 0, "", ""));
+                            player.hasPermissions(2), request.filter(), request.offset(), end < all.size(), rows, null, false,
+                            request.id(), 0, 0, "", ""));
                 }
                 case DETAIL, READ -> {
                     MailMessage mail = state.detail(player.getUUID(), request.id());
@@ -95,7 +95,7 @@ public final class MailService {
                     var p = original.request;
                     MailMessage mail = new MailMessage(UUID.nameUUIDFromBytes(key.getBytes(StandardCharsets.UTF_8)), now,
                             p.organizationMail() ? MailMessage.Kind.ORGANIZATION : MailMessage.Kind.ADMIN,
-                            current.sender, p.title().strip(), p.body(), List.of(), p.coin());
+                            current.sender, p.title().strip(), p.body(), List.of(), p.coin(), p.scope());
                     state.deliver(data, key, mail, current.recipients);
                     if (p.organizationMail()) state.announcementSent(player.getUUID(), now);
                     data.markChanged(); session.drafts.remove(key);

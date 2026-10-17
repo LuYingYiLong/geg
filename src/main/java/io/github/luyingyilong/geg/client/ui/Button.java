@@ -265,7 +265,7 @@ public final class Button extends Control {
         if (type == Type.TEXT) {
             int color = textBackgroundColor(hovered, pressed);
             if (color != 0) graphics.fill(x, y, x + width, y + height, color);
-        } else if (background != null) {
+        } else if (background != null && paintsThemedBackground(type, hovered, pressed)) {
             background.draw(context, x, y, width, height, style);
         }
 
@@ -324,6 +324,7 @@ public final class Button extends Control {
     static WidgetTheme theme(ITheme theme, Type type, boolean hovered, boolean pressed) {
         WidgetThemeKey<WidgetTheme> key = switch (type) {
             case TEXT -> OreTheme.BUTTON_SECONDARY_NORMAL;
+            case MENU -> pressed ? OreTheme.BUTTON_MENU_PRESSED : OreTheme.BUTTON_MENU_HOVERED;
             case SECONDARY -> pressed ? OreTheme.BUTTON_SECONDARY_PRESSED
                     : hovered ? OreTheme.BUTTON_SECONDARY_HOVERED : OreTheme.BUTTON_SECONDARY_NORMAL;
             case PRIMARY -> pressed ? OreTheme.BUTTON_PRIMARY_PRESSED
@@ -337,6 +338,10 @@ public final class Button extends Control {
 
     static int textBackgroundColor(boolean hovered, boolean pressed) {
         return pressed ? 0x1A000000 : hovered ? 0x16FFFFFF : 0;
+    }
+
+    static boolean paintsThemedBackground(Type type, boolean hovered, boolean pressed) {
+        return type != Type.TEXT && (type != Type.MENU || hovered || pressed);
     }
 
     static boolean leftMousePressed() {
@@ -367,6 +372,7 @@ public final class Button extends Control {
         PRIMARY,
         DESTRUCTIVE,
         TEXT,
+        MENU,
     }
 
     public enum ACTION_MODE {

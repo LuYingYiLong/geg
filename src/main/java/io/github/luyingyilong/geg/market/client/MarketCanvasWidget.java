@@ -34,9 +34,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private static final int MIN_CARD_WIDTH = 96;
     private static final int FOOTER_HEIGHT = Button.Size.MEDIUM.height();
     private static final int FAVORITE_BUTTON_WIDTH = 51;
-    private final Tabs footerTabs = new Tabs(Arrays.stream(Tab.values())
+    private final Segmented footerOptions = new Segmented(Arrays.stream(Tab.values())
             .map(Tab::title).toList());
-    private final Tabs publishTabs = new Tabs(List.of(
+    private final Segmented publishOptions = new Segmented(List.of(
             Component.translatable("market.geg.selling"),
             Component.translatable("market.geg.buying")), Button.Size.SMALL);
     private final List<Card> cards = new ArrayList<>();
@@ -45,7 +45,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             .showArrow(false).type(Button.Type.TEXT);
     private final Window window = new Window(true);
     private final Grid<Card> grid = new Grid<>();
-    private final Scroll gridScroll = new Scroll().content(grid).embedded(true);
+    private final Scroll gridScroll = new Scroll().content(grid);
     private final BodyContent body = new BodyContent();
     private final Table<MarketDetail> offerTable = createOfferTable();
     private final DetailContent detailContent = new DetailContent();
@@ -60,12 +60,12 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private final Label coinBalance = new Label().color(HEADER_TEXT)
             .overflow(Label.Overflow.ELLIPSIS).maximumWidth(128)
             .align(Label.Horizontal.RIGHT, Label.Vertical.CENTER);
-    private final Padding footerSlot = new Padding(new Padding.Insets(4, 0, 0, 0)).child(footerTabs);
+    private final Padding footerSlot = new Padding(new Padding.Insets(4, 0, 0, 0)).child(footerOptions);
     private final Label publishFee = new Label().color(SECONDARY_TEXT)
             .overflow(Label.Overflow.CLIP).align(Label.Horizontal.RIGHT, Label.Vertical.CENTER);
     private final Padding publishSlot = new Padding(new Padding.Insets(7, 6, 2, 6))
             .child(new Box().orientation(Box.Orientation.HORIZONTAL).gap(6)
-                    .add(publishTabs).add(publishFee));
+                    .add(publishOptions).add(publishFee));
     private final Overlay overlay = new Overlay();
     private Tab tab = Tab.MARKET;
     private Card modal;
@@ -82,20 +82,21 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     MarketCanvasWidget(Input search) {
         searchSlot = new InputControl(search);
         coinBalance.minimum(32, Button.Size.MEDIUM.height());
-        searchSlot.minimum(64, Button.Size.SMALL.height()).preferred(138, Button.Size.SMALL.height());
+        searchSlot.minimum(64, Button.Size.SMALL.height()).preferred(138, Button.Size.SMALL.height())
+                .sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         filterDropdown.minimum(Button.Size.MEDIUM.height(), Button.Size.MEDIUM.height());
         Box spaceCompactBox = new Box().orientation(Box.Orientation.HORIZONTAL).gap(0);
         spaceCompactBox.add(searchSlot).add(filterDropdown);
         header.extra(coinBalance, spaceCompactBox);
         publishSlot.minimum(0, 27).preferred(0, 27)
-                .policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
-        publishTabs.minimum(96, Button.Size.SMALL.height()).preferred(134, Button.Size.SMALL.height())
-                .policy(Control.SizePolicy.CONTENT, Control.SizePolicy.CONTENT);
-        publishFee.policy(Control.SizePolicy.EXPAND, Control.SizePolicy.FILL);
+                .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        publishOptions.minimum(96, Button.Size.SMALL.height()).preferred(134, Button.Size.SMALL.height())
+                .sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        publishFee.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
         footerSlot.minimum(0, FOOTER_HEIGHT + 4).preferred(0, FOOTER_HEIGHT + 4)
-                .policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
-        footerTabs.policy(Control.SizePolicy.FILL, Control.SizePolicy.FILL);
-        footerTabs.onSelect(index -> {
+                .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        footerOptions.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
+        footerOptions.onSelect(index -> {
             Tab next = Tab.values()[index];
             if (next != tab) {
                 tab = next;
@@ -104,7 +105,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 dirty = true;
             }
         });
-        publishTabs.onSelect(index -> {
+        publishOptions.onSelect(index -> {
             requestMode = index == 1;
             dirty = true;
         });
@@ -113,7 +114,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             dirty = true;
         });
         grid.onItemClick(this::openModal);
-        body.policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
+        body.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         Box column = new Box().add(header).add(publishSlot).add(body).add(footerSlot);
         window.content(column).overlay(overlay);
         grid.columns(MIN_CARD_WIDTH, 4, CARD_GAP).mode(Grid.LayoutMode.MASONRY)
@@ -280,7 +281,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     void prepareLayout(int width, int height, Font font) {
         publishSlot.visible(tab == Tab.SELL);
-        publishTabs.selected(requestMode ? 1 : 0);
+        publishOptions.selected(requestMode ? 1 : 0);
         publishFee.visible(width >= 230);
         publishFee.text(Component.translatable("market.geg.seller_fee",
                 MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints())));
@@ -304,7 +305,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                     : Component.translatable("market.geg.quantity"));
         }
         window.layoutViewport(width, height, font);
-        footerTabs.selected(tab.ordinal());
+        footerOptions.selected(tab.ordinal());
     }
 
     void invalidate() {
@@ -618,7 +619,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         int mouseX = getContext().getAbsMouseX();
         int mouseY = getContext().getAbsMouseY();
         return window.pointerPressed(mouseX - x, mouseY - y, getContext())
-                ? Interactable.Result.STOP : Interactable.Result.IGNORE;
+                ? Interactable.Result.SUCCESS : Interactable.Result.IGNORE;
     }
 
     private MarketDetail selectedDetail() {
@@ -797,16 +798,16 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             else detailContent.scrollBy(-(int) Math.signum(delta) * 24);
             return true;
         }
-        Rect footer = footerTabs.screenBounds(getArea().x, getArea().y);
+        Rect footer = footerOptions.screenBounds(getArea().x, getArea().y);
         if (footer.contains(getContext().getAbsMouseX(), getContext().getAbsMouseY())
-                && footerTabs.scrollBy(-(int) Math.signum(delta) * 24, getContext().getFont())) return true;
+                && footerOptions.scrollBy(-(int) Math.signum(delta) * 24, getContext().getFont())) return true;
         window.dispatchScroll(getContext().getAbsMouseX() - getArea().x,
                 getContext().getAbsMouseY() - getArea().y, delta, Screen.hasShiftDown());
         return true;
     }
 
     @Override public void onMouseDrag(int button, double dragX, double dragY) {
-        if (button == 0) gridScroll.dragTo(getContext().getAbsMouseX() - getArea().x,
+        if (button == 0) window.pointerDragged(getContext().getAbsMouseX() - getArea().x,
                 getContext().getAbsMouseY() - getArea().y);
     }
 
@@ -814,7 +815,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         if (button != 0) return false;
         boolean released = window.pointerReleased(getContext().getAbsMouseX() - getArea().x,
                 getContext().getAbsMouseY() - getArea().y);
-        return gridScroll.endDrag() || released;
+        return released;
     }
 
     @Override public boolean onKeyReleased(int keyCode, int scanCode, int modifiers) {
@@ -1109,12 +1110,12 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         private Card card;
 
         private CardView() {
-            name.minimum(0, 10).preferred(0, 10).policy(SizePolicy.FILL, SizePolicy.CONTENT);
-            count.minimum(0, 10).preferred(0, 10).policy(SizePolicy.FILL, SizePolicy.CONTENT);
-            price.minimum(0, 10).preferred(0, 10).policy(SizePolicy.FILL, SizePolicy.CONTENT);
-            icon.minimum(16, 20).preferred(16, 20).policy(SizePolicy.CONTENT, SizePolicy.FILL);
+            name.minimum(0, 10).preferred(0, 10).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+            count.minimum(0, 10).preferred(0, 10).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+            price.minimum(0, 10).preferred(0, 10).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+            icon.minimum(16, 20).preferred(16, 20).sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_FILL);
             textColumn.add(name).add(count).add(price);
-            textColumn.policy(SizePolicy.EXPAND, SizePolicy.FILL);
+            textColumn.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
             row.add(icon).add(textColumn);
             addChild(row);
         }

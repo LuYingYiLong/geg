@@ -146,6 +146,7 @@ public final class DrawerLayoutTest {
             check(close.icon().equals(new Button.Icon(OreIcons.CLOSE, 7, 7)));
             Rect bounds = close.absoluteBounds();
             check(bounds.width() == 20 && bounds.height() == 20);
+            check(bounds.width() == 20 && bounds.height() == 20);
             int x = bounds.x() + 1;
             int y = bounds.y() + 1; // The blank padding also belongs to the button.
             check(window.pointerPressed(x, y, null) && closed[0] == 0);

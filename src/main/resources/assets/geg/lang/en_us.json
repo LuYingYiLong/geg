@@ -207,6 +207,7 @@
   "mail.geg.previous": "Previous",
   "mail.geg.next": "Next",
   "mail.geg.detail": "Mail details",
+  "mail.geg.select_message": "Select a message to view its contents",
   "mail.geg.loading": "Loading…",
   "mail.geg.empty": "No mail",
   "mail.geg.source": "From",

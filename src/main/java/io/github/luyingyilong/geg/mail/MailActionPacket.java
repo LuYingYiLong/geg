@@ -11,7 +11,10 @@ public record MailActionPacket(Action action, UUID id, MailState.Filter filter, 
     public enum Scope { PLAYER, ORGANIZATION, ALL }
     public static final UUID EMPTY = new UUID(0, 0);
     public static MailActionPacket query(Action action, UUID id, MailState.Filter filter, int offset) {
-        return new MailActionPacket(action, id, filter, offset, Scope.PLAYER, false, EMPTY, "", "", "", 0);
+        return query(action, id, filter, offset, Scope.PLAYER);
+    }
+    public static MailActionPacket query(Action action, UUID id, MailState.Filter filter, int offset, Scope scope) {
+        return new MailActionPacket(action, id, filter, offset, scope, false, EMPTY, "", "", "", 0);
     }
     public static void encode(MailActionPacket p, FriendlyByteBuf b) {
         b.writeEnum(p.action); b.writeUUID(p.id); b.writeEnum(p.filter); b.writeVarInt(p.offset);

@@ -1,5 +1,6 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
 import io.github.luyingyilong.geg.client.ui.layout.Box;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Padding;
@@ -18,7 +19,7 @@ public final class DialogLayoutTest {
 
         Box header = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
         Control title = new Control().minimum(30, 18)
-                .policy(Control.SizePolicy.EXPAND, Control.SizePolicy.FILL);
+                .sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
         Control close = new Control().minimum(18, 18);
         header.add(title).add(close);
         header.layout(new Rect(0, 0, 100, 18), null);
@@ -27,9 +28,9 @@ public final class DialogLayoutTest {
 
         Box footer = new Box().gap(2);
         Control first = new Control().minimum(0, 20)
-                .policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+                .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Control second = new Control().minimum(0, 20)
-                .policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+                .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         footer.add(first).add(second);
         footer.layout(new Rect(0, 0, 100, 42), null);
         check(first.bounds().width() == 100 && first.bounds().y() == 0);
@@ -38,13 +39,13 @@ public final class DialogLayoutTest {
         Box column = new Box();
         Control row = new Control().minimum(0, 18);
         Control body = new Control()
-                .policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
+                .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         Padding headerInset = new Padding(new Padding.Insets(2, 8, 4, 8)).child(row);
         Padding bodyInset = new Padding(new Padding.Insets(0, 8, 5, 8)).child(body);
         Padding footerInset = new Padding(new Padding.Insets(4, 8, 2, 8)).child(footer);
-        headerInset.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
-        bodyInset.policy(Control.SizePolicy.FILL, Control.SizePolicy.EXPAND);
-        footerInset.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        headerInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        bodyInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        footerInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         column.add(headerInset).add(bodyInset).add(footerInset);
         column.layout(new Rect(0, 0, 100, 96), null);
         check(row.absoluteBounds().x() == 8 && row.absoluteBounds().y() == 2);

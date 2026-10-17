@@ -20,6 +20,10 @@ import org.joml.Matrix4f;
 import java.util.function.IntPredicate;
 
 public class Input extends TextFieldWidget {
+    private static final InputShortcuts.Clipboard CLIPBOARD = new InputShortcuts.Clipboard() {
+        @Override public String get() { return net.minecraft.client.Minecraft.getInstance().keyboardHandler.getClipboard(); }
+        @Override public void set(String text) { net.minecraft.client.Minecraft.getInstance().keyboardHandler.setClipboard(text); }
+    };
     private final float depth;
     private Button.Size controlSize = Button.Size.MEDIUM;
     private boolean inputVisible = true;
@@ -35,13 +39,25 @@ public class Input extends TextFieldWidget {
 
     public Input(float depth) {
         this.depth = depth;
+        handler = new OreTextFieldHandler(this);
         renderer = new OreTextFieldRenderer(handler);
         handler.setRenderer(renderer);
+        handler.setScrollArea(getScrollArea());
         getScrollArea().setScrollX(io.github.luyingyilong.geg.client.ui.util.HiddenInputScroll.horizontal());
         // An explicit empty builder prevents TextFieldWidget.onInit from adding its overflow tooltip.
         tooltipBuilder(tooltip -> { });
         showScrollShadows(false);
     }
+
+    protected final OreTextFieldHandler editingHandler() { return (OreTextFieldHandler) handler; }
+
+    @Override public void setText(String text) {
+        super.setText(text);
+        editingHandler().clearHistory();
+        handler.setCursor(new brachy.modularui.utils.Point(0, 0), false);
+    }
+
+    protected void onEditShortcut() { renderer.setCursor(true); }
 
     public Input controlSize(Button.Size size) {
         controlSize = java.util.Objects.requireNonNull(size);
@@ -137,11 +153,13 @@ public class Input extends TextFieldWidget {
     }
 
     @Override public void onFocus(ModularGuiContext context) {
+        editingHandler().endEditGroup();
         super.onFocus(context);
         OreInputMethod.focus(this);
     }
 
     @Override public void onRemoveFocus(ModularGuiContext context) {
+        editingHandler().endEditGroup();
         OreInputMethod.release(this);
         removeNativeFocus(context);
         focusLostHandler.run();
@@ -157,6 +175,7 @@ public class Input extends TextFieldWidget {
     @Override public @NotNull Interactable.Result onMousePressed(int button) {
         if (!layoutInteractive() || layoutControl != null
                 && !layoutControl.pointerInteractive(getContext().getAbsMouseX(), getContext().getAbsMouseY())) return Interactable.Result.IGNORE;
+        editingHandler().endEditGroup();
         if (isFocused() && composing()) cancelPreedit();
         Interactable.Result result = super.onMousePressed(button);
         if (result != Interactable.Result.IGNORE) mousePressHandler.run();
@@ -165,6 +184,15 @@ public class Input extends TextFieldWidget {
 
     @Override public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
         if (!layoutInteractive()) return Interactable.Result.IGNORE;
+        if (isFocused() && InputShortcuts.matches(keyCode, modifiers)) {
+            if (composing()) {
+                cancelPreedit();
+                if (keyCode == GLFW.GLFW_KEY_Z) return Interactable.Result.SUCCESS;
+            }
+            InputShortcuts.dispatch(editingHandler(), keyCode, modifiers, CLIPBOARD);
+            onEditShortcut();
+            return Interactable.Result.SUCCESS;
+        }
         if (isFocused() && keyCode == GLFW.GLFW_KEY_ESCAPE && composing()) {
             cancelPreedit();
             return Interactable.Result.STOP;
@@ -181,7 +209,8 @@ public class Input extends TextFieldWidget {
         if (!layoutInteractive()) return Interactable.Result.IGNORE;
         // IMBlocker probes custom screens with NUL to discover their real text field focus.
         if (character == 0 && isFocused()) OreInputMethod.locateFocus(this);
-        return super.onCharTyped(character, modifiers);
+        if (!isFocused()) return Interactable.Result.IGNORE;
+        return InputShortcuts.type(editingHandler(), character) ? Interactable.Result.SUCCESS : Interactable.Result.STOP;
     }
 
     @Override
@@ -220,10 +249,10 @@ public class Input extends TextFieldWidget {
         }
     }
 
-    /** All hints occupy the first standard input row, including a taller multiline editor. */
+    /** A single-line field centers its hint within its actual, possibly expanded, height. */
     protected int firstLineTop() {
-        return io.github.luyingyilong.geg.client.ui.util.InputGeometry.firstLineTop(
-                getArea().getPadding().top(), getArea().paddedHeight(), controlSize.height(), renderer.getFontHeight());
+        return io.github.luyingyilong.geg.client.ui.util.InputGeometry.centeredLineTop(
+                getArea().getPadding().top(), getArea().paddedHeight(), renderer.getFontHeight());
     }
 
     @Override protected void drawText(ModularGuiContext context, TextFieldTheme theme) {

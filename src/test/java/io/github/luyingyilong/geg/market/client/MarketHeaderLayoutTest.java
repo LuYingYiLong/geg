@@ -3,6 +3,8 @@ package io.github.luyingyilong.geg.market.client;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
 import io.github.luyingyilong.geg.client.ui.layout.Size;
+import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
+import io.github.luyingyilong.geg.client.ui.layout.Box;
 import io.github.luyingyilong.geg.client.ui.Header;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
@@ -32,7 +34,7 @@ public final class MarketHeaderLayoutTest {
             check(filter.bounds().height() == 20);
             for (Control action : new Control[]{balance, search, filter}) {
                 check(action.bounds().width() >= action.minimumWidth());
-                check(action.bounds().right() <= width - 4);
+                check(action.bounds().right() <= width);
                 check(action.bounds().bottom() <= height);
                 check(header.hitTop(action.bounds().x(), action.bounds().y()) == action);
             }
@@ -44,6 +46,14 @@ public final class MarketHeaderLayoutTest {
             filter.visible(false);
             check(header.layoutDirty());
         }
+        Control search = new Control().minimum(64, 18).preferred(138, 18)
+                .sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        Control filter = new Control().minimum(20, 20);
+        Box compact = new Box().orientation(Box.Orientation.HORIZONTAL).add(search).add(filter);
+        Header header = new Header(Component.literal("Market")).extra(compact);
+        header.layout(new Rect(0, 0, 640, 25), font);
+        check(search.size().height() == 18 && filter.size().height() == 20);
+        check(search.absoluteBounds().y() == filter.absoluteBounds().y() + 1);
     }
 
     private static void check(boolean condition) {

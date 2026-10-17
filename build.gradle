@@ -61,6 +61,14 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+// ModularUI 3.3.1 retains 1.12 SideOnly metadata on a few classes.
+// Supply only those annotation types to javac; they are never shipped or loaded at runtime.
+sourceSets {
+    modularUiLegacyAnnotations {
+        java.srcDir 'src/compileOnly/java'
+    }
+}
+
 repositories {
     maven {
         url = 'https://www.cursemaven.com'
@@ -69,6 +77,8 @@ repositories {
 }
 
 dependencies {
+    compileOnly sourceSets.modularUiLegacyAnnotations.output
+    testCompileOnly sourceSets.modularUiLegacyAnnotations.output
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation fg.deobf('curse.maven:modularui-624243:8339410')
     implementation fg.deobf('curse.maven:curios-309927:6418456')

@@ -17,6 +17,11 @@ public final class InputLayerTest {
         check(InputGeometry.firstLineTop(0, 20, 20, 10) == InputGeometry.firstLineTop(0, 80, 20, 10));
         check(InputGeometry.firstLineTop(4, 72, 20, 10) == 9);
         check(InputGeometry.firstLineTop(0, 5, 20, 10) == 0);
+        check(InputGeometry.centeredLineTop(0, 20, 10) == 5);
+        check(InputGeometry.centeredLineTop(0, 80, 10) == 35);
+        check(InputGeometry.centeredLineTop(4, 72, 10) == 35);
+        check(InputGeometry.centeredLineTop(4, 5, 10) == 4);
+        check(InputGeometry.centeredLineTop(3, 31, 9.0F) == 14);
 
         Control field = new Control().preferred(80, 200);
         Scroll inner = new Scroll().embedded(true).content(field);

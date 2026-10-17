@@ -1,6 +1,6 @@
 package io.github.luyingyilong.geg.market.client;
 
-import brachy.modularui.factory.ClientGUI;
+import io.github.luyingyilong.geg.client.ui.OreScreen;
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
 import brachy.modularui.value.StringValue;
@@ -78,7 +78,7 @@ public final class ClientMarketScreen {
                 Minecraft.getInstance().getWindow().getGuiScaledHeight(), Minecraft.getInstance().font);
 
         ModularPanel<?> panel = new InstantMarketPanel();
-        panel.widgetTheme(OreTheme.BACKGROUND);
+        panel.disableThemeBackground(true);
         panel.full();
         panel.child(canvas.full().disableThemeBackground(true));
         panel.child(search);
@@ -90,7 +90,7 @@ public final class ClientMarketScreen {
             ClientMarketState.clearDetails();
             canvas = null;
         });
-        ClientGUI.open(new ModularScreen("geg", panel).useTheme(OreTheme.NAME).pausesGame(false));
+        OreScreen.open(new ModularScreen("geg", panel).useTheme(OreTheme.NAME).pausesGame(false));
     }
 
     public static void openFromTerminal(BlockPos pos) {

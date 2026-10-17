@@ -1,5 +1,6 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
 import io.github.luyingyilong.geg.client.ui.util.OreIcons;
 import io.github.luyingyilong.geg.client.ui.util.OreSounds;
 
@@ -44,7 +45,7 @@ public final class Drawer extends Container {
             .align(Label.Horizontal.LEFT, Label.Vertical.CENTER).color(OreTheme.TEXT_WHITE);
     private final Box header = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
     private final Box footer = new Box().gap(2);
-    private final Scroll body = new Scroll().embedded(true);
+    private final Scroll body = new Scroll();
     private final Box column = new Box().gap(4);
     private final Padding frame = new Padding(Padding.Insets.all(PADDING)).child(column);
     private Panel background;
@@ -72,14 +73,15 @@ public final class Drawer extends Container {
         this.clock = Objects.requireNonNull(clock);
         this.soundPlayer = Objects.requireNonNull(soundPlayer);
         title(title);
-        this.title.policy(SizePolicy.EXPAND, SizePolicy.FILL);
+        this.title.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
         Button close = new Button().type(Button.Type.TEXT)
                 .icon(OreIcons.CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE).onPress(this::close);
         close.minimum(CLOSE_SIZE, CLOSE_SIZE);
+        close.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         header.add(this.title).add(close);
-        header.minimum(0, CLOSE_SIZE).policy(SizePolicy.FILL, SizePolicy.CONTENT);
-        body.policy(SizePolicy.FILL, SizePolicy.EXPAND);
-        footer.policy(SizePolicy.FILL, SizePolicy.CONTENT);
+        header.minimum(0, CLOSE_SIZE).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        body.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        footer.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         footer.visible(false);
         column.add(header).add(body).add(footer);
         super.addChild(frame);
@@ -116,7 +118,7 @@ public final class Drawer extends Container {
 
     public Drawer action(Component text, Runnable onPress, Button.Type type) {
         Button button = new Button(text).type(type).onPress(onPress);
-        button.policy(SizePolicy.FILL, SizePolicy.CONTENT);
+        button.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         footer.addChild(button);
         footer.minimum(0, footer.children().size() * Button.HEIGHT
                 + Math.max(0, footer.children().size() - 1) * 2);

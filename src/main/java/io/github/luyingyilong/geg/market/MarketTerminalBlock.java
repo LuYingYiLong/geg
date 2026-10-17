@@ -39,13 +39,15 @@ public final class MarketTerminalBlock extends Block {
     }
 
     @Override
+    @SuppressWarnings("deprecation") // Vanilla routes BlockState rotation through this override.
     public BlockState rotate(BlockState state, Rotation rotation) {
         return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
+    @SuppressWarnings("deprecation") // Required BlockBehaviour callback in Minecraft 1.20.1.
     public BlockState mirror(BlockState state, Mirror mirror) {
-        return state.rotate(mirror.getRotation(state.getValue(FACING)));
+        return rotate(state, mirror.getRotation(state.getValue(FACING)));
     }
 
     @Override
@@ -54,6 +56,7 @@ public final class MarketTerminalBlock extends Block {
     }
 
     @Override
+    @SuppressWarnings("deprecation") // Required BlockBehaviour interaction callback in 1.20.1.
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
                                  InteractionHand hand, BlockHitResult hit) {
         if (hand != InteractionHand.MAIN_HAND) {

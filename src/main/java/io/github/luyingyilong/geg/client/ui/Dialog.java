@@ -1,5 +1,6 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
 import io.github.luyingyilong.geg.client.ui.util.OreIcons;
 import io.github.luyingyilong.geg.client.ui.util.OreSounds;
 
@@ -66,15 +67,16 @@ public final class Dialog extends Container {
         preferredHeight = Math.max(0, height);
         this.verticalOffset = verticalOffset;
         title(title);
-        titleLabel.policy(SizePolicy.EXPAND, SizePolicy.FILL);
+        titleLabel.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
         close.minimum(CLOSE_SIZE, CLOSE_SIZE);
+        close.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         close.onPress(() -> onClose.run());
-        header.minimum(0, CLOSE_SIZE).policy(SizePolicy.FILL, SizePolicy.CONTENT);
+        header.minimum(0, CLOSE_SIZE).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         header.add(titleLabel).add(close);
-        headerInset.policy(SizePolicy.FILL, SizePolicy.CONTENT);
+        headerInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         column.add(headerInset);
-        footer.policy(SizePolicy.FILL, SizePolicy.CONTENT);
-        footerInset.policy(SizePolicy.FILL, SizePolicy.CONTENT);
+        footer.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        footerInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         footerInset.visible(false);
         column.add(footerInset);
         panel.child(column);
@@ -110,10 +112,10 @@ public final class Dialog extends Container {
 
     public Dialog content(Control content) {
         this.content = Objects.requireNonNull(content);
-        content.policy(SizePolicy.FILL, SizePolicy.EXPAND);
+        content.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         bodyInset.child(content);
         if (bodyInset.parent() == null) {
-            bodyInset.policy(SizePolicy.FILL, SizePolicy.EXPAND);
+            bodyInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
             column.removeChild(footerInset);
             column.add(bodyInset).add(footerInset);
         }
@@ -134,7 +136,7 @@ public final class Dialog extends Container {
 
     public Dialog action(Component label, Runnable onClick, Button.Type type) {
         Button button = new Button(label).type(type).onPress(onClick);
-        button.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        button.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         actions.add(button);
         footer.addChild(button);
         footer.minimum(0, actionHeight(actions.size()));

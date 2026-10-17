@@ -1,6 +1,7 @@
 package io.github.luyingyilong.geg.organization.client;
 
-import brachy.modularui.factory.ClientGUI;
+import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
+import io.github.luyingyilong.geg.client.ui.OreScreen;
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
 import io.github.luyingyilong.geg.client.ui.Form;
@@ -40,9 +41,9 @@ public final class ClientOrganizationScreen {
             else if (!unrestricted.checked()) approval.checked(true);
         });
         Box joinChoices = new Box().gap(2).add(unrestricted).add(approval);
-        joinChoices.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
-        unrestricted.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
-        approval.policy(Control.SizePolicy.FILL, Control.SizePolicy.CONTENT);
+        joinChoices.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        unrestricted.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        approval.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Form form = new Form().add(new FormItem("name",
                 Component.translatable("organization.geg.name"), name))
                 .add(new FormItem("description",
@@ -54,7 +55,7 @@ public final class ClientOrganizationScreen {
         canvas.showInitialState();
 
         ModularPanel<?> panel = new InstantOrganizationPanel();
-        panel.widgetTheme(OreTheme.BACKGROUND);
+        panel.disableThemeBackground(true);
         panel.full();
         panel.child(canvas.full().disableThemeBackground(true));
         panel.child(name);
@@ -63,7 +64,7 @@ public final class ClientOrganizationScreen {
             form.setVisible(false);
             canvas = null;
         });
-        ClientGUI.open(new ModularScreen("geg", panel).useTheme(OreTheme.NAME).pausesGame(false));
+        OreScreen.open(new ModularScreen("geg", panel).useTheme(OreTheme.NAME).pausesGame(false));
         OrganizationNetwork.request();
     }
 

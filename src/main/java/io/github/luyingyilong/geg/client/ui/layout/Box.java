@@ -24,28 +24,31 @@ public final class Box extends Container {
     }
     public List<Control> children() { return List.copyOf(children); }
 
-    @Override
-    public int measureWidth(Font font, int available) {
-        int total = Math.max(0, (int) children.stream().filter(Control::visible).count() - 1) * gap;
-        int maximum = 0;
+    @Override public Size measureSize(Font font, Size available) {
+        int totalWidth = 0;
+        int totalHeight = 0;
+        int count = 0;
         for (Control child : children) if (child.visible()) {
-            int value = child.measureSize(font, new Size(available, available)).width();
-            total += value;
-            maximum = Math.max(maximum, value);
+            Size measured = child.measureSize(font, available);
+            totalWidth = orientation == Orientation.HORIZONTAL ? totalWidth + measured.width()
+                    : Math.max(totalWidth, measured.width());
+            totalHeight = orientation == Orientation.VERTICAL ? totalHeight + measured.height()
+                    : Math.max(totalHeight, measured.height());
+            count++;
         }
-        return orientation == Orientation.HORIZONTAL ? total : maximum;
+        int gaps = Math.max(0, count - 1) * gap;
+        if (orientation == Orientation.HORIZONTAL) totalWidth += gaps;
+        else totalHeight += gaps;
+        return new Size(Math.max(super.measureWidth(font, available.width()), totalWidth),
+                Math.max(super.measureHeight(font, available.height()), totalHeight));
     }
 
-    @Override
-    public int measureHeight(Font font, int available) {
-        int total = Math.max(0, (int) children.stream().filter(Control::visible).count() - 1) * gap;
-        int maximum = 0;
-        for (Control child : children) if (child.visible()) {
-            int value = child.measureSize(font, new Size(available, available)).height();
-            total += value;
-            maximum = Math.max(maximum, value);
-        }
-        return orientation == Orientation.VERTICAL ? total : maximum;
+    @Override public int measureWidth(Font font, int available) {
+        return measureSize(font, new Size(available, available)).width();
+    }
+
+    @Override public int measureHeight(Font font, int available) {
+        return measureSize(font, new Size(available, available)).height();
     }
 
     @Override
@@ -56,67 +59,71 @@ public final class Box extends Container {
         int cross = orientation == Orientation.VERTICAL ? localBounds.width() : localBounds.height();
         int space = Math.max(0, axis - Math.max(0, active.size() - 1) * gap);
         int[] sizes = new int[active.size()];
-        int desired = 0;
+        int fixed = 0;
         for (int index = 0; index < active.size(); index++) {
             Control child = active.get(index);
             Size measured = child.measureSize(font, orientation == Orientation.VERTICAL
                     ? new Size(cross, axis) : new Size(axis, cross));
             sizes[index] = orientation == Orientation.VERTICAL ? measured.height() : measured.width();
-            desired += sizes[index];
+            if (!expands(child)) fixed += sizes[index];
         }
-        if (desired > space) {
-            int shortage = shrink(active, sizes, desired - space, false);
-            if (shortage > 0) shortage = shrink(active, sizes, shortage, true);
-            // The children retain their minimum size and overflow the box.
-        } else {
-            int remaining = space - desired;
-            double ratioRemaining = active.stream().filter(child -> (orientation == Orientation.VERTICAL
-                    ? child.verticalPolicy() : child.horizontalPolicy()) == SizePolicy.EXPAND)
-                    .mapToDouble(Control::stretchRatio).sum();
-            for (int index = 0; index < active.size() && ratioRemaining > 0.0D; index++) {
-                Control child = active.get(index);
-                if ((orientation == Orientation.VERTICAL ? child.verticalPolicy()
-                        : child.horizontalPolicy()) == SizePolicy.EXPAND) {
-                    int extra = (int) Math.round(remaining * child.stretchRatio() / ratioRemaining);
-                    sizes[index] += extra;
-                    remaining -= extra;
-                    ratioRemaining -= child.stretchRatio();
-                }
-            }
+        int expandedMinimum = active.stream().filter(this::expands).mapToInt(this::mainMinimum).sum();
+        int shortage = Math.max(0, fixed + expandedMinimum - space);
+        for (int index = 0; index < active.size() && shortage > 0; index++) {
+            Control child = active.get(index);
+            if (expands(child)) continue;
+            int reduction = Math.min(shortage, sizes[index] - mainMinimum(child));
+            sizes[index] -= reduction;
+            fixed -= reduction;
+            shortage -= reduction;
         }
+        allocateExpanded(active, sizes, Math.max(0, space - fixed));
         int cursor = 0;
         for (int index = 0; index < active.size(); index++) {
             Control child = active.get(index);
-            Size measured = child.measureSize(font, orientation == Orientation.VERTICAL
-                    ? new Size(cross, sizes[index]) : new Size(sizes[index], cross));
-            int crossSize = orientation == Orientation.VERTICAL ? measured.width() : measured.height();
-            SizePolicy crossPolicy = orientation == Orientation.VERTICAL
-                    ? child.horizontalPolicy() : child.verticalPolicy();
-            int crossMinimum = orientation == Orientation.VERTICAL
-                    ? child.minimumWidth() : child.minimumHeight();
-            if (crossPolicy != SizePolicy.CONTENT) crossSize = Math.max(crossMinimum, cross);
-            else crossSize = Math.max(crossMinimum, crossSize);
-            int crossOffset = crossPolicy == SizePolicy.CONTENT ? Math.max(0, (cross - crossSize) / 2) : 0;
             fitChild(child, orientation == Orientation.VERTICAL
-                    ? new Rect(crossOffset, cursor, crossSize, sizes[index])
-                    : new Rect(cursor, crossOffset, sizes[index], crossSize), font);
+                    ? new Rect(0, cursor, cross, sizes[index])
+                    : new Rect(cursor, 0, sizes[index], cross), font);
             cursor += sizes[index] + gap;
         }
     }
 
-    private int shrink(List<Control> active, int[] sizes, int shortage, boolean expandChildren) {
-        for (int index = 0; index < active.size() && shortage > 0; index++) {
-            Control child = active.get(index);
-            SizePolicy policy = orientation == Orientation.VERTICAL
-                    ? child.verticalPolicy() : child.horizontalPolicy();
-            if ((policy == SizePolicy.EXPAND) != expandChildren) continue;
-            int minimum = orientation == Orientation.VERTICAL
-                    ? child.minimumHeight() : child.minimumWidth();
-            int reduction = Math.min(shortage, Math.max(0, sizes[index] - minimum));
-            sizes[index] -= reduction;
-            shortage -= reduction;
+    private boolean expands(Control child) {
+        return SizeFlags.expands(orientation == Orientation.VERTICAL
+                ? child.sizeFlagsVertical() : child.sizeFlagsHorizontal());
+    }
+
+    private int mainMinimum(Control child) {
+        return orientation == Orientation.VERTICAL ? child.minimumHeight() : child.minimumWidth();
+    }
+
+    /** Freeze children whose proportional slot would be below their minimum, then redistribute. */
+    private void allocateExpanded(List<Control> active, int[] sizes, int space) {
+        List<Integer> pending = new ArrayList<>();
+        for (int index = 0; index < active.size(); index++) if (expands(active.get(index))) pending.add(index);
+        int remaining = space;
+        while (!pending.isEmpty()) {
+            double weight = pending.stream().mapToDouble(index -> active.get(index).sizeFlagsStretchRatio()).sum();
+            List<Integer> frozen = new ArrayList<>();
+            for (int index : pending)
+                if (remaining * (double) active.get(index).sizeFlagsStretchRatio() / weight < mainMinimum(active.get(index)))
+                    frozen.add(index);
+            if (frozen.isEmpty()) {
+                int assigned = 0;
+                for (int index : pending) {
+                    sizes[index] = (int) Math.floor(remaining * (double) active.get(index).sizeFlagsStretchRatio() / weight);
+                    assigned += sizes[index];
+                }
+                int remainder = remaining - assigned;
+                for (int index : pending) if (remainder-- > 0) sizes[index]++;
+                return;
+            }
+            for (int index : frozen) {
+                sizes[index] = mainMinimum(active.get(index));
+                remaining = Math.max(0, remaining - sizes[index]);
+            }
+            pending.removeAll(frozen);
         }
-        return shortage;
     }
 
     @Override

@@ -17,7 +17,7 @@ public final class MailPacketTest {
             MailMessage message = new MailMessage(id, 123, MailMessage.Kind.SYSTEM, "Builders", "mail.geg.system.title",
                     "mail.geg.system.promote", List.of("Builders"), 0);
             MailSyncPacket sync = new MailSyncPacket(MailSyncPacket.Kind.DETAIL, 7, 3, true, MailState.Filter.ALL, 0, false,
-                    List.of(new MailSyncPacket.Row(id, Component.literal("Hello"), "OP", MailMessage.Kind.ADMIN, 123, 100, false, false)),
+                    List.of(new MailSyncPacket.Row(id, Component.literal("Hello"), "OP", MailMessage.Kind.ADMIN, 123, 100, false, false, MailActionPacket.Scope.PLAYER)),
                     message, true, id, 1, Long.MAX_VALUE, "92233720368547758.07", "");
             MailSyncPacket.encode(sync, buffer); check(MailSyncPacket.decode(buffer).equals(sync));
             buffer.clear();

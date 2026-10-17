@@ -23,8 +23,8 @@ public final class ReleaseControlsTest {
             @Override public int width(FormattedText text) { return text.getString().length() * 6; }
         };
         checkbox(font);
-        tabs(font);
-        scrolledTabs(font);
+        segmented(font);
+        scrolledSegmented(font);
         dropdown(font);
         detachedDropdown();
     }
@@ -62,54 +62,54 @@ public final class ReleaseControlsTest {
         check(changes[0] == 2);
     }
 
-    private static void tabs(Font font) {
+    private static void segmented(Font font) {
         int[] changes = {0};
-        Tabs tabs = new Tabs(List.of(Component.literal("A"), Component.literal("B")))
+        Segmented segmented = new Segmented(List.of(Component.literal("A"), Component.literal("B")))
                 .onSelect(index -> changes[0]++);
-        Window window = new Window(true).content(tabs);
+        Window window = new Window(true).content(segmented);
         window.layoutViewport(120, 20, font);
         check(window.pointerPressed(80, 10, null));
-        check(tabs.selected() == 0 && changes[0] == 0);
-        check(tabs.topInset(0, false) == 2 && tabs.topInset(1, true) == 2);
-        check(tabs.topInset(1, false) == 0); // Dragging away restores the normal head.
-        check(window.pointerReleased(10, 10) && changes[0] == 0); // Another tab is not the original target.
-        check(tabs.topInset(1, true) == 0);
+        check(segmented.selected() == 0 && changes[0] == 0);
+        check(segmented.topInset(0, false) == 2 && segmented.topInset(1, true) == 2);
+        check(segmented.topInset(1, false) == 0); // Dragging away restores the normal head.
+        check(window.pointerReleased(10, 10) && changes[0] == 0); // Another option is not the original target.
+        check(segmented.topInset(1, true) == 0);
         window.pointerPressed(80, 10, null);
         check(window.pointerReleased(80, 35) && changes[0] == 0);
         window.pointerPressed(80, 10, null);
-        check(window.pointerReleased(80, 10) && tabs.selected() == 1 && changes[0] == 1);
-        window.focusManager().requestFocus(tabs, null);
+        check(window.pointerReleased(80, 10) && segmented.selected() == 1 && changes[0] == 1);
+        window.focusManager().requestFocus(segmented, null);
         window.keyPressed(GLFW.GLFW_KEY_LEFT, 0, null);
         window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null);
-        check(tabs.selected() == 1 && changes[0] == 1);
-        check(tabs.topInset(0, false) == 2 && tabs.focusBounds().y() == 2);
+        check(segmented.selected() == 1 && changes[0] == 1);
+        check(segmented.topInset(0, false) == 2 && segmented.focusBounds().y() == 2);
         window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
-        check(tabs.selected() == 0 && changes[0] == 2);
+        check(segmented.selected() == 0 && changes[0] == 2);
         window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null);
         window.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, null);
         window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
-        check(tabs.selected() == 0 && changes[0] == 2);
+        check(segmented.selected() == 0 && changes[0] == 2);
         check(!window.pointerPressed(10, 0, null)); // Selected texture's 2px top inset.
         window.pointerReleased(10, 10);
         check(changes[0] == 2);
         window.pointerPressed(10, 10, null);
         window.pointerReleased(10, 10);
-        check(changes[0] == 3 && tabs.focusBounds().x() == 0);
+        check(changes[0] == 3 && segmented.focusBounds().x() == 0);
     }
 
-    private static void scrolledTabs(Font font) {
-        Tabs tabs = new Tabs(List.of(Component.literal("A"), Component.literal("B")));
-        tabs.position(0, 80).requestedSize(100, 20);
-        Scroll scroll = new Scroll().content(new Control().preferred(100, 200).addChild(tabs));
+    private static void scrolledSegmented(Font font) {
+        Segmented segmented = new Segmented(List.of(Component.literal("A"), Component.literal("B")));
+        segmented.position(0, 80).requestedSize(100, 20);
+        Scroll scroll = new Scroll().content(new Control().preferred(100, 200).addChild(segmented));
         Window window = new Window(true).content(scroll);
         window.layoutViewport(120, 60, font);
         scroll.scrollBy(0, 70);
         check(window.pointerPressed(75, 15, null));
-        check(window.pointerReleased(75, 15) && tabs.selected() == 1);
+        check(window.pointerReleased(75, 15) && segmented.selected() == 1);
         window.pointerPressed(10, 15, null);
         scroll.scrollBy(0, 60);
         window.pointerReleased(10, 15);
-        check(tabs.selected() == 1);
+        check(segmented.selected() == 1);
     }
 
     private static void dropdown(Font font) {

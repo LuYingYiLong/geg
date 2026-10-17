@@ -25,7 +25,7 @@ public final class Overlay extends Container {
     @Override
     public void layout(Rect localBounds, Font font) {
         super.layout(localBounds, font);
-        for (Control layer : layers) fitChild(layer, new Rect(0, 0,
+        for (Control layer : layers) layoutChild(layer, new Rect(0, 0,
                 localBounds.width(), localBounds.height()), font);
     }
 

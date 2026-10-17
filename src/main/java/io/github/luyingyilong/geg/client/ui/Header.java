@@ -1,5 +1,6 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.layout.Container;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
@@ -25,7 +26,7 @@ public final class Header extends Container {
     public Header(Component title) {
         this.title.text(title);
         addChild(this.title);
-        policy(SizePolicy.FILL, SizePolicy.CONTENT);
+        sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
     }
 
     public Header title(Component text) { title.text(text); return this; }

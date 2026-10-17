@@ -309,7 +309,7 @@ public final class Dropdown<T> extends Control {
         drawBackground(context, panel, panelStyle);
 
         WidgetThemeEntry<WidgetTheme> itemEntry = context.getTheme()
-                .getWidgetTheme(OreTheme.MENU_ITEM);
+                .getWidgetTheme(OreTheme.DROPDOWN_ITEM);
         WidgetTheme itemStyle = itemEntry != null ? itemEntry.theme() : panelStyle;
         for (int index = 0; index < visibleCount(); index++) {
             Option<T> option = options.get(offset + index);

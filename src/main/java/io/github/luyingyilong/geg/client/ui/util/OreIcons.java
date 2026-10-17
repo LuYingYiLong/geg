@@ -19,6 +19,10 @@ public final class OreIcons {
     public static final ResourceLocation CHECKBOX_CHECKED_PRESSED = icon("checkbox_checked_pressed");
     public static final ResourceLocation CHECKBOX_CHECKED_DISABLED = icon("checkbox_checked_disabled");
     public static final ResourceLocation FILTER = icon("filter");
+    public static final ResourceLocation EMAIL = icon("email");
+    public static final ResourceLocation EMAIL_READED = icon("email_readed");
+    public static final ResourceLocation GIFT = icon("gift");
+    public static final ResourceLocation GIFT_OPENED = icon("gift_opened");
 
     private OreIcons() {
     }
