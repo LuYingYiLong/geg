@@ -18,7 +18,7 @@ import java.util.List;
 
 /** A centered navigation title, optional back action, and right-aligned actions that wrap. */
 public final class Navbar extends Container {
-    public static final int ROW_HEIGHT = 22;
+    public static final int ROW_HEIGHT = 23;
     public static final int BOTTOM_PADDING = 3;
     private static final int GAP = 6;
     private static final int PADDING = 0;
