@@ -1,0 +1,24 @@
+// Shared Minecraft compile environment. Neither library module declares a Mod identity.
+group = rootProject.group
+version = rootProject.version
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'net.minecraftforge.gradle'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+minecraft { mappings channel: rootProject.mapping_channel, version: rootProject.mapping_version }
+repositories {
+    mavenCentral()
+    maven { url = 'https://www.cursemaven.com'; content { includeGroup 'curse.maven' } }
+}
+sourceSets {
+    modularUiLegacyAnnotations { java.srcDir rootProject.file('build-support/legacy-annotations/java') }
+}
+dependencies {
+    minecraft "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
+    implementation fg.deobf('curse.maven:modularui-624243:8339410')
+    compileOnly sourceSets.modularUiLegacyAnnotations.output
+    testCompileOnly sourceSets.modularUiLegacyAnnotations.output
+}
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }

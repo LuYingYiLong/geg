@@ -1,15 +1,17 @@
 package io.github.luyingyilong.geg.market.client;
 
+import io.github.luyingyilong.geg.client.GegInputs;
+
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
 import brachy.modularui.value.StringValue;
-import io.github.luyingyilong.geg.client.ui.Button;
-import io.github.luyingyilong.geg.client.ui.Form;
-import io.github.luyingyilong.geg.client.ui.FormItem;
-import io.github.luyingyilong.geg.client.ui.input.Input;
-import io.github.luyingyilong.geg.client.ui.input.NumberInput;
-import io.github.luyingyilong.geg.client.ui.screen.OreScreen;
-import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
+import io.github.luyingyilong.ore.Button;
+import io.github.luyingyilong.ore.Form;
+import io.github.luyingyilong.ore.FormItem;
+import io.github.luyingyilong.ore.input.Input;
+import io.github.luyingyilong.ore.input.NumberInput;
+import io.github.luyingyilong.ore.screen.OreScreen;
+import io.github.luyingyilong.ore.theme.OreTheme;
 import io.github.luyingyilong.geg.market.MarketActionPacket;
 import io.github.luyingyilong.geg.market.MarketNetwork;
 import net.minecraft.client.Minecraft;
@@ -47,7 +49,7 @@ public final class ClientMarketScreen {
         search.controlSize(Button.Size.SMALL);
         canvas = new MarketCanvasWidget(search);
 
-        quantity = new NumberInput(250.0F, NumberInput.Kind.QUANTITY)
+        quantity = GegInputs.quantity(250.0F)
                 .minimumValue(1).boundaryStrategy(NumberInput.BoundaryStrategy.CLAMP);
         quantityValue = new StringValue("");
         quantity.value(quantityValue);
@@ -55,7 +57,7 @@ public final class ClientMarketScreen {
         quantity.controlSize(Button.Size.MEDIUM);
         quantity.setInputVisible(false);
 
-        price = new NumberInput(250.0F, NumberInput.Kind.COIN)
+        price = GegInputs.coin(250.0F, false)
                 .minimumValue("0.01").boundaryStrategy(NumberInput.BoundaryStrategy.CLAMP);
         priceValue = new StringValue("");
         price.value(priceValue);
@@ -63,7 +65,7 @@ public final class ClientMarketScreen {
         price.controlSize(Button.Size.MEDIUM);
         price.setInputVisible(false);
 
-        tradeQuantity = new NumberInput(320.0F, NumberInput.Kind.QUANTITY)
+        tradeQuantity = GegInputs.quantity(320.0F)
                 .minimumValue(1).boundaryStrategy(NumberInput.BoundaryStrategy.CLAMP);
         tradeQuantityValue = new StringValue("1");
         tradeQuantity.value(tradeQuantityValue);
@@ -129,13 +131,13 @@ public final class ClientMarketScreen {
 
     static boolean validateDetailForm() { return detailForm != null && detailForm.validate(); }
     static boolean validateTradeForm() { return tradeForm != null && tradeForm.validate(); }
-    static void setDetailQuantityMaximum(int maximum) { quantity.maximumQuantity(maximum); }
-    static void setTradeQuantityMaximum(int maximum) { tradeQuantity.maximumQuantity(maximum); }
+    static void setDetailQuantityMaximum(int maximum) { quantity.availableMaximum(java.math.BigDecimal.valueOf(maximum)); }
+    static void setTradeQuantityMaximum(int maximum) { tradeQuantity.availableMaximum(java.math.BigDecimal.valueOf(maximum)); }
 
     static void showTradeQuantity(boolean show) {
         tradeForm.setVisible(show);
         if (show) {
-            tradeQuantity.maximumQuantity(Integer.MAX_VALUE);
+            tradeQuantity.availableMaximum(java.math.BigDecimal.valueOf(Integer.MAX_VALUE));
             setTradeQuantity(1);
         }
     }
@@ -152,7 +154,7 @@ public final class ClientMarketScreen {
         priceItem.setActive(showPrice);
         detailForm.setVisible(showQuantity || showPrice);
         if (showQuantity) {
-            quantity.maximumQuantity(Integer.MAX_VALUE);
+            quantity.availableMaximum(java.math.BigDecimal.valueOf(Integer.MAX_VALUE));
             String text = Integer.toString(initialQuantity);
             quantityValue.setStringValue(text);
             quantity.setText(text);

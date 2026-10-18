@@ -1,16 +1,16 @@
 package io.github.luyingyilong.geg.market.client;
 
 import brachy.modularui.theme.WidgetThemeKey;
-import io.github.luyingyilong.geg.client.ui.Button;
-import io.github.luyingyilong.geg.client.ui.DescriptionItem;
-import io.github.luyingyilong.geg.client.ui.Form;
-import io.github.luyingyilong.geg.client.ui.FormItem;
-import io.github.luyingyilong.geg.client.ui.Modal;
-import io.github.luyingyilong.geg.client.ui.layout.Control;
-import io.github.luyingyilong.geg.client.ui.layout.Overlay;
-import io.github.luyingyilong.geg.client.ui.layout.Rect;
-import io.github.luyingyilong.geg.client.ui.layout.Size;
-import io.github.luyingyilong.geg.client.ui.layout.Window;
+import io.github.luyingyilong.ore.Button;
+import io.github.luyingyilong.ore.DescriptionItem;
+import io.github.luyingyilong.ore.Form;
+import io.github.luyingyilong.ore.FormItem;
+import io.github.luyingyilong.ore.Modal;
+import io.github.luyingyilong.ore.layout.Control;
+import io.github.luyingyilong.ore.layout.Overlay;
+import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.layout.Size;
+import io.github.luyingyilong.ore.layout.Window;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;

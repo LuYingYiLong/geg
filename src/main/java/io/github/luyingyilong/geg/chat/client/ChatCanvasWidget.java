@@ -1,20 +1,20 @@
 package io.github.luyingyilong.geg.chat.client;
 
-import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+import io.github.luyingyilong.ore.debug.DebugBridge;
 
 import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
 import io.github.luyingyilong.geg.chat.*;
-import io.github.luyingyilong.geg.client.ui.*;
-import io.github.luyingyilong.geg.client.ui.input.Input;
-import io.github.luyingyilong.geg.client.ui.input.InputControl;
-import io.github.luyingyilong.geg.client.ui.layout.*;
-import io.github.luyingyilong.geg.client.ui.layout.Container;
-import io.github.luyingyilong.geg.client.ui.screen.OreScreen;
-import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
-import io.github.luyingyilong.geg.client.ui.util.OreToasts;
+import io.github.luyingyilong.ore.*;
+import io.github.luyingyilong.ore.input.Input;
+import io.github.luyingyilong.ore.input.InputControl;
+import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.layout.Container;
+import io.github.luyingyilong.ore.screen.OreScreen;
+import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.util.OreToasts;
 import java.util.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

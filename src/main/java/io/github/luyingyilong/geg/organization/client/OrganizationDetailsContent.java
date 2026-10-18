@@ -1,14 +1,14 @@
 package io.github.luyingyilong.geg.organization.client;
 
-import io.github.luyingyilong.geg.client.ui.Descriptions;
-import io.github.luyingyilong.geg.client.ui.Button;
-import io.github.luyingyilong.geg.client.ui.Label;
-import io.github.luyingyilong.geg.client.ui.Table;
-import io.github.luyingyilong.geg.client.ui.layout.Box;
-import io.github.luyingyilong.geg.client.ui.layout.Container;
-import io.github.luyingyilong.geg.client.ui.layout.Rect;
-import io.github.luyingyilong.geg.client.ui.layout.Size;
-import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
+import io.github.luyingyilong.ore.Descriptions;
+import io.github.luyingyilong.ore.Button;
+import io.github.luyingyilong.ore.Label;
+import io.github.luyingyilong.ore.Table;
+import io.github.luyingyilong.ore.layout.Box;
+import io.github.luyingyilong.ore.layout.Container;
+import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.layout.Size;
+import io.github.luyingyilong.ore.layout.SizeFlags;
 import io.github.luyingyilong.geg.organization.Organization;
 import io.github.luyingyilong.geg.organization.OrganizationSyncPacket;
 import net.minecraft.client.gui.Font;

@@ -1,8 +1,8 @@
 package io.github.luyingyilong.geg.organization.client;
 
-import io.github.luyingyilong.geg.client.ui.Label;
-import io.github.luyingyilong.geg.client.ui.layout.Rect;
-import io.github.luyingyilong.geg.client.ui.layout.Size;
+import io.github.luyingyilong.ore.Label;
+import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.layout.Size;
 import io.github.luyingyilong.geg.organization.Organization;
 import io.github.luyingyilong.geg.organization.OrganizationSyncPacket;
 import net.minecraft.client.gui.Font;

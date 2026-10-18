@@ -1,6 +1,6 @@
 package io.github.luyingyilong.geg;
 
-import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
+import io.github.luyingyilong.geg.client.GegClient;
 import io.github.luyingyilong.geg.market.MarketBlocks;
 import io.github.luyingyilong.geg.market.MarketEvents;
 import io.github.luyingyilong.geg.market.MarketNetwork;
@@ -26,7 +26,7 @@ public final class GegMod {
     public GegMod(FMLJavaModLoadingContext context) {
         MarketRules.register();
         MoneyRules.register();
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> OreTheme::register);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> GegClient.initialize(context.getModEventBus()));
         MarketBlocks.register(context.getModEventBus());
         GegSounds.register(context.getModEventBus());
         MoneyNetwork.register();

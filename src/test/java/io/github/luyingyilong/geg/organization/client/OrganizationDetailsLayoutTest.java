@@ -1,11 +1,11 @@
 package io.github.luyingyilong.geg.organization.client;
 
-import io.github.luyingyilong.geg.client.ui.Drawer;
-import io.github.luyingyilong.geg.client.ui.PlayerIdentityCell;
-import io.github.luyingyilong.geg.client.ui.Table;
-import io.github.luyingyilong.geg.client.ui.layout.Control;
-import io.github.luyingyilong.geg.client.ui.layout.Overlay;
-import io.github.luyingyilong.geg.client.ui.layout.Window;
+import io.github.luyingyilong.ore.Drawer;
+import io.github.luyingyilong.ore.PlayerIdentityCell;
+import io.github.luyingyilong.ore.Table;
+import io.github.luyingyilong.ore.layout.Control;
+import io.github.luyingyilong.ore.layout.Overlay;
+import io.github.luyingyilong.ore.layout.Window;
 import io.github.luyingyilong.geg.organization.Organization;
 import io.github.luyingyilong.geg.organization.OrganizationSyncPacket;
 import net.minecraft.client.gui.Font;

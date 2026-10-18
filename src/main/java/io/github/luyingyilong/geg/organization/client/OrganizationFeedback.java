@@ -1,7 +1,7 @@
 package io.github.luyingyilong.geg.organization.client;
 
-import io.github.luyingyilong.geg.client.ui.Toast;
-import io.github.luyingyilong.geg.client.ui.util.OreToasts;
+import io.github.luyingyilong.ore.Toast;
+import io.github.luyingyilong.ore.util.OreToasts;
 import net.minecraft.network.chat.Component;
 
 /** Shared presentation for server results and local organization form validation. */

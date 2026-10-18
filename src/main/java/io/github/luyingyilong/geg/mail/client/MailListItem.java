@@ -1,8 +1,8 @@
 package io.github.luyingyilong.geg.mail.client;
 
-import io.github.luyingyilong.geg.client.ui.Button;
-import io.github.luyingyilong.geg.client.ui.MenuItem;
-import io.github.luyingyilong.geg.client.ui.theme.OreIcons;
+import io.github.luyingyilong.ore.Button;
+import io.github.luyingyilong.ore.MenuItem;
+import io.github.luyingyilong.ore.theme.OreIcons;
 import io.github.luyingyilong.geg.mail.MailState;
 import io.github.luyingyilong.geg.mail.MailSyncPacket;
 import net.minecraft.network.chat.Component;

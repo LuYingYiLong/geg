@@ -2,10 +2,10 @@ package io.github.luyingyilong.geg.chat.client;
 
 import com.mojang.brigadier.suggestion.Suggestion;
 import io.github.luyingyilong.geg.chat.ChatPolicy;
-import io.github.luyingyilong.geg.client.ui.*;
-import io.github.luyingyilong.geg.client.ui.input.*;
-import io.github.luyingyilong.geg.client.ui.layout.*;
-import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
+import io.github.luyingyilong.ore.*;
+import io.github.luyingyilong.ore.input.*;
+import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.theme.OreTheme;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

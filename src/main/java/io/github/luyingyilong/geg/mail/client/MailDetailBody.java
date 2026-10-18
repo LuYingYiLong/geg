@@ -1,7 +1,7 @@
 package io.github.luyingyilong.geg.mail.client;
 
-import io.github.luyingyilong.geg.client.ui.Label;
-import io.github.luyingyilong.geg.client.ui.layout.*;
+import io.github.luyingyilong.ore.Label;
+import io.github.luyingyilong.ore.layout.*;
 import net.minecraft.client.gui.Font;
 
 /** Wrap at the viewport width; expand short bodies and scroll vertically for long bodies. */

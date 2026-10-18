@@ -1,0 +1,7 @@
+{
+  "click": { "sounds": ["ore:click"] },
+  "button": { "sounds": ["ore:button"] },
+  "drawer_open": { "sounds": ["ore:drawer_open"] },
+  "drawer_close": { "sounds": ["ore:drawer_close"] },
+  "toast": { "sounds": ["ore:toast"] }
+}

@@ -100,7 +100,7 @@ public Label fontSize(float value) {
 
 ## 结构与验证
 
-`src/main/.../client/ui/window` 是发布版客户端窗口基础设施；`client/ui/debug` 是无操作桥接和注解。`src/oreDebug` 包含原生 Inspector、类型化快照／命令和反射适配器；`src/oreDebugTest` 是测试夹具。没有 HTTP 服务、端口、网页或 WebSocket，专用 Netty 依赖已移除。
+`ore/src/main/.../ore/window` 是发布版客户端窗口基础设施；`ore/debug` 是无操作桥接和注解。`ore-inspector/src/main` 包含原生 Inspector、类型化快照／命令和反射适配器；`src/oreDebugTest` 是测试夹具。没有 HTTP 服务、端口、网页或 WebSocket，专用 Netty 依赖已移除。
 
 - `gradlew inspectorTest`：注解发现、真实 setter 预检、非法值、覆盖和历史回归。
 - `WindowLayoutTest`：窗口坐标／DPI、输入隔离、Splitter 拖动和 Tree 虚拟化。

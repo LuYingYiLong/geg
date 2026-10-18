@@ -12,11 +12,9 @@ base {
     archivesName = mod_id
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
+apply from: file('gradle/ore-conventions.gradle')
+evaluationDependsOn(':ore')
+evaluationDependsOn(':ore-inspector')
 
 println "Gradle JVM: ${System.getProperty('java.version')} (${System.getProperty('java.vendor')}, ${System.getProperty('os.arch')})"
 
@@ -29,7 +27,6 @@ sourceSets {
 }
 
 minecraft {
-    mappings channel: mapping_channel, version: mapping_version
     copyIdeResources = true
 
     runs {
@@ -39,18 +36,22 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             // ModularUI's published refmap targets SRG names; this dev run uses official names.
             property 'mixin.env.disableRefMap', 'true'
-            args '--mixin.config', 'geg.mixins.json'
+            args '--mixin.config', 'geg.mixins.json', '--mixin.config', 'ore.mixins.json'
 
             mods {
                 "${mod_id}" {
                     source sourceSets.main
+                    source project(':ore').sourceSets.main
                 }
             }
         }
 
         client {
             ideaModule "${project.name}.oreDebug"
-            mods { "${mod_id}" { source sourceSets.oreDebug } }
+            mods { "${mod_id}" {
+                source sourceSets.oreDebug
+                source project(':ore-inspector').sourceSets.main
+            } }
             property 'forge.enabledGameTestNamespaces', mod_id
         }
 
@@ -76,38 +77,15 @@ sourceSets {
         runtimeClasspath += sourceSets.oreDebug.output + sourceSets.oreDebug.runtimeClasspath + sourceSets.main.output + sourceSets.main.runtimeClasspath
     }
 }
-tasks.register('inspectorTest', JavaExec) {
-    dependsOn tasks.named('oreDebugTestClasses'), tasks.named('processOreDebugResources')
-    classpath = sourceSets.oreDebugTest.runtimeClasspath
-    workingDir layout.buildDirectory.dir('tmp/ore-inspector-tests')
-    doFirst { workingDir.mkdirs() }
-    mainClass = 'io.github.luyingyilong.geg.inspector.InspectorTest'
-    enableAssertions = true
-}
+tasks.register('inspectorTest') { dependsOn ':ore-inspector:oreTest' }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-// ModularUI 3.3.1 retains 1.12 SideOnly metadata on a few classes.
-// Supply only those annotation types to javac; they are never shipped or loaded at runtime.
-sourceSets {
-    modularUiLegacyAnnotations {
-        java.srcDir 'src/compileOnly/java'
-    }
-}
-
-repositories {
-    mavenCentral()
-    maven {
-        url = 'https://www.cursemaven.com'
-        content { includeGroup 'curse.maven' }
-    }
-}
-
 dependencies {
-    compileOnly sourceSets.modularUiLegacyAnnotations.output
-    testCompileOnly sourceSets.modularUiLegacyAnnotations.output
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    implementation fg.deobf('curse.maven:modularui-624243:8339410')
+    compileOnly project(':ore')
+    testImplementation project(':ore')
+    oreDebugCompileOnly project(':ore-inspector')
+    oreDebugTestCompileOnly project(':ore-inspector')
     implementation fg.deobf('curse.maven:curios-309927:6418456')
     compileOnly fg.deobf('curse.maven:lightmans-currency-472521:9048567')
     compileOnly fg.deobf('curse.maven:ftb-quests-forge-289412:4872462')
@@ -146,6 +124,7 @@ tasks.named('processResources', ProcessResources).configure {
 }
 
 tasks.named('jar', Jar).configure {
+    from project(':ore').sourceSets.main.output
     manifest {
         attributes([
                 'Specification-Title'     : mod_id,
@@ -154,7 +133,7 @@ tasks.named('jar', Jar).configure {
                 'Implementation-Title'    : project.name,
                 'Implementation-Version'  : project.version,
                 'Implementation-Vendor'   : mod_authors,
-                'MixinConfigs'            : 'geg.mixins.json',
+                'MixinConfigs'            : 'geg.mixins.json,ore.mixins.json',
         ])
     }
 
@@ -178,3 +157,9 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
+
+sourceSets.oreDebugTest.runtimeClasspath += project(':ore-inspector').sourceSets.main.output + project(':ore').sourceSets.main.output
+apply from: file('gradle/ore-tests.gradle')
+tasks.named('oreTest') { dependsOn ':ore:oreTest' }
+
+apply from: file('gradle/ore-release-check.gradle')

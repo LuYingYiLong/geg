@@ -1,14 +1,16 @@
 package io.github.luyingyilong.geg.mail.client;
 
+import io.github.luyingyilong.geg.client.GegInputs;
+
 import brachy.modularui.screen.*;
 import io.github.luyingyilong.geg.GegMod;
-import io.github.luyingyilong.geg.client.ui.*;
-import io.github.luyingyilong.geg.client.ui.input.Input;
-import io.github.luyingyilong.geg.client.ui.input.NumberInput;
-import io.github.luyingyilong.geg.client.ui.input.TextArea;
-import io.github.luyingyilong.geg.client.ui.screen.OreScreen;
-import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
-import io.github.luyingyilong.geg.client.ui.util.OreToasts;
+import io.github.luyingyilong.ore.*;
+import io.github.luyingyilong.ore.input.Input;
+import io.github.luyingyilong.ore.input.NumberInput;
+import io.github.luyingyilong.ore.input.TextArea;
+import io.github.luyingyilong.ore.screen.OreScreen;
+import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.util.OreToasts;
 import io.github.luyingyilong.geg.mail.*;
 import io.github.luyingyilong.geg.mail.MailSyncPacket;
 import net.minecraft.network.chat.Component;
@@ -34,7 +36,7 @@ public final class ClientMailScreen {
         Input title = new Input(250).placeholder(Component.translatable("mail.geg.title_hint")); title.setMaxLength(128);
         TextArea body = new TextArea(250); body.placeholder(Component.translatable("mail.geg.body_hint"));
         Input target = new Input(250).placeholder(Component.translatable("mail.geg.target_hint")); target.setMaxLength(64);
-        NumberInput coin = new NumberInput(250, NumberInput.Kind.COIN).allowZero(true); coin.value(new brachy.modularui.value.StringValue("0.00")); coin.setText("0.00");
+        NumberInput coin = GegInputs.coin(250, true); coin.value(new brachy.modularui.value.StringValue("0.00")); coin.setText("0.00");
         MailCanvasWidget next = new MailCanvasWidget(title, body, target, coin, organization);
         canvas = next;
         ModularPanel<?> panel = new MailPanel();

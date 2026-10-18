@@ -1,0 +1,465 @@
+{
+  "parent": "vanilla",
+  "panel": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/panel",
+      "imageWidth": 3,
+      "imageHeight": 3,
+      "x": 0,
+      "y": 0,
+      "width": 3,
+      "height": 3,
+      "borderY": 1,
+      "borderX": 1
+    }
+  },
+  "panel:headerPanel": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/header_panel",
+      "nonOpaque": true,
+      "imageWidth": 1,
+      "imageHeight": 7,
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 7,
+      "borderX": 0,
+      "borderY": 3
+    },
+    "textColor": "#FF1E1E1F"
+  },
+  "panel:inputBox": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/input_box",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 1,
+      "borderY": 4
+    }
+  },
+  "panel:modal": {
+    "textColor": "#FFFFFFFF",
+    "textShadow": false,
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/modal",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 3,
+      "borderY": 5
+    }
+  },
+  "panel:dropdownPanel": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/dropdown_panel",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 1,
+      "borderY": 1
+    }
+  },
+  "panel:dropdownItem": {
+    "textColor": "#FFFFFFFF",
+    "textShadow": false,
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/dropdown_item",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 1,
+      "borderY": 1
+    }
+  },
+  "panel:bar": {
+    "textColor": "#FFFFFFFF",
+    "textShadow": false,
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/bar",
+      "imageWidth": 3,
+      "imageHeight": 3,
+      "x": 0,
+      "y": 0,
+      "width": 3,
+      "height": 3,
+      "borderX": 0,
+      "borderY": 1
+    }
+  },
+  "panel:floatingBackground": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/floating_background",
+      "imageWidth": 3,
+      "imageHeight": 3,
+      "x": 0,
+      "y": 0,
+      "width": 3,
+      "height": 3,
+      "borderX": 1,
+      "borderY": 1
+    }
+  },
+  "panel:floatingHeader": {
+    "textColor": "#FFFFFFFF",
+    "textShadow": false,
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/floating_header",
+      "imageWidth": 3,
+      "imageHeight": 3,
+      "x": 0,
+      "y": 0,
+      "width": 3,
+      "height": 3,
+      "borderX": 1,
+      "borderY": 1
+    }
+  },
+  "panel:HDivider": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/h_divider",
+      "imageWidth": 1,
+      "imageHeight": 2,
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 2,
+      "borderX": 0,
+      "borderY": 0
+    }
+  },
+  "panel:VDivider": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/v_divider",
+      "imageWidth": 1,
+      "imageHeight": 1,
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "borderX": 0,
+      "borderY": 0
+    }
+  },
+  "panel:VGrabber": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/v_grabber",
+      "nonOpaque": true,
+      "imageWidth": 6,
+      "imageHeight": 12,
+      "x": 0,
+      "y": 0,
+      "width": 6,
+      "height": 12,
+      "borderX": 2,
+      "borderY": 5
+    }
+  },
+  "panel:HGrabber": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/h_grabber",
+      "nonOpaque": true,
+      "imageWidth": 6,
+      "imageHeight": 6,
+      "x": 0,
+      "y": 0,
+      "width": 6,
+      "height": 6,
+      "borderX": 2,
+      "borderY": 2
+    }
+  },
+  "textField": {
+    "textColor": "#FFFFFFFF",
+    "markedColor": "#FFA9AAAC",
+    "hintColor": "#FFD0D1D4"
+  },
+  "button:disabled": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/button_disabled",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "textColor": "#801E1E1F",
+    "textShadow": false
+  },
+  "button:secondary:normal": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/button_secondary_normal",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "textColor": "#FF1E1E1F",
+    "textShadow": false
+  },
+  "button:secondary:hovered": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/button_secondary_hovered",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "textColor": "#FF1E1E1F",
+    "textShadow": false
+  },
+  "button:secondary:pressed": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/button_secondary_pressed",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 2
+    },
+    "textColor": "#FF1E1E1F",
+    "textShadow": false
+  },
+  "button:primary:normal": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/button_primary_normal",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
+  },
+  "button:primary:hovered": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/button_primary_hovered",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
+  },
+  "button:primary:pressed": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/button_primary_pressed",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 2
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
+  },
+  "button:destructive:normal": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/button_destructive_normal",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
+  },
+  "button:destructive:hovered": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/button_destructive_hovered",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
+  },
+  "button:destructive:pressed": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/button_destructive_pressed",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 2
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
+  },
+  "button:menuItem:hovered": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/menu_item_hovered",
+      "imageWidth": 1,
+      "imageHeight": 3,
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 3,
+      "borderX": 0,
+      "borderY": 1
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
+  },
+  "button:menuItem:pressed": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/menu_item_pressed",
+      "imageWidth": 1,
+      "imageHeight": 3,
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 3,
+      "borderX": 0,
+      "borderY": 1
+    },
+    "textColor": "#FFFFFFFF",
+    "textShadow": false
+  },
+  "button:segmentedButtonSelected": {
+    "textColor": "#FFFFFFFF",
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/tab_selected",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 2
+    }
+  },
+  "toggleButton": {
+    "textColor": "#FF1E1E1F",
+    "textShadow": false,
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/toggle_button",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "selectedBackground": {
+      "type": "texture",
+      "location": "ore:modularui/gui/toggled_button",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 3
+    },
+    "selectedTextColor": "#FF1E1E1F",
+    "selectedTextShadow": false
+  },
+  "toggleButton:hover": {
+    "background": {
+      "type": "texture",
+      "location": "ore:modularui/gui/hover_toggle_button",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 4
+    },
+    "selectedBackground": {
+      "type": "texture",
+      "location": "ore:modularui/gui/toggled_button",
+      "imageWidth": 16,
+      "imageHeight": 16,
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 16,
+      "borderX": 2,
+      "borderY": 3
+    }
+  }
+}

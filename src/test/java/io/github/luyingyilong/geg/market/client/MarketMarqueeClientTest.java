@@ -1,8 +1,8 @@
 package io.github.luyingyilong.geg.market.client;
 
-import io.github.luyingyilong.geg.client.ui.Label;
-import io.github.luyingyilong.geg.client.ui.layout.Control;
-import io.github.luyingyilong.geg.client.ui.layout.Grid;
+import io.github.luyingyilong.ore.Label;
+import io.github.luyingyilong.ore.layout.Control;
+import io.github.luyingyilong.ore.layout.Grid;
 import io.github.luyingyilong.geg.market.MarketSummary;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;

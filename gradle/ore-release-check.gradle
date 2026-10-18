@@ -1,0 +1,48 @@
+// Verify the actual reobfuscated artifact, not a development classes directory.
+tasks.register('verifyOreRelease') {
+    dependsOn tasks.named('reobfJar')
+    doLast {
+        def jar = tasks.named('jar').get().archiveFile.get().asFile
+        new java.util.zip.ZipFile(jar).withCloseable { zip ->
+            def names = zip.entries().collect { it.name }
+            ['META-INF/mods.toml', 'pack.mcmeta', 'geg.mixins.json', 'ore.mixins.json',
+             'io/github/luyingyilong/ore/OreClient.class', 'assets/ore/themes/ore.json',
+             'assets/ore/font/ore.json', 'assets/geg/font/ore.json'].each {
+                if (!names.contains(it)) throw new GradleException("Missing release entry: $it")
+            }
+            def forbidden = names.findAll { it.startsWith('io/github/luyingyilong/ore/inspector/') ||
+                it.startsWith('io/github/luyingyilong/geg/client/ui/') ||
+                it.startsWith('assets/ore_inspector/') || it.contains('InspectorBootstrap') ||
+                it.endsWith('Test.class') || it.startsWith('net/minecraftforge/fml/relauncher/') ||
+                it.startsWith('brachy/modularui/') }
+            if (!forbidden.empty) throw new GradleException("Development/dependency entries in release: $forbidden")
+            def metadata = zip.getInputStream(zip.getEntry('META-INF/mods.toml')).getText('UTF-8')
+            if ((metadata =~ /(?m)^modId\s*=/).count != 1) throw new GradleException('Release must have one Mod identity')
+            def manifest = new java.util.jar.Manifest(zip.getInputStream(zip.getEntry('META-INF/MANIFEST.MF')))
+            if (manifest.mainAttributes.getValue('MixinConfigs') != 'geg.mixins.json,ore.mixins.json')
+                throw new GradleException('Both client mixin configurations must be included')
+            logger.lifecycle("Ore release boundary verified: ${jar.name}")
+        }
+    }
+}
+
+// Can run without compiling GEG: neither library may contain a GEG reference.
+tasks.register('verifyOreModules') {
+    dependsOn ':ore:classes', ':ore-inspector:classes'
+    doLast {
+        [project(':ore'), project(':ore-inspector')].each { library ->
+            library.sourceSets.main.allJava.files.each { source ->
+                if (source.getText('UTF-8').contains('io.github.luyingyilong.geg'))
+                    throw new GradleException("GEG dependency in $source")
+            }
+            library.sourceSets.main.output.classesDirs.asFileTree.matching { include '**/*.class' }.each { compiled ->
+                if (new String(compiled.bytes, java.nio.charset.StandardCharsets.ISO_8859_1).contains('io/github/luyingyilong/geg'))
+                    throw new GradleException("GEG bytecode dependency in $compiled")
+            }
+            if (library.file('src/main/resources/META-INF/mods.toml').exists() || library.file('src/main/resources/pack.mcmeta').exists())
+                throw new GradleException("Library must not declare separate Mod/pack metadata: ${library.path}")
+        }
+        logger.lifecycle('Ore and Inspector compile independently of GEG sources')
+    }
+}
+tasks.named('verifyOreRelease') { dependsOn tasks.named('verifyOreModules') }

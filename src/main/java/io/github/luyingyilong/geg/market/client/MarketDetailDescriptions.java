@@ -1,9 +1,9 @@
 package io.github.luyingyilong.geg.market.client;
 
-import io.github.luyingyilong.geg.client.ui.Descriptions;
-import io.github.luyingyilong.geg.client.ui.layout.Container;
-import io.github.luyingyilong.geg.client.ui.layout.Rect;
-import io.github.luyingyilong.geg.client.ui.layout.Size;
+import io.github.luyingyilong.ore.Descriptions;
+import io.github.luyingyilong.ore.layout.Container;
+import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.layout.Size;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 

@@ -1,8 +1,8 @@
 package io.github.luyingyilong.geg.mail.client;
 
-import io.github.luyingyilong.geg.client.ui.Label;
-import io.github.luyingyilong.geg.client.ui.Slot;
-import io.github.luyingyilong.geg.client.ui.layout.*;
+import io.github.luyingyilong.ore.Label;
+import io.github.luyingyilong.ore.Slot;
+import io.github.luyingyilong.ore.layout.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;

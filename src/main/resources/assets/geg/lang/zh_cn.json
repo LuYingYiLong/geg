@@ -153,7 +153,6 @@
   "market.geg.buying_item": "求购：%s",
   "market.geg.selling_item": "出售：%s",
   "market.geg.sample": "已选样本",
-  "ore.geg.number.out_of_bounds": "请输入 %s 到 %s 之间的数值",
   "market.geg.form.invalid_quantity": "请输入范围内的正整数",
   "market.geg.form.invalid_coin": "请输入最多两位小数的正数金币金额",
   "organization.geg.entry": "组织",

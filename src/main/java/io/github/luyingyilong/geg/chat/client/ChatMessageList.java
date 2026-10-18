@@ -2,10 +2,10 @@ package io.github.luyingyilong.geg.chat.client;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.chat.ChatMessage;
-import io.github.luyingyilong.geg.client.ui.Avatar;
-import io.github.luyingyilong.geg.client.ui.Label;
-import io.github.luyingyilong.geg.client.ui.layout.*;
-import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
+import io.github.luyingyilong.ore.Avatar;
+import io.github.luyingyilong.ore.Label;
+import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.theme.OreTheme;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;

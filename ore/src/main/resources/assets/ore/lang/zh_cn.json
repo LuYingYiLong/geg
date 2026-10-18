@@ -1,0 +1,5 @@
+{
+  "ore.number.out_of_bounds": "请输入 %s 到 %s 之间的数值",
+  "ore.number.invalid": "请输入最多 %s 位小数的精确数值。",
+  "ore.number.empty_range": "当前没有可用数量。"
+}

@@ -1,13 +1,13 @@
 package io.github.luyingyilong.geg.organization.client;
 
-import io.github.luyingyilong.geg.client.ui.Checkbox;
-import io.github.luyingyilong.geg.client.ui.Form;
-import io.github.luyingyilong.geg.client.ui.FormItem;
-import io.github.luyingyilong.geg.client.ui.Label;
-import io.github.luyingyilong.geg.client.ui.input.TextArea;
-import io.github.luyingyilong.geg.client.ui.layout.Box;
-import io.github.luyingyilong.geg.client.ui.layout.Scroll;
-import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
+import io.github.luyingyilong.ore.Checkbox;
+import io.github.luyingyilong.ore.Form;
+import io.github.luyingyilong.ore.FormItem;
+import io.github.luyingyilong.ore.Label;
+import io.github.luyingyilong.ore.input.TextArea;
+import io.github.luyingyilong.ore.layout.Box;
+import io.github.luyingyilong.ore.layout.Scroll;
+import io.github.luyingyilong.ore.layout.SizeFlags;
 import io.github.luyingyilong.geg.organization.Organization;
 import io.github.luyingyilong.geg.organization.OrganizationSavedData;
 import io.github.luyingyilong.geg.organization.OrganizationSyncPacket;

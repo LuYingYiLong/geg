@@ -1,7 +1,7 @@
 package io.github.luyingyilong.geg.chat.client;
 
 import io.github.luyingyilong.geg.GegMod;
-import io.github.luyingyilong.geg.client.ui.theme.OreFonts;
+import io.github.luyingyilong.ore.theme.OreFonts;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.world.entity.player.ChatVisiblity;
