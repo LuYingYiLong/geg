@@ -1,0 +1,55 @@
+def portabilityDirectory = layout.buildDirectory.dir('tmp/ore-lib-portability-host')
+// Copy only source/configuration subtrees. Never snapshot or sync a live Gradle cache/run directory.
+tasks.register('prepareOrePortabilityFixture') {
+    doLast {
+        def destination = portabilityDirectory.get().asFile.canonicalFile
+        if (!destination.toPath().startsWith(rootProject.projectDir.canonicalFile.toPath()))
+            throw new GradleException('The portability fixture must remain inside this workspace')
+        def library = new File(destination, 'libraries/controls')
+        project.sync { from 'ore-lib/src'; into new File(library, 'src') }
+        project.sync { from 'ore-lib/gradle'; into new File(library, 'gradle') }
+        project.copy { from 'ore-lib/build.gradle', 'ore-lib/README.md'; into library }
+        project.sync { from 'build-support/ore-portability-host/src'; into new File(destination, 'src') }
+        project.copy {
+            from('build-support/ore-portability-host') { exclude 'src/**' }
+            into destination
+        }
+    }
+}
+tasks.register('verifyOrePortability', Exec) {
+    dependsOn tasks.named('prepareOrePortabilityFixture')
+    def javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(17) }
+    workingDir portabilityDirectory
+    doFirst {
+        def optionalProbes = ['imBlockerJar', 'customSkinLoaderJar'].findResults { key ->
+            def value = providers.gradleProperty(key)
+            value.isPresent() ? "-P${key}=${value.get()}" : null
+        }
+        commandLine ([javaLauncher.get().executablePath.asFile.absolutePath,
+                '-classpath', rootProject.file('gradle/wrapper/gradle-wrapper.jar').absolutePath,
+                'org.gradle.wrapper.GradleWrapperMain', '-p', portabilityDirectory.get().asFile.absolutePath,
+                ':ui-lib:oreTest', ':ui-lib:inspectorTest', ':classes', ':jar', '--offline', '--console=plain'] + optionalProbes)
+    }
+    doLast {
+        def artifact = new File(portabilityDirectory.get().asFile, 'build/libs/ore-portability-host-1.0.jar')
+        new java.util.zip.ZipFile(artifact).withCloseable { zip ->
+            def names = zip.entries().collect { it.name }
+            ['io/github/luyingyilong/ore/OreClient.class', 'ore.mixins.json',
+             'assets/ore/themes/ore.json', 'assets/ore/font/ore.json'].each {
+                if (!names.contains(it)) throw new GradleException("Missing portable library entry: $it")
+            }
+            def forbidden = names.findAll {
+                it.startsWith('io/github/luyingyilong/geg/') || it.startsWith('assets/geg/') ||
+                it.startsWith('io/github/luyingyilong/ore/inspector/') || it.startsWith('assets/ore_inspector/') ||
+                it == 'META-INF/services/io.github.luyingyilong.ore.OreClientExtension' ||
+                it.startsWith('net/minecraftforge/fml/relauncher/') || it.startsWith('brachy/modularui/') ||
+                it.startsWith('top/theillusivec4/curios/')
+            }
+            if (!forbidden.empty) throw new GradleException("Unexpected portable artifact entries: $forbidden")
+            def metadata = zip.getInputStream(zip.getEntry('META-INF/mods.toml')).getText('UTF-8')
+            if ((metadata =~ /(?m)^\[\[mods\]\]/).count != 1 || !metadata.contains('modId="ore_sample"'))
+                throw new GradleException('Portable host must have only its own Mod identity')
+            logger.lifecycle('Independent Ore host built without GEG, Inspector or embedded third-party libraries')
+        }
+    }
+}

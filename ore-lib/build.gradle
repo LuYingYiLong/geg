@@ -1,0 +1,26 @@
+// The host supplies ForgeGradle; this directory contains all other library build support.
+group = 'io.github.luyingyilong.ore'
+ext.oreBuildRoot = projectDir
+apply from: file('gradle/ore-conventions.gradle')
+
+// One module, separate production and development outputs. The standard jar only includes main.
+sourceSets {
+    inspector {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+    inspectorTest {
+        compileClasspath += sourceSets.main.output + sourceSets.inspector.output + sourceSets.inspector.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.inspector.output + sourceSets.inspector.runtimeClasspath
+    }
+}
+configurations {
+    inspectorImplementation.extendsFrom implementation
+    inspectorCompileOnly.extendsFrom compileOnly
+    inspectorRuntimeOnly.extendsFrom runtimeOnly
+    inspectorTestImplementation.extendsFrom inspectorImplementation
+    inspectorTestCompileOnly.extendsFrom inspectorCompileOnly
+    inspectorTestRuntimeOnly.extendsFrom inspectorRuntimeOnly
+}
+
+apply from: file('gradle/ore-tests.gradle')

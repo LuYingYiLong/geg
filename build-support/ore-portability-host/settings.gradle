@@ -1,0 +1,6 @@
+pluginManagement {
+    repositories { gradlePluginPortal(); maven { url = 'https://maven.minecraftforge.net/' } }
+}
+rootProject.name = 'ore-portability-host'
+include 'ui-lib'
+project(':ui-lib').projectDir = file('libraries/controls')

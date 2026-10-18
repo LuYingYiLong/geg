@@ -1,0 +1,30 @@
+// Everything needed by the library build lives under oreBuildRoot, not in the host project.
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'net.minecraftforge.gradle'
+
+def oreDirectory = project.ext.oreBuildRoot as File
+def defaults = new Properties()
+new File(oreDirectory, 'gradle/environment.properties').withInputStream { defaults.load(it) }
+def setting = { String key -> project.findProperty(key)?.toString() ?: defaults.getProperty(key) }
+ext.oreEnvironment = defaults.keySet().collectEntries { key -> [(key): setting(key.toString())] }
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(oreEnvironment.java_version.toInteger())
+minecraft { mappings channel: oreEnvironment.mapping_channel, version: oreEnvironment.mapping_version }
+repositories {
+    mavenCentral()
+    maven { url = 'https://www.cursemaven.com'; content { includeGroup 'curse.maven' } }
+}
+sourceSets {
+    modularUiLegacyAnnotations { java.srcDir new File(oreDirectory, 'gradle/legacy-annotations/java') }
+}
+dependencies {
+    minecraft "net.minecraftforge:forge:${oreEnvironment.minecraft_version}-${oreEnvironment.forge_version}"
+    implementation fg.deobf(oreEnvironment.modularui_dependency)
+    // Development bootstrap support only; neither dependency is embedded in the host artifact.
+    runtimeOnly fg.deobf(oreEnvironment.modularui_dev_runtime_dependency)
+    compileOnly sourceSets.modularUiLegacyAnnotations.output
+    testCompileOnly sourceSets.modularUiLegacyAnnotations.output
+}
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }

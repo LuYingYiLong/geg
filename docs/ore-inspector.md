@@ -100,11 +100,13 @@ public Label fontSize(float value) {
 
 ## 结构与验证
 
-`ore/src/main/.../ore/window` 是发布版客户端窗口基础设施；`ore/debug` 是无操作桥接和注解。`ore-inspector/src/main` 包含原生 Inspector、类型化快照／命令和反射适配器；`src/oreDebugTest` 是测试夹具。没有 HTTP 服务、端口、网页或 WebSocket，专用 Netty 依赖已移除。
+`ore-lib/src/main/.../ore/window` 是发布版客户端窗口基础设施；`ore-lib/src/main/.../ore/debug` 是无操作桥接和注解。`ore-lib/src/inspector` 包含原生 Inspector、类型化快照／命令和反射适配器；`src/clientIntegrationTest` 是测试夹具。没有 HTTP 服务、端口、网页或 WebSocket，专用 Netty 依赖已移除。
 
 - `gradlew inspectorTest`：注解发现、真实 setter 预检、非法值、覆盖和历史回归。
 - `WindowLayoutTest`：窗口坐标／DPI、输入隔离、Splitter 拖动和 Tree 虚拟化。
 - `NativeWindowClientTest`：显式 `geg.native.smoke=true` 的隔离客户端测试，覆盖双窗口、字符／多行输入、缩放、最小化、异常恢复和关闭。
 - `NativeInspectorClientTest`：显式 `geg.native.inspector.smoke=true` 的隔离客户端测试，覆盖原生前端、数百节点、属性编辑、拾取及四类业务目标。
 
-客户端夹具只有显式加入 `oreDebugTest` 输出时才运行，不应在普通游戏世界开启。发布 JAR 不包含 Inspector、测试或调试语言资源。
+客户端夹具只有显式加入 `clientIntegrationTest` 输出时才运行，不应在普通游戏世界开启。发布 JAR 不包含 Inspector、测试或调试语言资源。
+
+Inspector 通过 `META-INF/services/io.github.luyingyilong.ore.OreClientExtension` 自动接入开发客户端，注册 F8 和事件监听；不需要 GEG 开发启动桥。正常 IDEA runClient 使用 main 模块，运行前会构建 Inspector。该服务描述和 inspector 源码集输出均不进入发布 JAR、服务端或数据生成。

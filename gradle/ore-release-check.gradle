@@ -7,12 +7,15 @@ tasks.register('verifyOreRelease') {
             def names = zip.entries().collect { it.name }
             ['META-INF/mods.toml', 'pack.mcmeta', 'geg.mixins.json', 'ore.mixins.json',
              'io/github/luyingyilong/ore/OreClient.class', 'assets/ore/themes/ore.json',
-             'assets/ore/font/ore.json', 'assets/geg/font/ore.json'].each {
+             'assets/ore/font/ore.json', 'io/github/luyingyilong/ore/OreClientExtension.class'].each {
                 if (!names.contains(it)) throw new GradleException("Missing release entry: $it")
             }
             def forbidden = names.findAll { it.startsWith('io/github/luyingyilong/ore/inspector/') ||
                 it.startsWith('io/github/luyingyilong/geg/client/ui/') ||
                 it.startsWith('assets/ore_inspector/') || it.contains('InspectorBootstrap') ||
+                it.startsWith('assets/geg/font/') || it == 'assets/geg/themes.json' ||
+                it == 'assets/geg/sounds.json' || it == 'io/github/luyingyilong/geg/sound/GegSounds.class' ||
+                it == 'META-INF/services/io.github.luyingyilong.ore.OreClientExtension' ||
                 it.endsWith('Test.class') || it.startsWith('net/minecraftforge/fml/relauncher/') ||
                 it.startsWith('brachy/modularui/') }
             if (!forbidden.empty) throw new GradleException("Development/dependency entries in release: $forbidden")
@@ -26,18 +29,21 @@ tasks.register('verifyOreRelease') {
     }
 }
 
-// Can run without compiling GEG: neither library may contain a GEG reference.
+// Can run without compiling GEG: both source sets must stay independent of the host.
 tasks.register('verifyOreModules') {
-    dependsOn ':ore:classes', ':ore-inspector:classes'
+    dependsOn ':ore-lib:classes', ':ore-lib:inspectorClasses'
     doLast {
-        [project(':ore'), project(':ore-inspector')].each { library ->
-            library.sourceSets.main.allJava.files.each { source ->
-                if (source.getText('UTF-8').contains('io.github.luyingyilong.geg'))
+        [project(':ore-lib')].each { library ->
+            library.fileTree('src').matching { include '**/*.java', '**/*.json', '**/*.properties' }.each { source ->
+                def text = source.getText('UTF-8')
+                if (text.contains('io.github.luyingyilong.geg') || (text =~ /(?i)\bgeg:/).find())
                     throw new GradleException("GEG dependency in $source")
             }
-            library.sourceSets.main.output.classesDirs.asFileTree.matching { include '**/*.class' }.each { compiled ->
-                if (new String(compiled.bytes, java.nio.charset.StandardCharsets.ISO_8859_1).contains('io/github/luyingyilong/geg'))
-                    throw new GradleException("GEG bytecode dependency in $compiled")
+            [library.sourceSets.main, library.sourceSets.inspector].collectMany { it.output.classesDirs.files.toList() }.each { classes ->
+                library.fileTree(classes).matching { include '**/*.class' }.each { compiled ->
+                    if (new String(compiled.bytes, java.nio.charset.StandardCharsets.ISO_8859_1).contains('io/github/luyingyilong/geg'))
+                        throw new GradleException("GEG bytecode dependency in $compiled")
+                }
             }
             if (library.file('src/main/resources/META-INF/mods.toml').exists() || library.file('src/main/resources/pack.mcmeta').exists())
                 throw new GradleException("Library must not declare separate Mod/pack metadata: ${library.path}")

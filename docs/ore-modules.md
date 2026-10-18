@@ -1,71 +1,56 @@
-# Ore 模块结构与构建
+# Ore Lib 模块结构与构建
 
-## 依赖和发布
+## 单模块、独立输出
 
-- 根工程：GEG 的市场、组织、邮件、聊天、背包入口及服务端业务。
-- `:ore`：`io.github.luyingyilong.ore`，包含控件、布局、输入、字体、头像缓存、窗口宿主、无操作 DebugBridge 与属性注解。
-- `:ore-inspector`：`io.github.luyingyilong.ore.inspector`，包含原生 Inspector、显式／反射适配、覆盖与编辑历史，仅在开发客户端挂载。
-- 根 `src/oreDebug` 只提供 GEG 的 Inspector 启动桥；`src/oreDebugTest` 保留真实客户端联动夹具。
+根工程负责 GEG 市场、组织、邮件、聊天和服务端业务；唯一 UI 模块是 `:ore-lib`。
 
-依赖方向为 GEG → Ore、GEG 开发启动桥 → Inspector → Ore。模块编译不依赖 GEG 主源码。两库没有自己的 `mods.toml`、`pack.mcmeta` 或 Mod 入口，也没有独立发布任务。
+- `ore-lib/src/main`：`io.github.luyingyilong.ore` 控件、布局、窗口、字体、IME、头像缓存、无操作调试桥接和属性注解
+- `ore-lib/src/inspector`：`io.github.luyingyilong.ore.inspector` 原生调试器、快照、反射适配、属性覆盖和历史
+- `ore-lib/src/test`：正式控件回归
+- `ore-lib/src/inspectorTest`：Inspector 回归
+- 根 `src/clientIntegrationTest`：显式启用的真实客户端业务联动夹具
 
-`gradle/ore-conventions.gradle` 统一 Java 17、Forge、映射、ModularUI 和旧 SideOnly 注解的编译环境。`build-support/legacy-annotations/java` 只用于编译，不进入运行类路径或发布包。
+依赖方向为 GEG → ore-lib main，inspector → main。GEG 的 clientIntegrationTest 可以编译引用 inspector；普通 root test 和正式运行不加载 inspector。两个 Java 包保持原名，不增加 Mod 身份或独立元数据。
 
-开发运行将 Ore 输出和 GEG 输出挂到同一个 `geg` Mod source；只在 client 中加入 Inspector 和启动桥，不另外加载模块 JAR。server、gameTestServer 和 data 不包含 Inspector。根 JAR 合并 Ore 未重映射的 main 输出，再由根 `reobfJar` 统一处理；不使用 Jar-in-Jar，不嵌入 ModularUI。
+构建支持在 `ore-lib/gradle/`，包括环境默认值和仅编译期旧注解。模块内部不引用 GEG 业务源码、翻译或根构建脚本。复制一个 ore-lib 目录即可接入同版本 Forge 项目，详见该目录 README。
 
-## 客户端初始化
+## 运行与打包
 
-仅在客户端 Mod 构造阶段调用：
+正常 runClient 挂载 GEG main、ore-lib main 和 ore-lib inspector；server、gameTestServer、data 只挂载 GEG main 和 ore-lib main。IDEA 客户端运行前构建 inspectorClasses。
 
-```java
-OreClient.initialize(new OreClientOptions(
-        hostModId, "ore", OreFonts.BODY, OreFonts.HERO,
-        ResourceLocation.fromNamespaceAndPath("ore", "ore_fallback"),
-        OreSounds::playDefault, avatarCacheDirectory), modBus, forgeBus);
-```
+Inspector 的 `META-INF/services/io.github.luyingyilong.ore.OreClientExtension` 仅在 inspector 输出中，调用 OreClient.initialize 后自动注册 F8。主源码不链接 Inspector 实现。
 
-入口幂等；事件监听只注册一次。初始化不创建 GLFW 窗口、不激活 Windows IME，相关原生能力按需加载。默认字体为 Mojangles → Noto Sans → Minecraft 回退，hero 为 Minecraft Ten → Noto Sans → Minecraft 回退。宿主可传入自己的字体资源和音效回调；静音可传入空回调。
+库标准 JAR 仅包含 main。GEG JAR 同样只合并 main 未重映射输出，根 reobfJar 统一映射，包含 geg.mixins.json 和 ore.mixins.json。不使用 Jar-in-Jar，不嵌入 ModularUI、Curios、Inspector、测试或编译注解。
 
-GEG 的初始化桥在 `GegClient`，继续使用游戏目录的 `geg/avatars`，已有离线／CSL 头像缓存无需移动。ModularUI 的字体兼容 Mixin 属于 `ore.mixins.json`；聊天快捷键 Mixin 仍属于 `geg.mixins.json`。
+初始化仍由客户端 GegClient 传入 OreClientOptions；头像缓存保留 geg/avatars。NumberInput 的数量／coin 业务预设由 GEG 的 GegInputs 提供。协议、存档、交易和界面状态逻辑未变。
 
-`NumberInput` 默认整数、无上下界；`decimalPlaces(n)` 配置固定精度，`minimumValue`／`maximumValue` 可用 null 清除边界。`availableMaximum` 用于动态可用上限，允许上限低于下限表示无可提交值。GEG 的 `GegInputs` 显式提供数量和 coin 预设；金额仍受两位小数和 long 分值上限约束。
+## 资源
 
-## 资源覆盖迁移
+Ore 字体、纹理、主题、UI 音效和通用翻译在 assets/ore；业务资源仍在 assets/geg。旧 geg 字体、geg_ore 主题和旧 UI 音效入口已删除，不添加忽略或迁移处理。默认字体、基线、IME 和可选皮肤兼容保持原行为。
 
-| 原路径／入口 | 当前入口 |
-| --- | --- |
-| `assets/geg/textures/modularui/**` | `assets/ore/textures/modularui/**` |
-| `assets/geg/themes/ore.json` | `assets/ore/themes/ore.json` |
-| `assets/geg/font/*.ttf`、`*.otf` | `assets/ore/font/` 同名文件 |
-| `assets/geg/sounds/<UI 音效>.ogg` | `assets/ore/sounds/` 同名文件 |
-| `geg:ore`、`geg:ore_hero`、`geg:ore_fallback` | 旧入口保留 reference，指向 `ore:` 同名字体 |
-| `geg_ore` 主题名 | 保留映射到 `ore:ore`，默认主题名为 `ore` |
-| `geg:click` 等五个旧音效事件 | 保留注册和声音定义，引用 `ore:` 音频 |
+ModularUI 3.3.1 开发模式会加载 Curios 测试物品，开发 runtimeOnly 已配置 Curios；正式运行不走此注册分支，Ore 无 Curios API 引用。
 
-纹理资源包须改为新命名空间，不保留重复 PNG／字体文件。GEG 业务翻译和方块纹理仍在 `assets/geg`；通用数字输入错误位于 `assets/ore/lang`。Inspector 翻译只在开发模块中。
-
-## 验证命令
+## 验证入口
 
 ```powershell
-.\gradlew.bat :ore:compileJava :ore-inspector:compileJava
+.\gradlew.bat :ore-lib:compileJava :ore-lib:inspectorClasses
 .\gradlew.bat oreTest inspectorTest
-.\gradlew.bat build verifyOreModules verifyOreRelease
-.\gradlew.bat prepareRunClient genIntellijRuns
+.\gradlew.bat verifyOreModules verifyOreRelease verifyOrePortability
+.\gradlew.bat prepareRunClientCompile genIntellijRuns
 ```
 
-`oreTest` 汇总通用控件及 GEG 集成回归；`inspectorTest` 保留原来的常用入口。所有 main 方法测试从各模块 `build/tmp/regression` 运行，资源通过绝对路径提供，避免轮转仓库日志。可选真实兼容测试使用 `-PimBlockerJar=<文件>`、`-PcustomSkinLoaderJar=<文件>`；未提供 IMBlocker 时明确跳过这一项。CSL 测试支持 Universal JAR 内嵌的 Common JAR。
+oreTest 汇总根业务及库的通用回归；inspectorTest 委托库的同名任务。所有 main 回归从隔离 build/tmp 目录执行；可选真实兼容检查使用 imBlockerJar 和 customSkinLoaderJar Gradle 属性。
 
-Windows 原生 IMM 测试会明确区分环境不支持与测试失败；完整中文候选交互仍需在真实桌面手测。客户端联动夹具必须显式加入 `oreDebugTest` 并传入原有 smoke 开关，只在隔离游戏目录／测试世界运行。正常 IDEA 配置不带这些夹具或开关。
+verifyOreModules 检查 main 与 inspector 的源码和字节码不引用 GEG；verifyOreRelease 检查最终重映射发布包的资源及隔离边界。
 
-发布文件仍为 `build/libs/geg-<版本>.jar`，玩家只安装这一份 GEG，继续安装原来声明的外部 Mod 依赖。`verifyOreRelease` 检查重映射产物的 Ore 类／资源、两份 Mixin、单 Mod 身份，以及 Inspector、测试、旧 Java 包、第三方库和兼容注解的隔离。
+verifyOrePortability 将单个模块复制到 build/tmp/ore-lib-portability-host，逻辑名改为 :ui-lib，物理目录改为 libraries/controls。独立宿主 ID 为 ore_sample，不提供 GEG 业务代码、资源、原宿主 Gradle 属性或根脚本，验证正式控件与 Inspector 测试及单 JAR 重映射。夹具源码位于 build-support/ore-portability-host；其 runClient 可执行控件开屏和 F8 原生 Inspector 联动。
 
-## 本次迁移验证
+正常 IDEA 配置不包含 clientIntegrationTest、smoke 参数或测试专用输入法环境绕行。发布客户端和专用服务端继续只安装 GEG JAR 及声明的外部依赖。
 
-- `build inspectorTest verifyOreRelease prepareRunClient genIntellijRuns` 通过；80 个 main 回归入口通过，包括真实 IMBlocker／CSL 接口检查。
-- Forge 47.4.10 隔离服务端：13 项必需 GameTest 全部通过，覆盖经济、交易、邮件、任务与聊天权限；运行源不包含 Inspector。
-- 开发客户端：四类业务目标、Inspector 实时编辑／错误／撤销／拾取／三次 F8 重开通过；另在 Modern UI 3.11.1.6 与 IMBlocker 环境通过同一组联动。
-- 双原生窗口及两种 framebuffer 尺寸的像素网格验证通过。
-- 最终重映射 GEG JAR 使用本机 Forge 47.3.22 的正式运行库，仅搭配 ModularUI、Curios，在隔离单人世界成功启动并正常保存退出。
-- 122 份 PNG、字体、音频和作者源文件迁移前后 SHA-256 一致；旧字体、主题、声音入口另有兼容测试。
+## 合并验证
 
-客户端测试使用独立目录和本地测试身份，不修改整合包、玩家世界或头像缓存。IDEA 的正常 client/server/gameTest/data 配置已重新生成；没有 smoke 开关或测试源码挂载。Windows JDK 本地网络临时目录的环境绕行只用于测试进程，没有写入项目运行配置。
+- 合并后的 main、inspector、inspectorTest 及 GEG 主源码、客户端联动夹具编译通过；普通测试类路径确认无 Inspector 服务
+- 改名为 :ui-lib 的独立宿主完成全部 56 项库回归，包含真实 IMBlocker／CSL JAR 检查
+- 独立客户端实际显示 Ore 控件、通过 F8 创建并绘制原生 Inspector，输出 ORE_PORTABILITY_CLIENT_PASS 后正常退出
+- 独立宿主、库标准 JAR 和最终 GEG 重映射产物均确认不包含 Inspector、开发服务描述或第三方依赖实现
+- 标准 IDEA client/server/gameTest/data 配置已重新生成；仅 client 挂载 inspector 输出，旧模块目录已删除

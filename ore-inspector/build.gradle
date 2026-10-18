@@ -1,6 +1,0 @@
-apply from: rootProject.file('gradle/ore-conventions.gradle')
-dependencies {
-    compileOnly project(':ore')
-    testImplementation project(':ore')
-}
-apply from: rootProject.file('gradle/ore-tests.gradle')

@@ -1,0 +1,38 @@
+plugins { id 'net.minecraftforge.gradle' version '[6.0,6.2)' }
+group = 'sample.consumer'
+version = '1.0'
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+evaluationDependsOn(':ui-lib')
+repositories { maven { url = 'https://www.cursemaven.com'; content { includeGroup 'curse.maven' } } }
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.4.10'
+    implementation fg.deobf('curse.maven:modularui-624243:8339410')
+    runtimeOnly fg.deobf('curse.maven:curios-309927:6418456')
+    compileOnly project(':ui-lib')
+}
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+    copyIdeResources = true
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'mixin.env.disableRefMap', 'true'
+            property 'forge.logging.console.level', 'info'
+            args '--mixin.config', 'ore.mixins.json', '--width', '808', '--height', '480',
+                    '--username', 'OreSample', '--uuid', '00000000000000000000000000000002', '--accessToken', '0'
+            mods { ore_sample {
+                source sourceSets.main
+                source project(':ui-lib').sourceSets.main
+                source project(':ui-lib').sourceSets.inspector
+            } }
+        }
+    }
+}
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+tasks.register('inspectorClasses') { dependsOn ':ui-lib:inspectorClasses' }
+// Only the core is bundled/reobfuscated. Inspector remains a development source output.
+tasks.named('jar', Jar) {
+    from project(':ui-lib').sourceSets.main.output
+    manifest { attributes 'MixinConfigs': 'ore.mixins.json' }
+    finalizedBy 'reobfJar'
+}

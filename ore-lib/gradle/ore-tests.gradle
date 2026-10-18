@@ -1,0 +1,34 @@
+def registerMainTests = { testSourceSet, String aggregate, String prefix ->
+    def testMains = testSourceSet.allJava.matching { include '**/*Test.java' }.files.findAll {
+        it.getText('UTF-8') =~ /public static void main\(String\[\] args\)/
+    }.sort { it.path }
+
+    def regressions = testMains.collect { source ->
+        def packageName = (source.getText('UTF-8') =~ /package ([\w.]+);/)[0][1]
+        tasks.register("${prefix}${source.name - '.java'}", JavaExec) {
+            dependsOn tasks.named(testSourceSet.classesTaskName)
+            classpath = testSourceSet.runtimeClasspath
+            mainClass = "${packageName}.${source.name - '.java'}"
+            enableAssertions = true
+            workingDir layout.buildDirectory.dir("tmp/${aggregate}/${source.name - '.java'}")
+            systemProperty 'ore.resourceRoot', new File(project.ext.oreBuildRoot as File, 'src/main/resources').absolutePath
+            systemProperty 'org.lwjgl.system.SharedLibraryExtractPath', layout.buildDirectory.dir('tmp/natives').get().asFile.absolutePath
+            systemProperty 'jna.tmpdir', layout.buildDirectory.dir('tmp/jna').get().asFile.absolutePath
+            doFirst { workingDir.mkdirs(); new File(workingDir, 'build/tmp').mkdirs() }
+            if (source.name == 'ImBlockerCompatibilityTest.java') {
+                onlyIf('optional installed IMBlocker jar supplied with -PimBlockerJar') { providers.gradleProperty('imBlockerJar').isPresent() }
+                if (providers.gradleProperty('imBlockerJar').isPresent()) args providers.gradleProperty('imBlockerJar').get()
+            }
+            if (source.name == 'CustomSkinLoaderAvatarTest.java' && providers.gradleProperty('customSkinLoaderJar').isPresent()) {
+                args providers.gradleProperty('customSkinLoaderJar').get()
+            }
+        }
+    }
+    tasks.register(aggregate) { dependsOn regressions }
+}
+registerMainTests(sourceSets.test, 'oreTest', 'regression')
+if (sourceSets.findByName('inspectorTest') != null) {
+    registerMainTests(sourceSets.inspectorTest, 'inspectorTest', 'regressionInspector')
+    tasks.named('check') { dependsOn tasks.named('inspectorTest') }
+}
+tasks.named('check') { dependsOn tasks.named('oreTest') }

@@ -12,19 +12,11 @@ base {
     archivesName = mod_id
 }
 
-apply from: file('gradle/ore-conventions.gradle')
-evaluationDependsOn(':ore')
-evaluationDependsOn(':ore-inspector')
+ext.oreBuildRoot = file('ore-lib')
+apply from: file('ore-lib/gradle/ore-conventions.gradle')
+evaluationDependsOn(':ore-lib')
 
 println "Gradle JVM: ${System.getProperty('java.version')} (${System.getProperty('java.vendor')}, ${System.getProperty('os.arch')})"
-
-// Inspector is intentionally absent from main, server runs and publication artifacts.
-sourceSets {
-    oreDebug {
-        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
-        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
-    }
-}
 
 minecraft {
     copyIdeResources = true
@@ -41,16 +33,15 @@ minecraft {
             mods {
                 "${mod_id}" {
                     source sourceSets.main
-                    source project(':ore').sourceSets.main
+                    source project(':ore-lib').sourceSets.main
                 }
             }
         }
 
         client {
-            ideaModule "${project.name}.oreDebug"
+            ideaModule "${project.name}.main"
             mods { "${mod_id}" {
-                source sourceSets.oreDebug
-                source project(':ore-inspector').sourceSets.main
+                source project(':ore-lib').sourceSets.inspector
             } }
             property 'forge.enabledGameTestNamespaces', mod_id
         }
@@ -71,21 +62,29 @@ minecraft {
     }
 }
 
+// Opt-in business/client fixtures; never mounted by normal client/server runs.
 sourceSets {
-    oreDebugTest {
-        compileClasspath += sourceSets.oreDebug.output + sourceSets.oreDebug.compileClasspath
-        runtimeClasspath += sourceSets.oreDebug.output + sourceSets.oreDebug.runtimeClasspath + sourceSets.main.output + sourceSets.main.runtimeClasspath
+    clientIntegrationTest {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath +
+                project(':ore-lib').sourceSets.main.output + project(':ore-lib').sourceSets.inspector.output
     }
 }
-tasks.register('inspectorTest') { dependsOn ':ore-inspector:oreTest' }
+// IDEA uses the main module; compile Inspector explicitly before its client launcher runs.
+// ForgeGradle resolves a run's custom source set classes task in the host project.
+tasks.register('inspectorClasses') { dependsOn ':ore-lib:inspectorClasses' }
+tasks.matching { it.name == 'prepareRunClientCompile' }.configureEach {
+    dependsOn ':ore-lib:inspectorClasses'
+}
+
+tasks.register('inspectorTest') { dependsOn ':ore-lib:inspectorTest' }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-    compileOnly project(':ore')
-    testImplementation project(':ore')
-    oreDebugCompileOnly project(':ore-inspector')
-    oreDebugTestCompileOnly project(':ore-inspector')
+    compileOnly project(':ore-lib')
+    testImplementation project(':ore-lib')
+    clientIntegrationTestCompileOnly project(':ore-lib').sourceSets.inspector.output
     implementation fg.deobf('curse.maven:curios-309927:6418456')
     compileOnly fg.deobf('curse.maven:lightmans-currency-472521:9048567')
     compileOnly fg.deobf('curse.maven:ftb-quests-forge-289412:4872462')
@@ -124,7 +123,7 @@ tasks.named('processResources', ProcessResources).configure {
 }
 
 tasks.named('jar', Jar).configure {
-    from project(':ore').sourceSets.main.output
+    from project(':ore-lib').sourceSets.main.output
     manifest {
         attributes([
                 'Specification-Title'     : mod_id,
@@ -158,8 +157,9 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
-sourceSets.oreDebugTest.runtimeClasspath += project(':ore-inspector').sourceSets.main.output + project(':ore').sourceSets.main.output
-apply from: file('gradle/ore-tests.gradle')
-tasks.named('oreTest') { dependsOn ':ore:oreTest' }
+apply from: file('ore-lib/gradle/ore-tests.gradle')
+tasks.named('oreTest') { dependsOn ':ore-lib:oreTest' }
 
 apply from: file('gradle/ore-release-check.gradle')
+
+apply from: file('gradle/ore-portability-check.gradle')
