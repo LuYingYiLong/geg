@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui.input;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+
 import brachy.modularui.screen.viewport.GuiContext;
 import brachy.modularui.utils.Point;
 import brachy.modularui.utils.PointF;
@@ -31,8 +33,10 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
     private int affinityRow;
     void multiline(boolean multiline) { this.multiline = multiline; }
 
-    OreTextFieldRenderer(TextFieldHandler handler) {
+    private final Input owner;
+    OreTextFieldRenderer(TextFieldHandler handler, Input owner) {
         super(handler);
+        this.owner = owner;
     }
 
     @Override public float getFontHeight() { return OreTextMetrics.body().lineHeight(scale); }
@@ -42,6 +46,14 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
 
     @Override protected void draw(GuiGraphics graphics, FormattedCharSequence text, float left, float top) {
         if (simulate || graphics == null) return;
+        if (DebugBridge.active() && owner.debugControl() != null) {
+            var metrics = OreTextMetrics.body();
+            DebugBridge.backend().text(owner.debugControl(), graphics,
+                    owner.inputMethodBounds(), left, top + metrics.drawOrigin(scale), getFont().width(text) * scale,
+                    getFontHeight(), top, top + metrics.baseline(scale), top + metrics.drawOrigin(scale) + metrics.inkTop()*scale,
+                    top + metrics.drawOrigin(scale) + metrics.inkBottom()*scale, 8 * scale,
+                    "Mojangles → Noto Sans → Minecraft default; native editor", 0);
+        }
         graphics.pose().pushPose();
         try {
             graphics.pose().translate(left, top + OreTextMetrics.body().drawOrigin(scale), 0);
@@ -132,6 +144,9 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
     }
 
     @Override public void drawMarked(GuiGraphics graphics, float top, float left, float right) {
+        if (owner.debugControl() != null && DebugBridge.active())
+            DebugBridge.backend().primitive(owner.debugControl(), "selection", graphics,
+                    new io.github.luyingyilong.geg.client.ui.layout.Rect((int)left,(int)top,Math.max(0,(int)Math.ceil(right-left)),(int)Math.ceil(getFontHeight())));
         brachy.modularui.drawable.GuiDraw.drawRect(graphics, left, top, Math.max(0, right - left),
                 getFontHeight(), markedColor);
     }
@@ -253,6 +268,10 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
 
     private void drawCaret(GuiGraphics graphics, PointF position, boolean emptyLine) {
         InputGeometry.Caret caret = InputGeometry.caret(position.x, position.y, scale, emptyLine);
+        if (owner.debugControl() != null && DebugBridge.active())
+            DebugBridge.backend().primitive(owner.debugControl(), "caret", graphics,
+                    new io.github.luyingyilong.geg.client.ui.layout.Rect((int)Math.floor(caret.x()), (int)Math.floor(caret.y()),
+                            Math.max(1,(int)Math.ceil(caret.width())), (int)Math.ceil(caret.height())));
         // Font vertices may still be batched. Flush them before the final caret rectangle.
         graphics.flush();
         brachy.modularui.drawable.GuiDraw.drawRect(graphics, caret.x(), caret.y(), caret.width(), caret.height(), cursorColor);
@@ -271,6 +290,11 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
             int left = (int) Math.floor(getStartX(row.width()) + layout.xAt(row, from));
             int right = (int) Math.ceil(getStartX(row.width()) + layout.xAt(row, to) + (newline ? scale : 0));
             int bottom = (int) Math.ceil(top + (index + 1) * getFontHeight());
+            if (owner.debugControl() != null && DebugBridge.active()) {
+                int rangeTop = underline ? bottom - 1 : (int)(top + index * getFontHeight());
+                DebugBridge.backend().primitive(owner.debugControl(), underline ? "preedit" : "selection", graphics,
+                        new io.github.luyingyilong.geg.client.ui.layout.Rect(left,rangeTop,Math.max(1,right-left),bottom-rangeTop));
+            }
             graphics.fill(left, underline ? bottom - 1 : (int) (top + index * getFontHeight()),
                     Math.max(left + 1, right), bottom, underline ? cursorColor : markedColor);
         }

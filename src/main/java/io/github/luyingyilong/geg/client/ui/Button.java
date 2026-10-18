@@ -1,5 +1,8 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+import io.github.luyingyilong.geg.client.ui.debug.Inspectable;
+import io.github.luyingyilong.geg.client.ui.debug.DebugProperty;
 import brachy.modularui.api.ITheme;
 import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
@@ -69,8 +72,12 @@ public final class Button extends Control {
     public Button fontSize(float fontSize) { label.fontSize(fontSize); requestLayout(); return this; }
     public float fontSize() { return label.fontSize(); }
     public Button size(Size size) { this.buttonSize = java.util.Objects.requireNonNull(size); minimum(0, size.height()); return this; }
-    public Button type(Type type) { this.type = java.util.Objects.requireNonNull(type); return this; }
-    public Type type() { return type; }
+    public Button type(Type type) { java.util.Objects.requireNonNull(type); if (DebugBridge.previewWrite(this, "type", type)) return this; this.type = type; return this; }
+    @Inspectable(group = "Appearance")
+    public Type type() {
+        Type type = DebugBridge.value(this, "type", this.type);
+        return type;
+    }
     public Button emphasizedSound(boolean emphasized) { emphasizedSound = emphasized; return this; }
     public boolean emphasizedSound() { return emphasizedSound; }
     public Button actionMode(ACTION_MODE actionMode) {
@@ -159,6 +166,7 @@ public final class Button extends Control {
     }
 
     private void layoutBadge(Font font) {
+        Type type = DebugBridge.value(this, "type", this.type);
         if (!hasBadge()) return;
         io.github.luyingyilong.geg.client.ui.layout.Size natural = badge.measureSize(font,
                 new io.github.luyingyilong.geg.client.ui.layout.Size(size().width(), size().height()));
@@ -174,6 +182,7 @@ public final class Button extends Control {
     }
 
     @Override public Rect focusBounds() {
+        Type type = DebugBridge.value(this, "type", this.type);
         return backgroundBounds(absoluteBounds(), type, visuallyPressed());
     }
 
@@ -187,6 +196,8 @@ public final class Button extends Control {
 
     /** Composite controls reuse Button's appearance while retaining their own activation behavior. */
     void drawPresentation(ModularGuiContext context, Rect area, boolean hovered, boolean pressed) {
+        Type type = DebugBridge.value(this, "type", this.type);
+        DebugBridge.backend().internal(this, "label", label);
         drawLabelled(context, area.x(), area.y(), area.width(), area.height(), label, icon, trailingIcon,
                 alignment, type, !disabled && hovered, !disabled && pressed, disabled, badgeReservation(context.getFont()));
     }
@@ -426,8 +437,7 @@ public final class Button extends Control {
     }
 
     static boolean leftMousePressed() {
-        return GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().getWindow(),
-                GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
+        return io.github.luyingyilong.geg.client.ui.window.WindowContext.current().mouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT);
     }
 
     public static boolean contains(int x, int y, int width, int height,
@@ -474,5 +484,10 @@ public final class Button extends Control {
         public int height() {
             return height;
         }
+    }
+    @Override public void debugProperties(java.util.List<DebugProperty> out) {
+        super.debugProperties(out);
+        out.add(DebugProperty.bool(label,"hero","Text",label::hero));
+        out.add(DebugProperty.number(label,"fontSize","Text",label::fontSize,0.0001,256));
     }
 }

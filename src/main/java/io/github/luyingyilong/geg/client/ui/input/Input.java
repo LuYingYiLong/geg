@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui.input;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+
 import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
@@ -24,8 +26,8 @@ import java.util.function.IntPredicate;
 
 public class Input extends TextFieldWidget {
     private static final InputShortcuts.Clipboard CLIPBOARD = new InputShortcuts.Clipboard() {
-        @Override public String get() { return net.minecraft.client.Minecraft.getInstance().keyboardHandler.getClipboard(); }
-        @Override public void set(String text) { net.minecraft.client.Minecraft.getInstance().keyboardHandler.setClipboard(text); }
+        @Override public String get() { return io.github.luyingyilong.geg.client.ui.window.WindowContext.current().clipboard(); }
+        @Override public void set(String text) { io.github.luyingyilong.geg.client.ui.window.WindowContext.current().clipboard(text); }
     };
     private final float depth;
     private Button.Size controlSize = Button.Size.MEDIUM;
@@ -33,6 +35,8 @@ public class Input extends TextFieldWidget {
     private IntPredicate tabNavigation = modifiers -> false;
     private Runnable mousePressHandler = () -> { };
     private Runnable focusLostHandler = () -> { };
+    private Runnable submitAction;
+    public Input onSubmit(Runnable action) { submitAction = java.util.Objects.requireNonNull(action); return this; }
     private InputControl layoutControl;
     private final NativePaintPass paintPass = new NativePaintPass();
 
@@ -43,7 +47,7 @@ public class Input extends TextFieldWidget {
     public Input(float depth) {
         this.depth = depth;
         handler = new OreTextFieldHandler(this);
-        renderer = new OreTextFieldRenderer(handler);
+        renderer = new OreTextFieldRenderer(handler, this);
         handler.setRenderer(renderer);
         handler.setScrollArea(getScrollArea());
         getScrollArea().setScrollX(io.github.luyingyilong.geg.client.ui.input.HiddenInputScroll.horizontal());
@@ -104,6 +108,11 @@ public class Input extends TextFieldWidget {
 
     protected boolean supportsInputMethod() { return true; }
     /** Uncommitted text is separate from getText()/Form values and never sent to the server. */
+    public io.github.luyingyilong.geg.client.ui.window.WindowContext windowContext() {
+        return layoutControl != null ? layoutControl.windowContext() : isValid()
+                ? io.github.luyingyilong.geg.client.ui.window.WindowContext.of(getContext())
+                : io.github.luyingyilong.geg.client.ui.window.WindowContext.current();
+    }
     public InputPreedit preedit() { return OreInputMethod.preedit(this); }
     public boolean composing() { return OreInputMethod.composing(this); }
     public void cancelPreedit() {
@@ -201,13 +210,16 @@ public class Input extends TextFieldWidget {
             return Interactable.Result.SUCCESS;
         }
         if (isFocused() && keyCode == GLFW.GLFW_KEY_ESCAPE) {
-            if (composing()) cancelPreedit();
+            if (composing()) { cancelPreedit(); return Interactable.Result.STOP; }
             getContext().removeFocus();
             return Interactable.Result.STOP;
         }
         if (isFocused() && (keyCode >= GLFW.GLFW_KEY_ESCAPE && keyCode <= GLFW.GLFW_KEY_END
                 || keyCode == GLFW.GLFW_KEY_KP_ENTER)
                 && OreInputMethod.composing(this)) return Interactable.Result.STOP;
+        if (submitAction != null && isFocused() && (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER)) {
+            if (!composing()) submitAction.run(); return Interactable.Result.STOP;
+        }
         if (keyCode == GLFW.GLFW_KEY_TAB && isFocused() && tabNavigation.test(modifiers))
             return Interactable.Result.STOP;
         return super.onKeyPressed(keyCode, scanCode, modifiers);
@@ -280,6 +292,8 @@ public class Input extends TextFieldWidget {
         } finally { hintText = placeholder; }
     }
 
+    io.github.luyingyilong.geg.client.ui.layout.Control debugControl() { return layoutControl; }
+
     protected Label placeholderLabel(Component placeholder) {
         int color = hintTextColor == null ? OreTheme.TEXT_SECONDARY : hintTextColor;
         return new Label(placeholder).color(color).scale(scale).overflow(Label.Overflow.VISIBLE);
@@ -290,6 +304,7 @@ public class Input extends TextFieldWidget {
         Label label = placeholderLabel(placeholder);
         label.layout(new Rect(getArea().getPadding().left(), top, getArea().paddedWidth(),
                 Math.max(0, Math.min(controlSize.height(), getArea().height - top))), context.getFont());
+        if (layoutControl != null) DebugBridge.backend().internal(layoutControl, "placeholder", label);
         label.draw(context, 0, 0);
     }
 
@@ -338,15 +353,17 @@ public class Input extends TextFieldWidget {
         graphics.pose().translate(0.0F, 0.0F,
                 paintPass.active() ? OreLayers.INPUT : layoutControl == null ? depth : layoutControl.drawingDepth());
         Rect clip = layoutControl == null ? null : layoutControl.drawingClip();
-        if (clip != null) graphics.enableScissor(clip.x(), clip.y(), clip.right(), clip.bottom());
+        if (clip != null) { graphics.enableScissor(clip.x(), clip.y(), clip.right(), clip.bottom());
+            DebugBridge.backend().clip(clip); }
         Rect fieldClip = inputMethodBounds();
         graphics.enableScissor(fieldClip.x(), fieldClip.y(), fieldClip.right(), fieldClip.bottom());
+        DebugBridge.backend().clip(fieldClip);
         try {
             draw.run();
             graphics.flush();
         } finally {
-            graphics.disableScissor();
-            if (clip != null) graphics.disableScissor();
+            graphics.disableScissor(); DebugBridge.backend().unclip();
+            if (clip != null) { graphics.disableScissor(); DebugBridge.backend().unclip(); }
             graphics.pose().popPose();
         }
     }

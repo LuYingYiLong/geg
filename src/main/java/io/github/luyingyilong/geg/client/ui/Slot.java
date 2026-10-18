@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
@@ -61,6 +63,7 @@ public final class Slot extends Control {
     }
 
     @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+        DebugBridge.backend().paint(this, context, screenX, screenY);
         render(context, screenX, screenY);
         if (!count.visible()) return;
         var graphics = context.getGraphics();

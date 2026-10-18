@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+
 import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
@@ -197,8 +199,9 @@ public final class Segmented extends Control {
         }
         GuiGraphics graphics = context.getGraphics();
         graphics.enableScissor(viewport.x(), viewport.y(), viewport.right(), viewport.bottom());
+        DebugBridge.backend().clip(viewport);
         drawOptions(context, viewport.x() - scrollX, viewport.y(), contentWidth, selectedIndex);
-        graphics.disableScissor();
+        graphics.disableScissor(); DebugBridge.backend().unclip();
     }
 
     private void ensureSelectedVisible(int contentWidth, int viewportWidth) {

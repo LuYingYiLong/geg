@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+
 import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
@@ -32,6 +34,8 @@ public final class Dropdown<T> extends Control {
     private final int maxVisibleItems;
     private final Button.Size size;
     private final Button triggerButton;
+    private final Label optionLabel = new Label().opticalCenter(true).overflow(Label.Overflow.CLIP)
+            .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
     private List<Option<T>> options = List.of();
     private T selected;
     private Component triggerLabel;
@@ -286,6 +290,7 @@ public final class Dropdown<T> extends Control {
         triggerButton.label(triggerText());
         boolean hovered = Button.contains(x, y, width, height, context.getAbsMouseX(), context.getAbsMouseY());
         Target<T> trigger = new Target<>(TRIGGER, -1, null);
+        DebugBridge.backend().internal(this,"trigger",triggerButton);
         triggerButton.drawPresentation(context,
                 new io.github.luyingyilong.geg.client.ui.layout.Rect(x, y, width, height), hovered,
                 pressed || gesture.keyPressed(trigger) || hovered && gesture.pointerPressed(trigger));
@@ -327,10 +332,13 @@ public final class Dropdown<T> extends Control {
             boolean checked = checkable && Objects.equals(option.value, selected);
             int iconSpace = checkable ? CHECKED_SIZE + ITEM_PADDING : 0;
             int textWidth = Math.max(0, item.width - 2 * ITEM_PADDING - iconSpace);
-            Label.draw(context, option.label, new io.github.luyingyilong.geg.client.ui.layout.Rect(
-                            item.x + ITEM_PADDING, item.y, textWidth, item.height),
-                    itemStyle.getTextColor(), itemStyle.isTextShadow(), Label.Overflow.CLIP,
-                    Label.Horizontal.LEFT, Label.Vertical.CENTER);
+            Label paintedLabel = DebugBridge.active() ? new Label().opticalCenter(true).overflow(Label.Overflow.CLIP)
+                    .align(Label.Horizontal.LEFT, Label.Vertical.CENTER) : optionLabel;
+            paintedLabel.text(option.label).color(itemStyle.getTextColor()).shadow(itemStyle.isTextShadow());
+            paintedLabel.layout(new io.github.luyingyilong.geg.client.ui.layout.Rect(
+                    item.x + ITEM_PADDING, item.y, textWidth, item.height), context.getFont());
+            DebugBridge.backend().internal(this,"option-"+(offset+index),paintedLabel);
+            paintedLabel.draw(context, 0, 0);
             if (checked) {
                 int iconX = item.right() - ITEM_PADDING - CHECKED_SIZE;
                 int iconY = item.y + (item.height - CHECKED_SIZE) / 2;

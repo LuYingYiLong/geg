@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui.layout;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.client.gui.Font;
 
@@ -31,6 +33,7 @@ public final class Overlay extends Container {
 
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
+        DebugBridge.backend().paint(this, context, screenX, screenY);
         for (Control layer : layers) if (layer.visible()) layer.draw(context, screenX, screenY);
     }
 

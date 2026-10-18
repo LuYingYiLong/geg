@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui.layout;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+import io.github.luyingyilong.geg.client.ui.debug.Inspectable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.client.gui.Font;
 
@@ -13,8 +15,12 @@ public final class Box extends Container {
     private Orientation orientation = Orientation.VERTICAL;
     private int gap;
 
-    public Box orientation(Orientation orientation) { this.orientation = orientation; requestLayout(); return this; }
-    public Box gap(int gap) { this.gap = Math.max(0, gap); requestLayout(); return this; }
+    public Box orientation(Orientation orientation) { java.util.Objects.requireNonNull(orientation); if (DebugBridge.previewWrite(this, "orientation", orientation)) return this; this.orientation = orientation; requestLayout(); return this; }
+    public Box gap(int gap) { gap = Math.max(0, gap); if (DebugBridge.previewWrite(this, "gap", gap)) return this; this.gap = gap; requestLayout(); return this; }
+    @Inspectable
+    public Orientation orientation() { return DebugBridge.value(this, "orientation", orientation); }
+    @Inspectable(min = 0, max = 10000)
+    public int gap() { return DebugBridge.value(this, "gap", gap); }
     public Box add(Control child) { addChild(child); return this; }
     @Override public Box addChild(Control child) { super.addChild(child); children.add(child); return this; }
     @Override public boolean removeChild(Control child) {
@@ -25,11 +31,13 @@ public final class Box extends Container {
     public List<Control> children() { return List.copyOf(children); }
 
     @Override public Size measureSize(Font font, Size available) {
+        Orientation orientation = DebugBridge.value(this, "orientation", this.orientation);
+        int gap = DebugBridge.value(this, "gap", this.gap);
         int totalWidth = 0;
         int totalHeight = 0;
         int count = 0;
         for (Control child : children) if (child.visible()) {
-            Size measured = child.measureSize(font, available);
+            Size measured = child.desiredSize(font, available);
             totalWidth = orientation == Orientation.HORIZONTAL ? totalWidth + measured.width()
                     : Math.max(totalWidth, measured.width());
             totalHeight = orientation == Orientation.VERTICAL ? totalHeight + measured.height()
@@ -53,6 +61,8 @@ public final class Box extends Container {
 
     @Override
     public void layout(Rect localBounds, Font font) {
+        Orientation orientation = DebugBridge.value(this, "orientation", this.orientation);
+        int gap = DebugBridge.value(this, "gap", this.gap);
         super.layout(localBounds, font);
         List<Control> active = children.stream().filter(Control::visible).toList();
         int axis = orientation == Orientation.VERTICAL ? localBounds.height() : localBounds.width();
@@ -62,7 +72,7 @@ public final class Box extends Container {
         int fixed = 0;
         for (int index = 0; index < active.size(); index++) {
             Control child = active.get(index);
-            Size measured = child.measureSize(font, orientation == Orientation.VERTICAL
+            Size measured = child.desiredSize(font, orientation == Orientation.VERTICAL
                     ? new Size(cross, axis) : new Size(axis, cross));
             sizes[index] = orientation == Orientation.VERTICAL ? measured.height() : measured.width();
             if (!expands(child)) fixed += sizes[index];
@@ -89,11 +99,13 @@ public final class Box extends Container {
     }
 
     private boolean expands(Control child) {
+        Orientation orientation = DebugBridge.value(this, "orientation", this.orientation);
         return SizeFlags.expands(orientation == Orientation.VERTICAL
                 ? child.sizeFlagsVertical() : child.sizeFlagsHorizontal());
     }
 
     private int mainMinimum(Control child) {
+        Orientation orientation = DebugBridge.value(this,"orientation",this.orientation);
         return orientation == Orientation.VERTICAL ? child.minimumHeight() : child.minimumWidth();
     }
 
@@ -128,6 +140,8 @@ public final class Box extends Container {
 
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
+        DebugBridge.backend().paint(this, context, screenX, screenY);
         for (Control child : children) if (child.visible()) child.draw(context, screenX, screenY);
     }
+
 }

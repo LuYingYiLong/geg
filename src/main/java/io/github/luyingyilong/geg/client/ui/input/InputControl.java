@@ -54,7 +54,7 @@ public final class InputControl extends Control {
         widget.drawInTree(context);
     }
 
-    Rect displayedBounds() {
+    public Rect displayedBounds() {
         Rect area = absoluteBounds();
         for (Control node = parent(); node != null; node = node.parent())
             if (node instanceof Scroll scroll) area = area.translated(-scroll.scrollX(), -scroll.scrollY());

@@ -1,5 +1,8 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+import io.github.luyingyilong.geg.client.ui.debug.Inspectable;
+import io.github.luyingyilong.geg.client.ui.debug.DebugProperty;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
@@ -49,6 +52,7 @@ public final class Label extends Control {
     public Label(Component text) { this.text = Objects.requireNonNull(text); }
     public Label text(Component text) {
         Component next = Objects.requireNonNull(text);
+        if (DebugBridge.previewWrite(this, "text", next)) return this;
         if (!this.text.equals(next)) {
             styledText = null;
             scrollStartMs = Long.MIN_VALUE;
@@ -59,6 +63,7 @@ public final class Label extends Control {
     }
     public Label setText(Component text) { return text(text); }
     public Label hero(boolean hero) {
+        if (DebugBridge.previewWrite(this, "hero", hero)) return this;
         if (this.hero != hero) {
             this.hero = hero;
             styledText = null;
@@ -67,11 +72,20 @@ public final class Label extends Control {
         }
         return this;
     }
-    public boolean hero() { return hero; }
+    @Inspectable(group = "Text")
+    public boolean hero() {
+        boolean hero = DebugBridge.value(this, "hero", this.hero);
+        return hero;
+    }
     /** Use a fixed font-family visual box for centering, never the current string's glyph bounds. */
-    public Label opticalCenter(boolean opticalCenter) { this.opticalCenter = opticalCenter; return this; }
-    public boolean opticalCenter() { return opticalCenter; }
+    public Label opticalCenter(boolean opticalCenter) { if (DebugBridge.previewWrite(this, "opticalCenter", opticalCenter)) return this; this.opticalCenter = opticalCenter; return this; }
+    @Inspectable(group = "Text")
+    public boolean opticalCenter() {
+        boolean opticalCenter = DebugBridge.value(this, "opticalCenter", this.opticalCenter);
+        return opticalCenter;
+    }
     public Component styledText() {
+        if (DebugBridge.active()) return OreFonts.text(text(), hero());
         if (styledText == null) styledText = OreFonts.text(text, hero);
         return styledText;
     }
@@ -81,27 +95,42 @@ public final class Label extends Control {
         super.invalidateTextLayout();
     }
     public Label overflow(Overflow overflow) {
-        this.overflow = Objects.requireNonNull(overflow);
-        scrollStartMs = Long.MIN_VALUE;
+        Overflow next = Objects.requireNonNull(overflow);
+        if (DebugBridge.previewWrite(this, "overflow", next)) return this;
+        if (this.overflow != next) {
+            this.overflow = next;
+            scrollStartMs = Long.MIN_VALUE;
+            requestLayout();
+        }
         return this;
     }
-    public Label wrap(Wrap wrap) { this.wrap = Objects.requireNonNull(wrap); requestLayout(); return this; }
+    public Label wrap(Wrap wrap) { Objects.requireNonNull(wrap); if (DebugBridge.previewWrite(this, "wrap", wrap)) return this; this.wrap = wrap; requestLayout(); return this; }
     public Label scrollTrigger(ScrollTrigger trigger) {
-        scrollTrigger = Objects.requireNonNull(trigger);
-        scrollStartMs = Long.MIN_VALUE;
+        ScrollTrigger next = Objects.requireNonNull(trigger);
+        if (DebugBridge.previewWrite(this, "scrollTrigger", next)) return this;
+        if (scrollTrigger != next) {
+            scrollTrigger = next;
+            scrollStartMs = Long.MIN_VALUE;
+        }
         return this;
     }
     public Label scrollSpeed(float pixelsPerSecond) {
         if (!(pixelsPerSecond > 0.0F) || !Float.isFinite(pixelsPerSecond))
             throw new IllegalArgumentException("Scroll speed must be positive and finite");
-        scrollSpeed = pixelsPerSecond;
-        scrollStartMs = Long.MIN_VALUE;
+        if (DebugBridge.previewWrite(this, "scrollSpeed", pixelsPerSecond)) return this;
+        if (scrollSpeed != pixelsPerSecond) {
+            scrollSpeed = pixelsPerSecond;
+            scrollStartMs = Long.MIN_VALUE;
+        }
         return this;
     }
     public Label scrollEndPause(long milliseconds) {
         if (milliseconds < 0L) throw new IllegalArgumentException("Pause cannot be negative");
-        scrollEndPauseMs = milliseconds;
-        scrollStartMs = Long.MIN_VALUE;
+        if (DebugBridge.previewWrite(this, "scrollEndPauseMs", milliseconds)) return this;
+        if (scrollEndPauseMs != milliseconds) {
+            scrollEndPauseMs = milliseconds;
+            scrollStartMs = Long.MIN_VALUE;
+        }
         return this;
     }
     public Label align(Horizontal horizontal, Vertical vertical) {
@@ -109,13 +138,18 @@ public final class Label extends Control {
         this.vertical = Objects.requireNonNull(vertical);
         return this;
     }
-    public Label color(int color) { this.color = color; return this; }
-    public int color() { return color; }
+    public Label color(int color) { if (DebugBridge.previewWrite(this, "color", color)) return this; this.color = color; return this; }
+    @Inspectable(group = "Text", min = -2147483648.0, max = 4294967295.0)
+    public int color() {
+        int color = DebugBridge.value(this, "color", this.color);
+        return color;
+    }
     public Label shadow(boolean shadow) { this.shadow = shadow; return this; }
     /** Sets the logical text size; scale remains an additional relative multiplier. */
     public Label fontSize(float fontSize) {
         if (!(fontSize > 0.0F) || !Float.isFinite(fontSize))
             throw new IllegalArgumentException("Font size must be positive and finite");
+        if (DebugBridge.previewWrite(this, "fontSize", fontSize)) return this;
         if (this.fontSize != fontSize) {
             this.fontSize = fontSize;
             scrollStartMs = Long.MIN_VALUE;
@@ -123,18 +157,40 @@ public final class Label extends Control {
         }
         return this;
     }
-    public float fontSize() { return fontSize; }
-    private float textScale() { return scale * (fontSize / DEFAULT_FONT_SIZE); }
+    @Inspectable(group = "Text", min = 0.0001, max = 256)
+    public float fontSize() {
+        float fontSize = DebugBridge.value(this, "fontSize", this.fontSize);
+        return fontSize;
+    }
+    @Inspectable(group = "Text", min = 0.0001, max = 64)
+    public float scale() { return DebugBridge.value(this, "scale", scale); }
+    @Inspectable(group = "Text", min = 1, max = Integer.MAX_VALUE)
+    public int maxLines() { return DebugBridge.value(this, "maxLines", maxLines); }
+    @Inspectable(group = "Text")
+    public ScrollTrigger scrollTrigger() { return DebugBridge.value(this, "scrollTrigger", scrollTrigger); }
+    @Inspectable(group = "Text", min = 0.0001, max = 100000)
+    public float scrollSpeed() { return DebugBridge.value(this, "scrollSpeed", scrollSpeed); }
+    @Inspectable(group = "Text", setter = "scrollEndPause", min = 0, max = 100000)
+    public long scrollEndPauseMs() { return DebugBridge.value(this, "scrollEndPauseMs", scrollEndPauseMs); }
+
+    private float textScale() {
+        float scale = DebugBridge.value(this, "scale", this.scale);
+        float fontSize = DebugBridge.value(this, "fontSize", this.fontSize); return scale * (fontSize / DEFAULT_FONT_SIZE);
+    }
 
     public Label scale(float scale) {
         if (!(scale > 0.0F) || !Float.isFinite(scale)) throw new IllegalArgumentException("Invalid text scale");
-        this.scale = scale;
-        scrollStartMs = Long.MIN_VALUE;
-        requestLayout();
+        if (DebugBridge.previewWrite(this, "scale", scale)) return this;
+        if (this.scale != scale) {
+            this.scale = scale;
+            scrollStartMs = Long.MIN_VALUE;
+            requestLayout();
+        }
         return this;
     }
     public Label maxLines(int maxLines) {
         if (maxLines < 1) throw new IllegalArgumentException("At least one line is required");
+        if (DebugBridge.previewWrite(this, "maxLines", maxLines)) return this;
         this.maxLines = maxLines;
         requestLayout();
         return this;
@@ -146,10 +202,25 @@ public final class Label extends Control {
         return this;
     }
 
-    public Component text() { return text; }
-    public Component getText() { return text; }
-    public Overflow overflow() { return overflow; }
-    public Wrap wrap() { return wrap; }
+    @Inspectable(group = "Text", max = 2048)
+    public Component text() {
+        Component text = DebugBridge.value(this, "text", this.text);
+        return text;
+    }
+    public Component getText() {
+        Component text = DebugBridge.value(this, "text", this.text);
+        return text;
+    }
+    @Inspectable(group = "Text")
+    public Overflow overflow() {
+        Overflow overflow = DebugBridge.value(this, "overflow", this.overflow);
+        return overflow;
+    }
+    @Inspectable(group = "Text")
+    public Wrap wrap() {
+        Wrap wrap = DebugBridge.value(this, "wrap", this.wrap);
+        return wrap;
+    }
 
     @Override
     public int measureWidth(Font font, int available) {
@@ -158,6 +229,7 @@ public final class Label extends Control {
 
     @Override
     public int measureHeight(Font font, int available) {
+        int maxLines = DebugBridge.value(this, "maxLines", this.maxLines);
         return Math.max(minimumHeight(), Math.min(maxLines, lines(font, available).size()) * lineHeight(font));
     }
 
@@ -167,9 +239,14 @@ public final class Label extends Control {
                 measureHeight(font, available.width()));
     }
 
-    public int lineHeight(Font font) { return OreTextMetrics.family(hero).lineHeight(textScale()); }
+    public int lineHeight(Font font) {
+        boolean hero = DebugBridge.value(this, "hero", this.hero); return OreTextMetrics.family(hero).lineHeight(textScale());
+    }
 
     float firstLineOrigin(int height, int lines) {
+        boolean hero = DebugBridge.value(this, "hero", this.hero);
+        boolean opticalCenter = DebugBridge.value(this, "opticalCenter", this.opticalCenter);
+        Vertical vertical = DebugBridge.value(this, "vertical", this.vertical);
         var metrics = OreTextMetrics.family(hero);
         return switch (vertical) {
             case TOP -> metrics.drawOrigin(textScale());
@@ -179,6 +256,8 @@ public final class Label extends Control {
     }
 
     public List<FormattedCharSequence> lines(Font font, int width) {
+        Overflow overflow = DebugBridge.value(this, "overflow", this.overflow);
+        Wrap wrap = DebugBridge.value(this, "wrap", this.wrap);
         int logicalWidth = Math.max(1, (int) Math.floor(width / textScale()));
         Component display = styledText();
         if (wrap == Wrap.NONE || overflow == Overflow.MARQUEE) return List.of(display.getVisualOrderText());
@@ -227,6 +306,8 @@ public final class Label extends Control {
     }
 
     public List<FormattedCharSequence> displayedLines(Font font, int width, int height) {
+        Overflow overflow = DebugBridge.value(this, "overflow", this.overflow);
+        int maxLines = DebugBridge.value(this, "maxLines", this.maxLines);
         List<FormattedCharSequence> source = lines(font, width);
         int count = Math.min(maxLines, source.size());
         if (overflow != Overflow.VISIBLE) count = Math.min(count,
@@ -245,6 +326,9 @@ public final class Label extends Control {
 
     /** Screen-pixel offset for a left-right marquee; package-visible for deterministic tests. */
     int marqueeOffset(Font font, int width, long nowMs, boolean hovered) {
+        ScrollTrigger scrollTrigger = DebugBridge.value(this, "scrollTrigger", this.scrollTrigger);
+        float scrollSpeed = DebugBridge.value(this, "scrollSpeed", this.scrollSpeed);
+        long scrollEndPauseMs = DebugBridge.value(this, "scrollEndPauseMs", this.scrollEndPauseMs);
         int distance = Math.max(0, (int) Math.ceil(font.width(styledText()) * textScale()) - width);
         if (distance == 0 || (scrollTrigger == ScrollTrigger.HOVER && !hovered)) {
             scrollStartMs = Long.MIN_VALUE;
@@ -273,13 +357,21 @@ public final class Label extends Control {
 
     /** Internal shared painter for Ore components hosted outside a ModularUI screen. */
     void paint(GuiGraphics graphics, Font font, Rect area, int mouseX, int mouseY) {
+        Overflow overflow = DebugBridge.value(this, "overflow", this.overflow);
+        Horizontal horizontal = DebugBridge.value(this, "horizontal", this.horizontal);
+        int color = DebugBridge.value(this, "color", this.color);
         if (!visible() || area.width() <= 0 || area.height() <= 0) return;
         float textScale = textScale();
         List<FormattedCharSequence> lines = displayedLines(font, area.width(), area.height());
         int lineHeight = lineHeight(font);
         int visibleLines = lines.size();
         float startY = area.y() + firstLineOrigin(area.height(), visibleLines);
-        if (overflow != Overflow.VISIBLE) graphics.enableScissor(area.x(), area.y(), area.right(), area.bottom());
+        int scrollOffset = overflow == Overflow.MARQUEE
+                ? marqueeOffset(font, area.width(), System.nanoTime() / 1_000_000L, area.contains(mouseX, mouseY)) : 0;
+        if (overflow != Overflow.VISIBLE) {
+            graphics.enableScissor(area.x(), area.y(), area.right(), area.bottom());
+            DebugBridge.backend().clip(area);
+        }
         for (int index = 0; index < visibleLines; index++) {
             FormattedCharSequence line = lines.get(index);
             int lineWidth = (int) Math.ceil(font.width(line) * textScale);
@@ -289,8 +381,20 @@ public final class Label extends Control {
                 case RIGHT -> area.width() - lineWidth;
             };
             if (overflow == Overflow.MARQUEE && lineWidth > area.width()) {
-                boolean hovered = area.contains(mouseX, mouseY);
-                lineX = area.x() - marqueeOffset(font, area.width(), System.nanoTime() / 1_000_000L, hovered);
+                lineX = area.x() - scrollOffset;
+            }
+            if (DebugBridge.active()) {
+                var metrics = OreTextMetrics.family(hero());
+                java.util.Set<String> spanFonts = new java.util.LinkedHashSet<>();
+                line.accept((at, style, codepoint) -> { spanFonts.add(style.getFont().toString()); return true; });
+                String chain = hero() ? "Minecraft Ten → Noto Sans → Minecraft default" : "Mojangles → Noto Sans → Minecraft default";
+                DebugBridge.backend().text(this, graphics, area,
+                        lineX, startY + index * lineHeight, lineWidth, lineHeight,
+                        startY + index * lineHeight - metrics.drawOrigin(textScale),
+                        startY + index * lineHeight + 7 * textScale,
+                        startY + index * lineHeight + metrics.inkTop() * textScale,
+                        startY + index * lineHeight + metrics.inkBottom() * textScale,
+                        8 * textScale, "Span font IDs: " + spanFonts + "; configured fallback: " + chain + "; not a per-glyph provider attribution", scrollOffset);
             }
             graphics.pose().pushPose();
             graphics.pose().translate(lineX, startY + index * lineHeight, 0.0F);
@@ -298,7 +402,14 @@ public final class Label extends Control {
             OreFonts.draw(graphics, font, line, 0, 0, color, shadow);
             graphics.pose().popPose();
         }
-        if (overflow != Overflow.VISIBLE) graphics.disableScissor();
+        if (overflow != Overflow.VISIBLE) { graphics.disableScissor(); DebugBridge.backend().unclip(); }
+    }
+
+    public static void draw(Control owner, ModularGuiContext context, Component text, Rect area, int color,
+                            Overflow overflow, Horizontal horizontal, Vertical vertical) {
+        Label label = new Label(text).color(color).overflow(overflow).align(horizontal, vertical);
+        DebugBridge.backend().internal(owner, "text@" + area.x() + "," + area.y(), label);
+        label.drawAt(context, area);
     }
 
     public static void draw(ModularGuiContext context, Component text, Rect area, int color,
@@ -311,4 +422,11 @@ public final class Label extends Control {
         new Label(text).color(color).shadow(shadow).overflow(overflow)
                 .align(horizontal, vertical).drawAt(context, area);
     }
+
+    @Override public void debugProperties(java.util.List<DebugProperty> out) {
+        super.debugProperties(out);
+        out.add(DebugProperty.choice(this, "horizontal", "Text", () -> DebugBridge.value(this, "horizontal", this.horizontal)));
+        out.add(DebugProperty.choice(this, "vertical", "Text", () -> DebugBridge.value(this, "vertical", this.vertical)));
+    }
+
 }

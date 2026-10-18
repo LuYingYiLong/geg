@@ -1,5 +1,8 @@
 package io.github.luyingyilong.geg.client.ui.layout;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+import io.github.luyingyilong.geg.client.ui.debug.Inspectable;
+import io.github.luyingyilong.geg.client.ui.debug.DebugProperty;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.client.gui.Font;
 
@@ -9,6 +12,7 @@ import java.util.List;
 
 /** A local-coordinate layout node. Window owns keyboard focus; ModularUI edits text. */
 public class Control {
+    private String debugName = "";
     private Control parent;
     private final List<Control> children = new ArrayList<>();
     private Rect bounds = new Rect(0, 0, 0, 0);
@@ -46,6 +50,7 @@ public class Control {
 
     public Control sizeFlagsHorizontal(int flags) {
         SizeFlags.validate(flags);
+        if (DebugBridge.previewWrite(this, "sizeFlagsHorizontal", flags)) return this;
         if (sizeFlagsHorizontal != flags) {
             sizeFlagsHorizontal = flags;
             requestLayout();
@@ -55,6 +60,7 @@ public class Control {
 
     public Control sizeFlagsVertical(int flags) {
         SizeFlags.validate(flags);
+        if (DebugBridge.previewWrite(this, "sizeFlagsVertical", flags)) return this;
         if (sizeFlagsVertical != flags) {
             sizeFlagsVertical = flags;
             requestLayout();
@@ -65,6 +71,7 @@ public class Control {
     public Control sizeFlagsStretchRatio(float ratio) {
         if (!Float.isFinite(ratio) || ratio <= 0.0F)
             throw new IllegalArgumentException("Stretch ratio must be positive");
+        if (DebugBridge.previewWrite(this, "sizeFlagsStretchRatio", ratio)) return this;
         if (sizeFlagsStretchRatio != ratio) {
             sizeFlagsStretchRatio = ratio;
             requestLayout();
@@ -72,9 +79,21 @@ public class Control {
         return this;
     }
 
-    public int sizeFlagsHorizontal() { return sizeFlagsHorizontal; }
-    public int sizeFlagsVertical() { return sizeFlagsVertical; }
-    public float sizeFlagsStretchRatio() { return sizeFlagsStretchRatio; }
+    @Inspectable(min = 0, max = 15)
+    public int sizeFlagsHorizontal() {
+        int sizeFlagsHorizontal = DebugBridge.value(this, "sizeFlagsHorizontal", this.sizeFlagsHorizontal);
+        return sizeFlagsHorizontal;
+    }
+    @Inspectable(min = 0, max = 15)
+    public int sizeFlagsVertical() {
+        int sizeFlagsVertical = DebugBridge.value(this, "sizeFlagsVertical", this.sizeFlagsVertical);
+        return sizeFlagsVertical;
+    }
+    @Inspectable(min = 0.0001, max = 100000)
+    public float sizeFlagsStretchRatio() {
+        float sizeFlagsStretchRatio = DebugBridge.value(this, "sizeFlagsStretchRatio", this.sizeFlagsStretchRatio);
+        return sizeFlagsStretchRatio;
+    }
 
     public Control focusable(boolean focusable) {
         this.focusable = focusable;
@@ -127,6 +146,11 @@ public class Control {
     }
 
     public void onFocusChanged(boolean focused) { }
+    public io.github.luyingyilong.geg.client.ui.window.WindowContext windowContext() {
+        for (Control node = this; node != null; node = node.parent())
+            if (node instanceof Window window) return window.context();
+        return io.github.luyingyilong.geg.client.ui.window.WindowContext.current();
+    }
     public Control parent() { return parent; }
     public List<Control> children() { return List.copyOf(children); }
 
@@ -145,6 +169,7 @@ public class Control {
     public boolean removeChild(Control child) {
         if (!children.remove(child)) return false;
         child.cancelInteractions();
+        DebugBridge.backend().removed(child);
         child.parent = null;
         requestLayout();
         return true;
@@ -183,9 +208,15 @@ public class Control {
         for (Control child : children) child.invalidateTextLayout();
     }
 
-    public int minimumWidth() { return minimumWidth; }
-    public int minimumHeight() { return minimumHeight; }
-    public Size minimumSize() { return new Size(minimumWidth, minimumHeight); }
+    public int minimumWidth() {
+        int minimumWidth = DebugBridge.value(this, "minimumWidth", this.minimumWidth);
+        return minimumWidth;
+    }
+    public int minimumHeight() {
+        int minimumHeight = DebugBridge.value(this, "minimumHeight", this.minimumHeight);
+        return minimumHeight;
+    }
+    public Size minimumSize() { return new Size(minimumWidth(), minimumHeight()); }
     public boolean visible() { return visible; }
     public void visible(boolean visible) {
         if (this.visible != visible) {
@@ -201,10 +232,30 @@ public class Control {
         return this;
     }
     public Control offset(int x, int y) { return offset(new Offset(x, y)); }
-    public Offset offset() { return offset; }
+    public Offset offset() { if (!DebugBridge.active()) return offset; return new Offset(debugValue("offsetX", offset.x()), debugValue("offsetY", offset.y())); }
+    protected final <T> T debugValue(String key, T base) { return DebugBridge.value(this, key, base); }
+    protected final int debugValue(String key, int base) { return DebugBridge.value(this, key, base); }
+    public String debugName() { return debugName; }
+    public Control debugName(String name) { debugName = java.util.Objects.requireNonNull(name); return this; }
+    public Rect debugRequestedBounds() { if (!DebugBridge.active()) return requestedBounds; return new Rect(debugValue("x", requestedBounds.x()), debugValue("y", requestedBounds.y()),
+            debugValue("width", requestedBounds.width()), debugValue("height", requestedBounds.height())); }
+    /** Complex/forwarded properties only; the development Inspector also discovers @Inspectable getters. */
+    public void debugProperties(java.util.List<DebugProperty> out) {
+        var number = (java.util.function.BiConsumer<String, java.util.function.Supplier<?>>)(key, read) -> out.add(
+                DebugProperty.number(this, key, "Layout", read,
+                key.startsWith("offset") || key.equals("x") || key.equals("y") ? -100000 : key.equals("sizeFlagsStretchRatio") ? 0.0001 : 0, 100000));
+        number.accept("minimumWidth", this::minimumWidth); number.accept("minimumHeight", this::minimumHeight);
+        number.accept("preferredWidth", () -> debugValue("preferredWidth", preferredWidth));
+        number.accept("preferredHeight", () -> debugValue("preferredHeight", preferredHeight));
+        number.accept("offsetX", () -> offset().x()); number.accept("offsetY", () -> offset().y());
+        if (!(parent instanceof Container) && !(this instanceof Window)) {
+            number.accept("x", () -> debugRequestedBounds().x()); number.accept("y", () -> debugRequestedBounds().y());
+            number.accept("width", () -> debugRequestedBounds().width()); number.accept("height", () -> debugRequestedBounds().height());
+        }
+    }
     /** The parent's assigned rectangle, before this control's Offset is applied. */
     public Rect layoutBounds() { return bounds; }
-    public Rect bounds() { return bounds.translated(offset.x(), offset.y()); }
+    public Rect bounds() { return bounds.translated(offset().x(), offset().y()); }
     /** The size assigned by the most recent layout pass. */
     public Size size() { return new Size(bounds.width(), bounds.height()); }
 
@@ -219,12 +270,30 @@ public class Control {
         addChild(child);
     }
 
-    public int measureWidth(Font font, int available) { return Math.max(minimumWidth, preferredWidth); }
-    public int measureHeight(Font font, int available) { return Math.max(minimumHeight, preferredHeight); }
+    public int measureWidth(Font font, int available) {
+        int minimumWidth = DebugBridge.value(this, "minimumWidth", this.minimumWidth);
+        int preferredWidth = DebugBridge.value(this, "preferredWidth", this.preferredWidth);
+        return Math.max(minimumWidth, preferredWidth);
+    }
+    public int measureHeight(Font font, int available) {
+        int minimumHeight = DebugBridge.value(this, "minimumHeight", this.minimumHeight);
+        int preferredHeight = DebugBridge.value(this, "preferredHeight", this.preferredHeight);
+        return Math.max(minimumHeight, preferredHeight);
+    }
     /** The desired size before layout, which may differ from the current size. */
     public Size measureSize(Font font, Size available) {
+        int minimumWidth = DebugBridge.value(this, "minimumWidth", this.minimumWidth);
+        int minimumHeight = DebugBridge.value(this, "minimumHeight", this.minimumHeight);
         return new Size(Math.max(minimumWidth, measureWidth(font, available.width())),
                 Math.max(minimumHeight, measureHeight(font, available.height())));
+    }
+
+    /** Containers use this envelope so overrides of natural measurement still respect preferences. */
+    public final Size desiredSize(Font font, Size available) {
+        Size natural = measureSize(font, available);
+        int width = Math.max(natural.width(), debugValue("preferredWidth", preferredWidth));
+        int height = Math.max(natural.height(), debugValue("preferredHeight", preferredHeight));
+        return width == natural.width() && height == natural.height() ? natural : new Size(width, height);
     }
 
     /** Coordinates are relative to the parent control. */
@@ -233,10 +302,11 @@ public class Control {
         layoutDirty = false;
         if (!(this instanceof Container))
             for (Control child : children)
-                if (child.visible()) child.layout(child.requestedBounds, font);
+                if (child.visible()) child.layout(child.debugRequestedBounds(), font);
     }
 
     public void draw(ModularGuiContext context, int screenX, int screenY) {
+        DebugBridge.backend().paint(this, context, screenX, screenY);
         render(context, screenX, screenY);
         for (Control child : children)
             if (child.visible()) child.draw(context, screenX, screenY);

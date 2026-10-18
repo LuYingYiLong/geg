@@ -23,6 +23,7 @@ public final class OreButtonWidget extends AbstractWidget {
     private Font font;
     private ModularGuiContext context;
     private boolean pointerHeld;
+    private final io.github.luyingyilong.geg.client.ui.window.WindowContext hostContext = new io.github.luyingyilong.geg.client.ui.window.WindowContext(false);
 
     public OreButtonWidget(Button button, Component narration) {
         super(0, 0, 32, Button.HEIGHT, narration);
@@ -55,12 +56,12 @@ public final class OreButtonWidget extends AbstractWidget {
         context.updateScreenArea(minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
         context.updateState(mouseX, mouseY, partialTick);
         context.setOverrideFont(font);
-        context.setGraphics(graphics);
+        context.setGraphics(graphics); hostContext.bind(context);
         context.reset();
         context.pushViewport(null, context.getScreenArea());
         boolean disabled = button.disabled();
         if (!active) button.disabled(true);
-        try {
+        try (var host = hostContext.enter()) {
             graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
             button.draw(context, 0, 0);
             if (isFocused() && active && !button.disabled() && minecraft.getLastInputType().isKeyboard()) {

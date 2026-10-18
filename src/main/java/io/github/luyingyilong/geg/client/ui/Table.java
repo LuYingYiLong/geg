@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.layout.Container;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
@@ -610,6 +612,7 @@ public final class Table<T> extends Container {
 
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
+        DebugBridge.backend().paint(this, context, screenX, screenY);
         if (bounds().width() <= 0 || bounds().height() <= 0) return;
         if (rowBackground == null) rowBackground = new Panel(OreTheme.BAR);
         updateVisible(context.getFont());
@@ -620,8 +623,9 @@ public final class Table<T> extends Container {
         if (body.height() <= 0) return;
         GuiGraphics graphics = context.getGraphics();
         graphics.enableScissor(body.x(), body.y(), body.right(), body.bottom());
+        DebugBridge.backend().clip(body);
         if (rows.isEmpty()) {
-            Label.draw(context, empty, new Rect(body.x() + 2, body.y() + 8,
+            Label.draw(this, context, empty, new Rect(body.x() + 2, body.y() + 8,
                             Math.max(0, body.width() - 4), 12), headerColor,
                     Label.Overflow.CLIP, Label.Horizontal.LEFT, Label.Vertical.CENTER);
         } else {
@@ -630,14 +634,14 @@ public final class Table<T> extends Container {
                 if (view != null) view.draw(context, screenX, screenY);
             }
         }
-        graphics.disableScissor();
+        graphics.disableScissor(); DebugBridge.backend().unclip();
     }
 
     private void drawHeader(ModularGuiContext context, Rect area) {
         int x = area.x();
         for (int index = 0; index < columns.size(); index++) {
             Column<T> column = columns.get(index);
-            Label.draw(context, column.title, new Rect(x + 4, area.y(),
+            Label.draw(this, context, column.title, new Rect(x + 4, area.y(),
                             Math.max(0, columnWidths[index] - 8), HEADER_HEIGHT), headerColor,
                     Label.Overflow.CLIP, Label.Horizontal.LEFT, Label.Vertical.CENTER);
             x += columnWidths[index];
@@ -657,6 +661,7 @@ public final class Table<T> extends Container {
         if (bounds.width() <= 0 || bounds.height() <= 0) return;
         GuiGraphics graphics = context.getGraphics();
         graphics.enableScissor(bounds.x(), bounds.y(), bounds.right(), bounds.bottom());
+        DebugBridge.backend().clip(bounds);
         try {
             List<Rect> targets = column.cell.focusTargets(item, bounds);
             int pointerIndex = -1;
@@ -670,7 +675,7 @@ public final class Table<T> extends Container {
             }
             column.cell.draw(context, item, bounds, new CellState(pointerIndex, keyIndex));
         } finally {
-            graphics.disableScissor();
+            graphics.disableScissor(); DebugBridge.backend().unclip();
         }
     }
 
@@ -679,7 +684,7 @@ public final class Table<T> extends Container {
         int width = Math.max(0, row.width() - 2 * COMPACT_INSET);
         int y = row.y() + COMPACT_INSET;
         for (Column<T> column : columns) {
-            Label.draw(context, column.title, new Rect(x, y, width, COMPACT_LABEL_HEIGHT),
+            Label.draw(this, context, column.title, new Rect(x, y, width, COMPACT_LABEL_HEIGHT),
                     headerColor, Label.Overflow.CLIP, Label.Horizontal.LEFT, Label.Vertical.CENTER);
             y += COMPACT_LABEL_HEIGHT;
             int height = compactCellHeight(column, item, context.getFont(), width);
@@ -800,6 +805,7 @@ public final class Table<T> extends Container {
 
         private void bind(Row<T> row) {
             cancelInteractions();
+            DebugBridge.backend().binding(this, row.key());
             this.row = row;
             for (Column<T> column : columns) {
                 Control control = controls.get(column.key);
@@ -828,14 +834,16 @@ public final class Table<T> extends Container {
         }
 
         @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+        DebugBridge.backend().paint(this, context, screenX, screenY);
             render(context, screenX, screenY);
             for (Column<T> column : columns) {
                 Control control = controls.get(column.key);
                 if (control == null || !control.visible()) continue;
                 Rect area = control.screenBounds(screenX, screenY);
                 context.getGraphics().enableScissor(area.x(), area.y(), area.right(), area.bottom());
+                DebugBridge.backend().clip(area);
                 try { control.draw(context, screenX, screenY); }
-                finally { context.getGraphics().disableScissor(); }
+                finally { context.getGraphics().disableScissor(); DebugBridge.backend().unclip(); }
             }
         }
 

@@ -1,5 +1,8 @@
 package io.github.luyingyilong.geg.client.ui.layout;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+import io.github.luyingyilong.geg.client.ui.window.*;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.theme.OreFonts;
 import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
@@ -10,6 +13,11 @@ import org.lwjgl.glfw.GLFW;
 /** GUI-viewport root, not a native operating-system window. */
 public final class Window extends Container {
     private final boolean fullscreen;
+    private WindowHost host;
+    private boolean inspectable = true;
+    private boolean automaticPopups;
+    private boolean closedNotified;
+    private Runnable onClosed = () -> { };
     private final FocusManager focusManager = new FocusManager(this);
     private final FocusOverlay focusOverlay = new FocusOverlay(focusManager);
     private Control content;
@@ -18,7 +26,31 @@ public final class Window extends Container {
     private Control pointerCapture;
     private Runnable onBack = OreScreen::back;
 
-    public Window(boolean fullscreen) { this.fullscreen = fullscreen; }
+    public Window(boolean fullscreen) {
+        this.fullscreen = fullscreen;
+        host = new EmbeddedWindowHost(); host.context().owner(this);
+    }
+    public static Window embedded() { Window root = new Window(true); root.automaticPopups = true; root.onBack = root::close; return root; }
+    public static Window nativeWindow(WindowOptions options) {
+        Window root = new Window(true); root.host = new NativeWindowHost(options); root.automaticPopups = true;
+        root.context().owner(root); root.onBack = root::close; return root;
+    }
+    public WindowHost host() { return host; }
+    public WindowContext context() { return host.context(); }
+    public Window open() { closedNotified = false; host.open(this); return this; }
+    public void close() { if (closedNotified) return; closedNotified = true; cancelInteractions(); DebugBridge.backend().close(this); host.close(); onClosed.run(); }
+    public void hostClosed() {
+        if (closedNotified) return; closedNotified=true; cancelInteractions();
+        io.github.luyingyilong.geg.client.ui.input.OreInputMethod.releaseWindow(context());
+        DebugBridge.backend().close(this);
+        if (host instanceof EmbeddedWindowHost embedded) embedded.detached();
+        onClosed.run();
+    }
+    public void requestFocus() { host.requestFocus(); }
+    public Window onClosed(Runnable action) { onClosed = java.util.Objects.requireNonNull(action); return this; }
+    public boolean inspectable() { return inspectable; }
+    public Window inspectable(boolean value) { inspectable = value; return this; }
+
     public Window content(Control content) {
         if (this.content != null) removeChild(this.content);
         addChild(content);
@@ -54,7 +86,9 @@ public final class Window extends Container {
     Overlay overlayLayer() { return overlay; }
 
     public boolean pointerPressed(int rootX, int rootY, ModularGuiContext context) {
+        if (inspectable && DebugBridge.backend().picking(this)) return true;
         cancelPointer();
+        if (automaticPopups && this.context().popups().press(rootX, rootY)) return true;
         focusManager.cancelActivation();
         Control hit = pointerTarget(rootX, rootY);
         focusManager.pointerPressed(hit, context);
@@ -68,6 +102,7 @@ public final class Window extends Container {
     }
 
     public Control tooltipTarget(int rootX, int rootY) {
+        if (automaticPopups && context().popups().open()) return null;
         if (!visible() || !hit(rootX, rootY)) return null;
         for (Control node = pointerTarget(rootX, rootY); node != null && node != this; node = node.parent()) {
             if (!node.visible()) return null;
@@ -117,6 +152,7 @@ public final class Window extends Container {
     }
 
     public boolean pointerReleased(int rootX, int rootY) {
+        if (automaticPopups && context().popups().release(rootX, rootY)) return true;
         Control captured = pointerCapture;
         pointerCapture = null;
         if (captured == null) return false;
@@ -146,8 +182,13 @@ public final class Window extends Container {
     }
 
     @Override public void cancelInteraction() {
+        context().popups().cancel();
         cancelPointer();
         focusManager.resetInput();
+    }
+
+    @Override public boolean dispatchScroll(int x, int y, double delta, boolean horizontal) {
+        return automaticPopups && context().popups().scroll(delta) || super.dispatchScroll(x,y,delta,horizontal);
     }
 
     public boolean keyPressed(int keyCode, int modifiers, ModularGuiContext context) {
@@ -196,12 +237,24 @@ public final class Window extends Container {
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
         if (!visible()) return;
+        this.context().bind(context);
+        if (host instanceof EmbeddedWindowHost embedded) {
+            closedNotified = false; embedded.attached(); WindowManager.embedded(this);
+            this.context().dimensions(context.getScreenArea().width, context.getScreenArea().height,
+                    context.getScreenArea().width, context.getScreenArea().height, 1);
+        }
+        try (var frame = this.context().enter()) {
+        DebugBridge.backend().begin(this, context, screenX, screenY);
+        DebugBridge.backend().paint(this, context, screenX, screenY);
         Rect area = screenBounds(screenX, screenY);
         context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.OVERLAY_COLOR);
         if (content != null) content.draw(context, screenX, screenY);
         if (overlay != null) overlay.draw(context, screenX, screenY);
+        if (automaticPopups) this.context().popups().draw(context, screenX, screenY);
         focusManager.synchronizeNativeFocus(context);
         focusOverlay.draw(context, screenX, screenY);
         drawTooltip(context, screenX, screenY);
+        DebugBridge.backend().end(this, context, screenX, screenY);
+        }
     }
 }

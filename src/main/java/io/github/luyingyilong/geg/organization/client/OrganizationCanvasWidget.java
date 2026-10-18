@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.organization.client;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+
 import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetThemeEntry;
@@ -49,7 +51,7 @@ import java.util.Map;
 import java.util.UUID;
 
 final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> implements Interactable {
-    private final Window window = new Window(true);
+    private final Window window = (Window) new Window(true).debugName("Organization Window");
     private final Overlay overlay = new Overlay();
     private final Box options = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
     private final Box memberships = new Box().gap(4);
@@ -869,6 +871,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     @Override public void dispose() {
+        DebugBridge.backend().close(window);
         closeMenu();
         heldMenuKey = -1;
         window.cancelInteractions();

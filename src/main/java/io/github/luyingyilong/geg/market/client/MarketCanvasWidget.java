@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.market.client;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+
 import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetThemeEntry;
@@ -58,7 +60,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.IntConsumer;
 
-
 final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Interactable {
     private static final int ACCENT = OreTheme.TEXT_ACCENT;
     private static final int TEXT = OreTheme.TEXT_WHITE;
@@ -77,7 +78,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private final Dropdown<String> filterDropdown = new Dropdown<>("all", 8)
             .triggerLabel(Component.empty()).icon(OreIcons.FILTER, 16, 16)
             .showArrow(false).type(Button.Type.TEXT);
-    private final Window window = new Window(true);
+    private final Window window = (Window) new Window(true).debugName("Market Window");
     private final Grid<Card> grid = new Grid<>();
     private final Scroll gridScroll = new Scroll().content(grid);
     private final BodyContent body = new BodyContent();
@@ -847,6 +848,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     @Override public void dispose() {
+        DebugBridge.backend().close(window);
         window.cancelInteractions();
         super.dispose();
     }

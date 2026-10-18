@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.chat.client;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+
 import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetThemeEntry;
@@ -22,7 +24,7 @@ import org.lwjgl.glfw.GLFW;
 
 /** The single bridge between MUI events/native editors and the Ore chat tree. */
 final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interactable {
-    private final Window window = new Window(true);
+    private final Window window = (Window) new Window(true).debugName("Chat Window");
     private final Menu menu = new Menu(), compactMenu = new Menu(), contacts = new Menu();
     private final Scroll menuScroll = new Scroll().horizontal(Scroll.BarMode.DISABLED).content(menu);
     private final Scroll compactScroll = new Scroll().horizontal(Scroll.BarMode.DISABLED).content(compactMenu);
@@ -194,7 +196,8 @@ final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interac
         return window.keyPressed(key, modifiers, getContext()) ? Result.STOP : Result.IGNORE;
     }
     @Override public boolean onKeyReleased(int key, int scanCode, int modifiers) { return window.keyReleased(key, modifiers, getContext()); }
-    @Override public void dispose() { closing(); super.dispose(); }
+    @Override public void dispose() {
+        DebugBridge.backend().close(window); closing(); super.dispose(); }
 
     private final class Content extends Container {
         @Override public Size measureSize(Font font, Size available) { return minimumSize(); }

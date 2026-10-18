@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui.input;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+
 import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.utils.PointF;
@@ -91,6 +93,7 @@ public final class TextArea extends Input {
         Rect field = inputMethodBounds();
         context.getGraphics().enableScissor(field.x() + left, field.y() + top,
                 field.x() + left + width, field.y() + top + height);
+        if (debugControl() != null) DebugBridge.backend().internal(debugControl(),"placeholder",label);
         try { label.draw(context, 0, 0); }
         finally { context.getGraphics().disableScissor(); }
     }

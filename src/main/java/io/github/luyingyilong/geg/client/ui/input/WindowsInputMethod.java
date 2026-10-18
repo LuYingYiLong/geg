@@ -25,9 +25,10 @@ final class WindowsInputMethod implements InputMethodSession.Connection {
     private final boolean compositionCaptured;
     private final boolean initialOpen;
     private boolean closed;
+    private final boolean nativeWindow;
 
     WindowsInputMethod(Input input) {
-        this(input, currentWindow());
+        this(input, new WinDef.HWND(new Pointer(GLFWNativeWin32.glfwGetWin32Window(input.windowContext().handle()))));
     }
 
     WindowsInputMethod(Input input, WinDef.HWND window) {
@@ -37,13 +38,14 @@ final class WindowsInputMethod implements InputMethodSession.Connection {
     /** Injectable IMM boundary keeps state restoration testable without a desktop input context. */
     WindowsInputMethod(Input input, WinDef.HWND window, Imm imm) {
         this.input = input;
+        nativeWindow = input != null && input.windowContext().nativeWindow();
         this.window = window;
         this.imm = imm;
         previous = imm.ImmGetContext(window);
         previousOpen = previous != null && imm.ImmGetOpenStatus(previous);
         if (previous != null) imm.ImmReleaseContext(window, previous);
         // IACE_DEFAULT associates the window's default context, allowing OS language shortcuts.
-        if (!imm.ImmAssociateContextEx(window, null, 0x0010))
+        if (!nativeWindow && !imm.ImmAssociateContextEx(window, null, 0x0010))
             throw new IllegalStateException("Windows could not associate the input method context");
         Pointer context = imm.ImmGetContext(window);
         try {
@@ -66,9 +68,9 @@ final class WindowsInputMethod implements InputMethodSession.Connection {
         if (context == null) return;
         try {
             var caret = input.inputMethodCaret();
-            double scale = Minecraft.getInstance().getWindow().getGuiScale();
-            int x = (int) Math.round(caret.x() * scale);
-            int y = (int) Math.round(caret.y() * scale);
+            var host = input.windowContext();
+            int x = (int) Math.round(host.nativeWindow() ? host.clientX(caret.x()) : caret.x() * host.guiScale());
+            int y = (int) Math.round(host.nativeWindow() ? host.clientY(caret.y()) : caret.y() * host.guiScale());
             CandidateForm candidate = new CandidateForm();
             candidate.style = 0x0040; // CFS_CANDIDATEPOS
             candidate.position.x = x;
@@ -133,12 +135,12 @@ final class WindowsInputMethod implements InputMethodSession.Connection {
                 if (context != null) {
                     if (candidateCaptured) imm.ImmSetCandidateWindow(context, previousCandidate);
                     if (compositionCaptured) imm.ImmSetCompositionWindow(context, previousComposition);
-                    imm.ImmSetOpenStatus(context, initialOpen);
+                    if (!nativeWindow) imm.ImmSetOpenStatus(context, initialOpen);
                 }
             } finally {
                 if (context != null) imm.ImmReleaseContext(window, context);
                 imm.ImmAssociateContext(window, previous);
-                if (previous != null) imm.ImmSetOpenStatus(previous, previousOpen);
+                if (previous != null && !nativeWindow) imm.ImmSetOpenStatus(previous, previousOpen);
             }
         }
     }

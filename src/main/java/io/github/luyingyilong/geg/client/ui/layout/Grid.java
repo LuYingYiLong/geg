@@ -1,5 +1,8 @@
 package io.github.luyingyilong.geg.client.ui.layout;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+import io.github.luyingyilong.geg.client.ui.debug.Inspectable;
+import io.github.luyingyilong.geg.client.ui.debug.DebugProperty;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.client.gui.Font;
 
@@ -138,7 +141,12 @@ public final class Grid<T> extends Container implements ScrollContent {
         return true;
     }
 
+    @Inspectable
+    public LayoutMode mode() { return DebugBridge.value(this, "mode", mode); }
+
     public Grid<T> mode(LayoutMode mode) {
+        Objects.requireNonNull(mode);
+        if (DebugBridge.previewWrite(this, "mode", mode)) return this;
         this.mode = mode;
         invalidate();
         return this;
@@ -206,6 +214,9 @@ public final class Grid<T> extends Container implements ScrollContent {
     }
 
     public int columns() {
+        int minCardWidth = DebugBridge.value(this, "minCardWidth", this.minCardWidth);
+        int maxColumns = DebugBridge.value(this, "maxColumns", this.maxColumns);
+        int gap = DebugBridge.value(this, "gap", this.gap);
         int width = Math.max(1, bounds().width());
         return Math.max(1, Math.min(maxColumns, (width + gap) / (minCardWidth + gap)));
     }
@@ -236,8 +247,16 @@ public final class Grid<T> extends Container implements ScrollContent {
     }
 
     private void relayout(Font font) {
+        LayoutMode mode = DebugBridge.value(this, "mode", this.mode);
+        int minCardWidth = DebugBridge.value(this, "minCardWidth", this.minCardWidth);
+        int gap = DebugBridge.value(this, "gap", this.gap);
         if (!resetScrollPending && lastWidth != -1 && lastWidth != bounds().width()
                 && !dirty) saveAnchor();
+        Map<Object, ArrayDeque<View<T>>> previous = new HashMap<>();
+        for (Entry<T> entry : entries) {
+            View<T> view = active.get(entry.index());
+            if (view != null) previous.computeIfAbsent(entry.key(), key -> new ArrayDeque<>()).add(view);
+        }
         entries.clear();
         lastWidth = bounds().width();
         dirty = false;
@@ -283,10 +302,32 @@ public final class Grid<T> extends Container implements ScrollContent {
                     break;
                 }
         }
-        recycleAll();
+        // Provisional Scroll measurements may cross a column breakpoint every frame.
+        // Keep each item's view (and its marquee/input state) attached to its stable key.
+        Map<Integer, View<T>> retained = new HashMap<>();
+        for (Entry<T> entry : entries) {
+            ArrayDeque<View<T>> candidates = previous.get(entry.key());
+            View<T> view = candidates == null ? null : candidates.pollFirst();
+            if (view != null) {
+                if (view instanceof Control control) DebugBridge.backend().binding(control, entry.key());
+                view.bind(entry.item());
+                retained.put(entry.index(), view);
+            }
+        }
+        for (ArrayDeque<View<T>> remaining : previous.values())
+            for (View<T> view : remaining) {
+                if (view instanceof Control control) super.removeChild(control);
+                recycled.add(view);
+            }
+        active.clear();
+        active.putAll(retained);
+        visibilityDirty = true;
     }
 
     private void relayoutFixed(Font font) {
+        LayoutMode mode = DebugBridge.value(this, "mode", this.mode);
+        int minCardWidth = DebugBridge.value(this, "minCardWidth", this.minCardWidth);
+        int gap = DebugBridge.value(this, "gap", this.gap);
         if (fixedChildren.isEmpty()) {
             contentWidth = 0;
             contentHeight = 0;
@@ -305,7 +346,7 @@ public final class Grid<T> extends Container implements ScrollContent {
                 rowY += rowHeight + gap;
                 rowHeight = 0;
             }
-            int height = Math.max(1, child.measureSize(font, new Size(cardWidth, cardWidth)).height());
+            int height = Math.max(1, child.desiredSize(font, new Size(cardWidth, cardWidth)).height());
             int top = mode == LayoutMode.ROWS ? rowY : heights[column];
             fitChild(child, new Rect(column * (cardWidth + gap), top, cardWidth, height), font);
             if (mode == LayoutMode.ROWS) rowHeight = Math.max(rowHeight, height);
@@ -347,6 +388,7 @@ public final class Grid<T> extends Container implements ScrollContent {
         for (Entry<T> entry : entries)
             if (visible.contains(entry.index()) && !active.containsKey(entry.index())) {
                 View<T> view = recycled.isEmpty() ? adapter.createView() : recycled.removeFirst();
+                if (view instanceof Control control) DebugBridge.backend().binding(control, entry.key());
                 view.bind(entry.item());
                 if (view instanceof Control control) super.addChild(control);
                 active.put(entry.index(), view);
@@ -358,6 +400,7 @@ public final class Grid<T> extends Container implements ScrollContent {
 
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
+        DebugBridge.backend().paint(this, context, screenX, screenY);
         if (bounds().width() <= 0 || bounds().height() <= 0) return;
         if (adapter != null) updateVisible();
         Rect origin = screenBounds(screenX, screenY);
@@ -457,4 +500,12 @@ public final class Grid<T> extends Container implements ScrollContent {
 
     public record Entry<T>(int index, T item, Object key, Rect bounds) {
     }
+
+    @Override public void debugProperties(java.util.List<DebugProperty> out) {
+        super.debugProperties(out);
+        out.add(DebugProperty.number(this, "minCardWidth", "Layout", () -> DebugBridge.value(this, "minCardWidth", this.minCardWidth), 1, 10000));
+        out.add(DebugProperty.number(this, "maxColumns", "Layout", () -> DebugBridge.value(this, "maxColumns", this.maxColumns), 1, 10000));
+        out.add(DebugProperty.number(this, "gap", "Layout", () -> DebugBridge.value(this, "gap", this.gap), 0, 10000));
+    }
+
 }

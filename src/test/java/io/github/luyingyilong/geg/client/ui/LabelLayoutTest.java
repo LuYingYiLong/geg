@@ -80,6 +80,14 @@ public final class LabelLayoutTest {
         check(marquee.marqueeOffset(font, 12, 8000L, false) == 6);
         marquee.text(Component.literal("AB"));
         check(marquee.marqueeOffset(font, 12, 9000L, false) == 0);
+        Label configuredEachFrame = new Label(Component.literal("ABCDE"));
+        for (int frame = 0; frame <= 10; frame++) {
+            configuredEachFrame.overflow(Label.Overflow.MARQUEE).scrollTrigger(Label.ScrollTrigger.HOVER)
+                    .scrollSpeed(6).scrollEndPause(500).scale(1);
+            check(configuredEachFrame.marqueeOffset(font, 12, 1000 + frame * 100L, true) == frame * 6 / 10);
+        }
+        configuredEachFrame.scrollSpeed(12);
+        check(configuredEachFrame.marqueeOffset(font, 12, 2100, true) == 0);
         fontFamiliesAndStyles();
         fontSizeLayout(font);
         stableBaselines(font);

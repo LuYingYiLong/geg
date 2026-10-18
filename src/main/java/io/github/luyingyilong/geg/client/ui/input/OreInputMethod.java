@@ -16,84 +16,98 @@ import net.minecraftforge.fml.common.Mod;
 /** Native text input follows Ore focus, including fields disappearing or their screen closing. */
 @Mod.EventBusSubscriber(modid = GegMod.MODID, value = Dist.CLIENT)
 public final class OreInputMethod {
-    private static final InputMethodSession<Input> SESSION = new InputMethodSession<>();
-    private static Input focused;
-    private static Screen screen;
-    private static boolean failed;
+    private static final java.util.Map<io.github.luyingyilong.geg.client.ui.window.WindowContext, State> STATES = new java.util.WeakHashMap<>();
+    private static final class State {
+        final InputMethodSession<Input> session = new InputMethodSession<>();
+        Input focused;
+        Screen screen;
+        boolean failed;
+    }
+    private static State state(Input input) { return STATES.computeIfAbsent(input.windowContext(), key -> new State()); }
+    public static void releaseWindow(io.github.luyingyilong.geg.client.ui.window.WindowContext context) {
+        State state = STATES.remove(context);
+        if (state != null) { if (state.focused != null) state.focused.clearPreeditDisplay(); state.session.clear(); }
+    }
 
     private OreInputMethod() { }
 
     static void focus(Input input) {
-        if (failed || !input.supportsInputMethod()) return;
+        State state = state(input);
+        if (state.failed || !input.supportsInputMethod() || !input.windowContext().focused()) return;
         try {
-            SESSION.focus(input, () -> {
-                if (ModList.get().isLoaded("imblocker")) return new ImBlockerInputMethod(input);
+            state.session.focus(input, () -> {
+                if (!input.windowContext().nativeWindow() && ModList.get().isLoaded("imblocker")) return new ImBlockerInputMethod(input);
                 if (Util.getPlatform() == Util.OS.WINDOWS) return new WindowsInputMethod(input);
                 return () -> { };
             });
-            focused = input;
-            screen = Minecraft.getInstance().screen;
-            SESSION.update(input, true);
+            state.focused = input;
+            state.screen = Minecraft.getInstance().screen;
+            state.session.update(input, true);
         } catch (RuntimeException | LinkageError error) {
-            fail(error);
+            fail(state, error);
         }
     }
 
     static void release(Input input) {
+        State state = STATES.get(input.windowContext());
         input.clearPreeditDisplay();
-        if (focused != input) return;
-        focused = null;
-        screen = null;
-        try { SESSION.release(input); }
-        catch (RuntimeException | LinkageError error) { fail(error); }
+        if (state == null) return;
+        if (state.focused != input) return;
+        state.focused = null;
+        state.screen = null;
+        try { state.session.release(input); }
+        catch (RuntimeException | LinkageError error) { fail(state, error); }
     }
 
     static boolean composing(Input input) {
-        try { return SESSION.composing(input); }
-        catch (RuntimeException | LinkageError error) { fail(error); return false; }
+        State state = state(input);
+        try { return state.session.composing(input); }
+        catch (RuntimeException | LinkageError error) { fail(state, error); return false; }
     }
 
     static InputPreedit preedit(Input input) {
-        try { return SESSION.preedit(input); }
-        catch (RuntimeException | LinkageError error) { fail(error); return InputPreedit.EMPTY; }
+        State state = state(input);
+        try { return state.session.preedit(input); }
+        catch (RuntimeException | LinkageError error) { fail(state, error); return InputPreedit.EMPTY; }
     }
 
-    static boolean inlinePreedit(Input input) { return SESSION.inlinePreedit(input); }
+    static boolean inlinePreedit(Input input) { return state(input).session.inlinePreedit(input); }
 
     static void cancelComposition(Input input) {
-        try { SESSION.cancelComposition(input); }
-        catch (RuntimeException | LinkageError error) { fail(error); }
+        State state = state(input);
+        try { state.session.cancelComposition(input); }
+        catch (RuntimeException | LinkageError error) { fail(state, error); }
     }
 
     static void locateFocus(Input input) {
-        try { SESSION.locateFocus(input); }
-        catch (RuntimeException | LinkageError error) { fail(error); }
+        State state = state(input);
+        try { state.session.locateFocus(input); }
+        catch (RuntimeException | LinkageError error) { fail(state, error); }
     }
 
-    private static void fail(Throwable error) {
-        failed = true;
-        if (focused != null) focused.clearPreeditDisplay();
-        focused = null;
-        screen = null;
-        try { SESSION.clear(); }
-        catch (RuntimeException | LinkageError cleanup) { error.addSuppressed(cleanup); }
-        LogUtils.getLogger().warn("Ore input method integration unavailable; using GLFW text input", error);
+    private static void fail(State state, Throwable error) {
+        state.failed = true;
+        if (state.focused != null) state.focused.clearPreeditDisplay();
+        state.focused = null; state.screen = null;
+        try { state.session.clear(); } catch (RuntimeException | LinkageError cleanup) { error.addSuppressed(cleanup); }
+        LogUtils.getLogger().warn("Ore window input method unavailable; using GLFW text input", error);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void screenClosing(ScreenEvent.Closing event) {
-        if (focused != null && event.getScreen() == screen) release(focused);
-    }
-
-    @SubscribeEvent public static void tick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || focused == null) return;
-        Input input = focused;
-        if (Minecraft.getInstance().screen != screen || !input.isFocused()
-                || !input.inputVisible() || !input.inputMethodInteractive()) {
-            release(input);
-            return;
+        for (var entry : java.util.List.copyOf(STATES.entrySet())) {
+            State state = entry.getValue();
+            if (!entry.getKey().nativeWindow() && state.focused != null && event.getScreen() == state.screen) release(state.focused);
         }
-        try { SESSION.update(input, true); }
-        catch (RuntimeException | LinkageError error) { fail(error); }
+    }
+    @SubscribeEvent public static void tick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        for (var entry : java.util.List.copyOf(STATES.entrySet())) {
+            var context = entry.getKey(); State state = entry.getValue(); Input input = state.focused;
+            if (input == null) continue;
+            if (!context.focused() || !context.nativeWindow() && Minecraft.getInstance().screen != state.screen
+                    || !input.isFocused() || !input.inputVisible() || !input.inputMethodInteractive()) { release(input); continue; }
+            try { state.session.update(input, true); } catch (RuntimeException | LinkageError error) { fail(state, error); }
+        }
     }
 }

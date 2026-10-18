@@ -20,6 +20,14 @@ java {
 
 println "Gradle JVM: ${System.getProperty('java.version')} (${System.getProperty('java.vendor')}, ${System.getProperty('os.arch')})"
 
+// Inspector is intentionally absent from main, server runs and publication artifacts.
+sourceSets {
+    oreDebug {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
 minecraft {
     mappings channel: mapping_channel, version: mapping_version
     copyIdeResources = true
@@ -41,6 +49,8 @@ minecraft {
         }
 
         client {
+            ideaModule "${project.name}.oreDebug"
+            mods { "${mod_id}" { source sourceSets.oreDebug } }
             property 'forge.enabledGameTestNamespaces', mod_id
         }
 
@@ -60,6 +70,21 @@ minecraft {
     }
 }
 
+sourceSets {
+    oreDebugTest {
+        compileClasspath += sourceSets.oreDebug.output + sourceSets.oreDebug.compileClasspath
+        runtimeClasspath += sourceSets.oreDebug.output + sourceSets.oreDebug.runtimeClasspath + sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+tasks.register('inspectorTest', JavaExec) {
+    dependsOn tasks.named('oreDebugTestClasses'), tasks.named('processOreDebugResources')
+    classpath = sourceSets.oreDebugTest.runtimeClasspath
+    workingDir layout.buildDirectory.dir('tmp/ore-inspector-tests')
+    doFirst { workingDir.mkdirs() }
+    mainClass = 'io.github.luyingyilong.geg.inspector.InspectorTest'
+    enableAssertions = true
+}
+
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 // ModularUI 3.3.1 retains 1.12 SideOnly metadata on a few classes.
@@ -71,6 +96,7 @@ sourceSets {
 }
 
 repositories {
+    mavenCentral()
     maven {
         url = 'https://www.cursemaven.com'
         content { includeGroup 'curse.maven' }

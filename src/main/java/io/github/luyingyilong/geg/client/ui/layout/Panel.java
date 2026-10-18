@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui.layout;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+
 import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
@@ -34,7 +36,7 @@ public final class Panel extends Container {
     }
 
     @Override public Size measureSize(Font font, Size available) {
-        Size childSize = child == null ? new Size(0, 0) : child.measureSize(font, available);
+        Size childSize = child == null ? new Size(0, 0) : child.desiredSize(font, available);
         return new Size(Math.max(minimumWidth(), childSize.width()),
                 Math.max(minimumHeight(), childSize.height()));
     }
@@ -49,6 +51,7 @@ public final class Panel extends Container {
 
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
+        DebugBridge.backend().paint(this, context, screenX, screenY);
         drawAt(context, screenBounds(screenX, screenY));
         if (child != null && child.visible()) child.draw(context, screenX, screenY);
     }

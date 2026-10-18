@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.mail.client;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+
 import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetThemeEntry;
@@ -47,7 +49,7 @@ import java.util.*;
 
 /** Ore owns one geometry/focus tree; MUI Input widgets are synchronized siblings of this canvas. */
 final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interactable {
-    private final Window window = new Window(true);
+    private final Window window = (Window) new Window(true).debugName("Mail Window");
     private final Overlay overlay = new Overlay();
     private final Navbar navbar = new Navbar(tr("mail.geg.title"));
     private final Button send = new Button(tr("mail.geg.compose")).onPressed(() -> compose(null));
@@ -292,7 +294,8 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         }
     }
     void close() { form.setVisible(false); window.cancelInteractions(); }
-    @Override public void dispose() { close(); super.dispose(); }
+    @Override public void dispose() {
+        DebugBridge.backend().close(window); close(); super.dispose(); }
     @Override public void draw(ModularGuiContext context, WidgetThemeEntry<?> theme) {
         int width = getArea().width, height = getArea().height;
         int drawerWidth = width < 320 ? width : width / 2;

@@ -1,5 +1,8 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+import io.github.luyingyilong.geg.client.ui.debug.Inspectable;
+import io.github.luyingyilong.geg.client.ui.debug.DebugProperty;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
@@ -120,15 +123,25 @@ public final class Drawer extends Container {
     public Padding.Insets padding() { return frame.insets(); }
 
     public Drawer placement(Placement placement) {
-        this.placement = Objects.requireNonNull(placement);
+        Objects.requireNonNull(placement);
+        if (DebugBridge.previewWrite(this, "placement", placement)) return this;
+        this.placement = placement;
         requestLayout();
         return this;
     }
-    public Placement placement() { return placement; }
+    @Inspectable
+    public Placement placement() {
+        Placement placement = DebugBridge.value(this, "placement", this.placement);
+        return placement;
+    }
 
     /** Zero (the default) uses half the GUI viewport; explicit widths are viewport-limited. */
+    @Inspectable(setter = "width", min = 0, max = 100000)
+    public int requestedWidth() { return DebugBridge.value(this, "requestedWidth", requestedWidth); }
+
     public Drawer width(int width) {
         if (width < 0) throw new IllegalArgumentException("Drawer width cannot be negative");
+        if (DebugBridge.previewWrite(this, "requestedWidth", width)) return this;
         requestedWidth = width;
         requestLayout();
         return this;
@@ -234,6 +247,8 @@ public final class Drawer extends Container {
     }
 
     private void layoutPanel(Font font) {
+        Placement placement = DebugBridge.value(this, "placement", this.placement);
+        int requestedWidth = DebugBridge.value(this, "requestedWidth", this.requestedWidth);
         advanceAnimation();
         int viewportWidth = Math.max(1, bounds().width());
         int width = Math.min(viewportWidth, Math.max(1,
@@ -245,6 +260,7 @@ public final class Drawer extends Container {
     }
 
     @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+        DebugBridge.backend().paint(this, context, screenX, screenY);
         if (!visible()) return;
         layoutPanel(context.getFont());
         if (!visible()) return;
@@ -254,6 +270,7 @@ public final class Drawer extends Container {
         graphics.pose().pushPose();
         graphics.pose().translate(0.0F, 0.0F, depth);
         graphics.enableScissor(viewport.x(), viewport.y(), viewport.right(), viewport.bottom());
+        DebugBridge.backend().clip(viewport);
         try {
             graphics.fill(viewport.x(), viewport.y(), viewport.right(), viewport.bottom(), maskColor());
             if (background == null) background = new Panel(OreTheme.FLOATING_BACKGROUND);
@@ -264,7 +281,7 @@ public final class Drawer extends Container {
             frame.draw(context, screenX, screenY);
             graphics.flush();
         } finally {
-            graphics.disableScissor();
+            graphics.disableScissor(); DebugBridge.backend().unclip();
             graphics.pose().popPose();
         }
     }
@@ -295,6 +312,15 @@ public final class Drawer extends Container {
         if (keyCode != GLFW.GLFW_KEY_ESCAPE) return false;
         close();
         return true;
+    }
+
+
+    @Override public void debugProperties(java.util.List<DebugProperty> out) {
+        super.debugProperties(out);
+        out.add(DebugProperty.number(title,"fontSize","Text",title::fontSize,0.0001,256));
+        java.util.List<DebugProperty> paddingProperties = new java.util.ArrayList<>();
+        frame.debugProperties(paddingProperties);
+        paddingProperties.stream().filter(p -> java.util.Set.of("top","right","bottom","left").contains(p.key())).forEach(out::add);
     }
 
 }

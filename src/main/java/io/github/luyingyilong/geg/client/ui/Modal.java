@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
@@ -224,6 +226,7 @@ public final class Modal extends Container {
     }
 
     @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+        DebugBridge.backend().paint(this, context, screenX, screenY);
         if (!visible()) return;
         GuiGraphics graphics = context.getGraphics();
         graphics.flush();

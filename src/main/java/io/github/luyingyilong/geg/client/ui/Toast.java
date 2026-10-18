@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.layout.*;
 import io.github.luyingyilong.geg.client.ui.theme.OreSounds;
@@ -121,6 +123,7 @@ public final class Toast extends Container {
         label.paint(graphics, font, textBounds(area), -1, -1);
     }
     @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+        DebugBridge.backend().paint(this, context, screenX, screenY);
         drawGui(context.getGraphics(), context.getFont(), screenBounds(screenX, screenY));
     }
     @Override public Control hitTop(int rootX, int rootY) { return null; }

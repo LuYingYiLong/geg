@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client.ui.layout;
 
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
+import io.github.luyingyilong.geg.client.ui.debug.DebugProperty;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.client.gui.Font;
 
@@ -44,12 +46,13 @@ public final class Padding extends Container {
         if (this.child == child) this.child = null;
         return true;
     }
-    public Insets insets() { return insets; }
+    public Insets insets() { if (!DebugBridge.active()) return insets; return new Insets(debugValue("top", insets.top()), debugValue("right", insets.right()),
+                debugValue("bottom", insets.bottom()), debugValue("left", insets.left())); }
 
     @Override public Size measureSize(Font font, Size available) {
-        int horizontal = insets.left() + insets.right();
-        int vertical = insets.top() + insets.bottom();
-        Size inner = child == null ? new Size(0, 0) : child.measureSize(font,
+        int horizontal = insets().left() + insets().right();
+        int vertical = insets().top() + insets().bottom();
+        Size inner = child == null ? new Size(0, 0) : child.desiredSize(font,
                 new Size(Math.max(0, available.width() - horizontal),
                         Math.max(0, available.height() - vertical)));
         return new Size(Math.max(minimumWidth(), horizontal + inner.width()),
@@ -58,26 +61,34 @@ public final class Padding extends Container {
 
     @Override
     public int measureWidth(Font font, int available) {
-        return insets.left() + insets.right() + (child == null ? 0
-                : child.measureWidth(font, Math.max(0, available - insets.left() - insets.right())));
+        return insets().left() + insets().right() + (child == null ? 0
+                : child.measureWidth(font, Math.max(0, available - insets().left() - insets().right())));
     }
 
     @Override
     public int measureHeight(Font font, int available) {
-        return insets.top() + insets.bottom() + (child == null ? 0
-                : child.measureHeight(font, Math.max(0, available - insets.top() - insets.bottom())));
+        return insets().top() + insets().bottom() + (child == null ? 0
+                : child.measureHeight(font, Math.max(0, available - insets().top() - insets().bottom())));
     }
 
     @Override
     public void layout(Rect localBounds, Font font) {
         super.layout(localBounds, font);
-        if (child != null) fitChild(child, new Rect(insets.left(), insets.top(),
-                Math.max(child.minimumWidth(), localBounds.width() - insets.left() - insets.right()),
-                Math.max(child.minimumHeight(), localBounds.height() - insets.top() - insets.bottom())), font);
+        if (child != null) fitChild(child, new Rect(insets().left(), insets().top(),
+                Math.max(child.minimumWidth(), localBounds.width() - insets().left() - insets().right()),
+                Math.max(child.minimumHeight(), localBounds.height() - insets().top() - insets().bottom())), font);
     }
 
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
+        DebugBridge.backend().paint(this, context, screenX, screenY);
         if (child != null && child.visible()) child.draw(context, screenX, screenY);
+    }
+    @Override public void debugProperties(java.util.List<DebugProperty> out) {
+        super.debugProperties(out);
+        out.add(DebugProperty.number(this,"top","Layout",()->insets().top(),0,10000));
+        out.add(DebugProperty.number(this,"right","Layout",()->insets().right(),0,10000));
+        out.add(DebugProperty.number(this,"bottom","Layout",()->insets().bottom(),0,10000));
+        out.add(DebugProperty.number(this,"left","Layout",()->insets().left(),0,10000));
     }
 }
