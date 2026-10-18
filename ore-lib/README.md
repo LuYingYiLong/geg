@@ -84,6 +84,26 @@ OreClient.initialize(
 
 资源命名空间为 `ore:`，默认主题名为 `ore`，字体为 `ore:ore`、`ore:ore_hero`、`ore:ore_fallback`。资源包覆盖 `assets/ore/`。Inspector 的翻译属于 `ore_inspector:`，只挂载在开发客户端。
 
+## Switch
+
+基于 [Ant Design Switch](https://ant.design/components/switch-cn/) 的状态与回调语义，使用固定像素纹理：
+
+```java
+Switch toggle = new Switch(true)
+        .onChange(checked -> updateSetting(checked))
+        .onClick(checked -> { });
+box.addChild(toggle);
+toggle.checked(false); // 程序化更新不触发回调或音效
+toggle.disabled(true);
+toggle.loading(true); // 显示滑块内的 Spin，阻止再次操作
+```
+
+`new Switch()` 默认关闭，布尔构造参数设置初始状态。checked、disabled、loading 同时提供 getter 和链式 setter。用户松开鼠标或 Enter／Space 后先更新状态，再触发 onChange、onClick；拖出后松开会取消。禁用、加载、失焦、隐藏和顶层弹层会取消未完成操作。
+
+底板为 27×13，滑块为 14×15，底部对齐；滑块从 x=0 移动到 x=14，整体占 28×15。全部纹理按原始像素绘制，额外分配的空间不会放大图像或点击区。默认水平始端收缩、垂直居中收缩；聚焦框为滑块外围 1px，并跟随移动。
+
+默认 240ms 的 ease-out bounce 动画支持途中反向切换，不因重复绑定相同 checked 值而重新开始。`animationDuration(ms)` 可调整时长，0 关闭动画；初始值直接定位，不播放入场动画。
+
 ## 测试与兼容
 
 ```powershell

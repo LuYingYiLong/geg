@@ -38,7 +38,11 @@ public final class FocusManager {
     public boolean allowsNativeInput(Control input) { return inside(input, topScope()); }
 
     public void requestFocus(Control target, ModularGuiContext context) {
-        validate();
+        requestFocus(target, context, true);
+    }
+
+    private void requestFocus(Control target, ModularGuiContext context, boolean revealTarget) {
+        validate(revealTarget);
         if (target != null && !eligible(target)) return;
         if (focused == target) return;
         cancelActivation();
@@ -48,7 +52,7 @@ public final class FocusManager {
             inputPointerFocusVisible = false;
         if (target != null) {
             remembered.put(scope, target);
-            reveal(target);
+            if (revealTarget) reveal(target);
             target.onFocusChanged(true);
         }
         if (context != null) {
@@ -60,10 +64,12 @@ public final class FocusManager {
 
     public void pointerPressed(Control hit, ModularGuiContext context) {
         pointerActivity();
-        validate();
+        // A pointer already identifies a visible point. Revealing the whole control here can
+        // scroll a wide table/input before Window dispatches that very same press.
+        validate(false);
         for (Control control = hit; control != null; control = control.parent()) {
             if (control.acceptsFocus() && inside(control, scope)) {
-                requestFocus(control, context);
+                requestFocus(control, context, false);
                 inputPointerFocusVisible = control instanceof io.github.luyingyilong.ore.input.InputControl;
                 return;
             }
@@ -256,6 +262,10 @@ public final class FocusManager {
     }
 
     private void validate() {
+        validate(true);
+    }
+
+    private void validate(boolean revealTarget) {
         Control nextScope = topScope();
         if (nextScope != scope) {
             cancelActivation();
@@ -271,7 +281,7 @@ public final class FocusManager {
                 if (scope != null && !choices.isEmpty()) focused = choices.get(0);
             }
             if (focused != null) {
-                reveal(focused);
+                if (revealTarget) reveal(focused);
                 focused.onFocusChanged(true);
             }
         } else if (focused != null && !eligible(focused)) {

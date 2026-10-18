@@ -25,6 +25,12 @@ public final class OreIcons {
     public static final ResourceLocation EMAIL_READED = icon("email_readed");
     public static final ResourceLocation GIFT = icon("gift");
     public static final ResourceLocation GIFT_OPENED = icon("gift_opened");
+    public static final ResourceLocation SWITCH_BASE = icon("switch_base");
+    public static final ResourceLocation SWITCH_BASE_DISABLED = icon("switch_base_disabled");
+    public static final ResourceLocation SWITCH_BUTTON_NORMAL = icon("switch_button_normal");
+    public static final ResourceLocation SWITCH_BUTTON_HOVERED = icon("switch_button_hovered");
+    public static final ResourceLocation SWITCH_BUTTON_PRESSED = icon("switch_button_pressed");
+    public static final ResourceLocation SWITCH_BUTTON_DISABLED = icon("switch_button_disabled");
 
     private OreIcons() {
     }
