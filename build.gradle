@@ -31,6 +31,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             // ModularUI's published refmap targets SRG names; this dev run uses official names.
             property 'mixin.env.disableRefMap', 'true'
+            args '--mixin.config', 'geg.mixins.json'
 
             mods {
                 "${mod_id}" {

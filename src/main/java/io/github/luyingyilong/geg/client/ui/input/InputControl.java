@@ -46,6 +46,9 @@ public final class InputControl extends Control {
     }
 
     public Input widget() { return widget; }
+    @Override public int measureHeight(Font font, int available) {
+        return Math.max(minimumHeight(), widget.preferredInputHeight());
+    }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
         widget.drawInTree(context);

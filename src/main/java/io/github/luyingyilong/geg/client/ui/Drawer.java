@@ -24,8 +24,8 @@ import java.util.function.Consumer;
 import java.util.function.LongSupplier;
 
 /**
- * A right-hand overlay, initially closed. Add it to Window's Overlay, then call open().
- * The panel slides in from and returns to the right edge; the mask fades with it.
+ * An edge overlay, initially closed. Add it to Window's Overlay, then call open().
+ * The panel slides in from and returns to its selected edge; the mask fades with it.
  * onClose runs after the exit animation, so the owner can safely remove the layer.
  * <pre>{@code
  * Drawer drawer = new Drawer(title).fontSize(12).width(240).content(form);
@@ -34,8 +34,8 @@ import java.util.function.LongSupplier;
  * }</pre>
  */
 public final class Drawer extends Container {
+    public enum Placement { LEFT, RIGHT }
     public static final int PADDING = 4;
-    public static final int MASK_COLOR = 0xB3000000;
     private static final int CLOSE_SIZE = 20;
     private static final int CLOSE_ICON_SIZE = 7;
 
@@ -44,6 +44,7 @@ public final class Drawer extends Container {
     private final Label title = new Label().hero(true).overflow(Label.Overflow.ELLIPSIS)
             .align(Label.Horizontal.LEFT, Label.Vertical.CENTER).color(OreTheme.TEXT_WHITE);
     private final Box header = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
+    private final Button closeButton;
     private final Box footer = new Box().gap(2);
     private final Scroll body = new Scroll();
     private final Box column = new Box().gap(4);
@@ -52,6 +53,8 @@ public final class Drawer extends Container {
     private int titleColor = OreTheme.TEXT_WHITE;
     private Runnable onClose = () -> { };
     private int requestedWidth;
+    private Placement placement = Placement.RIGHT;
+    private boolean closable = true;
     private float depth = 200.0F;
     private long durationMs = 200L;
     private long transitionStart;
@@ -72,13 +75,12 @@ public final class Drawer extends Container {
     Drawer(Component title, LongSupplier clock, Consumer<OreSounds.Cue> soundPlayer) {
         this.clock = Objects.requireNonNull(clock);
         this.soundPlayer = Objects.requireNonNull(soundPlayer);
-        title(title);
         this.title.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
-        Button close = new Button().type(Button.Type.TEXT)
+        closeButton = new Button().type(Button.Type.TEXT)
                 .icon(OreIcons.CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE).onPress(this::close);
-        close.minimum(CLOSE_SIZE, CLOSE_SIZE);
-        close.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        header.add(this.title).add(close);
+        closeButton.minimum(CLOSE_SIZE, CLOSE_SIZE);
+        closeButton.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        header.add(this.title).add(closeButton);
         header.minimum(0, CLOSE_SIZE).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         body.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         footer.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
@@ -86,13 +88,33 @@ public final class Drawer extends Container {
         column.add(header).add(body).add(footer);
         super.addChild(frame);
         super.visible(false);
+        title(title);
     }
 
-    public Drawer title(Component text) { title.text(Objects.requireNonNull(text)); return this; }
+    public Drawer title(Component text) {
+        title.text(Objects.requireNonNull(text)); updateHeader(); return this;
+    }
+    /** Controls the close button; Escape and mask-click dismissal remain independent. */
+    public Drawer closable(boolean closable) {
+        this.closable = closable; updateHeader(); return this;
+    }
+    public boolean closable() { return closable; }
+    private void updateHeader() {
+        closeButton.visible(closable);
+        header.visible(closable || !title.getText().getString().isBlank());
+        requestLayout();
+    }
     public Drawer titleColor(int color) { titleColor = color; title.color(color); return this; }
     public int titleColor() { return titleColor; }
     public Drawer fontSize(float fontSize) { title.fontSize(fontSize); return this; }
     public float fontSize() { return title.fontSize(); }
+
+    public Drawer placement(Placement placement) {
+        this.placement = Objects.requireNonNull(placement);
+        requestLayout();
+        return this;
+    }
+    public Placement placement() { return placement; }
 
     /** Zero (the default) uses half the GUI viewport; explicit widths are viewport-limited. */
     public Drawer width(int width) {
@@ -191,7 +213,10 @@ public final class Drawer extends Container {
         }
     }
 
-    int maskColor() { return (int) Math.round((MASK_COLOR >>> 24) * progress) << 24; }
+    int maskColor() {
+        int alpha = (int) Math.round((OreTheme.OVERLAY_COLOR >>> 24) * progress);
+        return (alpha << 24) | (OreTheme.OVERLAY_COLOR & 0x00FFFFFF);
+    }
 
     @Override public void layout(Rect viewport, Font font) {
         super.layout(viewport, font);
@@ -203,7 +228,8 @@ public final class Drawer extends Container {
         int viewportWidth = Math.max(1, bounds().width());
         int width = Math.min(viewportWidth, Math.max(1,
                 requestedWidth == 0 ? viewportWidth / 2 : requestedWidth));
-        int x = viewportWidth - (int) Math.round(width * progress);
+        int visibleWidth = (int) Math.round(width * progress);
+        int x = placement == Placement.LEFT ? visibleWidth - width : viewportWidth - visibleWidth;
         // Move the actual layout rectangle, so hit tests, focus and native inputs follow the slide.
         fitChild(frame, new Rect(x, 0, width, bounds().height()), font);
     }

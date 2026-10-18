@@ -73,7 +73,14 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
             return;
         }
         if (!preedit.active()) {
-            super.drawMeasuredLines(graphics, lines);
+            boolean cursor = renderCursor;
+            renderCursor = false;
+            try { super.drawMeasuredLines(graphics, lines); }
+            finally { renderCursor = cursor; }
+            if (cursor && !simulate) {
+                Point point = handler.getMainCursor();
+                drawCaret(graphics, getPosOf(lines, point), handler.getText().get(point.y).isEmpty());
+            }
             return;
         }
         var display = presentation();
@@ -94,7 +101,7 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
                 int bottom = (int) Math.ceil(start.y + getFontHeight()) - 1;
                 graphics.fill((int) start.x, bottom, Math.max((int) start.x + 1, (int) Math.ceil(end.x)),
                         bottom + 1, cursorColor);
-                graphics.fill((int) caret.x, (int) caret.y, (int) caret.x + 1, bottom, cursorColor);
+                drawCaret(graphics, caret, false);
             }
         } finally {
             graphics.pose().popPose();
@@ -132,11 +139,14 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
             wrappedScale = scale;
             fontRevision = OreFonts.revision();
             Style style = Style.EMPTY.withFont(OreFonts.BODY);
-            wrapped = new WrappedText(source, Math.max(1, maxWidth - 1),
+            wrapped = new WrappedText(source, textWidth(),
                     cp -> getFont().getSplitter().stringWidth(FormattedCharSequence.codepoint(cp, style)) * scale);
         }
         return wrapped;
     }
+
+    /** The same final-column allowance is used by editable text and its wrapped hint. */
+    float textWidth() { return Math.max(1, maxWidth - 1); }
 
     private static Point sourcePosition(String text, int offset) {
         int start = text.lastIndexOf('\n', Math.max(-1, offset - 1)) + 1;
@@ -210,14 +220,21 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
                         getStartX(row.width()), top + index * getFontHeight());
             }
             if (display != null || renderCursor) {
-                PointF caret = wrappedPosition(layout, display == null ? handler.getMainCursor()
-                        : sourcePosition(display.text(), display.cursor()));
-                graphics.fill((int) caret.x, (int) caret.y, (int) caret.x + 1,
-                        (int) Math.ceil(caret.y + getFontHeight()), cursorColor);
+                Point point = display == null ? handler.getMainCursor() : sourcePosition(display.text(), display.cursor());
+                PointF caret = wrappedPosition(layout, point);
+                boolean emptyLine = layout.rows().get(visualPosition(layout, point).row()).text().isEmpty();
+                drawCaret(graphics, caret, emptyLine);
             }
         }
         lastWidth = Math.max(0, layout.rows().stream().map(WrappedText.Row::width).max(Float::compare).orElse(0.0F) - scale);
         lastHeight = Math.max(0, layout.rows().size() * getFontHeight() - scale);
+    }
+
+    private void drawCaret(GuiGraphics graphics, PointF position, boolean emptyLine) {
+        InputGeometry.Caret caret = InputGeometry.caret(position.x, position.y, scale, emptyLine);
+        // Font vertices may still be batched. Flush them before the final caret rectangle.
+        graphics.flush();
+        brachy.modularui.drawable.GuiDraw.drawRect(graphics, caret.x(), caret.y(), caret.width(), caret.height(), cursorColor);
     }
 
     private void drawRange(GuiGraphics graphics, WrappedText layout, Point start, Point end, boolean underline) {

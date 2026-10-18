@@ -35,7 +35,6 @@ public final class Dialog extends Container {
     private static final int CONTENT_MIN_HEIGHT = 24;
     private static final int CLOSE_SIZE = 18;
     private static final int CLOSE_ICON_SIZE = 8;
-    private static final int OVERLAY_COLOR = 0xB8000000;
 
     private final int preferredWidth;
     private final int preferredHeight;
@@ -191,7 +190,7 @@ public final class Dialog extends Container {
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
         Rect area = screenBounds(screenX, screenY);
-        context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), OVERLAY_COLOR);
+        context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.OVERLAY_COLOR);
         WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.MODAL);
         WidgetTheme style = entry == null ? context.getTheme().getPanelTheme().theme() : entry.theme();
         titleLabel.color(style.getTextColor()).shadow(style.isTextShadow());

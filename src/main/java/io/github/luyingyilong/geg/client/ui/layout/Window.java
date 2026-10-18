@@ -2,13 +2,13 @@ package io.github.luyingyilong.geg.client.ui.layout;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.geg.client.ui.theme.OreFonts;
+import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import io.github.luyingyilong.geg.client.ui.screen.OreScreen;
 import net.minecraft.client.gui.Font;
 import org.lwjgl.glfw.GLFW;
 
 /** GUI-viewport root, not a native operating-system window. */
 public final class Window extends Container {
-    public static final int BACKGROUND_COLOR = 0x80000000;
     private final boolean fullscreen;
     private final FocusManager focusManager = new FocusManager(this);
     private final FocusOverlay focusOverlay = new FocusOverlay(focusManager);
@@ -197,7 +197,7 @@ public final class Window extends Container {
     public void draw(ModularGuiContext context, int screenX, int screenY) {
         if (!visible()) return;
         Rect area = screenBounds(screenX, screenY);
-        context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), BACKGROUND_COLOR);
+        context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.OVERLAY_COLOR);
         if (content != null) content.draw(context, screenX, screenY);
         if (overlay != null) overlay.draw(context, screenX, screenY);
         focusManager.synchronizeNativeFocus(context);

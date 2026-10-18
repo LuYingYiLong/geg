@@ -266,12 +266,23 @@ public class Input extends TextFieldWidget {
     @Override protected void drawText(ModularGuiContext context, TextFieldTheme theme) {
         Component placeholder = hintText;
         hintText = null;
-        try { super.drawText(context, theme); }
-        finally { hintText = placeholder; }
-        if (placeholder == null || !handler.isTextEmpty() || composing()) return;
-        int top = firstLineTop();
+        try {
+            if (placeholder != null && handler.isTextEmpty() && !composing()) {
+                drawPlaceholder(context, placeholder);
+            }
+            // The editor paints its caret last, above the placeholder and committed text.
+            super.drawText(context, theme);
+        } finally { hintText = placeholder; }
+    }
+
+    protected Label placeholderLabel(Component placeholder) {
         int color = hintTextColor == null ? OreTheme.TEXT_SECONDARY : hintTextColor;
-        Label label = new Label(placeholder).color(color).scale(scale).overflow(Label.Overflow.VISIBLE);
+        return new Label(placeholder).color(color).scale(scale).overflow(Label.Overflow.VISIBLE);
+    }
+
+    protected void drawPlaceholder(ModularGuiContext context, Component placeholder) {
+        int top = firstLineTop();
+        Label label = placeholderLabel(placeholder);
         label.layout(new Rect(getArea().getPadding().left(), top, getArea().paddedWidth(),
                 Math.max(0, Math.min(controlSize.height(), getArea().height - top))), context.getFont());
         label.draw(context, 0, 0);

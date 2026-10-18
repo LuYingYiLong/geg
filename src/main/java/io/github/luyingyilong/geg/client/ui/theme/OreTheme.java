@@ -5,6 +5,7 @@ import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeKey;
 
 public final class OreTheme {
+    public static final int OVERLAY_COLOR = 0x80000000;
     public static final int TEXT_DARK = 0xFF1E1E1F;
     public static final int TEXT_WHITE = 0xFFFFFFFF;
     public static final int TEXT_SECONDARY = 0xFFD0D1D4;

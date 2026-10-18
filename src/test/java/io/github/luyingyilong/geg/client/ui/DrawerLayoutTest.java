@@ -8,6 +8,7 @@ import io.github.luyingyilong.geg.client.ui.layout.Size;
 import io.github.luyingyilong.geg.client.ui.layout.Window;
 import io.github.luyingyilong.geg.client.ui.theme.OreIcons;
 import io.github.luyingyilong.geg.client.ui.theme.OreSounds;
+import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -53,11 +54,11 @@ public final class DrawerLayoutTest {
         now[0] = 100L;
         window.layoutViewport(200, 120, font);
         check(drawer.panelBounds().x() == 150);
-        check((drawer.maskColor() >>> 24) == 90);
+        check((drawer.maskColor() >>> 24) == 64);
         now[0] = 200L;
         window.layoutViewport(200, 120, font);
         check(drawer.panelBounds().equals(new Rect(100, 0, 100, 120)));
-        check(!drawer.animating() && drawer.maskColor() == Drawer.MASK_COLOR);
+        check(!drawer.animating() && drawer.maskColor() == OreTheme.OVERLAY_COLOR);
         check(inside.absoluteBounds().x() == 104);
         check(drawer.bodyScroll().maxScrollY() > 0);
         Rect hit = inside.absoluteBounds();
@@ -71,11 +72,13 @@ public final class DrawerLayoutTest {
         now[0] = 300L;
         window.layoutViewport(200, 120, font);
         check(drawer.panelBounds().x() == 150);
+        check((drawer.maskColor() >>> 24) == 64);
         check(window.pointerPressed(5, 5, null));
         check(closed[0] == 0);
         now[0] = 400L;
         window.layoutViewport(200, 120, font);
         check(!drawer.visible() && closed[0] == 1);
+        check(drawer.maskColor() == 0);
         check(window.focusManager().focused() == outside);
         check(window.focusManager().allowsNativeInput(outside));
 
@@ -94,7 +97,7 @@ public final class DrawerLayoutTest {
         check(drawer.panelBounds().x() == before);
         now[0] = 700L;
         window.layoutViewport(200, 120, font);
-        check(drawer.maskColor() == Drawer.MASK_COLOR && closed[0] == 1);
+        check(drawer.maskColor() == OreTheme.OVERLAY_COLOR && closed[0] == 1);
         check(window.keyPressed(GLFW.GLFW_KEY_ESCAPE, 0, null));
         check(!drawer.isOpen());
         now[0] = 900L;
@@ -127,6 +130,89 @@ public final class DrawerLayoutTest {
         transitionSounds();
         closingCancelsPendingAction(font);
         closeButtonRelease(font);
+        leftPlacement(font);
+        optionalHeader(font);
+    }
+
+    private static void optionalHeader(Font font) {
+        Drawer drawer = new Drawer(Component.literal("Title"), () -> 0L, cue -> { }).animationDuration(0);
+        Window window = new Window(true).content(new Control()).overlay(new Overlay().add(drawer));
+        drawer.open();
+        window.layoutViewport(240, 120, font);
+        Control column = drawer.children().get(0).children().get(0);
+        Control header = column.children().get(0), body = column.children().get(1);
+        Button close = findIconButton(drawer);
+        check(drawer.closable() && close.visible() && header.visible());
+        int originalBodyTop = body.absoluteBounds().y();
+        drawer.closable(false);
+        window.layoutViewport(240, 120, font);
+        check(!drawer.closable() && !close.visible() && header.visible());
+        check(body.absoluteBounds().y() == originalBodyTop);
+        drawer.title(Component.empty());
+        for (int width : new int[]{127, 128, 129, 640}) {
+            window.layoutViewport(width, 120, font);
+            check(!header.visible() && body.absoluteBounds().y() == Drawer.PADDING);
+            check(body.bounds().height() == 120 - 2 * Drawer.PADDING);
+        }
+        drawer.closable(true);
+        window.layoutViewport(240, 120, font);
+        check(header.visible() && close.visible());
+        check(close.absoluteBounds().right() == drawer.panelBounds().right() - Drawer.PADDING);
+        drawer.title(Component.literal("Title")).closable(false);
+        window.layoutViewport(240, 120, font);
+        check(header.visible() && !close.visible());
+        drawer.title(Component.literal(""));
+        window.layoutViewport(240, 120, font);
+        check(!header.visible());
+        check(window.keyPressed(GLFW.GLFW_KEY_ESCAPE, 0, null) && !drawer.isOpen());
+        drawer.open();
+        window.layoutViewport(240, 120, font);
+        check(window.pointerPressed(5, 5, null) && !drawer.isOpen());
+    }
+
+    private static void leftPlacement(Font font) {
+        long[] now = {0};
+        int[] clicked = {0};
+        Button inside = new Button(cue -> { }).onPress(() -> clicked[0]++);
+        inside.position(0, 0).requestedSize(40, 20);
+        Drawer drawer = new Drawer(Component.literal("Left"), () -> now[0], cue -> { })
+                .placement(Drawer.Placement.LEFT).content(new Control().preferred(40, 20).addChild(inside));
+        Window window = new Window(true).content(new Control()).overlay(new Overlay().add(drawer));
+        check(drawer.placement() == Drawer.Placement.LEFT);
+        drawer.open();
+        window.layoutViewport(200, 120, font);
+        check(drawer.panelBounds().equals(new Rect(-100, 0, 100, 120)));
+        now[0] = 100;
+        window.layoutViewport(200, 120, font);
+        check(drawer.panelBounds().x() == -50 && (drawer.maskColor() >>> 24) == 64);
+        now[0] = 200;
+        window.layoutViewport(200, 120, font);
+        check(drawer.panelBounds().equals(new Rect(0, 0, 100, 120)));
+        Rect hit = inside.absoluteBounds();
+        check(hit.x() == Drawer.PADDING);
+        check(window.pointerPressed(hit.x() + 1, hit.y() + 1, null));
+        check(window.pointerReleased(hit.x() + 1, hit.y() + 1) && clicked[0] == 1);
+        check(window.pointerPressed(180, 10, null) && !drawer.isOpen());
+        now[0] = 300;
+        window.layoutViewport(200, 120, font);
+        check(drawer.panelBounds().x() == -50);
+        drawer.open();
+        window.layoutViewport(200, 120, font);
+        check(drawer.panelBounds().x() == -50);
+        now[0] = 500;
+        drawer.animationDuration(0);
+        for (int width : new int[]{127, 128, 129, 640}) {
+            window.layoutViewport(width, 120, font);
+            check(drawer.panelBounds().equals(new Rect(0, 0, width / 2, 120)));
+        }
+        drawer.placement(Drawer.Placement.RIGHT);
+        window.layoutViewport(640, 120, font);
+        check(drawer.panelBounds().right() == 640);
+        drawer.placement(Drawer.Placement.LEFT).width(1000);
+        window.layoutViewport(127, 120, font);
+        check(drawer.panelBounds().equals(new Rect(0, 0, 127, 120)));
+        drawer.close();
+        check(!drawer.visible());
     }
 
     private static void closeButtonRelease(Font font) {

@@ -21,6 +21,24 @@ public final class OrganizationSavedData extends SavedData {
 
     private final Map<UUID, Organization> organizations = new HashMap<>();
     private final Map<UUID, Map<UUID, Long>> applications = new HashMap<>();
+    private final Map<UUID, Map<UUID, UUID>> chatMemberships = new HashMap<>();
+
+    /** A fresh epoch on every admission prevents history access across separate memberships. */
+    public UUID chatEpoch(UUID organizationId, UUID player) {
+        Organization organization = organizations.get(organizationId);
+        if (organization == null || organization.roleOf(player) == null) return null;
+        Map<UUID, UUID> members = chatMemberships.computeIfAbsent(organizationId, ignored -> new HashMap<>());
+        UUID epoch = members.get(player);
+        if (epoch == null) { epoch = UUID.randomUUID(); members.put(player, epoch); setDirty(); }
+        return epoch;
+    }
+    private void beginChatMembership(UUID organization, UUID player) {
+        chatMemberships.computeIfAbsent(organization, ignored -> new HashMap<>()).put(player, UUID.randomUUID());
+    }
+    private void endChatMembership(UUID organization, UUID player) {
+        Map<UUID, UUID> members = chatMemberships.get(organization);
+        if (members != null) members.remove(player);
+    }
 
     public record MailEvent(UUID id, UUID recipient, String organization, String action) {
         public CompoundTag save() {
@@ -75,6 +93,14 @@ public final class OrganizationSavedData extends SavedData {
             if (tag.hasUUID("id") && tag.hasUUID("recipient")) data.mailEvents.add(new MailEvent(
                     tag.getUUID("id"), tag.getUUID("recipient"), tag.getString("organization"), tag.getString("action")));
         }
+        for (Tag raw : root.getList("chatMemberships", Tag.TAG_COMPOUND)) {
+            CompoundTag tag = (CompoundTag) raw;
+            if (!tag.hasUUID("organization") || !tag.hasUUID("player") || !tag.hasUUID("epoch")) continue;
+            Organization organization = data.organizations.get(tag.getUUID("organization"));
+            if (organization != null && organization.roleOf(tag.getUUID("player")) != null)
+                data.chatMemberships.computeIfAbsent(organization.id(), ignored -> new HashMap<>())
+                        .put(tag.getUUID("player"), tag.getUUID("epoch"));
+        }
         return data;
     }
 
@@ -95,6 +121,12 @@ public final class OrganizationSavedData extends SavedData {
                         }));
         root.put("applications", pending);
         ListTag events = new ListTag(); mailEvents.forEach(event -> events.add(event.save())); root.put("mailEvents", events);
+        ListTag epochs = new ListTag();
+        chatMemberships.forEach((organization, members) -> members.forEach((player, epoch) -> {
+            CompoundTag tag = new CompoundTag(); tag.putUUID("organization", organization);
+            tag.putUUID("player", player); tag.putUUID("epoch", epoch); epochs.add(tag);
+        }));
+        root.put("chatMemberships", epochs);
         return root;
     }
 
@@ -159,6 +191,7 @@ public final class OrganizationSavedData extends SavedData {
             if (memberships(actor).size() >= MAX_MEMBERSHIPS) return OperationResult.TOO_MANY;
             if (organization.joinPolicy() == Organization.JoinPolicy.UNRESTRICTED) {
                 organizations.put(organizationId, organization.withMember(actor));
+                beginChatMembership(organizationId, actor);
                 Map<UUID, Long> pending = applications.get(organizationId);
                 if (pending != null) {
                     pending.remove(actor);
@@ -184,6 +217,7 @@ public final class OrganizationSavedData extends SavedData {
                 if (organization.roleOf(target) != null) return OperationResult.ALREADY_MEMBER;
                 if (memberships(target).size() >= MAX_MEMBERSHIPS) return OperationResult.TOO_MANY;
                 organizations.put(organizationId, organization.withMember(target));
+                beginChatMembership(organizationId, target);
             }
             pending.remove(target);
             if (pending.isEmpty()) applications.remove(organizationId);
@@ -196,11 +230,13 @@ public final class OrganizationSavedData extends SavedData {
             if (actorRole != Organization.Role.LEADER || !actor.equals(target))
                 return OperationResult.FORBIDDEN;
             organizations.remove(organizationId);
+            chatMemberships.remove(organizationId);
             applications.remove(organizationId);
         } else if (operation == Operation.LEAVE) {
             if (!actor.equals(target) || actorRole == Organization.Role.LEADER)
                 return OperationResult.FORBIDDEN;
             organizations.put(organizationId, organization.withoutMember(actor));
+            endChatMembership(organizationId, actor);
         } else {
             if (targetRole == null || target.equals(actor)) return OperationResult.INVALID_TARGET;
             if (operation == Operation.PROMOTE || operation == Operation.DEMOTE) {
@@ -217,6 +253,7 @@ public final class OrganizationSavedData extends SavedData {
                         && targetRole != Organization.Role.MEMBER)
                     return OperationResult.FORBIDDEN;
                 organizations.put(organizationId, organization.withoutMember(target));
+                endChatMembership(organizationId, target);
             }
         }
         if (operation == Operation.PROMOTE || operation == Operation.DEMOTE || operation == Operation.REMOVE)
@@ -240,6 +277,7 @@ public final class OrganizationSavedData extends SavedData {
                 return CreateResult.DUPLICATE_NAME;
         Organization organization = Organization.create(name, description, founder, policy);
         organizations.put(organization.id(), organization);
+        beginChatMembership(organization.id(), founder);
         setDirty();
         return CreateResult.CREATED;
     }

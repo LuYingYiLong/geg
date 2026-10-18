@@ -24,6 +24,14 @@ public final class InputLayerTest {
         check(InputGeometry.centeredLineTop(4, 72, 10) == 35);
         check(InputGeometry.centeredLineTop(4, 5, 10) == 4);
         check(InputGeometry.centeredLineTop(3, 31, 9.0F) == 14);
+        for (float scale : new float[]{0.75F, 1.0F, 1.5F, 2.0F}) {
+            InputGeometry.Caret normal = InputGeometry.caret(10, 20, scale, false);
+            InputGeometry.Caret empty = InputGeometry.caret(10, 20, scale, true);
+            check(Math.abs(normal.width() - 0.6F * scale) < 0.0001F);
+            check(normal.width() == empty.width() && normal.height() == 9.0F * scale);
+            check(normal.y() == empty.y() && normal.y() == 19);
+            check(Math.abs(empty.x() - normal.x() - 0.7F) < 0.0001F);
+        }
 
         Control field = new Control().preferred(80, 200);
         Scroll inner = new Scroll().embedded(true).content(field);

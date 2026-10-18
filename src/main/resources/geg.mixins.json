@@ -4,7 +4,8 @@
   "package": "io.github.luyingyilong.geg.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "FontRenderHelperMixin"
+    "FontRenderHelperMixin",
+    "ChatScreenInitialMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -216,6 +216,8 @@ public final class Modal extends Container {
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+        Rect area = screenBounds(screenX, screenY);
+        context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.OVERLAY_COLOR);
         WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.FLOATING_HEADER);
         WidgetTheme style = entry == null ? context.getTheme().getPanelTheme().theme() : entry.theme();
         titleLabel.color(style.getTextColor()).shadow(style.isTextShadow());

@@ -32,6 +32,8 @@ public final class GegMod {
         MoneyNetwork.register();
         MarketNetwork.register();
         OrganizationNetwork.register();
+        io.github.luyingyilong.geg.chat.ChatNetwork.register();
+        MinecraftForge.EVENT_BUS.addListener(io.github.luyingyilong.geg.chat.ChatCommands::register);
         io.github.luyingyilong.geg.mail.MailNetwork.register();
         MinecraftForge.EVENT_BUS.addListener(io.github.luyingyilong.geg.mail.MailService::onStarted);
         MinecraftForge.EVENT_BUS.addListener(io.github.luyingyilong.geg.mail.MailService::onStopped);
