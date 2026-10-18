@@ -7,6 +7,7 @@ import brachy.modularui.widget.sizer.Area;
 import brachy.modularui.widgets.textfield.TextFieldHandler;
 import brachy.modularui.widgets.textfield.TextFieldRenderer;
 import io.github.luyingyilong.geg.client.ui.theme.OreFonts;
+import io.github.luyingyilong.geg.client.ui.theme.OreTextMetrics;
 import io.github.luyingyilong.geg.client.ui.util.TextLines;
 import io.github.luyingyilong.geg.client.ui.util.WrappedText;
 import net.minecraft.client.gui.GuiGraphics;
@@ -32,6 +33,21 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
 
     OreTextFieldRenderer(TextFieldHandler handler) {
         super(handler);
+    }
+
+    @Override public float getFontHeight() { return OreTextMetrics.body().lineHeight(scale); }
+
+    /** The owner sets the row box once; empty text, IME and committed text share that origin. */
+    @Override protected int getStartYOfLines(int count) { return y; }
+
+    @Override protected void draw(GuiGraphics graphics, FormattedCharSequence text, float left, float top) {
+        if (simulate || graphics == null) return;
+        graphics.pose().pushPose();
+        try {
+            graphics.pose().translate(left, top + OreTextMetrics.body().drawOrigin(scale), 0);
+            graphics.pose().scale(scale, scale, 1);
+            OreFonts.draw(graphics, getFont(), text, 0, 0, color, shadow);
+        } finally { graphics.pose().popPose(); }
     }
 
     void preedit(InputPreedit preedit) { this.preedit = preedit; }
@@ -113,6 +129,11 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
 
     @Override protected void drawMarked(GuiGraphics graphics, List<Line> lines) {
         if (!drawingPreedit) super.drawMarked(graphics, lines);
+    }
+
+    @Override public void drawMarked(GuiGraphics graphics, float top, float left, float right) {
+        brachy.modularui.drawable.GuiDraw.drawRect(graphics, left, top, Math.max(0, right - left),
+                getFontHeight(), markedColor);
     }
 
     @Override public void drawScrolling(GuiGraphics graphics, Line line, float offset, Area area, GuiContext context) {

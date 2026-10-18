@@ -28,10 +28,8 @@ public final class Toast extends Container {
     public static final long EXIT_DURATION = 160L;
     private static final int INSET_X = 4;
     private static final int INSET_Y = 2;
-    // Label's line box includes trailing leading below the visible Mojangles/Noto glyphs.
-    private static final int TEXT_BASELINE_OFFSET = 1;
     private final Label label = new Label().wrap(Label.Wrap.WORD).maxLines(3).overflow(Label.Overflow.ELLIPSIS)
-            .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
+            .opticalCenter(true).align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
     private final LongSupplier clock;
     private final Consumer<OreSounds.Cue> sound;
     private Type type = Type.NEUTRAL;
@@ -106,7 +104,7 @@ public final class Toast extends Container {
         fitChild(label, textBounds(new Rect(0, 0, bounds.width(), bounds.height())), font);
     }
     Rect textBounds(Rect area) {
-        return new Rect(area.x() + INSET_X, area.y() + INSET_Y + TEXT_BASELINE_OFFSET,
+        return new Rect(area.x() + INSET_X, area.y() + INSET_Y,
                 Math.max(0, area.width() - INSET_X * 2), Math.max(0, area.height() - INSET_Y * 2));
     }
     public static Rect shadowBounds(Rect area) { return area.translated(1, 1); }

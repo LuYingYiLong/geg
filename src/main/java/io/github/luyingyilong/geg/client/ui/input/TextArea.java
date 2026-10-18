@@ -5,6 +5,7 @@ import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.utils.PointF;
 import io.github.luyingyilong.geg.client.ui.Label;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
+import io.github.luyingyilong.geg.client.ui.theme.OreTextMetrics;
 import io.github.luyingyilong.geg.client.ui.util.TextLines;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +71,6 @@ public final class TextArea extends Input {
     @Override protected void setupDrawText(brachy.modularui.screen.viewport.ModularGuiContext context,
                                             brachy.modularui.theme.TextFieldTheme theme) {
         super.setupDrawText(context, theme);
-        renderer.setPos(getArea().getPadding().left(), firstLineTop());
         updateTextScroll();
     }
     /** Multiline editors keep both the hint and caret on the first row, even when expanded. */
@@ -95,7 +95,8 @@ public final class TextArea extends Input {
         finally { context.getGraphics().disableScissor(); }
     }
     @Override public int preferredInputHeight() {
-        return (minimumRows == 0 ? rows : Math.max(minimumRows, Math.min(maximumRows, automaticRows))) * 12 + 8;
+        int count = minimumRows == 0 ? rows : Math.max(minimumRows, Math.min(maximumRows, automaticRows));
+        return controlSize().height() + (count - 1) * OreTextMetrics.body().lineHeight(scale);
     }
     @Override public void onUpdate() {
         super.onUpdate();

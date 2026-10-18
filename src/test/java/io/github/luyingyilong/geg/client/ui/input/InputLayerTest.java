@@ -5,6 +5,7 @@ import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Scroll;
 import io.github.luyingyilong.geg.client.ui.layout.Window;
 import io.github.luyingyilong.geg.client.ui.util.OreLayers;
+import io.github.luyingyilong.geg.client.ui.theme.OreTextMetrics;
 
 public final class InputLayerTest {
     public static void main(String[] args) {
@@ -28,8 +29,8 @@ public final class InputLayerTest {
             InputGeometry.Caret normal = InputGeometry.caret(10, 20, scale, false);
             InputGeometry.Caret empty = InputGeometry.caret(10, 20, scale, true);
             check(Math.abs(normal.width() - 0.6F * scale) < 0.0001F);
-            check(normal.width() == empty.width() && normal.height() == 9.0F * scale);
-            check(normal.y() == empty.y() && normal.y() == 19);
+            check(normal.width() == empty.width() && normal.height() == OreTextMetrics.body().lineHeight(scale));
+            check(normal.y() == empty.y() && normal.y() == 20);
             check(Math.abs(empty.x() - normal.x() - 0.7F) < 0.0001F);
         }
 

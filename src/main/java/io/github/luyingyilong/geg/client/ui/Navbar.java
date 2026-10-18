@@ -24,7 +24,7 @@ public final class Navbar extends Container {
     private static final int PADDING = 0;
     private static final int BACK_BUTTON_SIZE = 22;
     private Panel background;
-    private final Label title = new Label().color(OreTheme.TEXT_DARK).hero(true).overflow(Label.Overflow.ELLIPSIS)
+    private final Label title = new Label().color(OreTheme.TEXT_DARK).hero(true).opticalCenter(true).overflow(Label.Overflow.ELLIPSIS)
             .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
     private final Button back = new Button().type(Button.Type.TEXT).icon(OreIcons.ARROW_LEFT, 7, 7)
             .onPress(OreScreen::back);

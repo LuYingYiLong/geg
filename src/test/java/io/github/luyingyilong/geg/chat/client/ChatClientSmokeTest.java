@@ -75,6 +75,19 @@ public final class ChatClientSmokeTest {
                 check(drawer.placement() == Drawer.Placement.LEFT, "Chat Drawer must open from the left");
                 check(!drawer.closable() && !drawer.children().get(0).children().get(0).children().get(0).visible(),
                         "Chat Drawer header should be hidden");
+                var inputRenderer = field(canvas.composer().input(),
+                        brachy.modularui.widgets.textfield.BaseTextFieldWidget.class, "renderer",
+                        brachy.modularui.widgets.textfield.TextFieldRenderer.class);
+                check(inputRenderer.getFontHeight() == new io.github.luyingyilong.geg.client.ui.Label().lineHeight(mc.font),
+                        "Editor and Label line heights differ");
+                Float caretTop = null;
+                for (String text : new String[]{"", "abc", "中文", "abc中文gjpq", "ÉÅ"}) {
+                    canvas.composer().input().setText(text);
+                    var point = inputRenderer.getPosOf(inputRenderer.measureStringLines(java.util.List.of(text)),
+                            new brachy.modularui.utils.Point(0, 0));
+                    if (caretTop == null) caretTop = point.y;
+                    check(point.y == caretTop, "Editing mixed text moved the caret vertically");
+                }
                 for (int width : new int[]{127, 128, 129, 640}) for (int height : new int[]{127, 240}) {
                     drawer.width(ChatLayout.drawerWidth(width)); window.layoutViewport(width, height, mc.font);
                     var input = canvas.composer().editor().absoluteBounds(); var panel = drawer.panelBounds();

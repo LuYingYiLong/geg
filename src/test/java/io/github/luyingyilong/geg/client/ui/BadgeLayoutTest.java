@@ -22,7 +22,7 @@ public final class BadgeLayoutTest {
         check(badge.faceBounds(badge.absoluteBounds()).equals(new Rect(8, 10, 12, 12)));
         check(badge.shadowBounds(badge.absoluteBounds()).equals(new Rect(8, 22, 12, 1)));
         Label digits = (Label) badge.children().get(0);
-        check(digits.bounds().equals(new Rect(4, 3, 6, 10)));
+        check(digits.bounds().equals(new Rect(4, 0, 6, 12)) && digits.opticalCenter());
         for (long value : new long[]{0L, 7L, 42L, 99L, 100L}) {
             badge.count(value);
             Size natural = badge.measureSize(font, new Size(100, 30));
@@ -33,8 +33,9 @@ public final class BadgeLayoutTest {
                 int visibleWidth = font.width(digits.styledText()) - 1;
                 // Pixel rounding may differ by half a pixel, never by a full pixel.
                 check(Math.abs(2 * text.x() + visibleWidth - (2 * face.x() + face.width())) <= 1);
-                check(Math.abs(2 * text.y() + 7 - (2 * face.y() + face.height())) <= 1);
-                check(text.y() + 7 <= badge.shadowBounds(badge.absoluteBounds()).y());
+                float drawTop = text.y() + digits.firstLineOrigin(text.height(), 1);
+                check(Math.abs(2 * drawTop + 8 - (2 * face.y() + face.height())) <= 1);
+                check(drawTop + 8 <= badge.shadowBounds(badge.absoluteBounds()).y());
             }
         }
         badge.count(100);

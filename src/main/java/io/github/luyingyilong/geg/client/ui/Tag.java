@@ -31,7 +31,7 @@ public final class Tag extends Container {
 
     private static final int PADDING_X = 4;
     private static final int PADDING_Y = 2;
-    private final Label label = new Label().align(Label.Horizontal.CENTER, Label.Vertical.CENTER)
+    private final Label label = new Label().opticalCenter(true).align(Label.Horizontal.CENTER, Label.Vertical.CENTER)
             .overflow(Label.Overflow.ELLIPSIS).color(OreTheme.TEXT_WHITE);
     private boolean outlined;
     private Type type = Type.NEUTRAL;

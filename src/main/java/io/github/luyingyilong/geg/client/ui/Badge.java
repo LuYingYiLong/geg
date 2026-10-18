@@ -19,9 +19,8 @@ public final class Badge extends Container {
     public static final int SHADOW_HEIGHT = 1;
     private static final int PADDING_X = 2;
     // Mojangles digits are seven pixels high; their advance includes one trailing spacing pixel.
-    private static final int DIGIT_HEIGHT = 7;
     private static final int TRAILING_SPACING = 1;
-    private final Label label = new Label();
+    private final Label label = new Label().opticalCenter(true).align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
     private Long count;
     private long overflowCount = 99L;
     private Tag.Type type = Tag.Type.PRIMARY;
@@ -91,7 +90,7 @@ public final class Badge extends Container {
         int inkWidth = Math.max(0, advance - TRAILING_SPACING);
         // Center the visible number, excluding both the line's leading and the badge's shadow.
         layoutChild(label, new Rect(Math.round((face.width() - inkWidth) / 2.0F),
-                Math.round((face.height() - DIGIT_HEIGHT) / 2.0F), advance, label.lineHeight(font)), font);
+                0, advance, face.height()), font);
     }
     Rect faceBounds(Rect area) { return new Rect(area.x(), area.y(), area.width(), Math.max(0, area.height() - SHADOW_HEIGHT)); }
     Rect shadowBounds(Rect area) { return new Rect(area.x(), Math.max(area.y(), area.bottom() - SHADOW_HEIGHT), area.width(), Math.min(SHADOW_HEIGHT, area.height())); }

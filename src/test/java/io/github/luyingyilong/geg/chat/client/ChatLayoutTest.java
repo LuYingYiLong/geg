@@ -23,10 +23,11 @@ public final class ChatLayoutTest {
         ChatMessageList list = new ChatMessageList(); list.messages(rows);
         for (int width : new int[]{127, 128, 129, 320, 854}) {
             int drawer = ChatLayout.drawerWidth(width); check(drawer <= width && drawer > 0);
-            check(ChatLayout.collapsed(drawer - 8) == (drawer - 8 < 172));
-            list.layout(new Rect(0, 0, Math.max(1, drawer - 8), 150), font);
+            int contentWidth = drawer - ChatLayout.DRAWER_PADDING.left() - ChatLayout.DRAWER_PADDING.right();
+            check(ChatLayout.collapsed(contentWidth) == (contentWidth < 172));
+            list.layout(new Rect(0, 0, Math.max(1, contentWidth), 150), font);
             check(list.activeViews() < 100 && list.scroll().maxScrollY() > 0);
-            list.bottom(); list.layout(new Rect(0, 0, Math.max(1, drawer - 8), 150), font); check(list.atBottom());
+            list.bottom(); list.layout(new Rect(0, 0, Math.max(1, contentWidth), 150), font); check(list.atBottom());
         }
         list.scroll().setScroll(0, 50);
         ChatMessage more = new ChatMessage(UUID.randomUUID(), 101, 101, user, "Alice", Component.literal("new"));

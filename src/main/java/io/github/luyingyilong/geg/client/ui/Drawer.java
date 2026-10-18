@@ -41,7 +41,7 @@ public final class Drawer extends Container {
 
     private final LongSupplier clock;
     private final Consumer<OreSounds.Cue> soundPlayer;
-    private final Label title = new Label().hero(true).overflow(Label.Overflow.ELLIPSIS)
+    private final Label title = new Label().hero(true).opticalCenter(true).overflow(Label.Overflow.ELLIPSIS)
             .align(Label.Horizontal.LEFT, Label.Vertical.CENTER).color(OreTheme.TEXT_WHITE);
     private final Box header = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
     private final Button closeButton;
@@ -108,6 +108,16 @@ public final class Drawer extends Container {
     public int titleColor() { return titleColor; }
     public Drawer fontSize(float fontSize) { title.fontSize(fontSize); return this; }
     public float fontSize() { return title.fontSize(); }
+
+    /** Inner spacing around the header, body and footer; defaults to 4px on every side. */
+    public Drawer padding(Padding.Insets insets) {
+        frame.insets(Objects.requireNonNull(insets));
+        return this;
+    }
+    public Drawer padding(int top, int right, int bottom, int left) {
+        return padding(new Padding.Insets(top, right, bottom, left));
+    }
+    public Padding.Insets padding() { return frame.insets(); }
 
     public Drawer placement(Placement placement) {
         this.placement = Objects.requireNonNull(placement);

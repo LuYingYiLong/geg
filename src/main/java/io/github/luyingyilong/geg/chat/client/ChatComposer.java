@@ -143,7 +143,7 @@ public final class ChatComposer extends Container {
         }
     }
     private final class Completion extends Container {
-        private final Panel background = new Panel(OreTheme.MENU_PANEL)
+        private final Panel background = new Panel(OreTheme.PANEL)
                 .child(new Padding(Padding.Insets.all(1)).child(new Scroll().horizontal(Scroll.BarMode.DISABLED).content(suggestionButtons)));
         Completion() { addChild(background); }
         @Override public float contentDepth() { return 50; }

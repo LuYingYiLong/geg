@@ -260,11 +260,13 @@ public final class Segmented extends Control {
                         optionWidth, height - inset, style);
             }
 
-            Label.draw(context, options.get(index), new io.github.luyingyilong.geg.client.ui.layout.Rect(
+            Label text = new Label(options.get(index)).opticalCenter(true)
+                    .color(style.getTextColor()).shadow(style.isTextShadow()).overflow(Label.Overflow.CLIP)
+                    .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
+            text.layout(new Rect(
                             optionX + TEXT_PADDING, y + topInset,
-                            Math.max(0, optionWidth - 2 * TEXT_PADDING), height),
-                    style.getTextColor(), style.isTextShadow(), Label.Overflow.CLIP,
-                    Label.Horizontal.CENTER, Label.Vertical.CENTER);
+                            Math.max(0, optionWidth - 2 * TEXT_PADDING), height), context.getFont());
+            text.draw(context, 0, 0);
 
             if (selected && optionWidth > 0 && height > 0) {
                 int lineWidth = Math.min(INDICATOR_MAX_WIDTH, Math.max(1, optionWidth / 3));

@@ -12,6 +12,9 @@ public final class OreFontResources {
 
     @SubscribeEvent
     public static void registerReloadListeners(RegisterClientReloadListenersEvent event) {
-        event.registerReloadListener((ResourceManagerReloadListener) resources -> OreFonts.resourcesReloaded());
+        event.registerReloadListener((ResourceManagerReloadListener) resources -> {
+            OreTextMetrics.reload(resources);
+            OreFonts.resourcesReloaded();
+        });
     }
 }

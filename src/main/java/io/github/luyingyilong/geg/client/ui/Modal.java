@@ -39,7 +39,7 @@ public final class Modal extends Container {
     private final Panel header;
     private final Box headerRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
     private final Control headerSpacer = new Control();
-    private final Label titleLabel = new Label().overflow(Label.Overflow.ELLIPSIS)
+    private final Label titleLabel = new Label().opticalCenter(true).overflow(Label.Overflow.ELLIPSIS)
             .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
     private final Button close = new Button().type(Button.Type.TEXT)
             .icon(OreIcons.CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);

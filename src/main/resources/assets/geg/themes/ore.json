@@ -4,26 +4,14 @@
     "background": {
       "type": "texture",
       "location": "geg:modularui/gui/panel",
-      "imageWidth": 16,
-      "imageHeight": 16,
+      "imageWidth": 3,
+      "imageHeight": 3,
       "x": 0,
       "y": 0,
-      "width": 16,
-      "height": 16,
-      "borderY": 2,
-      "borderX": 2
-    }
-  },
-  "panel:background": {
-    "background": {
-      "type": "texture",
-      "location": "geg:modularui/gui/background",
-      "imageWidth": 16,
-      "imageHeight": 16,
-      "x": 0,
-      "y": 0,
-      "width": 16,
-      "height": 16
+      "width": 3,
+      "height": 3,
+      "borderY": 1,
+      "borderX": 1
     }
   },
   "panel:headerPanel": {
@@ -138,20 +126,6 @@
     "background": {
       "type": "texture",
       "location": "geg:modularui/gui/floating_header",
-      "imageWidth": 3,
-      "imageHeight": 3,
-      "x": 0,
-      "y": 0,
-      "width": 3,
-      "height": 3,
-      "borderX": 1,
-      "borderY": 1
-    }
-  },
-  "panel:menuPanel": {
-    "background": {
-      "type": "texture",
-      "location": "geg:modularui/gui/menu_panel",
       "imageWidth": 3,
       "imageHeight": 3,
       "x": 0,

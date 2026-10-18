@@ -338,7 +338,7 @@ public final class Button extends Control {
         ContentLayout content = contentLayout(new Rect(x, y, Math.max(0, width - reservedRight), height),
                 hasLabel ? label.measureWidth(context.getFont(), width) : 0, hasLabel, icon, trailingIcon, alignment, type, pressed);
         if (hasLabel) {
-            label.color(style.getTextColor()).shadow(style.isTextShadow())
+            label.color(style.getTextColor()).shadow(style.isTextShadow()).opticalCenter(true)
                 .overflow(Label.Overflow.ELLIPSIS).align(switch (alignment) {
                     case LEFT -> Label.Horizontal.LEFT;
                     case CENTER -> Label.Horizontal.CENTER;

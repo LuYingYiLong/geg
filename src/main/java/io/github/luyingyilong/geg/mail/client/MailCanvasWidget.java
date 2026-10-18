@@ -124,7 +124,9 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         detailActions.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Panel detailPanel = new Panel(null).child(new Padding(Padding.Insets.all(4))
                 .child(new Box().gap(4).add(detailTitle).add(detailAuthor).add(detailScroll)));
-        columnsScroll = new Scroll().vertical(Scroll.BarMode.DISABLED).content(new MailColumns(mailScroll, detailPanel));
+        Panel menuPanel = new Panel(OreTheme.PANEL)
+                .child(new Padding(new Padding.Insets(8, 1, 8, 1)).child(mailScroll));
+        columnsScroll = new Scroll().vertical(Scroll.BarMode.DISABLED).content(new MailColumns(menuPanel, detailPanel));
         columnsScroll.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL); columnsScroll.minimum(0, 41);
         Padding padding = new Padding(Padding.Insets.all(4));
         padding.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);

@@ -82,6 +82,22 @@ public final class LabelLayoutTest {
         check(marquee.marqueeOffset(font, 12, 9000L, false) == 0);
         fontFamiliesAndStyles();
         fontSizeLayout(font);
+        stableBaselines(font);
+    }
+
+    private static void stableBaselines(Font font) {
+        Label label = new Label().align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+        for (boolean optical : new boolean[]{false, true}) {
+            label.opticalCenter(optical);
+            float baseline = label.firstLineOrigin(22, 1);
+            for (String text : new String[]{"", "abc", "中文", "abc中文", "abc中文gjpq", "ÉÅ"}) {
+                label.text(Component.literal(text));
+                check(label.firstLineOrigin(22, 1) == baseline);
+                check(label.lineHeight(font) == 10);
+            }
+        }
+        label.align(Label.Horizontal.LEFT, Label.Vertical.TOP);
+        check(label.firstLineOrigin(10, 1) > 0); // Keep the TTF's slight negative top inside the row.
     }
 
     private static void fontSizeLayout(Font font) {

@@ -24,9 +24,8 @@ public final class OreTheme {
     public static final int TOAST_SHADOW = 0x4D000000;
 
     public static final String NAME = "geg_ore";
-    private static final WidgetThemeKey<WidgetTheme> PANEL = ITheme.getDefault().getPanelTheme().key();
+    public static final WidgetThemeKey<WidgetTheme> PANEL = ITheme.getDefault().getPanelTheme().key();
 
-    public static final WidgetThemeKey<WidgetTheme> BACKGROUND = PANEL.createSubKey("background");
     public static final WidgetThemeKey<WidgetTheme> HEADER_PANEL =
             PANEL.createSubKey("headerPanel");
     public static final WidgetThemeKey<WidgetTheme> INPUT_BOX = PANEL.createSubKey("inputBox");
@@ -34,7 +33,6 @@ public final class OreTheme {
     public static final WidgetThemeKey<WidgetTheme> DROPDOWN_PANEL =
             PANEL.createSubKey("dropdownPanel");
     public static final WidgetThemeKey<WidgetTheme> DROPDOWN_ITEM = PANEL.createSubKey("dropdownItem");
-    public static final WidgetThemeKey<WidgetTheme> MENU_PANEL = PANEL.createSubKey("menuPanel");
     public static final WidgetThemeKey<WidgetTheme> MENU_DIVIDER = PANEL.createSubKey("menuDivider");
     public static final WidgetThemeKey<WidgetTheme> BAR = PANEL.createSubKey("bar");
     public static final WidgetThemeKey<WidgetTheme> FLOATING_BACKGROUND = PANEL.createSubKey("floatingBackground");

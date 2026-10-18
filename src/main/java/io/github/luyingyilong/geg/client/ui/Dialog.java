@@ -44,7 +44,7 @@ public final class Dialog extends Container {
     private final Box header = new Box().orientation(Box.Orientation.HORIZONTAL).gap(HEADER_GAP);
     private final Padding headerInset = new Padding(new Padding.Insets(PADDING, PADDING, SECTION_SPACING, PADDING))
             .child(header);
-    private final Label titleLabel = new Label().hero(true).overflow(Label.Overflow.CLIP)
+    private final Label titleLabel = new Label().hero(true).opticalCenter(true).overflow(Label.Overflow.CLIP)
             .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
     private final Button close = new Button().size(Button.Size.SMALL).type(Button.Type.TEXT)
             .icon(OreIcons.SMALL_CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);

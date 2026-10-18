@@ -2,12 +2,10 @@ package io.github.luyingyilong.geg.client.ui;
 
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeKey;
-import io.github.luyingyilong.geg.client.ui.layout.*;
 import io.github.luyingyilong.geg.client.ui.layout.Box;
 import io.github.luyingyilong.geg.client.ui.layout.Container;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Padding;
-import io.github.luyingyilong.geg.client.ui.layout.Panel;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
 import io.github.luyingyilong.geg.client.ui.layout.ScrollContent;
 import io.github.luyingyilong.geg.client.ui.layout.Size;
@@ -20,9 +18,8 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-/** Vertical, single-selection menu. Wrap in Scroll to expose overflowing items. */
+/** Box-based, single-selection menu without an outer background or inset. Wrap in Scroll for overflow. */
 public final class Menu extends Container implements ScrollContent {
-    private final Panel panel;
     private final Box sections = new Box().gap(8);
     private final Label empty = new Label().color(OreTheme.TEXT_WHITE).wrap(Label.Wrap.WORD);
     private final WidgetThemeKey<WidgetTheme> dividerTheme;
@@ -38,16 +35,14 @@ public final class Menu extends Container implements ScrollContent {
     private Anchor anchor;
     private int restoredScrollY = -1;
 
-    public Menu() { this(OreTheme.MENU_PANEL, OreTheme.MENU_DIVIDER, Button::new); }
+    public Menu() { this(OreTheme.MENU_DIVIDER, Button::new); }
 
-    Menu(WidgetThemeKey<WidgetTheme> panelTheme, WidgetThemeKey<WidgetTheme> dividerTheme,
-         Supplier<Button> buttonFactory) {
+    Menu(WidgetThemeKey<WidgetTheme> dividerTheme, Supplier<Button> buttonFactory) {
         this.dividerTheme = dividerTheme;
         this.buttonFactory = Objects.requireNonNull(buttonFactory);
         sections.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         empty.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        panel = new Panel(panelTheme).child(new Padding(new Padding.Insets(8, 1, 8, 1)).child(sections));
-        super.addChild(panel);
+        super.addChild(sections);
         rebuild();
     }
 
@@ -152,7 +147,7 @@ public final class Menu extends Container implements ScrollContent {
     }
 
     @Override public Size measureSize(Font font, Size available) {
-        Size desired = panel.measureSize(font, available);
+        Size desired = sections.measureSize(font, available);
         return new Size(Math.max(minimumWidth(), Math.min(available.width(), desired.width())),
                 Math.max(minimumHeight(), desired.height()));
     }
@@ -162,9 +157,9 @@ public final class Menu extends Container implements ScrollContent {
     @Override public void layout(Rect bounds, Font font) {
         if (bounds.width() != bounds().width()) rememberAnchor();
         super.layout(bounds, font);
-        int height = Math.max(bounds.height(), panel.measureSize(font, new Size(bounds.width(), bounds.height())).height());
+        int height = Math.max(bounds.height(), sections.measureSize(font, new Size(bounds.width(), bounds.height())).height());
         extent = new Size(bounds.width(), height);
-        fitChild(panel, new Rect(0, 0, extent.width(), extent.height()), font);
+        fitChild(sections, new Rect(0, 0, extent.width(), extent.height()), font);
         if (anchor != null && !buttons.isEmpty()) {
             List<Button> ordered = List.copyOf(buttons.values());
             Button target = buttons.getOrDefault(anchor.key(), ordered.get(Math.min(anchor.index(), ordered.size() - 1)));

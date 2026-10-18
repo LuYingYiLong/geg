@@ -5,6 +5,7 @@ import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
 import io.github.luyingyilong.geg.client.ui.layout.Size;
 import io.github.luyingyilong.geg.client.ui.theme.OreFonts;
+import io.github.luyingyilong.geg.client.ui.theme.OreTextMetrics;
 import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -28,6 +29,7 @@ public final class Label extends Control {
     private Component text;
     private Component styledText;
     private boolean hero;
+    private boolean opticalCenter;
     private Overflow overflow = Overflow.VISIBLE;
     private Wrap wrap = Wrap.NONE;
     private Horizontal horizontal = Horizontal.LEFT;
@@ -66,6 +68,9 @@ public final class Label extends Control {
         return this;
     }
     public boolean hero() { return hero; }
+    /** Use a fixed font-family visual box for centering, never the current string's glyph bounds. */
+    public Label opticalCenter(boolean opticalCenter) { this.opticalCenter = opticalCenter; return this; }
+    public boolean opticalCenter() { return opticalCenter; }
     public Component styledText() {
         if (styledText == null) styledText = OreFonts.text(text, hero);
         return styledText;
@@ -162,7 +167,16 @@ public final class Label extends Control {
                 measureHeight(font, available.width()));
     }
 
-    public int lineHeight(Font font) { return Math.max(1, (int) Math.ceil((font.lineHeight + 1) * textScale())); }
+    public int lineHeight(Font font) { return OreTextMetrics.family(hero).lineHeight(textScale()); }
+
+    float firstLineOrigin(int height, int lines) {
+        var metrics = OreTextMetrics.family(hero);
+        return switch (vertical) {
+            case TOP -> metrics.drawOrigin(textScale());
+            case CENTER -> metrics.centeredOrigin(height, lines, textScale(), opticalCenter);
+            case BOTTOM -> height - metrics.blockHeight(lines, textScale()) + metrics.drawOrigin(textScale());
+        };
+    }
 
     public List<FormattedCharSequence> lines(Font font, int width) {
         int logicalWidth = Math.max(1, (int) Math.floor(width / textScale()));
@@ -264,12 +278,7 @@ public final class Label extends Control {
         List<FormattedCharSequence> lines = displayedLines(font, area.width(), area.height());
         int lineHeight = lineHeight(font);
         int visibleLines = lines.size();
-        int blockHeight = visibleLines * lineHeight;
-        int startY = area.y() + switch (vertical) {
-            case TOP -> 0;
-            case CENTER -> (area.height() - blockHeight) / 2;
-            case BOTTOM -> area.height() - blockHeight;
-        };
+        float startY = area.y() + firstLineOrigin(area.height(), visibleLines);
         if (overflow != Overflow.VISIBLE) graphics.enableScissor(area.x(), area.y(), area.right(), area.bottom());
         for (int index = 0; index < visibleLines; index++) {
             FormattedCharSequence line = lines.get(index);
@@ -283,14 +292,11 @@ public final class Label extends Control {
                 boolean hovered = area.contains(mouseX, mouseY);
                 lineX = area.x() - marqueeOffset(font, area.width(), System.nanoTime() / 1_000_000L, hovered);
             }
-            if (textScale == 1.0F) OreFonts.draw(graphics, font, line, lineX, startY + index * lineHeight, color, shadow);
-            else {
-                graphics.pose().pushPose();
-                graphics.pose().translate(lineX, startY + index * lineHeight, 0.0F);
-                graphics.pose().scale(textScale, textScale, 1.0F);
-                OreFonts.draw(graphics, font, line, 0, 0, color, shadow);
-                graphics.pose().popPose();
-            }
+            graphics.pose().pushPose();
+            graphics.pose().translate(lineX, startY + index * lineHeight, 0.0F);
+            graphics.pose().scale(textScale, textScale, 1.0F);
+            OreFonts.draw(graphics, font, line, 0, 0, color, shadow);
+            graphics.pose().popPose();
         }
         if (overflow != Overflow.VISIBLE) graphics.disableScissor();
     }

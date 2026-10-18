@@ -263,6 +263,11 @@ public class Input extends TextFieldWidget {
                 getArea().getPadding().top(), getArea().paddedHeight(), renderer.getFontHeight());
     }
 
+    @Override protected void setupDrawText(ModularGuiContext context, TextFieldTheme theme) {
+        super.setupDrawText(context, theme);
+        renderer.setPos(getArea().getPadding().left(), firstLineTop());
+    }
+
     @Override protected void drawText(ModularGuiContext context, TextFieldTheme theme) {
         Component placeholder = hintText;
         hintText = null;

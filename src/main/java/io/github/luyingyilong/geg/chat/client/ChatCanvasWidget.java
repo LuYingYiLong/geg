@@ -41,7 +41,8 @@ final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interac
     private final Box conversation = new Box().gap(4).add(chooseChannel).add(header).add(loading).add(messages).add(newMessages).add(composer);
     private final Content content = new Content();
     private final Drawer drawer = new Drawer(Component.empty()).closable(false)
-            .placement(Drawer.Placement.LEFT).content(content).onClose(OreScreen::back);
+            .placement(Drawer.Placement.LEFT).padding(ChatLayout.DRAWER_PADDING)
+            .content(content).onClose(OreScreen::back);
     private final Input target = new Input(410).placeholder(Component.translatable("chat.geg.target_hint"));
     private final InputControl targetControl = new InputControl(target);
     private final Modal channelModal = new Modal(Component.translatable("chat.geg.channels")).size(220, 220).content(compactScroll)

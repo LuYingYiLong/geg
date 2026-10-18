@@ -4,7 +4,6 @@ import io.github.luyingyilong.geg.client.ui.layout.*;
 import io.github.luyingyilong.geg.client.ui.layout.Box;
 import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.Padding;
-import io.github.luyingyilong.geg.client.ui.layout.Panel;
 import io.github.luyingyilong.geg.client.ui.layout.Rect;
 import io.github.luyingyilong.geg.client.ui.layout.Scroll;
 import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
@@ -29,7 +28,7 @@ public final class MenuLayoutTest {
             }
         };
         List<String> actions = new ArrayList<>();
-        Menu menu = new Menu(null, null, () -> new Button(cue -> { }))
+        Menu menu = new Menu(null, () -> new Button(cue -> { }))
                 .onSelect(item -> actions.add(item.key()));
         MenuItem first = MenuItem.item("first", Component.literal("First"));
         MenuItem second = MenuItem.item("second", Component.literal("Second"));
@@ -37,15 +36,12 @@ public final class MenuLayoutTest {
                 MenuItem.item("third", Component.literal("Third")),
                 MenuItem.item("disabled", Component.literal("Disabled")).disabled(true)))));
         menu.layout(new Rect(0, 0, 128, 150), font);
-        Control panel = menu.children().get(0);
-        check(panel instanceof Panel, "Panel root");
-        Padding padding = (Padding) panel.children().get(0);
-        check(padding.insets().equals(new Padding.Insets(8, 1, 8, 1)), "Menu padding");
-        Box sections = (Box) padding.children().get(0);
+        check(menu.children().size() == 1 && menu.children().get(0) instanceof Box, "Box root without outer panel or padding");
+        Box sections = (Box) menu.children().get(0);
         check(sections.sizeFlagsHorizontal() == SizeFlags.SIZE_EXPAND_FILL
                 && sections.sizeFlagsVertical() == SizeFlags.SIZE_EXPAND_FILL, "Expanding sections");
         Rect a = menu.button("first").absoluteBounds(), b = menu.button("second").absoluteBounds();
-        check(a.x() == 1 && a.y() == 8 && a.width() == 126 && a.height() == 20, "Item area");
+        check(a.x() == 0 && a.y() == 0 && a.width() == 128 && a.height() == 20, "Item area without outer inset");
         check(b.y() == a.bottom(), "No item gaps");
         Box group = (Box) sections.children().get(1);
         check(group.absoluteBounds().y() == b.bottom() + 8, "Section gap");
@@ -92,7 +88,7 @@ public final class MenuLayoutTest {
         for (int width : new int[]{127, 128, 129, 640}) {
             window.layoutViewport(width, 60, font);
             check(scroll.maxScrollX() == 0, "Long text stays within width");
-            check(menu.button("mail-5").size().width() == scroll.viewport().width() - 2, "Responsive width");
+            check(menu.button("mail-5").size().width() == scroll.viewport().width(), "Responsive width");
         }
         scroll.setScroll(0, scroll.maxScrollY());
         menu.items(List.of(first)); window.layoutViewport(128, 60, font);
@@ -106,7 +102,7 @@ public final class MenuLayoutTest {
             check(menu.items().get(0).key().equals("off"), "Invalid data preserves previous tree");
         }
         menu.items(List.of()); window.layoutViewport(128, 60, font);
-        check(menu.button("first") == null && menu.contentExtent().height() >= 16, "Empty state");
+        check(menu.button("first") == null && menu.contentExtent().height() >= menu.minimumHeight(), "Empty state");
         menu.items(List.of(MenuItem.group("empty-group", Component.literal("All"),
                 List.of(MenuItem.empty("empty-row", Component.literal("No mail"))))));
         window.layoutViewport(128, 60, font);

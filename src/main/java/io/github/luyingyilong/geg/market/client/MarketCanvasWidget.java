@@ -31,6 +31,7 @@ import io.github.luyingyilong.geg.client.ui.layout.Size;
 import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
 import io.github.luyingyilong.geg.client.ui.layout.Window;
 import io.github.luyingyilong.geg.client.ui.theme.OreIcons;
+import io.github.luyingyilong.geg.client.ui.theme.OreTextMetrics;
 import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
 import io.github.luyingyilong.geg.market.*;
 import io.github.luyingyilong.geg.market.MarketActionPacket;
@@ -172,7 +173,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                         boolean hasPrice = card.kind == Kind.GROUP || card.kind == Kind.OWN
                                 || card.kind == Kind.OWN_REQUEST || card.kind == Kind.FAVORITE
                                 || card.kind == Kind.HISTORY;
-                        return hasPrice ? 42 : 32;
+                        int lineHeight = OreTextMetrics.body().lineHeight(1);
+                        return (hasPrice ? 3 : 2) * (lineHeight + 1) + 9;
                     }
 
                     @Override
@@ -1175,6 +1177,11 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
         @Override public void layout(Rect bounds, Font font) {
             super.layout(bounds, font);
+            for (Label label : List.of(name, count, price)) {
+                int lineHeight = label.lineHeight(font);
+                if (label.minimumHeight() != lineHeight)
+                    label.minimum(0, lineHeight).preferred(0, lineHeight);
+            }
             fitChild(row, new Rect(5, 5, Math.max(0, bounds.width() - 10),
                     Math.max(0, bounds.height() - 10)), font);
         }

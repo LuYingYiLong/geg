@@ -27,7 +27,7 @@ public final class Checkbox extends Container {
     private final ReleaseGesture<Boolean> gesture = new ReleaseGesture<>();
 
     public Checkbox(Component text) {
-        label = new Label(Objects.requireNonNull(text)).color(OreTheme.TEXT_WHITE)
+        label = new Label(Objects.requireNonNull(text)).opticalCenter(true).color(OreTheme.TEXT_WHITE)
                 .overflow(Label.Overflow.ELLIPSIS)
                 .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
         addChild(label);

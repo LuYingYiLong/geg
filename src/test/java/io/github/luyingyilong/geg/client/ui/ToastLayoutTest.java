@@ -3,6 +3,7 @@ package io.github.luyingyilong.geg.client.ui;
 import io.github.luyingyilong.geg.client.ui.layout.*;
 import io.github.luyingyilong.geg.client.ui.theme.OreSounds;
 import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
+import io.github.luyingyilong.geg.client.ui.theme.OreTextMetrics;
 import io.github.luyingyilong.geg.client.ui.util.ToastQueue;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
@@ -93,12 +94,12 @@ public final class ToastLayoutTest {
                     Rect textArea = toast.textBounds(face);
                     check(label.absoluteBounds().equals(textArea));
                     int lines = label.displayedLines(font, textArea.width(), textArea.height()).size();
-                    int startY = textArea.y() + (textArea.height() - lines * label.lineHeight(font)) / 2;
-                    // Typical Ore body glyphs occupy 8px; extra pixels belong to line spacing.
-                    int visibleHeight = (lines - 1) * label.lineHeight(font) + 8;
+                    float startY = textArea.y() + label.firstLineOrigin(textArea.height(), lines);
+                    float visibleHeight = OreTextMetrics.body().opticalHeight(lines, 1);
+                    check(label.opticalCenter());
                     check(Math.abs(2 * startY + visibleHeight - (2 * face.y() + face.height())) <= 1);
                     check(startY >= face.y() + 1 && startY + visibleHeight <= face.bottom() - 1);
-                    check(textArea.bottom() == face.bottom() - 1);
+                    check(textArea.bottom() == face.bottom() - 2);
                 }
             }
         }
