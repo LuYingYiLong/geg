@@ -40,22 +40,42 @@ public final class InspectorView {
         targets.onSelect(id -> backend.execute(new InspectorCommand(InspectorCommand.Operation.TARGET, id, -1, "", "", false)));
         targets.minimum(110, 22);
         targets.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL);
-        Box tools = new Box().orientation(Box.Orientation.HORIZONTAL).gap(3).add(pick).add(undo).add(redo)
-                .add(button("restore_all", () -> action(InspectorCommand.Operation.RESET_ALL))).add(targets);
+        Box tools = new Box()
+                .orientation(Box.Orientation.HORIZONTAL)
+                .gap(3)
+                .add(pick)
+                .add(undo)
+                .add(redo)
+                .add(button("restore_all", () -> action(InspectorCommand.Operation.RESET_ALL)))
+                .add(targets);
         tools.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        Box flags = new Box().orientation(Box.Orientation.HORIZONTAL).gap(6)
-                .add(flag("layout", true)).add(flag("text", true)).add(flag("all", false));
+        Box flags = new Box()
+                .orientation(Box.Orientation.HORIZONTAL)
+                .gap(6)
+                .add(flag("layout", true))
+                .add(flag("text", true))
+                .add(flag("all", false));
         flags.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         Scroll treeScroll = new Scroll().content(tree);
         treeScroll.sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Box left = new Box().gap(4).add(new InputControl(search)).add(treeScroll);
+        Box left = new Box()
+                .gap(4)
+                .add(new InputControl(search))
+                .add(treeScroll);
         left.minimum(110, 0);
         properties.minimum(0, 0);
-        Scroll propertyScroll = new Scroll().content(new PropertyViewport()).horizontal(Scroll.BarMode.DISABLED);
+        Scroll propertyScroll = new Scroll()
+                .content(new PropertyViewport())
+                .horizontal(Scroll.BarMode.DISABLED);
         propertyScroll.minimum(190, 0);
         Splitter split = new Splitter(left, propertyScroll).ratio(0.34);
         split.sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Box root = new Box().gap(4).add(tools).add(flags).add(split).add(message);
+        Box root = new Box()
+                .gap(4)
+                .add(tools)
+                .add(flags)
+                .add(split)
+                .add(message);
         message.minimum(0, 16).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         window = Window
                 .nativeWindow(WindowOptions.defaults("Ore Inspector"))
