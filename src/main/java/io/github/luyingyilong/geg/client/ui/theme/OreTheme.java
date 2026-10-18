@@ -33,7 +33,8 @@ public final class OreTheme {
     public static final WidgetThemeKey<WidgetTheme> DROPDOWN_PANEL =
             PANEL.createSubKey("dropdownPanel");
     public static final WidgetThemeKey<WidgetTheme> DROPDOWN_ITEM = PANEL.createSubKey("dropdownItem");
-    public static final WidgetThemeKey<WidgetTheme> MENU_DIVIDER = PANEL.createSubKey("menuDivider");
+    public static final WidgetThemeKey<WidgetTheme> H_DIVIDER = PANEL.createSubKey("HDivider");
+    public static final WidgetThemeKey<WidgetTheme> V_DIVIDER = PANEL.createSubKey("VDivider");
     public static final WidgetThemeKey<WidgetTheme> BAR = PANEL.createSubKey("bar");
     public static final WidgetThemeKey<WidgetTheme> FLOATING_BACKGROUND = PANEL.createSubKey("floatingBackground");
     public static final WidgetThemeKey<WidgetTheme> FLOATING_HEADER = PANEL.createSubKey("floatingHeader");

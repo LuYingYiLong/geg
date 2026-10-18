@@ -1,8 +1,7 @@
 package io.github.luyingyilong.geg.client.ui;
 
-import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
-
 import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.geg.client.ui.debug.DebugBridge;
 import io.github.luyingyilong.geg.client.ui.layout.*;
 import io.github.luyingyilong.geg.client.ui.theme.OreSounds;
 import io.github.luyingyilong.geg.client.ui.theme.OreTheme;
@@ -14,17 +13,10 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.LongSupplier;
 
-/** A non-interactive transient message, usable in Ore trees or through OreToasts.show. */
+/**
+ * A non-interactive transient message, usable in Ore trees or through OreToasts.show.
+ */
 public final class Toast extends Container {
-    public enum Type {
-        PRIMARY(Tag.Type.PRIMARY), NEUTRAL(Tag.Type.NEUTRAL), SECONDARY(Tag.Type.SECONDARY),
-        INFORMATIVE(Tag.Type.INFORMATIVE), NOTICE(Tag.Type.NOTICE), WARNING(Tag.Type.WARNING),
-        REALMS_INFORMATIVE(Tag.Type.REALMS_INFORMATIVE);
-        private final Tag.Type style;
-        Type(Tag.Type style) { this.style = style; }
-        public int color() { return style.color(); }
-    }
-
     public static final long DEFAULT_DURATION = 3000L;
     public static final long ENTER_DURATION = 180L;
     public static final long EXIT_DURATION = 160L;
@@ -41,43 +33,92 @@ public final class Toast extends Container {
     private double closingFrom;
     private boolean started;
     private boolean closing;
+    public Toast() {
+        this(() -> System.nanoTime() / 1_000_000L, OreSounds::play);
+    }
 
-    public Toast() { this(() -> System.nanoTime() / 1_000_000L, OreSounds::play); }
-    public Toast(Component text) { this(); text(text); }
+    public Toast(Component text) {
+        this();
+        text(text);
+    }
+
     Toast(LongSupplier clock, Consumer<OreSounds.Cue> sound) {
-        this.clock = Objects.requireNonNull(clock); this.sound = Objects.requireNonNull(sound);
-        addChild(label); type(type); visible(false);
+        this.clock = Objects.requireNonNull(clock);
+        this.sound = Objects.requireNonNull(sound);
+        addChild(label);
+        type(type);
+        visible(false);
         sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
     }
 
-    public Toast text(Component text) { label.text(Objects.requireNonNull(text)); return this; }
-    public Component text() { return label.text(); }
-    /** Milliseconds of fully displayed time; zero keeps the toast open until close(). */
+    private static double easeIn(double phase) {
+        return Math.pow(Math.min(1.0D, Math.max(0.0D, phase)), 3.0D);
+    }
+
+    public static Rect shadowBounds(Rect area) {
+        return area.translated(1, 1);
+    }
+
+    public Toast text(Component text) {
+        label.text(Objects.requireNonNull(text));
+        return this;
+    }
+
+    public Component text() {
+        return label.text();
+    }
+
+    /**
+     * Milliseconds of fully displayed time; zero keeps the toast open until close().
+     */
     public Toast duration(long milliseconds) {
         if (milliseconds < 0) throw new IllegalArgumentException("Negative toast duration");
-        duration = milliseconds; return this;
+        duration = milliseconds;
+        return this;
     }
-    public long duration() { return duration; }
+
+    public long duration() {
+        return duration;
+    }
+
     public Toast type(Type type) {
-        this.type = Objects.requireNonNull(type); label.color(type.style.textColor()); return this;
+        this.type = Objects.requireNonNull(type);
+        label.color(type.style.textColor());
+        return this;
     }
-    public Type type() { return type; }
+
+    public Type type() {
+        return type;
+    }
 
     public Toast open() {
         if (started && !finished()) return this;
-        started = true; closing = false; openedAt = clock.getAsLong(); visible(true);
-        sound.accept(OreSounds.Cue.TOAST); return this;
-    }
-    /** Keyed updates keep the existing toast and sound, and renew its displayed lifetime. */
-    public Toast refresh() {
-        if (!started || finished()) return open();
-        openedAt = Math.max(openedAt, clock.getAsLong() - ENTER_DURATION); closing = false;
+        started = true;
+        closing = false;
+        openedAt = clock.getAsLong();
+        visible(true);
+        sound.accept(OreSounds.Cue.TOAST);
         return this;
     }
+
+    /**
+     * Keyed updates keep the existing toast and sound, and renew its displayed lifetime.
+     */
+    public Toast refresh() {
+        if (!started || finished()) return open();
+        openedAt = Math.max(openedAt, clock.getAsLong() - ENTER_DURATION);
+        closing = false;
+        return this;
+    }
+
     public Toast close() {
         if (!started || closing || finished()) return this;
-        closingFrom = progress(); closingAt = clock.getAsLong(); closing = true; return this;
+        closingFrom = progress();
+        closingAt = clock.getAsLong();
+        closing = true;
+        return this;
     }
+
     public boolean finished() {
         if (!started) return true;
         long elapsed = Math.max(0L, clock.getAsLong() - (closing ? closingAt : openedAt));
@@ -85,7 +126,10 @@ public final class Toast extends Container {
         return duration > 0 && elapsed >= ENTER_DURATION && elapsed - ENTER_DURATION >= duration
                 && elapsed - ENTER_DURATION - duration >= EXIT_DURATION;
     }
-    /** Visibility fraction used by the host's slide from above the GUI viewport. */
+
+    /**
+     * Visibility fraction used by the host's slide from above the GUI viewport.
+     */
     public double progress() {
         if (!started) return 0.0D;
         long elapsed = Math.max(0L, clock.getAsLong() - (closing ? closingAt : openedAt));
@@ -94,24 +138,28 @@ public final class Toast extends Container {
         long held = elapsed - ENTER_DURATION;
         return duration == 0 || held < duration ? 1.0D : 1.0D - easeIn((held - duration) / (double) EXIT_DURATION);
     }
-    private static double easeIn(double phase) { return Math.pow(Math.min(1.0D, Math.max(0.0D, phase)), 3.0D); }
 
-    @Override public Size measureSize(Font font, Size available) {
+    @Override
+    public Size measureSize(Font font, Size available) {
         int width = Math.max(0, Math.min(available.width(), label.measureWidth(font, available.width()) + INSET_X * 2));
         int height = label.measureHeight(font, Math.max(1, width - INSET_X * 2)) + INSET_Y * 2;
         return new Size(Math.max(minimumWidth(), width), Math.max(minimumHeight(), height));
     }
-    @Override public void layout(Rect bounds, Font font) {
+
+    @Override
+    public void layout(Rect bounds, Font font) {
         super.layout(bounds, font);
         fitChild(label, textBounds(new Rect(0, 0, bounds.width(), bounds.height())), font);
     }
+
     Rect textBounds(Rect area) {
         return new Rect(area.x() + INSET_X, area.y() + INSET_Y,
                 Math.max(0, area.width() - INSET_X * 2), Math.max(0, area.height() - INSET_Y * 2));
     }
-    public static Rect shadowBounds(Rect area) { return area.translated(1, 1); }
 
-    /** Global GUI adapter: the same Label painter, fonts and colors as other Ore controls. */
+    /**
+     * Global GUI adapter: the same Label painter, fonts and colors as other Ore controls.
+     */
     public void drawGui(GuiGraphics graphics, Font font, Rect area) {
         if (!visible() || finished() || area.width() < 1 || area.height() < 1) return;
         Rect shadow = shadowBounds(area);
@@ -122,9 +170,30 @@ public final class Toast extends Container {
             graphics.fill(area.x() + 1, area.y() + 1, area.right() - 1, area.bottom() - 1, type.color());
         label.paint(graphics, font, textBounds(area), -1, -1);
     }
-    @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+
+    @Override
+    public void draw(ModularGuiContext context, int screenX, int screenY) {
         DebugBridge.backend().paint(this, context, screenX, screenY);
         drawGui(context.getGraphics(), context.getFont(), screenBounds(screenX, screenY));
     }
-    @Override public Control hitTop(int rootX, int rootY) { return null; }
+
+    @Override
+    public Control hitTop(int rootX, int rootY) {
+        return null;
+    }
+
+    public enum Type {
+        PRIMARY(Tag.Type.PRIMARY), NEUTRAL(Tag.Type.NEUTRAL), SECONDARY(Tag.Type.SECONDARY),
+        INFORMATIVE(Tag.Type.INFORMATIVE), NOTICE(Tag.Type.NOTICE), WARNING(Tag.Type.WARNING),
+        REALMS_INFORMATIVE(Tag.Type.REALMS_INFORMATIVE);
+        private final Tag.Type style;
+
+        Type(Tag.Type style) {
+            this.style = style;
+        }
+
+        public int color() {
+            return style.color();
+        }
+    }
 }

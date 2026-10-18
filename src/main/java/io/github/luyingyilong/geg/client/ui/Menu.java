@@ -35,7 +35,7 @@ public final class Menu extends Container implements ScrollContent {
     private Anchor anchor;
     private int restoredScrollY = -1;
 
-    public Menu() { this(OreTheme.MENU_DIVIDER, Button::new); }
+    public Menu() { this(OreTheme.H_DIVIDER, Button::new); }
 
     Menu(WidgetThemeKey<WidgetTheme> dividerTheme, Supplier<Button> buttonFactory) {
         this.dividerTheme = dividerTheme;

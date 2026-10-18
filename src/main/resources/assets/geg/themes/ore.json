@@ -136,16 +136,30 @@
       "borderY": 1
     }
   },
-  "panel:menuDivider": {
+  "panel:HDivider": {
     "background": {
       "type": "texture",
-      "location": "geg:modularui/gui/menu_divider",
+      "location": "geg:modularui/gui/h_divider",
       "imageWidth": 1,
       "imageHeight": 2,
       "x": 0,
       "y": 0,
       "width": 1,
       "height": 2,
+      "borderX": 0,
+      "borderY": 0
+    }
+  },
+  "panel:VDivider": {
+    "background": {
+      "type": "texture",
+      "location": "geg:modularui/gui/v_divider",
+      "imageWidth": 1,
+      "imageHeight": 1,
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
       "borderX": 0,
       "borderY": 0
     }

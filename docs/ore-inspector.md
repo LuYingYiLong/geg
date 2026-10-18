@@ -44,6 +44,35 @@ tree.items(nodes);
 Scroll scroll = new Scroll().content(tree);
 ```
 
+## Ore Splitter 与 Divider
+
+`Splitter` 是双面板容器，已替换原有类名及 Inspector 使用处。水平排列对应竖分隔线，垂直排列对应横分隔线。`Divider.layout(Divider.Layout.VERTICAL)` 使用 `OreTheme.V_DIVIDER`，固定宽度 1px；默认 HORIZONTAL 使用 `H_DIVIDER`，固定高度 2px。主题在首次绘制时加载。
+
+| Splitter 属性／接口 | 默认值及含义 |
+| --- | --- |
+| `orientation(Orientation)` | HORIZONTAL，左右排列；VERTICAL 上下排列 |
+| `ratio(double)` | 0.35，首面板所占比例，切换为比例尺寸模式 |
+| `firstSize(int)` | 设置首面板的期望像素尺寸，切换为像素模式 |
+| `firstSize()`／`secondSize()`／`sizes()` | 读取最近布局实际分配的尺寸 |
+| `firstMinimum`／`secondMinimum` | 0，与子控件自己的最小尺寸取较大值 |
+| `firstMaximum`／`secondMaximum` | Integer.MAX_VALUE，可设置像素上限 |
+| `gap(int)` | 4px，两面板之间的保留空间 |
+| `dragSize(int)` | 6px，居中的拖拽热区，独立于线条粗细 |
+| `showDivider(boolean)` | true；隐藏线条不改变 gap，也不禁用拖拽 |
+| `resizable(boolean)` | true；false 时禁止用户拖拽 |
+| `lazy(boolean)` | false；true 时拖动只移动分隔线，释放后提交面板尺寸 |
+| `onResizeStart`／`onResize`／`onResizeEnd` | 用户拖拽的开始、变化及结束，接收 `Sizes(first, second)` |
+
+程序设置尺寸不触发拖拽回调。中断拖拽不触发结束回调，lazy 预览会撤销；移出控件后仍可拖动和释放。最小尺寸不足时允许溢出，最大尺寸之和不足以填满容器时余量留空；子控件自身最小尺寸优先。只有一个面板可见时，它填满容器并隐藏分隔线。
+
+```java
+Splitter splitter = new Splitter(left, right)
+        .orientation(Splitter.Orientation.HORIZONTAL)
+        .ratio(0.34).firstMinimum(110).secondMinimum(190)
+        .showDivider(true).resizable(true).gap(4).dragSize(6)
+        .onResizeEnd(sizes -> saveSplit(sizes.first(), sizes.second()));
+```
+
 ## 属性接入
 
 普通属性在 public getter 标记 `@Inspectable`。`InspectorProperties` 缓存每个 Class 的访问器，通过反射配对 public setter；不读取字段、不使用 `setAccessible`。支持 boolean、int、long、float、double、枚举、String 和 Component。
@@ -74,7 +103,7 @@ public Label fontSize(float value) {
 `src/main/.../client/ui/window` 是发布版客户端窗口基础设施；`client/ui/debug` 是无操作桥接和注解。`src/oreDebug` 包含原生 Inspector、类型化快照／命令和反射适配器；`src/oreDebugTest` 是测试夹具。没有 HTTP 服务、端口、网页或 WebSocket，专用 Netty 依赖已移除。
 
 - `gradlew inspectorTest`：注解发现、真实 setter 预检、非法值、覆盖和历史回归。
-- `WindowLayoutTest`：窗口坐标／DPI、输入隔离、SplitContainer 拖动和 Tree 虚拟化。
+- `WindowLayoutTest`：窗口坐标／DPI、输入隔离、Splitter 拖动和 Tree 虚拟化。
 - `NativeWindowClientTest`：显式 `geg.native.smoke=true` 的隔离客户端测试，覆盖双窗口、字符／多行输入、缩放、最小化、异常恢复和关闭。
 - `NativeInspectorClientTest`：显式 `geg.native.inspector.smoke=true` 的隔离客户端测试，覆盖原生前端、数百节点、属性编辑、拾取及四类业务目标。
 

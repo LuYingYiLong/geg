@@ -2,41 +2,52 @@ package io.github.luyingyilong.geg.client.ui.debug;
 
 import io.github.luyingyilong.geg.client.ui.layout.Control;
 import io.github.luyingyilong.geg.client.ui.layout.SizeFlags;
-import java.util.List;
-import java.util.function.Supplier;
-import java.util.function.Consumer;
 
-/** An explicit allowlisted property; it never writes application fields. */
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+/**
+ * An explicit allowlisted property; it never writes application fields.
+ */
 public record DebugProperty(Control target, String key, String group, String kind,
                             List<String> options, Supplier<?> read, double min, double max,
                             Consumer<Object> validate) {
     public DebugProperty(Control target, String key, String group, String kind,
                          List<String> options, Supplier<?> read, double min, double max) {
-        this(target, key, group, kind, options, read, min, max, value -> { });
+        this(target, key, group, kind, options, read, min, max, value -> {
+        });
     }
+
     public static DebugProperty number(Control c, String key, String group, Supplier<?> read, double min, double max) {
         return new DebugProperty(c, key, group, "number", List.of(), read, min, max);
     }
+
     public static DebugProperty bool(Control c, String key, String group, Supplier<?> read) {
         return new DebugProperty(c, key, group, "boolean", List.of(), read, 0, 1);
     }
+
     public static DebugProperty text(Control c, String key, String group, Supplier<?> read) {
         return new DebugProperty(c, key, group, "text", List.of(), read, 0, 2048);
     }
+
     public static DebugProperty choice(Control c, String key, String group, Supplier<? extends Enum<?>> read) {
         Enum<?> value = read.get();
         return new DebugProperty(c, key, group, "enum", java.util.Arrays.stream(value.getDeclaringClass().getEnumConstants())
                 .map(Enum::name).toList(), read, 0, 0);
     }
+
     public Object parse(String input) {
         Object value = parseValue(input);
         validate.accept(value);
         return value;
     }
+
     private Object parseValue(String input) {
         Object base = read.get();
         if (kind.equals("boolean")) {
-            if (!input.equals("true") && !input.equals("false")) throw new IllegalArgumentException("Expected true or false");
+            if (!input.equals("true") && !input.equals("false"))
+                throw new IllegalArgumentException("Expected true or false");
             return Boolean.parseBoolean(input);
         }
         if (kind.equals("text")) {
@@ -76,6 +87,8 @@ public record DebugProperty(Control target, String key, String group, String kin
             else result = value.intValueExact();
             if (key.startsWith("sizeFlags") && !key.equals("sizeFlagsStretchRatio")) SizeFlags.validate(result);
             return result;
-        } catch (ArithmeticException ex) { throw new IllegalArgumentException("Expected an integer within the property's numeric type", ex); }
+        } catch (ArithmeticException ex) {
+            throw new IllegalArgumentException("Expected an integer within the property's numeric type", ex);
+        }
     }
 }

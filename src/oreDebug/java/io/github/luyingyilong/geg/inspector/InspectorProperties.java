@@ -9,27 +9,15 @@ import net.minecraft.network.chat.Component;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-/** Cached public accessor discovery. No field access, setAccessible or reflective base writes. */
+/**
+ * Cached public accessor discovery. No field access, setAccessible or reflective base writes.
+ */
 public final class InspectorProperties {
-    private record Accessor(Method getter, Method setter, String key, Inspectable metadata,
-                            String kind, List<String> options) {
-        DebugProperty bind(Control target) {
-            return new DebugProperty(target, key, metadata.group(), kind, options,
-                    () -> invoke(getter, target), metadata.min(), metadata.max(),
-                    value -> DebugBridge.validateSetter(target, key, value,
-                            () -> invoke(setter, target, value)));
-        }
-    }
-
     private static final ClassValue<List<Accessor>> ACCESSORS = new ClassValue<>() {
-        @Override protected List<Accessor> computeValue(Class<?> type) {
+        @Override
+        protected List<Accessor> computeValue(Class<?> type) {
             List<Accessor> result = new ArrayList<>();
             Set<String> keys = new HashSet<>();
             Method[] methods = type.getMethods();
@@ -57,16 +45,21 @@ public final class InspectorProperties {
                 else throw invalid(getter, "Unsupported value type: " + valueType.getName());
                 String setterName = metadata.setter().isEmpty() ? getter.getName() : metadata.setter();
                 Method setter;
-                try { setter = type.getMethod(setterName, valueType); }
-                catch (NoSuchMethodException ex) { throw invalid(getter, "Missing public typed setter: " + setterName); }
-                if (Modifier.isStatic(setter.getModifiers())) throw invalid(getter, "Setter must be an instance method");
+                try {
+                    setter = type.getMethod(setterName, valueType);
+                } catch (NoSuchMethodException ex) {
+                    throw invalid(getter, "Missing public typed setter: " + setterName);
+                }
+                if (Modifier.isStatic(setter.getModifiers()))
+                    throw invalid(getter, "Setter must be an instance method");
                 result.add(new Accessor(getter, setter, key, metadata, kind, options));
             }
             return List.copyOf(result);
         }
     };
 
-    private InspectorProperties() { }
+    private InspectorProperties() {
+    }
 
     public static List<DebugProperty> properties(Control target) {
         List<DebugProperty> result = new ArrayList<>();
@@ -82,8 +75,9 @@ public final class InspectorProperties {
     }
 
     private static Object invoke(Method method, Object target, Object... arguments) {
-        try { return method.invoke(target, arguments); }
-        catch (InvocationTargetException ex) {
+        try {
+            return method.invoke(target, arguments);
+        } catch (InvocationTargetException ex) {
             if (ex.getCause() instanceof RuntimeException runtime) throw runtime;
             if (ex.getCause() instanceof Error error) throw error;
             throw new IllegalStateException("Inspector accessor failed: " + method.getName(), ex.getCause());
@@ -94,5 +88,15 @@ public final class InspectorProperties {
 
     private static IllegalArgumentException invalid(Method method, String message) {
         return new IllegalArgumentException(method.getDeclaringClass().getSimpleName() + "." + method.getName() + ": " + message);
+    }
+
+    private record Accessor(Method getter, Method setter, String key, Inspectable metadata,
+                            String kind, List<String> options) {
+        DebugProperty bind(Control target) {
+            return new DebugProperty(target, key, metadata.group(), kind, options,
+                    () -> invoke(getter, target), metadata.min(), metadata.max(),
+                    value -> DebugBridge.validateSetter(target, key, value,
+                            () -> invoke(setter, target, value)));
+        }
     }
 }

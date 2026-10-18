@@ -32,7 +32,7 @@ public final class WindowLayoutTest {
         rejects(() -> new WindowOptions("Bad", 0, 10, 1, 1, 2));
 
         Control left = new Control().minimum(20, 10), right = new Control().minimum(30, 10);
-        SplitContainer split = new SplitContainer(left, right).ratio(0.5); Window root = new Window(true).content(split);
+        Splitter split = new Splitter(left, right).ratio(0.5); Window root = new Window(true).content(split);
         root.layoutViewport(104, 50, null); check(left.bounds().width() == 50 && right.bounds().x() == 54, "Split geometry");
         root.pointerPressed(51, 12, null); root.pointerDragged(72, 12); root.pointerReleased(72, 12);
         root.layoutViewport(104, 50, null); check(left.bounds().width() == 70, "Divider uses Window capture");
