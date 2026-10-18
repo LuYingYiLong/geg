@@ -14,6 +14,36 @@
 - 辅助线绘制在目标窗口中；默认仅显示选中节点。字体回退链不是每个字符实际字形来源的断言。
 - 关闭 Inspector 或断开世界时停止本次调试并清理覆盖。原生窗口关闭后恢复原先的失焦暂停设置。调试修改不写入源码、主题或世界存档。
 
+## Ore Tree
+
+Tree 的展开按钮使用 `arrow_right_light`／`arrow_down_light` 的 7×7 图标，叶节点保留对齐空间但不显示箭头。滚动由外层 Scroll 管理，长名称完整测量，行实例仍按视口复用。
+
+| 属性／接口 | 行为与默认值 |
+| --- | --- |
+| `rowHeight(int)`／`indent(int)` | 行高 22px（最小 18px），每层缩进 10px |
+| `blockNode(boolean)` | 默认 true，节点按钮占满行；false 时只占名称和图标所需宽度 |
+| `showSwitcher(boolean)` | 默认 true；false 时同时移除箭头列的占位 |
+| `switcherIcon((item, expanded) -> Icon)` | 自定义展开／折叠图标 |
+| `showIcon(boolean)` | 默认 false；显示 Item 的可选图标 |
+| `disabled(boolean)`／`selectable(boolean)` | 默认 false／true；禁用整树交互，或仅禁止用户选中节点 |
+| `defaultExpandAll(boolean)` | 默认 true，保持旧行为；决定后续新节点的初始展开状态 |
+| `expandedKeys(Collection)`／`expandedKeys()` | 设置／读取展开的分支键集合；程序更新不触发回调 |
+| `expanded(key, boolean)`／`expandAll(boolean)` | 控制单个分支或全部分支 |
+| `onExpand(event)` | 用户展开／折叠时返回 Item、展开状态和不可变展开键快照 |
+| `selected(key)`／`onSelect(value)` | 程序设置选中项不触发回调；用户选择时回传节点值 |
+
+四参数 `Item(key, parent, text, value)` 保持兼容；完整构造支持 `disabled`、`selectable`、`Button.Icon`。禁用节点不响应选择／展开；不可选择的分支仍可展开和通过键盘遍历。方向键跳过禁用节点：右键展开或进入子节点，左键折叠或返回父节点，上下键遍历。搜索临时展开匹配路径，清除搜索后恢复先前展开状态。数据拒绝重复键、缺失父节点和环。
+
+```java
+Tree<String> tree = new Tree<String>()
+        .rowHeight(22).indent(12).blockNode(true)
+        .defaultExpandAll(false).showIcon(true)
+        .onSelect(key -> selectObject(key))
+        .onExpand(event -> expandedChanged(event.item().key(), event.expanded()));
+tree.items(nodes);
+Scroll scroll = new Scroll().content(tree);
+```
+
 ## 属性接入
 
 普通属性在 public getter 标记 `@Inspectable`。`InspectorProperties` 缓存每个 Class 的访问器，通过反射配对 public setter；不读取字段、不使用 `setAccessible`。支持 boolean、int、long、float、double、枚举、String 和 Component。
