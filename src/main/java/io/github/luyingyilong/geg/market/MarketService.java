@@ -1,10 +1,17 @@
 package io.github.luyingyilong.geg.market;
 
+import io.github.luyingyilong.geg.mail.MailActionPacket;
+import io.github.luyingyilong.geg.mail.MailItem;
+import io.github.luyingyilong.geg.mail.MailMessage;
+import io.github.luyingyilong.geg.mail.MailNetwork;
 import io.github.luyingyilong.geg.money.MoneyBalance;
 import io.github.luyingyilong.geg.money.MoneyNetwork;
 import io.github.luyingyilong.geg.money.MoneySavedData;
 import io.github.luyingyilong.geg.money.MoneyCurrency;
 import io.github.luyingyilong.geg.money.MoneyService;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +23,8 @@ import net.minecraft.world.item.ItemStack;
 public final class MarketService {
     public static final int MAX_ACTIVE_LISTINGS = 128;
     public static final int MAX_ITEM_DATA_CHARS = 32768;
+    private static final DateTimeFormatter MAIL_TIME = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss")
+            .withZone(ZoneId.of("Asia/Shanghai"));
 
 
     private MarketService() {
@@ -115,10 +124,11 @@ public final class MarketService {
         }
 
         data.requireAuditCapacity(3);
+        long tradedAt = System.currentTimeMillis();
         MarketDelivery delivery = new MarketDelivery(state.nextId++, listing.item(), quantity);
         MarketCoinCredit credit = proceeds > 0L ? new MarketCoinCredit(state.nextId++, proceeds) : null;
         MarketPurchase purchase = new MarketPurchase(listing.item(), quantity, listing.unitPrice(),
-                listing.sellerName(), System.currentTimeMillis());
+                listing.sellerName(), tradedAt);
         if (credit != null) data.record("market_sale", MoneyCurrency.COIN,
                 MoneyService.wallet(buyer.getUUID()), MoneyService.pending(listing.seller(), credit.id()),
                 proceeds, "listing:" + listingId);
@@ -127,8 +137,8 @@ public final class MarketService {
         data.put(buyer.getUUID(), balance.with(io.github.luyingyilong.geg.money.MoneyCurrency.COIN,
                 balance.coinMinorUnits() - total));
         MoneyNetwork.sync(buyer, data.balance(buyer.getUUID()));
-        if (credit != null) state.coinCredits.computeIfAbsent(listing.seller(), ignored -> new ArrayList<>()).add(credit);
-        state.deliveries.computeIfAbsent(buyer.getUUID(), ignored -> new ArrayList<>()).add(delivery);
+        deliverItemMail(data, buyer.getUUID(), buyer.getGameProfile().getName(), delivery, tradedAt, "purchase");
+        if (credit != null) deliverSaleMail(data, listing.seller(), listing.sellerName(), credit, tradedAt);
         List<MarketPurchase> records = state.history.computeIfAbsent(buyer.getUUID(), ignored -> new ArrayList<>());
         records.add(0, purchase);
         if (records.size() > 100) {
@@ -141,6 +151,8 @@ public final class MarketService {
         }
         updateFavorites(state, listingId);
         changed(server, listing.item(), buyer.getUUID(), listing.seller());
+        syncMail(server, buyer.getUUID(), false);
+        if (credit != null) syncMail(server, listing.seller(), false);
         MarketNetwork.sync(buyer);
         ServerPlayer onlineSeller = server.getPlayerList().getPlayer(listing.seller());
         if (onlineSeller != null) {
@@ -180,11 +192,15 @@ public final class MarketService {
         if (!listing.seller().equals(seller.getUUID()) || state.nextId == Long.MAX_VALUE) {
             return MarketResult.INVALID;
         }
-        state.deliveries.computeIfAbsent(seller.getUUID(), ignored -> new ArrayList<>())
-                .add(new MarketDelivery(state.nextId++, listing.item(), listing.quantity()));
+        long deliveryId = state.nextId++;
+        long cancelledAt = System.currentTimeMillis();
+        MoneySavedData data = MoneySavedData.get(server);
+        deliverItemMail(data, seller.getUUID(), seller.getGameProfile().getName(),
+                new MarketDelivery(deliveryId, listing.item(), listing.quantity()), cancelledAt, "cancelled");
         state.listings.remove(listingId);
         updateFavorites(state, listingId);
         changed(server, listing.item(), seller.getUUID());
+        syncMail(server, seller.getUUID(), false);
         MarketNetwork.sync(seller);
         return MarketResult.CANCELLED;
     }
@@ -290,6 +306,7 @@ public final class MarketService {
         long proceeds = total - fee;
         if (state.nextId > Long.MAX_VALUE - (proceeds > 0L ? 2L : 1L)) return MarketResult.LIMIT;
         data.requireAuditCapacity(3);
+        long tradedAt = System.currentTimeMillis();
         long deliveryId = state.nextId++;
         long creditId = proceeds > 0L ? state.nextId++ : 0L;
         if (proceeds > 0L) data.record("market_fulfill", MoneyCurrency.COIN,
@@ -308,18 +325,20 @@ public final class MarketService {
         }
         seller.getInventory().setChanged();
         seller.inventoryMenu.broadcastChanges();
-        state.deliveries.computeIfAbsent(order.buyer(), ignored -> new ArrayList<>())
-                .add(new MarketDelivery(deliveryId, order.item(), quantity));
-        if (proceeds > 0L) state.coinCredits.computeIfAbsent(seller.getUUID(), ignored -> new ArrayList<>())
-                .add(new MarketCoinCredit(creditId, proceeds));
+        deliverItemMail(data, order.buyer(), order.buyerName(),
+                new MarketDelivery(deliveryId, order.item(), quantity), tradedAt, "purchase");
+        if (proceeds > 0L) deliverSaleMail(data, seller.getUUID(), seller.getGameProfile().getName(),
+                new MarketCoinCredit(creditId, proceeds), tradedAt);
         List<MarketPurchase> records = state.history.computeIfAbsent(order.buyer(), ignored -> new ArrayList<>());
         records.add(0, new MarketPurchase(order.item(), quantity, order.unitPrice(),
-                seller.getGameProfile().getName(), System.currentTimeMillis()));
+                seller.getGameProfile().getName(), tradedAt));
         if (records.size() > 100) records.subList(100, records.size()).clear();
         if (quantity == order.quantity()) state.buyOrders.remove(orderId);
         else state.buyOrders.put(orderId, order.withQuantity(order.quantity() - quantity));
         updateFavorites(state, orderId);
         changed(server, order.item(), seller.getUUID());
+        syncMail(server, order.buyer(), true);
+        if (proceeds > 0L) syncMail(server, seller.getUUID(), false);
         MarketNetwork.sync(seller);
         ServerPlayer onlineBuyer = server.getPlayerList().getPlayer(order.buyer());
         if (onlineBuyer != null) MarketNetwork.sync(onlineBuyer);
@@ -402,6 +421,34 @@ public final class MarketService {
         }
     }
 
+
+    private static List<String> mailArguments(String playerName, long occurredAt) {
+        return List.of(playerName, MAIL_TIME.format(Instant.ofEpochMilli(occurredAt)));
+    }
+
+    private static void deliverItemMail(MoneySavedData data, UUID recipient, String playerName,
+                                        MarketDelivery delivery, long occurredAt, String event) {
+        String prefix = "mail.geg.market." + event + "_items";
+        MailMessage mail = new MailMessage(MarketState.mailId(recipient, delivery.id(), false), occurredAt,
+                MailMessage.Kind.SYSTEM, "", prefix + "_title", prefix + "_body",
+                mailArguments(playerName, occurredAt), 0, MailActionPacket.Scope.PLAYER, null, "",
+                List.of(new MailItem(delivery.item(), delivery.quantity())));
+        data.mail().deliverMarket(data, MarketState.mailKey(recipient, delivery.id(), false), mail, recipient, "");
+    }
+
+    private static void deliverSaleMail(MoneySavedData data, UUID recipient, String playerName,
+                                        MarketCoinCredit credit, long occurredAt) {
+        MailMessage mail = new MailMessage(MarketState.mailId(recipient, credit.id(), true), occurredAt,
+                MailMessage.Kind.SYSTEM, "", "mail.geg.market.sold_title", "mail.geg.market.sold_body",
+                mailArguments(playerName, occurredAt), credit.amount(), MailActionPacket.Scope.PLAYER);
+        data.mail().deliverMarket(data, MarketState.mailKey(recipient, credit.id(), true), mail, recipient,
+                MoneyService.pending(recipient, credit.id()));
+    }
+
+    private static void syncMail(MinecraftServer server, UUID recipient, boolean notify) {
+        ServerPlayer online = server.getPlayerList().getPlayer(recipient);
+        if (online != null) MailNetwork.status(online, notify);
+    }
 
     private static void changed(MinecraftServer server, ItemStack item, UUID... notifiedPlayers) {
         MoneySavedData data = MoneySavedData.get(server);

@@ -223,8 +223,17 @@ public final class MarketGameTests {
         helper.assertTrue(seller.getInventory().getItem(0).isEmpty(), "Listing did not escrow items");
         helper.assertTrue(MarketService.addFavorite(buyer, listingId) == MarketResult.FAVORITED,
                 "Favorite failed");
+        long purchaseDeliveryId = data.market().nextId;
         helper.assertTrue(MarketService.buy(buyer, listingId, 1L, 125L, 1) == MarketResult.BOUGHT,
                 "Partial purchase failed");
+        MailMessage purchaseMail = assertTradeMail(helper, data, buyer.getUUID(),
+                MarketState.mailId(buyer.getUUID(), purchaseDeliveryId, false), "purchase_items", "market_buyer");
+        MailMessage saleMail = assertTradeMail(helper, data, seller.getUUID(),
+                MarketState.mailId(seller.getUUID(), purchaseDeliveryId + 1, true), "sold", "market_seller");
+        helper.assertTrue(purchaseMail.sentAt() == saleMail.sentAt()
+                        && purchaseMail.sentAt() == data.market().history.get(buyer.getUUID()).get(0).purchasedAt()
+                        && purchaseMail.items().get(0).quantity() == 1 && saleMail.coin() == 125L,
+                "Trade mails must share the transaction time and retain their item/coin attachments");
         helper.assertTrue(data.balance(buyer.getUUID()).coinMinorUnits() == 875L,
                 "Buyer was not charged the unit price");
         helper.assertTrue(pendingMailCoin(helper.getLevel().getServer(), seller.getUUID()) == 125L,
@@ -236,6 +245,9 @@ public final class MarketGameTests {
                 "Sale proceeds were not recorded as a wallet-to-pending transfer");
         helper.assertTrue(MarketService.buy(buyer, listingId, 1L, 125L, 1) == MarketResult.STALE,
                 "Stale purchase succeeded");
+        helper.assertTrue(data.mail().list(buyer.getUUID(), MailState.Filter.ALL).size() == 1
+                        && data.mail().list(seller.getUUID(), MailState.Filter.ALL).size() == 1,
+                "Stale purchase sent duplicate transaction mail");
         helper.assertTrue(MarketService.reprice(seller, listingId, 1L, 200L) == MarketResult.STALE,
                 "Stale reprice succeeded");
         helper.assertTrue(MarketService.reprice(seller, listingId, 2L, 200L) == MarketResult.REPRICED,
@@ -309,6 +321,30 @@ public final class MarketGameTests {
                 "Cancellation failed");
         helper.assertTrue(itemMail(helper.getLevel().getServer(), seller.getUUID()).size() == 1,
                 "Cancelled items were not moved to Claim");
+        UUID cancellationId = itemMail(helper.getLevel().getServer(), seller.getUUID()).get(0).id();
+        MailMessage cancellation = data.mail().detail(seller.getUUID(), cancellationId);
+        helper.assertTrue(cancellation.title().equals("mail.geg.market.cancelled_items_title")
+                        && cancellation.body().equals("mail.geg.market.cancelled_items_body")
+                        && cancellation.arguments().size() == 2
+                        && cancellation.arguments().get(0).equals(seller.getGameProfile().getName())
+                        && cancellation.arguments().get(1).matches("[0-9]{2}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}"),
+                "Cancellation mail must contain its own message, player name and second-precision time");
+        long messageTime = java.time.LocalDateTime.parse(cancellation.arguments().get(1),
+                        java.time.format.DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss"))
+                .atZone(java.time.ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli();
+        helper.assertTrue(cancellation.sentAt() - messageTime >= 0 && cancellation.sentAt() - messageTime < 1000,
+                "Cancellation mail time must use the cancellation timestamp in Asia/Shanghai");
+        helper.assertTrue(cancellation.items().get(0).quantity() == 2
+                        && MarketKey.of(cancellation.items().get(0).item()).equals(MarketKey.of(item)),
+                "Cancellation mail lost the returned quantity or full item data");
+        MailMessage restoredCancellation = MailState.load(data.mail().save()).detail(seller.getUUID(), cancellationId);
+        helper.assertTrue(restoredCancellation != null && restoredCancellation.arguments().equals(cancellation.arguments())
+                        && restoredCancellation.sentAt() == cancellation.sentAt()
+                        && restoredCancellation.title().equals(cancellation.title()),
+                "Cancellation mail name and time changed after reload");
+        helper.assertTrue(MarketService.cancel(seller, secondId, 1L) == MarketResult.STALE
+                        && itemMail(helper.getLevel().getServer(), seller.getUUID()).size() == 1,
+                "A repeated cancellation must not send another mail");
         seller.getInventory().setItem(0, item.copyWithCount(1));
         long thirdId = data.market().nextId;
         helper.assertTrue(MarketService.list(seller, 0, 1, 300L, item) == MarketResult.LISTED,
@@ -355,8 +391,16 @@ public final class MarketGameTests {
         seller.getInventory().setItem(0, sample.copyWithCount(2));
         seller.getInventory().setItem(1, wrong.copyWithCount(9));
         seller.getInventory().setItem(2, sample.copyWithCount(2));
+        long requestDeliveryId = data.market().nextId;
         helper.assertTrue(MarketService.fulfillRequest(seller, id, 1L, 100L, 4)
                 == MarketResult.FULFILLED, "Delivery across matching stacks failed");
+        MailMessage requestPurchaseMail = assertTradeMail(helper, data, buyer.getUUID(),
+                MarketState.mailId(buyer.getUUID(), requestDeliveryId, false), "purchase_items", "request_buyer");
+        MailMessage requestSaleMail = assertTradeMail(helper, data, seller.getUUID(),
+                MarketState.mailId(seller.getUUID(), requestDeliveryId + 1, true), "sold", "request_seller");
+        helper.assertTrue(requestPurchaseMail.sentAt() == requestSaleMail.sentAt()
+                        && requestPurchaseMail.items().get(0).quantity() == 4 && requestSaleMail.coin() == 400L,
+                "Buy-order delivery mails lost the transaction timestamp or attachments");
         helper.assertTrue(seller.getInventory().getItem(0).isEmpty()
                 && seller.getInventory().getItem(2).isEmpty()
                 && seller.getInventory().getItem(1).getCount() == 9,
@@ -471,6 +515,26 @@ public final class MarketGameTests {
                 "Full wallet accepted more coin");
         helper.succeed();
     }
+    private static MailMessage assertTradeMail(GameTestHelper helper, MoneySavedData data, UUID recipient,
+                                                UUID id, String event, String playerName) {
+        MailMessage mail = data.mail().detail(recipient, id);
+        helper.assertTrue(mail != null && mail.title().equals("mail.geg.market." + event + "_title")
+                        && mail.body().equals("mail.geg.market." + event + "_body")
+                        && mail.arguments().size() == 2 && mail.arguments().get(0).equals(playerName)
+                        && mail.arguments().get(1).matches("[0-9]{2}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}"),
+                "Transaction mail must use the correct event, recipient name and second-precision time");
+        long transactionTime = java.time.LocalDateTime.parse(mail.arguments().get(1),
+                        java.time.format.DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss"))
+                .atZone(java.time.ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli();
+        helper.assertTrue(mail.sentAt() - transactionTime >= 0 && mail.sentAt() - transactionTime < 1000,
+                "Transaction mail must display the recorded transaction time in Asia/Shanghai");
+        MailMessage restored = MailState.load(data.mail().save()).detail(recipient, id);
+        helper.assertTrue(restored != null && restored.title().equals(mail.title()) && restored.body().equals(mail.body())
+                        && restored.arguments().equals(mail.arguments()) && restored.sentAt() == mail.sentAt(),
+                "Transaction mail content changed after reload");
+        return mail;
+    }
+
     private static long pendingMailCoin(net.minecraft.server.MinecraftServer server, UUID player) {
         var data = MoneySavedData.get(server);
         data.market().migrateClaims(data);
