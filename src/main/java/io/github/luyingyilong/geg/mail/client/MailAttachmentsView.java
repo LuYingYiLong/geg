@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.mail.client;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.Button;
 import io.github.luyingyilong.ore.Slot;
 import io.github.luyingyilong.ore.layout.*;
@@ -18,13 +20,13 @@ final class MailAttachmentsView extends Container {
     MailAttachmentsView(Runnable action) {
         items.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
         scroll.minimum(0, Slot.SIZE).sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL);
-        claim.onPressed(action).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        Signals.configure(claim, connected -> connected.pressed().connect(connected, action)).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         addChild(row);
         sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
     }
 
     void attachments(List<MailItem> values, boolean hasAttachments, boolean claimed) {
-        for (Control child : items.children()) items.removeChild(child);
+        for (Control child : items.children()) { if (child.parent() != null) child.parent().removeChild(child); child.queueFree(); }
         for (MailItem value : values) items.add(new Slot().item(value.item(), value.quantity()));
         scroll.visible(!values.isEmpty());
         claim.label(Component.translatable(claimed ? "mail.geg.claimed" : "mail.geg.claim"))

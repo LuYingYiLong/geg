@@ -1,5 +1,6 @@
 package io.github.luyingyilong.geg.organization.client;
 
+
 import io.github.luyingyilong.ore.Button;
 import io.github.luyingyilong.ore.Label;
 import io.github.luyingyilong.ore.layout.Box;
@@ -19,7 +20,7 @@ final class OrganizationMembershipRow extends Container {
     private final Label description;
     private final Button open;
 
-    OrganizationMembershipRow(OrganizationSyncPacket.Summary summary, Runnable showDetails) {
+    OrganizationMembershipRow(OrganizationSyncPacket.Summary summary) {
         details.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Label name = new Label(Component.literal(summary.name())).color(OreTheme.TEXT_WHITE);
         name.minimum(0, 16).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
@@ -29,13 +30,14 @@ final class OrganizationMembershipRow extends Container {
         description.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         description.visible(!summary.description().isBlank());
         details.add(description);
-        open = new Button(Component.translatable("organization.geg.details")).onPress(showDetails);
+        open = new Button(Component.translatable("organization.geg.details"));
         open.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         row.add(details).add(open);
         addChild(row);
     }
 
     Label descriptionNode() { return description; }
+    io.github.luyingyilong.ore.signal.Signal0 detailsRequested() { return open.pressed(); }
 
     @Override public Size measureSize(Font font, Size available) {
         Size action = open.measureSize(font, available);

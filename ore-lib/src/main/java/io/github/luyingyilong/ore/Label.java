@@ -104,7 +104,7 @@ public final class Label extends Control {
         }
         return this;
     }
-    public Label wrap(Wrap wrap) { Objects.requireNonNull(wrap); if (DebugBridge.previewWrite(this, "wrap", wrap)) return this; this.wrap = wrap; requestLayout(); return this; }
+    public Label wrap(Wrap wrap) { Objects.requireNonNull(wrap); if (DebugBridge.previewWrite(this, "wrap", wrap)) return this; if (this.wrap != wrap) { this.wrap = wrap; requestLayout(); } return this; }
     public Label scrollTrigger(ScrollTrigger trigger) {
         ScrollTrigger next = Objects.requireNonNull(trigger);
         if (DebugBridge.previewWrite(this, "scrollTrigger", next)) return this;
@@ -191,8 +191,7 @@ public final class Label extends Control {
     public Label maxLines(int maxLines) {
         if (maxLines < 1) throw new IllegalArgumentException("At least one line is required");
         if (DebugBridge.previewWrite(this, "maxLines", maxLines)) return this;
-        this.maxLines = maxLines;
-        requestLayout();
+        if (this.maxLines != maxLines) { this.maxLines = maxLines; requestLayout(); }
         return this;
     }
     public Label maximumWidth(int maximumWidth) {
@@ -224,17 +223,20 @@ public final class Label extends Control {
 
     @Override
     public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0;
         return Math.max(minimumWidth(), Math.min(maximumWidth, (int) Math.ceil(font.width(styledText()) * textScale())));
     }
 
     @Override
     public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0;
         int maxLines = DebugBridge.value(this, "maxLines", this.maxLines);
         return Math.max(minimumHeight(), Math.min(maxLines, lines(font, available).size()) * lineHeight(font));
     }
 
     @Override
     public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         return new Size(measureWidth(font, available.width()),
                 measureHeight(font, available.width()));
     }
@@ -260,6 +262,17 @@ public final class Label extends Control {
         Wrap wrap = DebugBridge.value(this, "wrap", this.wrap);
         int logicalWidth = Math.max(1, (int) Math.floor(width / textScale()));
         Component display = styledText();
+        return wrappedLines(font, display, logicalWidth, wrap, overflow);
+    }
+
+    /** Body-font measurement without allocating a Control, SignalScope or diagnostic identity. */
+    public static int measureTextHeight(Font font, Component text, int width, Wrap wrap, Overflow overflow, int maxLines) {
+        if (maxLines < 1) throw new IllegalArgumentException("At least one line is required");
+        return Math.min(maxLines, wrappedLines(font, OreFonts.text(Objects.requireNonNull(text)), Math.max(1, width),
+                Objects.requireNonNull(wrap), Objects.requireNonNull(overflow)).size()) * OreTextMetrics.body().lineHeight(1.0F);
+    }
+
+    private static List<FormattedCharSequence> wrappedLines(Font font, Component display, int logicalWidth, Wrap wrap, Overflow overflow) {
         if (wrap == Wrap.NONE || overflow == Overflow.MARQUEE) return List.of(display.getVisualOrderText());
         if (wrap == Wrap.WORD) return font.split(display, logicalWidth);
         List<FormattedCharSequence> result = new ArrayList<>();
@@ -357,6 +370,10 @@ public final class Label extends Control {
 
     /** Internal shared painter for Ore components hosted outside a ModularUI screen. */
     void paint(GuiGraphics graphics, Font font, Rect area, int mouseX, int mouseY) {
+        paint(graphics, font, area, mouseX, mouseY, this);
+    }
+
+    private void paint(GuiGraphics graphics, Font font, Rect area, int mouseX, int mouseY, Control debugOwner) {
         Overflow overflow = DebugBridge.value(this, "overflow", this.overflow);
         Horizontal horizontal = DebugBridge.value(this, "horizontal", this.horizontal);
         int color = DebugBridge.value(this, "color", this.color);
@@ -383,12 +400,12 @@ public final class Label extends Control {
             if (overflow == Overflow.MARQUEE && lineWidth > area.width()) {
                 lineX = area.x() - scrollOffset;
             }
-            if (DebugBridge.active()) {
+            if (DebugBridge.active() && debugOwner != null) {
                 var metrics = OreTextMetrics.family(hero());
                 java.util.Set<String> spanFonts = new java.util.LinkedHashSet<>();
                 line.accept((at, style, codepoint) -> { spanFonts.add(style.getFont().toString()); return true; });
                 String chain = hero() ? "Minecraft Ten → Noto Sans → Minecraft default" : "Mojangles → Noto Sans → Minecraft default";
-                DebugBridge.backend().text(this, graphics, area,
+                DebugBridge.backend().text(debugOwner, graphics, area,
                         lineX, startY + index * lineHeight, lineWidth, lineHeight,
                         startY + index * lineHeight - metrics.drawOrigin(textScale),
                         startY + index * lineHeight + 7 * textScale,
@@ -407,9 +424,8 @@ public final class Label extends Control {
 
     public static void draw(Control owner, ModularGuiContext context, Component text, Rect area, int color,
                             Overflow overflow, Horizontal horizontal, Vertical vertical) {
-        Label label = new Label(text).color(color).overflow(overflow).align(horizontal, vertical);
-        DebugBridge.backend().internal(owner, "text@" + area.x() + "," + area.y(), label);
-        label.drawAt(context, area);
+        immediate(context, text).color(color).overflow(overflow).align(horizontal, vertical)
+                .paint(context.getGraphics(), context.getFont(), area, context.getAbsMouseX(), context.getAbsMouseY(), owner);
     }
 
     public static void draw(ModularGuiContext context, Component text, Rect area, int color,
@@ -419,8 +435,15 @@ public final class Label extends Control {
 
     public static void draw(ModularGuiContext context, Component text, Rect area, int color,
                             boolean shadow, Overflow overflow, Horizontal horizontal, Vertical vertical) {
-        new Label(text).color(color).shadow(shadow).overflow(overflow)
-                .align(horizontal, vertical).drawAt(context, area);
+        immediate(context, text).color(color).shadow(shadow).overflow(overflow).align(horizontal, vertical)
+                .paint(context.getGraphics(), context.getFont(), area, context.getAbsMouseX(), context.getAbsMouseY(), null);
+    }
+
+    /** Compatibility painters borrow one window-owned scratch label; retained UI should own its Labels. */
+    static Label immediate(ModularGuiContext context, Component text) {
+        return io.github.luyingyilong.ore.window.WindowContext.of(context).textPainter().text(text)
+                .hero(false).fontSize(DEFAULT_FONT_SIZE).scale(1.0F).wrap(Wrap.NONE).maxLines(Integer.MAX_VALUE)
+                .shadow(false).opticalCenter(false);
     }
 
     @Override public void debugProperties(java.util.List<DebugProperty> out) {

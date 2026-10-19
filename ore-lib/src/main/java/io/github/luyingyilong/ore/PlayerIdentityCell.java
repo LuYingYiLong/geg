@@ -35,8 +35,8 @@ public final class PlayerIdentityCell<T> implements Table.Cell<T> {
     }
 
     @Override public int measureHeight(Font font, T row, int width) {
-        int textHeight = font == null ? 0 : nameLabel().text(Component.literal(playerName.apply(row)))
-                .measureHeight(font, Math.max(1, width - 2 * INSET_X - AVATAR_SIZE - GAP));
+        int textHeight = font == null ? 0 : Label.measureTextHeight(font, Component.literal(playerName.apply(row)),
+                Math.max(1, width - 2 * INSET_X - AVATAR_SIZE - GAP), Label.Wrap.CHARACTER, Label.Overflow.ELLIPSIS, 2);
         return Math.max(AVATAR_SIZE, textHeight) + 2 * INSET_Y;
     }
 
@@ -66,8 +66,12 @@ public final class PlayerIdentityCell<T> implements Table.Cell<T> {
         }
 
         @Override public void layout(Rect bounds, Font font) {
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(bounds, font);
             fitChild(content, new Rect(0, 0, bounds.width(), bounds.height()), font);
+
         }
+    }
     }
 }

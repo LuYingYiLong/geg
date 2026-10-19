@@ -14,13 +14,17 @@ public final class ToastQueue {
     public Toast show(String key, Toast toast) {
         Objects.requireNonNull(key); Objects.requireNonNull(toast); prune();
         Toast existing = messages.get(key);
-        if (existing != null) return existing.text(toast.text()).duration(toast.duration()).type(toast.type()).refresh();
-        while (messages.size() >= 3) messages.remove(messages.keySet().iterator().next());
+        if (existing != null) {
+            existing.text(toast.text()).duration(toast.duration()).type(toast.type()).refresh();
+            if (existing != toast) toast.queueFree();
+            return existing;
+        }
+        while (messages.size() >= 3) messages.remove(messages.keySet().iterator().next()).queueFree();
         messages.put(key, toast.open()); return toast;
     }
-    public void clear() { messages.clear(); }
+    public void clear() { for (Toast toast : List.copyOf(messages.values())) toast.queueFree(); messages.clear(); }
     public int size() { prune(); return messages.size(); }
-    private void prune() { messages.values().removeIf(toast -> !toast.visible() || toast.finished()); }
+    private void prune() { messages.values().removeIf(toast -> { if (!toast.isAlive() || !toast.visible() || toast.finished()) { toast.queueFree(); return true; } return false; }); }
 
     public List<Frame> layout(Font font, int width, int height) {
         prune();
@@ -31,7 +35,7 @@ public final class ToastQueue {
         while (messages.size() > 1) {
             int required = messages.values().stream().mapToInt(toast -> toast.measureSize(font, new Size(available, height)).height() + 4).sum();
             if (required + top - 4 < height) break;
-            messages.remove(messages.keySet().iterator().next());
+            messages.remove(messages.keySet().iterator().next()).queueFree();
         }
         List<Frame> frames = new ArrayList<>();
         int y = top;

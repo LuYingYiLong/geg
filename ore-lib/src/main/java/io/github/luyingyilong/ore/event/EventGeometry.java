@@ -30,7 +30,7 @@ public final class EventGeometry {
         return clip;
     }
     public static boolean contains(Control control,int x,int y){
-        if(control==null || !control.visible())return false;
+        if(control==null || !(control.isAlive() && control.visible()))return false;
         Rect clip=clip(control);Rect p=point(control,x,y);
         return (clip==null||clip.contains(x,y))&&control.hit(p.x(),p.y());
     }

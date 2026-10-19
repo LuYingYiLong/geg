@@ -50,6 +50,7 @@ public final class Padding extends Container {
                 debugValue("bottom", insets.bottom()), debugValue("left", insets.left())); }
 
     @Override public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         int horizontal = insets().left() + insets().right();
         int vertical = insets().top() + insets().bottom();
         Size inner = child == null ? new Size(0, 0) : child.desiredSize(font,
@@ -61,28 +62,36 @@ public final class Padding extends Container {
 
     @Override
     public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0;
         return insets().left() + insets().right() + (child == null ? 0
                 : child.measureWidth(font, Math.max(0, available - insets().left() - insets().right())));
     }
 
     @Override
     public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0;
         return insets().top() + insets().bottom() + (child == null ? 0
                 : child.measureHeight(font, Math.max(0, available - insets().top() - insets().bottom())));
     }
 
     @Override
     public void layout(Rect localBounds, Font font) {
-        super.layout(localBounds, font);
-        if (child != null) fitChild(child, new Rect(insets().left(), insets().top(),
-                Math.max(child.minimumWidth(), localBounds.width() - insets().left() - insets().right()),
-                Math.max(child.minimumHeight(), localBounds.height() - insets().top() - insets().bottom())), font);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(localBounds, font);
+            if (child != null) fitChild(child, new Rect(insets().left(), insets().top(),
+                    Math.max(child.minimumWidth(), localBounds.width() - insets().left() - insets().right()),
+                    Math.max(child.minimumHeight(), localBounds.height() - insets().top() - insets().bottom())), font);
+        }
     }
 
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
-        DebugBridge.backend().paint(this, context, screenX, screenY);
-        if (child != null && child.visible()) child.draw(context, screenX, screenY);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            DebugBridge.backend().paint(this, context, screenX, screenY);
+            if (child != null && (child.isAlive() && child.visible())) child.draw(context, screenX, screenY);
+        }
     }
     @Override public void debugProperties(java.util.List<DebugProperty> out) {
         super.debugProperties(out);

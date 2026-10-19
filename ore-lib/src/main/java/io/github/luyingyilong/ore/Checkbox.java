@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Rect;
@@ -12,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 
 /** Transparent icon-and-label toggle. Its whole assigned rectangle is clickable. */
 public final class Checkbox extends Container {
@@ -23,13 +24,13 @@ public final class Checkbox extends Container {
     private final Label label;
     private boolean checked;
     private boolean enabled = true;
-    private Consumer<Boolean> onChange = value -> { };
+    private final SignalSource<Boolean> toggled = new SignalSource<>(this, "toggled", "Boolean");
     private final ReleaseGesture<Boolean> gesture = new ReleaseGesture<>();
 
     public Checkbox(Component text) {
-        label = new Label(Objects.requireNonNull(text)).opticalCenter(true).color(OreTheme.TEXT_WHITE)
+        label = ownPart("label", new Label(Objects.requireNonNull(text)).opticalCenter(true).color(OreTheme.TEXT_WHITE)
                 .overflow(Label.Overflow.ELLIPSIS)
-                .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+                .align(Label.Horizontal.LEFT, Label.Vertical.CENTER));
         addChild(label);
         minimum(ICON_SIZE, HEIGHT);
         focusable(true);
@@ -45,9 +46,11 @@ public final class Checkbox extends Container {
         return checked;
     }
 
-    /** Programmatic changes do not fire the user-change callback. */
+    /** State setters notify only when the value changes. */
     public Checkbox checked(boolean checked) {
+        if (this.checked == checked) return this;
         this.checked = checked;
+        toggled.emit(checked);
         return this;
     }
 
@@ -58,23 +61,26 @@ public final class Checkbox extends Container {
         return this;
     }
 
-    public Checkbox onChange(Consumer<Boolean> onChange) {
-        this.onChange = Objects.requireNonNull(onChange);
-        return this;
-    }
+    public Signal<Boolean> toggled() { return toggled.signal(); }
+    public Checkbox setCheckedNoSignal(boolean value) { checked = value; return this; }
 
     @Override public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0;
         return Math.max(minimumWidth(), ICON_SIZE + ICON_GAP + label.measureWidth(font, available));
     }
 
     @Override public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0;
         return Math.max(minimumHeight(), label.measureHeight(font, available));
     }
 
     @Override public void layout(Rect bounds, Font font) {
-        super.layout(bounds, font);
-        fitChild(label, new Rect(ICON_SIZE + ICON_GAP, 0,
-                Math.max(0, bounds.width() - ICON_SIZE - ICON_GAP), bounds.height()), font);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(bounds, font);
+            fitChild(label, new Rect(ICON_SIZE + ICON_GAP, 0,
+                    Math.max(0, bounds.width() - ICON_SIZE - ICON_GAP), bounds.height()), font);
+        }
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
@@ -121,8 +127,7 @@ public final class Checkbox extends Container {
     @Override public boolean activate() {
         if (!enabled || !visible()) return false;
         OreSounds.play(OreSounds.Cue.CLICK);
-        checked = !checked;
-        onChange.accept(checked);
+        checked(!checked);
         return true;
     }
 

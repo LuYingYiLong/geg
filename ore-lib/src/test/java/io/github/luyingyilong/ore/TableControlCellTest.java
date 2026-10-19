@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Overlay;
@@ -23,10 +25,8 @@ public final class TableControlCellTest {
         private final Button favorite;
 
         private Actions(List<String> events) {
-            buy = new Button(cue -> events.add(cue.name())).size(Button.Size.SMALL)
-                    .onPressed(() -> events.add(row.id() + ":buy"));
-            favorite = new Button(cue -> events.add(cue.name())).size(Button.Size.SMALL).toggleButton(true)
-                    .onPressed(() -> events.add(row.id() + ":favorite:" + favoriteState()));
+            buy = Signals.configure(new Button(cue -> events.add(cue.name())).size(Button.Size.SMALL), connected -> connected.pressed().connect(connected, () -> events.add(row.id() + ":buy")));
+            favorite = Signals.configure(new Button(cue -> events.add(cue.name())).size(Button.Size.SMALL).toggleButton(true), connected -> connected.pressed().connect(connected, () -> events.add(row.id() + ":favorite:" + favoriteState())));
             addChild(buy);
             addChild(favorite);
         }
@@ -34,7 +34,7 @@ public final class TableControlCellTest {
         private boolean favoriteState() { return favorite.buttonPressed(); }
         private void bind(Item row) {
             this.row = row;
-            favorite.buttonPressedNoSignal(row.favorite());
+            favorite.setButtonPressedNoSignal(row.favorite());
         }
 
         @Override public void layout(Rect bounds, Font font) {

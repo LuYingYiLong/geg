@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.layout.Control;
@@ -10,7 +12,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import java.util.*;
-import java.util.function.Consumer;
 
 /** Retained trigger. The owning Window creates and routes its Overlay menu. */
 public final class Dropdown<T> extends Control {
@@ -24,14 +25,22 @@ public final class Dropdown<T> extends Control {
     private Component triggerLabel;
     private boolean checkable=true,showArrow=true,open,held;
     private int activationKey=-1;
-    private Consumer<T> onSelect=value->{};
+    private final SignalSource<T> selectionChanged=new SignalSource<>(this,"selectionChanged", "T");
+    private final SignalSource<T> itemActivated=new SignalSource<>(this,"itemActivated", "T");
     public Dropdown(T initialValue,int maxVisibleItems){this(initialValue,maxVisibleItems,Button.Size.MEDIUM);}
     public Dropdown(T initialValue,int maxVisibleItems,Button.Size size){
         selected=initialValue;this.maxVisibleItems=Math.max(1,maxVisibleItems);this.size=Objects.requireNonNull(size);
-        triggerButton=new Button().size(size).alignment(Button.TextAlignment.LEFT).trailingIcon(ARROW);
+        triggerButton=ownPart("trigger", new Button().size(size).alignment(Button.TextAlignment.LEFT).trailingIcon(ARROW));
         minimum(0,size.height());focusable(true);focusExpansion(1);
     }
-    public Dropdown<T> onSelect(Consumer<T> action){onSelect=Objects.requireNonNull(action);return this;}
+    public Signal<T> selectionChanged(){return selectionChanged.signal();}
+    public Signal<T> itemActivated(){return itemActivated.signal();}
+    public Dropdown<T> selected(T value){T before=selected;setSelectedNoSignal(value);if(!Objects.equals(before,selected))selectionChanged.emit(selected);return this;}
+    public Dropdown<T> setSelectedNoSignal(T value){
+        if(value!=null&&options.stream().noneMatch(option->Objects.equals(option.value(),value)))throw new IllegalArgumentException("Unknown dropdown option");
+        if(!Objects.equals(selected,value)){selected=value;requestLayout();}return this;
+    }
+
     public Dropdown<T> triggerLabel(Component label){triggerLabel=Objects.requireNonNull(label);requestLayout();return this;}
     public Dropdown<T> icon(Button.Icon icon){triggerButton.icon(icon);requestLayout();return this;}
     public Dropdown<T> icon(ResourceLocation texture,int width,int height){return icon(new Button.Icon(texture,width,height));}
@@ -50,14 +59,13 @@ public final class Dropdown<T> extends Control {
     public void setOptions(List<Option<T>> values){
         List<Option<T>> next=List.copyOf(values);
         if(!options.equals(next)){close();options=next;requestLayout();}
-        if(options.stream().noneMatch(option->Objects.equals(option.value(),selected)))selected=options.isEmpty()?null:options.get(0).value();
+        if(options.stream().noneMatch(option->Objects.equals(option.value(),selected)))selected(options.isEmpty()?null:options.get(0).value());
     }
     public void select(T value){
         close();
         if(options.stream().noneMatch(option->Objects.equals(option.value(),value)))return;
-        boolean changed=!Objects.equals(selected,value);selected=value;
-        if(changed)requestLayout();
-        if(changed||!checkable)onSelect.accept(value);
+        selected(value);
+        itemActivated.emit(value);
     }
     public void close(){open=false;cancelInteraction();}
     @Override public void cancelInteraction(){held=false;activationKey=-1;}

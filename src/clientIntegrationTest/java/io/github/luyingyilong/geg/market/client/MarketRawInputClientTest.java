@@ -19,6 +19,7 @@ public final class MarketRawInputClientTest {
     private static int phase,ticks;
     private static Window window;
     private static NumberInput number;
+    private static int textSignals, priceTextSignals, priceCommits;
     private static int x,y;
     @SubscribeEvent public static void tick(TickEvent.ClientTickEvent event) {
         if(!Boolean.getBoolean("geg.market.raw.smoke")||event.phase!=TickEvent.Phase.END||phase==99)return;
@@ -37,6 +38,7 @@ public final class MarketRawInputClientTest {
                 var show=MarketCanvasWidget.class.getDeclaredMethod("openModal",card);show.setAccessible(true);show.invoke(canvas,sample);
                 window=(Window)field(MarketCanvasWidget.class,canvas,"window");
                 number=(NumberInput)field(ClientMarketScreen.class,null,"quantity");phase=2;
+                number.textChanged().connect(number, value -> textSignals++);
             }else if(phase==2&&ticks>45){
                 Form form=(Form)field(ClientMarketScreen.class,null,"detailForm");
                 var node=form.children().stream().filter(FormItem.class::isInstance).map(FormItem.class::cast)
@@ -52,6 +54,7 @@ public final class MarketRawInputClientTest {
                 key(GLFW.GLFW_KEY_A,GLFW.GLFW_MOD_CONTROL);
                 text("2+3");state("TEXT");
                 check(number.getText().equals("2+3"),"GLFW characters accepted: "+number.getText());
+                check(textSignals==3,"One textChanged signal per GLFW character, got "+textSignals);
                 phase=5;
             }else if(phase==5&&ticks>55){
                 state("AFTER_FRAMES");check(number.getText().equals("2+3")&&number.isFocused(),"Text and focus persist after frames");
@@ -66,6 +69,8 @@ public final class MarketRawInputClientTest {
                 check(InputGeometryProbe.cursor(number).x==2,"GLFW click at column 2, got "+InputGeometryProbe.cursor(number).x);
                 text("1");check(number.getText().equals("121+34"),"GLFW insert at clicked caret");
                 number=(NumberInput)field(ClientMarketScreen.class,null,"price");
+                number.textChanged().connect(number, value -> priceTextSignals++);
+                number.valueCommitted().connect(number, value -> priceCommits++);
                 var a=number.getArea();move(a.x+8,a.y+a.height/2);phase=8;
             }else if(phase==8&&ticks>70){
                 mouse(GLFW.GLFW_PRESS);phase=9;
@@ -75,6 +80,8 @@ public final class MarketRawInputClientTest {
             }else if(phase==10&&ticks>77){
                 check(number.getText().equals("0.1+0.2"),"Price text persists with mouse over field");
                 key(GLFW.GLFW_KEY_ENTER,0);check(number.getText().equals("0.30"),"Price arithmetic commits");
+                check(priceTextSignals==8,"Seven input changes plus one arithmetic normalization, got "+priceTextSignals);
+                check(priceCommits==1,"Numeric commit emitted exactly once, got "+priceCommits);
                 Object canvas=field(ClientMarketScreen.class,null,"canvas");
                 var menu=MarketCanvasWidget.class.getDeclaredField("quantityMenu");menu.setAccessible(true);menu.setBoolean(canvas,true);
                 ClientMarketScreen.showTradeQuantity(true);

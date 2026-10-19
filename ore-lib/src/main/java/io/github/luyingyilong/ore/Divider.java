@@ -47,12 +47,12 @@ public final class Divider extends Control {
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
         var area = screenBounds(screenX, screenY);
         if (layout == Layout.VERTICAL) {
-            if (verticalPainter == null) verticalPainter = new Panel(OreTheme.V_DIVIDER);
+            if (verticalPainter == null) verticalPainter = ownPart("verticalPainter", new Panel(OreTheme.V_DIVIDER));
             int width = Math.min(1, area.width());
             verticalPainter.drawAt(context, new io.github.luyingyilong.ore.layout.Rect(
                     area.x() + (area.width()-width)/2, area.y(), width, area.height()));
         } else {
-            if (horizontalPainter == null) horizontalPainter = new Panel(defaultTheme ? OreTheme.H_DIVIDER : horizontalTheme);
+            if (horizontalPainter == null) horizontalPainter = ownPart("horizontalPainter", new Panel(defaultTheme ? OreTheme.H_DIVIDER : horizontalTheme));
             int height = Math.min(2, area.height());
             horizontalPainter.drawAt(context, new io.github.luyingyilong.ore.layout.Rect(
                     area.x(), area.y() + (area.height()-height)/2, area.width(), height));

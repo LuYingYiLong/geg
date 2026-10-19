@@ -1,5 +1,6 @@
 package io.github.luyingyilong.geg.organization.client;
 
+
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
 import io.github.luyingyilong.ore.Checkbox;
@@ -29,15 +30,15 @@ public final class ClientOrganizationScreen {
         description.placeholder(Component.translatable("organization.geg.description_hint"));
         description.setMaxLength(120);
         Checkbox unrestricted = new Checkbox(Component.translatable("organization.geg.join_unrestricted"))
-                .checked(true);
+                .setCheckedNoSignal(true);
         Checkbox approval = new Checkbox(Component.translatable("organization.geg.join_approval"));
-        unrestricted.onChange(checked -> {
-            if (checked) approval.checked(false);
-            else if (!approval.checked()) unrestricted.checked(true);
+        unrestricted.toggled().connect(unrestricted, checked -> {
+            if (checked) approval.setCheckedNoSignal(false);
+            else if (!approval.checked()) unrestricted.setCheckedNoSignal(true);
         });
-        approval.onChange(checked -> {
-            if (checked) unrestricted.checked(false);
-            else if (!unrestricted.checked()) approval.checked(true);
+        approval.toggled().connect(approval, checked -> {
+            if (checked) unrestricted.setCheckedNoSignal(false);
+            else if (!unrestricted.checked()) approval.setCheckedNoSignal(true);
         });
         Box joinChoices = new Box().gap(2).add(unrestricted).add(approval);
         joinChoices.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);

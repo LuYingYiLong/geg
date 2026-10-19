@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.theme.OreIcons;
 import net.minecraft.client.gui.Font;
@@ -50,8 +52,7 @@ public final class BadgeLayoutTest {
         }
 
         int[] actions = {0};
-        Button button = new Button(cue -> { }).label(Component.literal("Mail")).badge(badge.count(7))
-                .onPressed(() -> actions[0]++);
+        Button button = Signals.configure(new Button(cue -> { }).label(Component.literal("Mail")).badge(badge.count(7)), connected -> connected.pressed().connect(connected, () -> actions[0]++));
         int withBadge = button.measureWidth(font, 200);
         badge.visible(false);
         int withoutBadge = button.measureWidth(font, 200);
@@ -71,7 +72,7 @@ public final class BadgeLayoutTest {
         io.github.luyingyilong.ore.event.WindowInputs.release(window,190, 70);
         check(actions[0] == 1);
 
-        button.toggleButton(true).buttonPressedNoSignal(true);
+        button.toggleButton(true).setButtonPressedNoSignal(true);
         window.layoutViewport(200, 80, font);
         check(badge.bounds().equals(normal.translated(0, 2)));
         button.type(Button.Type.TEXT);

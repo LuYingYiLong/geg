@@ -27,11 +27,13 @@ public final class Navbar extends Container {
     private final Label title = new Label().color(OreTheme.TEXT_DARK).hero(true).opticalCenter(true).overflow(Label.Overflow.ELLIPSIS)
             .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
     private final Button back = new Button().type(Button.Type.TEXT).icon(OreIcons.ARROW_LEFT, 7, 7)
-            .onPress(OreScreen::back);
+            ;
+    private Runnable backAction = OreScreen::back;
     private final List<Control> extra = new ArrayList<>();
 
     public Navbar(Component title) {
         this.title.text(title);
+        back.pressed().connect(this, () -> backAction.run());
         back.minimum(BACK_BUTTON_SIZE, BACK_BUTTON_SIZE);
         back.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         addChild(this.title);
@@ -51,7 +53,9 @@ public final class Navbar extends Container {
         return this;
     }
     public boolean showBackButton() { return back.visible(); }
-    public Navbar onBack(Runnable action) { back.onPress(action); return this; }
+    public Navbar onBack(Runnable action) { backAction = java.util.Objects.requireNonNull(action); return this; }
+
+
 
     @Override public Navbar addChild(Control child) {
         super.addChild(child);
@@ -87,7 +91,7 @@ public final class Navbar extends Container {
 
     private Arrangement arrange(Font font, int outerWidth) {
         int width = Math.max(0, outerWidth - PADDING * 2);
-        List<Control> active = extra.stream().filter(Control::visible).toList();
+        List<Control> active = extra.stream().filter(c -> c.isAlive() && c.visible()).toList();
         int minimum = active.stream().mapToInt(Control::minimumWidth).sum()
                 + Math.max(0, active.size() - 1) * GAP;
         int titleWidth = font == null ? title.minimumWidth() : title.measureWidth(font, width);
@@ -117,33 +121,39 @@ public final class Navbar extends Container {
         return new Arrangement(false, rows, titleRowHeight(font) + rows.stream().mapToInt(Row::height).sum());
     }
 
-    @Override public int measureWidth(Font font, int available) { return Math.max(minimumWidth(), available); }
+    @Override public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0; return Math.max(minimumWidth(), available); }
     @Override public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0;
         return Math.max(minimumHeight(), arrange(font, available).height() + BOTTOM_PADDING);
     }
     @Override public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         return new Size(measureWidth(font, available.width()), measureHeight(font, available.width()));
     }
 
     @Override public void layout(Rect bounds, Font font) {
-        super.layout(bounds, font);
-        int width = Math.max(0, bounds.width() - PADDING * 2);
-        Arrangement arrangement = arrange(font, bounds.width());
-        int reserve = Math.min(backReserve(), width / 2);
-        int y = arrangement.inline() ? 0 : titleRowHeight(font);
-        for (Row row : arrangement.rows()) {
-            int limit = width;
-            if (arrangement.inline() && !row.controls().isEmpty()) {
-                int titleWidth = font == null ? title.minimumWidth() : title.measureWidth(font, width);
-                limit = Math.max(0, (width - titleWidth) / 2 - GAP);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(bounds, font);
+            int width = Math.max(0, bounds.width() - PADDING * 2);
+            Arrangement arrangement = arrange(font, bounds.width());
+            int reserve = Math.min(backReserve(), width / 2);
+            int y = arrangement.inline() ? 0 : titleRowHeight(font);
+            for (Row row : arrangement.rows()) {
+                int limit = width;
+                if (arrangement.inline() && !row.controls().isEmpty()) {
+                    int titleWidth = font == null ? title.minimumWidth() : title.measureWidth(font, width);
+                    limit = Math.max(0, (width - titleWidth) / 2 - GAP);
+                }
+                int used = layoutRow(row, font, width, limit, y);
+                if (arrangement.inline() && !row.controls().isEmpty()) reserve = Math.max(reserve, used + GAP);
+                y += row.height();
             }
-            int used = layoutRow(row, font, width, limit, y);
-            if (arrangement.inline() && !row.controls().isEmpty()) reserve = Math.max(reserve, used + GAP);
-            y += row.height();
+            int titleHeight = arrangement.inline() ? arrangement.height() : titleRowHeight(font);
+            fitChild(title, new Rect(PADDING + reserve, 0, Math.max(0, width - 2 * reserve), titleHeight), font);
+            if (showBackButton()) fitChild(back, new Rect(PADDING, 0, BACK_BUTTON_SIZE, titleHeight), font);
         }
-        int titleHeight = arrangement.inline() ? arrangement.height() : titleRowHeight(font);
-        fitChild(title, new Rect(PADDING + reserve, 0, Math.max(0, width - 2 * reserve), titleHeight), font);
-        if (showBackButton()) fitChild(back, new Rect(PADDING, 0, BACK_BUTTON_SIZE, titleHeight), font);
     }
 
     private int layoutRow(Row row, Font font, int width, int limit, int y) {
@@ -170,7 +180,7 @@ public final class Navbar extends Container {
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-        if (background == null) background = new Panel(OreTheme.HEADER_PANEL);
+        if (background == null) background = ownPart("background", new Panel(OreTheme.HEADER_PANEL));
         Rect area = screenBounds(screenX, screenY);
         background.drawAt(context, new Rect(area.x(), area.y(), area.width(), Math.max(0, area.height() - BOTTOM_PADDING)));
     }

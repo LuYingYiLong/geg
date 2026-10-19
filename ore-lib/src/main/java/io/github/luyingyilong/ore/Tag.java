@@ -17,8 +17,8 @@ import java.util.Objects;
 public final class Tag extends Container {
     private static final int PADDING_X = 4;
     private static final int PADDING_Y = 2;
-    private final Label label = new Label().opticalCenter(true).align(Label.Horizontal.CENTER, Label.Vertical.CENTER)
-            .overflow(Label.Overflow.ELLIPSIS).color(OreTheme.TEXT_WHITE);
+    private final Label label = ownPart("label", new Label().opticalCenter(true).align(Label.Horizontal.CENTER, Label.Vertical.CENTER)
+            .overflow(Label.Overflow.ELLIPSIS).color(OreTheme.TEXT_WHITE));
     private boolean outlined;
     private Type type = Type.NEUTRAL;
     public Tag() {
@@ -68,6 +68,7 @@ public final class Tag extends Container {
 
     @Override
     public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         int horizontal = 2 * (PADDING_X + border()), vertical = 2 * (PADDING_Y + border());
         Size text = label.measureSize(font, new Size(Math.max(0, available.width() - horizontal),
                 Math.max(0, available.height() - vertical)));
@@ -77,19 +78,24 @@ public final class Tag extends Container {
 
     @Override
     public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0;
         return measureSize(font, new Size(available, available)).width();
     }
 
     @Override
     public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0;
         return measureSize(font, new Size(available, available)).height();
     }
 
     @Override
     public void layout(Rect bounds, Font font) {
-        super.layout(bounds, font);
-        int x = PADDING_X + border(), y = PADDING_Y + border();
-        fitChild(label, new Rect(x, y, Math.max(0, bounds.width() - 2 * x), Math.max(0, bounds.height() - 2 * y)), font);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(bounds, font);
+            int x = PADDING_X + border(), y = PADDING_Y + border();
+            fitChild(label, new Rect(x, y, Math.max(0, bounds.width() - 2 * x), Math.max(0, bounds.height() - 2 * y)), font);
+        }
     }
 
     @Override

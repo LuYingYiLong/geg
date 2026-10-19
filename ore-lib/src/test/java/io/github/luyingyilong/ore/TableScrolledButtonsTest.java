@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.event.EventGeometry;
 import io.github.luyingyilong.ore.event.WindowInputs;
 import io.github.luyingyilong.ore.layout.*;
@@ -16,7 +18,7 @@ public final class TableScrolledButtonsTest {
         private Action action;
         private final Button button;
         Cell(List<String> events) {
-            button = new Button(cue -> { }).onPressed(() -> events.add(action.id()));
+            button = Signals.configure(new Button(cue -> { }), connected -> connected.pressed().connect(connected, () -> events.add(action.id())));
             addChild(button);
         }
         void bind(Action action) {

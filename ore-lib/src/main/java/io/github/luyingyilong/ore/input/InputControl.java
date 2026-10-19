@@ -15,11 +15,12 @@ public final class InputControl extends Control {
 
     public InputControl(Input widget) {
         this.widget = widget;
+        signalScope().own(widget::releaseSession);
         widget.layoutControl(this);
         minimum(1, widget.preferredInputHeight());
         focusable(true);
         focusExpansion(2);
-        widget.focusLostHandler(() -> {
+        widget.focusExited().connect(this, () -> {
             Control root = this;
             while (root.parent() != null) root = root.parent();
             if (root instanceof Window window)
@@ -31,8 +32,11 @@ public final class InputControl extends Control {
         widget.height(() -> Math.max(1, bounds().height()), Unit.Measure.PIXEL);
     }
 
+    @Override protected boolean lifecycleReady() { return widget.isValid(); }
+
     public Input widget() { return widget; }
     @Override public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0;
         return Math.max(minimumHeight(), widget.preferredInputHeight());
     }
 
@@ -60,14 +64,14 @@ public final class InputControl extends Control {
                 && pointer.action()==io.github.luyingyilong.ore.event.PointerEvent.Action.PRESS)event.capturePointer();
     }
 
-    @Override protected void onDetached() {
-        if(widget.isValid() && widget.isFocused())widget.getContext().removeFocus();
+    @Override public void cancelInteraction() {
+        widget.cancelPreedit();
+        if (widget.isValid() && widget.isFocused()) widget.getContext().removeFocus();
         OreInputMethod.release(widget);
     }
-
     boolean layoutVisible() {
         for (Control node = this; node != null; node = node.parent())
-            if (!node.visible()) return false;
+            if (!node.isAlive() || !(node.isAlive() && node.visible())) return false;
         return true;
     }
 
@@ -113,8 +117,11 @@ public final class InputControl extends Control {
     }
 
     @Override public void layout(Rect localBounds, Font font) {
-        super.layout(localBounds, font);
-        syncWidgetArea();
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(localBounds, font);
+            syncWidgetArea();
+        }
     }
 
     void syncWidgetArea() {

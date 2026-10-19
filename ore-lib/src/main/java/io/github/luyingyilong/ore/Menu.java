@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeKey;
 import io.github.luyingyilong.ore.layout.Box;
@@ -15,7 +17,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /** Box-based, single-selection menu without an outer background or inset. Wrap in Scroll for overflow. */
@@ -28,7 +29,9 @@ public final class Menu extends Container implements ScrollContent {
     private final List<Label> emptyLabels = new ArrayList<>();
     private int emptyColor = OreTheme.TEXT_WHITE;
     private List<MenuItem> items = List.of();
-    private Consumer<MenuItem> onSelect = item -> { };
+    private final SignalSource<MenuItem> itemActivated = new SignalSource<>(this, "itemActivated", "MenuItem");
+    private final SignalSource<String> selectionChanged = new SignalSource<>(this, "selectionChanged", "String");
+    private final Map<String, SignalScope> bindings = new HashMap<>();
     private String selectedKey;
     private Size extent = new Size(0, 0);
     private Rect visibleRegion = new Rect(0, 0, 0, 0);
@@ -39,6 +42,8 @@ public final class Menu extends Container implements ScrollContent {
 
     Menu(WidgetThemeKey<WidgetTheme> dividerTheme, Supplier<Button> buttonFactory) {
         this.dividerTheme = dividerTheme;
+        ownPooled(empty);
+        signalScope().own(this::releaseBindings);
         this.buttonFactory = Objects.requireNonNull(buttonFactory);
         sections.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         empty.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
@@ -56,12 +61,19 @@ public final class Menu extends Container implements ScrollContent {
     }
 
     public List<MenuItem> items() { return items; }
-    public Menu onSelect(Consumer<MenuItem> callback) { onSelect = Objects.requireNonNull(callback); return this; }
+    public Signal<MenuItem> itemActivated() { return itemActivated.signal(); }
+    public Signal<String> selectionChanged() { return selectionChanged.signal(); }
     public String selectedKey() { return selectedKey; }
     /** Update selection without triggering an action. Missing keys clear the selection. */
     public Menu selectedKey(String key) {
+        String previous = selectedKey;
+        setSelectedNoSignal(key);
+        if (!Objects.equals(previous, selectedKey)) selectionChanged.emit(selectedKey);
+        return this;
+    }
+    public Menu setSelectedNoSignal(String key) {
         selectedKey = buttons.containsKey(key) ? key : null;
-        buttons.forEach((id, button) -> button.buttonPressedNoSignal(Objects.equals(id, selectedKey)));
+        buttons.forEach((id, button) -> button.setButtonPressedNoSignal(Objects.equals(id, selectedKey)));
         return this;
     }
     public Button button(String key) { return buttons.get(key); }
@@ -89,7 +101,10 @@ public final class Menu extends Container implements ScrollContent {
     private void rebuild() {
         Map<String, Button> previous = new HashMap<>(buttons);
         for (Button button : previous.values()) button.parent().removeChild(button);
-        for (Control child : sections.children()) sections.removeChild(child);
+        for (SignalScope binding : bindings.values()) binding.close();
+        bindings.clear();
+        if (empty.parent() != null) empty.parent().removeChild(empty);
+        for (Control child : sections.children()) { if (child.parent() != null) child.parent().removeChild(child); child.queueFree(); }
         buttons.clear();
         emptyLabels.clear();
         append(sections, items, previous, false);
@@ -97,7 +112,9 @@ public final class Menu extends Container implements ScrollContent {
             if (empty.parent() != null) empty.parent().removeChild(empty);
             sections.add(empty);
         }
-        selectedKey(selectedKey);
+        for (Map.Entry<String, Button> entry : previous.entrySet())
+            if (!buttons.containsKey(entry.getKey())) entry.getValue().queueFree();
+        setSelectedNoSignal(selectedKey);
         requestLayout();
     }
 
@@ -132,12 +149,21 @@ public final class Menu extends Container implements ScrollContent {
                 if (button == null) button = Objects.requireNonNull(buttonFactory.get());
                 button.label(item.label()).icon(item.icon()).type(Button.Type.MENU)
                         .alignment(Button.TextAlignment.LEFT).toggleButton(true).disabled(disabled || item.disabled())
-                        .onPressed(() -> { selectedKey(item.key()); onSelect.accept(item); });
+                        ;
+                SignalScope binding = new SignalScope();
+                bindings.put(item.key(), binding);
+                button.pressed().connect(binding, () -> { selectedKey(item.key()); itemActivated.emit(item); });
                 button.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
                 buttons.put(item.key(), button);
                 run.add(button);
             }
         }
+    }
+
+    private void releaseBindings() {
+        for (SignalScope binding : bindings.values()) binding.close();
+        bindings.clear();
+
     }
 
     private static Box verticalBox() {
@@ -147,26 +173,32 @@ public final class Menu extends Container implements ScrollContent {
     }
 
     @Override public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         Size desired = sections.measureSize(font, available);
         return new Size(Math.max(minimumWidth(), Math.min(available.width(), desired.width())),
                 Math.max(minimumHeight(), desired.height()));
     }
-    @Override public int measureWidth(Font font, int available) { return measureSize(font, new Size(available, available)).width(); }
-    @Override public int measureHeight(Font font, int available) { return measureSize(font, new Size(available, available)).height(); }
+    @Override public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0; return measureSize(font, new Size(available, available)).width(); }
+    @Override public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0; return measureSize(font, new Size(available, available)).height(); }
 
     @Override public void layout(Rect bounds, Font font) {
-        if (bounds.width() != bounds().width()) rememberAnchor();
-        super.layout(bounds, font);
-        int height = Math.max(bounds.height(), sections.measureSize(font, new Size(bounds.width(), bounds.height())).height());
-        extent = new Size(bounds.width(), height);
-        fitChild(sections, new Rect(0, 0, extent.width(), extent.height()), font);
-        if (anchor != null && !buttons.isEmpty()) {
-            List<Button> ordered = List.copyOf(buttons.values());
-            Button target = buttons.getOrDefault(anchor.key(), ordered.get(Math.min(anchor.index(), ordered.size() - 1)));
-            restoredScrollY = Math.max(0, target.absoluteBounds().y() - absoluteBounds().y() + anchor.offset());
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            if (bounds.width() != bounds().width()) rememberAnchor();
+            super.layout(bounds, font);
+            int height = Math.max(bounds.height(), sections.measureSize(font, new Size(bounds.width(), bounds.height())).height());
+            extent = new Size(bounds.width(), height);
+            fitChild(sections, new Rect(0, 0, extent.width(), extent.height()), font);
+            if (anchor != null && !buttons.isEmpty()) {
+                List<Button> ordered = List.copyOf(buttons.values());
+                Button target = buttons.getOrDefault(anchor.key(), ordered.get(Math.min(anchor.index(), ordered.size() - 1)));
+                restoredScrollY = Math.max(0, target.absoluteBounds().y() - absoluteBounds().y() + anchor.offset());
+            }
+            // Scroll may measure several widths while deciding which bars to show.
+            // Keep the original key through those provisional layouts until it consumes the anchor.
         }
-        // Scroll may measure several widths while deciding which bars to show.
-        // Keep the original key through those provisional layouts until it consumes the anchor.
     }
 
     private void rememberAnchor() {

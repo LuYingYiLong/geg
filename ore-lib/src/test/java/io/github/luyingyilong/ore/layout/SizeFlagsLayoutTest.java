@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore.layout;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 /** SizeFlags allocation, alignment and overflow without a running Minecraft client. */
 public final class SizeFlagsLayoutTest {
     public static void main(String[] args) {
@@ -105,13 +107,13 @@ public final class SizeFlagsLayoutTest {
             @Override public void draw(brachy.modularui.screen.viewport.ModularGuiContext context, Rect area, boolean hovered) { }
         }
         int[] clicked = {-1};
-        Grid<Integer> virtual = new Grid<Integer>().adapter(new Grid.Adapter<>() {
+        Grid<Integer> virtual = Signals.configure(new Grid<Integer>().adapter(new Grid.Adapter<>() {
             @Override public int size() { return 400; }
             @Override public Integer item(int index) { return index; }
             @Override public Object key(Integer item) { return item; }
             @Override public int measureHeight(Integer item, int width, net.minecraft.client.gui.Font font) { return 30; }
             @Override public Grid.View<Integer> createView() { return new Card(); }
-        }).onItemClick(item -> clicked[0] = item);
+        }), connected -> connected.itemActivated().connect(connected, item -> clicked[0] = item));
         Scroll scroll = new Scroll().embedded(true).content(virtual).horizontal(Scroll.BarMode.DISABLED);
         scroll.layout(new Rect(0, 0, 100, 50), null);
         Control first = virtual.children().get(0);

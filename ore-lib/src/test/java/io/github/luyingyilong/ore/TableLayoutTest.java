@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.ore.layout.Rect;
 import net.minecraft.network.chat.Component;
@@ -27,8 +29,8 @@ public final class TableLayoutTest {
                 return false;
             }
         };
-        Table<Integer> table = new Table<Integer>()
-                .rowKey(row -> row).onRowClick(selected::add)
+        Table<Integer> table = Signals.configure(new Table<Integer>()
+                .rowKey(row -> row), connected -> connected.rowActivated().connect(connected, selected::add))
                 .column(new Table.Column<>("status", Component.literal("Status"),
                         110, 110, 1, width -> 20, text))
                 .column(new Table.Column<>("price", Component.literal("Price"),

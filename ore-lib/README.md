@@ -69,6 +69,40 @@ project(':ui-lib').projectDir = file('libraries/controls')
 
 默认环境位于 `gradle/environment.properties`，无需宿主提供 Mod 名称、group 或版本。宿主可覆盖 `minecraft_version`、`forge_version`、`mapping_channel`、`mapping_version`、`java_version`、`modularui_dependency`、`modularui_dev_runtime_dependency`。当前仅验证 1.20.1，不保证跨 Minecraft 大版本兼容。
 
+## 信号与生命周期
+
+通知使用类型安全的 `Signal0`／`Signal<T>`，不再提供 `onPress`、`onSelect` 等单订阅 setter。无参数槽使用 `Runnable`，有参数槽使用 `Consumer`，多个参数可以定义为 record。槽按连接顺序在所属线程同步执行；每次 `connect` 都创建独立连接。
+
+```java
+Button save = new Button(Component.literal("Save"));
+Connection connection = save.pressed().connect(window, this::save);
+checkbox.toggled().connect(window, this::updateChecked);
+input.textChanged().connect(window, this::updateDraft);
+connection.disconnect(); // close() 等价，可重复调用
+```
+
+接收方必须是 `SignalOwner`：Control 已实现该接口，非控件对象使用 `SignalScope`。发射方或接收方结束生命周期时，连接自动断开并释放闭包。控件仅公开订阅入口；自定义控件将 `SignalSource` 保留为 private，通过 `signal()` 暴露只读入口。
+
+属性变化会通知，重复设置同一值不通知。受控刷新使用 `setCheckedNoSignal`、`setSelectedNoSignal`、`setTextNoSignal` 等静默方法。它们仍更新状态及布局。`pressed`、`itemActivated` 仅代表激活；程序设置选中状态不会点击按钮。输入框使用显式 `submitOnEnter(true)` 启用提交；TextArea 默认仍是 Enter 换行。
+
+`removeChild`、隐藏、暂存和回收不是销毁；永久废弃的节点必须调用幂等的 `queueFree()`。它立即取消交互并标记拥有的子树，在整轮渲染结束或客户端 tick 的安全收尾点永久清理，不在单个 Window.draw 返回时释放。父控件销毁会清理普通子节点、内部部件和回收池，窗口会话结束由宿主清理，返回链中的父界面继续保留。虚拟控件内部连接绑定到控件本身；捕获当前数据的连接绑定到 `bindingScope()`，每次重绑或回收时清理。
+
+Input 的 MUI `dispose()` 可能只是临时解绑。树内输入框的信号由 InputControl 的永久销毁清理；独立输入框应通过会话 `SignalScope.own(input::releaseSession)` 托管。不要将 UI 信号用于替代 Window 的 InputEvent 分发或服务端校验。
+
+开发客户端按 F8 打开 Inspector，右侧使用 Segmented 切换“属性／信号”。信号面板只读，列出全部声明、有效连接、生命周期接收方、订阅的 Java 文件与行号，以及反向订阅。来源、接收方和订阅名称相同的多条有效连接会标为“疑似重复”，不会自动断开合法的多订阅。
+
+可为订阅增加可选的诊断名称；它不影响类型检查或执行顺序：
+
+```java
+save.pressed().connect(window, "save settings", this::save);
+```
+
+自定义控件可以声明 `private final SignalSource<String> renamed = new SignalSource<>(this, "renamed", "String");`。第三个参数只描述诊断中的参数类型；不提供时显示泛型 `T`，不推测擦除后的运行时类型。`Signal0` 明确显示为无参数。面板中的接收方是 `connect` 的生命周期 owner，不是从 lambda 捕获内容猜测的方法接收对象。
+
+选中节点移出控件树后仍可查看它的清理记录，状态区分“已移出”和“已销毁”。历史记录包含手动断开、绑定重置、作用域关闭和控件销毁，并显示剩余连接数；控件已不可访问时只显示历史，不推断清理成功。每线程最多保留 512 条事件，面板显示最近 120 条相关记录。记录只包含值对象；选中控件使用弱引用，Inspector 自身的连接和销毁不会污染目标历史。
+
+纯 Java 的 `SignalDiagnostics` 位于 Ore 主源码，不依赖 Minecraft、GEG 或 Inspector。默认不记录调用位置或历史；开发 Inspector 扩展在初始化时启用追踪，因此 F8 打开前建立的连接也能显示来源。没有追踪时仍能查询当前声明及连接数量，未采集的来源明确标注为不可用。所有诊断读取仍受信号所属线程约束。
+
 ## 客户端初始化
 
 宿主客户端 Mod 构造分支，在创建控件前调用：
@@ -83,6 +117,8 @@ OreClient.initialize(
 初始化幂等，不立即创建原生窗口或激活输入法。不要在专用服务端加载客户端类。完整 options 构造器可配置主题、字体、音效和头像缓存位置。
 
 资源命名空间为 `ore:`，默认主题名为 `ore`，字体为 `ore:ore`、`ore:ore_hero`、`ore:ore_fallback`。资源包覆盖 `assets/ore/`。Inspector 的翻译属于 `ore_inspector:`，只挂载在开发客户端。
+
+`ore.mixins.json` 还会修正 `file` 使用 `ore:` 命名空间的 TTF／OTF 字形重复叠加水平侧边距的问题。该修正保留字宽、基线、全角字符及光标测量；其他命名空间的字体仍使用原有渲染行为。
 
 ## Switch
 
@@ -126,3 +162,12 @@ toggle.loading(true); // 显示滑块内的 Spin，阻止再次操作
 回归从模块 build/tmp 运行，不依赖宿主目录名。`oreTest` 的类路径只有正式控件；`inspectorTest` 额外使用 inspector 输出。可用 `-PimBlockerJar=<路径>` 和 `-PcustomSkinLoaderJar=<路径>` 验证真实兼容 JAR。
 
 ModularUI 3.3.1 的开发测试注册需要 Curios 运行库，正式运行不走该分支；Ore 不链接 Curios API。Modern UI、IMBlocker 和 CustomSkinLoader 保持可选。Windows 原生窗口和输入法按需启用，其他系统保留内嵌窗口。`gradle/legacy-annotations` 仅用于读取 ModularUI 旧注解，不能进入发布包。
+
+
+生命周期使用 `LifecycleState`：ALIVE → QUEUED_FOR_FREE → FREEING → FREED。`isDisposed()` 仅表示最后一态；排队后的控件不能重新挂载或取得部件所有权，原始 visible 属性不变。`addChild` 和 `removeChild` 仍同步改变树，不会永久清理对象。刷新时可以先 removeChild，再 queueFree 废弃节点，保留结构节点及需要复用的部件。
+
+自定义控件可重写 `protected void notification(ControlNotification notice)`。框架保证 ENTER_TREE 父先子后、READY 子先父后且只发生一次、EXIT_TREE 子先父后、PRE_FREE 父先子后；另提供合并的 RESIZED、有效 VISIBILITY_CHANGED 及 SUSPENDED／RESUMED。通知携带当次窗口和树状态快照，不必调用 super 才能完成框架清理。READY 等待输入宿主就绪，但不保证尺寸稳定，尺寸相关代码使用 RESIZED。
+
+不参加布局的内部控件使用 `ownPart("name", control)`；虚拟视图使用 `ownPooled(control)` 保留回收期所有权。一个控件不能被不相关的所有者重复拥有。普通资源放入 `signalScope().own(resource)`，控件统一由生命周期队列清理。应用无需手工调用 LifecycleScheduler.flush；只有宿主收尾和独立回归测试使用它，输入、信号、布局、绘制及通知期间的 flush 会被拒绝。Drawer 的 closed 仍在关闭动画完成后发送。
+
+Inspector 的共有状态区显示生命周期、树内状态、READY、暂存状态、首次申请位置与原因。已释放选中节点只保留只读记录，禁止编辑、拾取或高亮；历史上限为 512，使用不可变元数据和弱引用，调试会话结束时清空。发布环境不采集申请堆栈。

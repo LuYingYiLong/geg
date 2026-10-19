@@ -26,6 +26,7 @@ public final class WindowManager {
     }
 
     public static void embedded(io.github.luyingyilong.ore.layout.Window root) {
+        io.github.luyingyilong.ore.screen.OreScreen.attachRoot(root);
         embedded = new java.lang.ref.WeakReference<>(root);
         embeddedScreen = Minecraft.getInstance().screen;
     }
@@ -82,11 +83,12 @@ public final class WindowManager {
                 host.destroy();
             }
         }
+        io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
     }
 
     @SubscribeEvent
     public static void fallback(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) embeddedFocus();
+        if (event.phase == TickEvent.Phase.END) { embeddedFocus(); io.github.luyingyilong.ore.layout.LifecycleScheduler.flush(); }
         if (event.phase == TickEvent.Phase.END && !WINDOWS.isEmpty() && System.nanoTime() - lastRender > 100_000_000L)
             render(new TickEvent.RenderTickEvent(TickEvent.Phase.END, 0));
     }
@@ -96,6 +98,8 @@ public final class WindowManager {
     @SubscribeEvent
     public static void shutdown(GameShuttingDownEvent event) {
         for (NativeWindowHost host : List.copyOf(WINDOWS)) { host.context().owner().close(); host.destroy(); }
+        io.github.luyingyilong.ore.screen.OreScreen.disposeSessions();
+        io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
         embedded.clear(); suspended=null; embeddedFocus=null; embeddedScreen=null;
     }
 }

@@ -18,7 +18,7 @@ import java.util.function.Function;
 /** A square player face with the hat layer and vanilla default; unidentified sources use initials. */
 public final class Avatar extends Container {
     public static final int DEFAULT_SIZE = 24;
-    private final Label initial = new Label().align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
+    private final Label initial = ownPart("initial", new Label().align(Label.Horizontal.CENTER, Label.Vertical.CENTER));
     private final Function<GameProfile, AvatarSkins.Skin> skins;
     private GameProfile profile;
     private AvatarSkins.Skin skin;
@@ -94,8 +94,11 @@ public final class Avatar extends Container {
     }
 
     @Override public void layout(Rect bounds, Font font) {
-        super.layout(bounds, font);
-        fitChild(initial, new Rect(0, 0, bounds.width(), bounds.height()), font);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(bounds, font);
+            fitChild(initial, new Rect(0, 0, bounds.width(), bounds.height()), font);
+        }
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {

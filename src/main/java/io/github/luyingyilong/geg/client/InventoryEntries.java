@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.client;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.geg.organization.client.ClientOrganizationScreen;
 
 import io.github.luyingyilong.geg.GegMod;
@@ -83,16 +85,16 @@ public final class InventoryEntries {
 
     @SubscribeEvent public static void onClose(ScreenEvent.Closing event) {
         Entries entries = ENTRIES.remove(event.getScreen());
-        if (entries != null) entries.cancel();
+        if (entries != null) entries.widgets().forEach(OreButtonWidget::queueFree);
     }
 
     private static final class Entries {
         private final Badge unread = new Badge().type(Tag.Type.PRIMARY);
         private final OreButtonWidget organization = new OreButtonWidget(
-                new Button(Component.translatable("organization.geg.entry")).onPressed(ClientOrganizationScreen::open),
+                Signals.configure(new Button(Component.translatable("organization.geg.entry")), connected -> connected.pressed().connect(connected, ClientOrganizationScreen::open)),
                 Component.translatable("organization.geg.entry"));
         private final OreButtonWidget mail = new OreButtonWidget(
-                new Button(Component.translatable("mail.geg.entry")).badge(unread).onPressed(ClientMailScreen::open),
+                Signals.configure(new Button(Component.translatable("mail.geg.entry")).badge(unread), connected -> connected.pressed().connect(connected, ClientMailScreen::open)),
                 Component.translatable("mail.geg.entry"));
 
         private java.util.List<OreButtonWidget> widgets() { return java.util.List.of(organization, mail); }

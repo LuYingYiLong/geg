@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.market.client;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import brachy.modularui.theme.WidgetThemeKey;
 import io.github.luyingyilong.ore.Button;
 import io.github.luyingyilong.ore.DescriptionItem;
@@ -55,8 +57,8 @@ public final class MarketDetailLayoutTest {
                 WidgetThemeKey.class, WidgetThemeKey.class);
         constructor.setAccessible(true);
         Modal modal = constructor.newInstance(Component.literal("Item"), null, null, null).size(340, 224).content(details)
-                .action(Component.literal("撤单"), () -> { }, Button.Type.DESTRUCTIVE)
-                .action(Component.literal("改价"), () -> { }, Button.Type.PRIMARY);
+                .addAction(Signals.configure(new Button(Component.literal("撤单")).type(Button.Type.DESTRUCTIVE), actionButton -> actionButton.pressed().connect(actionButton, () -> { })))
+                .addAction(Signals.configure(new Button(Component.literal("改价")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
         Window window = new Window(true).content(new Control()).overlay(new Overlay().add(modal));
         for (int width : new int[]{127, 128, 129, 427, 640}) {
             window.layoutViewport(width, 240, font);
@@ -75,8 +77,8 @@ public final class MarketDetailLayoutTest {
         quantityContent.bindForm(quantityForm);
         Modal quantity = constructor.newInstance(Component.literal("Quantity"), null, null, null)
                 .size(224, 0).centered().depth(300).content(quantityContent)
-                .action(Component.literal("Cancel"), () -> { })
-                .action(Component.literal("Confirm"), () -> { }, Button.Type.PRIMARY);
+                .addAction(Signals.configure(new Button(Component.literal("Cancel")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, () -> { })))
+                .addAction(Signals.configure(new Button(Component.literal("Confirm")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
         Overlay layers = new Overlay();
         // Move the existing secondary modal into the new two-level overlay.
         modal.parent().removeChild(modal);

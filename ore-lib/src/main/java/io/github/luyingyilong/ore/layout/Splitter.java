@@ -1,10 +1,11 @@
 package io.github.luyingyilong.ore.layout;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import io.github.luyingyilong.ore.Divider;
 import net.minecraft.client.gui.Font;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 
 /** Two resizable panes. The themed line and the pointer hit area are independent. */
 public final class Splitter extends Container {
@@ -22,8 +23,12 @@ public final class Splitter extends Container {
     private boolean showDivider = true, resizable = true, lazy, dragging;
     private int grabOffset;
     private Sizes sizes = new Sizes(0,0);
+    private Sizes reportedSizes = sizes;
+    private boolean silentResize;
     private Rect bar = new Rect(0,0,0,0);
-    private Consumer<Sizes> resizeStart = value -> { }, resize = value -> { }, resizeEnd = value -> { };
+    private final SignalSource<Sizes> resizeStarted = new SignalSource<>(this, "resizeStarted", "Sizes");
+    private final SignalSource<Sizes> resized = new SignalSource<>(this, "resized", "Sizes");
+    private final SignalSource<Sizes> resizeEnded = new SignalSource<>(this, "resizeEnded", "Sizes");
 
     public Splitter(Control first, Control second) {
         this.first = Objects.requireNonNull(first); this.second = Objects.requireNonNull(second);
@@ -41,13 +46,16 @@ public final class Splitter extends Container {
         requestLayout(); return this;
     }
     public double ratio() { return ratio; }
-    /** Switches to proportional sizing. Programmatic setters do not emit resize events. */
+    /** Switches to proportional sizing; the resolved sizes are notified after layout. */
     public Splitter ratio(double ratio) {
         if (!Double.isFinite(ratio)) throw new IllegalArgumentException("Invalid split ratio");
+        silentResize = false;
         this.ratio = Math.max(0,Math.min(1,ratio)); preferredFirst = null; requestLayout(); return this;
     }
+    public Splitter setRatioNoSignal(double ratio) { ratio(ratio); silentResize = true; return this; }
     /** Switches to a pixel-sized first pane; constraints are still applied during layout. */
-    public Splitter firstSize(int pixels) { nonnegative(pixels); preferredFirst = pixels; requestLayout(); return this; }
+    public Splitter firstSize(int pixels) { nonnegative(pixels); silentResize = false; preferredFirst = pixels; requestLayout(); return this; }
+    public Splitter setFirstSizeNoSignal(int pixels) { firstSize(pixels); silentResize = true; return this; }
     public int firstSize() { return sizes.first(); }
     public int secondSize() { return sizes.second(); }
     public Sizes sizes() { return sizes; }
@@ -73,9 +81,9 @@ public final class Splitter extends Container {
     public Splitter secondMinimum(int pixels) { range(pixels,secondMaximum); secondMinimum = pixels; requestLayout(); return this; }
     public Splitter firstMaximum(int pixels) { range(firstMinimum,pixels); firstMaximum = pixels; requestLayout(); return this; }
     public Splitter secondMaximum(int pixels) { range(secondMinimum,pixels); secondMaximum = pixels; requestLayout(); return this; }
-    public Splitter onResizeStart(Consumer<Sizes> callback) { resizeStart = Objects.requireNonNull(callback); return this; }
-    public Splitter onResize(Consumer<Sizes> callback) { resize = Objects.requireNonNull(callback); return this; }
-    public Splitter onResizeEnd(Consumer<Sizes> callback) { resizeEnd = Objects.requireNonNull(callback); return this; }
+    public Signal<Sizes> resizeStarted() { return resizeStarted.signal(); }
+    public Signal<Sizes> resized() { return resized.signal(); }
+    public Signal<Sizes> resizeEnded() { return resizeEnded.signal(); }
 
     private static void nonnegative(int pixels) { if (pixels < 0) throw new IllegalArgumentException("Negative split size"); }
     private static void range(int min,int max) { nonnegative(min); if (max < min) throw new IllegalArgumentException("Invalid split size range"); }
@@ -106,7 +114,7 @@ public final class Splitter extends Container {
             sizes = new Sizes(first.visible()?extent():0,second.visible()?extent():0);
             if (first.visible()) fitChild(first,new Rect(0,0,bounds.width(),bounds.height()),font);
             if (second.visible()) fitChild(second,new Rect(0,0,bounds.width(),bounds.height()),font);
-            bar = new Rect(0,0,0,0); return;
+            bar = new Rect(0,0,0,0); reportLayoutSizes(); return;
         }
         sizes = resolve(extent(),null);
         int a = sizes.first();
@@ -120,6 +128,14 @@ public final class Splitter extends Container {
         int linePosition = dragging && lazy && pendingFirst != null ? resolve(extent(),pendingFirst).first() : a;
         bar = horizontal()?new Rect(linePosition,0,gap,bounds.height()):new Rect(0,linePosition,bounds.width(),gap);
         divider.visible(showDivider); fitChild(divider,bar,font);
+        reportLayoutSizes();
+    }
+    private void reportLayoutSizes() {
+        if (dragging && lazy) return;
+        boolean changed = !reportedSizes.equals(sizes);
+        reportedSizes = sizes;
+        boolean silent = silentResize; silentResize = false;
+        if (changed && !silent) resized.emit(sizes);
     }
     /** Local reserved separator area; the themed line is centered inside it. */
     public Rect dividerBounds() { return bar; }
@@ -136,7 +152,7 @@ public final class Splitter extends Container {
         if (!atBar(x,y)) return false;
         Rect area = absoluteBounds();
         grabOffset = horizontal()?x-area.x()-bar.x():y-area.y()-bar.y();
-        dragging = true; pendingFirst = sizes.first(); resizeStart.accept(sizes); return true;
+        dragging = true; pendingFirst = sizes.first(); resizeStarted.emit(sizes); return true;
     }
     private void applyPosition(int position) {
         if (preferredFirst != null) preferredFirst = position;
@@ -152,7 +168,8 @@ public final class Splitter extends Container {
         if (!Objects.equals(pendingFirst,target.first())) {
             pendingFirst = target.first();
             if (!lazy) applyPosition(target.first()); else requestLayout();
-            resize.accept(target);
+            reportedSizes = target;
+            resized.emit(target);
         }
         return true;
     }
@@ -160,10 +177,11 @@ public final class Splitter extends Container {
         if (!dragging) return false;
         Sizes target = resolve(extent(),pendingFirst);
         if (lazy && pendingFirst != null) applyPosition(target.first());
-        dragging = false; pendingFirst = null; requestLayout(); resizeEnd.accept(target); return true;
+        dragging = false; pendingFirst = null; requestLayout(); resizeEnded.emit(target); return true;
     }
     @Override public void cancelInteraction() {
         boolean wasDragging = dragging; dragging = false; pendingFirst = null;
+        if (wasDragging && lazy) reportedSizes = sizes;
         if (wasDragging) requestLayout();
     }
 }

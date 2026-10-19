@@ -20,6 +20,9 @@ import java.util.*;
 public final class InspectorBackend implements DebugBridge.Backend {
     private final Map<Window, Long> targets = new WeakHashMap<>();
     private final DebugOverrides overrides = new DebugOverrides();
+    private final InspectorLifecycles lifecycleHistory = new InspectorLifecycles();
+    private LifecycleInfo selectedLifecycle;
+    private final InspectorSignals signalInspector = new InspectorSignals();
     private final Map<Control, Long> identities = new WeakHashMap<>();
     private final Map<Control, Long> lifecycles = new WeakHashMap<>();
     private final Map<Control, Binding> bindings = new WeakHashMap<>();
@@ -40,6 +43,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
     private String selected = "", hovered = "", error = "";
     private boolean picking, layout = true, text = true, all, collecting, bypass;
     public InspectorBackend() {
+        io.github.luyingyilong.ore.signal.SignalDiagnostics.tracingEnabled(true);
     }
 
     private static void horizontal(GuiGraphics g, Rect r, float y, int color) {
@@ -93,6 +97,19 @@ public final class InspectorBackend implements DebugBridge.Backend {
     public void removed(Control c) {
         lifecycles.merge(c, 1L, Long::sum);
         overrides.removeTree(c);
+    }
+
+    @Override public void lifecycle(Control control, LifecycleInfo info) {
+        if (control.windowContext().owner() != null && !control.windowContext().owner().inspectable()) return;
+        Node node = nodes.values().stream().filter(n -> n.control == control).findFirst().orElse(null);
+        if (node != null && node.id.equals(selected) || selectedLifecycle != null && selectedLifecycle.id() == info.id()) selectedLifecycle = info;
+        lifecycleHistory.record(control, info);
+        if (info.state() == LifecycleState.FREED) {
+            overrides.removeTree(control);
+            nodes.values().removeIf(n -> n.control == control);
+            painted.remove(control); texts.remove(control); primitives.remove(control); parts.remove(control);
+            rootTargets.values().forEach(set -> set.remove(control));
+        }
     }
 
     private String id(Control c) {
@@ -232,12 +249,13 @@ public final class InspectorBackend implements DebugBridge.Backend {
 
     private void rebuildNodes(Window window) {
         nodes.clear();
+        collectOwnedParts(window, java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>()));
         walk(window, "", true, "");
         // Internal presentation nodes have no parent in the business tree and cannot be edited directly.
         for (var e : parts.entrySet().stream().sorted(java.util.Comparator.comparing(e -> internalId(e.getKey(), new HashSet<>()))).toList()) {
             Part p = e.getValue();
             Node owner = nodes.get(internalId(p.owner, new HashSet<>()));
-            if (owner == null) continue;
+            if (owner == null || !e.getKey().isAlive()) continue;
             Control c = e.getKey();
             String key = owner.id + "/" + p.name;
             Geometry g = painted.get(c);
@@ -255,6 +273,16 @@ public final class InspectorBackend implements DebugBridge.Backend {
         }
     }
 
+    private void collectOwnedParts(Control owner, Set<Control> seen) {
+        if (!owner.isAlive() || !seen.add(owner)) return;
+        for (Control child : owner.children()) if (child.parent() == owner) collectOwnedParts(child, seen);
+        for (var entry : owner.ownedParts().entrySet()) {
+            Control part = entry.getValue();
+            if (part.parent() == null) parts.putIfAbsent(part, new Part(owner, entry.getKey()));
+            collectOwnedParts(part, seen);
+        }
+    }
+
     private String internalId(Control c, Set<Control> seen) {
         if (!seen.add(c)) return "";
         Part part = parts.get(c);
@@ -262,18 +290,19 @@ public final class InspectorBackend implements DebugBridge.Backend {
     }
 
     private void walk(Control c, String parent, boolean ancestorVisible, String reason) {
+        if (!c.isAlive()) return;
         boolean visible = ancestorVisible && c.visible();
         String hidden = visible ? "" : !ancestorVisible ? reason : c.getClass().getSimpleName() + ".visible=false";
         String key = id(c);
         nodes.put(key, new Node(key, parent, c, c.debugName().isEmpty() ? c.getClass().getSimpleName() : c.debugName(), visible, hidden, painted.get(c), false));
-        for (Control child : c.children()) walk(child, key, visible, hidden);
+        for (Control child : c.children()) if (child.parent() == c) walk(child, key, visible, hidden);
     }
 
     String pick(int x, int y) {
         Node best = null;
         for (Node n : nodes.values()) {
             Geometry g = n.geometry;
-            if (n.control instanceof Overlay || n.control instanceof Window || !n.visible || g == null || !g.area.contains(x, y) || (g.clip != null && !g.clip.contains(x, y)))
+            if (!n.control.isAlive() || n.control instanceof Overlay || n.control instanceof Window || !n.visible || g == null || !g.area.contains(x, y) || (g.clip != null && !g.clip.contains(x, y)))
                 continue;
             if (best == null || g.depth > best.geometry.depth || (g.depth == best.geometry.depth && g.order > best.geometry.order))
                 best = n;
@@ -316,6 +345,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
                 case SELECT -> {
                     valid(command.node());
                     selected = command.node();
+                    selectedLifecycle = nodes.get(selected).control.lifecycleInfo();
                 }
                 case TARGET -> {
                     Window next = targets.keySet().stream().filter(w -> w.context().id().toString().equals(command.node())).findFirst().orElseThrow(() -> new IllegalArgumentException("Window no longer exists"));
@@ -323,6 +353,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
                     root = next;
                     nodes.clear();
                     selected = "";
+                    signalInspector.clear();
                     hovered = "";
                     picking = false;
                     lastFrame = 0;
@@ -386,7 +417,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
 
     private Node valid(String key) {
         Node node = nodes.get(key);
-        if (System.nanoTime() - lastFrame > 500_000_000L || node == null || (!node.internal && !key.equals(id(node.control))) || !attached(node.control))
+        if (root == null || !root.isAlive() || node == null || (!node.internal && !key.equals(id(node.control))) || !node.control.isAlive() || !attached(node.control))
             throw new IllegalArgumentException("Stale node; refresh the tree");
         return node;
     }
@@ -400,6 +431,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
     private void publish() {
         List<InspectorSnapshot.Node> out = new ArrayList<>();
         for (Node n : nodes.values()) {
+            if (!n.control.isAlive()) continue;
             List<InspectorSnapshot.Property> props = new ArrayList<>();
             int index = 0;
             for (DebugProperty p : properties(n.control)) {
@@ -452,8 +484,26 @@ public final class InspectorBackend implements DebugBridge.Backend {
                         e.getKey().debugName().isBlank() ? "Window" : e.getKey().debugName(), e.getKey().host().nativeWindow(), System.nanoTime() - e.getValue() < 500_000_000L))
                 .sorted(Comparator.comparing(InspectorSnapshot.Target::id)).toList();
         snapshot = new InspectorSnapshot(++sequence, root == null || System.nanoTime() - lastFrame > 300_000_000L, selected, picking, error,
-                overrides.canUndo(), overrides.canRedo(), windows, List.copyOf(out));
+                overrides.canUndo(), overrides.canRedo(), windows, List.copyOf(out), signalSnapshot(), lifecycleSnapshot(), lifecycleHistory.snapshot());
         lastSend = System.nanoTime();
+    }
+
+    private LifecycleInfo lifecycleSnapshot() {
+        Node current = nodes.get(selected);
+        if (current != null) selectedLifecycle = current.control.lifecycleInfo();
+        return selectedLifecycle;
+    }
+
+    private InspectorSnapshot.SignalPanel signalSnapshot() {
+        Node current = nodes.get(selected);
+        if (current != null) signalInspector.watch(current.id, current.name, current.control);
+        Map<Long, String> names = new HashMap<>();
+        for (Node node : nodes.values()) {
+            names.put(io.github.luyingyilong.ore.signal.SignalDiagnostics.ownerId(node.control), node.name);
+            if (node.control instanceof io.github.luyingyilong.ore.input.InputControl input)
+                names.put(io.github.luyingyilong.ore.signal.SignalDiagnostics.ownerId(input.widget()), node.name + " / Input");
+        }
+        return signalInspector.snapshot(names, current != null);
     }
 
     private void readonly(List<InspectorSnapshot.Property> props, String name, Object value) {
@@ -477,7 +527,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
         g.pose().translate(0, 0, depth - g.pose().last().pose().m32());
         try {
             for (Node n : nodes.values()) {
-                if ((!all && n != selectedNode) || !n.visible || n.geometry == null) continue;
+                if ((!all && n != selectedNode) || !n.control.isAlive() || !n.visible || n.geometry == null) continue;
                 Geometry geo = n.geometry;
                 Rect area = intersect(geo.clip, geo.area);
                 if (area.width() == 0 || area.height() == 0) continue;
@@ -568,6 +618,8 @@ public final class InspectorBackend implements DebugBridge.Backend {
     }
 
     public void clear() {
+        signalInspector.clear();
+        lifecycleHistory.clear(); selectedLifecycle = null;
         swallowed.clear();
         targets.clear();
         overrides.clear();

@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
@@ -7,6 +9,7 @@ import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.FocusManager;
 import io.github.luyingyilong.ore.layout.Panel;
+import io.github.luyingyilong.ore.layout.Padding;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.Window;
 import io.github.luyingyilong.ore.theme.OreTheme;
@@ -24,7 +27,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
@@ -126,24 +128,28 @@ public final class Table<T> extends Container {
 
         @Override public int measureHeight(Font font, T row, int width) {
             if (font == null) return 0;
-            Label label = label(row);
-            return label.measureHeight(font, Math.max(1, width - 2 * horizontalInset))
+            return Label.measureTextHeight(font, text.apply(row), Math.max(1, width - 2 * horizontalInset), wrap, overflow, maxLines)
                     + 2 * verticalInset;
         }
 
         @Override public void draw(ModularGuiContext context, T row, Rect bounds) {
-            Rect inner = new Rect(bounds.x() + horizontalInset, bounds.y() + verticalInset,
-                    Math.max(0, bounds.width() - 2 * horizontalInset),
-                    Math.max(0, bounds.height() - 2 * verticalInset));
-            if (inner.width() == 0 || inner.height() == 0) return;
-            Label label = label(row);
-            label.layout(inner, context.getFont());
-            label.draw(context, 0, 0);
+            // RowView owns the retained Padding/Label subtree, including clipping and disposal.
         }
 
-        private Label label(T row) {
-            return new Label(Objects.requireNonNull(text.apply(row))).color(color)
+        @Override public Control createControl() {
+            return new Padding(insets()).child(new Label().color(color).overflow(overflow)
+                    .wrap(wrap).maxLines(maxLines).align(horizontal, vertical));
+        }
+
+        @Override public void bindControl(Control control, T row) {
+            Padding padding = (Padding) control;
+            padding.insets(insets());
+            ((Label) padding.children().get(0)).text(Objects.requireNonNull(text.apply(row))).color(color)
                     .overflow(overflow).wrap(wrap).maxLines(maxLines).align(horizontal, vertical);
+        }
+
+        private Padding.Insets insets() {
+            return new Padding.Insets(verticalInset, horizontalInset, verticalInset, horizontalInset);
         }
     }
 
@@ -179,13 +185,15 @@ public final class Table<T> extends Container {
     private static final int COMPACT_LABEL_HEIGHT = 10;
 
     private final List<Column<T>> columns = new ArrayList<>();
+    private final Map<String, Label> headerLabels = new HashMap<>();
+    private final Label emptyLabel = ownPart("emptyLabel", new Label());
     private final List<Row<T>> layoutRows = new ArrayList<>();
     private final Map<Integer, RowView> activeViews = new HashMap<>();
     private final ArrayDeque<RowView> recycledViews = new ArrayDeque<>();
     private Panel rowBackground;
     private List<T> rows = List.of();
     private Function<T, Object> rowKey;
-    private Consumer<T> onRowClick = row -> { };
+    private final SignalSource<T> rowActivated = new SignalSource<>(this, "rowActivated", "T");
     private Component empty = Component.empty();
     private int headerColor = OreTheme.TEXT_SECONDARY;
     private int[] columnWidths = new int[0];
@@ -205,6 +213,7 @@ public final class Table<T> extends Container {
     private Rect drawingBody;
 
     public Table() {
+        signalScope().own(() -> { activeViews.clear(); recycledViews.clear(); headerLabels.clear(); });
         focusable(true);
         focusExpansion(1);
     }
@@ -272,7 +281,7 @@ public final class Table<T> extends Container {
             return target.cell().click(row.item(), target.cellBounds(),
                     bounds.x() + bounds.width() / 2, bounds.y() + bounds.height() / 2);
         }
-        onRowClick.accept(row.item());
+        rowActivated.emit(row.item());
         return true;
     }
 
@@ -349,6 +358,7 @@ public final class Table<T> extends Container {
         if (columns.stream().anyMatch(existing -> existing.key.equals(column.key)))
             throw new IllegalArgumentException("Duplicate table column: " + column.key);
         columns.add(column);
+        headerLabels.put(column.key, ownPart("header_" + column.key, new Label(column.title)));
         dirty = true;
         return this;
     }
@@ -360,10 +370,7 @@ public final class Table<T> extends Container {
         return this;
     }
 
-    public Table<T> onRowClick(Consumer<T> onRowClick) {
-        this.onRowClick = Objects.requireNonNull(onRowClick);
-        return this;
-    }
+    public Signal<T> rowActivated() { return rowActivated.signal(); }
 
     public Table<T> empty(Component empty) {
         this.empty = Objects.requireNonNull(empty);
@@ -468,44 +475,47 @@ public final class Table<T> extends Container {
 
     @Override
     public void layout(Rect localBounds, Font font) {
-        // Scroll may lay out this table several times while resolving scrollbar space.
-        // Resizing does not invalidate a retained cell's press/release gesture.
-        if (!bounds().equals(localBounds)) gesture.cancel();
-        if (rowKey == null) throw new IllegalStateException("A table requires a row key");
-        if (lastWidth >= 0 && lastWidth != localBounds.width() && !dirty && !resetScroll) saveAnchor();
-        super.layout(localBounds, font);
-        lastFont = font;
-        if (!dirty && lastWidth == localBounds.width()) {
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            // Scroll may lay out this table several times while resolving scrollbar space.
+            // Resizing does not invalidate a retained cell's press/release gesture.
+            if (!bounds().equals(localBounds)) gesture.cancel();
+            if (rowKey == null) throw new IllegalStateException("A table requires a row key");
+            if (lastWidth >= 0 && lastWidth != localBounds.width() && !dirty && !resetScroll) saveAnchor();
+            super.layout(localBounds, font);
+            lastFont = font;
+            if (!dirty && lastWidth == localBounds.width()) {
+                setScroll(scroll);
+                updateVisible(font);
+                return;
+            }
+            lastWidth = localBounds.width();
+            dirty = false;
+            int minimum = columns.stream().mapToInt(column -> column.minimumWidth).sum();
+            compact = localBounds.width() < minimum;
+            columnWidths = compact ? new int[0] : calculateColumnWidths(localBounds.width());
+            layoutRows.clear();
+            int top = 0;
+            for (int index = 0; index < rows.size(); index++) {
+                T item = rows.get(index);
+                int height = compact ? compactRowHeight(item, font) : regularRowHeight(item, font);
+                layoutRows.add(new Row<>(index, item, Objects.requireNonNull(rowKey.apply(item)),
+                        new Rect(0, top, localBounds.width(), height)));
+                top += height;
+            }
+            contentHeight = top;
+            if (!resetScroll && anchorKey != null) {
+                for (Row<T> row : layoutRows) if (anchorKey.equals(row.key())) {
+                    scroll = row.bounds().y() + anchorOffset;
+                    break;
+                }
+            }
+            rebindViews();
             setScroll(scroll);
             updateVisible(font);
-            return;
+            anchorKey = null;
+            resetScroll = false;
         }
-        lastWidth = localBounds.width();
-        dirty = false;
-        int minimum = columns.stream().mapToInt(column -> column.minimumWidth).sum();
-        compact = localBounds.width() < minimum;
-        columnWidths = compact ? new int[0] : calculateColumnWidths(localBounds.width());
-        layoutRows.clear();
-        int top = 0;
-        for (int index = 0; index < rows.size(); index++) {
-            T item = rows.get(index);
-            int height = compact ? compactRowHeight(item, font) : regularRowHeight(item, font);
-            layoutRows.add(new Row<>(index, item, Objects.requireNonNull(rowKey.apply(item)),
-                    new Rect(0, top, localBounds.width(), height)));
-            top += height;
-        }
-        contentHeight = top;
-        if (!resetScroll && anchorKey != null) {
-            for (Row<T> row : layoutRows) if (anchorKey.equals(row.key())) {
-                scroll = row.bounds().y() + anchorOffset;
-                break;
-            }
-        }
-        rebindViews();
-        setScroll(scroll);
-        updateVisible(font);
-        anchorKey = null;
-        resetScroll = false;
     }
 
     private void rebindViews() {
@@ -514,6 +524,7 @@ public final class Table<T> extends Container {
         List<RowView> previous = List.copyOf(activeViews.values());
         activeViews.clear();
         for (RowView view : previous) {
+            if (!view.isAlive()) { super.removeChild(view); continue; }
             Row<T> row = next.get(view.row.key());
             if (row == null) recycle(view);
             else {
@@ -531,11 +542,14 @@ public final class Table<T> extends Container {
                 break;
             }
         }
+        view.resetBindingScope();
         super.removeChild(view);
         recycledViews.add(view);
     }
 
     private void updateVisible(Font font) {
+        recycledViews.removeIf(view -> !view.isAlive());
+        for (int key : List.copyOf(activeViews.keySet())) { RowView view = activeViews.get(key); if (view != null && !view.isAlive()) { activeViews.remove(key); super.removeChild(view); } }
         int buffer = bodyHeight();
         int start = scroll - buffer;
         int end = scroll + bodyHeight() + buffer;
@@ -550,7 +564,7 @@ public final class Table<T> extends Container {
         for (Row<T> row : layoutRows) if (needed.contains(row.index())) {
             RowView view = activeViews.get(row.index());
             if (view == null) {
-                view = recycledViews.isEmpty() ? new RowView() : recycledViews.removeFirst();
+                view = recycledViews.isEmpty() ? ownPooled(new RowView()) : recycledViews.removeFirst();
                 view.bind(row);
                 super.addChild(view);
                 activeViews.put(row.index(), view);
@@ -614,40 +628,48 @@ public final class Table<T> extends Container {
 
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
-        DebugBridge.backend().paint(this, context, screenX, screenY);
-        if (bounds().width() <= 0 || bounds().height() <= 0) return;
-        if (rowBackground == null) rowBackground = new Panel(OreTheme.BAR);
-        updateVisible(context.getFont());
-        Rect area = screenBounds(screenX, screenY);
-        if (headerVisible && !compact) drawHeader(context, area);
-        Rect body = new Rect(area.x(), area.y() + headerHeight(), area.width(), bodyHeight());
-        drawingBody = body;
-        if (body.height() <= 0) return;
-        GuiGraphics graphics = context.getGraphics();
-        graphics.enableScissor(body.x(), body.y(), body.right(), body.bottom());
-        DebugBridge.backend().clip(body);
-        if (rows.isEmpty()) {
-            Label.draw(this, context, empty, new Rect(body.x() + 2, body.y() + 8,
-                            Math.max(0, body.width() - 4), 12), headerColor,
-                    Label.Overflow.CLIP, Label.Horizontal.LEFT, Label.Vertical.CENTER);
-        } else {
-            for (Row<T> row : visibleRows()) {
-                RowView view = activeViews.get(row.index());
-                if (view != null) view.draw(context, screenX, screenY);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            DebugBridge.backend().paint(this, context, screenX, screenY);
+            if (bounds().width() <= 0 || bounds().height() <= 0) return;
+            if (rowBackground == null) rowBackground = ownPart("rowBackground", new Panel(OreTheme.BAR));
+            updateVisible(context.getFont());
+            Rect area = screenBounds(screenX, screenY);
+            if (headerVisible && !compact) drawHeader(context, area);
+            Rect body = new Rect(area.x(), area.y() + headerHeight(), area.width(), bodyHeight());
+            drawingBody = body;
+            if (body.height() <= 0) return;
+            GuiGraphics graphics = context.getGraphics();
+            graphics.enableScissor(body.x(), body.y(), body.right(), body.bottom());
+            DebugBridge.backend().clip(body);
+            if (rows.isEmpty()) {
+                drawText(this, "empty", emptyLabel.text(empty), context, new Rect(body.x() + 2, body.y() + 8,
+                                Math.max(0, body.width() - 4), 12));
+            } else {
+                for (Row<T> row : visibleRows()) {
+                    RowView view = activeViews.get(row.index());
+                    if (view != null) view.draw(context, screenX, screenY);
+                }
             }
+            graphics.disableScissor(); DebugBridge.backend().unclip();
         }
-        graphics.disableScissor(); DebugBridge.backend().unclip();
     }
 
     private void drawHeader(ModularGuiContext context, Rect area) {
         int x = area.x();
         for (int index = 0; index < columns.size(); index++) {
             Column<T> column = columns.get(index);
-            Label.draw(this, context, column.title, new Rect(x + 4, area.y(),
-                            Math.max(0, columnWidths[index] - 8), HEADER_HEIGHT), headerColor,
-                    Label.Overflow.CLIP, Label.Horizontal.LEFT, Label.Vertical.CENTER);
+            drawText(this, "header_" + column.key, headerLabels.get(column.key), context,
+                    new Rect(x + 4, area.y(), Math.max(0, columnWidths[index] - 8), HEADER_HEIGHT));
             x += columnWidths[index];
         }
+    }
+
+    private void drawText(Control owner, String name, Label label, ModularGuiContext context, Rect area) {
+        label.color(headerColor).overflow(Label.Overflow.CLIP).align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+        label.layout(area, context.getFont());
+        DebugBridge.backend().internal(owner, name, label);
+        label.draw(context, 0, 0);
     }
 
     private void drawRegularRow(ModularGuiContext context, T item, Rect row) {
@@ -681,13 +703,13 @@ public final class Table<T> extends Container {
         }
     }
 
-    private void drawCompactRow(ModularGuiContext context, T item, Rect row) {
+    private void drawCompactRow(ModularGuiContext context, T item, Rect row, RowView view) {
         int x = row.x() + COMPACT_INSET;
         int width = Math.max(0, row.width() - 2 * COMPACT_INSET);
         int y = row.y() + COMPACT_INSET;
         for (Column<T> column : columns) {
-            Label.draw(this, context, column.title, new Rect(x, y, width, COMPACT_LABEL_HEIGHT),
-                    headerColor, Label.Overflow.CLIP, Label.Horizontal.LEFT, Label.Vertical.CENTER);
+            drawText(view, "caption_" + column.key, view.captions.get(column.key), context,
+                    new Rect(x, y, width, COMPACT_LABEL_HEIGHT));
             y += COMPACT_LABEL_HEIGHT;
             int height = compactCellHeight(column, item, context.getFont(), width);
             drawCell(context, column, item, new Rect(x, y, width, height));
@@ -741,7 +763,7 @@ public final class Table<T> extends Container {
                 x += width;
             }
         }
-        onRowClick.accept(row.item());
+        rowActivated.emit(row.item());
         return true;
     }
 
@@ -804,19 +826,25 @@ public final class Table<T> extends Container {
 
 
 
+
+
     private final class RowView extends Container {
         private Row<T> row;
         private final Map<String, Control> controls = new HashMap<>();
+        private final Map<String, Label> captions = new HashMap<>();
 
         private void bind(Row<T> row) {
             // Preserve gestures and open menus when only geometry or an equal snapshot changes.
             // A different record or changed data must never inherit a pending activation.
             if (this.row == null || !Objects.equals(this.row.key(), row.key())
-                    || !Objects.equals(this.row.item(), row.item())) cancelInteractions();
+                    || !Objects.equals(this.row.item(), row.item())) { cancelInteractions(); resetBindingScope(); }
             DebugBridge.backend().binding(this, row.key());
+            resetBindingScope();
             this.row = row;
             for (Column<T> column : columns) {
+                captions.computeIfAbsent(column.key, key -> ownPart("caption_" + key, new Label(column.title)));
                 Control control = controls.get(column.key);
+                if (control != null && !control.isAlive()) { controls.remove(column.key); removeChild(control); control = null; }
                 if (control == null) {
                     control = column.cell.createControl();
                     if (control != null) { controls.put(column.key, control); addChild(control); }
@@ -826,6 +854,8 @@ public final class Table<T> extends Container {
         }
 
         @Override public void layout(Rect bounds, Font font) {
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(bounds, font);
             int x = compact ? COMPACT_INSET : 0;
             int y = compact ? COMPACT_INSET : 0;
@@ -839,27 +869,34 @@ public final class Table<T> extends Container {
                 if (compact) y += height;
                 else x += width;
             }
+
         }
+    }
 
         @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
-        DebugBridge.backend().paint(this, context, screenX, screenY);
-            render(context, screenX, screenY);
-            for (Column<T> column : columns) {
-                Control control = controls.get(column.key);
-                if (control == null || !control.visible()) continue;
-                Rect area = control.screenBounds(screenX, screenY);
-                context.getGraphics().enableScissor(area.x(), area.y(), area.right(), area.bottom());
-                DebugBridge.backend().clip(area);
-                try { control.draw(context, screenX, screenY); }
-                finally { context.getGraphics().disableScissor(); DebugBridge.backend().unclip(); }
-            }
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            DebugBridge.backend().paint(this, context, screenX, screenY);
+                render(context, screenX, screenY);
+                for (Column<T> column : columns) {
+                    Control control = controls.get(column.key);
+                    if (control == null || !(control.isAlive() && control.visible())) continue;
+                    Rect area = control.screenBounds(screenX, screenY);
+                    context.getGraphics().enableScissor(area.x(), area.y(), area.right(), area.bottom());
+                    DebugBridge.backend().clip(area);
+                    try { control.draw(context, screenX, screenY); }
+                    finally { context.getGraphics().disableScissor(); DebugBridge.backend().unclip(); }
+                }
         }
+    }
 
         @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
             Rect area = screenBounds(screenX, screenY);
             rowBackground.drawAt(context, area);
-            if (compact) drawCompactRow(context, row.item(), area);
+            if (compact) drawCompactRow(context, row.item(), area, this);
             else drawRegularRow(context, row.item(), area);
         }
+
+
     }
 }

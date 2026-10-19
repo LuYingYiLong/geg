@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Overlay;
 import io.github.luyingyilong.ore.layout.Window;
@@ -16,14 +18,14 @@ public final class EscapePriorityTest {
         };
         int[] closed = {0, 0, 0, 0};
         long[] now = {0L};
-        Drawer drawer = new Drawer(Component.literal("Organization"), () -> now[0]).animationDuration(0)
-                .content(new Control().preferred(80, 40)).onClose(() -> closed[0]++);
+        Drawer drawer = Signals.configure(new Drawer(Component.literal("Organization"), () -> now[0]).animationDuration(0)
+                .content(new Control().preferred(80, 40)), connected -> connected.closed().connect(connected, () -> closed[0]++));
         Modal modal = new Modal(Component.literal("Edit"), null, null, null)
                 .size(180, 100).content(new Control().preferred(80, 20));
-        modal.onClose(() -> { closed[1]++; modal.visible(false); });
+        modal.closeRequested().connect(modal, () -> { closed[1]++; modal.visible(false); });
         Modal topModal = new Modal(Component.literal("Quantity"), null, null, null)
                 .size(120, 80).content(new Control().preferred(20, 20));
-        topModal.onClose(() -> { closed[2]++; topModal.visible(false); });
+        topModal.closeRequested().connect(topModal, () -> { closed[2]++; topModal.visible(false); });
         topModal.visible(false);
         Window window = new Window(true).content(new Control())
                 .overlay(new Overlay().add(drawer).add(modal).add(topModal)).onBack(() -> closed[3]++);

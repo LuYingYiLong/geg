@@ -16,6 +16,7 @@ public final class WindowContext {
     private static WindowContext current;
     private final UUID id = UUID.randomUUID();
     private final WindowPopups popups = new WindowPopups(this);
+    private io.github.luyingyilong.ore.Label textPainter;
     public WindowPopups popups() { return popups; }
     private final boolean nativeWindow;
     private final Set<Integer> keys = new HashSet<>(), buttons = new HashSet<>();
@@ -37,6 +38,16 @@ public final class WindowContext {
 
     public WindowContext(boolean nativeWindow) {
         this.nativeWindow = nativeWindow;
+    }
+
+    /** One bounded compatibility painter per host, released with the owning Window's lifetime. */
+    public io.github.luyingyilong.ore.Label textPainter() {
+        if (textPainter == null) {
+            if (owner != null && owner.isDisposed()) throw new IllegalStateException("Window has been disposed");
+            textPainter = new io.github.luyingyilong.ore.Label();
+            if (owner != null) owner.ownPart("textPainter", textPainter);
+        }
+        return textPainter;
     }
 
     public static WindowContext primary() {

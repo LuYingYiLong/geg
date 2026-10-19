@@ -29,12 +29,14 @@ public final class WindowCanvas extends Widget<WindowCanvas> implements Interact
     }
 
     private static void collect(Control c, List<InputControl> out) {
+        if (!c.isAlive()) return;
         if (c instanceof InputControl input) out.add(input);
         c.children().forEach(child -> collect(child, out));
     }
 
     @Override
     public void draw(ModularGuiContext context, WidgetThemeEntry<?> theme) {
+        if (!root.isAlive()) return;
         List<InputControl> fields = inputs(root);
         for (InputControl old : List.copyOf(registered)) {
             if (!fields.contains(old)) { old.widget().dispose(); registered.remove(old); }
@@ -45,6 +47,7 @@ public final class WindowCanvas extends Widget<WindowCanvas> implements Interact
             if (field.widget().getStringValue() == null) field.widget().value(new brachy.modularui.value.StringValue(pending));
             registered.add(field); field.widget().initialise(getPanel(), false);
         }
+        root.prepareTree(context);
         root.layoutViewport(context.getScreenArea().width, context.getScreenArea().height, context.getFont());
         for (InputControl field : fields) {
             var area = field.widget().getArea(); var bounds = field.widgetBounds();
@@ -78,6 +81,6 @@ public final class WindowCanvas extends Widget<WindowCanvas> implements Interact
     }
 
     @Override public void dispose() {
-        root.hostClosed(); registered.forEach(input -> input.widget().dispose()); registered.clear(); super.dispose();
+        root.hostDetached(); registered.forEach(input -> input.widget().dispose()); registered.clear(); super.dispose();
     }
 }

@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.screen.OreButtonWidget;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
@@ -17,8 +19,8 @@ public final class OreButtonWidgetTest {
         };
         List<String> events = new ArrayList<>();
         Badge unread = new Badge(7);
-        Button button = new Button(cue -> events.add(cue.name())).label(Component.literal("Mail"))
-                .badge(unread).onPressed(() -> events.add("open"));
+        Button button = Signals.configure(new Button(cue -> events.add(cue.name())).label(Component.literal("Mail"))
+                .badge(unread), connected -> connected.pressed().connect(connected, () -> events.add("open")));
         OreButtonWidget widget = new OreButtonWidget(button, Component.literal("Mail, 7 unread"));
         widget.place(font, 4, 50, 32);
         check(widget.button() == button && widget.getWidth() == 56 && widget.getY() == 50);

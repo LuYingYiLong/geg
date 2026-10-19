@@ -32,8 +32,8 @@ public final class OreNavigationContractTest {
         check(dispatch.indexOf("io/github/luyingyilong/ore/event/InputEvent.deliver") < dispatch.indexOf("io/github/luyingyilong/ore/layout/Window.unhandledInput"),
                 "Focused Input consumes Escape before unhandled navigation");
         for (String popup : new String[]{"Modal", "Dialog"})
-            check(calls("io/github/luyingyilong/ore/" + popup, "onFocusKey").contains("java/lang/Runnable.run"),
-                    popup + " delegates Esc to its owner's close callback");
+            check(calls("io/github/luyingyilong/ore/" + popup, "onFocusKey").contains("io/github/luyingyilong/ore/signal/SignalSource0.emit"),
+                    popup + " emits a typed close request for Esc");
 
         // These library behaviors are what keep drawers, scroll offsets and drafts on the original instances.
         Set<String> close = calls("brachy/modularui/screen/ModularPanel", "closeIfOpen");

@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.luyingyilong.ore.layout.Container;
@@ -29,9 +31,9 @@ public final class Switch extends Container {
     private final ReleaseGesture<Boolean> gesture = new ReleaseGesture<>();
     private final LongSupplier clock;
     private final Consumer<OreSounds.Cue> soundPlayer;
-    private final Spin spinner = new Spin();
-    private Consumer<Boolean> onChange = value -> { };
-    private Consumer<Boolean> onClick = value -> { };
+    private final Spin spinner = ownPart("spinner", new Spin());
+    private final SignalSource<Boolean> toggled = new SignalSource<>(this, "toggled", "Boolean");
+    private final SignalSource<Boolean> activated = new SignalSource<>(this, "activated", "Boolean");
     private boolean checked;
     private boolean disabled;
     private boolean loading;
@@ -66,8 +68,17 @@ public final class Switch extends Container {
 
     public boolean checked() { return checked; }
 
-    /** Programmatic changes animate, but do not emit onChange/onClick or play sounds. */
+    public Signal<Boolean> toggled() { return toggled.signal(); }
+    public Signal<Boolean> activated() { return activated.signal(); }
     public Switch checked(boolean value) {
+        boolean previous = checked;
+        setCheckedNoSignal(value);
+        if (previous != checked) toggled.emit(checked);
+        return this;
+    }
+
+    /** Silent changes retain animation without playing a user-input sound. */
+    public Switch setCheckedNoSignal(boolean value) {
         if (checked != value) {
             long now = clock.getAsLong();
             animationFrom = offsetAt(now);
@@ -95,15 +106,6 @@ public final class Switch extends Container {
         return this;
     }
 
-    public Switch onChange(Consumer<Boolean> callback) {
-        onChange = Objects.requireNonNull(callback);
-        return this;
-    }
-
-    public Switch onClick(Consumer<Boolean> callback) {
-        onClick = Objects.requireNonNull(callback);
-        return this;
-    }
 
     public long animationDuration() { return animationDuration; }
 
@@ -118,12 +120,17 @@ public final class Switch extends Container {
         return this;
     }
 
-    @Override public int measureWidth(Font font, int available) { return Math.max(WIDTH, minimumWidth()); }
-    @Override public int measureHeight(Font font, int available) { return Math.max(HEIGHT, minimumHeight()); }
+    @Override public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0; return Math.max(WIDTH, minimumWidth()); }
+    @Override public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0; return Math.max(HEIGHT, minimumHeight()); }
 
     @Override public void layout(Rect bounds, Font font) {
-        super.layout(bounds, font);
-        layoutSpinner(thumbBounds(), font);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(bounds, font);
+            layoutSpinner(thumbBounds(), font);
+        }
     }
 
     /** Extra allocated space never stretches the textures or enlarges the clickable area. */
@@ -216,10 +223,9 @@ public final class Switch extends Container {
     @Override public boolean activate() {
         if (!available() || !visible()) return false;
         boolean next = !checked;
-        checked(next);
         soundPlayer.accept(OreSounds.Cue.CLICK);
-        onChange.accept(next);
-        onClick.accept(next);
+        checked(next);
+        activated.emit(next);
         return true;
     }
 

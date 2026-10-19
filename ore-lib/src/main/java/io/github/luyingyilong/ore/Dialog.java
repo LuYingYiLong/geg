@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
@@ -57,7 +59,7 @@ public final class Dialog extends Container {
             PADDING, BODY_HORIZONTAL_INSET));
     private final List<Button> actions = new ArrayList<>();
     private Control content;
-    private Runnable onClose = () -> { };
+    private final SignalSource0 closeRequested = new SignalSource0(this, "closeRequested");
     private float depth = 200.0F;
 
     public Dialog(Component title) {
@@ -72,7 +74,7 @@ public final class Dialog extends Container {
         titleLabel.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
         close.minimum(CLOSE_SIZE, CLOSE_SIZE);
         close.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        close.onPress(() -> onClose.run());
+        close.pressed().connect(close, () -> closeRequested.emit());
         header.minimum(0, CLOSE_SIZE).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         header.add(titleLabel).add(close);
         headerInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
@@ -98,10 +100,7 @@ public final class Dialog extends Container {
     public Dialog fontSize(float fontSize) { titleLabel.fontSize(fontSize); return this; }
     public float fontSize() { return titleLabel.fontSize(); }
 
-    public Dialog onClose(Runnable onClose) {
-        this.onClose = Objects.requireNonNull(onClose);
-        return this;
-    }
+    public Signal0 closeRequested() { return closeRequested.signal(); }
 
     @Override public float contentDepth() { return depth; }
 
@@ -114,7 +113,7 @@ public final class Dialog extends Container {
 
     @Override public boolean onFocusKey(int keyCode, int modifiers) {
         if (keyCode != GLFW.GLFW_KEY_ESCAPE) return false;
-        onClose.run();
+        closeRequested.emit();
         return true;
     }
 
@@ -131,19 +130,15 @@ public final class Dialog extends Container {
     }
 
     public Dialog clearActions() {
-        for (Button action : actions) footer.removeChild(action);
+        for (Button action : List.copyOf(actions)) { if (action.parent() != null) action.parent().removeChild(action); action.queueFree(); }
         actions.clear();
         footer.minimum(0, 0);
         footerInset.visible(false);
         return this;
     }
 
-    public Dialog action(Component label, Runnable onClick) {
-        return action(label, onClick, Button.Type.SECONDARY);
-    }
-
-    public Dialog action(Component label, Runnable onClick, Button.Type type) {
-        Button button = new Button(label).type(type).onPress(onClick);
+    public Dialog addAction(Button button) {
+        Objects.requireNonNull(button);
         button.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         actions.add(button);
         footer.addChild(button);
@@ -176,18 +171,21 @@ public final class Dialog extends Container {
     }
 
     @Override public void layout(Rect viewport, Font font) {
-        int verticalPadding = viewport.height() < 110 ? COMPACT_VERTICAL_PADDING : PADDING;
-        headerInset.insets(new Padding.Insets(verticalPadding, PADDING, SECTION_SPACING, PADDING));
-        footerInset.insets(new Padding.Insets(SECTION_SPACING, PADDING, verticalPadding, PADDING));
-        super.layout(viewport, font);
-        Size measured = panel.measureSize(font, new Size(viewport.width(), viewport.height()));
-        int width = Math.max(Math.max(preferredWidth, minimumWidth()), measured.width());
-        int intrinsicContentHeight = content == null ? 0
-                : content.measureSize(font, new Size(viewport.width(), viewport.height())).height();
-        int fallbackBodyHeight = content != null && intrinsicContentHeight == 0 ? CONTENT_MIN_HEIGHT : 0;
-        int height = Math.max(Math.max(preferredHeight, minimumHeight()), measured.height() + fallbackBodyHeight);
-        fitChild(panel, fittedBounds(width, height, verticalOffset,
-                viewport.width(), viewport.height()), font);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            int verticalPadding = viewport.height() < 110 ? COMPACT_VERTICAL_PADDING : PADDING;
+            headerInset.insets(new Padding.Insets(verticalPadding, PADDING, SECTION_SPACING, PADDING));
+            footerInset.insets(new Padding.Insets(SECTION_SPACING, PADDING, verticalPadding, PADDING));
+            super.layout(viewport, font);
+            Size measured = panel.measureSize(font, new Size(viewport.width(), viewport.height()));
+            int width = Math.max(Math.max(preferredWidth, minimumWidth()), measured.width());
+            int intrinsicContentHeight = content == null ? 0
+                    : content.measureSize(font, new Size(viewport.width(), viewport.height())).height();
+            int fallbackBodyHeight = content != null && intrinsicContentHeight == 0 ? CONTENT_MIN_HEIGHT : 0;
+            int height = Math.max(Math.max(preferredHeight, minimumHeight()), measured.height() + fallbackBodyHeight);
+            fitChild(panel, fittedBounds(width, height, verticalOffset,
+                    viewport.width(), viewport.height()), font);
+        }
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
@@ -199,17 +197,21 @@ public final class Dialog extends Container {
     }
 
     @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
-        DebugBridge.backend().paint(this, context, screenX, screenY);
-        if (!visible()) return;
-        GuiGraphics graphics = context.getGraphics();
-        graphics.flush();
-        graphics.pose().pushPose();
-        graphics.pose().translate(0.0F, 0.0F, depth);
-        try {
-            super.draw(context, screenX, screenY);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            if (!isAlive()) return;
+            DebugBridge.backend().paint(this, context, screenX, screenY);
+            if (!visible()) return;
+            GuiGraphics graphics = context.getGraphics();
             graphics.flush();
-        } finally {
-            graphics.pose().popPose();
+            graphics.pose().pushPose();
+            graphics.pose().translate(0.0F, 0.0F, depth);
+            try {
+                super.draw(context, screenX, screenY);
+                graphics.flush();
+            } finally {
+                graphics.pose().popPose();
+            }
         }
     }
 
@@ -218,7 +220,7 @@ public final class Dialog extends Container {
         if (!visible()) return false;
         if (!panel.hit(rootX, rootY)) {
             OreSounds.play(OreSounds.Cue.CLICK);
-            onClose.run();
+            closeRequested.emit();
             return true;
         }
         return true;

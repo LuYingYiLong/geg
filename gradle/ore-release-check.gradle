@@ -7,7 +7,12 @@ tasks.register('verifyOreRelease') {
             def names = zip.entries().collect { it.name }
             ['META-INF/mods.toml', 'pack.mcmeta', 'geg.mixins.json', 'ore.mixins.json',
              'io/github/luyingyilong/ore/OreClient.class', 'assets/ore/themes/ore.json',
-             'assets/ore/font/ore.json', 'io/github/luyingyilong/ore/OreClientExtension.class'].each {
+             'assets/ore/font/ore.json', 'io/github/luyingyilong/ore/OreClientExtension.class',
+             'io/github/luyingyilong/ore/signal/Signal.class', 'io/github/luyingyilong/ore/signal/Signal0.class',
+             'io/github/luyingyilong/ore/signal/SignalScope.class', 'io/github/luyingyilong/ore/signal/Connection.class',
+             'io/github/luyingyilong/ore/signal/SignalDiagnostics.class',
+             'io/github/luyingyilong/ore/theme/OreTrueTypeGlyphProvider.class',
+             'io/github/luyingyilong/ore/mixin/TrueTypeGlyphProviderDefinitionMixin.class'].each {
                 if (!names.contains(it)) throw new GradleException("Missing release entry: $it")
             }
             def forbidden = names.findAll { it.startsWith('io/github/luyingyilong/ore/inspector/') ||

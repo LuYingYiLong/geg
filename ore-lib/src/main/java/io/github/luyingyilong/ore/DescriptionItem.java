@@ -60,6 +60,7 @@ public final class DescriptionItem extends Container {
     }
 
     @Override public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         int width = Math.max(minimumWidth(), available.width());
         int height;
         if (layout == Descriptions.Layout.VERTICAL) {
@@ -75,11 +76,16 @@ public final class DescriptionItem extends Container {
         return new Size(width, Math.max(minimumHeight(), height));
     }
 
-    @Override public int measureWidth(Font font, int available) { return Math.max(minimumWidth(), available); }
-    @Override public int measureHeight(Font font, int available) { return measureSize(font, new Size(available, Integer.MAX_VALUE)).height(); }
+    @Override public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0; return Math.max(minimumWidth(), available); }
+    @Override public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0; return measureSize(font, new Size(available, Integer.MAX_VALUE)).height(); }
 
     @Override public void layout(Rect bounds, Font font) {
-        super.layout(bounds, font);
-        fitChild(box, new Rect(0, 0, bounds.width(), bounds.height()), font);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(bounds, font);
+            fitChild(box, new Rect(0, 0, bounds.width(), bounds.height()), font);
+        }
     }
 }

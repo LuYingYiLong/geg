@@ -7,6 +7,7 @@ import net.minecraft.client.gui.Font;
 /** A control which assigns rectangles to its direct children. */
 public class Container extends Control {
     protected final void fitChild(Control child, Rect slot, Font font) {
+        if (!child.isAlive()) return;
         DebugBridge.backend().slot(child, slot);
         int horizontal = child.sizeFlagsHorizontal();
         int vertical = child.sizeFlagsVertical();
@@ -24,6 +25,6 @@ public class Container extends Control {
 
     /** Internal geometry such as an Overlay viewport or a scrollbar is not a content slot. */
     protected final void layoutChild(Control child, Rect bounds, Font font) {
-        child.layout(bounds, font);
+        if (child.isAlive()) try (var phase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) { child.layout(bounds, font); }
     }
 }

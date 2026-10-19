@@ -1,5 +1,6 @@
 package io.github.luyingyilong.geg.organization.client;
 
+
 import io.github.luyingyilong.ore.Checkbox;
 import io.github.luyingyilong.ore.Form;
 import io.github.luyingyilong.ore.FormItem;
@@ -17,7 +18,7 @@ import net.minecraft.network.chat.Component;
 final class OrganizationEditForm {
     private final Label name = new Label().overflow(Label.Overflow.ELLIPSIS);
     private final TextArea description = new TextArea(0.0F).rows(4);
-    private final Checkbox unrestricted = new Checkbox(Component.translatable("organization.geg.join_unrestricted")).checked(true);
+    private final Checkbox unrestricted = new Checkbox(Component.translatable("organization.geg.join_unrestricted")).setCheckedNoSignal(true);
     private final Checkbox approval = new Checkbox(Component.translatable("organization.geg.join_approval"));
     private final Form form;
     private final Scroll scroll;
@@ -25,13 +26,13 @@ final class OrganizationEditForm {
     OrganizationEditForm() {
         description.placeholder(Component.translatable("organization.geg.description_hint"));
         description.setMaxLength(120);
-        unrestricted.onChange(checked -> {
-            if (checked) approval.checked(false);
-            else if (!approval.checked()) unrestricted.checked(true);
+        unrestricted.toggled().connect(unrestricted, checked -> {
+            if (checked) approval.setCheckedNoSignal(false);
+            else if (!approval.checked()) unrestricted.setCheckedNoSignal(true);
         });
-        approval.onChange(checked -> {
-            if (checked) unrestricted.checked(false);
-            else if (!unrestricted.checked()) approval.checked(true);
+        approval.toggled().connect(approval, checked -> {
+            if (checked) unrestricted.setCheckedNoSignal(false);
+            else if (!unrestricted.checked()) approval.setCheckedNoSignal(true);
         });
         unrestricted.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         approval.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
@@ -53,9 +54,9 @@ final class OrganizationEditForm {
 
     void show(OrganizationSyncPacket.Summary summary) {
         name.text(Component.literal(summary.name()));
-        description.setText(summary.description());
-        approval.checked(summary.joinPolicy() == Organization.JoinPolicy.APPROVAL);
-        unrestricted.checked(summary.joinPolicy() == Organization.JoinPolicy.UNRESTRICTED);
+        description.setTextNoSignal(summary.description());
+        approval.setCheckedNoSignal(summary.joinPolicy() == Organization.JoinPolicy.APPROVAL);
+        unrestricted.setCheckedNoSignal(summary.joinPolicy() == Organization.JoinPolicy.UNRESTRICTED);
         form.setVisible(true);
         scroll.scrollToTop();
     }

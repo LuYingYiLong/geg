@@ -11,7 +11,6 @@ import java.util.List;
 public final class Box extends Container {
     public enum Orientation { VERTICAL, HORIZONTAL }
 
-    private final List<Control> children = new ArrayList<>();
     private Orientation orientation = Orientation.VERTICAL;
     private int gap;
 
@@ -22,21 +21,16 @@ public final class Box extends Container {
     @Inspectable(min = 0, max = 10000)
     public int gap() { return DebugBridge.value(this, "gap", gap); }
     public Box add(Control child) { addChild(child); return this; }
-    @Override public Box addChild(Control child) { super.addChild(child); children.add(child); return this; }
-    @Override public boolean removeChild(Control child) {
-        if (!super.removeChild(child)) return false;
-        children.remove(child);
-        return true;
-    }
-    public List<Control> children() { return List.copyOf(children); }
+    @Override public Box addChild(Control child) { super.addChild(child); return this; }
 
     @Override public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         Orientation orientation = DebugBridge.value(this, "orientation", this.orientation);
         int gap = DebugBridge.value(this, "gap", this.gap);
         int totalWidth = 0;
         int totalHeight = 0;
         int count = 0;
-        for (Control child : children) if (child.visible()) {
+        for (Control child : children()) if (child.parent() == this && child.isAlive() && child.visible()) {
             Size measured = child.desiredSize(font, available);
             totalWidth = orientation == Orientation.HORIZONTAL ? totalWidth + measured.width()
                     : Math.max(totalWidth, measured.width());
@@ -52,49 +46,54 @@ public final class Box extends Container {
     }
 
     @Override public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0;
         return measureSize(font, new Size(available, available)).width();
     }
 
     @Override public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0;
         return measureSize(font, new Size(available, available)).height();
     }
 
     @Override
     public void layout(Rect localBounds, Font font) {
-        Orientation orientation = DebugBridge.value(this, "orientation", this.orientation);
-        int gap = DebugBridge.value(this, "gap", this.gap);
-        super.layout(localBounds, font);
-        List<Control> active = children.stream().filter(Control::visible).toList();
-        int axis = orientation == Orientation.VERTICAL ? localBounds.height() : localBounds.width();
-        int cross = orientation == Orientation.VERTICAL ? localBounds.width() : localBounds.height();
-        int space = Math.max(0, axis - Math.max(0, active.size() - 1) * gap);
-        int[] sizes = new int[active.size()];
-        int fixed = 0;
-        for (int index = 0; index < active.size(); index++) {
-            Control child = active.get(index);
-            Size measured = child.desiredSize(font, orientation == Orientation.VERTICAL
-                    ? new Size(cross, axis) : new Size(axis, cross));
-            sizes[index] = orientation == Orientation.VERTICAL ? measured.height() : measured.width();
-            if (!expands(child)) fixed += sizes[index];
-        }
-        int expandedMinimum = active.stream().filter(this::expands).mapToInt(this::mainMinimum).sum();
-        int shortage = Math.max(0, fixed + expandedMinimum - space);
-        for (int index = 0; index < active.size() && shortage > 0; index++) {
-            Control child = active.get(index);
-            if (expands(child)) continue;
-            int reduction = Math.min(shortage, sizes[index] - mainMinimum(child));
-            sizes[index] -= reduction;
-            fixed -= reduction;
-            shortage -= reduction;
-        }
-        allocateExpanded(active, sizes, Math.max(0, space - fixed));
-        int cursor = 0;
-        for (int index = 0; index < active.size(); index++) {
-            Control child = active.get(index);
-            fitChild(child, orientation == Orientation.VERTICAL
-                    ? new Rect(0, cursor, cross, sizes[index])
-                    : new Rect(cursor, 0, sizes[index], cross), font);
-            cursor += sizes[index] + gap;
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            Orientation orientation = DebugBridge.value(this, "orientation", this.orientation);
+            int gap = DebugBridge.value(this, "gap", this.gap);
+            super.layout(localBounds, font);
+            List<Control> active = children().stream().filter(c -> c.isAlive() && c.visible()).toList();
+            int axis = orientation == Orientation.VERTICAL ? localBounds.height() : localBounds.width();
+            int cross = orientation == Orientation.VERTICAL ? localBounds.width() : localBounds.height();
+            int space = Math.max(0, axis - Math.max(0, active.size() - 1) * gap);
+            int[] sizes = new int[active.size()];
+            int fixed = 0;
+            for (int index = 0; index < active.size(); index++) {
+                Control child = active.get(index);
+                Size measured = child.desiredSize(font, orientation == Orientation.VERTICAL
+                        ? new Size(cross, axis) : new Size(axis, cross));
+                sizes[index] = orientation == Orientation.VERTICAL ? measured.height() : measured.width();
+                if (!expands(child)) fixed += sizes[index];
+            }
+            int expandedMinimum = active.stream().filter(this::expands).mapToInt(this::mainMinimum).sum();
+            int shortage = Math.max(0, fixed + expandedMinimum - space);
+            for (int index = 0; index < active.size() && shortage > 0; index++) {
+                Control child = active.get(index);
+                if (expands(child)) continue;
+                int reduction = Math.min(shortage, sizes[index] - mainMinimum(child));
+                sizes[index] -= reduction;
+                fixed -= reduction;
+                shortage -= reduction;
+            }
+            allocateExpanded(active, sizes, Math.max(0, space - fixed));
+            int cursor = 0;
+            for (int index = 0; index < active.size(); index++) {
+                Control child = active.get(index);
+                fitChild(child, orientation == Orientation.VERTICAL
+                        ? new Rect(0, cursor, cross, sizes[index])
+                        : new Rect(cursor, 0, sizes[index], cross), font);
+                cursor += sizes[index] + gap;
+            }
         }
     }
 
@@ -140,8 +139,11 @@ public final class Box extends Container {
 
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
-        DebugBridge.backend().paint(this, context, screenX, screenY);
-        for (Control child : children) if (child.visible()) child.draw(context, screenX, screenY);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            DebugBridge.backend().paint(this, context, screenX, screenY);
+            for (Control child : children()) if (child.parent() == this && child.isAlive() && child.visible()) child.draw(context, screenX, screenY);
+        }
     }
 
 }

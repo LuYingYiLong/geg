@@ -90,24 +90,28 @@ public final class FormItem extends Container {
     }
 
     @Override public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         return new Size(Math.max(minimumWidth(), available.width()),
                 Math.max(minimumHeight(), rowHeight(font, available.width())));
     }
 
     @Override public void layout(Rect bounds, Font font) {
-        super.layout(bounds, font);
-        int width = bounds.width();
-        int labelWidth = horizontal ? Math.min(90, Math.max(36, width / 3)) : width;
-        int controlX = horizontal ? labelWidth + GAP : 0;
-        int controlY = horizontal ? 0 : LABEL_HEIGHT + GAP;
-        int controlWidth = Math.max(1, width - controlX);
-        int controlHeight = fieldHeight(font, width);
-        fitChild(labelNode, new Rect(0, horizontal ? 5 : 0, labelWidth, LABEL_HEIGHT), font);
-        fitChild(field, new Rect(controlX, controlY, controlWidth, controlHeight), font);
-        Component error = error();
-        errorNode.text(error == null ? Component.empty() : error);
-        errorNode.visible(error != null);
-        fitChild(errorNode, new Rect(0, controlY + controlHeight + 1,
-                width, error == null ? 0 : ERROR_HEIGHT), font);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(bounds, font);
+            int width = bounds.width();
+            int labelWidth = horizontal ? Math.min(90, Math.max(36, width / 3)) : width;
+            int controlX = horizontal ? labelWidth + GAP : 0;
+            int controlY = horizontal ? 0 : LABEL_HEIGHT + GAP;
+            int controlWidth = Math.max(1, width - controlX);
+            int controlHeight = fieldHeight(font, width);
+            fitChild(labelNode, new Rect(0, horizontal ? 5 : 0, labelWidth, LABEL_HEIGHT), font);
+            fitChild(field, new Rect(controlX, controlY, controlWidth, controlHeight), font);
+            Component error = error();
+            errorNode.text(error == null ? Component.empty() : error);
+            errorNode.visible(error != null);
+            fitChild(errorNode, new Rect(0, controlY + controlHeight + 1,
+                    width, error == null ? 0 : ERROR_HEIGHT), font);
+        }
     }
 }

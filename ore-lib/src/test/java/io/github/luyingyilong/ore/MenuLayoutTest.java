@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.layout.Box;
 import io.github.luyingyilong.ore.layout.Control;
@@ -28,8 +30,7 @@ public final class MenuLayoutTest {
             }
         };
         List<String> actions = new ArrayList<>();
-        Menu menu = new Menu(null, () -> new Button(cue -> { }))
-                .onSelect(item -> actions.add(item.key()));
+        Menu menu = Signals.configure(new Menu(null, () -> new Button(cue -> { })), connected -> connected.itemActivated().connect(connected, item -> actions.add(item.key())));
         MenuItem first = MenuItem.item("first", Component.literal("First"));
         MenuItem second = MenuItem.item("second", Component.literal("Second"));
         menu.items(List.of(first, second, MenuItem.group("group", Component.literal("Group"), List.of(

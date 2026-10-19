@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.chat.client;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import com.mojang.brigadier.suggestion.Suggestion;
 import io.github.luyingyilong.geg.chat.ChatPolicy;
 import io.github.luyingyilong.ore.Button;
@@ -31,15 +33,15 @@ public final class ChatComposer extends Container {
     private String displayedDraft = "";
     private Runnable afterSend = () -> {
     };
-    private Runnable onEmptySubmit = () -> {
-    };
+    private final io.github.luyingyilong.ore.signal.SignalSource0 emptySubmitted =
+            new io.github.luyingyilong.ore.signal.SignalSource0(this, "emptySubmitted");
     private boolean editorInitialized;
 
     public ChatComposer() {
         input.value(inputValue);
         input.setMaxLength(1024);
         input.placeholder(Component.translatable("chat.geg.compose_hint"));
-        input.onSubmit(this::submit).keyHandler(this::key);
+        Signals.configure(input, connected -> { connected.submitOnEnter(true); connected.submitted().connect(connected, submittedText130 -> this.submit()); }).keyHandler(this::key);
         editor.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         addChild(editor);
         addChild(completion);
@@ -60,10 +62,7 @@ public final class ChatComposer extends Container {
         return this;
     }
 
-    public ChatComposer onEmptySubmit(Runnable action) {
-        onEmptySubmit = java.util.Objects.requireNonNull(action);
-        return this;
-    }
+    public io.github.luyingyilong.ore.signal.Signal0 emptySubmitted() { return emptySubmitted.signal(); }
 
     public void bind() {
         var selected = ClientChatState.selected();
@@ -72,7 +71,7 @@ public final class ChatComposer extends Container {
             bound = selected;
             displayedDraft = ClientChatState.view(bound).draft;
             inputValue.setStringValue(displayedDraft);
-            input.setText(displayedDraft);
+            input.setTextNoSignal(displayedDraft);
             input.cursorOffset(displayedDraft.length());
             dismissSuggestions();
         }
@@ -96,7 +95,7 @@ public final class ChatComposer extends Container {
         var view = ClientChatState.view(bound);
         // A server acknowledgement may have cleared this draft while the widget still shows the sent text.
         if (input.getText().equals(displayedDraft) && !view.draft.equals(displayedDraft)) {
-            input.setText(view.draft);
+            input.setTextNoSignal(view.draft);
             displayedDraft = view.draft;
             inputValue.setStringValue(displayedDraft);
         } else store();
@@ -111,7 +110,7 @@ public final class ChatComposer extends Container {
         if (input.composing()) return;
         if (value.isBlank()) {
             dismissSuggestions();
-            onEmptySubmit.run();
+            emptySubmitted.emit();
             return;
         }
         if (!view.available || ClientChatState.pending(ClientChatState.selected())) return;
@@ -124,7 +123,7 @@ public final class ChatComposer extends Container {
             if (connection != null) {
                 connection.sendCommand(value.substring(1));
                 view.draft = "";
-                input.setText("");
+                input.setTextNoSignal("");
                 displayedDraft = "";
                 Minecraft.getInstance().gui.getChat().addRecentChat(value);
                 dismissSuggestions();
@@ -158,10 +157,10 @@ public final class ChatComposer extends Container {
             if (token != completionRevision || !input.isFocused() || !input.getText().equals(value)) return;
             suggestions = result.getList().stream().limit(8).toList();
             suggestionIndex = 0;
-            for (Control child : suggestionButtons.children()) suggestionButtons.removeChild(child);
+            for (Control child : suggestionButtons.children()) { if (child.parent() != null) child.parent().removeChild(child); child.queueFree(); }
             for (Suggestion suggestion : suggestions) {
-                Button button = new Button(Component.literal(suggestion.getText()).withStyle(style -> style.withColor(OreTheme.TEXT_WHITE))).type(Button.Type.TEXT)
-                        .toggleButton(true).alignment(Button.TextAlignment.LEFT).onPressed(() -> apply(suggestion));
+                Button button = Signals.configure(new Button(Component.literal(suggestion.getText()).withStyle(style -> style.withColor(OreTheme.TEXT_WHITE))).type(Button.Type.TEXT)
+                        .toggleButton(true).alignment(Button.TextAlignment.LEFT), connected -> connected.pressed().connect(connected, () -> apply(suggestion)));
                 button.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
                 suggestionButtons.add(button);
             }
@@ -256,7 +255,7 @@ public final class ChatComposer extends Container {
             int i = 0;
             for (Control node : suggestionButtons.children())
                 if (node instanceof Button button)
-                    button.buttonPressedNoSignal(i++ == suggestionIndex);
+                    button.setButtonPressedNoSignal(i++ == suggestionIndex);
         }
 
         @Override

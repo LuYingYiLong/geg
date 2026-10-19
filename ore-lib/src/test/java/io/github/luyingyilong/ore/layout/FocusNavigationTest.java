@@ -1,5 +1,6 @@
 package io.github.luyingyilong.ore.layout;
 
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.ore.Button;
 import io.github.luyingyilong.ore.Checkbox;
@@ -137,7 +138,7 @@ public final class FocusNavigationTest {
     private static void selectedOptionFocusFollowsTexture() {
         Segmented segmented = new Segmented(List.of(Component.literal("First"), Component.literal("Second")));
         int[] selected = {0};
-        segmented.onSelect(index -> selected[0]++);
+        segmented.selectionChanged().connect(segmented, index -> selected[0]++);
         Window window = new Window(true).content(segmented);
         window.layoutViewport(100, 20, null);
         check(segmented.focusBounds().equals(new Rect(0, 2, 51, 18)));

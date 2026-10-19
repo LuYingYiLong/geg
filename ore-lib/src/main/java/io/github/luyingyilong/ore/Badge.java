@@ -20,7 +20,7 @@ public final class Badge extends Container {
     private static final int PADDING_X = 2;
     // Mojangles digits are seven pixels high; their advance includes one trailing spacing pixel.
     private static final int TRAILING_SPACING = 1;
-    private final Label label = new Label().opticalCenter(true).align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+    private final Label label = ownPart("label", new Label().opticalCenter(true).align(Label.Horizontal.LEFT, Label.Vertical.CENTER));
     private Long count;
     private long overflowCount = 99L;
     private Tag.Type type = Tag.Type.PRIMARY;
@@ -73,6 +73,7 @@ public final class Badge extends Container {
     }
 
     @Override public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         int width = DOT_SIZE, height = DOT_SIZE;
         if (count != null) {
             width = Math.max(MIN_COUNT_SIZE, label.measureWidth(font, Integer.MAX_VALUE) + 2 * PADDING_X);
@@ -81,16 +82,21 @@ public final class Badge extends Container {
         return new Size(Math.max(super.measureWidth(font, available.width()), width),
                 Math.max(super.measureHeight(font, available.height()), height + SHADOW_HEIGHT));
     }
-    @Override public int measureWidth(Font font, int available) { return measureSize(font, new Size(available, available)).width(); }
-    @Override public int measureHeight(Font font, int available) { return measureSize(font, new Size(available, available)).height(); }
+    @Override public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0; return measureSize(font, new Size(available, available)).width(); }
+    @Override public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0; return measureSize(font, new Size(available, available)).height(); }
     @Override public void layout(Rect bounds, Font font) {
-        super.layout(bounds, font);
-        Rect face = faceBounds(new Rect(0, 0, bounds.width(), bounds.height()));
-        int advance = label.measureWidth(font, Integer.MAX_VALUE);
-        int inkWidth = Math.max(0, advance - TRAILING_SPACING);
-        // Center the visible number, excluding both the line's leading and the badge's shadow.
-        layoutChild(label, new Rect(Math.round((face.width() - inkWidth) / 2.0F),
-                0, advance, face.height()), font);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(bounds, font);
+            Rect face = faceBounds(new Rect(0, 0, bounds.width(), bounds.height()));
+            int advance = label.measureWidth(font, Integer.MAX_VALUE);
+            int inkWidth = Math.max(0, advance - TRAILING_SPACING);
+            // Center the visible number, excluding both the line's leading and the badge's shadow.
+            layoutChild(label, new Rect(Math.round((face.width() - inkWidth) / 2.0F),
+                    0, advance, face.height()), font);
+        }
     }
     Rect faceBounds(Rect area) { return new Rect(area.x(), area.y(), area.width(), Math.max(0, area.height() - SHADOW_HEIGHT)); }
     Rect shadowBounds(Rect area) { return new Rect(area.x(), Math.max(area.y(), area.bottom() - SHADOW_HEIGHT), area.width(), Math.min(SHADOW_HEIGHT, area.height())); }

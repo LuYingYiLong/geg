@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.Inspectable;
 import io.github.luyingyilong.ore.debug.DebugProperty;
@@ -28,14 +30,15 @@ public final class Button extends Control {
     private static final int ICON_PADDING = 4;
     private static final int PRESSED_OFFSET = 2;
 
-    private final Label label = new Label();
+    private final Label label = ownPart("label", new Label());
     private Size buttonSize = Size.MEDIUM;
     private Type type = Type.SECONDARY;
     private TextAlignment alignment = TextAlignment.CENTER;
     private Icon icon;
     private Icon trailingIcon;
     private Badge badge;
-    private Runnable onPress = () -> { };
+    private final SignalSource0 pressed = new SignalSource0(this, "pressed");
+    private final SignalSource<Boolean> toggled = new SignalSource<>(this, "toggled", "Boolean");
     private final Consumer<OreSounds.Cue> soundPlayer;
     private boolean emphasizedSound;
     private ACTION_MODE actionMode = ACTION_MODE.BUTTON_RELEASE;
@@ -107,30 +110,31 @@ public final class Button extends Control {
         if (removed && child == badge) badge = null;
         return removed;
     }
-    public Button onPress(Runnable action) { this.onPress = java.util.Objects.requireNonNull(action); return this; }
-    public Button onPressed(Runnable action) { return onPress(action); }
+    public Signal0 pressed() { return pressed.signal(); }
+    public Signal<Boolean> toggled() { return toggled.signal(); }
 
     public Button toggleButton(boolean toggleButton) {
         this.toggleButton = toggleButton;
-        if (!toggleButton) buttonPressed = false;
+        if (!toggleButton) buttonPressed(false);
         return this;
     }
     public boolean toggleButton() { return toggleButton; }
     public boolean buttonPressed() { return buttonPressed; }
 
-    /** Emits pressed on a state change (or a momentary true pulse), without playing a user-input sound. */
-    public Button buttonPressed(boolean pressed) {
-        boolean changed = toggleButton ? buttonPressed != pressed : pressed;
-        buttonPressedNoSignal(pressed);
-        if (changed) onPress.run();
+    /** Programmatic state updates never activate the button or play its sound. */
+    public Button buttonPressed(boolean value) {
+        boolean previous = buttonPressed;
+        setButtonPressedNoSignal(value);
+        if (previous != buttonPressed) toggled.emit(buttonPressed);
         return this;
     }
 
-    /** Applies authoritative state without invoking callbacks or playing sounds. */
-    public Button buttonPressedNoSignal(boolean pressed) {
-        buttonPressed = toggleButton && pressed;
+    public Button setButtonPressedNoSignal(boolean value) {
+        buttonPressed = toggleButton && value;
         return this;
     }
+
+
 
     public Button disabled(boolean disabled) {
         this.disabled = disabled;
@@ -141,6 +145,7 @@ public final class Button extends Control {
     @Override public boolean acceptsFocus() { return !disabled && super.acceptsFocus(); }
 
     @Override public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0;
         int reserved = badgeReservation(font);
         if (icon != null && !hasLabel() && trailingIcon == null)
             return Math.max(minimumWidth(), Math.max(buttonSize.height(), icon.width
@@ -151,6 +156,7 @@ public final class Button extends Control {
     }
 
     @Override public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0;
         int iconHeight = Math.max(icon == null ? 0 : icon.height, trailingIcon == null ? 0 : trailingIcon.height);
         int height = Math.max(super.measureHeight(font, available), iconHeight == 0 ? 0 : iconHeight + 2 * ICON_PADDING);
         return Math.max(height, hasBadge() ? badge.measureHeight(font, available) + 4 : 0);
@@ -160,8 +166,11 @@ public final class Button extends Control {
     private int badgeReservation(Font font) { return hasBadge() ? badge.measureWidth(font, Integer.MAX_VALUE) + ICON_GAP : 0; }
 
     @Override public void layout(Rect bounds, Font font) {
-        super.layout(bounds, font);
-        layoutBadge(font);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(bounds, font);
+            layoutBadge(font);
+        }
     }
 
     private void layoutBadge(Font font) {
@@ -195,6 +204,7 @@ public final class Button extends Control {
 
     /** Composite controls reuse Button's appearance while retaining their own activation behavior. */
     void drawPresentation(ModularGuiContext context, Rect area, boolean hovered, boolean pressed) {
+        if (!isAlive()) return;
         Type type = DebugBridge.value(this, "type", this.type);
         DebugBridge.backend().internal(this, "label", label);
         drawLabelled(context, area.x(), area.y(), area.width(), area.height(), label, icon, trailingIcon,
@@ -216,6 +226,7 @@ public final class Button extends Control {
         if (!visible() || disabled) return false;
         soundPlayer.accept(emphasizedSound ? OreSounds.Cue.BUTTON : OreSounds.Cue.CLICK);
         buttonPressed(toggleButton ? !buttonPressed : true);
+        pressed.emit();
         return true;
     }
 
@@ -290,12 +301,12 @@ public final class Button extends Control {
     static void draw(ModularGuiContext context, int x, int y, int width,
                      int height, Component label, Icon trailingIcon,
                      TextAlignment alignment, Type type) {
-        drawLabelled(context, x, y, width, height, new Label(label), trailingIcon, alignment, type);
+        drawLabelled(context, x, y, width, height, Label.immediate(context, label), trailingIcon, alignment, type);
     }
 
     static void draw(ModularGuiContext context, int x, int y, int width, int height,
                      Component label, Icon trailingIcon, TextAlignment alignment, boolean hovered, boolean pressed) {
-        drawLabelled(context, x, y, width, height, new Label(label), null, trailingIcon,
+        drawLabelled(context, x, y, width, height, Label.immediate(context, label), null, trailingIcon,
                 alignment, Type.SECONDARY, hovered, pressed);
     }
 

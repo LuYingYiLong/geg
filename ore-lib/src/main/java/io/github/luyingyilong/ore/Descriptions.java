@@ -137,14 +137,14 @@ public final class Descriptions extends Container {
         requestLayout();
         return true;
     }
-    public Descriptions clear() { for (String key : List.copyOf(items.keySet())) remove(key); return this; }
+    public Descriptions clear() { for (String key : List.copyOf(items.keySet())) { DescriptionItem item = items.get(key); remove(key); item.queueFree(); } return this; }
 
     public int effectiveColumns(int width) {
         return Math.max(1, Math.min(columns, (int) (((long) Math.max(0, width) + columnGap) / ((long) columnMinimum() + columnGap))));
     }
 
     private int columnMinimum() {
-        return Math.max(minimumColumnWidth, items.values().stream().filter(Control::visible).mapToInt(Control::minimumWidth).max().orElse(0));
+        return Math.max(minimumColumnWidth, items.values().stream().filter(c -> c.isAlive() && c.visible()).mapToInt(Control::minimumWidth).max().orElse(0));
     }
 
     private void configureItems() {
@@ -153,11 +153,11 @@ public final class Descriptions extends Container {
     }
 
     private void arrange(int width) {
-        List<DescriptionItem> visible = items.values().stream().filter(Control::visible).toList();
+        List<DescriptionItem> visible = items.values().stream().filter(c -> c.isAlive() && c.visible()).toList();
         int count = effectiveColumns(width);
         if (arranged.equals(visible) && arrangedColumns == count) return;
         for (DescriptionItem item : items.values()) item.parent().removeChild(item);
-        for (Box row : rows) box.removeChild(row);
+        for (Box row : rows) { if (row.parent() != null) row.parent().removeChild(row); row.queueFree(); }
         rows.clear();
         for (int index = 0; index < visible.size(); index += count) {
             Box row = new Box().orientation(Box.Orientation.HORIZONTAL).gap(columnGap);
@@ -192,20 +192,26 @@ public final class Descriptions extends Container {
         return new Size(width, Math.max(minimumHeight(), height));
     }
 
-    @Override public Size measureSize(Font font, Size available) { return measure(font, available.width()); }
-    @Override public int measureWidth(Font font, int available) { return measure(font, available).width(); }
-    @Override public int measureHeight(Font font, int available) { return measure(font, available).height(); }
+    @Override public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0); return measure(font, available.width()); }
+    @Override public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0; return measure(font, available).width(); }
+    @Override public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0; return measure(font, available).height(); }
 
     @Override public void layout(Rect bounds, Font font) {
-        Size measured = measure(font, bounds.width());
-        super.layout(bounds, font);
-        // Boxes receive explicit measured row heights; each item still lays out its own label/value Box.
-        int columnWidth = Math.max(1, (measured.width() - Math.max(0, arrangedColumns - 1) * columnGap) / Math.max(1, arrangedColumns));
-        for (Box row : rows) {
-            int height = row.children().stream().filter(DescriptionItem.class::isInstance)
-                    .mapToInt(child -> child.measureSize(font, new Size(columnWidth, Integer.MAX_VALUE)).height()).max().orElse(0);
-            if (row.minimumHeight() != height) row.minimum(0, height);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            Size measured = measure(font, bounds.width());
+            super.layout(bounds, font);
+            // Boxes receive explicit measured row heights; each item still lays out its own label/value Box.
+            int columnWidth = Math.max(1, (measured.width() - Math.max(0, arrangedColumns - 1) * columnGap) / Math.max(1, arrangedColumns));
+            for (Box row : rows) {
+                int height = row.children().stream().filter(DescriptionItem.class::isInstance)
+                        .mapToInt(child -> child.measureSize(font, new Size(columnWidth, Integer.MAX_VALUE)).height()).max().orElse(0);
+                if (row.minimumHeight() != height) row.minimum(0, height);
+            }
+            fitChild(box, new Rect(0, 0, measured.width(), Math.max(measured.height(), bounds.height())), font);
         }
-        fitChild(box, new Rect(0, 0, measured.width(), Math.max(measured.height(), bounds.height())), font);
     }
 }

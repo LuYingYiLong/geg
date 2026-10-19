@@ -95,6 +95,8 @@ public final class NativeWindowClientTest {
             }
         } catch (Throwable error) { error.printStackTrace(); System.out.println("GEG_NATIVE_WINDOW_CLIENT_FAIL"); phase = 99; mc.stop(); }
     }
+    public static int frames(Window window) { return ((NativeWindowHost) window.host()).framesRendered(); }
+
     public static void capture(Window window, java.nio.file.Path path) throws Exception {
         Files.createDirectories(path.getParent());
         try (var image = Screenshot.takeScreenshot(((NativeWindowHost)window.host()).renderTarget())) { image.writeToFile(path); }

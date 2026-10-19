@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
@@ -51,7 +53,7 @@ public final class Modal extends Container {
     private final Padding footerInset = new Padding(Padding.Insets.all(FOOTER_INSET)).child(footerButtons);
     private final List<Button> actions = new ArrayList<>();
     private Control content;
-    private Runnable onClose = () -> { };
+    private final SignalSource0 closeRequested = new SignalSource0(this, "closeRequested");
     private int requestedWidth;
     private int requestedHeight;
     private Integer customX;
@@ -72,7 +74,7 @@ public final class Modal extends Container {
         headerSpacer.minimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
         close.minimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
         close.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        close.onPress(() -> onClose.run());
+        close.pressed().connect(close, () -> closeRequested.emit());
         headerRow.add(headerSpacer).add(titleLabel).add(close);
         header.child(new Padding(new Padding.Insets(0, 1, 0, 1)).child(headerRow));
         header.minimum(0, HEADER_HEIGHT).preferred(0, HEADER_HEIGHT)
@@ -126,10 +128,7 @@ public final class Modal extends Container {
     public Modal fontSize(float fontSize) { titleLabel.fontSize(fontSize); return this; }
     public float fontSize() { return titleLabel.fontSize(); }
 
-    public Modal onClose(Runnable onClose) {
-        this.onClose = Objects.requireNonNull(onClose);
-        return this;
-    }
+    public Signal0 closeRequested() { return closeRequested.signal(); }
 
     @Override public float contentDepth() { return depth; }
 
@@ -146,19 +145,15 @@ public final class Modal extends Container {
     }
 
     public Modal clearActions() {
-        for (Button action : actions) footerButtons.removeChild(action);
+        for (Button action : List.copyOf(actions)) { if (action.parent() != null) action.parent().removeChild(action); action.queueFree(); }
         actions.clear();
         footer.visible(false);
         footer.minimum(0, 0);
         return this;
     }
 
-    public Modal action(Component label, Runnable onClick) {
-        return action(label, onClick, Button.Type.SECONDARY);
-    }
-
-    public Modal action(Component label, Runnable onClick, Button.Type type) {
-        Button button = new Button(label).type(type).onPress(onClick);
+    public Modal addAction(Button button) {
+        Objects.requireNonNull(button);
         button.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         actions.add(button);
         footerButtons.add(button);
@@ -176,7 +171,7 @@ public final class Modal extends Container {
 
     @Override public boolean onFocusKey(int keyCode, int modifiers) {
         if (keyCode != GLFW.GLFW_KEY_ESCAPE) return false;
-        onClose.run();
+        closeRequested.emit();
         return true;
     }
 
@@ -205,16 +200,19 @@ public final class Modal extends Container {
     }
 
     @Override public void layout(Rect viewport, Font font) {
-        super.layout(viewport, font);
-        int desiredWidth = requestedWidth > 0 ? requestedWidth
-                : Math.max(minimumWidth(), background.measureSize(font,
-                        new Size(viewport.width(), viewport.height())).width());
-        int fittedWidth = Math.max(1, Math.min(desiredWidth, Math.max(1, viewport.width())));
-        int desiredHeight = requestedHeight > 0 ? requestedHeight
-                : Math.max(minimumHeight(), background.measureSize(font,
-                        new Size(fittedWidth, viewport.height())).height());
-        fitChild(background, fittedBounds(desiredWidth, desiredHeight, customX, customY,
-                viewport.width(), viewport.height()), font);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(viewport, font);
+            int desiredWidth = requestedWidth > 0 ? requestedWidth
+                    : Math.max(minimumWidth(), background.measureSize(font,
+                            new Size(viewport.width(), viewport.height())).width());
+            int fittedWidth = Math.max(1, Math.min(desiredWidth, Math.max(1, viewport.width())));
+            int desiredHeight = requestedHeight > 0 ? requestedHeight
+                    : Math.max(minimumHeight(), background.measureSize(font,
+                            new Size(fittedWidth, viewport.height())).height());
+            fitChild(background, fittedBounds(desiredWidth, desiredHeight, customX, customY,
+                    viewport.width(), viewport.height()), font);
+        }
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
@@ -226,17 +224,20 @@ public final class Modal extends Container {
     }
 
     @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
-        DebugBridge.backend().paint(this, context, screenX, screenY);
-        if (!visible()) return;
-        GuiGraphics graphics = context.getGraphics();
-        graphics.flush();
-        graphics.pose().pushPose();
-        graphics.pose().translate(0.0F, 0.0F, depth);
-        try {
-            super.draw(context, screenX, screenY);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            DebugBridge.backend().paint(this, context, screenX, screenY);
+            if (!visible()) return;
+            GuiGraphics graphics = context.getGraphics();
             graphics.flush();
-        } finally {
-            graphics.pose().popPose();
+            graphics.pose().pushPose();
+            graphics.pose().translate(0.0F, 0.0F, depth);
+            try {
+                super.draw(context, screenX, screenY);
+                graphics.flush();
+            } finally {
+                graphics.pose().popPose();
+            }
         }
     }
 
@@ -245,7 +246,7 @@ public final class Modal extends Container {
         if (!visible()) return false;
         if (!background.hit(rootX, rootY)) {
             OreSounds.play(OreSounds.Cue.CLICK);
-            onClose.run();
+            closeRequested.emit();
             return true;
         }
         return true;

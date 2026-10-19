@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore.input;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
 import brachy.modularui.api.drawable.IDrawable;
@@ -24,7 +26,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.function.IntPredicate;
 
-public class Input extends TextFieldWidget {
+public class Input extends TextFieldWidget implements SignalOwner {
     private static final InputShortcuts.Clipboard CLIPBOARD = new InputShortcuts.Clipboard() {
         @Override public String get() { return io.github.luyingyilong.ore.window.WindowContext.current().clipboard(); }
         @Override public void set(String text) { io.github.luyingyilong.ore.window.WindowContext.current().clipboard(text); }
@@ -33,10 +35,46 @@ public class Input extends TextFieldWidget {
     private Button.Size controlSize = Button.Size.MEDIUM;
     private boolean inputVisible = true;
     private IntPredicate tabNavigation = modifiers -> false;
-    private Runnable mousePressHandler = () -> { };
-    private Runnable focusLostHandler = () -> { };
-    private Runnable submitAction;
-    public Input onSubmit(Runnable action) { submitAction = java.util.Objects.requireNonNull(action); return this; }
+    private final SignalScope signalScope = new SignalScope();
+    private final Label placeholderLabel = new Label().overflow(Label.Overflow.VISIBLE);
+    private final SignalSource<String> textChanged = new SignalSource<>(this, "textChanged", "String");
+    private final SignalSource<String> submitted = new SignalSource<>(this, "submitted", "String");
+    private final SignalSource0 pointerPressed = new SignalSource0(this, "pointerPressed");
+    private final SignalSource0 focusEntered = new SignalSource0(this, "focusEntered");
+    private final SignalSource0 focusExited = new SignalSource0(this, "focusExited");
+    private boolean submitOnEnter;
+    private int silentTextDepth;
+    private int textMutationDepth;
+    private boolean signalFocused;
+    private String observedText = "";
+    @Override public final SignalScope signalScope() { return signalScope; }
+    public final Signal<String> textChanged() { return textChanged.signal(); }
+    public final Signal<String> submitted() { return submitted.signal(); }
+    public final Signal0 pointerPressed() { return pointerPressed.signal(); }
+    public final Signal0 focusEntered() { return focusEntered.signal(); }
+    public final Signal0 focusExited() { return focusExited.signal(); }
+    public Input submitOnEnter(boolean value) { submitOnEnter = value; return this; }
+    public boolean submitOnEnter() { return submitOnEnter; }
+    protected final void submitText() {
+        if (this instanceof NumberInput number && !number.commit()) return;
+        submitted.emit(getText());
+    }
+
+    public final void setTextNoSignal(String text) {
+        silentTextDepth++;
+        try { setText(text); }
+        finally { silentTextDepth--; }
+    }
+
+    @Override protected void onTextChanged() {
+        super.onTextChanged();
+        // ModularUI may invoke this hook while its superclass is being constructed.
+        if (textChanged == null || textMutationDepth > 0) return;
+        String text = getText();
+        if (java.util.Objects.equals(observedText, text)) return;
+        observedText = text;
+        if (silentTextDepth == 0) textChanged.emit(text);
+    }
     private InputControl layoutControl;
     private final NativePaintPass paintPass = new NativePaintPass();
 
@@ -46,6 +84,8 @@ public class Input extends TextFieldWidget {
 
     public Input(float depth) {
         this.depth = depth;
+        // MUI dispose() can be a temporary detach; the signal scope is the permanent lifetime.
+        signalScope.own(() -> { if (layoutControl == null) placeholderLabel.queueFree(); });
         handler = new OreTextFieldHandler(this);
         renderer = new OreTextFieldRenderer(handler, this);
         handler.setRenderer(renderer);
@@ -59,9 +99,17 @@ public class Input extends TextFieldWidget {
     protected final OreTextFieldHandler editingHandler() { return (OreTextFieldHandler) handler; }
 
     @Override public void setText(String text) {
-        super.setText(text);
-        editingHandler().clearHistory();
-        handler.setCursor(new brachy.modularui.utils.Point(0, 0), false);
+        beginTextMutation();
+        try {
+            super.setText(text);
+            editingHandler().clearHistory();
+            handler.setCursor(new brachy.modularui.utils.Point(0, 0), false);
+        } finally { endTextMutation(); }
+    }
+
+    protected final void beginTextMutation() { textMutationDepth++; }
+    protected final void endTextMutation() {
+        if (--textMutationDepth == 0) onTextChanged();
     }
 
     protected void onEditShortcut() { renderer.setCursor(true); }
@@ -94,7 +142,13 @@ public class Input extends TextFieldWidget {
         return inputVisible && (layoutControl == null || layoutControl.layoutVisible());
     }
 
-    void layoutControl(InputControl control) { layoutControl = control; }
+    void layoutControl(InputControl control) { layoutControl = control; control.ownPart("placeholder", placeholderLabel); }
+    public final void releaseSession() {
+        signalScope.checkThread();
+        OreInputMethod.release(this);
+        setInputVisible(false);
+        signalScope.close(SignalDiagnostics.Reason.OWNER_DISPOSED);
+    }
     /** Validation text can change the owning FormItem's measured height. */
     protected final void invalidateInputLayout() {
         if (layoutControl != null) layoutControl.requestLayout();
@@ -175,27 +229,19 @@ public class Input extends TextFieldWidget {
         return this;
     }
 
-    public Input mousePressHandler(Runnable handler) {
-        mousePressHandler = java.util.Objects.requireNonNull(handler);
-        return this;
-    }
-
-    public Input focusLostHandler(Runnable handler) {
-        focusLostHandler = java.util.Objects.requireNonNull(handler);
-        return this;
-    }
 
     @Override public void onFocus(ModularGuiContext context) {
         editingHandler().endEditGroup();
         super.onFocus(context);
         OreInputMethod.focus(this);
+        if (!signalFocused) { signalFocused = true; focusEntered.emit(); }
     }
 
     @Override public void onRemoveFocus(ModularGuiContext context) {
         editingHandler().endEditGroup();
         OreInputMethod.release(this);
         removeNativeFocus(context);
-        focusLostHandler.run();
+        if (signalFocused) { signalFocused = false; focusExited.emit(); }
     }
 
     protected void removeNativeFocus(ModularGuiContext context) { super.onRemoveFocus(context); }
@@ -205,7 +251,10 @@ public class Input extends TextFieldWidget {
         super.dispose();
     }
 
-    protected boolean submitsOnEnter() { return submitAction!=null; }
+    protected boolean submitsOnEnter() { return submitOnEnter; }
+    protected boolean isSubmitKey(int keyCode, int modifiers) {
+        return keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER;
+    }
 
     private boolean routingInput;
     protected final boolean acceptsHostInput() { return layoutControl == null || routingInput; }
@@ -261,7 +310,7 @@ public class Input extends TextFieldWidget {
         editingHandler().endEditGroup();
         if (isFocused() && composing()) cancelPreedit();
         Interactable.Result result = super.onMousePressed(button);
-        if (result != Interactable.Result.IGNORE) mousePressHandler.run();
+        if (result != Interactable.Result.IGNORE) pointerPressed.emit();
         return result;
     }
 
@@ -285,8 +334,8 @@ public class Input extends TextFieldWidget {
         if (isFocused() && (keyCode >= GLFW.GLFW_KEY_ESCAPE && keyCode <= GLFW.GLFW_KEY_END
                 || keyCode == GLFW.GLFW_KEY_KP_ENTER)
                 && OreInputMethod.composing(this)) return Interactable.Result.STOP;
-        if (submitAction != null && isFocused() && (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER)) {
-            if (!composing()) submitAction.run(); return Interactable.Result.STOP;
+        if (submitOnEnter && isFocused() && isSubmitKey(keyCode, modifiers)) {
+            if (!composing()) submitText(); return Interactable.Result.STOP;
         }
         if (keyCode == GLFW.GLFW_KEY_TAB && isFocused() && tabNavigation.test(modifiers))
             return Interactable.Result.STOP;
@@ -365,7 +414,9 @@ public class Input extends TextFieldWidget {
 
     protected Label placeholderLabel(Component placeholder) {
         int color = hintTextColor == null ? OreTheme.TEXT_SECONDARY : hintTextColor;
-        return new Label(placeholder).color(color).scale(scale).overflow(Label.Overflow.VISIBLE);
+        // Keep a snapshot so in-place edits to a MutableComponent also invalidate styled text.
+        if (!placeholderLabel.text().equals(placeholder)) placeholderLabel.text(placeholder.copy());
+        return placeholderLabel.color(color).scale(scale);
     }
 
     protected void drawPlaceholder(ModularGuiContext context, Component placeholder) {

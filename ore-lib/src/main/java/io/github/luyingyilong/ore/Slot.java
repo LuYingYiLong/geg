@@ -16,8 +16,8 @@ public final class Slot extends Control {
     private ItemStack item = ItemStack.EMPTY;
     private int quantity;
     private boolean backgroundVisible = true;
-    private final Label count = new Label().color(OreTheme.TEXT_WHITE).shadow(true)
-            .align(Label.Horizontal.RIGHT, Label.Vertical.BOTTOM).fontSize(8);
+    private final Label count = ownPart("count", new Label().color(OreTheme.TEXT_WHITE).shadow(true)
+            .align(Label.Horizontal.RIGHT, Label.Vertical.BOTTOM).fontSize(8));
 
     public Slot() {
         minimum(SIZE, SIZE);
@@ -63,15 +63,18 @@ public final class Slot extends Control {
     }
 
     @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
-        DebugBridge.backend().paint(this, context, screenX, screenY);
-        render(context, screenX, screenY);
-        if (!count.visible()) return;
-        var graphics = context.getGraphics();
-        graphics.flush(); graphics.pose().pushPose();
-        try {
-            // Match vanilla item-decoration depth so the quantity stays above the item model.
-            graphics.pose().translate(0.0F, 0.0F, 200.0F);
-            count.draw(context, screenX, screenY); graphics.flush();
-        } finally { graphics.pose().popPose(); }
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            DebugBridge.backend().paint(this, context, screenX, screenY);
+            render(context, screenX, screenY);
+            if (!count.visible()) return;
+            var graphics = context.getGraphics();
+            graphics.flush(); graphics.pose().pushPose();
+            try {
+                // Match vanilla item-decoration depth so the quantity stays above the item model.
+                graphics.pose().translate(0.0F, 0.0F, 200.0F);
+                count.draw(context, screenX, screenY); graphics.flush();
+            } finally { graphics.pose().popPose(); }
+        }
     }
 }

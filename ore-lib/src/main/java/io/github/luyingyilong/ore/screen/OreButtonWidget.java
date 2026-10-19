@@ -46,12 +46,13 @@ public final class OreButtonWidget extends AbstractWidget {
 
     private void syncLayout() {
         if (font == null) font = Minecraft.getInstance().font;
+        if (context != null) root.prepareTree();
         root.layout(new Rect(0,0,Math.max(1,getX()+getWidth()),Math.max(1,getY()+getHeight())),font);
         button.layout(new Rect(getX(), getY(), getWidth(), getHeight()), font);
     }
 
     @Override protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        if (!button.visible()) { cancelInput(); return; }
+        if (!button.isAlive() || !button.visible()) { cancelInput(); return; }
         if(!hostContext.focused())cancelInput();
         syncLayout();
         if (context == null) context = new ButtonContext();
@@ -60,6 +61,8 @@ public final class OreButtonWidget extends AbstractWidget {
         context.updateState(mouseX, mouseY, partialTick);
         context.setOverrideFont(font);
         context.setGraphics(graphics); hostContext.bind(context);
+        root.prepareTree();
+        syncLayout();
         context.reset();
         context.pushViewport(null, context.getScreenArea());
         boolean disabled = button.disabled();
@@ -82,7 +85,7 @@ public final class OreButtonWidget extends AbstractWidget {
         }
     }
 
-    private boolean usable() { return active && visible && button.visible() && !button.disabled(); }
+    private boolean usable() { return root.isAlive() && active && visible && button.visible() && !button.disabled(); }
 
     @Override public boolean isMouseOver(double mouseX, double mouseY) {
         Rect area = button.absoluteBounds();
@@ -131,11 +134,13 @@ public final class OreButtonWidget extends AbstractWidget {
 
     @Override public void setFocused(boolean focused) {
         super.setFocused(focused);
-        button.onFocusChanged(focused);
+        button.notifyFocusChanged(focused);
         if (!focused) cancelInput();
     }
 
     public void cancelInput() { pointerHeld = false; root.cancelInteractions(); hostContext.detach(); }
+
+    public void queueFree() { cancelInput(); root.queueFree("host ended"); }
 
     @Override public ScreenRectangle getRectangle() {
         Rect area = button.absoluteBounds();

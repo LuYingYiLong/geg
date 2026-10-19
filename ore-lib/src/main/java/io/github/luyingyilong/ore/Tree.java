@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.theme.OreIcons;
 import net.minecraft.client.gui.Font;
@@ -7,7 +9,6 @@ import net.minecraft.network.chat.Component;
 
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 /**
  * Stable-key tree with virtual rows. Wrap in Scroll; this control owns no scroll offset.
@@ -20,21 +21,20 @@ public final class Tree<T> extends Container implements ScrollContent {
     private final ArrayDeque<Row> recycled = new ArrayDeque<>();
     private final Map<String, Item<T>> byKey = new LinkedHashMap<>();
     private final Set<String> branches = new HashSet<>();
-    private final Label widthProbe = new Label();
+    private final Label widthProbe = ownPart("widthProbe", new Label());
     private List<Item<T>> items = List.of();
     private String selected = "", cursor = "", query = "";
     private Rect region = new Rect(0, 0, 0, 0);
     private Font font;
     private int contentWidth;
-    private Consumer<T> onSelect = value -> {
-    };
-    private Consumer<Expansion<T>> onExpand = event -> {
-    };
+    private final SignalSource<T> selectionChanged = new SignalSource<>(this, "selectionChanged", "T");
+    private final SignalSource<Expansion<T>> expansionChanged = new SignalSource<>(this, "expansionChanged", "Expansion<T>");
     private int rowHeight = 22, indent = 10;
     private boolean disabled, selectable = true, blockNode = true, showIcon, showSwitcher = true, defaultExpandAll = true;
     private BiFunction<Item<T>, Boolean, Button.Icon> switcherIcon = (item, expanded) -> new Button.Icon(
             expanded ? OreIcons.ARROW_DOWN_LIGHT : OreIcons.ARROW_RIGHT_LIGHT, 7, 7);
     public Tree() {
+        signalScope().own(() -> { rows.clear(); recycled.clear(); });
         focusable(true);
     }
 
@@ -184,9 +184,17 @@ public final class Tree<T> extends Container implements ScrollContent {
     }
 
     /**
-     * Programmatic changes are silent; onExpand reports user actions only.
+     * Expansion setters notify on actual state changes; NoSignal variants support controlled refresh.
      */
     public Tree<T> expandedKeys(Collection<String> keys) {
+        Set<String> before = expandedKeys();
+        setExpandedKeysNoSignal(keys);
+        for (String key : branches) if (before.contains(key) != !collapsed.contains(key))
+            expansionChanged.emit(new Expansion<>(byKey.get(key), !collapsed.contains(key), expandedKeys()));
+        return this;
+    }
+
+    public Tree<T> setExpandedKeysNoSignal(Collection<String> keys) {
         if (!byKey.keySet().containsAll(keys)) throw new IllegalArgumentException("Unknown tree expansion key");
         collapsed.clear();
         collapsed.addAll(branches);
@@ -195,17 +203,9 @@ public final class Tree<T> extends Container implements ScrollContent {
         return this;
     }
 
-    public Tree<T> expandAll(boolean expand) {
-        if (expand) collapsed.clear();
-        else collapsed.addAll(branches);
-        rebuild();
-        return this;
-    }
+    public Tree<T> expandAll(boolean expand) { return expandedKeys(expand ? Set.copyOf(branches) : Set.of()); }
 
-    public Tree<T> onExpand(Consumer<Expansion<T>> callback) {
-        onExpand = Objects.requireNonNull(callback);
-        return this;
-    }
+    public Signal<Expansion<T>> expansionChanged() { return expansionChanged.signal(); }
 
     public Tree<T> search(String query) {
         String next = query.toLowerCase(Locale.ROOT);
@@ -216,12 +216,16 @@ public final class Tree<T> extends Container implements ScrollContent {
         return this;
     }
 
-    public Tree<T> onSelect(Consumer<T> callback) {
-        onSelect = Objects.requireNonNull(callback);
+    public Signal<T> selectionChanged() { return selectionChanged.signal(); }
+
+    public Tree<T> selected(String key) {
+        String previous = selected;
+        setSelectedNoSignal(key);
+        if (!Objects.equals(previous, selected)) selectionChanged.emit(byKey.containsKey(selected) ? byKey.get(selected).value() : null);
         return this;
     }
 
-    public Tree<T> selected(String key) {
+    public Tree<T> setSelectedNoSignal(String key) {
         if (selected.equals(key)) return this;
         selected = key;
         cursor = key;
@@ -258,6 +262,13 @@ public final class Tree<T> extends Container implements ScrollContent {
     }
 
     public Tree<T> expanded(String key, boolean expanded) {
+        boolean before = !collapsed.contains(key);
+        setExpandedNoSignal(key, expanded);
+        if (before != expanded) expansionChanged.emit(new Expansion<>(byKey.get(key), expanded, expandedKeys()));
+        return this;
+    }
+
+    public Tree<T> setExpandedNoSignal(String key, boolean expanded) {
         if (!byKey.containsKey(key)) throw new IllegalArgumentException("Unknown tree expansion key");
         if (expanded) collapsed.remove(key);
         else collapsed.add(key);
@@ -272,7 +283,6 @@ public final class Tree<T> extends Container implements ScrollContent {
     private void userExpand(Entry<T> entry, boolean expand) {
         if (disabled || entry.item.disabled() || !entry.branch || displayedExpanded(entry.item.key()) == expand) return;
         expanded(entry.item.key(), expand);
-        onExpand.accept(new Expansion<>(entry.item, expand, expandedKeys()));
     }
 
     private void rebuild() {
@@ -310,9 +320,7 @@ public final class Tree<T> extends Container implements ScrollContent {
         if (disabled || entry.item.disabled()) return;
         cursor = entry.item.key();
         if (selectable && entry.item.selectable()) {
-            selected = cursor;
-            updateRows();
-            onSelect.accept(entry.item.value());
+            selected(cursor);
         }
         if (parent() instanceof Scroll scroll) for (int i = 0; i < visible.size(); i++)
             if (visible.get(i).item.key().equals(cursor)) ensureEntryVisible(i, scroll);
@@ -320,6 +328,7 @@ public final class Tree<T> extends Container implements ScrollContent {
 
     @Override
     public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         return new Size(minimumWidth(), minimumHeight());
     }
 
@@ -336,10 +345,13 @@ public final class Tree<T> extends Container implements ScrollContent {
 
     @Override
     public void layout(Rect bounds, Font font) {
-        super.layout(bounds, font);
-        this.font = font;
-        measureContentWidth();
-        updateRows();
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(bounds, font);
+            this.font = font;
+            measureContentWidth();
+            updateRows();
+        }
     }
 
     private void measureContentWidth() {
@@ -366,6 +378,8 @@ public final class Tree<T> extends Container implements ScrollContent {
     }
 
     private void updateRows() {
+        recycled.removeIf(row -> !row.isAlive());
+        for (String key : List.copyOf(rows.keySet())) { Row row = rows.get(key); if (row != null && !row.isAlive()) { rows.remove(key); super.removeChild(row); } }
         int start = Math.max(0, (region.y() - region.height()) / rowHeight);
         int end = Math.min(visible.size(), (region.bottom() + region.height() + rowHeight - 1) / rowHeight);
         Set<String> live = new HashSet<>();
@@ -375,7 +389,7 @@ public final class Tree<T> extends Container implements ScrollContent {
             live.add(key);
             Row row = rows.get(key);
             if (row == null) {
-                row = recycled.isEmpty() ? new Row() : recycled.remove();
+                row = recycled.isEmpty() ? ownPooled(new Row()) : recycled.remove();
                 rows.put(key, row);
                 super.addChild(row);
                 io.github.luyingyilong.ore.debug.DebugBridge.backend().binding(row, key);
@@ -386,8 +400,9 @@ public final class Tree<T> extends Container implements ScrollContent {
         for (String key : List.copyOf(rows.keySet()))
             if (!live.contains(key)) {
                 Row row = rows.remove(key);
+                row.resetBindingScope();
                 super.removeChild(row);
-                if (recycled.size() < 128) recycled.add(row);
+                if (recycled.size() < 128) recycled.add(row); else row.queueFree();
             }
     }
 
@@ -452,6 +467,8 @@ public final class Tree<T> extends Container implements ScrollContent {
     private record Entry<T>(Item<T> item, int depth, boolean branch) {
     }
 
+
+
     private final class Row extends Container {
         private final Button twist = new Button().type(Button.Type.TEXT);
         private final Button label = new Button().type(Button.Type.TEXT).toggleButton(true).alignment(Button.TextAlignment.LEFT);
@@ -462,8 +479,8 @@ public final class Tree<T> extends Container implements ScrollContent {
             label.focusable(false);
             super.addChild(twist);
             super.addChild(label);
-            twist.onPress(() -> userExpand(entry, !displayedExpanded(entry.item.key())));
-            label.onPress(() -> select(entry));
+            twist.pressed().connect(twist, () -> userExpand(entry, !displayedExpanded(entry.item.key())));
+            label.pressed().connect(label, () -> select(entry));
         }
 
         void bind(Entry<T> entry) {
@@ -476,16 +493,20 @@ public final class Tree<T> extends Container implements ScrollContent {
             label.icon(showIcon ? entry.item.icon() : null);
             label.label(entry.item.text().copy().withStyle(disabled || entry.item.disabled() || !selectable || !entry.item.selectable()
                     ? net.minecraft.ChatFormatting.GRAY : net.minecraft.ChatFormatting.WHITE));
-            label.buttonPressedNoSignal(selected.equals(entry.item.key()));
+            label.setButtonPressedNoSignal(selected.equals(entry.item.key()));
         }
 
         @Override
         public void layout(Rect bounds, Font font) {
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(bounds, font);
             int x = entry.depth * indent, offset = switcherWidth();
             layoutChild(twist, new Rect(x, 0, offset, rowHeight), font);
             int width = Math.max(0, bounds.width() - x - offset);
             layoutChild(label, new Rect(x + offset, 0, blockNode ? width : Math.min(width, labelWidth(entry.item)), rowHeight), font);
+
         }
+    }
     }
 }

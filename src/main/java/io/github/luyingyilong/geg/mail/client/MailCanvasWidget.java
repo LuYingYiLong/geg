@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.mail.client;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
 import brachy.modularui.api.widget.Interactable;
@@ -52,7 +54,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     private final Window window = (Window) new Window(true).debugName("Mail Window");
     private final Overlay overlay = new Overlay();
     private final Navbar navbar = new Navbar(tr("mail.geg.title"));
-    private final Button send = new Button(tr("mail.geg.compose")).onPressed(() -> compose(null));
+    private final Button send = Signals.configure(new Button(tr("mail.geg.compose")), connected -> connected.pressed().connect(connected, () -> compose(null)));
     private final Segmented audiences = new Segmented(List.of(tr("mail.geg.player"), tr("mail.geg.organization"), tr("mail.geg.everyone")));
     private final MailInbox inbox = new MailInbox();
     private final Menu mailMenu = new Menu().empty(tr("mail.geg.loading"));
@@ -106,12 +108,12 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         this.title = title; this.body = body; this.target = target; this.coin = coin; this.initialOrganization = initialOrganization;
         send.minimum(56, Button.HEIGHT);
         send.visible(ClientMailScreen.admin());
-        mailMenu.onSelect(item -> { selectedItemKey = item.key(); showDetail(MailListItem.messageId(item)); });
+        mailMenu.itemActivated().connect(mailMenu, item -> { selectedItemKey = item.key(); showDetail(MailListItem.messageId(item)); });
         navbar.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         audiences.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND | SizeFlags.SIZE_SHRINK_BEGIN)
                 .sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         send.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        audiences.onSelect(index -> selectInbox(MailActionPacket.Scope.values()[index]));
+        audiences.selectionChanged().connect(audiences, index -> selectInbox(MailActionPacket.Scope.values()[index]));
         Box audienceRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4).add(audiences).add(send);
         audienceRow.minimum(0, Button.HEIGHT).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         for (Control label : List.of(detailTitle, detailSender, detailDate, detailText, attachment))
@@ -145,8 +147,8 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         form.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         previewText.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         editor.content(new Box().gap(6).add(form).add(previewText));
-        editor.onClose(() -> { form.setVisible(false); busy = false; token = null; });
-        scopes.onSelect(index -> { targetItem.setActive(scope() != MailActionPacket.Scope.ALL); editAgain(); });
+        editor.closed().connect(editor, () -> { form.setVisible(false); busy = false; token = null; });
+        scopes.selectionChanged().connect(scopes, index -> { targetItem.setActive(scope() != MailActionPacket.Scope.ALL); editAgain(); });
         overlay.add(editor);
     }
     private static String time(long millis) {
@@ -168,7 +170,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         if (selected != null) {
             if (selectedItemKey == null || mailMenu.button(selectedItemKey) == null)
                 selectedItemKey = MailListItem.key(MailState.Filter.ALL, selected);
-            mailMenu.selectedKey(selectedItemKey);
+            mailMenu.setSelectedNoSignal(selectedItemKey);
         }
     }
     private void query(MailActionPacket.Action action, UUID id) {
@@ -182,7 +184,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         clearDetailActions(); detailScroll.scrollToTop(); query(MailActionPacket.Action.DETAIL, id);
     }
     private void clearDetailActions() {
-        for (Control action : detailActions.children()) detailActions.removeChild(action);
+        for (Control action : detailActions.children()) { if (action.parent() != null) action.parent().removeChild(action); action.queueFree(); }
         detailActions.minimum(0, 0); detailActions.visible(false);
     }
     private void clearDetail() {
@@ -217,8 +219,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         rewards.attachments(mail.items(), mail.hasAttachments(), selectedClaimed);
         attachmentDivider.visible(mail.hasAttachments());
         if (claimable) return;
-        Button action = new Button(tr("mail.geg.delete")).type(Button.Type.DESTRUCTIVE)
-                .onPressed(() -> { deleting = selected; query(MailActionPacket.Action.DELETE, selected); });
+        Button action = Signals.configure(new Button(tr("mail.geg.delete")).type(Button.Type.DESTRUCTIVE), connected -> connected.pressed().connect(connected, () -> { deleting = selected; query(MailActionPacket.Action.DELETE, selected); }));
         action.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         detailActions.add(action); detailActions.minimum(0, action.minimumHeight()); detailActions.visible(true);
     }
@@ -234,7 +235,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     }
     private void editAgain() {
         busy = false; token = null; previewSignature = null; previewText.text(Component.empty());
-        editor.clearActions().action(tr("mail.geg.preview"), this::preview, Button.Type.PRIMARY);
+        editor.clearActions().addAction(Signals.configure(new Button(tr("mail.geg.preview")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::preview)));
     }
     private void preview() {
         if (busy) return;
@@ -273,8 +274,8 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
             if (!Objects.equals(previewSignature, signature())) { editAgain(); feedback("mail.geg.preview_again"); return; }
             previewText.text(tr("mail.geg.preview_summary", packet.recipients(), MoneyCurrency.COIN.format(packet.coin()), packet.total()));
             feedback(packet.result());
-            editor.clearActions().action(tr("mail.geg.confirm_send"), this::confirm, Button.Type.PRIMARY)
-                    .action(tr("mail.geg.edit"), this::editAgain);
+            editor.clearActions().addAction(Signals.configure(new Button(tr("mail.geg.confirm_send")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::confirm)))
+                    .addAction(Signals.configure(new Button(tr("mail.geg.edit")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::editAgain)));
         } else if (packet.kind() == MailSyncPacket.Kind.RESULT) {
             feedback(packet.result());
             if (editor.isOpen() && Objects.equals(token, packet.token())) {
@@ -295,8 +296,9 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     }
     void close() { form.setVisible(false); window.cancelInteractions(); }
     @Override public void dispose() {
-        DebugBridge.backend().close(window); close(); super.dispose(); }
+        window.hostDetached(); close(); super.dispose(); }
     @Override public void draw(ModularGuiContext context, WidgetThemeEntry<?> theme) {
+        if (!window.isAlive()) return;
         int width = getArea().width, height = getArea().height;
         int drawerWidth = width < 320 ? width : width / 2;
         editor.width(drawerWidth);
@@ -305,6 +307,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         // Clear the previous minimum so a two-row navbar can return to one row on resize.
         navbar.minimum(0, 0);
         navbar.minimum(0, navbar.measureHeight(context.getFont(), width));
+        window.prepareTree(context);
         window.layoutViewport(width, height, context.getFont());
         if (inbox.catchingUp() || mailScroll.scrollY() + mailScroll.viewport().height() * 2 >= mailMenu.contentExtent().height()) {
             MailActionPacket next = inbox.nextBatch();

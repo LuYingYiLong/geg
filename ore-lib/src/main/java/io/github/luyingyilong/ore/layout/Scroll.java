@@ -141,6 +141,7 @@ public final class Scroll extends Container {
     }
 
     @Override public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         if (content == null) return minimumSize();
         Size measured = content.desiredSize(font, available);
         int reserveX = !embedded() && verticalBar.mode() == BarMode.ALWAYS ? BAR_SIZE : 0;
@@ -150,41 +151,46 @@ public final class Scroll extends Container {
     }
 
     @Override public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0;
         return measureSize(font, new Size(available, available)).width();
     }
 
     @Override public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0;
         return measureSize(font, new Size(available, available)).height();
     }
 
     @Override public void layout(Rect localBounds, Font font) {
-        super.layout(localBounds, font);
-        boolean vertical = verticalBar.mode() == BarMode.ALWAYS;
-        boolean horizontal = horizontalBar.mode() == BarMode.ALWAYS;
-        for (int pass = 0; pass < 4; pass++) {
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(localBounds, font);
+            boolean vertical = verticalBar.mode() == BarMode.ALWAYS;
+            boolean horizontal = horizontalBar.mode() == BarMode.ALWAYS;
+            for (int pass = 0; pass < 4; pass++) {
+                measureContent(localBounds, font, vertical, horizontal);
+                boolean nextVertical = visibleFor(verticalBar.mode(), extent.height() > viewport.height());
+                boolean nextHorizontal = visibleFor(horizontalBar.mode(), extent.width() > viewport.width());
+                if (vertical == nextVertical && horizontal == nextHorizontal) break;
+                vertical = nextVertical;
+                horizontal = nextHorizontal;
+            }
+            // The last visibility change may have altered the available viewport.
             measureContent(localBounds, font, vertical, horizontal);
-            boolean nextVertical = visibleFor(verticalBar.mode(), extent.height() > viewport.height());
-            boolean nextHorizontal = visibleFor(horizontalBar.mode(), extent.width() > viewport.width());
-            if (vertical == nextVertical && horizontal == nextHorizontal) break;
-            vertical = nextVertical;
-            horizontal = nextHorizontal;
+            showVertical = vertical;
+            showHorizontal = horizontal;
+            verticalBar.visible(showVertical);
+            horizontalBar.visible(showHorizontal);
+            int corner = showVertical && showHorizontal ? BAR_SIZE : 0;
+            layoutChild(verticalBar, new Rect(localBounds.width() - BAR_SIZE, 0, BAR_SIZE,
+                    Math.max(0, embedded() ? localBounds.height() - corner : viewport.height())), font);
+            layoutChild(horizontalBar, new Rect(0, localBounds.height() - BAR_SIZE,
+                    Math.max(0, embedded() ? localBounds.width() - corner : viewport.width()), BAR_SIZE), font);
+            if (content instanceof ScrollContent virtual) {
+                int restored = virtual.consumeRestoredScrollY();
+                if (restored >= 0) scrollY = restored + content.bounds().y();
+            }
+            setScroll(scrollX, scrollY);
         }
-        // The last visibility change may have altered the available viewport.
-        measureContent(localBounds, font, vertical, horizontal);
-        showVertical = vertical;
-        showHorizontal = horizontal;
-        verticalBar.visible(showVertical);
-        horizontalBar.visible(showHorizontal);
-        int corner = showVertical && showHorizontal ? BAR_SIZE : 0;
-        layoutChild(verticalBar, new Rect(localBounds.width() - BAR_SIZE, 0, BAR_SIZE,
-                Math.max(0, embedded() ? localBounds.height() - corner : viewport.height())), font);
-        layoutChild(horizontalBar, new Rect(0, localBounds.height() - BAR_SIZE,
-                Math.max(0, embedded() ? localBounds.width() - corner : viewport.width()), BAR_SIZE), font);
-        if (content instanceof ScrollContent virtual) {
-            int restored = virtual.consumeRestoredScrollY();
-            if (restored >= 0) scrollY = restored + content.bounds().y();
-        }
-        setScroll(scrollX, scrollY);
     }
 
     private void measureContent(Rect bounds, Font font, boolean vertical, boolean horizontal) {
@@ -224,29 +230,32 @@ public final class Scroll extends Container {
     }
 
     @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
-        DebugBridge.backend().paint(this, context, screenX, screenY);
-        if (!visible()) return;
-        if (content != null && viewport.width() > 0 && viewport.height() > 0) {
-            Rect clip = viewport.translated(screenX + absoluteBounds().x(),
-                    screenY + absoluteBounds().y());
-            GuiGraphics graphics = context.getGraphics();
-            graphics.enableScissor(clip.x(), clip.y(), clip.right(), clip.bottom());
-        DebugBridge.backend().clip(clip);
-            try {
-                content.draw(context, screenX - scrollX(), screenY - scrollY());
-            } finally {
-                graphics.disableScissor(); DebugBridge.backend().unclip();
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            DebugBridge.backend().paint(this, context, screenX, screenY);
+            if (!visible()) return;
+            if (content != null && viewport.width() > 0 && viewport.height() > 0) {
+                Rect clip = viewport.translated(screenX + absoluteBounds().x(),
+                        screenY + absoluteBounds().y());
+                GuiGraphics graphics = context.getGraphics();
+                graphics.enableScissor(clip.x(), clip.y(), clip.right(), clip.bottom());
+            DebugBridge.backend().clip(clip);
+                try {
+                    content.draw(context, screenX - scrollX(), screenY - scrollY());
+                } finally {
+                    graphics.disableScissor(); DebugBridge.backend().unclip();
+                }
             }
-        }
-        GuiGraphics graphics = context.getGraphics();
-        graphics.flush();
-        graphics.pose().pushPose();
-        graphics.pose().translate(0.0F, 0.0F, io.github.luyingyilong.ore.util.OreLayers.SCROLLBAR);
-        try {
-            if (showVertical) verticalBar.draw(context, screenX, screenY);
-            if (showHorizontal) horizontalBar.draw(context, screenX, screenY);
+            GuiGraphics graphics = context.getGraphics();
             graphics.flush();
-        } finally { graphics.pose().popPose(); }
+            graphics.pose().pushPose();
+            graphics.pose().translate(0.0F, 0.0F, io.github.luyingyilong.ore.util.OreLayers.SCROLLBAR);
+            try {
+                if (showVertical) verticalBar.draw(context, screenX, screenY);
+                if (showHorizontal) horizontalBar.draw(context, screenX, screenY);
+                graphics.flush();
+            } finally { graphics.pose().popPose(); }
+        }
     }
 
 

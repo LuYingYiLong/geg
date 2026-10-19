@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.market.client;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
 import brachy.modularui.api.widget.Interactable;
@@ -85,10 +87,10 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private final Table<MarketDetail> offerTable = createOfferTable();
     private final DetailContent detailContent = new DetailContent();
     private final QuantityContent quantityContent = new QuantityContent(this::adjustTradeQuantity);
-    private final Modal detailModal = new Modal(Component.empty()).size(340, 224).centered()
-            .content(detailContent).onClose(this::closeModal);
-    private final Modal quantityModal = new Modal(Component.empty()).size(224, 0).centered()
-            .content(quantityContent).onClose(this::closeQuantityMenu).depth(300.0F);
+    private final Modal detailModal = Signals.configure(new Modal(Component.empty()).size(340, 224).centered()
+            .content(detailContent), connected -> connected.closeRequested().connect(connected, this::closeModal));
+    private final Modal quantityModal = Signals.configure(new Modal(Component.empty()).size(224, 0).centered()
+            .content(quantityContent), connected -> connected.closeRequested().connect(connected, this::closeQuantityMenu)).depth(300.0F);
     private final Navbar navbar = new Navbar(Component.translatable("market.geg.title"))
             .titleColor(HEADER_TEXT);
     private final InputControl searchSlot;
@@ -131,7 +133,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         footerSlot.minimum(0, FOOTER_HEIGHT + 4).preferred(0, FOOTER_HEIGHT + 4)
                 .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         footerOptions.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
-        footerOptions.onSelect(index -> {
+        footerOptions.selectionChanged().connect(footerOptions, index -> {
             Tab next = Tab.values()[index];
             if (next != tab) {
                 tab = next;
@@ -140,15 +142,15 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 dirty = true;
             }
         });
-        publishOptions.onSelect(index -> {
+        publishOptions.selectionChanged().connect(publishOptions, index -> {
             requestMode = index == 1;
             dirty = true;
         });
-        filterDropdown.onSelect(value -> {
+        filterDropdown.itemActivated().connect(filterDropdown, value -> {
             gridScroll.scrollToTop();
             dirty = true;
         });
-        grid.onItemClick(this::openModal);
+        grid.itemActivated().connect(grid, this::openModal);
         body.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         Box column = new Box().add(navbar).add(publishSlot).add(body).add(footerSlot);
         window.content(column).overlay(overlay);
@@ -268,7 +270,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     void prepareLayout(int width, int height, Font font) {
         publishSlot.visible(tab == Tab.SELL);
-        publishOptions.selected(requestMode ? 1 : 0);
+        publishOptions.setSelectedNoSignal(requestMode ? 1 : 0);
         publishFee.visible(width >= 230);
         publishFee.text(Component.translatable("market.geg.seller_fee",
                 MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints())));
@@ -294,7 +296,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                     : Component.translatable("market.geg.quantity"));
         }
         window.layoutViewport(width, height, font);
-        footerOptions.selected(tab.ordinal());
+        footerOptions.setSelectedNoSignal(tab.ordinal());
     }
 
     void invalidate() {
@@ -320,6 +322,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     @Override
     public void draw(ModularGuiContext context, WidgetThemeEntry<?> theme) {
+        if (!window.isAlive()) return;
         Font font = context.getFont();
         int x = getArea().x;
         int y = getArea().y;
@@ -336,6 +339,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             lastLanguage = language;
             rebuild(width, height, search);
         }
+        window.prepareTree(context);
         prepareLayout(width, height, font);
         window.draw(context, x, y);
     }
@@ -455,8 +459,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     private Table<MarketDetail> createOfferTable() {
         Table<MarketDetail> table = new Table<>();
-        table.rowKey(offer -> offer.id()).headerColor(SECONDARY_TEXT)
-                .onRowClick(offer -> selectedDetailId = offer.id());
+        Signals.configure(table.rowKey(offer -> offer.id()).headerColor(SECONDARY_TEXT), connected -> connected.rowActivated().connect(connected, offer -> selectedDetailId = offer.id()));
         table.column(new Table.Column<>("status", Component.translatable("market.geg.status"),
                 110, 110, 1, width -> 20, new Table.Cell<>() {
             @Override
@@ -511,27 +514,22 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         detailModal.clearActions();
         if (modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE) {
             if (modal.kind == Kind.FAVORITE && modal.favorite.ended())
-                detailModal.action(Component.translatable("market.geg.unfavorite"), this::secondaryModalAction);
-            detailModal.action(Component.translatable("market.geg.request_this"), this::primaryModalAction,
-                    Button.Type.PRIMARY);
+                detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.unfavorite")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::secondaryModalAction)));
+            detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.request_this")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::primaryModalAction)));
         } else if (modal.kind == Kind.OWN || modal.kind == Kind.OWN_REQUEST) {
-            detailModal.action(Component.translatable("market.geg.cancel_listing"), this::secondaryModalAction,
-                    Button.Type.DESTRUCTIVE);
-            detailModal.action(Component.translatable("market.geg.reprice"), this::primaryModalAction,
-                    Button.Type.PRIMARY);
+            detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.cancel_listing")).type(Button.Type.DESTRUCTIVE), actionButton -> actionButton.pressed().connect(actionButton, this::secondaryModalAction)));
+            detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.reprice")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::primaryModalAction)));
         } else if (modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE) {
-            detailModal.action(Component.translatable(requestMode
-                    ? "market.geg.confirm_request" : "market.geg.confirm_list"), this::primaryModalAction,
-                    Button.Type.PRIMARY);
+            detailModal.addAction(Signals.configure(new Button(Component.translatable(requestMode
+                    ? "market.geg.confirm_request" : "market.geg.confirm_list")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::primaryModalAction)));
         }
     }
 
     private void configureQuantityActions() {
         MarketDetail offer = selectedDetail();
-        quantityModal.clearActions().action(Component.translatable("market.geg.cancel"), this::closeQuantityMenu)
-                .action(Component.translatable(offer != null && offer.buyOrder()
-                        ? "market.geg.confirm_fulfill" : "market.geg.confirm_buy"), this::confirmQuantity,
-                        Button.Type.PRIMARY);
+        quantityModal.clearActions().addAction(Signals.configure(new Button(Component.translatable("market.geg.cancel")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeQuantityMenu)))
+                .addAction(Signals.configure(new Button(Component.translatable(offer != null && offer.buyOrder()
+                        ? "market.geg.confirm_fulfill" : "market.geg.confirm_buy")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::confirmQuantity)));
     }
 
     private void closeQuantityMenu() {
@@ -542,16 +540,15 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     /** Each virtual row retains two real Buttons, with callbacks rebound to the current order. */
     private final class OfferActions extends Container {
         private MarketDetail offer;
-        private final Button trade = new Button().size(Button.Size.SMALL).onPressed(() -> {
+        private final Button trade = Signals.configure(new Button().size(Button.Size.SMALL), connected -> connected.pressed().connect(connected, () -> {
             selectedDetailId = offer.id();
             quantityMenu = true;
             quantityContent.scroll = 0;
             ClientMarketScreen.showTradeQuantity(true);
             ClientMarketScreen.setTradeQuantityMaximum(maxTradeQuantity(offer));
             configureQuantityActions();
-        });
-        private final Button favorite = new Button().size(Button.Size.SMALL).toggleButton(true)
-                .onPressed(() -> toggleOfferFavorite(offer));
+        }));
+        private final Button favorite = Signals.configure(new Button().size(Button.Size.SMALL).toggleButton(true), connected -> connected.pressed().connect(connected, () -> toggleOfferFavorite(offer)));
 
         private OfferActions() { addChild(trade); addChild(favorite); }
 
@@ -564,7 +561,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         private void syncFavorite() {
             boolean selected = ClientMarketState.favorites().stream()
                     .anyMatch(value -> value.orderId() == offer.id());
-            favorite.buttonPressedNoSignal(selected).label(Component.translatable(selected
+            favorite.setButtonPressedNoSignal(selected).label(Component.translatable(selected
                     ? "market.geg.favorited" : "market.geg.favorite"));
         }
 
@@ -775,7 +772,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     @Override public void dispose() {
-        DebugBridge.backend().close(window);
+        window.hostDetached();
         window.cancelInteractions();
         super.dispose();
     }
@@ -939,9 +936,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             String[] labels = {"-16", "-8", "+8", "+16"};
             for (int index = 0; index < 5; index++) {
                 final int buttonIndex = index;
-                Button button = new Button(index == 4
-                        ? Component.translatable("market.geg.max") : Component.literal(labels[index]))
-                        .onPress(() -> adjustQuantity.accept(buttonIndex));
+                Button button = Signals.configure(new Button(index == 4
+                        ? Component.translatable("market.geg.max") : Component.literal(labels[index])), connected -> connected.pressed().connect(connected, () -> adjustQuantity.accept(buttonIndex)));
                 quickButtons.add(button);
                 addChild(button);
             }

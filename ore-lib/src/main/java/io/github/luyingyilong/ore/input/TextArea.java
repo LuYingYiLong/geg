@@ -19,12 +19,11 @@ public final class TextArea extends Input {
     private PointF lastCaret;
     private int lastWidth = -1, lastHeight = -1;
     private float lastTextHeight = -1;
-    private Runnable submit;
     private java.util.function.BiPredicate<Integer, Integer> keyHandler = (key, modifiers) -> false;
     private int minimumRows, maximumRows;
     private int automaticRows;
     private int pendingCursor = -1;
-    public TextArea onSubmit(Runnable submit) { this.submit = submit; return this; }
+    @Override public TextArea submitOnEnter(boolean value) { super.submitOnEnter(value); return this; }
     public TextArea keyHandler(java.util.function.BiPredicate<Integer, Integer> handler) {
         keyHandler = java.util.Objects.requireNonNull(handler); return this;
     }
@@ -85,7 +84,7 @@ public final class TextArea extends Input {
         int width = (int) Math.floor(((OreTextFieldRenderer) renderer).textWidth());
         int height = Math.max(0, getArea().height - getArea().getPadding().bottom() - top);
         if (height == 0) return;
-        Label label = placeholderLabel(placeholder).wrap(Label.Wrap.WORD);
+        Label label = placeholderLabel(placeholder);
         label.maxLines(Math.max(1, height / label.lineHeight(context.getFont())));
         int left = getArea().getPadding().left();
         label.layout(new Rect(left, top, width, height), context.getFont());
@@ -96,6 +95,9 @@ public final class TextArea extends Input {
         if (debugControl() != null) DebugBridge.backend().internal(debugControl(),"placeholder",label);
         try { label.draw(context, 0, 0); }
         finally { context.getGraphics().disableScissor(); }
+    }
+    @Override protected Label placeholderLabel(Component placeholder) {
+        return super.placeholderLabel(placeholder).wrap(Label.Wrap.WORD);
     }
     @Override public int preferredInputHeight() {
         int count = minimumRows == 0 ? rows : Math.max(minimumRows, Math.min(maximumRows, automaticRows));
@@ -142,21 +144,18 @@ public final class TextArea extends Input {
         updateTextScroll();
     }
 
-    @Override protected boolean submitsOnEnter() { return submit!=null; }
+
+    @Override protected boolean isSubmitKey(int keyCode, int modifiers) {
+        return super.isSubmitKey(keyCode, modifiers) && (modifiers & GLFW.GLFW_MOD_SHIFT) == 0;
+    }
 
     @Override public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
         if (!acceptsHostInput()) return Interactable.Result.IGNORE;
-        if (submit != null && inputMethodInteractive() && isFocused() && keyCode == GLFW.GLFW_KEY_ESCAPE && composing()) {
+        if (submitOnEnter() && inputMethodInteractive() && isFocused() && keyCode == GLFW.GLFW_KEY_ESCAPE && composing()) {
             cancelPreedit(); return Interactable.Result.STOP;
         }
         if (inputMethodInteractive() && isFocused() && !composing() && keyHandler.test(keyCode, modifiers))
             return Interactable.Result.STOP;
-        if (submit != null && inputMethodInteractive() && isFocused()
-                && (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER)
-                && (modifiers & GLFW.GLFW_MOD_SHIFT) == 0) {
-            if (!composing()) submit.run();
-            return Interactable.Result.STOP;
-        }
         if (inputMethodInteractive() && isFocused() && !composing()
                 && (modifiers & (GLFW.GLFW_MOD_CONTROL | GLFW.GLFW_MOD_ALT)) == 0
                 && (keyCode == GLFW.GLFW_KEY_UP || keyCode == GLFW.GLFW_KEY_DOWN
@@ -191,11 +190,14 @@ public final class TextArea extends Input {
     }
 
     @Override public void setText(String text) {
-        var lines = handler.getText(); lines.clear();
-        lines.addAll(TextLines.split(text));
-        editingHandler().clearHistory();
-        handler.setCursor(new brachy.modularui.utils.Point(0, 0), false);
-        lastCaret = null;
-        scheduleResize();
+        beginTextMutation();
+        try {
+            var lines = handler.getText(); lines.clear();
+            lines.addAll(TextLines.split(text));
+            editingHandler().clearHistory();
+            handler.setCursor(new brachy.modularui.utils.Point(0, 0), false);
+            lastCaret = null;
+            scheduleResize();
+        } finally { endTextMutation(); }
     }
 }

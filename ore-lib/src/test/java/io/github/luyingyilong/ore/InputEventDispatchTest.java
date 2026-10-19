@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.event.*;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.debug.DebugBridge;
@@ -68,7 +70,7 @@ public final class InputEventDispatchTest {
         thread.start();thread.join();check(failure[0] instanceof IllegalStateException,"Cross-thread delivery rejected");
     }
     private static void picking() {
-        int[] activated={0};Button button=new Button(cue->{}).onPress(()->activated[0]++);
+        int[] activated={0};Button button=Signals.configure(new Button(cue->{}), connected -> connected.pressed().connect(connected, ()->activated[0]++));
         Window root=new Window(true).content(button);root.layoutViewport(100,40,null);
         WindowInputs.press(root,5,5,null);
         DebugBridge.install(new DebugBridge.Backend(){@Override public boolean picking(Window window){return window==root;}});
@@ -81,8 +83,7 @@ public final class InputEventDispatchTest {
             if(event instanceof KeyEvent){leaked[0]++;event.accept();}
         }}.focusable(true).requestedSize(30,20).position(50,0);
         Window root=new Window(true);
-        Button button=new Button(cue->{}).actionMode(Button.ACTION_MODE.BUTTON_PRESS)
-                .onPress(()->root.focusManager().requestFocus(trap,null));
+        Button button=Signals.configure(new Button(cue->{}).actionMode(Button.ACTION_MODE.BUTTON_PRESS), connected -> connected.pressed().connect(connected, ()->root.focusManager().requestFocus(trap,null)));
         button.requestedSize(30,20);
         root.content(new Control().addChild(button).addChild(trap));root.layoutViewport(100,40,null);
         root.focusManager().requestFocus(button,null);

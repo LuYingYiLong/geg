@@ -1,5 +1,6 @@
 package io.github.luyingyilong.ore.layout;
 
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.ore.Segmented;
 import io.github.luyingyilong.ore.theme.OreFonts;
@@ -124,7 +125,7 @@ public final class LayoutRegressionTest {
         check(io.github.luyingyilong.ore.EventFixture.scroll(gridScroll,5, 5, -1.0D, false) && gridScroll.scrollY() == 28);
         gridScroll.scrollToTop();
         List<Integer> chosen = new ArrayList<>();
-        grid.onItemClick(chosen::add);
+        grid.itemActivated().connect(grid, chosen::add);
         check(io.github.luyingyilong.ore.EventFixture.press(gridScroll,5, 5) && chosen.equals(List.of(items.get(0))));
 
         Box tall = new Box().add(new Control().minimum(30, 80));

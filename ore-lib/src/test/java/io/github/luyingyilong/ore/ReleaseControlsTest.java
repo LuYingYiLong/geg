@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.FocusManager;
 import io.github.luyingyilong.ore.layout.Overlay;
@@ -30,7 +32,7 @@ public final class ReleaseControlsTest {
 
     private static void checkbox(Font font) {
         int[] changes = {0};
-        Checkbox checkbox = new Checkbox(Component.literal("Label")).onChange(value -> changes[0]++);
+        Checkbox checkbox = Signals.configure(new Checkbox(Component.literal("Label")), connected -> connected.toggled().connect(connected, value -> changes[0]++));
         checkbox.position(10, 10).requestedSize(90, 20);
         Window window = new Window(true).content(new Control().addChild(checkbox));
         window.layoutViewport(120, 80, font);
@@ -63,8 +65,7 @@ public final class ReleaseControlsTest {
 
     private static void segmented(Font font) {
         int[] changes = {0};
-        Segmented segmented = new Segmented(List.of(Component.literal("A"), Component.literal("B")))
-                .onSelect(index -> changes[0]++);
+        Segmented segmented = Signals.configure(new Segmented(List.of(Component.literal("A"), Component.literal("B"))), connected -> connected.selectionChanged().connect(connected, index -> changes[0]++));
         Window window = new Window(true).content(segmented);
         window.layoutViewport(120, 20, font);
         check(io.github.luyingyilong.ore.event.WindowInputs.press(window,80, 10, null));
@@ -93,7 +94,7 @@ public final class ReleaseControlsTest {
         check(changes[0] == 2);
         io.github.luyingyilong.ore.event.WindowInputs.press(window,10, 10, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,10, 10);
-        check(changes[0] == 3 && segmented.focusBounds().x() == 0);
+        check(changes[0] == 2 && segmented.focusBounds().x() == 0); // Reselecting is not a state change.
     }
 
     private static void scrolledSegmented(Font font) {
@@ -113,10 +114,10 @@ public final class ReleaseControlsTest {
 
     private static void dropdown(Font font) {
         int[] changes={0},underlying={0};
-        Dropdown<String> dropdown=new Dropdown<String>("a",2).onSelect(value->changes[0]++);
+        Dropdown<String> dropdown=Signals.configure(new Dropdown<String>("a",2), connected -> connected.itemActivated().connect(connected, value->changes[0]++));
         var options=List.of(option("a"),option("b"));dropdown.setOptions(options);
         dropdown.position(10,10).requestedSize(80,20);
-        Button behind=new Button(cue->{}).onPress(()->underlying[0]++);
+        Button behind=Signals.configure(new Button(cue->{}), connected -> connected.pressed().connect(connected, ()->underlying[0]++));
         behind.position(100,90).requestedSize(20,20);
         Overlay overlay=new Overlay();
         Window window=new Window(true).content(new Control().addChild(dropdown).addChild(behind)).overlay(overlay);

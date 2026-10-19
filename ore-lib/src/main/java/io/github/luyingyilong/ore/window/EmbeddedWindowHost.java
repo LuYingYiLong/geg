@@ -42,6 +42,7 @@ public final class EmbeddedWindowHost implements WindowHost {
         WindowCanvas canvas = new WindowCanvas(root);
         panel.child(canvas.full().disableThemeBackground(true));
         OreScreen.open(new ModularScreen(io.github.luyingyilong.ore.OreClient.options().hostModId(), panel).useTheme(io.github.luyingyilong.ore.OreClient.options().defaultTheme()).pausesGame(false));
+        OreScreen.attachRoot(root);
         open = true;
     }
 

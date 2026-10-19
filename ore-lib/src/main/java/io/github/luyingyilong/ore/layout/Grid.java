@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore.layout;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.Inspectable;
 import io.github.luyingyilong.ore.debug.DebugProperty;
@@ -7,7 +9,6 @@ import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.client.gui.Font;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 /**
  * A regular or masonry grid with optional view recycling
@@ -32,12 +33,13 @@ public final class Grid<T> extends Container implements ScrollContent {
     private boolean resetScrollPending;
     private boolean dirty = true;
     private boolean visibilityDirty = true;
-    private Consumer<T> onItemClick = item -> { };
+    private final SignalSource<T> itemActivated = new SignalSource<>(this, "itemActivated", "T");
     private Rect visibleRegion = new Rect(0, 0, 0, 0);
     private Object focusedKey;
     private Font layoutFont;
 
     public Grid() {
+        signalScope().own(() -> { active.clear(); recycled.clear(); fixedChildren.clear(); entries.clear(); visibleIndices.clear(); });
         focusable(true);
         focusExpansion(1);
     }
@@ -97,7 +99,7 @@ public final class Grid<T> extends Container implements ScrollContent {
     @Override public boolean activate() {
         Entry<T> entry = focusedEntry();
         if (entry == null) return false;
-        onItemClick.accept(entry.item());
+        itemActivated.emit(entry.item());
         return true;
     }
 
@@ -111,15 +113,17 @@ public final class Grid<T> extends Container implements ScrollContent {
     public Grid<T> adapter(Adapter<T> adapter) {
         if (adapter != null && !fixedChildren.isEmpty())
             throw new IllegalStateException("A Grid cannot mix fixed children and an adapter");
+        if (this.adapter != adapter) {
+            recycleAll();
+            for (View<T> view : recycled) if (view instanceof Control control) control.queueFree();
+            recycled.clear();
+        }
         this.adapter = adapter;
         invalidate();
         return this;
     }
 
-    public Grid<T> onItemClick(Consumer<T> onItemClick) {
-        this.onItemClick = Objects.requireNonNull(onItemClick);
-        return this;
-    }
+    public Signal<T> itemActivated() { return itemActivated.signal(); }
 
     public Grid<T> add(Control child) {
         addChild(child);
@@ -223,14 +227,17 @@ public final class Grid<T> extends Container implements ScrollContent {
 
     @Override
     public void layout(Rect localBounds, Font font) {
-        boolean childLayoutChanged = layoutDirty();
-        layoutFont = font;
-        super.layout(localBounds, font);
-        if (dirty || lastWidth != localBounds.width() || childLayoutChanged && adapter == null) relayout(font);
-        if (childLayoutChanged) visibilityDirty = true;
-        if (visibleRegion.width() == 0 && visibleRegion.height() == 0)
-            visibleRegion(new Rect(0, 0, localBounds.width(), localBounds.height()));
-        if (adapter != null) updateVisible();
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            boolean childLayoutChanged = layoutDirty();
+            layoutFont = font;
+            super.layout(localBounds, font);
+            if (dirty || lastWidth != localBounds.width() || childLayoutChanged && adapter == null) relayout(font);
+            if (childLayoutChanged) visibilityDirty = true;
+            if (visibleRegion.width() == 0 && visibleRegion.height() == 0)
+                visibleRegion(new Rect(0, 0, localBounds.width(), localBounds.height()));
+            if (adapter != null) updateVisible();
+        }
     }
 
     private void saveAnchor() {
@@ -255,6 +262,7 @@ public final class Grid<T> extends Container implements ScrollContent {
         Map<Object, ArrayDeque<View<T>>> previous = new HashMap<>();
         for (Entry<T> entry : entries) {
             View<T> view = active.get(entry.index());
+            if (view instanceof Control control && !control.isAlive()) { super.removeChild(control); continue; }
             if (view != null) previous.computeIfAbsent(entry.key(), key -> new ArrayDeque<>()).add(view);
         }
         entries.clear();
@@ -309,14 +317,14 @@ public final class Grid<T> extends Container implements ScrollContent {
             ArrayDeque<View<T>> candidates = previous.get(entry.key());
             View<T> view = candidates == null ? null : candidates.pollFirst();
             if (view != null) {
-                if (view instanceof Control control) DebugBridge.backend().binding(control, entry.key());
+                if (view instanceof Control control) { ownPooled(control); control.resetBindingScope(); DebugBridge.backend().binding(control, entry.key()); }
                 view.bind(entry.item());
                 retained.put(entry.index(), view);
             }
         }
         for (ArrayDeque<View<T>> remaining : previous.values())
             for (View<T> view : remaining) {
-                if (view instanceof Control control) super.removeChild(control);
+                if (view instanceof Control control) { control.resetBindingScope(); super.removeChild(control); }
                 recycled.add(view);
             }
         active.clear();
@@ -356,9 +364,17 @@ public final class Grid<T> extends Container implements ScrollContent {
                 : Math.max(0, Arrays.stream(heights).max().orElse(0) - gap);
     }
 
+
+
+    private void pruneDeadViews() {
+        recycled.removeIf(view -> view instanceof Control control && !control.isAlive());
+        for (int key : List.copyOf(active.keySet())) { View<T> view = active.get(key); if (view instanceof Control control && !control.isAlive()) { active.remove(key); super.removeChild(control); } }
+    }
+
     private void recycleAll() {
+        pruneDeadViews();
         for (View<T> view : active.values())
-            if (view instanceof Control control) super.removeChild(control);
+            if (view instanceof Control control) { control.resetBindingScope(); super.removeChild(control); }
         recycled.addAll(active.values());
         active.clear();
         visibleIndices.clear();
@@ -367,6 +383,7 @@ public final class Grid<T> extends Container implements ScrollContent {
 
     private void updateVisible() {
         if (adapter == null || dirty || !visibilityDirty) return;
+        pruneDeadViews();
         visibilityDirty = false;
         int buffer = visibleRegion.height();
         int start = visibleRegion.y() - buffer;
@@ -382,13 +399,13 @@ public final class Grid<T> extends Container implements ScrollContent {
         for (int index : List.copyOf(active.keySet()))
             if (!visible.contains(index)) {
                 View<T> view = active.remove(index);
-                if (view instanceof Control control) super.removeChild(control);
+                if (view instanceof Control control) { control.resetBindingScope(); super.removeChild(control); }
                 recycled.add(view);
             }
         for (Entry<T> entry : entries)
             if (visible.contains(entry.index()) && !active.containsKey(entry.index())) {
                 View<T> view = recycled.isEmpty() ? adapter.createView() : recycled.removeFirst();
-                if (view instanceof Control control) DebugBridge.backend().binding(control, entry.key());
+                if (view instanceof Control control) { ownPooled(control); control.resetBindingScope(); DebugBridge.backend().binding(control, entry.key()); }
                 view.bind(entry.item());
                 if (view instanceof Control control) super.addChild(control);
                 active.put(entry.index(), view);
@@ -400,30 +417,34 @@ public final class Grid<T> extends Container implements ScrollContent {
 
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
-        DebugBridge.backend().paint(this, context, screenX, screenY);
-        if (bounds().width() <= 0 || bounds().height() <= 0) return;
-        if (adapter != null) updateVisible();
-        Rect origin = screenBounds(screenX, screenY);
-        Rect viewport = visibleRegion.translated(origin.x(), origin.y());
-        if (adapter == null) {
-            for (Control child : fixedChildren) {
-                Rect area = child.absoluteBounds();
-                if (area.bottom() >= absoluteBounds().y() + visibleRegion.y() - visibleRegion.height()
-                        && area.y() <= absoluteBounds().y() + visibleRegion.bottom() + visibleRegion.height()) {
-                    child.draw(context, screenX, screenY);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            DebugBridge.backend().paint(this, context, screenX, screenY);
+            if (bounds().width() <= 0 || bounds().height() <= 0) return;
+            if (adapter != null) updateVisible();
+            Rect origin = screenBounds(screenX, screenY);
+            Rect viewport = visibleRegion.translated(origin.x(), origin.y());
+            if (adapter == null) {
+                for (Control child : List.copyOf(fixedChildren)) {
+                    if (child.parent() != this || !child.isAlive() || !child.visible()) continue;
+                    Rect area = child.absoluteBounds();
+                    if (area.bottom() >= absoluteBounds().y() + visibleRegion.y() - visibleRegion.height()
+                            && area.y() <= absoluteBounds().y() + visibleRegion.bottom() + visibleRegion.height()) {
+                        child.draw(context, screenX, screenY);
+                    }
                 }
-            }
-        } else {
-            for (int index : visibleIndices) {
-                Entry<T> entry = entries.get(index);
-                View<T> view = active.get(index);
-                if (view == null) continue;
-                Rect card = entry.bounds().translated(origin.x(), origin.y());
-                boolean hovered = viewport.contains(context.getAbsMouseX(), context.getAbsMouseY())
-                        && card.contains(context.getAbsMouseX(), context.getAbsMouseY());
-                if (view instanceof Control control) {
-                    control.draw(context, screenX, screenY);
-                } else view.draw(context, card, hovered);
+            } else {
+                for (int index : visibleIndices) {
+                    Entry<T> entry = entries.get(index);
+                    View<T> view = active.get(index);
+                    if (view == null) continue;
+                    Rect card = entry.bounds().translated(origin.x(), origin.y());
+                    boolean hovered = viewport.contains(context.getAbsMouseX(), context.getAbsMouseY())
+                            && card.contains(context.getAbsMouseX(), context.getAbsMouseY());
+                    if (view instanceof Control control) {
+                        control.draw(context, screenX, screenY);
+                    } else view.draw(context, card, hovered);
+                }
             }
         }
     }
@@ -441,7 +462,7 @@ public final class Grid<T> extends Container implements ScrollContent {
     }
 
     @Override public Control hitTop(int rootX, int rootY) {
-        if (!visible()) return null;
+        if (!isAlive() || !visible()) return null;
         if (adapter == null) return super.hitTop(rootX, rootY);
         Entry<T> entry = hitItem(rootX, rootY);
         if (entry != null) {
@@ -461,14 +482,14 @@ public final class Grid<T> extends Container implements ScrollContent {
         View<T> view = active.get(entry.index());
         if(view instanceof Control control && !control.hit(rootX,rootY))return false;
         focusedKey = entry.key();
-        onItemClick.accept(entry.item());
+        itemActivated.emit(entry.item());
         return true;
     }
 
     public Control hitFixed(int rootX, int rootY) {
         if (adapter != null) return null;
-        for (Control child : fixedChildren)
-            if (child.visible()
+        for (Control child : List.copyOf(fixedChildren))
+            if ((child.isAlive() && child.visible())
                     && child.absoluteBounds().contains(rootX, rootY)) return child;
         return null;
     }

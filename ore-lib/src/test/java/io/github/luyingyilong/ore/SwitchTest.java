@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.theme.OreIcons;
 import net.minecraft.client.gui.Font;
@@ -81,8 +83,7 @@ public final class SwitchTest {
     private static void interaction() {
         AtomicLong now = new AtomicLong(1_000L);
         List<String> events = new ArrayList<>();
-        Switch toggle = new Switch(false, now::get, cue -> events.add(cue.name()))
-                .onChange(value -> events.add("change:" + value)).onClick(value -> events.add("click:" + value));
+        Switch toggle = Signals.configure(Signals.configure(new Switch(false, now::get, cue -> events.add(cue.name())), connected -> connected.toggled().connect(connected, value -> events.add("change:" + value))), connected -> connected.activated().connect(connected, value -> events.add("click:" + value)));
         toggle.position(10, 10).requestedSize(28, 15);
         Control body = new Control().addChild(toggle);
         Overlay overlay = new Overlay();
@@ -100,7 +101,7 @@ public final class SwitchTest {
         check(events.equals(List.of("CLICK", "change:true", "click:true")) && toggle.checked(), "One release, one change");
         check(!io.github.luyingyilong.ore.event.WindowInputs.release(window,11, 11), "Duplicate release ignored");
         events.clear();
-        toggle.checked(false);
+        toggle.setCheckedNoSignal(false);
         check(events.isEmpty(), "Programmatic binding is silent");
 
         window.focusManager().requestFocus(toggle, null);
@@ -150,7 +151,7 @@ public final class SwitchTest {
             @Override public int width(FormattedText value) { return value.getString().length() * 6; }
         };
         int[] changes = {0};
-        Switch toggle = new Switch(false, () -> 0L, cue -> { }).onChange(value -> changes[0]++);
+        Switch toggle = Signals.configure(new Switch(false, () -> 0L, cue -> { }), connected -> connected.toggled().connect(connected, value -> changes[0]++));
         toggle.position(10, 80).requestedSize(28, 15);
         Scroll scroll = new Scroll().content(new Control().preferred(80, 200).addChild(toggle));
         Window window = new Window(true).content(scroll);

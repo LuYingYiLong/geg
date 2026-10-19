@@ -23,7 +23,7 @@ public final class OrganizationMembershipRowTest {
             UUID leader = UUID.randomUUID();
             var summary = new OrganizationSyncPacket.Summary(UUID.randomUUID(), "公社", text,
                     Organization.JoinPolicy.UNRESTRICTED, leader, List.of(), List.of());
-            OrganizationMembershipRow row = new OrganizationMembershipRow(summary, () -> { });
+            OrganizationMembershipRow row = new OrganizationMembershipRow(summary);
             Label introduction = row.descriptionNode();
             for (int width : new int[]{127, 128, 129, 200, 640}) {
                 Size measured = row.measureSize(font, new Size(width, 1000));

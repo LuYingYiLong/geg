@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Overlay;
@@ -34,11 +36,11 @@ public final class DrawerLayoutTest {
         Control page = new Control().addChild(outside);
         Overlay overlay = new Overlay();
         Window window = new Window(true).content(page).overlay(overlay);
-        Button inside = new Button(Component.literal("Inside")).onPress(() -> clicked[0]++);
+        Button inside = Signals.configure(new Button(Component.literal("Inside")), connected -> connected.pressed().connect(connected, () -> clicked[0]++));
         inside.position(0, 0).requestedSize(60, 20);
         Control content = new Control().preferred(60, 300).addChild(inside);
-        Drawer drawer = new Drawer(Component.literal("Drawer"), () -> now[0])
-                .content(content).onClose(() -> closed[0]++);
+        Drawer drawer = Signals.configure(new Drawer(Component.literal("Drawer"), () -> now[0])
+                .content(content), connected -> connected.closed().connect(connected, () -> closed[0]++));
         overlay.add(drawer);
         window.layoutViewport(200, 120, font);
         check(!drawer.visible() && !drawer.isOpen());
@@ -111,7 +113,7 @@ public final class DrawerLayoutTest {
             check(drawer.panelBounds().width() == width / 2);
             check(drawer.panelBounds().right() == width);
         }
-        drawer.width(1000).action(Component.literal("Apply"), () -> { });
+        drawer.width(1000).addAction(Signals.configure(new Button(Component.literal("Apply")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
         for (int width : new int[]{127, 128, 129, 640}) {
             window.layoutViewport(width, 120, font);
             check(drawer.panelBounds().equals(new Rect(0, 0, width, 120)));
@@ -175,7 +177,7 @@ public final class DrawerLayoutTest {
     private static void leftPlacement(Font font) {
         long[] now = {0};
         int[] clicked = {0};
-        Button inside = new Button(cue -> { }).onPress(() -> clicked[0]++);
+        Button inside = Signals.configure(new Button(cue -> { }), connected -> connected.pressed().connect(connected, () -> clicked[0]++));
         inside.position(0, 0).requestedSize(40, 20);
         Drawer drawer = new Drawer(Component.literal("Left"), () -> now[0], cue -> { })
                 .placement(Drawer.Placement.LEFT).content(new Control().preferred(40, 20).addChild(inside));
@@ -221,9 +223,9 @@ public final class DrawerLayoutTest {
         for (int width : new int[]{127, 128, 129, 640}) {
             int[] closed = {0};
             int[] closeSounds = {0};
-            Drawer drawer = new Drawer(Component.literal("Close"), () -> 0L, cue -> {
+            Drawer drawer = Signals.configure(new Drawer(Component.literal("Close"), () -> 0L, cue -> {
                 if (cue == OreSounds.Cue.DRAWER_CLOSE) closeSounds[0]++;
-            }).animationDuration(0).onClose(() -> closed[0]++);
+            }).animationDuration(0), connected -> connected.closed().connect(connected, () -> closed[0]++));
             Window window = new Window(true).content(new Control()).overlay(new Overlay().add(drawer));
             drawer.open();
             window.layoutViewport(width, 150, font);
@@ -264,7 +266,7 @@ public final class DrawerLayoutTest {
     private static void closingCancelsPendingAction(Font font) {
         long[] now = {0};
         int[] actions = {0};
-        Button button = new Button(cue -> { }).onPress(() -> actions[0]++);
+        Button button = Signals.configure(new Button(cue -> { }), connected -> connected.pressed().connect(connected, () -> actions[0]++));
         button.position(0, 0).requestedSize(40, 20);
         Drawer drawer = new Drawer(Component.literal("Pending"), () -> now[0], cue -> { })
                 .content(new Control().preferred(40, 20).addChild(button));
@@ -301,15 +303,15 @@ public final class DrawerLayoutTest {
 
     private static void tableAndNestedOverlay(Font font) {
         int[] selected = {-1};
-        Table<Integer> table = new Table<Integer>().rowKey(row -> row)
+        Table<Integer> table = Signals.configure(new Table<Integer>().rowKey(row -> row)
                 .column(new Table.Column<>("member", Component.literal("Member"),
                         48, 100, 1, width -> 20, new Table.Cell<>() {
                     @Override public void draw(ModularGuiContext context, Integer row, Rect bounds) { }
-                })).onRowClick(row -> selected[0] = row);
+                })), connected -> connected.rowActivated().connect(connected, row -> selected[0] = row));
         table.minimum(0, 60);
         table.rows(IntStream.range(0, 300).boxed().toList());
         Drawer drawer = new Drawer(Component.literal("Organization")).animationDuration(0)
-                .content(table).action(Component.literal("Applications"), () -> { });
+                .content(table).addAction(Signals.configure(new Button(Component.literal("Applications")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
         Control popup = new Control() {
             @Override public boolean focusScope() { return true; }
             @Override public boolean onFocusKey(int keyCode, int modifiers) {

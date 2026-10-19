@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore.window;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.ore.*;
 import io.github.luyingyilong.ore.event.EventGeometry;
@@ -18,7 +20,7 @@ public final class WindowPopups {
     private boolean updating;
     WindowPopups(WindowContext context) { this.context=context; }
     private Dropdown<?> find(Control node) {
-        if(node==null||!node.visible()||node instanceof Popup||node instanceof Drawer drawer&&!drawer.isOpen())return null;
+        if(node==null||!(node.isAlive() && node.visible())||node instanceof Popup||node instanceof Drawer drawer&&!drawer.isOpen())return null;
         var children=node.children();
         for(int i=children.size()-1;i>=0;i--){var result=find(children.get(i));if(result!=null)return result;}
         return node instanceof Dropdown<?> dropdown&&dropdown.isOpen()
@@ -45,7 +47,7 @@ public final class WindowPopups {
     }
     private void dismiss(boolean restore) {
         Dropdown<?> previous=owner;Popup old=popup;owner=null;popup=null;
-        if(old!=null && old.parent()!=null)old.parent().removeChild(old);
+        if(old!=null)old.queueFree();
         if(previous!=null) {
             previous.close();
             if(restore && previous.parent()!=null)context.owner().focusManager().restoreFocus(previous,context.mui());
@@ -58,9 +60,12 @@ public final class WindowPopups {
         private final Dropdown<?> trigger;
         private final List<? extends Dropdown.Option<?>> options;
         private final Container panel=new Container() {
+            private Panel background;
             @Override protected void render(ModularGuiContext mui,int x,int y) {
-                new Panel(OreTheme.DROPDOWN_PANEL).drawAt(mui,screenBounds(x,y));
+                if (background == null) background = ownPart("background", new Panel(OreTheme.DROPDOWN_PANEL));
+                background.drawAt(mui,screenBounds(x,y));
             }
+
         };
         private final Scroll scroll=new Scroll();
         private final Items items=new Items();
@@ -69,8 +74,8 @@ public final class WindowPopups {
             panel.addChild(scroll);scroll.content(items);addChild(panel);
             scroll.vertical(Scroll.BarMode.NEVER).horizontal(Scroll.BarMode.DISABLED);
             for(var option:options) {
-                Button button=new Button(option.label()).type(Button.Type.MENU).alignment(Button.TextAlignment.LEFT)
-                        .size(trigger.controlSize()).onPress(()->select(option));
+                Button button=Signals.configure(new Button(option.label()).type(Button.Type.MENU).alignment(Button.TextAlignment.LEFT)
+                        .size(trigger.controlSize()), connected -> connected.pressed().connect(connected, ()->select(option)));
                 if(trigger.checkable()&&Objects.equals(option.value(),trigger.selected()))
                     button.trailingIcon(new Button.Icon(OreIcons.CHECKED,8,8));
                 items.addChild(button);

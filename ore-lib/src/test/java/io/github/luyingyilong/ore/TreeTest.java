@@ -1,5 +1,6 @@
 package io.github.luyingyilong.ore;
 
+
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.theme.OreIcons;
 import net.minecraft.network.chat.Component;
@@ -23,9 +24,9 @@ public final class TreeTest {
         Button switcher = (Button)tree.children().get(0).children().get(0);
         check(switcher.icon().texture().equals(OreIcons.ARROW_RIGHT_LIGHT), "Collapsed sprite");
         AtomicInteger expanded = new AtomicInteger(), selected = new AtomicInteger();
-        tree.onExpand(event -> { check(event.expandedKeys().equals(tree.expandedKeys()), "Expansion event snapshot"); expanded.incrementAndGet(); });
-        tree.onSelect(value -> selected.incrementAndGet());
-        tree.selected("root"); tree.onFocusMove(FocusManager.Direction.RIGHT);
+        tree.expansionChanged().connect(tree, event -> { check(event.expandedKeys().equals(tree.expandedKeys()), "Expansion event snapshot"); expanded.incrementAndGet(); });
+        tree.selectionChanged().connect(tree, value -> selected.incrementAndGet());
+        tree.setSelectedNoSignal("root"); tree.onFocusMove(FocusManager.Direction.RIGHT);
         check(tree.visibleRows()==3 && expanded.get()==1, "Keyboard expansion reports change");
         check(switcher.icon().texture().equals(OreIcons.ARROW_DOWN_LIGHT), "Expanded sprite");
         tree.onFocusMove(FocusManager.Direction.RIGHT);

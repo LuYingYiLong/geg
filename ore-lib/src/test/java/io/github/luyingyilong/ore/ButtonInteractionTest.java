@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Overlay;
 import io.github.luyingyilong.ore.layout.Rect;
@@ -20,7 +22,8 @@ public final class ButtonInteractionTest {
 
     public static void main(String[] args) {
         List<String> events = new ArrayList<>();
-        Button button = new Button(cue -> events.add(cue.name())).onPress(() -> events.add("action"));
+        Button button = new Button(cue -> events.add(cue.name()));
+        io.github.luyingyilong.ore.signal.Connection action = button.pressed().connect(button, () -> events.add("action"));
         button.position(10, 10).requestedSize(30, 20);
         Control content = new Control().addChild(button);
         Overlay overlay = new Overlay();
@@ -69,13 +72,14 @@ public final class ButtonInteractionTest {
         io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(events.isEmpty());
 
-        Button next = new Button(cue -> events.add(cue.name())).onPress(() -> events.add("next"))
+        Button next = Signals.configure(new Button(cue -> events.add(cue.name())), connected -> connected.pressed().connect(connected, () -> events.add("next")))
                 .actionMode(Button.ACTION_MODE.BUTTON_PRESS);
         next.position(50, 10).requestedSize(30, 20);
         content.addChild(next);
         window.layoutViewport(100, 100, null);
-        button.actionMode(Button.ACTION_MODE.BUTTON_PRESS)
-                .onPress(() -> window.focusManager().requestFocus(next, null));
+        action.disconnect();
+        button.actionMode(Button.ACTION_MODE.BUTTON_PRESS);
+        action = button.pressed().connect(button, () -> window.focusManager().requestFocus(next, null));
         window.focusManager().requestFocus(button, null);
         io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(events.equals(List.of("CLICK")));
@@ -86,7 +90,9 @@ public final class ButtonInteractionTest {
         io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(events.equals(List.of("CLICK", "CLICK", "next")));
         events.clear();
-        button.actionMode(Button.ACTION_MODE.BUTTON_RELEASE).onPress(() -> events.add("action"));
+        action.disconnect();
+        button.actionMode(Button.ACTION_MODE.BUTTON_RELEASE);
+        button.pressed().connect(button, () -> events.add("action"));
 
         io.github.luyingyilong.ore.event.WindowInputs.press(window,15, 15, null);
         button.visible(false);
@@ -165,10 +171,10 @@ public final class ButtonInteractionTest {
             io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null);
             check(window.focusManager().outlineBounds().equals(normal));
 
-            button.toggleButton(true).buttonPressedNoSignal(true);
+            button.toggleButton(true).setButtonPressedNoSignal(true);
             check(window.focusManager().outlineBounds().y() == normal.y() + offset);
             check(window.focusManager().outlineBounds().bottom() == normal.bottom());
-            button.buttonPressedNoSignal(false).toggleButton(false);
+            button.setButtonPressedNoSignal(false).toggleButton(false);
             io.github.luyingyilong.ore.event.WindowInputs.press(window,25, 25, null);
             check(button.focusBounds().y() == 20 + offset);
             io.github.luyingyilong.ore.event.WindowInputs.move(window,159, 70);
@@ -185,7 +191,7 @@ public final class ButtonInteractionTest {
             check(pressed.icon().equals(before.icon().translated(0, offset)));
             check(pressed.trailingIcon().equals(before.trailingIcon().translated(0, offset)));
             if (offset == 0) check(Button.backgroundBounds(area, type, true).equals(area));
-            button.toggleButton(true).buttonPressedNoSignal(true).disabled(true);
+            button.toggleButton(true).setButtonPressedNoSignal(true).disabled(true);
             check(button.focusBounds().equals(area));
         }
     }
@@ -193,20 +199,21 @@ public final class ButtonInteractionTest {
     private static void controlledState() {
         List<String> events = new ArrayList<>();
         Button button = new Button(cue -> events.add(cue.name()));
-        button.onPressed(() -> events.add("pressed:" + button.buttonPressed()));
+        button.pressed().connect(button, () -> events.add("pressed:" + button.buttonPressed()));
+        button.toggled().connect(button, value -> events.add("toggled:" + value));
         check(!button.disabled() && !button.toggleButton() && !button.buttonPressed());
         button.buttonPressed(true);
-        check(!button.buttonPressed() && events.equals(List.of("pressed:false")));
+        check(!button.buttonPressed() && events.isEmpty());
         button.buttonPressed(false);
-        check(events.size() == 1);
+        check(events.isEmpty());
         button.toggleButton(true).buttonPressed(true).buttonPressed(true);
-        check(button.buttonPressed() && events.equals(List.of("pressed:false", "pressed:true")));
+        check(button.buttonPressed() && events.equals(List.of("toggled:true")));
         button.onFocusChanged(false);
         check(button.buttonPressed()); // Focus loss cancels gestures, not retained state.
-        button.buttonPressedNoSignal(false).buttonPressedNoSignal(true);
-        check(events.size() == 2);
+        button.setButtonPressedNoSignal(false).setButtonPressedNoSignal(true);
+        check(events.size() == 1);
         button.activate();
-        check(!button.buttonPressed() && events.equals(List.of("pressed:false", "pressed:true", "CLICK", "pressed:false")));
+        check(!button.buttonPressed() && events.equals(List.of("toggled:true", "CLICK", "toggled:false", "pressed:false")));
 
         events.clear();
         button.position(0, 0).requestedSize(30, 20);
@@ -217,7 +224,7 @@ public final class ButtonInteractionTest {
         check(events.isEmpty() && !button.buttonPressed());
         io.github.luyingyilong.ore.event.WindowInputs.press(window,5, 5, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,5, 5);
-        check(button.buttonPressed() && events.equals(List.of("CLICK", "pressed:true")));
+        check(button.buttonPressed() && events.equals(List.of("CLICK", "toggled:true", "pressed:true")));
         events.clear();
         io.github.luyingyilong.ore.event.WindowInputs.press(window,5, 5, null);
         button.disabled(true).disabled(false); // Disabling while held must disarm the release.
@@ -229,9 +236,9 @@ public final class ButtonInteractionTest {
         io.github.luyingyilong.ore.event.WindowInputs.press(window,5, 5, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,5, 5);
         check(events.isEmpty());
-        button.buttonPressedNoSignal(false);
+        button.setButtonPressedNoSignal(false);
         check(!button.buttonPressed());
-        button.disabled(false).buttonPressedNoSignal(true).toggleButton(false);
+        button.disabled(false).setButtonPressedNoSignal(true).toggleButton(false);
         check(!button.buttonPressed());
     }
 
@@ -276,7 +283,7 @@ public final class ButtonInteractionTest {
             @Override public int width(FormattedText value) { return value.getString().length() * 6; }
         };
         int[] actions = {0};
-        Button button = new Button(cue -> { }).onPress(() -> actions[0]++);
+        Button button = Signals.configure(new Button(cue -> { }), connected -> connected.pressed().connect(connected, () -> actions[0]++));
         button.position(10, 80).requestedSize(30, 20);
         Control content = new Control().preferred(80, 200).addChild(button);
         Scroll scroll = new Scroll().content(content);

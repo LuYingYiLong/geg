@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.Inspectable;
 import io.github.luyingyilong.ore.debug.DebugProperty;
@@ -29,7 +31,7 @@ import java.util.function.LongSupplier;
 /**
  * An edge overlay, initially closed. Add it to Window's Overlay, then call open().
  * The panel slides in from and returns to its selected edge; the mask fades with it.
- * onClose runs after the exit animation, so the owner can safely remove the layer.
+ * The closed signal runs after the exit animation, so the owner can safely remove the layer.
  * <pre>{@code
  * Drawer drawer = new Drawer(title).fontSize(12).width(240).content(form);
  * overlay.add(drawer);
@@ -54,7 +56,7 @@ public final class Drawer extends Container {
     private final Padding frame = new Padding(Padding.Insets.all(PADDING)).child(column);
     private Panel background;
     private int titleColor = OreTheme.TEXT_WHITE;
-    private Runnable onClose = () -> { };
+    private final SignalSource0 closed = new SignalSource0(this, "closed");
     private int requestedWidth;
     private Placement placement = Placement.RIGHT;
     private boolean closable = true;
@@ -79,8 +81,8 @@ public final class Drawer extends Container {
         this.clock = Objects.requireNonNull(clock);
         this.soundPlayer = Objects.requireNonNull(soundPlayer);
         this.title.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
-        closeButton = new Button().type(Button.Type.TEXT)
-                .icon(OreIcons.CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE).onPress(this::close);
+        closeButton = Signals.configure(new Button().type(Button.Type.TEXT)
+                .icon(OreIcons.CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE), connected -> connected.pressed().connect(connected, this::close));
         closeButton.minimum(CLOSE_SIZE, CLOSE_SIZE);
         closeButton.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         header.add(this.title).add(closeButton);
@@ -157,12 +159,8 @@ public final class Drawer extends Container {
 
     public Scroll bodyScroll() { return body; }
 
-    public Drawer action(Component text, Runnable onPress) {
-        return action(text, onPress, Button.Type.SECONDARY);
-    }
-
-    public Drawer action(Component text, Runnable onPress, Button.Type type) {
-        Button button = new Button(text).type(type).onPress(onPress);
+    public Drawer addAction(Button button) {
+        Objects.requireNonNull(button);
         button.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         footer.addChild(button);
         footer.minimum(0, footer.children().size() * Button.HEIGHT
@@ -172,13 +170,13 @@ public final class Drawer extends Container {
     }
 
     public Drawer clearActions() {
-        for (Control child : footer.children()) footer.removeChild(child);
+        for (Control child : footer.children()) { if (child.parent() != null) child.parent().removeChild(child); child.queueFree(); }
         footer.minimum(0, 0);
         footer.visible(false);
         return this;
     }
 
-    public Drawer onClose(Runnable callback) { onClose = Objects.requireNonNull(callback); return this; }
+    public Signal0 closed() { return closed.signal(); }
     @Override public float contentDepth() { return depth; }
 
     public Drawer depth(float depth) { this.depth = depth; return this; }
@@ -231,7 +229,7 @@ public final class Drawer extends Container {
             animating = false;
             if (!targetOpen) {
                 super.visible(false);
-                onClose.run();
+                closed.emit();
             }
         }
     }
@@ -242,8 +240,11 @@ public final class Drawer extends Container {
     }
 
     @Override public void layout(Rect viewport, Font font) {
-        super.layout(viewport, font);
-        layoutPanel(font);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(viewport, font);
+            layoutPanel(font);
+        }
     }
 
     private void layoutPanel(Font font) {
@@ -260,29 +261,33 @@ public final class Drawer extends Container {
     }
 
     @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
-        DebugBridge.backend().paint(this, context, screenX, screenY);
-        if (!visible()) return;
-        layoutPanel(context.getFont());
-        if (!visible()) return;
-        GuiGraphics graphics = context.getGraphics();
-        Rect viewport = screenBounds(screenX, screenY);
-        graphics.flush();
-        graphics.pose().pushPose();
-        graphics.pose().translate(0.0F, 0.0F, depth);
-        graphics.enableScissor(viewport.x(), viewport.y(), viewport.right(), viewport.bottom());
-        DebugBridge.backend().clip(viewport);
-        try {
-            graphics.fill(viewport.x(), viewport.y(), viewport.right(), viewport.bottom(), maskColor());
-            if (background == null) background = new Panel(OreTheme.FLOATING_BACKGROUND);
-            WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.FLOATING_BACKGROUND);
-            WidgetTheme style = entry == null ? context.getTheme().getPanelTheme().theme() : entry.theme();
-            title.color(titleColor).shadow(style.isTextShadow());
-            background.drawAt(context, frame.screenBounds(screenX, screenY));
-            frame.draw(context, screenX, screenY);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            if (!isAlive()) return;
+            DebugBridge.backend().paint(this, context, screenX, screenY);
+            if (!visible()) return;
+            layoutPanel(context.getFont());
+            if (!visible()) return;
+            GuiGraphics graphics = context.getGraphics();
+            Rect viewport = screenBounds(screenX, screenY);
             graphics.flush();
-        } finally {
-            graphics.disableScissor(); DebugBridge.backend().unclip();
-            graphics.pose().popPose();
+            graphics.pose().pushPose();
+            graphics.pose().translate(0.0F, 0.0F, depth);
+            graphics.enableScissor(viewport.x(), viewport.y(), viewport.right(), viewport.bottom());
+            DebugBridge.backend().clip(viewport);
+            try {
+                graphics.fill(viewport.x(), viewport.y(), viewport.right(), viewport.bottom(), maskColor());
+                if (background == null) background = ownPart("background", new Panel(OreTheme.FLOATING_BACKGROUND));
+                WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.FLOATING_BACKGROUND);
+                WidgetTheme style = entry == null ? context.getTheme().getPanelTheme().theme() : entry.theme();
+                title.color(titleColor).shadow(style.isTextShadow());
+                background.drawAt(context, frame.screenBounds(screenX, screenY));
+                frame.draw(context, screenX, screenY);
+                graphics.flush();
+            } finally {
+                graphics.disableScissor(); DebugBridge.backend().unclip();
+                graphics.pose().popPose();
+            }
         }
     }
 

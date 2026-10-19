@@ -22,8 +22,8 @@ public final class Toast extends Container {
     public static final long EXIT_DURATION = 160L;
     private static final int INSET_X = 4;
     private static final int INSET_Y = 2;
-    private final Label label = new Label().wrap(Label.Wrap.WORD).maxLines(3).overflow(Label.Overflow.ELLIPSIS)
-            .opticalCenter(true).align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
+    private final Label label = ownPart("label", new Label().wrap(Label.Wrap.WORD).maxLines(3).overflow(Label.Overflow.ELLIPSIS)
+            .opticalCenter(true).align(Label.Horizontal.CENTER, Label.Vertical.CENTER));
     private final LongSupplier clock;
     private final Consumer<OreSounds.Cue> sound;
     private Type type = Type.NEUTRAL;
@@ -141,6 +141,7 @@ public final class Toast extends Container {
 
     @Override
     public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         int width = Math.max(0, Math.min(available.width(), label.measureWidth(font, available.width()) + INSET_X * 2));
         int height = label.measureHeight(font, Math.max(1, width - INSET_X * 2)) + INSET_Y * 2;
         return new Size(Math.max(minimumWidth(), width), Math.max(minimumHeight(), height));
@@ -148,8 +149,11 @@ public final class Toast extends Container {
 
     @Override
     public void layout(Rect bounds, Font font) {
-        super.layout(bounds, font);
-        fitChild(label, textBounds(new Rect(0, 0, bounds.width(), bounds.height())), font);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(bounds, font);
+            fitChild(label, textBounds(new Rect(0, 0, bounds.width(), bounds.height())), font);
+        }
     }
 
     Rect textBounds(Rect area) {
@@ -173,8 +177,11 @@ public final class Toast extends Container {
 
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
-        DebugBridge.backend().paint(this, context, screenX, screenY);
-        drawGui(context.getGraphics(), context.getFont(), screenBounds(screenX, screenY));
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            DebugBridge.backend().paint(this, context, screenX, screenY);
+            drawGui(context.getGraphics(), context.getFont(), screenBounds(screenX, screenY));
+        }
     }
 
     @Override

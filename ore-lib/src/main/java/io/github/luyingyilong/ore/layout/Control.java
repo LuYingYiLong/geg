@@ -2,6 +2,7 @@ package io.github.luyingyilong.ore.layout;
 
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.event.*;
+import io.github.luyingyilong.ore.signal.*;
 import io.github.luyingyilong.ore.debug.Inspectable;
 import io.github.luyingyilong.ore.debug.DebugProperty;
 import brachy.modularui.screen.viewport.ModularGuiContext;
@@ -12,7 +13,215 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** A local-coordinate layout node. Window owns keyboard focus; ModularUI edits text. */
-public class Control {
+public class Control implements SignalOwner {
+    private final SignalScope signalScope = new SignalScope();
+    private final SignalSource0 focusEntered = new SignalSource0(this, "focusEntered");
+    private final SignalSource0 focusExited = new SignalSource0(this, "focusExited");
+    private final SignalSource<Boolean> visibilityChanged = new SignalSource<>(this, "visibilityChanged", "Boolean");
+    private LifecycleState lifecycleState = LifecycleState.ALIVE;
+    private Control lifecycleOwner;
+    private final java.util.LinkedHashMap<String, Control> parts = new java.util.LinkedHashMap<>();
+    private final java.util.Set<Control> pooled = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+    private List<Control> freeOwned = List.of();
+    private io.github.luyingyilong.ore.window.WindowContext treeContext;
+    private boolean insideTree, ready, suspended, effectiveVisible, enteredDelivered;
+    private long treeEpoch;
+    private String freeReason = "", freeSource = "";
+    private boolean signalFocused;
+    private SignalScope bindingScope;
+
+    @Override public final SignalScope signalScope() { return signalScope; }
+    public final Signal0 focusEntered() { return focusEntered.signal(); }
+    public final Signal0 focusExited() { return focusExited.signal(); }
+    public final Signal<Boolean> visibilityChanged() { return visibilityChanged.signal(); }
+    public final boolean isDisposed() { return lifecycleState == LifecycleState.FREED; }
+    /** Connections capturing the current virtual row/item belong here, not to the reusable view. */
+    public final SignalScope bindingScope() {
+        signalScope.checkThread();
+        if (!isAlive()) throw new IllegalStateException("Control has been disposed");
+        if (bindingScope == null) bindingScope = signalScope.child("binding");
+        return bindingScope;
+    }
+    public final void resetBindingScope() {
+        if (bindingScope != null) { bindingScope.close(SignalDiagnostics.Reason.BINDING_RESET); bindingScope = null; }
+        for (Control child : ownedSnapshot()) if (child.isAlive()) child.resetBindingScope();
+    }
+
+    public final LifecycleState lifecycleState() { return lifecycleState; }
+    public final boolean isAlive() { return lifecycleState == LifecycleState.ALIVE; }
+    public final boolean isQueuedForDeletion() { return lifecycleState == LifecycleState.QUEUED_FOR_FREE || lifecycleState == LifecycleState.FREEING; }
+    public final boolean isInsideTree() { return insideTree; }
+    public final boolean isReady() { return ready; }
+    public final boolean isSuspended() { return suspended; }
+    public final LifecycleInfo lifecycleInfo() {
+        return new LifecycleInfo(SignalDiagnostics.ownerId(this), debugName.isEmpty() ? getClass().getSimpleName() : debugName,
+                lifecycleState, insideTree, ready, suspended, freeReason, freeSource);
+    }
+    public final void queueFree() { queueFree("direct request"); }
+    /** Hosts may supply a diagnostic reason; subsequent requests never overwrite the first. */
+    public final void queueFree(String reason) {
+        signalScope.checkThread();
+        if (!isAlive()) return;
+        Objects.requireNonNull(reason);
+        String source = DebugBridge.active() ? StackWalker.getInstance().walk(frames -> frames
+                .filter(f -> !f.getClassName().equals(Control.class.getName()))
+                .limit(8).map(f -> f.getClassName().substring(f.getClassName().lastIndexOf('.') + 1)
+                        + "." + f.getMethodName() + "(" + f.getFileName() + ":" + f.getLineNumber() + ")").collect(java.util.stream.Collectors.joining("\n"))) : "";
+        markForFree(reason, source);
+        LifecycleScheduler.enqueue(this);
+        Window window = treeContext == null ? null : treeContext.owner();
+        if (window != null) { window.cancelCaptures(this, CancelEvent.Reason.DETACHED); window.focusManager().forgetSubtree(this); }
+        cancelInteractions();
+        requestLayout();
+    }
+    final boolean queuedOwns(Control candidate) {
+        if (this == candidate) return true;
+        for (Control c : freeOwned) if (c.queuedOwns(candidate)) return true;
+        return false;
+    }
+    private void markForFree(String reason, String source) {
+        if (!isAlive()) return;
+        lifecycleState = LifecycleState.QUEUED_FOR_FREE;
+        freeReason = reason; freeSource = source;
+        freeOwned = ownedSnapshot();
+        publishLifecycle();
+        for (Control child : freeOwned) child.markForFree(child.parent == this ? "parent cleanup: " + debugName()
+                : "owned part cleanup: " + debugName(), source);
+    }
+    /** Register a non-layout component. Its active-tree lifetime follows this owner. */
+    public final <T extends Control> T ownPart(String name, T part) {
+        Objects.requireNonNull(name); Objects.requireNonNull(part);
+        requireOwnership(part);
+        Control previous = parts.get(name);
+        if (previous != null && previous != part) throw new IllegalStateException("Part name already in use: " + name);
+        parts.put(name, part); ((Control) part).lifecycleOwner = this;
+        if (insideTree) { part.enterTree(treeContext, suspended, effectiveVisible); LifecycleScheduler.prepare(part); }
+        return part;
+    }
+    /** Pool ownership survives temporary detachment; it does not activate a detached view. */
+    public final <T extends Control> T ownPooled(T part) {
+        requireOwnership(part); pooled.add(part); ((Control) part).lifecycleOwner = this; return part;
+    }
+    private void requireOwnership(Control part) {
+        signalScope.checkThread(); part.signalScope.checkThread();
+        if (!isAlive() || !part.isAlive()) throw new IllegalStateException("Cannot own a pending/freed control");
+        if (part.lifecycleOwner != null && part.lifecycleOwner != this || part.parent != null && part.parent != this)
+            throw new IllegalStateException("Control already has a lifecycle owner");
+        for (Control node = this; node != null; node = node.parent != null ? node.parent : node.lifecycleOwner)
+            if (node == part) throw new IllegalArgumentException("Lifecycle ownership cycle");
+    }
+    public final java.util.Map<String, Control> ownedParts() { return java.util.Map.copyOf(parts); }
+    private List<Control> ownedSnapshot() {
+        java.util.Set<Control> seen = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        List<Control> result = new ArrayList<>();
+        for (Control c : children()) if (c.parent == this && seen.add(c)) result.add(c);
+        for (Control c : List.copyOf(parts.values())) if (seen.add(c)) result.add(c);
+        for (Control c : List.copyOf(pooled)) if (seen.add(c)) result.add(c);
+        return result;
+    }
+    private List<Control> activeOwnedSnapshot() {
+        java.util.Set<Control> seen = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        List<Control> result = new ArrayList<>();
+        for (Control c : children()) if (c.parent == this && seen.add(c)) result.add(c);
+        for (Control c : List.copyOf(parts.values())) if (seen.add(c)) result.add(c);
+        return result;
+    }
+    protected void notification(ControlNotification notification) { }
+    final ControlNotification notificationSnapshot(ControlNotification.Type type) {
+        return new ControlNotification(type, treeContext, insideTree, ready, effectiveVisible, treeEpoch);
+    }
+    final void deliverNotification(ControlNotification notice) {
+        if (isDisposed()) return;
+        if (!isAlive() && notice.type() == ControlNotification.Type.READY) return;
+        if (notice.type() == ControlNotification.Type.ENTER_TREE && notice.treeEpoch() == treeEpoch) enteredDelivered = true;
+        try { notification(notice); }
+        catch (RuntimeException error) { lifecycleError("notification " + notice.type(), error); }
+    }
+    private void lifecycleError(String phase, RuntimeException error) {
+        System.getLogger(Control.class.getName()).log(System.Logger.Level.ERROR, "Ore " + phase + ": " + debugName(), error);
+    }
+    final void enterTree(io.github.luyingyilong.ore.window.WindowContext context, boolean paused, boolean ancestorVisible) {
+        if (!isAlive() || insideTree) return;
+        treeContext = context; insideTree = true; enteredDelivered = false; treeEpoch++; suspended = paused; effectiveVisible = ancestorVisible && visible;
+        LifecycleScheduler.notify(this, ControlNotification.Type.ENTER_TREE);
+        for (Control c : activeOwnedSnapshot()) c.enterTree(context, paused, effectiveVisible);
+    }
+    /** Input proxies wait for their host's native adapter; ordinary controls are immediately ready. */
+    protected boolean lifecycleReady() { return true; }
+    final void readySubtree() {
+        if (!insideTree || !isAlive()) return;
+        for (Control c : activeOwnedSnapshot()) c.readySubtree();
+        if (ready || !enteredDelivered || !lifecycleReady()) return;
+        if (activeOwnedSnapshot().stream().anyMatch(c -> c.isAlive() && c.insideTree && !c.ready)) return;
+        ready = true;
+        deliverNotification(notificationSnapshot(ControlNotification.Type.READY));
+        Control owner = parent != null ? parent : lifecycleOwner;
+        if (owner != null && owner.insideTree && !owner.ready) LifecycleScheduler.prepare(owner);
+    }
+    final void exitTree() {
+        if (!insideTree) return;
+        for (Control c : activeOwnedSnapshot()) c.exitTree();
+        insideTree = false; suspended = false; effectiveVisible = false;
+        LifecycleScheduler.notify(this, ControlNotification.Type.EXIT_TREE);
+    }
+    final void suspendTree(boolean value) {
+        if (!isAlive() || !insideTree || suspended == value) return;
+        suspended = value;
+        LifecycleScheduler.notify(this, value ? ControlNotification.Type.SUSPENDED : ControlNotification.Type.RESUMED);
+        for (Control c : activeOwnedSnapshot()) c.suspendTree(value);
+    }
+    private void updateEffectiveVisibility(boolean ancestorVisible) {
+        boolean next = insideTree && visible && ancestorVisible;
+        if (effectiveVisible != next) { effectiveVisible = next; LifecycleScheduler.notify(this, ControlNotification.Type.VISIBILITY_CHANGED); }
+        for (Control c : activeOwnedSnapshot()) c.updateEffectiveVisibility(next);
+    }
+    final void freeNow() {
+        if (lifecycleState != LifecycleState.QUEUED_FOR_FREE) return;
+        try { preFreeSubtree(); LifecycleScheduler.notifications(); }
+        finally { try { exitTree(); LifecycleScheduler.notifications(); } finally { finishFree(); } }
+    }
+    private void preFreeSubtree() {
+        if (lifecycleState != LifecycleState.QUEUED_FOR_FREE) return;
+        lifecycleState = LifecycleState.FREEING;
+        LifecycleScheduler.notify(this, ControlNotification.Type.PRE_FREE);
+        for (Control c : freeOwned) c.preFreeSubtree();
+    }
+    private void finishFree() {
+        if (lifecycleState != LifecycleState.FREEING) return;
+        try {
+            for (Control c : freeOwned) {
+                try { if (c.lifecycleState == LifecycleState.QUEUED_FOR_FREE) c.freeNow(); else c.finishFree(); }
+                catch (RuntimeException error) { lifecycleError("owned cleanup", error); }
+            }
+        } finally {
+            try { signalScope.close(SignalDiagnostics.Reason.OWNER_DISPOSED); }
+            finally {
+                if (parent != null) {
+                    Control old = parent;
+                    try { old.removeChild(this); }
+                    catch (RuntimeException error) { lifecycleError("detach during cleanup", error); }
+                    finally { old.children.removeIf(node -> node == this); parent = null; old.requestLayout(); }
+                }
+                if (lifecycleOwner != null) { lifecycleOwner.parts.values().removeIf(c -> c == this); lifecycleOwner.pooled.remove(this); lifecycleOwner = null; }
+                children.clear(); parts.clear(); pooled.clear(); freeOwned = List.of(); bindingScope = null;
+                lifecycleState = LifecycleState.FREED;
+                publishLifecycle(); treeContext = null;
+            }
+        }
+    }
+
+    private void publishLifecycle() {
+        if (!DebugBridge.active()) return;
+        try { DebugBridge.backend().lifecycle(this, lifecycleInfo()); }
+        catch (RuntimeException error) { lifecycleError("diagnostic observer", error); }
+    }
+
+    public final void notifyFocusChanged(boolean focused) {
+        onFocusChanged(focused);
+        if (signalFocused == focused) return;
+        signalFocused = focused;
+        if (focused) focusEntered.emit(); else focusExited.emit();
+    }
     private String debugName = "";
     private Control parent;
     private final List<Control> children = new ArrayList<>();
@@ -113,7 +322,7 @@ public class Control {
 
     public int focusExpansion() { return focusExpansion; }
 
-    public boolean acceptsFocus() { return focusable && visible; }
+    public boolean acceptsFocus() { return isAlive() && !suspended && focusable && visible; }
 
     public boolean focusScope() { return false; }
 
@@ -139,14 +348,17 @@ public class Control {
     public void cancelInteraction() { }
 
     public final void cancelInteractions() {
-        cancelInteraction();
-        for (Control child : children) child.cancelInteractions();
+        try { cancelInteraction(); }
+        catch (RuntimeException error) { lifecycleError("cancel interaction", error); }
+        finally { for (Control child : ownedSnapshot()) child.cancelInteractions(); }
     }
 
     public void onFocusChanged(boolean focused) { }
     public io.github.luyingyilong.ore.window.WindowContext windowContext() {
         for (Control node = this; node != null; node = node.parent())
             if (node instanceof Window window) return window.context();
+        if (treeContext != null) return treeContext;
+        if (lifecycleOwner != null) return lifecycleOwner.windowContext();
         return io.github.luyingyilong.ore.window.WindowContext.current();
     }
     public Control parent() { return parent; }
@@ -154,32 +366,36 @@ public class Control {
 
     public Control addChild(Control child) {
         Objects.requireNonNull(child);
+        signalScope.checkThread();
+        if (!isAlive() || !child.isAlive()) throw new IllegalStateException("Cannot attach a disposed control");
         if (child.parent != null) throw new IllegalStateException("Control already has a parent");
         if (child == this) throw new IllegalArgumentException("Control cannot parent itself");
         for (Control ancestor = this; ancestor != null; ancestor = ancestor.parent)
             if (ancestor == child) throw new IllegalArgumentException("Control tree cannot contain a cycle");
+        child.signalScope.checkThread();
+        if (child.lifecycleOwner != null) {
+            boolean sameOwner = false;
+            for (Control n = this; n != null; n = n.parent) if (n == child.lifecycleOwner) sameOwner = true;
+            if (!sameOwner) throw new IllegalStateException("Control belongs to another lifecycle owner");
+        }
         child.parent = this;
         children.add(child);
+        if (insideTree) { child.enterTree(treeContext, suspended, effectiveVisible); LifecycleScheduler.prepare(child); }
         requestLayout();
         return this;
     }
 
     public boolean removeChild(Control child) {
-        if (!children.contains(child)) return false;
+        signalScope.checkThread();
+        if (child == null || child.parent != this) return false;
         if(windowContext().owner()!=null)windowContext().owner().focusManager().forgetSubtree(child);
-        child.detachSubtree();
-        children.remove(child);
+        child.exitTree();
+        children.removeIf(node -> node == child);
         child.cancelInteractions();
         DebugBridge.backend().removed(child);
         child.parent = null;
         requestLayout();
         return true;
-    }
-
-    protected void onDetached() { }
-    private void detachSubtree() {
-        for(Control child:children())child.detachSubtree();
-        onDetached();
     }
 
     /** Free controls can place children; a Container owns its children's rectangles. */
@@ -212,7 +428,7 @@ public class Control {
     /** Resource reloads can change glyph advances without changing the text itself. */
     public void invalidateTextLayout() {
         requestLayout();
-        for (Control child : children) child.invalidateTextLayout();
+        for (Control child : ownedSnapshot()) if (child.isAlive()) child.invalidateTextLayout();
     }
 
     public int minimumWidth() {
@@ -232,7 +448,9 @@ public class Control {
                 if(windowContext().owner()!=null)windowContext().owner().cancelCaptures(this,CancelEvent.Reason.DETACHED);
                 cancelInteractions();
             }
+            updateEffectiveVisibility(parent != null ? parent.effectiveVisible : lifecycleOwner != null ? lifecycleOwner.effectiveVisible : true);
             requestLayout();
+            visibilityChanged.emit(visible);
         }
     }
     /** Layout translation shared by rendering, descendants, hit testing and focus. */
@@ -281,17 +499,20 @@ public class Control {
     }
 
     public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0;
         int minimumWidth = DebugBridge.value(this, "minimumWidth", this.minimumWidth);
         int preferredWidth = DebugBridge.value(this, "preferredWidth", this.preferredWidth);
         return Math.max(minimumWidth, preferredWidth);
     }
     public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0;
         int minimumHeight = DebugBridge.value(this, "minimumHeight", this.minimumHeight);
         int preferredHeight = DebugBridge.value(this, "preferredHeight", this.preferredHeight);
         return Math.max(minimumHeight, preferredHeight);
     }
     /** The desired size before layout, which may differ from the current size. */
     public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         int minimumWidth = DebugBridge.value(this, "minimumWidth", this.minimumWidth);
         int minimumHeight = DebugBridge.value(this, "minimumHeight", this.minimumHeight);
         return new Size(Math.max(minimumWidth, measureWidth(font, available.width())),
@@ -300,6 +521,7 @@ public class Control {
 
     /** Containers use this envelope so overrides of natural measurement still respect preferences. */
     public final Size desiredSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         Size natural = measureSize(font, available);
         int width = Math.max(natural.width(), debugValue("preferredWidth", preferredWidth));
         int height = Math.max(natural.height(), debugValue("preferredHeight", preferredHeight));
@@ -308,19 +530,27 @@ public class Control {
 
     /** Coordinates are relative to the parent control. */
     public void layout(Rect localBounds, Font font) {
-        layoutFont=font;
-        bounds = localBounds;
-        layoutDirty = false;
-        if (!(this instanceof Container))
-            for (Control child : children)
-                if (child.visible()) child.layout(child.debugRequestedBounds(), font);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            if (bounds.width() != localBounds.width() || bounds.height() != localBounds.height()) LifecycleScheduler.resized(this);
+            layoutFont=font;
+            bounds = localBounds;
+            layoutDirty = false;
+            if (!(this instanceof Container))
+                for (Control child : children())
+                    if (child.parent == this && child.isAlive() && child.visible()) child.layout(child.debugRequestedBounds(), font);
+        }
     }
 
     public void draw(ModularGuiContext context, int screenX, int screenY) {
-        DebugBridge.backend().paint(this, context, screenX, screenY);
-        render(context, screenX, screenY);
-        for (Control child : children)
-            if (child.visible()) child.draw(context, screenX, screenY);
+        if (!isAlive()) return;
+        try (var phase = DispatchGuard.enter()) {
+            DebugBridge.backend().paint(this, context, screenX, screenY);
+            List<Control> snapshot = children();
+            render(context, screenX, screenY);
+            for (Control child : snapshot)
+                if (child.parent == this && child.isAlive() && child.visible()) child.draw(context, screenX, screenY);
+        }
     }
 
     protected void render(ModularGuiContext context, int screenX, int screenY) {
@@ -353,14 +583,17 @@ public class Control {
     }
 
     public boolean hit(int rootX, int rootY) {
-        return visible && absoluteBounds().contains(rootX, rootY);
+        return isAlive() && visible && absoluteBounds().contains(rootX, rootY);
     }
 
     /** Last drawn child is hit first. Children may overflow their parent's bounds. */
     public Control hitTop(int rootX, int rootY) {
-        if (!visible) return null;
-        for (int index = children.size() - 1; index >= 0; index--) {
-            Control hit = children.get(index).hitTop(rootX, rootY);
+        if (!isAlive() || !visible) return null;
+        List<Control> snapshot = children();
+        for (int index = snapshot.size() - 1; index >= 0; index--) {
+            Control child = snapshot.get(index);
+            if (child.parent != this || !child.isAlive()) continue;
+            Control hit = child.hitTop(rootX, rootY);
             if (hit != null) return hit;
         }
         return hit(rootX, rootY) ? this : null;

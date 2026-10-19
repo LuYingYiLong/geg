@@ -36,6 +36,7 @@ public final class Panel extends Container {
     }
 
     @Override public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         Size childSize = child == null ? new Size(0, 0) : child.desiredSize(font, available);
         return new Size(Math.max(minimumWidth(), childSize.width()),
                 Math.max(minimumHeight(), childSize.height()));
@@ -43,20 +44,27 @@ public final class Panel extends Container {
 
     @Override
     public void layout(Rect localBounds, Font font) {
-        super.layout(localBounds, font);
-        if (child != null) fitChild(child, new Rect(0, 0,
-                Math.max(child.minimumWidth(), localBounds.width()),
-                Math.max(child.minimumHeight(), localBounds.height())), font);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(localBounds, font);
+            if (child != null) fitChild(child, new Rect(0, 0,
+                    Math.max(child.minimumWidth(), localBounds.width()),
+                    Math.max(child.minimumHeight(), localBounds.height())), font);
+        }
     }
 
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
-        DebugBridge.backend().paint(this, context, screenX, screenY);
-        drawAt(context, screenBounds(screenX, screenY));
-        if (child != null && child.visible()) child.draw(context, screenX, screenY);
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            DebugBridge.backend().paint(this, context, screenX, screenY);
+            drawAt(context, screenBounds(screenX, screenY));
+            if (child != null && (child.isAlive() && child.visible())) child.draw(context, screenX, screenY);
+        }
     }
 
     public void drawAt(ModularGuiContext context, Rect area) {
+        if (!isAlive()) return;
         WidgetThemeEntry<WidgetTheme> entry = themeKey == null ? null
                 : context.getTheme().getWidgetTheme(themeKey);
         WidgetTheme style = entry == null ? context.getTheme().getPanelTheme().theme() : entry.theme();

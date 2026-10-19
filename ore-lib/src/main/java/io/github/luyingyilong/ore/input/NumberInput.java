@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore.input;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.TextFieldTheme;
 import io.github.luyingyilong.ore.theme.OreTheme;
@@ -10,6 +12,8 @@ import java.util.Objects;
 
 /** An Input whose committed value is an exact integer or fixed-precision decimal. */
 public final class NumberInput extends Input {
+    private final SignalSource<BigDecimal> valueCommitted = new SignalSource<>(this, "valueCommitted", "BigDecimal");
+    public Signal<BigDecimal> valueCommitted() { return valueCommitted.signal(); }
     /** WARNING keeps invalid text; CLAMP applies bounds on Enter, focus loss or Form submission. */
     public enum BoundaryStrategy { WARNING, CLAMP }
 
@@ -93,6 +97,7 @@ public final class NumberInput extends Input {
             String formatted = rules.resolve(getText());
             if (!editingHandler().replaceAll(formatted)) throw new IllegalArgumentException("Invalid formatted value");
             clearError();
+            valueCommitted.emit(new BigDecimal(formatted));
             return true;
         } catch (NumberInputRules.OutOfBounds exception) {
             setError(rangeError());
@@ -104,8 +109,8 @@ public final class NumberInput extends Input {
     }
 
     @Override protected void onTextChanged() {
-        super.onTextChanged();
         if (rules != null) refreshRangeWarning();
+        super.onTextChanged();
     }
 
     @Override protected void drawText(ModularGuiContext context, TextFieldTheme theme) {

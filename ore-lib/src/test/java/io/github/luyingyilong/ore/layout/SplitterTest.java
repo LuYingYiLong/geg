@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore.layout;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.Divider;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,7 @@ public final class SplitterTest {
         Divider line = (Divider)split.children().get(2);
         check(line.layout()==Divider.Layout.VERTICAL && line.bounds().width()==1,"Side-by-side panes use the shared vertical Divider");
         List<String> events = new ArrayList<>();
-        split.onResizeStart(size->events.add("start")).onResize(size->events.add("resize:"+size.first())).onResizeEnd(size->events.add("end:"+size.first()));
+        Signals.configure(Signals.configure(Signals.configure(split, connected -> connected.resizeStarted().connect(connected, size->events.add("start"))), connected -> connected.resized().connect(connected, size->events.add("resize:"+size.first()))), connected -> connected.resizeEnded().connect(connected, size->events.add("end:"+size.first())));
         split.showDivider(false);
         check(!line.visible() && io.github.luyingyilong.ore.event.WindowInputs.press(root,101,40,null),"Invisible divider keeps its drag hit area");
         io.github.luyingyilong.ore.event.WindowInputs.move(root,141,40); io.github.luyingyilong.ore.event.WindowInputs.release(root,141,40); root.layoutViewport(204,100,null);

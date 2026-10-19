@@ -81,6 +81,7 @@ public final class Form extends Container {
     }
 
     @Override public Size measureSize(Font font, Size available) {
+        if (!isAlive()) return new Size(0, 0);
         boolean horizontal = effectiveLayout(layout, available.width()) == Layout.HORIZONTAL;
         int height = 0;
         for (FormItem item : items.values()) if (item.active()) {
@@ -92,18 +93,21 @@ public final class Form extends Container {
     }
 
     @Override public void layout(Rect bounds, Font font) {
-        super.layout(bounds, font);
-        boolean horizontal = effectiveLayout(layout, bounds.width()) == Layout.HORIZONTAL;
-        int top = 0;
-        for (FormItem item : items.values()) {
-            item.horizontal(horizontal);
-            item.visible(item.active());
-            if (!item.active()) continue;
-            int height = item.rowHeight(font, bounds.width());
-            fitChild(item, new Rect(0, top, bounds.width(), height), font);
-            top += height;
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(bounds, font);
+            boolean horizontal = effectiveLayout(layout, bounds.width()) == Layout.HORIZONTAL;
+            int top = 0;
+            for (FormItem item : items.values()) {
+                item.horizontal(horizontal);
+                item.visible(item.active());
+                if (!item.active()) continue;
+                int height = item.rowHeight(font, bounds.width());
+                fitChild(item, new Rect(0, top, bounds.width(), height), font);
+                top += height;
+            }
+            lastBottom = bounds.y() + top;
         }
-        lastBottom = bounds.y() + top;
     }
 
     /** Compatibility entry point until a modal directly owns the Form node. */

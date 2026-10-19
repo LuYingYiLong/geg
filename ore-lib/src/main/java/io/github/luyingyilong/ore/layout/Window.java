@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore.layout;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.event.*;
@@ -17,13 +19,12 @@ import org.lwjgl.glfw.GLFW;
 public final class Window extends Container {
     private final boolean fullscreen;
     private final FocusManager focusManager = new FocusManager(this);
-    private final FocusOverlay focusOverlay = new FocusOverlay(focusManager);
+    private final FocusOverlay focusOverlay = ownPart("focusOverlay", new FocusOverlay(focusManager));
     private WindowHost host;
     private boolean inspectable = true;
 
     private boolean closedNotified;
-    private Runnable onClosed = () -> {
-    };
+    private final SignalSource0 closed = new SignalSource0(this, "closed");
     private Control content;
     private Overlay overlay;
     private int fontRevision = -1;
@@ -38,6 +39,7 @@ public final class Window extends Container {
         this.fullscreen = fullscreen;
         host = new EmbeddedWindowHost();
         host.context().owner(this);
+        signalScope().own(this::releaseHost);
     }
 
     public static Window embedded() {
@@ -63,6 +65,7 @@ public final class Window extends Container {
     }
 
     public Window open() {
+        if (!isAlive()) throw new IllegalStateException("Cannot open a pending/freed window");
         closedNotified = false;
         host.open(this);
         return this;
@@ -75,7 +78,7 @@ public final class Window extends Container {
         io.github.luyingyilong.ore.input.OreInputMethod.releaseWindow(context());
         DebugBridge.backend().close(this);
         host.close();
-        onClosed.run();
+        closed.emit();
     }
 
     public void hostClosed() {
@@ -85,16 +88,47 @@ public final class Window extends Container {
         io.github.luyingyilong.ore.input.OreInputMethod.releaseWindow(context());
         DebugBridge.backend().close(this);
         if (host instanceof EmbeddedWindowHost embedded) embedded.detached();
-        onClosed.run();
+        closed.emit();
+    }
+
+    /** MUI releases panels while retaining their Screen for back navigation. */
+    public void hostDetached() {
+        suspendTree(true);
+        cancelInteractions();
+        io.github.luyingyilong.ore.input.OreInputMethod.releaseWindow(context());
+        if (host instanceof EmbeddedWindowHost embedded) embedded.detached();
+    }
+
+    public void prepareTree(ModularGuiContext mui) {
+        context().bind(mui);
+        if (host instanceof EmbeddedWindowHost embedded) { embedded.attached(); WindowManager.embedded(this); }
+        prepareTree();
+    }
+
+    public void prepareTree() {
+        if (!isAlive()) return;
+        if (!isInsideTree()) enterTree(context(), false, true);
+        else suspendTree(false);
+        LifecycleScheduler.prepare(this);
+        LifecycleScheduler.notifications();
     }
 
     public void requestFocus() {
         host.requestFocus();
     }
 
-    public Window onClosed(Runnable action) {
-        onClosed = java.util.Objects.requireNonNull(action);
-        return this;
+    public Signal0 closed() { return closed.signal(); }
+
+    @Override protected void notification(ControlNotification notice) {
+        if (notice.type() == ControlNotification.Type.PRE_FREE) hostClosed();
+    }
+
+    private void releaseHost() {
+        context().popups().cancel();
+        hostClosed();
+        DebugBridge.backend().close(this);
+        if (host instanceof EmbeddedWindowHost embedded) embedded.detached();
+        else host.close();
     }
 
     public boolean inspectable() {
@@ -168,12 +202,13 @@ public final class Window extends Container {
 
     /** The sole event entrance for embedded, native and business hosts. */
     public boolean dispatchInput(InputEvent event) {
+        if (!isAlive() || isSuspended()) return false;
         if (event.context() != context()) throw new IllegalArgumentException("Event belongs to another Window");
         if(event.dispatched())throw new IllegalStateException("InputEvent already dispatched");
         if (inputThread == null) inputThread = Thread.currentThread();
         if (Thread.currentThread() != inputThread) throw new IllegalStateException("Input must run on the client thread");
         if (dispatching != null) throw new IllegalStateException("Reentrant input dispatch");
-        try (var ignored = context().enter()) {
+        try (var lifecycleGuard = DispatchGuard.enter(); var ignored = context().enter(); var trace = SignalDiagnostics.suppress(!inspectable)) {
             dispatching = event;
             context().modifiers(event.modifiers());
             if(event instanceof KeyEvent key)context().key(key.keyCode(),key.action()==KeyEvent.Action.RELEASE?0:1,key.modifiers());
@@ -272,7 +307,7 @@ public final class Window extends Container {
         if (context().popups().open()) return null;
         if (!visible() || !hit(rootX, rootY)) return null;
         for (Control node = pointerTarget(rootX, rootY); node != null && node != this; node = node.parent()) {
-            if (!node.visible()) return null;
+            if ((!node.isAlive() || !node.visible())) return null;
             if (node.hasTooltip() && focusManager.allowsNativeInput(node)) return node;
         }
         return null;
@@ -298,7 +333,7 @@ public final class Window extends Container {
 
     private boolean attachedAndVisible(Control target) {
         for(Control node=target;node!=null;node=node.parent()) {
-            if(!node.visible())return false;
+            if((!node.isAlive() || !node.visible()))return false;
             if(node==this)return true;
         }
         return false;
@@ -336,6 +371,10 @@ public final class Window extends Container {
     }
 
     public void layoutViewport(int width, int height, Font font) {
+        if (!isAlive()) return;
+        if (isInsideTree()) prepareTree();
+
+        if (!isAlive()) return;
         validateCaptures();
         context().popups().synchronize();
         if (fontRevision != OreFonts.revision()) {
@@ -345,28 +384,34 @@ public final class Window extends Container {
         int actualWidth = fullscreen ? width : Math.min(width, measureWidth(font, width));
         int actualHeight = fullscreen ? height : Math.min(height, measureHeight(font, height));
         layout(new Rect(0, 0, actualWidth, actualHeight), font);
+        LifecycleScheduler.notifications();
     }
 
     @Override
     public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0;
         return content == null ? 0 : content.measureWidth(font, available);
     }
 
     @Override
     public int measureHeight(Font font, int available) {
+        if (!isAlive()) return 0;
         return content == null ? 0 : content.measureHeight(font, available);
     }
 
     @Override
     public void layout(Rect localBounds, Font font) {
-        super.layout(localBounds, font);
-        Rect full = new Rect(0, 0, localBounds.width(), localBounds.height());
-        if (content != null) fitChild(content, full, font);
-        if (overlay != null) layoutChild(overlay, full, font);
+        try (var phase = DispatchGuard.enter(); var trace = SignalDiagnostics.suppress(!inspectable)) {
+            super.layout(localBounds, font);
+            Rect full = new Rect(0, 0, localBounds.width(), localBounds.height());
+            if (content != null) fitChild(content, full, font);
+            if (overlay != null) layoutChild(overlay, full, font);
+        }
     }
 
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
+        if (!isAlive()) return;
         if (!visible()) return;
         this.context().bind(context);
         this.context().origin(screenX,screenY);
@@ -377,18 +422,20 @@ public final class Window extends Container {
             this.context().dimensions(context.getScreenArea().width, context.getScreenArea().height,
                     context.getScreenArea().width, context.getScreenArea().height, 1);
         }
-        try (var frame = this.context().enter()) {
+        try (var phase = DispatchGuard.enter(); var frame = this.context().enter(); var trace = SignalDiagnostics.suppress(!inspectable)) {
             if(host instanceof EmbeddedWindowHost && dispatching==null) {
                 int x=context.getAbsMouseX()-screenX,y=context.getAbsMouseY()-screenY;
                 if(x!=lastPointerX||y!=lastPointerY)
                     dispatchInput(new PointerEvent(this.context(),PointerEvent.Action.MOVE,x,y,0,this.context().modifiers()));
             }
+            Control body = content;
+            Overlay layers = overlay;
             DebugBridge.backend().begin(this, context, screenX, screenY);
             DebugBridge.backend().paint(this, context, screenX, screenY);
             Rect area = screenBounds(screenX, screenY);
             context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.OVERLAY_COLOR);
-            if (content != null) content.draw(context, screenX, screenY);
-            if (overlay != null) overlay.draw(context, screenX, screenY);
+            if (body != null && body.parent() == this && body.isAlive()) body.draw(context, screenX, screenY);
+            if (layers != null && layers.parent() == this && layers.isAlive()) layers.draw(context, screenX, screenY);
 
             focusManager.synchronizeNativeFocus(context);
             focusOverlay.draw(context, screenX, screenY);

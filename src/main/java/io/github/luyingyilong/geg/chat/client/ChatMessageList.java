@@ -60,10 +60,6 @@ public final class ChatMessageList extends Container {
         sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
     }
 
-    private static Label body(ChatMessage item) {
-        return new Label(item.text()).wrap(Label.Wrap.WORD);
-    }
-
     private static boolean system(ChatMessage item) {
         return item.sender().equals(ChatChannel.NONE);
     }
@@ -74,8 +70,9 @@ public final class ChatMessageList extends Container {
     }
 
     static int messageHeight(ChatMessage item, int width, Font font) {
-        return system(item) ? body(item).measureHeight(font, Math.max(1, width))
-                : Math.max(24, body(item).measureHeight(font, Math.max(1, width - 28)) + 14);
+        int textHeight = Label.measureTextHeight(font, item.text(), Math.max(1, system(item) ? width : width - 28),
+                Label.Wrap.WORD, Label.Overflow.VISIBLE, Integer.MAX_VALUE);
+        return system(item) ? textHeight : Math.max(24, textHeight + 14);
     }
 
     public void messages(List<ChatMessage> next) {

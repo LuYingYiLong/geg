@@ -1,5 +1,6 @@
 package io.github.luyingyilong.geg.organization.client;
 
+
 import io.github.luyingyilong.ore.Descriptions;
 import io.github.luyingyilong.ore.Button;
 import io.github.luyingyilong.ore.Label;
@@ -46,7 +47,7 @@ final class OrganizationDetailsContent extends Container {
     }
 
     Descriptions descriptions() { return info; }
-    void onEdit(Runnable action) { edit.onPress(action); }
+    io.github.luyingyilong.ore.signal.Signal0 editRequested() { return edit.pressed(); }
     void editable(boolean editable) { edit.visible(editable); }
     Button editButton() { return edit; }
 

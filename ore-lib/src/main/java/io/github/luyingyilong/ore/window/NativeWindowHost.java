@@ -326,6 +326,7 @@ public final class NativeWindowHost implements WindowHost {
             mui.pushViewport(null, mui.getScreenArea());
             try {
                 Stencil.reset();
+                root.prepareTree(mui);
                 root.layoutViewport(context.guiWidth(), context.guiHeight(), mc.font);
                 for (InputControl input : inputs) {
                     var area = input.widget().getArea();
@@ -376,6 +377,13 @@ public final class NativeWindowHost implements WindowHost {
     }
 
     void destroy() {
+        if (io.github.luyingyilong.ore.signal.DispatchGuard.active()) {
+            closing = true;
+            if (root != null) root.queueFree("host ended");
+            return;
+        }
+        if (root != null) { root.hostClosed(); root.queueFree("host ended"); }
+        io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
         OreInputMethod.releaseWindow(context);
         if (screen != null && screen.getContext().isFocused()) screen.getContext().removeFocus();
         for (InputControl input : inputs) input.widget().dispose();
@@ -406,6 +414,7 @@ public final class NativeWindowHost implements WindowHost {
         screen = null;
         events.clear();
         WindowManager.remove(this);
+
     }
 
     private final class DetachedMuiScreen extends ModularScreen {

@@ -1,5 +1,9 @@
 package io.github.luyingyilong.geg.organization.client;
 
+import io.github.luyingyilong.ore.Button;
+
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.Drawer;
 import io.github.luyingyilong.ore.PlayerIdentityCell;
 import io.github.luyingyilong.ore.Table;
@@ -41,7 +45,7 @@ public final class OrganizationDetailsLayoutTest {
                 .equals("organization.geg.join_approval"), "Joining policy remains localized");
 
         Drawer drawer = new Drawer(Component.literal("公社")).animationDuration(0).content(content)
-                .action(Component.literal("加入申请"), () -> { });
+                .addAction(Signals.configure(new Button(Component.literal("加入申请")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
         Window window = new Window(true).content(new Control()).overlay(new Overlay().add(drawer));
         drawer.open();
         for (int width : new int[]{127, 128, 129, 427, 640}) {

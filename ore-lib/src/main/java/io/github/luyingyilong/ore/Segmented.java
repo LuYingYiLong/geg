@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.signal.*;
+
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
 import brachy.modularui.api.drawable.IDrawable;
@@ -18,7 +20,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
-import java.util.function.IntConsumer;
 
 /** Content-sized single-choice options; FILL/EXPAND distributes any additional width. */
 public final class Segmented extends Control {
@@ -27,6 +28,7 @@ public final class Segmented extends Control {
     private static final int TEXT_PADDING = 4;
 
     private final List<Component> options;
+    private final List<Label> optionLabels;
     private final Button.Size size;
     private int selectedIndex;
     private int focusedIndex;
@@ -34,7 +36,7 @@ public final class Segmented extends Control {
     private int scrollX;
     private boolean revealSelected = true;
     private int lastViewportWidth = -1;
-    private IntConsumer onSelect = index -> { };
+    private final SignalSource<Integer> selectionChanged = new SignalSource<>(this, "selectionChanged", "Integer");
     private Font layoutFont;
     private final ReleaseGesture<Integer> gesture = new ReleaseGesture<>();
 
@@ -47,18 +49,25 @@ public final class Segmented extends Control {
             throw new IllegalArgumentException("Segmented requires at least one option");
         }
         this.options = List.copyOf(options);
+        optionLabels = options.stream().map(option -> new Label(option).opticalCenter(true)
+                .overflow(Label.Overflow.CLIP).align(Label.Horizontal.CENTER, Label.Vertical.CENTER)).toList();
+        for (int i = 0; i < optionLabels.size(); i++) ownPart("option_" + i, optionLabels.get(i));
         this.size = java.util.Objects.requireNonNull(size);
         minimum(0, size.height());
         focusable(true);
         focusExpansion(1);
     }
 
-    public Segmented onSelect(IntConsumer onSelect) {
-        this.onSelect = java.util.Objects.requireNonNull(onSelect);
+    public Signal<Integer> selectionChanged() { return selectionChanged.signal(); }
+
+    public Segmented selected(int index) {
+        int previous = selectedIndex;
+        setSelectedNoSignal(index);
+        if (previous != selectedIndex) selectionChanged.emit(selectedIndex);
         return this;
     }
 
-    public Segmented selected(int index) {
+    public Segmented setSelectedNoSignal(int index) {
         int next = Math.max(0, Math.min(options.size() - 1, index));
         if (next != selectedIndex) {
             cancelInteraction();
@@ -70,6 +79,7 @@ public final class Segmented extends Control {
     }
 
     public int selected() { return selectedIndex; }
+
     public int scrollX() { return scrollX; }
 
     @Override public void invalidateTextLayout() {
@@ -121,7 +131,6 @@ public final class Segmented extends Control {
         OreSounds.play(OreSounds.Cue.CLICK);
         selected(index);
         focusedIndex = index;
-        onSelect.accept(selectedIndex);
         return true;
     }
 
@@ -133,6 +142,7 @@ public final class Segmented extends Control {
     }
 
     @Override public int measureWidth(Font font, int available) {
+        if (!isAlive()) return 0;
         return Math.max(super.measureWidth(font, available), minimumRowWidth(font));
     }
 
@@ -148,16 +158,19 @@ public final class Segmented extends Control {
     }
 
     @Override public void layout(Rect bounds, Font font) {
-        super.layout(bounds, font);
-        layoutFont = font;
-        if (lastViewportWidth != bounds.width()) {
-            lastViewportWidth = bounds.width();
-            revealSelected = true;
-        }
-        if (font != null && revealSelected && bounds.width() > 0) {
-            int contentWidth = Math.max(bounds.width(), minimumRowWidth(font));
-            ensureSelectedVisible(contentWidth, bounds.width());
-            revealSelected = false;
+        if (!isAlive()) return;
+        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            super.layout(bounds, font);
+            layoutFont = font;
+            if (lastViewportWidth != bounds.width()) {
+                lastViewportWidth = bounds.width();
+                revealSelected = true;
+            }
+            if (font != null && revealSelected && bounds.width() > 0) {
+                int contentWidth = Math.max(bounds.width(), minimumRowWidth(font));
+                ensureSelectedVisible(contentWidth, bounds.width());
+                revealSelected = false;
+            }
         }
     }
 
@@ -267,12 +280,11 @@ public final class Segmented extends Control {
                         optionWidth, height - inset, style);
             }
 
-            Label text = new Label(options.get(index)).opticalCenter(true)
-                    .color(style.getTextColor()).shadow(style.isTextShadow()).overflow(Label.Overflow.CLIP)
-                    .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
+            Label text = optionLabels.get(index).color(style.getTextColor()).shadow(style.isTextShadow());
             text.layout(new Rect(
                             optionX + TEXT_PADDING, y + topInset,
                             Math.max(0, optionWidth - 2 * TEXT_PADDING), height), context.getFont());
+            DebugBridge.backend().internal(this, "option_" + index, text);
             text.draw(context, 0, 0);
 
             if (selected && optionWidth > 0 && height > 0) {

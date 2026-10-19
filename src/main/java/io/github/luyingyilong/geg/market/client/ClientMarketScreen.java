@@ -145,7 +145,7 @@ public final class ClientMarketScreen {
     static void setTradeQuantity(int value) {
         String text = Integer.toString(value);
         tradeQuantityValue.setStringValue(text);
-        tradeQuantity.setText(text);
+        tradeQuantity.setTextNoSignal(text);
         tradeQuantity.clearError();
     }
 
@@ -157,13 +157,13 @@ public final class ClientMarketScreen {
             quantity.availableMaximum(java.math.BigDecimal.valueOf(Integer.MAX_VALUE));
             String text = Integer.toString(initialQuantity);
             quantityValue.setStringValue(text);
-            quantity.setText(text);
+            quantity.setTextNoSignal(text);
             quantity.clearError();
         }
         if (showPrice) {
             String text = io.github.luyingyilong.geg.money.MoneyCurrency.COIN.format(initialPrice);
             priceValue.setStringValue(text);
-            price.setText(text);
+            price.setTextNoSignal(text);
             price.clearError();
         }
     }

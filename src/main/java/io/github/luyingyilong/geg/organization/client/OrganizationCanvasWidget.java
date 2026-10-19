@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.organization.client;
 
+import io.github.luyingyilong.ore.signal.Signals;
+
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
 import brachy.modularui.api.widget.Interactable;
@@ -50,6 +52,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private final Overlay overlay = new Overlay();
     private final Box options = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
     private final Box memberships = new Box().gap(4);
+    private final Box organizationList = new Box().gap(0);
     private final Scroll membershipsScroll = new Scroll().horizontal(Scroll.BarMode.DISABLED);
     private final Label emptyText;
     private final Form createForm;
@@ -76,6 +79,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
         memberships.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
         membershipsScroll.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        initializeMemberships();
         window.content(memberships).overlay(overlay);
 
         options.add(option(OreIcons.FLAG, "organization.geg.create",
@@ -87,40 +91,36 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                 .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
         emptyText.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Box emptyBody = new Box().gap(8).add(emptyText).add(options);
-        emptyDialog = new Dialog(270, 0, 0, Component.translatable("organization.geg.title"))
-                .content(emptyBody).onClose(this::closeEmptyDialog);
+        emptyDialog = Signals.configure(new Dialog(270, 0, 0, Component.translatable("organization.geg.title"))
+                .content(emptyBody), connected -> connected.closeRequested().connect(connected, this::closeEmptyDialog));
 
         createForm.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        createDrawer = new Drawer(Component.translatable("organization.geg.create"))
-                .content(createForm).onClose(this::onCreateClosed)
-                .action(Component.translatable("organization.geg.back"), this::closeCreate)
-                .action(Component.translatable("organization.geg.create_action"),
-                        this::submitCreate, Button.Type.PRIMARY);
-        detailDrawer = new Drawer(Component.empty()).content(organizationDetails)
-                .onClose(this::onDetailsClosed);
-        organizationDetails.onEdit(this::showEdit);
-        editModal = new Modal(Component.translatable("organization.geg.edit_title"))
-                .size(300, 0).centered().content(editor.content()).onClose(this::closeEdit)
-                .action(Component.translatable("organization.geg.back"), this::closeEdit)
-                .action(Component.translatable("organization.geg.save"), this::submitEdit, Button.Type.PRIMARY)
+        createDrawer = Signals.configure(new Drawer(Component.translatable("organization.geg.create"))
+                .content(createForm), connected -> connected.closed().connect(connected, this::onCreateClosed))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.back")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeCreate)))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.create_action")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::submitCreate)));
+        detailDrawer = Signals.configure(new Drawer(Component.empty()).content(organizationDetails), connected -> connected.closed().connect(connected, this::onDetailsClosed));
+        organizationDetails.editRequested().connect(window, this::showEdit);
+        editModal = Signals.configure(new Modal(Component.translatable("organization.geg.edit_title"))
+                .size(300, 0).centered().content(editor.content()), connected -> connected.closeRequested().connect(connected, this::closeEdit))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.back")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeEdit)))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.save")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::submitEdit)))
                 .depth(400.0F);
         applicationTable.headerVisible(false).minimum(0, 60)
                 .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        applicationsModal = new Modal(Component.translatable("organization.geg.applications"))
-                .content(applicationTable).onClose(this::closeApplications).depth(300.0F);
+        applicationsModal = Signals.configure(new Modal(Component.translatable("organization.geg.applications"))
+                .content(applicationTable), connected -> connected.closeRequested().connect(connected, this::closeApplications)).depth(300.0F);
         joinTable.headerVisible(false).minimum(0, 60)
                 .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        joinDrawer = new Drawer(Component.translatable("organization.geg.join"))
-                .content(joinTable).onClose(this::onJoinClosed);
+        joinDrawer = Signals.configure(new Drawer(Component.translatable("organization.geg.join"))
+                .content(joinTable), connected -> connected.closed().connect(connected, this::onJoinClosed));
         Label warning = new Label(Component.translatable("organization.geg.confirm_disband_body"))
                 .wrap(Label.Wrap.WORD).color(OreTheme.TEXT_SECONDARY);
         warning.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        disbandConfirmation = new Modal(Component.translatable("organization.geg.confirm_disband"))
-                .content(warning).onClose(this::closeDisbandConfirmation)
-                .action(Component.translatable("organization.geg.back"),
-                        this::closeDisbandConfirmation)
-                .action(Component.translatable("organization.geg.disband"),
-                        this::confirmDisband, Button.Type.DESTRUCTIVE)
+        disbandConfirmation = Signals.configure(new Modal(Component.translatable("organization.geg.confirm_disband"))
+                .content(warning), connected -> connected.closeRequested().connect(connected, this::closeDisbandConfirmation))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.back")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeDisbandConfirmation)))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.disband")).type(Button.Type.DESTRUCTIVE), actionButton -> actionButton.pressed().connect(actionButton, this::confirmDisband)))
                 .depth(400.0F);
         overlay.add(emptyDialog).add(createDrawer).add(detailDrawer)
                 .add(joinDrawer).add(applicationsModal).add(disbandConfirmation).add(editModal);
@@ -138,7 +138,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private static Panel option(ResourceLocation icon, String label, Runnable action) {
         IconControl image = new IconControl(icon);
         image.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Button button = new Button(Component.translatable(label)).onPress(action);
+        Button button = Signals.configure(new Button(Component.translatable(label)), connected -> connected.pressed().connect(connected, action));
         button.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Box column = new Box().gap(6).add(image).add(button);
         Panel panel = new Panel(null).child(new Padding(Padding.Insets.all(4)).child(column));
@@ -164,9 +164,9 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     private final class MemberActions extends Container {
         private UUID memberId;
-        private final Dropdown<OrganizationSavedData.Operation> menu = new Dropdown<OrganizationSavedData.Operation>(null, 6)
+        private final Dropdown<OrganizationSavedData.Operation> menu = Signals.configure(new Dropdown<OrganizationSavedData.Operation>(null, 6)
                 .triggerLabel(Component.translatable("organization.geg.actions"))
-                .checkable(false).onSelect(operation -> chooseOperation(operation, memberId));
+                .checkable(false), connected -> connected.itemActivated().connect(connected, operation -> chooseOperation(operation, memberId)));
         private MemberActions() { addChild(menu); }
         private void bind(OrganizationSyncPacket.Member member) {
             if(!java.util.Objects.equals(memberId,member.id()))menu.close();
@@ -197,12 +197,10 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     private final class ApplicationActions extends Container {
         private OrganizationSyncPacket.Application application;
-        private final Button reject = new Button(Component.translatable("organization.geg.reject"))
-                .size(Button.Size.SMALL).type(Button.Type.DESTRUCTIVE)
-                .onPressed(() -> review(OrganizationSavedData.Operation.REJECT));
-        private final Button approve = new Button(Component.translatable("organization.geg.approve"))
-                .size(Button.Size.SMALL).type(Button.Type.PRIMARY)
-                .onPressed(() -> review(OrganizationSavedData.Operation.APPROVE));
+        private final Button reject = Signals.configure(new Button(Component.translatable("organization.geg.reject"))
+                .size(Button.Size.SMALL).type(Button.Type.DESTRUCTIVE), connected -> connected.pressed().connect(connected, () -> review(OrganizationSavedData.Operation.REJECT)));
+        private final Button approve = Signals.configure(new Button(Component.translatable("organization.geg.approve"))
+                .size(Button.Size.SMALL).type(Button.Type.PRIMARY), connected -> connected.pressed().connect(connected, () -> review(OrganizationSavedData.Operation.APPROVE)));
 
         private ApplicationActions() { addChild(reject); addChild(approve); }
         private void bind(OrganizationSyncPacket.Application application) { this.application = application; }
@@ -243,13 +241,13 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     private final class JoinAction extends Container {
         private OrganizationSyncPacket.Directory entry;
-        private final Button button = new Button().onPressed(() -> {
+        private final Button button = Signals.configure(new Button(), connected -> connected.pressed().connect(connected, () -> {
             if (joinDrawer.isOpen() && Minecraft.getInstance().player != null)
                 OrganizationNetwork.operate(entry.pending()
                                 ? OrganizationSavedData.Operation.CANCEL_APPLICATION
                                 : OrganizationSavedData.Operation.APPLY,
                         entry.id(), Minecraft.getInstance().player.getUUID());
-        });
+        }));
 
         private JoinAction() { addChild(button); }
         private void bind(OrganizationSyncPacket.Directory entry) {
@@ -371,10 +369,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         organizationDetails.editable(canEdit);
         if (!canEdit) closeEdit();
         if (ownRole == Organization.Role.LEADER || ownRole == Organization.Role.OFFICER) {
-            detailDrawer.action(Component.translatable("organization.geg.applications"),
-                    this::showApplications);
-            detailDrawer.action(Component.translatable("mail.geg.announce"),
-                    () -> io.github.luyingyilong.geg.mail.client.ClientMailScreen.open(summary.id()));
+            detailDrawer.addAction(Signals.configure(new Button(Component.translatable("organization.geg.applications")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::showApplications)));
+            detailDrawer.addAction(Signals.configure(new Button(Component.translatable("mail.geg.announce")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, () -> io.github.luyingyilong.geg.mail.client.ClientMailScreen.open(summary.id()))));
             applicationTable.rows(summary.applications());
         } else {
             applicationsModal.visible(false);
@@ -535,6 +531,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
             showLoading();
             return;
         }
+        rebuildMemberships();
         emptyText.text(Component.translatable("organization.geg.none"));
         options.visible(true);
         emptyDialog.visible(!ClientOrganizationState.hasOrganizations());
@@ -605,16 +602,14 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         requestLayout();
     }
 
-    private void rebuildMemberships() {
-        for (Control child : memberships.children()) memberships.removeChild(child);
+    private void initializeMemberships() {
         Navbar navbar = new Navbar(Component.translatable("organization.geg.your_organizations"))
                 .titleColor(OreTheme.TEXT_DARK);
         memberships.add(navbar);
-        Button createButton = new Button(Component.translatable("organization.geg.create"))
-                .type(Button.Type.PRIMARY).onPress(this::showCreate);
+        Button createButton = Signals.configure(new Button(Component.translatable("organization.geg.create"))
+                .type(Button.Type.PRIMARY), connected -> connected.pressed().connect(connected, this::showCreate));
         createButton.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        Button joinButton = new Button(Component.translatable("organization.geg.join"))
-                .onPress(this::showJoin);
+        Button joinButton = Signals.configure(new Button(Component.translatable("organization.geg.join")), connected -> connected.pressed().connect(connected, this::showJoin));
         joinButton.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Box actions = new Box().orientation(Box.Orientation.HORIZONTAL).gap(2)
                 .add(createButton).add(joinButton);
@@ -623,15 +618,20 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         createInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         createInset.child(actions);
         memberships.add(createInset);
-        Box orgList = new Box().gap(0);
-        orgList.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
-        membershipsScroll.content(orgList);
+        organizationList.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
+        membershipsScroll.content(organizationList);
         memberships.add(membershipsScroll);
+    }
+
+    private void rebuildMemberships() {
+        // The shell and Scroll survive snapshots and Drawer close callbacks. Only rows are replaced.
+        for (Control child : organizationList.children()) { if (child.parent() != null) child.parent().removeChild(child); child.queueFree(); }
         for (OrganizationSyncPacket.Summary summary : ClientOrganizationState.organizations()) {
-            OrganizationMembershipRow row = new OrganizationMembershipRow(summary, () -> showDetails(summary.id()));
+            OrganizationMembershipRow row = new OrganizationMembershipRow(summary);
+            row.detailsRequested().connect(row, () -> showDetails(summary.id()));
             Panel panel = new Panel(OreTheme.BAR).child(new Padding(Padding.Insets.all(4)).child(row));
             panel.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-            orgList.add(panel);
+            organizationList.add(panel);
         }
     }
 
@@ -641,11 +641,13 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     @Override
     public void draw(ModularGuiContext context, WidgetThemeEntry<?> theme) {
+        if (!window.isAlive()) return;
         Rect area = new Rect(getArea().x, getArea().y, getArea().width, getArea().height);
         if (area.width() == 0 || area.height() == 0) return;
         applicationsModal.size(Math.min(320, area.width()), Math.min(220, area.height())).centered();
         disbandConfirmation.size(Math.min(240, area.width()), Math.min(120, area.height())).centered();
         options.orientation(area.width() < 252 ? Box.Orientation.VERTICAL : Box.Orientation.HORIZONTAL);
+        window.prepareTree(context);
         window.layoutViewport(area.width(), area.height(), context.getFont());
         window.draw(context, area.x(), area.y());
     }
@@ -680,7 +682,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     @Override public void dispose() {
-        DebugBridge.backend().close(window);
+        window.hostDetached();
         closeMenu();
         window.cancelInteractions();
         super.dispose();

@@ -26,6 +26,7 @@ public final class OreInspector {
     private static boolean initialized;
     public static synchronized void initialize(net.minecraftforge.eventbus.api.IEventBus forgeBus) {
         if (initialized || FMLEnvironment.production) return;
+        io.github.luyingyilong.ore.signal.SignalDiagnostics.tracingEnabled(true);
         forgeBus.register(OreInspector.class);
         initialized = true;
     }
@@ -51,7 +52,7 @@ public final class OreInspector {
             if (view != null || backend != null) stop();
             backend = new InspectorBackend();
             DebugBridge.install(backend);
-            view = new InspectorView(backend);
+            view = io.github.luyingyilong.ore.signal.SignalDiagnostics.withoutTracing(() -> new InspectorView(backend));
             view.open();
         } catch (RuntimeException | LinkageError error) {
             stop();
