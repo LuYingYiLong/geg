@@ -161,13 +161,17 @@ public final class Segmented extends Control {
         }
     }
 
-    @Override protected boolean onPointerPressed(int rootX, int rootY) {
-        if (layoutFont == null || clickAt(0, 0, rootX, rootY, layoutFont) < 0) return false;
-        capturePointer();
+    @Override protected boolean wheel(int x,int y,double delta,boolean horizontal) {
+        return windowContext().mui()!=null && scrollBy(-(int)Math.signum(delta)*24,windowContext().mui().getFont());
+    }
+
+    @Override protected boolean pointerDown(int rootX, int rootY) {
+        if (layoutFont == null || beginAt(0, 0, rootX, rootY, layoutFont) < 0) return false;
+
         return true;
     }
 
-    @Override public boolean releasePointer(int rootX, int rootY, boolean over) {
+    @Override protected boolean pointerUp(int rootX, int rootY, boolean over) {
         int index = layoutFont == null ? -1 : indexAt(0, 0, rootX, rootY, layoutFont);
         var release = gesture.pointerUp(index < 0 ? null : index, over && visible());
         if (release.target() != null) selectFromInput(release.target());
@@ -215,7 +219,7 @@ public final class Segmented extends Control {
     }
 
     /** Arms the option under the pointer; selection is deferred until a matching release. */
-    public int clickAt(int screenX, int screenY, int mouseX, int mouseY, Font font) {
+    private int beginAt(int screenX, int screenY, int mouseX, int mouseY, Font font) {
         int index = indexAt(screenX, screenY, mouseX, mouseY, font);
         if (index >= 0) gesture.pointerDown(index);
         return index;

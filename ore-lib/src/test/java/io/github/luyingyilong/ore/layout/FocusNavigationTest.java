@@ -30,21 +30,21 @@ public final class FocusNavigationTest {
         FocusManager focus = window.focusManager();
         focus.requestFocus(left, null);
         check(focus.outlineBounds() == null);
-        check(window.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null));
         check(focus.focused() == right);
         check(focus.outlineBounds().equals(new Rect(39, 9, 22, 22)));
         check(new Checkbox(Component.literal("check")).focusExpansion() == 1);
-        check(window.keyPressed(GLFW.GLFW_KEY_LEFT, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_LEFT, 0, null));
         check(focus.focused() == left);
-        check(window.pointerPressed(45, 12, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,45, 12, null));
         check(focus.focused() == right);
         check(focus.outlineBounds() == null);
         window.focusManager().pointerActivity();
         check(focus.outlineBounds() == null);
         focus.requestFocus(left, null);
-        check(window.keyPressed(GLFW.GLFW_KEY_DOWN, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_DOWN, 0, null));
         check(focus.focused() == bottom);
-        check(window.keyPressed(GLFW.GLFW_KEY_TAB, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_TAB, 0, null));
         check(focus.focused() == left);
 
         Popup popup = new Popup();
@@ -53,13 +53,13 @@ public final class FocusNavigationTest {
         overlay.add(popup);
         window.layoutViewport(100, 100, null);
         check(focus.focused() == action);
-        check(!window.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, null));
+        check(!io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null));
         popup.visible(false);
         check(focus.focused() == left);
 
         left.visible(false);
         check(focus.focused() == null);
-        check(window.keyPressed(GLFW.GLFW_KEY_TAB, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_TAB, 0, null));
         check(focus.focused() == right);
         virtualGridKeepsItsItem();
         tableActionsCanBeFocused();
@@ -88,7 +88,7 @@ public final class FocusNavigationTest {
         window.layoutViewport(30, 40, null);
         window.focusManager().requestFocus(grid, null);
         for (int index = 0; index < 5; index++)
-            check(window.keyPressed(GLFW.GLFW_KEY_DOWN, 0, null));
+            check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_DOWN, 0, null));
         check(scroll.scrollY() > 0);
         int oldY = grid.focusBounds().y();
         items.remove(0);
@@ -116,15 +116,15 @@ public final class FocusNavigationTest {
         Window window = new Window(true).content(table);
         window.layoutViewport(120, 80, null);
         window.focusManager().requestFocus(table, null);
-        check(window.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, null));
-        check(window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null));
         check(activated[0] == 0);
-        window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(activated[0] == 1);
-        check(window.keyPressed(GLFW.GLFW_KEY_DOWN, 0, null));
-        check(window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_DOWN, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null));
         check(activated[0] == 1);
-        window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(activated[0] == 2);
     }
 
@@ -143,18 +143,18 @@ public final class FocusNavigationTest {
         check(segmented.focusBounds().equals(new Rect(0, 2, 51, 18)));
         window.focusManager().requestFocus(segmented, null);
         check(selected[0] == 0);
-        check(window.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null));
         check(segmented.selected() == 0 && selected[0] == 0);
         check(segmented.focusBounds().equals(new Rect(50, 0, 51, 20)));
         segmented.selected(0); // Market synchronizes the active page on every layout pass.
         window.layoutViewport(100, 20, null);
         check(segmented.focusBounds().equals(new Rect(50, 0, 51, 20)));
-        check(window.keyPressed(GLFW.GLFW_KEY_LEFT, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_LEFT, 0, null));
         check(segmented.focusBounds().equals(new Rect(0, 2, 51, 18)));
-        check(window.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, null));
-        check(window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null));
         check(segmented.selected() == 0 && selected[0] == 0);
-        check(window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null));
         check(segmented.selected() == 1 && selected[0] == 1);
         check(segmented.focusBounds().equals(new Rect(50, 2, 51, 18)));
     }

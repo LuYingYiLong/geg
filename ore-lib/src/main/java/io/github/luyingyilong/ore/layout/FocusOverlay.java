@@ -35,5 +35,5 @@ public final class FocusOverlay extends Control {
     }
 
     @Override public Control hitTop(int rootX, int rootY) { return null; }
-    @Override public boolean dispatchPointer(int rootX, int rootY) { return false; }
+
 }

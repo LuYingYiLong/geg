@@ -1,6 +1,7 @@
 package io.github.luyingyilong.ore.layout;
 
 import io.github.luyingyilong.ore.debug.DebugBridge;
+import io.github.luyingyilong.ore.event.*;
 import io.github.luyingyilong.ore.debug.Inspectable;
 import io.github.luyingyilong.ore.debug.DebugProperty;
 import brachy.modularui.screen.viewport.ModularGuiContext;
@@ -27,6 +28,8 @@ public class Control {
     private boolean visible = true;
     private boolean layoutDirty = true;
     private boolean focusable;
+    private Font layoutFont;
+    public Font layoutFont(){return layoutFont;}
     private int focusExpansion;
     private float sizeFlagsStretchRatio = 1.0F;
 
@@ -129,15 +132,10 @@ public class Control {
     /** Paired keyboard activation; simple controls may still activate on the initial press. */
     public boolean onActivationPressed(int keyCode) { return activate(); }
     public boolean onActivationReleased(int keyCode) { return false; }
-    public boolean releasePointer(boolean over) { return false; }
-    public boolean releasePointer(int rootX, int rootY, boolean over) { return releasePointer(over); }
+    protected boolean pointerUp(boolean over) { return false; }
+    protected boolean pointerUp(int rootX, int rootY, boolean over) { return pointerUp(over); }
     /** Coordinates use the same unscrolled tree space as pointer presses and releases. */
-    public boolean dragPointer(int rootX, int rootY) { return false; }
-    /** A composite control captures itself even when a non-interactive child was hit. */
-    protected final void capturePointer() {
-        for (Control node = this; node != null; node = node.parent())
-            if (node instanceof Window window) { window.capturePointer(this); return; }
-    }
+    protected boolean pointerMove(int rootX, int rootY) { return false; }
     public void cancelInteraction() { }
 
     public final void cancelInteractions() {
@@ -167,12 +165,21 @@ public class Control {
     }
 
     public boolean removeChild(Control child) {
-        if (!children.remove(child)) return false;
+        if (!children.contains(child)) return false;
+        if(windowContext().owner()!=null)windowContext().owner().focusManager().forgetSubtree(child);
+        child.detachSubtree();
+        children.remove(child);
         child.cancelInteractions();
         DebugBridge.backend().removed(child);
         child.parent = null;
         requestLayout();
         return true;
+    }
+
+    protected void onDetached() { }
+    private void detachSubtree() {
+        for(Control child:children())child.detachSubtree();
+        onDetached();
     }
 
     /** Free controls can place children; a Container owns its children's rectangles. */
@@ -221,7 +228,10 @@ public class Control {
     public void visible(boolean visible) {
         if (this.visible != visible) {
             this.visible = visible;
-            if (!visible) cancelInteractions();
+            if (!visible) {
+                if(windowContext().owner()!=null)windowContext().owner().cancelCaptures(this,CancelEvent.Reason.DETACHED);
+                cancelInteractions();
+            }
             requestLayout();
         }
     }
@@ -298,6 +308,7 @@ public class Control {
 
     /** Coordinates are relative to the parent control. */
     public void layout(Rect localBounds, Font font) {
+        layoutFont=font;
         bounds = localBounds;
         layoutDirty = false;
         if (!(this instanceof Container))
@@ -319,23 +330,23 @@ public class Control {
     public boolean hasTooltip() { return false; }
     public void renderTooltip(ModularGuiContext context, int mouseX, int mouseY) { }
 
-    /** Dispatches in reverse draw order; clipping containers can narrow this route. */
-    public boolean dispatchPointer(int rootX, int rootY) {
-        if (!visible) return false;
-        for (int index = children.size() - 1; index >= 0; index--)
-            if (children.get(index).dispatchPointer(rootX, rootY)) return true;
-        return onPointerPressed(rootX, rootY);
+    /** Called only by the owning Window, in target-to-parent order. */
+    public void input(InputEvent event) {
+        boolean handled = false;
+        if (event instanceof CancelEvent) { cancelInteraction(); return; }
+        if (event instanceof PointerEvent pointer && pointer.button() == 0) {
+            handled = switch (pointer.action()) {
+                case PRESS -> pointerDown(event.treeX(), event.treeY());
+                case RELEASE -> pointerUp(event.treeX(), event.treeY(), pointer.over());
+                case MOVE -> pointerMove(event.treeX(), event.treeY());
+            };
+        } else if (event instanceof ScrollEvent scroll)
+            handled = wheel(event.treeX(), event.treeY(), scroll.delta(), scroll.horizontal());
+        if (handled) event.accept();
     }
 
-    protected boolean onPointerPressed(int rootX, int rootY) { return false; }
-
-    /** Routes wheel input through the same tree, with the topmost child first. */
-    public boolean dispatchScroll(int rootX, int rootY, double delta, boolean horizontal) {
-        if (!visible) return false;
-        for (int index = children.size() - 1; index >= 0; index--)
-            if (children.get(index).dispatchScroll(rootX, rootY, delta, horizontal)) return true;
-        return false;
-    }
+    protected boolean pointerDown(int x, int y) { return false; }
+    protected boolean wheel(int x, int y, double delta, boolean horizontal) { return false; }
 
     public Rect screenBounds(int screenX, int screenY) {
         return absoluteBounds().translated(screenX, screenY);

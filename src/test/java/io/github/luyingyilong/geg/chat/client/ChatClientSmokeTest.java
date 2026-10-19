@@ -100,9 +100,9 @@ public final class ChatClientSmokeTest {
                 drawer.width(ChatLayout.drawerWidth(mc.getWindow().getGuiScaledWidth()));
                 window.layoutViewport(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight(), mc.font);
                 canvas.composer().input().setText("keep me"); canvas.composer().store();
-                window.keyPressed(GLFW.GLFW_KEY_ESCAPE, 0, canvas.getContext());
+                io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ESCAPE, 0, canvas.getContext());
                 check(drawer.isOpen(), "First Escape must blur the editor");
-                window.keyPressed(GLFW.GLFW_KEY_ESCAPE, 0, canvas.getContext());
+                io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ESCAPE, 0, canvas.getContext());
                 check(!drawer.isOpen(), "Second Escape must close Drawer"); next();
             } else if (phase == 7 && !ClientChatScreen.isOpen() && waiting > 20) {
                 mc.setScreen(new ChatScreen("")); next();

@@ -214,21 +214,17 @@ public final class Dialog extends Container {
     }
 
     /** Returns true for all clicks while open; the topmost dialog owns its entire overlay. */
-    public boolean clickAt(int rootX, int rootY) {
+    @Override protected boolean pointerDown(int rootX, int rootY) {
         if (!visible()) return false;
         if (!panel.hit(rootX, rootY)) {
             OreSounds.play(OreSounds.Cue.CLICK);
             onClose.run();
             return true;
         }
-        if (close.pressAt(rootX, rootY)) return true;
-        for (Button action : actions) if (action.pressAt(rootX, rootY)) return true;
         return true;
     }
 
-    @Override protected boolean onPointerPressed(int rootX, int rootY) {
-        return clickAt(rootX, rootY);
-    }
+
 
     private static int actionHeight(int count) {
         return count == 0 ? 0 : count * Button.Size.MEDIUM.height() + (count - 1) * BUTTON_GAP;

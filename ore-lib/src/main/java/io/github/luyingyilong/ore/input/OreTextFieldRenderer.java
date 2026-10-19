@@ -216,7 +216,13 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
     }
 
     @Override public Point getCursorPos(List<String> lines, int mouseX, int mouseY) {
-        if (!multiline) return super.getCursorPos(lines, mouseX, mouseY);
+        if (!multiline) {
+            // A single-line editor has one insertion row, including its top/bottom padding.
+            // MUI otherwise derives another vertically aligned origin from the line count,
+            // while Ore already positioned the row for drawing. This sent clicks to the
+            // beginning/end instead of the character under the pointer.
+            return super.getCursorPos(lines, mouseX, getStartY(lines.size()));
+        }
         WrappedText layout = wrap(lines);
         int row = Math.max(0, Math.min(layout.rows().size() - 1,
                 (int) Math.floor((mouseY - getStartYOfLines(layout.rows().size())) / getFontHeight())));

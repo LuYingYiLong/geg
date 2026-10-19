@@ -65,8 +65,8 @@ public final class LayoutRegressionTest {
         footer.selected(5);
         footer.layout(new Rect(0, 0, 127, 20), font);
         check(footer.scrollX() > 0 && footer.bounds().height() == 20);
-        check(footer.clickAt(0, 0, 120, 10, font) == 5);
-        check(footer.releasePointer(120, 10, true));
+        check(io.github.luyingyilong.ore.EventFixture.press(footer,120,10));
+        check(io.github.luyingyilong.ore.EventFixture.release(footer,120, 10, true));
         footer.layout(new Rect(0, 0, 427, 20), font);
         check(footer.scrollX() == 0);
 
@@ -121,11 +121,11 @@ public final class LayoutRegressionTest {
         check(gridScroll.scrollBy(16, 0) && gridScroll.scrollX() == 16);
         gridScroll.scrollToTop();
         check(grid.hitItem(5 + gridScroll.scrollX(), 5 + gridScroll.scrollY()) != null);
-        check(gridScroll.dispatchScroll(5, 5, -1.0D, false) && gridScroll.scrollY() == 28);
+        check(io.github.luyingyilong.ore.EventFixture.scroll(gridScroll,5, 5, -1.0D, false) && gridScroll.scrollY() == 28);
         gridScroll.scrollToTop();
         List<Integer> chosen = new ArrayList<>();
         grid.onItemClick(chosen::add);
-        check(gridScroll.dispatchPointer(5, 5) && chosen.equals(List.of(items.get(0))));
+        check(io.github.luyingyilong.ore.EventFixture.press(gridScroll,5, 5) && chosen.equals(List.of(items.get(0))));
 
         Box tall = new Box().add(new Control().minimum(30, 80));
         Scroll scroll = new Scroll().content(tall).horizontal(Scroll.BarMode.DISABLED);
@@ -133,12 +133,12 @@ public final class LayoutRegressionTest {
         check(scroll.verticalVisible() && scroll.viewport().width() == 44);
         check(scroll.maxScrollY() == 30 && scroll.scrollBy(0, 10));
         scroll.scrollToTop();
-        check(scroll.dispatchScroll(5, 5, -1.0D, false) && scroll.scrollY() == 28);
+        check(io.github.luyingyilong.ore.EventFixture.scroll(scroll,5, 5, -1.0D, false) && scroll.scrollY() == 28);
         scroll.embedded(true);
         scroll.layout(new Rect(0, 0, 50, 50), null);
         check(scroll.viewport().width() == 50 && scroll.verticalVisible());
         scroll.scrollToTop();
-        check(scroll.dispatchPointer(47, 6));
+        check(io.github.luyingyilong.ore.EventFixture.press(scroll,47, 6));
         check(scroll.dragTo(47, 45) && scroll.scrollY() > 0);
         check(scroll.endDrag() && !scroll.endDrag());
         scroll.vertical(Scroll.BarMode.NEVER);
@@ -162,7 +162,7 @@ public final class LayoutRegressionTest {
         check(sideways.scrollX() == 0 && !sideways.scrollBy(5, 0));
         List<String> scrolledClicks = new ArrayList<>();
         Control target = new Control() {
-            @Override protected boolean onPointerPressed(int x, int y) {
+            @Override protected boolean pointerDown(int x, int y) {
                 if (!hit(x, y)) return false;
                 scrolledClicks.add("target");
                 return true;
@@ -173,7 +173,7 @@ public final class LayoutRegressionTest {
                 .add(new Control().minimum(30, 80)).add(target));
         withChild.layout(new Rect(0, 0, 50, 50), null);
         withChild.setScroll(0, 60);
-        check(withChild.scrollY() == 50 && withChild.dispatchPointer(10, 35)
+        check(withChild.scrollY() == 50 && io.github.luyingyilong.ore.EventFixture.press(withChild,10, 35)
                 && scrolledClicks.equals(List.of("target")));
         Scroll always = new Scroll().content(new Control().minimum(10, 10))
                 .vertical(Scroll.BarMode.ALWAYS).horizontal(Scroll.BarMode.ALWAYS);
@@ -209,14 +209,14 @@ public final class LayoutRegressionTest {
         check(overlay.hitTop(5, 5) == upper);
         List<String> clicks = new ArrayList<>();
         Control clickLower = new Control() {
-            @Override protected boolean onPointerPressed(int x, int y) {
+            @Override protected boolean pointerDown(int x, int y) {
                 if (!hit(x, y)) return false;
                 clicks.add("lower");
                 return true;
             }
         };
         Control clickUpper = new Control() {
-            @Override protected boolean onPointerPressed(int x, int y) {
+            @Override protected boolean pointerDown(int x, int y) {
                 if (!hit(x, y)) return false;
                 clicks.add("upper");
                 return true;
@@ -224,9 +224,9 @@ public final class LayoutRegressionTest {
         };
         Overlay clickable = new Overlay().add(clickLower).add(clickUpper);
         clickable.layout(new Rect(0, 0, 20, 20), null);
-        check(clickable.dispatchPointer(5, 5) && clicks.equals(List.of("upper")));
+        check(io.github.luyingyilong.ore.EventFixture.press(clickable,5, 5) && clicks.equals(List.of("upper")));
         clickUpper.visible(false);
-        check(clickable.dispatchPointer(5, 5) && clicks.equals(List.of("upper", "lower")));
+        check(io.github.luyingyilong.ore.EventFixture.press(clickable,5, 5) && clicks.equals(List.of("upper", "lower")));
     }
 
     private static void check(boolean condition) {

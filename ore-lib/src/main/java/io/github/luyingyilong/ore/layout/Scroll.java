@@ -249,21 +249,10 @@ public final class Scroll extends Container {
         } finally { graphics.pose().popPose(); }
     }
 
-    @Override public boolean dispatchPointer(int rootX, int rootY) {
-        if (!hit(rootX, rootY)) return false;
-        if (showVertical && verticalBar.dispatchPointer(rootX, rootY)) return true;
-        if (showHorizontal && horizontalBar.dispatchPointer(rootX, rootY)) return true;
-        if (!viewport.translated(absoluteBounds().x(), absoluteBounds().y()).contains(rootX, rootY))
-            return true;
-        return content != null && content.dispatchPointer(rootX + scrollX(), rootY + scrollY());
-    }
 
-    @Override public boolean dispatchScroll(int rootX, int rootY, double delta, boolean horizontal) {
+
+    @Override protected boolean wheel(int rootX, int rootY, double delta, boolean horizontal) {
         if (!hit(rootX, rootY)) return false;
-        boolean overContent = viewport.translated(absoluteBounds().x(), absoluteBounds().y())
-                .contains(rootX, rootY);
-        if (overContent && content != null && content.dispatchScroll(rootX + scrollX(), rootY + scrollY(),
-                delta, horizontal)) return true;
         int amount = -(int) Math.signum(delta) * wheelStep;
         if (amount == 0) return false;
         if (horizontal || maxScrollY() == 0) {
@@ -373,18 +362,18 @@ public final class Scroll extends Container {
                     : new Rect(bar.x() + TRACK_INSET, bar.y() + (BAR_SIZE - 2) / 2, bar.width() - 2 * TRACK_INSET, 2);
         }
 
-        @Override protected boolean onPointerPressed(int rootX, int rootY) {
+        @Override protected boolean pointerDown(int rootX, int rootY) {
             if (!hit(rootX, rootY)) return false;
-            capturePointer();
+
             owner.beginDrag(this, rootX, rootY);
             return true;
         }
 
-        @Override public boolean dragPointer(int rootX, int rootY) {
+        @Override protected boolean pointerMove(int rootX, int rootY) {
             return visible() && mode != BarMode.DISABLED && owner.dragTo(rootX, rootY);
         }
 
-        @Override public boolean releasePointer(int rootX, int rootY, boolean over) {
+        @Override protected boolean pointerUp(int rootX, int rootY, boolean over) {
             return owner.endDrag();
         }
 

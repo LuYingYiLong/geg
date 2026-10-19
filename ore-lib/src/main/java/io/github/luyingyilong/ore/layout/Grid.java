@@ -455,17 +455,12 @@ public final class Grid<T> extends Container implements ScrollContent {
                 rootY - absoluteBounds().y()) ? this : null;
     }
 
-    @Override public boolean dispatchPointer(int rootX, int rootY) {
-        if (!visible()) return false;
-        if (adapter == null) return super.dispatchPointer(rootX, rootY);
+    @Override protected boolean pointerDown(int rootX, int rootY) {
         Entry<T> entry = hitItem(rootX, rootY);
         if (entry == null) return false;
-        focusedKey = entry.key();
         View<T> view = active.get(entry.index());
-        if (view instanceof Control control) {
-            if (control.dispatchPointer(rootX, rootY)) return true;
-            if (!control.hit(rootX, rootY)) return false;
-        }
+        if(view instanceof Control control && !control.hit(rootX,rootY))return false;
+        focusedKey = entry.key();
         onItemClick.accept(entry.item());
         return true;
     }

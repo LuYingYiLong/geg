@@ -70,9 +70,9 @@ public final class PlayerIdentityCellTest {
         window.layoutViewport(300, 120, font);
         check(table.acceptsFocus(), "Decorative retained cells do not disable action-column keyboard focus");
         window.focusManager().requestFocus(table, null);
-        window.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, null);
-        window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null);
-        window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(actions[0] == 1, "Existing action target remains keyboard-accessible");
         for (int width : new int[]{127, 128, 129, 300}) {
             window.layoutViewport(width, 120, font);

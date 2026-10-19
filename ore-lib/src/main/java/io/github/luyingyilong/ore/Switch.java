@@ -183,16 +183,16 @@ public final class Switch extends Container {
 
     private boolean available() { return !disabled && !loading; }
 
-    @Override protected boolean onPointerPressed(int rootX, int rootY) {
+    @Override protected boolean pointerDown(int rootX, int rootY) {
         if (!available() || !hit(rootX, rootY)) return false;
-        capturePointer();
+
         gesture.pointerDown(true);
         return true;
     }
 
-    @Override public boolean dragPointer(int rootX, int rootY) { return gesture.pointerPending(); }
+    @Override protected boolean pointerMove(int rootX, int rootY) { return gesture.pointerPending(); }
 
-    @Override public boolean releasePointer(boolean over) {
+    @Override protected boolean pointerUp(boolean over) {
         var release = gesture.pointerUp(true, over && available() && visible());
         if (release.target() != null) activate();
         return release.handled();

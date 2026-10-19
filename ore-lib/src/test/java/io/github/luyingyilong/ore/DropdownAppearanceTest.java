@@ -27,15 +27,15 @@ public final class DropdownAppearanceTest {
         check(width == reference.measureWidth(font, 300) && height == reference.measureHeight(font, 300));
         check(dropdown.icon().equals(reference.icon()) && !dropdown.showArrow() && dropdown.type() == Button.Type.TEXT);
         dropdown.layout(new Rect(200, 5, width, height), font);
-        check(dropdown.clickAt(0, 0, 210, 15) && !dropdown.isOpen());
-        check(dropdown.releaseAt(210, 15) && dropdown.isOpen());
+        check(EventFixture.press(dropdown,210,15) && !dropdown.isOpen());
+        check(EventFixture.release(dropdown,210,15,true) && dropdown.isOpen());
 
         int menuWidth = new Label(Component.literal("minecraft")).measureWidth(font, 300) + 22;
         int optionX = 200 + width - menuWidth + 4;
         check(optionX < 200); // This is outside the icon button but inside the expanded menu.
         int optionY = 5 + height + 1 + Button.Size.MEDIUM.height() - 1 + 3;
-        check(dropdown.clickAt(0, 0, optionX, optionY));
-        check(dropdown.releaseAt(optionX, optionY));
+        check(EventFixture.press(dropdown,optionX,optionY));
+        check(EventFixture.release(dropdown,optionX,optionY,true));
         check(dropdown.selected().equals("minecraft") && !dropdown.isOpen());
         dropdown.showArrow(true);
         check(dropdown.measureWidth(font, 300) > width);

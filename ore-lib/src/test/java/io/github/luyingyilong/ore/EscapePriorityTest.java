@@ -32,19 +32,26 @@ public final class EscapePriorityTest {
 
         topModal.visible(true);
         window.layoutViewport(320, 200, font);
-        window.keyPressed(GLFW.GLFW_KEY_ESCAPE, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ESCAPE, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ESCAPE,0,null);
+        check(modal.visible()&&drawer.isOpen(),"Held Esc cannot cascade through layers");
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ESCAPE,0,null);
         check(!topModal.visible() && modal.visible() && closed[2] == 1 && drawer.isOpen(), "Only the upper Modal closes");
-        check(window.keyPressed(GLFW.GLFW_KEY_ESCAPE, 0, null), "Lower Modal consumes the next Esc");
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ESCAPE, 0, null), "Lower Modal consumes the next Esc");
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ESCAPE,0,null);
         check(!modal.visible() && closed[1] == 1 && drawer.isOpen(), "Lower Modal closes before the Drawer");
         drawer.animationDuration(100);
-        window.keyPressed(GLFW.GLFW_KEY_ESCAPE, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ESCAPE, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ESCAPE,0,null);
         check(!drawer.isOpen() && drawer.visible() && closed[3] == 0, "Esc starts closing the Drawer without returning");
-        window.keyPressed(GLFW.GLFW_KEY_ESCAPE, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ESCAPE, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ESCAPE,0,null);
         check(closed[3] == 0, "The closing animation continues to block page navigation");
         now[0] = 100L;
         window.layoutViewport(320, 200, font);
         check(!drawer.visible() && closed[0] == 1 && closed[3] == 0, "Drawer closes before page navigation");
-        window.keyPressed(GLFW.GLFW_KEY_ESCAPE, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ESCAPE, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ESCAPE,0,null);
         check(closed[3] == 1, "Esc returns only after all popups are closed");
     }
 

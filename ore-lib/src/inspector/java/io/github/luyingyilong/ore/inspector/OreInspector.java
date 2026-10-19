@@ -22,7 +22,6 @@ public final class OreInspector {
     static final KeyMapping OPEN = new KeyMapping("key.ore.inspector", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F8, "key.categories.ore.development");
     private static InspectorBackend backend;
     private static InspectorView view;
-    private static boolean swallowRelease;
 
     private static boolean initialized;
     public static synchronized void initialize(net.minecraftforge.eventbus.api.IEventBus forgeBus) {
@@ -70,12 +69,7 @@ public final class OreInspector {
         if (backend != null) backend.clear();
         backend = null;
         DebugBridge.install(null);
-        swallowRelease = false;
         if (previous != null) previous.window().close();
-    }
-
-    private static boolean pickingEmbedded() {
-        return backend != null && backend.picking() && backend.inspectedRoot() != null && !backend.inspectedRoot().host().nativeWindow();
     }
 
     @SubscribeEvent
@@ -98,42 +92,6 @@ public final class OreInspector {
             event.setCanceled(true);
             return;
         }
-        if (pickingEmbedded()) {
-            if (event.getKeyCode() == GLFW.GLFW_KEY_ESCAPE) backend.cancelPick();
-            event.setCanceled(true);
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void character(ScreenEvent.CharacterTyped.Pre event) {
-        if (pickingEmbedded()) event.setCanceled(true);
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void press(ScreenEvent.MouseButtonPressed.Pre event) {
-        if (pickingEmbedded()) {
-            if (event.getButton() == 0) backend.pickClick((int) event.getMouseX(), (int) event.getMouseY());
-            swallowRelease = true;
-            event.setCanceled(true);
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void release(ScreenEvent.MouseButtonReleased.Pre event) {
-        if (swallowRelease || (pickingEmbedded())) {
-            swallowRelease = false;
-            event.setCanceled(true);
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void drag(ScreenEvent.MouseDragged.Pre event) {
-        if (swallowRelease || (pickingEmbedded())) event.setCanceled(true);
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void wheel(ScreenEvent.MouseScrolled.Pre event) {
-        if (pickingEmbedded()) event.setCanceled(true);
     }
 
     @SubscribeEvent

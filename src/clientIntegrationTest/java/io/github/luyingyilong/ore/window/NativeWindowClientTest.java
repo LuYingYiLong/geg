@@ -43,7 +43,14 @@ public final class NativeWindowClientTest {
                 check(WindowManager.nativeWindows() == 2, "Two hosts"); first.requestFocus();
                 checkPixels((NativeWindowHost) second.host());
                 NativeWindowHost host = (NativeWindowHost) first.host();
-                first.focusManager().requestFocus(WindowCanvas.inputs(first).get(0), first.context().mui());
+                var fieldBounds=WindowCanvas.inputs(first).get(0).displayedBounds();
+                var cursor=GLFW.glfwSetCursorPosCallback(host.nativeHandle(),null);
+                cursor.invoke(host.nativeHandle(),first.context().clientX(fieldBounds.x()+5),first.context().clientY(fieldBounds.y()+7));
+                GLFW.glfwSetCursorPosCallback(host.nativeHandle(),cursor);
+                var mouse=GLFW.glfwSetMouseButtonCallback(host.nativeHandle(),null);
+                mouse.invoke(host.nativeHandle(),0,GLFW.GLFW_PRESS,0);
+                mouse.invoke(host.nativeHandle(),0,GLFW.GLFW_RELEASE,0);
+                GLFW.glfwSetMouseButtonCallback(host.nativeHandle(),mouse);
                 var callback = GLFW.glfwSetCharCallback(host.nativeHandle(), null);
                 callback.invoke(host.nativeHandle(), '中'); callback.invoke(host.nativeHandle(), '文'); GLFW.glfwSetCharCallback(host.nativeHandle(), callback);
                 phase = 2;

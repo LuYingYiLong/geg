@@ -24,20 +24,20 @@ public final class SplitterTest {
         List<String> events = new ArrayList<>();
         split.onResizeStart(size->events.add("start")).onResize(size->events.add("resize:"+size.first())).onResizeEnd(size->events.add("end:"+size.first()));
         split.showDivider(false);
-        check(!line.visible() && root.pointerPressed(101,40,null),"Invisible divider keeps its drag hit area");
-        root.pointerDragged(141,40); root.pointerReleased(141,40); root.layoutViewport(204,100,null);
+        check(!line.visible() && io.github.luyingyilong.ore.event.WindowInputs.press(root,101,40,null),"Invisible divider keeps its drag hit area");
+        io.github.luyingyilong.ore.event.WindowInputs.move(root,141,40); io.github.luyingyilong.ore.event.WindowInputs.release(root,141,40); root.layoutViewport(204,100,null);
         check(split.firstSize()==140 && events.equals(List.of("start","resize:140","end:140")),"Captured drag and ordered resize callbacks");
         split.resizable(false); double fixed = split.ratio();
-        root.pointerPressed(141,40,null);root.pointerDragged(180,40);root.pointerReleased(180,40);
+        io.github.luyingyilong.ore.event.WindowInputs.press(root,141,40,null);io.github.luyingyilong.ore.event.WindowInputs.move(root,180,40);io.github.luyingyilong.ore.event.WindowInputs.release(root,180,40);
         check(split.ratio()==fixed,"Resizable flag");
 
         split.resizable(true).showDivider(true).ratio(0.5).lazy(true); root.layoutViewport(204,100,null); events.clear();
-        root.pointerPressed(102,40,null);root.pointerDragged(152,40);root.layoutViewport(204,100,null);
+        io.github.luyingyilong.ore.event.WindowInputs.press(root,102,40,null);io.github.luyingyilong.ore.event.WindowInputs.move(root,152,40);root.layoutViewport(204,100,null);
         check(split.firstSize()==100 && split.dividerBounds().x()==150,"Lazy dragging previews the line without resizing panes");
-        root.pointerReleased(152,40);root.layoutViewport(204,100,null);
+        io.github.luyingyilong.ore.event.WindowInputs.release(root,152,40);root.layoutViewport(204,100,null);
         check(split.firstSize()==150 && events.get(2).equals("end:150"),"Lazy release commits pane sizes");
         split.ratio(0.5);root.layoutViewport(204,100,null);events.clear();
-        root.pointerPressed(102,40,null);root.pointerDragged(152,40);root.cancelInteractions();root.layoutViewport(204,100,null);
+        io.github.luyingyilong.ore.event.WindowInputs.press(root,102,40,null);io.github.luyingyilong.ore.event.WindowInputs.move(root,152,40);root.cancelInteractions();root.layoutViewport(204,100,null);
         check(!split.dragging() && split.firstSize()==100 && events.size()==2,"Cancelling lazy drag restores layout without end callback");
 
         split.lazy(false).firstMinimum(50).secondMinimum(40).firstMaximum(120).secondMaximum(90).ratio(0.5);
@@ -60,13 +60,13 @@ public final class SplitterTest {
         Window stackedRoot = new Window(true).content(stacked);stackedRoot.layoutViewport(100,264,null);
         Divider stackedLine=(Divider)stacked.children().get(2);
         check(stackedLine.layout()==Divider.Layout.HORIZONTAL&&stackedLine.bounds().height()==2,"Stacked panes use horizontal Divider");
-        stackedRoot.pointerPressed(30,132,null);stackedRoot.pointerDragged(30,162);stackedRoot.pointerReleased(30,162);stackedRoot.layoutViewport(100,264,null);
+        io.github.luyingyilong.ore.event.WindowInputs.press(stackedRoot,30,132,null);io.github.luyingyilong.ore.event.WindowInputs.move(stackedRoot,30,162);io.github.luyingyilong.ore.event.WindowInputs.release(stackedRoot,30,162);stackedRoot.layoutViewport(100,264,null);
         check(stacked.firstSize()==160,"Vertical dragging preserves grab offset");
 
-        Control greedy = new Control(){@Override protected boolean onPointerPressed(int x,int y){throw new AssertionError("Pane stole separator press");}};
+        Control greedy = new Control(){@Override protected boolean pointerDown(int x,int y){throw new AssertionError("Pane stole separator press");}};
         Splitter priority=new Splitter(greedy,new Control()).ratio(0.5);Window priorityRoot=new Window(true).content(priority);
         priorityRoot.layoutViewport(204,100,null);
-        check(priorityRoot.pointerPressed(99,20,null)&&priority.dragging(),"Expanded drag area takes precedence over pane contents");priorityRoot.pointerReleased(99,20);
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(priorityRoot,99,20,null)&&priority.dragging(),"Expanded drag area takes precedence over pane contents");io.github.luyingyilong.ore.event.WindowInputs.release(priorityRoot,99,20);
         rejects(()->priority.ratio(Double.NaN));rejects(()->priority.gap(-1));rejects(()->priority.dragSize(0));
         rejects(()->priority.firstMaximum(-1));rejects(()->priority.firstMinimum(-1));
         System.out.println("ORE_SPLITTER_TEST_PASS");

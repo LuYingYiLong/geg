@@ -13,7 +13,6 @@ import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.theme.OreSounds;
 import io.github.luyingyilong.ore.theme.OreTheme;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -202,19 +201,15 @@ public final class Button extends Control {
                 alignment, type, !disabled && hovered, !disabled && pressed, disabled, badgeReservation(context.getFont()));
     }
 
-    public boolean pressAt(int rootX, int rootY) {
+    @Override protected boolean pointerDown(int rootX, int rootY) {
         if (!hit(rootX, rootY)) return false;
         if (disabled) return true;
         if (pointerPressed) return true;
-        capturePointer();
+
         pointerPressed = true;
         pointerHovered = true;
         if (actionMode == ACTION_MODE.BUTTON_PRESS) activate();
         return true;
-    }
-
-    @Override protected boolean onPointerPressed(int rootX, int rootY) {
-        return pressAt(rootX, rootY);
     }
 
     @Override public boolean activate() {
@@ -224,14 +219,14 @@ public final class Button extends Control {
         return true;
     }
 
-    @Override public boolean releasePointer(boolean over) {
+    @Override protected boolean pointerUp(boolean over) {
         boolean armed = pointerPressed;
         pointerPressed = false;
         if (armed && over && actionMode == ACTION_MODE.BUTTON_RELEASE) activate();
         return armed;
     }
 
-    @Override public boolean dragPointer(int rootX, int rootY) {
+    @Override protected boolean pointerMove(int rootX, int rootY) {
         if (!pointerPressed) return false;
         pointerHovered = hit(rootX, rootY);
         return true;

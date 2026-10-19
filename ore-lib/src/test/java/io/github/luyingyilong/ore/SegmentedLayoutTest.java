@@ -29,7 +29,7 @@ public final class SegmentedLayoutTest {
         check(options.hitIndex(0, 0, 76, 23, 10) == 0 && options.hitIndex(0, 0, 76, 24, 10) == 1);
         window.focusManager().requestFocus(options, null);
         check(options.focusBounds().equals(new Rect(0, 2, 25, 18)));
-        window.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null);
         check(options.focusBounds().equals(new Rect(24, 0, 53, 20)) && options.selected() == 0);
         options.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         row.removeChild(row.children().get(1));
@@ -41,12 +41,12 @@ public final class SegmentedLayoutTest {
         window.focusManager().requestFocus(null, null);
         window.layoutViewport(40, 20, font);
         window.focusManager().requestFocus(options, null);
-        window.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null);
         window.layoutViewport(40, 20, font);
         check(options.scrollX() == 24 && options.selected() == 0);
         window.layoutViewport(40, 20, font);
         check(options.scrollX() == 24);
-        check(options.clickAt(0, 0, 39, 10, font) == 1);
+        check(io.github.luyingyilong.ore.EventFixture.press(options,39,10));
     }
 
     private static void check(boolean condition) { if (!condition) throw new AssertionError("Segmented sizing regression"); }

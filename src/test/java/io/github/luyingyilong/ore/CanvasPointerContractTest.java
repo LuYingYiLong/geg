@@ -32,8 +32,8 @@ public final class CanvasPointerContractTest {
                                         && owner.equals("brachy/modularui/api/widget/Interactable$Result")) results.add(field);
                             }
                             @Override public void visitMethodInsn(int opcode, String owner, String method, String type, boolean isInterface) {
-                                if (name.equals("onMouseDrag") && owner.equals("io/github/luyingyilong/ore/layout/Window")
-                                        && method.equals("pointerDragged")) forwardsDrag[0] = true;
+                                if (name.equals("onMouseDrag") && owner.equals("io/github/luyingyilong/ore/event/WindowInputs")
+                                        && method.equals("pointer")) forwardsDrag[0] = true;
                             }
                         };
                     }

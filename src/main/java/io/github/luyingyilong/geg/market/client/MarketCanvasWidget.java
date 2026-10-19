@@ -183,51 +183,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                         return new CardView();
                     }
                 });
-        overlay.add(new Control() {
-            @Override public Control hitTop(int rootX, int rootY) { return null; }
-            @Override
-            public void draw(ModularGuiContext context, int screenX, int screenY) {
-                if (modal != null || filterDropdown.isOpen()) return;
-                int rootX = context.getAbsMouseX() - screenX;
-                int rootY = context.getAbsMouseY() - screenY;
-                Rect clip = gridScroll.viewport().translated(gridScroll.absoluteBounds().x(),
-                        gridScroll.absoluteBounds().y());
-                if (!clip.contains(rootX, rootY)) return;
-                Grid.Entry<Card> hovered = grid.hitItem(rootX + gridScroll.scrollX(),
-                        rootY + gridScroll.scrollY());
-                if (hovered == null || hovered.item().item.isEmpty()) return;
-                Rect origin = grid.screenBounds(screenX - gridScroll.scrollX(),
-                        screenY - gridScroll.scrollY());
-                Rect card = hovered.bounds().translated(origin.x(), origin.y());
-                if (context.getAbsMouseX() >= card.x() + 24) return;
-                withOverlayDepth(context, 200.0F, () -> context.getGraphics().renderTooltip(
-                        context.getFont(), hovered.item().item,
-                        context.getAbsMouseX(), context.getAbsMouseY()));
-            }
-        });
-        overlay.add(new Control() {
-            @Override public Control hitTop(int rootX, int rootY) {
-                return filterDropdown.isOpen() && hit(rootX, rootY) ? this : null;
-            }
-            @Override
-            public void draw(ModularGuiContext context, int screenX, int screenY) {
-                if (!filterDropdown.isOpen()) return;
-                Rect area = filterDropdown.screenBounds(screenX, screenY);
-                withOverlayDepth(context, 200.0F, () -> filterDropdown.drawMenu(context,
-                        area.x(), area.y(), area.width(), area.height()));
-            }
-
-            @Override protected boolean onPointerPressed(int rootX, int rootY) {
-                return filterDropdown.isOpen() && filterDropdown.clickAt(0, 0, rootX, rootY);
-            }
-
-            @Override public boolean releasePointer(int rootX, int rootY, boolean over) {
-                if (!over) { filterDropdown.cancelInteraction(); return true; }
-                return filterDropdown.releaseAt(rootX, rootY);
-            }
-
-            @Override public void cancelInteraction() { filterDropdown.cancelInteraction(); }
-        });
         overlay.add(detailModal).add(quantityModal);
         detailModal.visible(false);
         quantityModal.visible(false);
@@ -626,18 +581,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         }
     }
 
-    @Override
-    public @NotNull Interactable.Result onMousePressed(int button) {
-        window.focusManager().pointerActivity();
-        if (button != 0) {
-            return Interactable.Result.IGNORE;
-        }
-        int x = getArea().x;
-        int y = getArea().y;
-        int mouseX = getContext().getAbsMouseX();
-        int mouseY = getContext().getAbsMouseY();
-        return window.pointerPressed(mouseX - x, mouseY - y, getContext())
-                ? Interactable.Result.SUCCESS : Interactable.Result.IGNORE;
+    @Override public @NotNull Interactable.Result onMousePressed(int button) {
+        return io.github.luyingyilong.ore.event.WindowInputs.press(window,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,getContext(),button)
+                ?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
     }
 
     private MarketDetail selectedDetail() {
@@ -808,43 +754,24 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         }
     }
 
-    @Override
-    public boolean onMouseScrolled(double delta) {
-        if (filterDropdown.scroll(delta)) {
-            return true;
-        }
-        if (modal != null) {
-            if (quantityMenu) {
-                quantityContent.scrollBy(-(int) Math.signum(delta) * 24);
-                return true;
-            }
-            if (modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE)
-                offerTable.scrollBy(-(int) Math.signum(delta) * (offerTable.compact() ? 36 : 23));
-            else detailContent.scrollBy(-(int) Math.signum(delta) * 24);
-            return true;
-        }
-        Rect footer = footerOptions.screenBounds(getArea().x, getArea().y);
-        if (footer.contains(getContext().getAbsMouseX(), getContext().getAbsMouseY())
-                && footerOptions.scrollBy(-(int) Math.signum(delta) * 24, getContext().getFont())) return true;
-        window.dispatchScroll(getContext().getAbsMouseX() - getArea().x,
-                getContext().getAbsMouseY() - getArea().y, delta, Screen.hasShiftDown());
-        return true;
+    @Override public @NotNull Interactable.Result onCharTyped(char character,int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.text(window,String.valueOf(character),modifiers,getContext())
+                ?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
+    }
+    @Override public boolean onMouseScrolled(double delta) {
+        return io.github.luyingyilong.ore.event.WindowInputs.scroll(window,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,delta,net.minecraft.client.gui.screens.Screen.hasShiftDown());
     }
 
-    @Override public void onMouseDrag(int button, double dragX, double dragY) {
-        if (button == 0) window.pointerDragged(getContext().getAbsMouseX() - getArea().x,
-                getContext().getAbsMouseY() - getArea().y);
+    @Override public void onMouseDrag(int button,double x,double y) {
+        io.github.luyingyilong.ore.event.WindowInputs.pointer(window,io.github.luyingyilong.ore.event.PointerEvent.Action.MOVE,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,button);
     }
 
     @Override public boolean onMouseReleased(int button) {
-        if (button != 0) return false;
-        boolean released = window.pointerReleased(getContext().getAbsMouseX() - getArea().x,
-                getContext().getAbsMouseY() - getArea().y);
-        return released;
+        return io.github.luyingyilong.ore.event.WindowInputs.pointer(window,io.github.luyingyilong.ore.event.PointerEvent.Action.RELEASE,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,button);
     }
 
-    @Override public boolean onKeyReleased(int keyCode, int scanCode, int modifiers) {
-        return window.keyReleased(keyCode, modifiers, getContext());
+    @Override public boolean onKeyReleased(int keyCode,int scanCode,int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.key(window,io.github.luyingyilong.ore.event.KeyEvent.Action.RELEASE,keyCode,scanCode,modifiers,getContext());
     }
 
     @Override public void dispose() {
@@ -853,15 +780,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         super.dispose();
     }
 
-    @Override
-    public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 256 && modal == null && filterDropdown.isOpen()
-                && !window.focusManager().nativeInputFocused()) {
-            filterDropdown.close();
-            return Interactable.Result.STOP;
-        }
-        return window.keyPressed(keyCode, modifiers, getContext())
-                ? Interactable.Result.STOP : Interactable.Result.IGNORE;
+    @Override public @NotNull Interactable.Result onKeyPressed(int keyCode,int scanCode,int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.key(window,io.github.luyingyilong.ore.event.KeyEvent.Action.PRESS,keyCode,scanCode,modifiers,getContext())
+                ?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
     }
 
     private final class BodyContent extends Container {
@@ -902,8 +823,11 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             scroll = Math.max(0, Math.min(Math.max(0, contentHeight - bounds().height()), scroll + amount));
         }
 
-        @Override public boolean dispatchPointer(int rootX, int rootY) {
-            return absoluteBounds().contains(rootX, rootY) && super.dispatchPointer(rootX, rootY);
+        @Override public Control hitTop(int x,int y) {
+            return absoluteBounds().contains(x,y)?super.hitTop(x,y):null;
+        }
+        @Override protected boolean wheel(int x,int y,double delta,boolean horizontal) {
+            if(horizontal)return false;int before=scroll;scrollBy(-(int)Math.signum(delta)*24);return before!=scroll;
         }
 
         @Override public void draw(ModularGuiContext context, int screenX, int screenY) {

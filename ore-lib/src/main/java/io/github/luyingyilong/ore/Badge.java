@@ -106,5 +106,5 @@ public final class Badge extends Container {
 
     /** Decoration never steals pointer or keyboard input from the owning button. */
     @Override public Control hitTop(int rootX, int rootY) { return null; }
-    @Override public boolean dispatchPointer(int rootX, int rootY) { return false; }
+
 }

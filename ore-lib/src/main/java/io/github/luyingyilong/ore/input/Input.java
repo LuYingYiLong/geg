@@ -126,7 +126,7 @@ public class Input extends TextFieldWidget {
     boolean inputMethodInteractive() { return layoutInteractive(); }
     Rect inputMethodBounds() {
         return layoutControl == null ? new Rect(getArea().x, getArea().y, getArea().width, getArea().height)
-                : layoutControl.displayedBounds();
+                : layoutControl.widgetBounds();
     }
     int inputMethodFontHeight() { return (int) Math.ceil(renderer.getFontHeight()); }
     record Caret(int x, int y) { }
@@ -138,7 +138,24 @@ public class Input extends TextFieldWidget {
                 area.y() + Math.max(0, Math.min(area.height(), (int) cursor.y - getScrollY() + inputMethodFontHeight())));
     }
 
-    @Override public boolean canHover() { return layoutInteractive() && super.canHover(); }
+    /**
+     * A tree field is painted/edited by Ore and only registered with MUI for lifecycle/focus.
+     * It must not enter MUI's hovering list: even IGNORE stops at a non-click-through widget,
+     * blocking the Canvas for pointer, key and character events whenever the mouse is over it.
+     */
+    @Override public boolean canHover() {
+        return layoutControl == null && layoutInteractive() && super.canHover();
+    }
+
+    @Override public boolean canClickThrough() {
+        return layoutControl != null || super.canClickThrough();
+    }
+
+    @Override public boolean isHovering() {
+        if(layoutControl!=null && routingInput)
+            return layoutControl.pointerInteractive(getContext().getAbsMouseX(),getContext().getAbsMouseY());
+        return super.isHovering();
+    }
 
     @Override public boolean isBelowMouseFor(int button) {
         if (!layoutInteractive()) return false;
@@ -188,7 +205,57 @@ public class Input extends TextFieldWidget {
         super.dispose();
     }
 
+    protected boolean submitsOnEnter() { return submitAction!=null; }
+
+    private boolean routingInput;
+    protected final boolean acceptsHostInput() { return layoutControl == null || routingInput; }
+
+    /** Only InputControl calls this; native callbacks on tree fields cannot edit twice. */
+    final void receive(io.github.luyingyilong.ore.event.InputEvent event) {
+        // Prepare the exact row geometry used by drawing before hit testing. A scroll,
+        // modal move or resize may have happened since the last painted frame.
+        setupDrawText(getContext(), getWidgetTheme(getPanel().getTheme(), TextFieldTheme.class).theme());
+        // MUI editing expects its own local matrix, even when a Canvas delivered the event.
+        var located=brachy.modularui.screen.viewport.LocatedWidget.of(this);
+        located.applyMatrix(getContext());
+        routingInput=true;
+        try {
+            boolean handled=false;
+            if(event instanceof io.github.luyingyilong.ore.event.PointerEvent pointer) {
+                switch(pointer.action()) {
+                    case PRESS -> handled=onMousePressed(pointer.button())!=Interactable.Result.IGNORE;
+                    case RELEASE -> handled=onMouseReleased(pointer.button());
+                    case MOVE -> { onMouseDrag(pointer.button(),0,0);handled=true; }
+                }
+            } else if(event instanceof io.github.luyingyilong.ore.event.KeyEvent key) {
+                if(key.action()==io.github.luyingyilong.ore.event.KeyEvent.Action.REPEAT && submitsOnEnter()
+                        && (key.keyCode()==GLFW.GLFW_KEY_ENTER || key.keyCode()==GLFW.GLFW_KEY_KP_ENTER)
+                        && (key.modifiers() & GLFW.GLFW_MOD_SHIFT)==0){event.accept();return;}
+                if(key.keyCode()==GLFW.GLFW_KEY_TAB && !composing())return;
+                handled=key.action()==io.github.luyingyilong.ore.event.KeyEvent.Action.RELEASE
+                        ?onKeyReleased(key.keyCode(),key.scanCode(),key.modifiers())
+                        :onKeyPressed(key.keyCode(),key.scanCode(),key.modifiers())!=Interactable.Result.IGNORE;
+            } else if(event instanceof io.github.luyingyilong.ore.event.TextInputEvent text) {
+                for(char character:text.text().toCharArray())onCharTyped(character,text.modifiers());
+                handled=true;
+            } else if(event instanceof io.github.luyingyilong.ore.event.ScrollEvent scroll)
+                handled=onMouseScrolled(scroll.delta());
+            else if(event instanceof io.github.luyingyilong.ore.event.CompositionEvent composition) {
+                if(composition.action()==io.github.luyingyilong.ore.event.CompositionEvent.Action.CANCEL)cancelPreedit();
+                else ((OreTextFieldRenderer)renderer).preedit(composition.preedit());
+                handled=true;
+            }
+            if(handled)event.accept();
+        } finally {routingInput=false;located.unapplyMatrix(getContext());}
+    }
+
+    @Override public boolean onMouseReleased(int button) { return acceptsHostInput() && super.onMouseReleased(button); }
+    @Override public void onMouseDrag(int button,double x,double y) { if(acceptsHostInput())super.onMouseDrag(button,x,y); }
+    @Override public boolean onMouseScrolled(double delta) { return acceptsHostInput() && super.onMouseScrolled(delta); }
+    @Override public boolean onKeyReleased(int key,int scan,int modifiers) { return acceptsHostInput() && super.onKeyReleased(key,scan,modifiers); }
+
     @Override public @NotNull Interactable.Result onMousePressed(int button) {
+        if (!acceptsHostInput()) return Interactable.Result.IGNORE;
         if (!layoutInteractive() || layoutControl != null
                 && !layoutControl.pointerInteractive(getContext().getAbsMouseX(), getContext().getAbsMouseY())) return Interactable.Result.IGNORE;
         editingHandler().endEditGroup();
@@ -199,6 +266,7 @@ public class Input extends TextFieldWidget {
     }
 
     @Override public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
+        if (!acceptsHostInput()) return Interactable.Result.IGNORE;
         if (!layoutInteractive()) return Interactable.Result.IGNORE;
         if (isFocused() && InputShortcuts.matches(keyCode, modifiers)) {
             if (composing()) {
@@ -226,6 +294,7 @@ public class Input extends TextFieldWidget {
     }
 
     @Override public @NotNull Interactable.Result onCharTyped(char character, int modifiers) {
+        if (!acceptsHostInput()) return Interactable.Result.IGNORE;
         if (!layoutInteractive()) return Interactable.Result.IGNORE;
         // IMBlocker probes custom screens with NUL to discover their real text field focus.
         if (character == 0 && isFocused()) OreInputMethod.locateFocus(this);

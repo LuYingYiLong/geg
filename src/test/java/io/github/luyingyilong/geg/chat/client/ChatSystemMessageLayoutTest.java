@@ -85,7 +85,7 @@ public final class ChatSystemMessageLayoutTest {
             Style ownLink = view.text.style(font, area.right() - 2, area.y() + 2, area);
             check(ownLink != null && ownLink.getClickEvent() != null, "Right-aligned own link retains its hit region");
             check(view.text.style(font, area.x() + 1, area.y() + 2, area) == null, "Own text's left whitespace is not clickable");
-            check(!view.onPointerPressed(avatar.absoluteBounds().x() + 1, avatar.absoluteBounds().y() + 1),
+            check(!io.github.luyingyilong.ore.EventFixture.press(view,avatar.absoluteBounds().x() + 1, avatar.absoluteBounds().y() + 1),
                     "Own portrait does not open a direct conversation");
 
             view.bind(incoming);

@@ -69,8 +69,8 @@ public final class MailDetailBodyLayoutTest {
                 detail.setScroll(0, detail.maxScrollY());
                 Rect button = rewards.claimButton().absoluteBounds().translated(-columns.scrollX(), -detail.scrollY());
                 check(button.x() >= 0 && button.right() <= width && button.bottom() <= 240);
-                check(window.pointerPressed(button.x() + 2, button.y() + 2, null));
-                check(window.pointerReleased(button.x() + 2, button.y() + 2));
+                check(io.github.luyingyilong.ore.event.WindowInputs.press(window,button.x() + 2, button.y() + 2, null));
+                check(io.github.luyingyilong.ore.event.WindowInputs.release(window,button.x() + 2, button.y() + 2));
             }
         }
         check(claims[0] == 15);

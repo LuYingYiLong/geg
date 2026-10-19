@@ -69,41 +69,41 @@ public final class TableControlCellTest {
         int x = buy.x() + 2;
         int y = buy.y() + 2;
         check(buy.height() == favorite.height() && buy.height() == 18);
-        check(window.pointerPressed(x, y, null) && events.isEmpty());
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null) && events.isEmpty());
         check(window.focusManager().focused() == first.buy);
-        check(window.pointerReleased(favorite.x() + 2, favorite.y() + 2) && events.isEmpty());
-        window.pointerPressed(x, y, null);
-        window.pointerReleased(x, y);
+        check(io.github.luyingyilong.ore.event.WindowInputs.release(window,favorite.x() + 2, favorite.y() + 2) && events.isEmpty());
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,x, y);
         check(events.equals(List.of("CLICK", "0:buy")));
-        check(!window.pointerReleased(x, y));
+        check(!io.github.luyingyilong.ore.event.WindowInputs.release(window,x, y));
         events.clear();
-        window.pointerPressed(favorite.x() + 2, favorite.y() + 2, null);
-        window.pointerReleased(favorite.x() + 2, favorite.y() + 2);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,favorite.x() + 2, favorite.y() + 2, null);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,favorite.x() + 2, favorite.y() + 2);
         check(first.favorite.buttonPressed() && events.equals(List.of("CLICK", "0:favorite:true")));
 
         events.clear();
         first.buy.disabled(true);
-        window.pointerPressed(x, y, null);
-        window.pointerReleased(x, y);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,x, y);
         check(events.isEmpty() && !first.buy.acceptsFocus());
         first.buy.disabled(false);
-        window.pointerPressed(x, y, null);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null);
         table.rows(List.copyOf(rows));
         window.layoutViewport(200, 100, null);
-        window.pointerReleased(x, y);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,x, y);
         check(events.equals(List.of("CLICK", "0:buy"))); // Equal snapshots preserve in-flight clicks.
 
         events.clear();
-        window.pointerPressed(x, y, null);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null);
         table.setScroll(23);
-        window.pointerReleased(x, y);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,x, y);
         check(events.isEmpty());
         table.setScroll(0);
-        window.pointerPressed(x, y, null);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null);
         Button focusedBeforeRefresh = actions(table, 0).buy;
         table.rows(IntStream.range(0, 500).mapToObj(i -> new Item(i, true)).toList());
         window.layoutViewport(200, 100, null);
-        window.pointerReleased(x, y);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,x, y);
         check(events.isEmpty() && actions(table, 0).favorite.buttonPressed());
         check(window.focusManager().focused() == focusedBeforeRefresh);
 
@@ -128,8 +128,8 @@ public final class TableControlCellTest {
                 .filter(row -> row.bounds().y() >= table.scroll()).findFirst().orElseThrow();
         Actions current = actions(table, visible.index());
         Rect target = current.buy.absoluteBounds();
-        window.pointerPressed(target.x() + 2, target.y() + 2, null);
-        window.pointerReleased(target.x() + 2, target.y() + 2);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,target.x() + 2, target.y() + 2, null);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,target.x() + 2, target.y() + 2);
         check(events.equals(List.of("CLICK", visible.item().id() + ":buy")));
         events.clear();
 
@@ -137,14 +137,14 @@ public final class TableControlCellTest {
         table.setScroll(0);
         first = actions(table, 0);
         window.focusManager().requestFocus(first.buy, null);
-        window.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null);
         check(window.focusManager().focused() == first.favorite);
-        window.keyPressed(GLFW.GLFW_KEY_SPACE, 0, null);
-        window.keyPressed(GLFW.GLFW_KEY_SPACE, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_SPACE, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_SPACE, 0, null);
         check(events.isEmpty());
-        window.keyReleased(GLFW.GLFW_KEY_SPACE, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_SPACE, 0, null);
         check(events.equals(List.of("CLICK", "0:favorite:false")));
-        for (int i = 0; i < 15; i++) window.keyPressed(GLFW.GLFW_KEY_DOWN, 0, null);
+        for (int i = 0; i < 15; i++) io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_DOWN, 0, null);
         check(table.scroll() > 0 && window.focusManager().focused() instanceof Button);
         Rect focus = window.focusManager().focused().absoluteBounds();
         check(focus.y() >= table.bodyBounds().y() && focus.bottom() <= table.bodyBounds().bottom());
@@ -152,26 +152,26 @@ public final class TableControlCellTest {
         // Header and buffered rows never receive body clicks, including compact layouts.
         events.clear();
         table.setScroll(10);
-        window.pointerPressed(45, 10, null);
-        window.pointerReleased(45, 10);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,45, 10, null);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,45, 10);
         check(events.isEmpty());
         for (int width : new int[]{127, 128, 129}) {
             table.scrollToTop();
             window.layoutViewport(width, 150, null);
             check(table.compact());
             target = actions(table, 0).buy.absoluteBounds();
-            window.pointerPressed(target.x() + 1, target.y() + 1, null);
-            window.pointerReleased(target.x() + 1, target.y() + 1);
+            io.github.luyingyilong.ore.event.WindowInputs.press(window,target.x() + 1, target.y() + 1, null);
+            io.github.luyingyilong.ore.event.WindowInputs.release(window,target.x() + 1, target.y() + 1);
             check(events.equals(List.of("CLICK", "0:buy")));
             events.clear();
         }
 
         target = actions(table, 0).buy.absoluteBounds();
-        window.pointerPressed(target.x() + 1, target.y() + 1, null);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,target.x() + 1, target.y() + 1, null);
         Control popup = new Control() { @Override public boolean focusScope() { return true; } };
         overlay.add(popup);
         window.layoutViewport(129, 150, null);
-        window.pointerReleased(target.x() + 1, target.y() + 1);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,target.x() + 1, target.y() + 1);
         check(events.isEmpty());
     }
 

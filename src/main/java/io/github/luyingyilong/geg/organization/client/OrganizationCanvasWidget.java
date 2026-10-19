@@ -22,7 +22,6 @@ import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.layout.Box;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.FocusManager;
 import io.github.luyingyilong.ore.layout.Overlay;
 import io.github.luyingyilong.ore.layout.Padding;
 import io.github.luyingyilong.ore.layout.Panel;
@@ -39,15 +38,11 @@ import io.github.luyingyilong.geg.organization.OrganizationSavedData;
 import io.github.luyingyilong.geg.organization.OrganizationSyncPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.GLFW;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> implements Interactable {
@@ -71,13 +66,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private final OrganizationEditForm editor;
     private final Modal editModal;
     private boolean pendingEdit;
-    private final Map<UUID, Dropdown<OrganizationSavedData.Operation>> memberMenus = new HashMap<>();
     private UUID selectedOrganizationId;
-    private UUID activeMenuMember;
-    private Rect activeMenuBounds;
-    private MemberMenuPress pendingMenuPress;
-    private Dropdown<OrganizationSavedData.Operation> pendingKeyMenu;
-    private int heldMenuKey = -1;
     private UUID pendingDisbandId;
     private boolean pendingCreate;
 
@@ -170,48 +159,26 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                                 member -> roleLabel(member.role()), OreTheme.TEXT_WHITE)
                                 .overflow(Label.Overflow.ELLIPSIS)))
                 .column(new Table.Column<>("action", Component.translatable("organization.geg.actions"),
-                        70, 82, 1, width -> 20, new Table.Cell<>() {
-                    @Override public void draw(ModularGuiContext context,
-                                               OrganizationSyncPacket.Member member, Rect bounds) {
-                        draw(context, member, bounds, Table.CellState.IDLE);
-                    }
+                        70, 82, 1, width -> 20, new Table.ControlCell<>(MemberActions::new, MemberActions::bind)));
+    }
 
-                    @Override public void draw(ModularGuiContext context,
-                                               OrganizationSyncPacket.Member member, Rect bounds, Table.CellState state) {
-                        if (actionsFor(member).isEmpty()) return;
-                        Rect trigger = actionBounds(bounds);
-                        Dropdown<OrganizationSavedData.Operation> menu = menuFor(member);
-                        menu.drawTrigger(context, trigger.x(), trigger.y(),
-                                trigger.width(), trigger.height(), state.pressed(0));
-                        Rect localTrigger = trigger.translated(-getArea().x, -getArea().y);
-                        if (pendingMenuPress != null && pendingMenuPress.member().equals(member.id())
-                                && !pendingMenuPress.trigger().equals(localTrigger)) cancelPendingMenuInteraction();
-                        if (member.id().equals(activeMenuMember))
-                            activeMenuBounds = trigger.translated(-getArea().x, -getArea().y);
-                    }
-
-                    @Override public boolean click(OrganizationSyncPacket.Member member, Rect bounds,
-                                                   int mouseX, int mouseY) {
-                        if (actionsFor(member).isEmpty()) return false;
-                        Rect trigger = actionBounds(bounds);
-                        if (!trigger.contains(mouseX, mouseY)) return false;
-                        Dropdown<OrganizationSavedData.Operation> menu = menuFor(member);
-                        if (activeMenuMember != null && !activeMenuMember.equals(member.id()))
-                            closeMenu();
-                        cancelPendingMenuInteraction();
-                        if (!menu.click(trigger.x(), trigger.y(), trigger.width(), trigger.height(), mouseX, mouseY)) return false;
-                        menu.releaseAt(mouseX, mouseY);
-                        activeMenuMember = menu.isOpen() ? member.id() : null;
-                        activeMenuBounds = menu.isOpen() ? trigger : null;
-                        return true;
-                    }
-
-                    @Override public List<Rect> focusTargets(OrganizationSyncPacket.Member member,
-                                                              Rect bounds) {
-                        return actionsFor(member).isEmpty() ? List.of()
-                                : List.of(actionBounds(bounds));
-                    }
-                }));
+    private final class MemberActions extends Container {
+        private UUID memberId;
+        private final Dropdown<OrganizationSavedData.Operation> menu = new Dropdown<OrganizationSavedData.Operation>(null, 6)
+                .triggerLabel(Component.translatable("organization.geg.actions"))
+                .checkable(false).onSelect(operation -> chooseOperation(operation, memberId));
+        private MemberActions() { addChild(menu); }
+        private void bind(OrganizationSyncPacket.Member member) {
+            if(!java.util.Objects.equals(memberId,member.id()))menu.close();
+            memberId=member.id();
+            var operations=actionsFor(member);
+            menu.setOptions(operations.stream().map(operation -> new Dropdown.Option<>(operation,
+                    Component.translatable("organization.geg.action."+operation.name().toLowerCase(java.util.Locale.ROOT)))).toList());
+            menu.visible(!operations.isEmpty());
+        }
+        @Override public void layout(Rect bounds,Font font) {
+            super.layout(bounds,font);fitChild(menu,new Rect(0,0,bounds.width(),bounds.height()),font);
+        }
     }
 
     private Table<OrganizationSyncPacket.Application> createApplicationTable() {
@@ -349,17 +316,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         return List.of();
     }
 
-    private Dropdown<OrganizationSavedData.Operation> menuFor(OrganizationSyncPacket.Member member) {
-        Dropdown<OrganizationSavedData.Operation> menu = memberMenus.computeIfAbsent(member.id(), id ->
-                new Dropdown<OrganizationSavedData.Operation>(null, 4)
-                        .triggerLabel(Component.translatable("organization.geg.actions"))
-                        .checkable(false)
-                        .onSelect(operation -> chooseOperation(operation, id)));
-        menu.setOptions(actionsFor(member).stream().map(operation -> new Dropdown.Option<>(operation,
-                Component.translatable("organization.geg.action."
-                        + operation.name().toLowerCase(java.util.Locale.ROOT)))).toList());
-        return menu;
-    }
+
 
     private void chooseOperation(OrganizationSavedData.Operation operation, UUID targetId) {
         closeMenu();
@@ -385,51 +342,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         pendingDisbandId = null;
     }
 
-    private void closeMenu() {
-        cancelPendingMenuInteraction();
-        if (activeMenuMember != null) {
-            Dropdown<OrganizationSavedData.Operation> menu = memberMenus.get(activeMenuMember);
-            if (menu != null) menu.close();
-        }
-        activeMenuMember = null;
-        activeMenuBounds = null;
-    }
-
-    private record MemberMenuPress(Dropdown<OrganizationSavedData.Operation> menu, UUID member,
-                                   Rect trigger) { }
-
-    private void cancelPendingMenuInteraction() {
-        if (pendingMenuPress != null) pendingMenuPress.menu().cancelInteraction();
-        if (pendingKeyMenu != null) pendingKeyMenu.cancelInteraction();
-        pendingMenuPress = null;
-        pendingKeyMenu = null;
-    }
-
-    private boolean beginMenuPress(Dropdown<OrganizationSavedData.Operation> menu, UUID member,
-                                   Rect trigger, Rect anchor, int x, int y) {
-        cancelPendingMenuInteraction();
-        window.focusManager().cancelActivation();
-        if (!menu.click(anchor.x(), anchor.y(), anchor.width(), anchor.height(), x, y)) return false;
-        pendingMenuPress = new MemberMenuPress(menu, member, trigger);
-        return true;
-    }
-
-    private boolean finishMenuPress(int x, int y) {
-        MemberMenuPress press = pendingMenuPress;
-        pendingMenuPress = null;
-        if (press == null) return false;
-        if (!detailDrawer.isOpen() || joinDrawer.visible() || applicationsModal.visible() || editModal.visible()
-                || disbandConfirmation.visible()) {
-            press.menu().cancelInteraction();
-            return true;
-        }
-        boolean released = press.menu().releaseAt(x, y);
-        if (press.menu().isOpen()) {
-            activeMenuMember = press.member();
-            activeMenuBounds = press.trigger();
-        } else closeMenu();
-        return released;
-    }
+    private void closeMenu() { window.context().popups().cancel(); }
 
     private void showDetails(UUID organizationId) {
         OrganizationSyncPacket.Summary summary = ClientOrganizationState.organizations().stream()
@@ -449,7 +362,6 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     private void refreshDetails(OrganizationSyncPacket.Summary summary) {
         closeMenu();
-        memberMenus.clear();
         detailDrawer.title(Component.literal(summary.name()));
         organizationDetails.update(summary);
         memberTable.rows(summary.members());
@@ -736,180 +648,47 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         options.orientation(area.width() < 252 ? Box.Orientation.VERTICAL : Box.Orientation.HORIZONTAL);
         window.layoutViewport(area.width(), area.height(), context.getFont());
         window.draw(context, area.x(), area.y());
-        if (!detailDrawer.isOpen()) closeMenu();
-        if (detailDrawer.isOpen() && !joinDrawer.visible() && !applicationsModal.visible()
-                && !disbandConfirmation.visible() && !editModal.visible() && activeMenuMember != null
-                && activeMenuBounds != null) {
-            Dropdown<OrganizationSavedData.Operation> menu = memberMenus.get(activeMenuMember);
-            if (menu != null && menu.isOpen()) {
-                GuiGraphics graphics = context.getGraphics();
-                graphics.flush();
-                graphics.pose().pushPose();
-                graphics.pose().translate(0.0F, 0.0F, 350.0F);
-                try {
-                    Rect anchor = activeMenuBounds.translated(area.x(), area.y());
-                    menu.drawMenu(context, anchor.x(), menuY(menu, activeMenuBounds) + area.y(),
-                            anchor.width(), anchor.height());
-                    graphics.flush();
-                } finally {
-                    graphics.pose().popPose();
-                }
-            }
-        }
     }
 
-    private int menuY(Dropdown<OrganizationSavedData.Operation> menu, Rect anchor) {
-        int bottom = detailDrawer.panelBounds().bottom();
-        return anchor.bottom() + menu.menuHeight() <= bottom ? anchor.y()
-                : anchor.y() - menu.menuHeight() - anchor.height();
+
+
+    @Override public @NotNull Interactable.Result onMousePressed(int button) {
+        return io.github.luyingyilong.ore.event.WindowInputs.press(window,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,getContext(),button)
+                ?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
     }
 
-    @Override
-    public @NotNull Interactable.Result onMousePressed(int button) {
-        window.focusManager().pointerActivity();
-        if (button != 0) return Interactable.Result.IGNORE;
-        cancelPendingMenuInteraction();
-        int mouseX = getContext().getAbsMouseX() - getArea().x;
-        int mouseY = getContext().getAbsMouseY() - getArea().y;
-        if (!detailDrawer.isOpen() || joinDrawer.visible() || editModal.visible()) closeMenu();
-        if (activeMenuMember != null && activeMenuBounds != null) {
-            Dropdown<OrganizationSavedData.Operation> menu = memberMenus.get(activeMenuMember);
-            if (menu != null && menu.isOpen()) {
-                Rect anchor = activeMenuBounds.contains(mouseX, mouseY) ? activeMenuBounds
-                        : new Rect(activeMenuBounds.x(), menuY(menu, activeMenuBounds),
-                                activeMenuBounds.width(), activeMenuBounds.height());
-                beginMenuPress(menu, activeMenuMember, activeMenuBounds, anchor, mouseX, mouseY);
-                return Interactable.Result.SUCCESS;
-            }
-        }
-        return window.pointerPressed(mouseX, mouseY, getContext())
-                ? Interactable.Result.SUCCESS : Interactable.Result.IGNORE;
+    @Override public @NotNull Interactable.Result onCharTyped(char character,int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.text(window,String.valueOf(character),modifiers,getContext())
+                ?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
     }
-
     @Override public boolean onMouseScrolled(double delta) {
-        cancelPendingMenuInteraction();
-        if (editModal.visible()) {
-            editor.content().dispatchScroll(getContext().getAbsMouseX() - getArea().x,
-                    getContext().getAbsMouseY() - getArea().y, delta, false);
-            return true;
-        }
-        if (emptyDialog.visible() || disbandConfirmation.visible()) return true;
-        if (createDrawer.visible() && !applicationsModal.visible() && !joinDrawer.visible()
-                && !detailDrawer.visible() && !disbandConfirmation.visible()) {
-            return createDrawer.dispatchScroll(getContext().getAbsMouseX() - getArea().x,
-                    getContext().getAbsMouseY() - getArea().y, delta, false);
-        }
-        if (applicationsModal.visible()) {
-            applicationTable.scrollBy(-(int) Math.signum(delta) *
-                    (applicationTable.compact() ? 36 : 23));
-            return true;
-        }
-        if (joinDrawer.visible()) {
-            return scrollTableDrawer(joinDrawer, joinTable, delta);
-        }
-        if (activeMenuMember != null) {
-            Dropdown<OrganizationSavedData.Operation> menu = memberMenus.get(activeMenuMember);
-            if (menu != null && menu.scroll(delta)) return true;
-        }
-        if (detailDrawer.visible()) {
-            closeMenu();
-            return scrollTableDrawer(detailDrawer, memberTable, delta);
-        }
-        return membershipsScroll.dispatchScroll(getContext().getAbsMouseX() - getArea().x,
-                getContext().getAbsMouseY() - getArea().y, delta, false);
+        return io.github.luyingyilong.ore.event.WindowInputs.scroll(window,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,delta,net.minecraft.client.gui.screens.Screen.hasShiftDown());
     }
 
-    private boolean scrollTableDrawer(Drawer drawer, Table<?> table, double delta) {
-        Scroll body = drawer.bodyScroll();
-        int mouseX = getContext().getAbsMouseX() - getArea().x;
-        int mouseY = getContext().getAbsMouseY() - getArea().y;
-        if (drawer.isOpen() && body.hit(mouseX, mouseY)) {
-            boolean horizontal = net.minecraft.client.gui.screens.Screen.hasShiftDown();
-            if (!horizontal && !body.scrollbarAt(mouseX, mouseY)
-                    && table.hit(mouseX + body.scrollX(), mouseY + body.scrollY())) {
-                int previous = table.scroll();
-                table.scrollBy(-(int) Math.signum(delta) * (table.compact() ? 36 : 23));
-                if (table.scroll() != previous) return true;
-            }
-            drawer.dispatchScroll(mouseX, mouseY, delta, horizontal);
-        }
-        return true;
-    }
 
-    @Override public void onMouseDrag(int button, double dragX, double dragY) {
-        if (button == 0) window.pointerDragged(getContext().getAbsMouseX() - getArea().x,
-                getContext().getAbsMouseY() - getArea().y);
+
+    @Override public void onMouseDrag(int button,double x,double y) {
+        io.github.luyingyilong.ore.event.WindowInputs.pointer(window,io.github.luyingyilong.ore.event.PointerEvent.Action.MOVE,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,button);
     }
 
     @Override public boolean onMouseReleased(int button) {
-        if (button != 0) return false;
-        boolean released = window.pointerReleased(getContext().getAbsMouseX() - getArea().x,
-                getContext().getAbsMouseY() - getArea().y);
-        if (pendingMenuPress != null) {
-            boolean menuReleased = finishMenuPress(getContext().getAbsMouseX() - getArea().x,
-                    getContext().getAbsMouseY() - getArea().y);
-            released |= menuReleased;
-        }
-        return released;
+        return io.github.luyingyilong.ore.event.WindowInputs.pointer(window,io.github.luyingyilong.ore.event.PointerEvent.Action.RELEASE,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,button);
     }
 
-    @Override public boolean onKeyReleased(int keyCode, int scanCode, int modifiers) {
-        boolean released = window.keyReleased(keyCode, modifiers, getContext());
-        if (heldMenuKey == keyCode) {
-            heldMenuKey = -1;
-            Dropdown<OrganizationSavedData.Operation> menu = pendingKeyMenu;
-            pendingKeyMenu = null;
-            if (menu != null) {
-                if (detailDrawer.isOpen() && !joinDrawer.visible() && !applicationsModal.visible()
-                        && !disbandConfirmation.visible() && !editModal.visible()) menu.onActivationReleased(keyCode);
-                else menu.cancelInteraction();
-                if (!menu.isOpen()) closeMenu();
-            }
-            released = true;
-        }
-        return released;
+    @Override public boolean onKeyReleased(int keyCode,int scanCode,int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.key(window,io.github.luyingyilong.ore.event.KeyEvent.Action.RELEASE,keyCode,scanCode,modifiers,getContext());
     }
 
     @Override public void dispose() {
         DebugBridge.backend().close(window);
         closeMenu();
-        heldMenuKey = -1;
         window.cancelInteractions();
         super.dispose();
     }
 
-    @Override
-    public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
-        if (heldMenuKey == keyCode) return Interactable.Result.STOP;
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE && activeMenuMember != null
-                && !applicationsModal.visible() && !joinDrawer.visible() && !disbandConfirmation.visible() && !editModal.visible()
-                && !window.focusManager().nativeInputFocused()) {
-            closeMenu();
-            return Interactable.Result.STOP;
-        }
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE && window.keyPressed(keyCode, modifiers, getContext()))
-            return Interactable.Result.STOP;
-        if (activeMenuMember != null) {
-            Dropdown<OrganizationSavedData.Operation> menu = memberMenus.get(activeMenuMember);
-            if (menu != null && menu.isOpen()) {
-                if (keyCode == GLFW.GLFW_KEY_UP || keyCode == GLFW.GLFW_KEY_DOWN) {
-                    window.focusManager().keyboardNavigation();
-                    menu.onFocusMove(keyCode == GLFW.GLFW_KEY_UP
-                            ? FocusManager.Direction.UP : FocusManager.Direction.DOWN);
-                    return Interactable.Result.STOP;
-                }
-                if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER
-                        || keyCode == GLFW.GLFW_KEY_SPACE) {
-                    if (heldMenuKey != -1) return Interactable.Result.STOP;
-                    heldMenuKey = keyCode;
-                    pendingKeyMenu = menu;
-                    menu.onActivationPressed(keyCode);
-                    return Interactable.Result.STOP;
-                }
-            }
-        }
-        return window.keyPressed(keyCode, modifiers, getContext())
-                ? Interactable.Result.STOP : Interactable.Result.IGNORE;
+    @Override public @NotNull Interactable.Result onKeyPressed(int keyCode,int scanCode,int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.key(window,io.github.luyingyilong.ore.event.KeyEvent.Action.PRESS,keyCode,scanCode,modifiers,getContext())
+                ?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
     }
 
     private static final class IconControl extends Control {

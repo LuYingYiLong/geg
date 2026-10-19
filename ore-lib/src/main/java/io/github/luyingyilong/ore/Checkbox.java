@@ -88,14 +88,14 @@ public final class Checkbox extends Container {
                 ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE);
     }
 
-    @Override protected boolean onPointerPressed(int rootX, int rootY) {
+    @Override protected boolean pointerDown(int rootX, int rootY) {
         if (!enabled || !hit(rootX, rootY)) return false;
-        capturePointer();
+
         gesture.pointerDown(true);
         return true;
     }
 
-    @Override public boolean releasePointer(boolean over) {
+    @Override protected boolean pointerUp(boolean over) {
         var release = gesture.pointerUp(true, over && enabled && visible());
         if (release.target() != null) activate();
         return release.handled();

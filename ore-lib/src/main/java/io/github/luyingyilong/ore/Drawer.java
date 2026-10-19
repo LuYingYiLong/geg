@@ -292,19 +292,13 @@ public final class Drawer extends Container {
         return child == null ? this : child;
     }
 
-    @Override public boolean dispatchPointer(int rootX, int rootY) {
-        if (!hit(rootX, rootY)) return false;
-        if (targetOpen) {
-            if (frame.hit(rootX, rootY)) frame.dispatchPointer(rootX, rootY);
-            else close();
-        }
+    @Override protected boolean pointerDown(int x, int y) {
+        if (!hit(x,y)) return false;
+        if (targetOpen && !frame.hit(x,y)) close();
         return true;
     }
-
-    @Override public boolean dispatchScroll(int rootX, int rootY, double delta, boolean horizontal) {
-        if (!hit(rootX, rootY)) return false;
-        if (targetOpen && frame.hit(rootX, rootY)) frame.dispatchScroll(rootX, rootY, delta, horizontal);
-        return true;
+    @Override protected boolean wheel(int x,int y,double delta,boolean horizontal) {
+        return hit(x,y);
     }
 
     @Override public boolean onFocusKey(int keyCode, int modifiers) {

@@ -211,7 +211,7 @@ public final class ChatMessageList extends Container {
         }
 
         @Override
-        protected boolean onPointerPressed(int x, int y) {
+        protected boolean pointerDown(int x, int y) {
             if (avatar.hit(x, y) && message != null && !outgoing && Minecraft.getInstance().player != null
                     && !message.sender().equals(Minecraft.getInstance().player.getUUID())) {
                 ClientChatState.openDirect(message.sender().toString());
@@ -278,7 +278,7 @@ public final class ChatMessageList extends Container {
         }
 
         @Override
-        protected boolean onPointerPressed(int x, int y) {
+        protected boolean pointerDown(int x, int y) {
             var mc = Minecraft.getInstance();
             Style style = style(mc.font, x, y, absoluteBounds());
             return style != null && style.getClickEvent() != null && mc.screen != null && mc.screen.handleComponentClicked(style);

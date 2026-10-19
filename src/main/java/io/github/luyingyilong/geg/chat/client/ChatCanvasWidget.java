@@ -20,7 +20,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.GLFW;
 
 /** The single bridge between MUI events/native editors and the Ore chat tree. */
 final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interactable {
@@ -177,25 +176,30 @@ final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interac
             if (messages.scroll().scrollY() <= 8) ClientChatState.older();
         }
     }
-    @Override public @NotNull Result onMousePressed(int button) {
-        window.focusManager().pointerActivity();
-        if (button != 0) return Result.IGNORE;
-        return window.pointerPressed(getContext().getAbsMouseX() - getArea().x, getContext().getAbsMouseY() - getArea().y, getContext()) ? Result.SUCCESS : Result.IGNORE;
+    @Override public @NotNull Interactable.Result onMousePressed(int button) {
+        return io.github.luyingyilong.ore.event.WindowInputs.press(window,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,getContext(),button)
+                ?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
     }
     @Override public boolean onMouseReleased(int button) {
-        return button == 0 && window.pointerReleased(getContext().getAbsMouseX() - getArea().x, getContext().getAbsMouseY() - getArea().y);
+        return io.github.luyingyilong.ore.event.WindowInputs.pointer(window,io.github.luyingyilong.ore.event.PointerEvent.Action.RELEASE,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,button);
     }
-    @Override public void onMouseDrag(int button, double x, double y) {
-        if (button == 0) window.pointerDragged(getContext().getAbsMouseX() - getArea().x, getContext().getAbsMouseY() - getArea().y);
+    @Override public void onMouseDrag(int button,double x,double y) {
+        io.github.luyingyilong.ore.event.WindowInputs.pointer(window,io.github.luyingyilong.ore.event.PointerEvent.Action.MOVE,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,button);
+    }
+    @Override public @NotNull Interactable.Result onCharTyped(char character,int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.text(window,String.valueOf(character),modifiers,getContext())
+                ?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
     }
     @Override public boolean onMouseScrolled(double delta) {
-        return window.dispatchScroll(getContext().getAbsMouseX() - getArea().x, getContext().getAbsMouseY() - getArea().y, delta, false);
+        return io.github.luyingyilong.ore.event.WindowInputs.scroll(window,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,delta,net.minecraft.client.gui.screens.Screen.hasShiftDown());
     }
-    @Override public @NotNull Result onKeyPressed(int key, int scanCode, int modifiers) {
-        if (composer.input().isFocused() && composer.handleKey(key, modifiers)) return Result.STOP;
-        return window.keyPressed(key, modifiers, getContext()) ? Result.STOP : Result.IGNORE;
+    @Override public @NotNull Interactable.Result onKeyPressed(int key,int scanCode,int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.key(window,io.github.luyingyilong.ore.event.KeyEvent.Action.PRESS,key,scanCode,modifiers,getContext())
+                ?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
     }
-    @Override public boolean onKeyReleased(int key, int scanCode, int modifiers) { return window.keyReleased(key, modifiers, getContext()); }
+    @Override public boolean onKeyReleased(int key,int scanCode,int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.key(window,io.github.luyingyilong.ore.event.KeyEvent.Action.RELEASE,key,scanCode,modifiers,getContext());
+    }
     @Override public void dispose() {
         DebugBridge.backend().close(window); closing(); super.dispose(); }
 

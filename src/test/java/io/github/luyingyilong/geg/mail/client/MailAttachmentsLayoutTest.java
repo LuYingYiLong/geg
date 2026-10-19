@@ -33,7 +33,7 @@ public final class MailAttachmentsLayoutTest {
             check(scroll.size().height() == Slot.SIZE && items.size().height() == Slot.SIZE);
             check(items.children().get(99).bounds().right() == 100 * Slot.SIZE + 99 * 2);
             scroll.setScroll(0, 0);
-            check(rewards.dispatchScroll(1, 1, -1, false) && scroll.scrollX() > 0);
+            check(io.github.luyingyilong.ore.EventFixture.scroll(rewards,1, 1, -1, false) && scroll.scrollX() > 0);
             scroll.setScroll(Integer.MAX_VALUE, 0);
             check(scroll.scrollX() == scroll.maxScrollX());
         }
@@ -43,7 +43,7 @@ public final class MailAttachmentsLayoutTest {
         check(!rewards.claimButton().acceptsFocus());
         rewards.layout(new Rect(0, 0, 300, Slot.SIZE), font);
         Rect button = rewards.claimButton().absoluteBounds();
-        rewards.claimButton().pressAt(button.x() + 1, button.y() + 1);
+        io.github.luyingyilong.ore.EventFixture.press(rewards,button.x()+1,button.y()+1);
         check(!rewards.claimButton().activate() && claims[0] == 0);
         check(rewards.claimButton().bounds().width() == 300);
         // Switching to an unclaimed or partially claimed mail re-enables the same button.

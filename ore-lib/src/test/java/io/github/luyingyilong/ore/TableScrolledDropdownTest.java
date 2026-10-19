@@ -8,8 +8,8 @@ import java.util.List;
 /** Mouse focus must not relocate a table before its cell receives the same pointer event. */
 public final class TableScrolledDropdownTest {
     public static void main(String[] args) {
-        detachedMemberMenu();
         retainedDropdown();
+        drawerDropdownAcrossLayout();
         System.out.println("ORE_TABLE_SCROLLED_DROPDOWN_PASS");
     }
 
@@ -18,57 +18,6 @@ public final class TableScrolledDropdownTest {
         dropdown.setOptions(List.of(new Dropdown.Option<>("a", Component.literal("A")),
                 new Dropdown.Option<>("b", Component.literal("B"))));
         return dropdown;
-    }
-
-    private static void detachedMemberMenu() {
-        int[] actions = {0};
-        Dropdown<String> menu = dropdown();
-        Table<Integer> table = new Table<Integer>().rowKey(value -> value)
-                .column(new Table.Column<>("name", Component.empty(), 230, 230, 0,
-                        width -> 23, (context, row, bounds) -> { }))
-                .column(new Table.Column<>("actions", Component.empty(), 70, 70, 0,
-                        width -> 23, new Table.Cell<>() {
-                    @Override public void draw(brachy.modularui.screen.viewport.ModularGuiContext context,
-                                               Integer row, Rect bounds) { }
-                    @Override public List<Rect> focusTargets(Integer row, Rect bounds) { return List.of(bounds); }
-                    @Override public boolean click(Integer row, Rect bounds, int x, int y) {
-                        if (!menu.click(bounds.x(), bounds.y(), bounds.width(), bounds.height(), x, y)) return false;
-                        actions[0]++;
-                        return menu.releaseAt(x, y);
-                    }
-                }));
-        table.minimum(300, 80);
-        table.rows(List.of(0));
-        Scroll scroll = new Scroll().vertical(Scroll.BarMode.DISABLED).content(table);
-        Window window = new Window(true).content(scroll);
-        window.layoutViewport(120, 80, null);
-        scroll.setScroll(150, 0);
-        check(scroll.scrollX() == 150, "Test needs horizontal overflow");
-        check(window.pointerPressed(90, 25, null), "Visible action press");
-        check(scroll.scrollX() == 150, "Mouse focus unexpectedly changed horizontal scroll");
-        window.pointerReleased(90, 25);
-        check(actions[0] == 1, "Visible table action must receive release");
-        check(menu.isOpen(), "Detached organization-style Dropdown must open");
-        menu.close();
-        window.focusManager().requestFocus(null, null);
-        window.pointerPressed(90, 25, null);
-        window.pointerReleased(50, 25);
-        check(!menu.isOpen() && actions[0] == 1, "Dragging out still cancels");
-
-        // Changing focus scope on the first pointer press must preserve the same coordinates too.
-        Control scope = new Control() { @Override public boolean focusScope() { return true; } };
-        scroll.removeChild(table);
-        Scroll scopedScroll = new Scroll().vertical(Scroll.BarMode.DISABLED).content(table);
-        scopedScroll.requestedSize(120, 80);
-        scope.addChild(scopedScroll);
-        Overlay overlay = new Overlay().add(scope);
-        window.overlay(overlay);
-        window.layoutViewport(120, 80, null);
-        scopedScroll.setScroll(150, 0);
-        window.pointerPressed(90, 25, null);
-        check(scopedScroll.scrollX() == 150, "First mouse focus in an overlay must not reveal the whole table");
-        window.pointerReleased(90, 25);
-        check(menu.isOpen(), "Menu opens on first press in a new scope");
     }
 
     private static void retainedDropdown() {
@@ -84,18 +33,50 @@ public final class TableScrolledDropdownTest {
         Window window = Window.embedded().content(scroll);
         window.layoutViewport(120, 80, null);
         scroll.setScroll(150, 0);
-        window.pointerPressed(90, 25, null);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,90, 25, null);
         check(scroll.scrollX() == 150 && window.focusManager().focused() == dropdown, "Retained dropdown preserves scroll");
-        window.pointerReleased(90, 25);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,90, 25);
         check(dropdown.isOpen(), "Retained Dropdown opens");
-        window.pointerPressed(90, 67, null);
-        window.pointerReleased(90, 67);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,90, 67, null);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,90, 67);
         check(dropdown.selected().equals("b") && !dropdown.isOpen(), "Popup options use the scrolled anchor");
 
         window.focusManager().requestFocus(null, null);
         scroll.setScroll(0, 0);
         window.focusManager().requestFocus(dropdown, null);
         check(scroll.scrollX() > 0, "Keyboard/programmatic focus must still reveal an offscreen dropdown");
+    }
+
+    private static void drawerDropdownAcrossLayout() {
+        Dropdown<String> dropdown = dropdown();
+        Container wrapper = new Container() {
+            { addChild(dropdown); }
+            @Override public void layout(Rect bounds, net.minecraft.client.gui.Font font) {
+                super.layout(bounds, font);
+                fitChild(dropdown, new Rect(0, 0, bounds.width(), bounds.height()), font);
+            }
+        };
+        Table<Integer> table = new Table<Integer>().rowKey(value -> value)
+                .column(new Table.Column<>("menu", Component.empty(), 70, 70, 1,
+                        width -> 23, new Table.ControlCell<>(() -> wrapper, (control, row) -> { })));
+        table.minimum(300, 80);
+        table.rows(List.of(0));
+        var font = new net.minecraft.client.gui.Font(id -> null, false) {
+            @Override public int width(net.minecraft.network.chat.FormattedText text) { return text.getString().length() * 6; }
+        };
+        long[] time = {0};
+        Drawer drawer = new Drawer(Component.literal("Members"), () -> time[0], cue -> { }).content(table);
+        Window window = Window.embedded().content(new Control()).overlay(new Overlay().add(drawer));
+        drawer.open();
+        time[0] = 1000;
+        window.layoutViewport(400, 200, font);
+        drawer.bodyScroll().setScroll(100, 0);
+        var area = io.github.luyingyilong.ore.event.EventGeometry.displayed(dropdown);
+        int x = Math.max(area.x(), drawer.panelBounds().x()) + 10, y = area.y() + 8;
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window, x, y, null), "Drawer dropdown press accepted");
+        for (int i = 0; i < 3; i++) window.layoutViewport(400, 200, font);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window, x, y);
+        check(dropdown.isOpen(), "Drawer Dropdown opens across intervening layout frames");
     }
 
     private static void check(boolean condition, String message) {

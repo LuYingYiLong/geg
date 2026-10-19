@@ -142,7 +142,10 @@ public final class TextArea extends Input {
         updateTextScroll();
     }
 
+    @Override protected boolean submitsOnEnter() { return submit!=null; }
+
     @Override public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
+        if (!acceptsHostInput()) return Interactable.Result.IGNORE;
         if (submit != null && inputMethodInteractive() && isFocused() && keyCode == GLFW.GLFW_KEY_ESCAPE && composing()) {
             cancelPreedit(); return Interactable.Result.STOP;
         }

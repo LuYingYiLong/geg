@@ -468,7 +468,9 @@ public final class Table<T> extends Container {
 
     @Override
     public void layout(Rect localBounds, Font font) {
-        if (!bounds().equals(localBounds)) cancelInteraction();
+        // Scroll may lay out this table several times while resolving scrollbar space.
+        // Resizing does not invalidate a retained cell's press/release gesture.
+        if (!bounds().equals(localBounds)) gesture.cancel();
         if (rowKey == null) throw new IllegalStateException("A table requires a row key");
         if (lastWidth >= 0 && lastWidth != localBounds.width() && !dirty && !resetScroll) saveAnchor();
         super.layout(localBounds, font);
@@ -743,7 +745,12 @@ public final class Table<T> extends Container {
         return true;
     }
 
-    @Override protected boolean onPointerPressed(int rootX, int rootY) {
+    @Override protected boolean wheel(int x,int y,double delta,boolean horizontal) {
+        if(horizontal || !bodyBounds().contains(x,y))return false;
+        int before=scroll;scrollBy(-(int)Math.signum(delta)*(compact?36:23));return before!=scroll;
+    }
+
+    @Override protected boolean pointerDown(int rootX, int rootY) {
         PressTarget target = pointerTarget(rootX, rootY);
         if (target == null) return false;
         Row<T> row = hitRow(rootX, rootY);
@@ -753,12 +760,12 @@ public final class Table<T> extends Container {
         for (int index = 0; index < targets.size(); index++)
             if (targets.get(index).columnKey().equals(target.columnKey())
                     && targets.get(index).index() == target.index()) { focusedAction = index; break; }
-        capturePointer();
+
         gesture.pointerDown(target);
         return true;
     }
 
-    @Override public boolean releasePointer(int rootX, int rootY, boolean over) {
+    @Override protected boolean pointerUp(int rootX, int rootY, boolean over) {
         var release = gesture.pointerUp(pointerTarget(rootX, rootY), over && visible());
         if (release.target() != null) click(rootX, rootY);
         return release.handled();
@@ -795,16 +802,17 @@ public final class Table<T> extends Container {
         return hitRow(rootX, rootY) == null ? null : super.hitTop(rootX, rootY);
     }
 
-    @Override public boolean dispatchPointer(int rootX, int rootY) {
-        return hitRow(rootX, rootY) != null && super.dispatchPointer(rootX, rootY);
-    }
+
 
     private final class RowView extends Container {
         private Row<T> row;
         private final Map<String, Control> controls = new HashMap<>();
 
         private void bind(Row<T> row) {
-            cancelInteractions();
+            // Preserve gestures and open menus when only geometry or an equal snapshot changes.
+            // A different record or changed data must never inherit a pending activation.
+            if (this.row == null || !Objects.equals(this.row.key(), row.key())
+                    || !Objects.equals(this.row.item(), row.item())) cancelInteractions();
             DebugBridge.backend().binding(this, row.key());
             this.row = row;
             for (Column<T> column : columns) {

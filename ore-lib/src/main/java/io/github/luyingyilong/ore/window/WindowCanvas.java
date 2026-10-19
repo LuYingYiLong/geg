@@ -47,47 +47,34 @@ public final class WindowCanvas extends Widget<WindowCanvas> implements Interact
         }
         root.layoutViewport(context.getScreenArea().width, context.getScreenArea().height, context.getFont());
         for (InputControl field : fields) {
-            var area = field.widget().getArea(); var bounds = field.displayedBounds();
+            var area = field.widget().getArea(); var bounds = field.widgetBounds();
             area.x = bounds.x(); area.y = bounds.y(); area.width = bounds.width(); area.height = bounds.height();
             field.widget().onUpdate();
         }
         root.draw(context, 0, 0);
     }
 
-    @Override
-    public Interactable.Result onMousePressed(int button) {
-        if (button != 0) return Interactable.Result.IGNORE;
-        boolean handled = root.pointerPressed(getContext().getAbsMouseX(), getContext().getAbsMouseY(), getContext());
-        if (!root.context().popups().capturing() && root.focusManager().focused() instanceof InputControl input
-                && input.displayedBounds().contains(getContext().getAbsMouseX(), getContext().getAbsMouseY()))
-            return input.widget().onMousePressed(button);
-        return handled ? Interactable.Result.SUCCESS : Interactable.Result.IGNORE;
+    @Override public Interactable.Result onMousePressed(int button) {
+        return io.github.luyingyilong.ore.event.WindowInputs.press(root,getContext().getAbsMouseX(),getContext().getAbsMouseY(),getContext(),button)
+                ?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
     }
-
-    @Override
-    public boolean onMouseReleased(int button) {
-        return button == 0 && root.pointerReleased(getContext().getAbsMouseX(), getContext().getAbsMouseY());
+    @Override public boolean onMouseReleased(int button) {
+        return io.github.luyingyilong.ore.event.WindowInputs.pointer(root,io.github.luyingyilong.ore.event.PointerEvent.Action.RELEASE,getContext().getAbsMouseX(),getContext().getAbsMouseY(),button);
     }
-
-    @Override
-    public void onMouseDrag(int button, double x, double y) {
-        if (button == 0 && !root.pointerDragged(getContext().getAbsMouseX(), getContext().getAbsMouseY())
-                && root.focusManager().focused() instanceof InputControl input) input.widget().onMouseDrag(button, x, y);
+    @Override public void onMouseDrag(int button,double x,double y) {
+        io.github.luyingyilong.ore.event.WindowInputs.pointer(root,io.github.luyingyilong.ore.event.PointerEvent.Action.MOVE,getContext().getAbsMouseX(),getContext().getAbsMouseY(),button);
     }
-
-    @Override
-    public Interactable.Result onKeyPressed(int key, int scan, int modifiers) {
-        return root.keyPressed(key, modifiers, getContext()) ? Interactable.Result.SUCCESS : Interactable.Result.IGNORE;
+    @Override public Interactable.Result onKeyPressed(int key,int scan,int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.key(root,io.github.luyingyilong.ore.event.KeyEvent.Action.PRESS,key,scan,modifiers,getContext())?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
     }
-
-    @Override
-    public boolean onKeyReleased(int key, int scan, int modifiers) {
-        return root.keyReleased(key, modifiers, getContext());
+    @Override public boolean onKeyReleased(int key,int scan,int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.key(root,io.github.luyingyilong.ore.event.KeyEvent.Action.RELEASE,key,scan,modifiers,getContext());
     }
-
-    @Override
-    public boolean onMouseScrolled(double delta) {
-        return root.dispatchScroll(getContext().getAbsMouseX(), getContext().getAbsMouseY(), delta, false);
+    @Override public Interactable.Result onCharTyped(char character,int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.text(root,String.valueOf(character),modifiers,getContext())?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
+    }
+    @Override public boolean onMouseScrolled(double delta) {
+        return io.github.luyingyilong.ore.event.WindowInputs.scroll(root,getContext().getAbsMouseX(),getContext().getAbsMouseY(),delta,net.minecraft.client.gui.screens.Screen.hasShiftDown());
     }
 
     @Override public void dispose() {

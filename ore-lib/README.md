@@ -104,6 +104,18 @@ toggle.loading(true); // 显示滑块内的 Spin，阻止再次操作
 
 默认 240ms 的 ease-out bounce 动画支持途中反向切换，不因重复绑定相同 checked 值而重新开始。`animationDuration(ms)` 可调整时长，0 关闭动画；初始值直接定位，不播放入场动画。
 
+## 输入事件与弹出菜单
+
+所有宿主输入交给所属 `Window.dispatchInput(InputEvent)`。`event` 包提供鼠标、双轴滚轮、键盘、提交文本、预编辑和取消事件；`WindowInputs` 仅将 MUI 回调转换为这些事件。旧的 `dispatchPointer`、`dispatchScroll`、`pointerPressed`、`pointerReleased` 和 `pointerDragged` 接口已删除。
+
+自定义控件重写 `input(InputEvent)`，通过 `target()`、`currentTarget()`、`localX()`／`localY()` 读取分发信息，通过 `accept()` 消费事件。鼠标按下被消费后，Window 将后续移动和释放交给该处理者；组合控件也可以调用 `event.capturePointer()` 显式申请捕获。释放事件的 `over()` 同时考虑控件命中范围和祖先裁剪；拖出后松开不能激活按钮。未处理事件仅沿命中路径向父节点冒泡，不穿透到下层兄弟节点。
+
+`EventGeometry` 统一显示区域和局部坐标转换。Scroll 只转换内容分支，滚动条不叠加自身所属 Scroll 的偏移。控件不应自行加减滚动量。一个事件只能在所属 Window 的客户端线程分发一次，跨窗口、跨线程和重复分发会被拒绝。
+
+`Dropdown` 必须加入控件树，例如作为 `Table.ControlCell`。其菜单由 Window 创建为 Overlay 子树，选项使用真实 Button，统一处理焦点、音效和释放行为；无需手动绘制或转发菜单。菜单会避开宿主边界和所属浮动面板，点击外部关闭并消费该次点击，Esc 返回触发控件；触发节点离开可见区域、换绑、隐藏或被更高层弹层阻断时关闭。
+
+`InputControl` 负责把事件适配到现有 MUI 编辑器，接收时应用字段自身的 MUI 局部矩阵。Ore 的 ModularPanel Mixin 仅在 Canvas 已处理当前按下时保留 Window 设置的字段焦点；其他 MUI 控件仍沿用原有焦点行为。树中 Input／NumberInput／TextArea 的 MUI 直接回调不会重复编辑；宿主不要再单独调用输入框事件方法。提交文字和 IME 预编辑分开处理，预编辑更新不写入文档。未加入 Ore 树的独立 MUI Input 保留原来的接收方式。
+
 ## 测试与兼容
 
 ```powershell

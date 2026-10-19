@@ -62,18 +62,18 @@ public final class DrawerLayoutTest {
         check(inside.absoluteBounds().x() == 104);
         check(drawer.bodyScroll().maxScrollY() > 0);
         Rect hit = inside.absoluteBounds();
-        check(window.pointerPressed(hit.x() + 1, hit.y() + 1, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,hit.x() + 1, hit.y() + 1, null));
         check(clicked[0] == 0);
-        check(window.pointerReleased(hit.x() + 1, hit.y() + 1));
+        check(io.github.luyingyilong.ore.event.WindowInputs.release(window,hit.x() + 1, hit.y() + 1));
         check(clicked[0] == 1);
 
-        check(window.pointerPressed(5, 5, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,5, 5, null));
         check(!drawer.isOpen() && drawer.visible() && drawer.animating());
         now[0] = 300L;
         window.layoutViewport(200, 120, font);
         check(drawer.panelBounds().x() == 150);
         check((drawer.maskColor() >>> 24) == 64);
-        check(window.pointerPressed(5, 5, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,5, 5, null));
         check(closed[0] == 0);
         now[0] = 400L;
         window.layoutViewport(200, 120, font);
@@ -98,7 +98,8 @@ public final class DrawerLayoutTest {
         now[0] = 700L;
         window.layoutViewport(200, 120, font);
         check(drawer.maskColor() == OreTheme.OVERLAY_COLOR && closed[0] == 1);
-        check(window.keyPressed(GLFW.GLFW_KEY_ESCAPE, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ESCAPE, 0, null));
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ESCAPE,0,null);
         check(!drawer.isOpen());
         now[0] = 900L;
         window.layoutViewport(200, 120, font);
@@ -164,10 +165,11 @@ public final class DrawerLayoutTest {
         drawer.title(Component.literal(""));
         window.layoutViewport(240, 120, font);
         check(!header.visible());
-        check(window.keyPressed(GLFW.GLFW_KEY_ESCAPE, 0, null) && !drawer.isOpen());
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ESCAPE, 0, null) && !drawer.isOpen());
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ESCAPE,0,null);
         drawer.open();
         window.layoutViewport(240, 120, font);
-        check(window.pointerPressed(5, 5, null) && !drawer.isOpen());
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,5, 5, null) && !drawer.isOpen());
     }
 
     private static void leftPlacement(Font font) {
@@ -190,9 +192,9 @@ public final class DrawerLayoutTest {
         check(drawer.panelBounds().equals(new Rect(0, 0, 100, 120)));
         Rect hit = inside.absoluteBounds();
         check(hit.x() == Drawer.PADDING);
-        check(window.pointerPressed(hit.x() + 1, hit.y() + 1, null));
-        check(window.pointerReleased(hit.x() + 1, hit.y() + 1) && clicked[0] == 1);
-        check(window.pointerPressed(180, 10, null) && !drawer.isOpen());
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,hit.x() + 1, hit.y() + 1, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.release(window,hit.x() + 1, hit.y() + 1) && clicked[0] == 1);
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,180, 10, null) && !drawer.isOpen());
         now[0] = 300;
         window.layoutViewport(200, 120, font);
         check(drawer.panelBounds().x() == -50);
@@ -234,18 +236,18 @@ public final class DrawerLayoutTest {
             check(bounds.width() == 20 && bounds.height() == 20);
             int x = bounds.x() + 1;
             int y = bounds.y() + 1; // The blank padding also belongs to the button.
-            check(window.pointerPressed(x, y, null) && closed[0] == 0);
-            check(window.pointerReleased(bounds.x() - 1, y) && closed[0] == 0);
-            check(window.pointerPressed(x, y, null) && closed[0] == 0);
-            check(window.pointerReleased(x, y) && closed[0] == 1);
-            check(!window.pointerReleased(x, y) && closed[0] == 1);
+            check(io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null) && closed[0] == 0);
+            check(io.github.luyingyilong.ore.event.WindowInputs.release(window,bounds.x() - 1, y) && closed[0] == 0);
+            check(io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null) && closed[0] == 0);
+            check(io.github.luyingyilong.ore.event.WindowInputs.release(window,x, y) && closed[0] == 1);
+            check(!io.github.luyingyilong.ore.event.WindowInputs.release(window,x, y) && closed[0] == 1);
 
             drawer.open();
             window.layoutViewport(width, 150, font);
             window.focusManager().requestFocus(close, null);
-            check(window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null) && closed[0] == 1);
-            check(window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null) && closed[0] == 1);
-            check(window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null) && closed[0] == 2);
+            check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null) && closed[0] == 1);
+            check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null) && closed[0] == 1);
+            check(io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null) && closed[0] == 2);
             check(closeSounds[0] == 2);
         }
     }
@@ -271,9 +273,9 @@ public final class DrawerLayoutTest {
         now[0] = 200;
         window.layoutViewport(200, 120, font);
         window.focusManager().requestFocus(button, null);
-        window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null);
         drawer.close();
-        window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(drawer.visible() && !drawer.isOpen() && actions[0] == 0);
     }
 
@@ -332,18 +334,20 @@ public final class DrawerLayoutTest {
             int x = table.absoluteBounds().x() + 1;
             int y = table.absoluteBounds().y() + table.headerHeight() + 1;
             Table.Row<Integer> row = table.hitRow(x, y);
-            check(row != null && window.pointerPressed(x, y, null));
-            check(window.pointerReleased(x, y));
+            check(row != null && io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null));
+            check(io.github.luyingyilong.ore.event.WindowInputs.release(window,x, y));
             check(selected[0] == row.item());
         }
         window.focusManager().requestFocus(table, null);
         popup.visible(true);
         window.layoutViewport(640, 180, font);
         check(window.focusManager().focused() == approve);
-        check(window.keyPressed(GLFW.GLFW_KEY_ESCAPE, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ESCAPE, 0, null));
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ESCAPE,0,null);
         check(!popup.visible() && drawer.isOpen());
         check(window.focusManager().focused() == table);
-        check(window.keyPressed(GLFW.GLFW_KEY_ESCAPE, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ESCAPE, 0, null));
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ESCAPE,0,null);
         check(!drawer.isOpen() && !drawer.visible());
     }
 

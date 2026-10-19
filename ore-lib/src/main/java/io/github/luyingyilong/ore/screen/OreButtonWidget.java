@@ -5,7 +5,6 @@ import brachy.modularui.api.UIType;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.ore.Button;
 import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.theme.OreTheme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,12 +22,14 @@ public final class OreButtonWidget extends AbstractWidget {
     private Font font;
     private ModularGuiContext context;
     private boolean pointerHeld;
-    private final io.github.luyingyilong.ore.window.WindowContext hostContext = new io.github.luyingyilong.ore.window.WindowContext(false);
+    private final io.github.luyingyilong.ore.layout.Window root = new io.github.luyingyilong.ore.layout.Window(true);
+    private final io.github.luyingyilong.ore.window.WindowContext hostContext = root.context();
 
     public OreButtonWidget(Button button, Component narration) {
         super(0, 0, 32, Button.HEIGHT, narration);
         this.button = Objects.requireNonNull(button);
         if (button.parent() != null) throw new IllegalArgumentException("Button already belongs to a control tree");
+        root.content(new io.github.luyingyilong.ore.layout.Control().addChild(button));
     }
 
     public Button button() { return button; }
@@ -45,11 +46,13 @@ public final class OreButtonWidget extends AbstractWidget {
 
     private void syncLayout() {
         if (font == null) font = Minecraft.getInstance().font;
+        root.layout(new Rect(0,0,Math.max(1,getX()+getWidth()),Math.max(1,getY()+getHeight())),font);
         button.layout(new Rect(getX(), getY(), getWidth(), getHeight()), font);
     }
 
     @Override protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         if (!button.visible()) { cancelInput(); return; }
+        if(!hostContext.focused())cancelInput();
         syncLayout();
         if (context == null) context = new ButtonContext();
         var minecraft = Minecraft.getInstance();
@@ -91,7 +94,7 @@ public final class OreButtonWidget extends AbstractWidget {
         if (mouseButton != 0 || !usable()) return false;
         syncLayout();
         if (!isMouseOver(mouseX, mouseY)) return false;
-        pointerHeld = button.pressAt((int) mouseX, (int) mouseY);
+        pointerHeld = io.github.luyingyilong.ore.event.WindowInputs.press(root,(int)mouseX,(int)mouseY,context);
         return pointerHeld;
     }
 
@@ -100,7 +103,7 @@ public final class OreButtonWidget extends AbstractWidget {
         if (mouseButton != 0 || !pointerHeld) return false;
         pointerHeld = false;
         syncLayout();
-        if (usable()) button.releasePointer(isMouseOver(mouseX, mouseY));
+        if (usable()) io.github.luyingyilong.ore.event.WindowInputs.release(root,(int)mouseX,(int)mouseY);
         else button.cancelInteraction();
         return true;
     }
@@ -108,17 +111,18 @@ public final class OreButtonWidget extends AbstractWidget {
     @Override public boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double deltaX, double deltaY) {
         if (mouseButton != 0 || !pointerHeld) return false;
         if (!usable()) { cancelInput(); return true; }
-        return button.dragPointer((int) mouseX, (int) mouseY);
+        return io.github.luyingyilong.ore.event.WindowInputs.move(root,(int)mouseX,(int)mouseY);
     }
 
     @Override public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (!isFocused() || !usable() || !activationKey(keyCode)) return false;
-        return button.onActivationPressed(keyCode);
+        root.focusManager().requestFocus(button,null);
+        return io.github.luyingyilong.ore.event.WindowInputs.key(root,io.github.luyingyilong.ore.event.KeyEvent.Action.PRESS,keyCode,scanCode,modifiers,context);
     }
 
     @Override public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
         if (!isFocused() || !usable() || !activationKey(keyCode)) return false;
-        return button.onActivationReleased(keyCode);
+        return io.github.luyingyilong.ore.event.WindowInputs.key(root,io.github.luyingyilong.ore.event.KeyEvent.Action.RELEASE,keyCode,scanCode,modifiers,context);
     }
 
     private static boolean activationKey(int keyCode) {
@@ -131,7 +135,7 @@ public final class OreButtonWidget extends AbstractWidget {
         if (!focused) cancelInput();
     }
 
-    public void cancelInput() { pointerHeld = false; button.cancelInteractions(); }
+    public void cancelInput() { pointerHeld = false; root.cancelInteractions(); hostContext.detach(); }
 
     @Override public ScreenRectangle getRectangle() {
         Rect area = button.absoluteBounds();

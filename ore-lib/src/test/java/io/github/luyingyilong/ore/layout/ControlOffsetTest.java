@@ -40,8 +40,8 @@ public final class ControlOffsetTest {
         window.layoutViewport(100, 80, null);
         scroll.setScroll(0, 80);
         Rect shown = button.absoluteBounds().translated(0, -scroll.scrollY());
-        check(window.pointerPressed(shown.x() + 1, shown.y() + 1, null));
-        check(window.pointerReleased(shown.x() + 1, shown.y() + 1) && button.actions == 1);
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,shown.x() + 1, shown.y() + 1, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.release(window,shown.x() + 1, shown.y() + 1) && button.actions == 1);
         check(window.focusManager().focused() == button);
         check(button.focusBounds().equals(button.absoluteBounds()));
         // Offscreen contents remain clipped despite the visual translation.
@@ -72,8 +72,8 @@ public final class ControlOffsetTest {
     private static final class Probe extends Control {
         private int actions;
         private Probe() { focusable(true); }
-        @Override protected boolean onPointerPressed(int x, int y) { capturePointer(); return hit(x, y); }
-        @Override public boolean releasePointer(boolean over) { if (over) actions++; return true; }
+        @Override protected boolean pointerDown(int x, int y) { return hit(x, y); }
+        @Override protected boolean pointerUp(boolean over) { if (over) actions++; return true; }
     }
     private static void check(boolean condition) { if (!condition) throw new AssertionError("Control Offset regression"); }
 }

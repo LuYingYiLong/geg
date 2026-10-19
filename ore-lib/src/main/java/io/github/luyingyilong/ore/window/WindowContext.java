@@ -24,7 +24,15 @@ public final class WindowContext {
     private long handle;
     private int windowWidth = 1, windowHeight = 1, framebufferWidth = 1, framebufferHeight = 1;
     private double scale = 1, mouseX, mouseY;
+    // Scoped to ModularPanel's current mouse-press dispatch, reset at its HEAD/RETURN.
+    private boolean orePointerFocus;
+    public void pointerFocusOwned(boolean owned){orePointerFocus=owned;}
+    public boolean pointerFocusOwned(){return orePointerFocus;}
     private int modifiers;
+    private int originX,originY;
+    public int originX(){return originX;}
+    public int originY(){return originY;}
+    public void origin(int x,int y){originX=x;originY=y;}
     private boolean focused = true;
 
     public WindowContext(boolean nativeWindow) {
@@ -181,16 +189,19 @@ public final class WindowContext {
         else buttons.remove(button);
     }
 
+    public void modifiers(int value){modifiers=value;}
+    public void clearInput(){keys.clear();buttons.clear();modifiers=0;}
+
     public int modifiers() {
         return modifiers;
     }
 
     public boolean mouseDown(int button) {
-        return nativeWindow ? buttons.contains(button) : GLFW.glfwGetMouseButton(handle(), button) == GLFW.GLFW_PRESS;
+        return nativeWindow || owner != null ? buttons.contains(button) : GLFW.glfwGetMouseButton(handle(), button) == GLFW.GLFW_PRESS;
     }
 
     public boolean keyDown(int key) {
-        return nativeWindow ? keys.contains(key) : GLFW.glfwGetKey(handle(), key) == GLFW.GLFW_PRESS;
+        return nativeWindow || owner != null ? keys.contains(key) : GLFW.glfwGetKey(handle(), key) == GLFW.GLFW_PRESS;
     }
 
     public String clipboard() {

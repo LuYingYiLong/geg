@@ -116,14 +116,14 @@ public final class SizeFlagsLayoutTest {
         scroll.layout(new Rect(0, 0, 100, 50), null);
         Control first = virtual.children().get(0);
         check(first.bounds().equals(new Rect(60, 0, 40, 30)), "Virtual cards are laid out before drawing");
-        check(!scroll.dispatchPointer(5, 5) && clicked[0] == -1, "Unused cell space is not a card hit");
-        check(scroll.dispatchPointer(65, 5) && clicked[0] == 0, "Virtual hit uses actual card rectangle");
+        check(!io.github.luyingyilong.ore.EventFixture.press(scroll,5, 5) && clicked[0] == -1, "Unused cell space is not a card hit");
+        check(io.github.luyingyilong.ore.EventFixture.press(scroll,65, 5) && clicked[0] == 0, "Virtual hit uses actual card rectangle");
         first.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER);
         virtual.layout(virtual.bounds(), null);
         check(first.bounds().x() == 30, "Virtual child flag changes trigger layout");
         scroll.setScroll(0, 340);
         check(virtual.activeViews() < 12, "Virtual binding remains bounded");
-        check(scroll.dispatchPointer(65, 5) && clicked[0] == 10, "Recycled cards receive layout before interaction");
+        check(io.github.luyingyilong.ore.EventFixture.press(scroll,65, 5) && clicked[0] == 10, "Recycled cards receive layout before interaction");
         Control fixed = new Control().preferred(10, 10);
         Grid<Object> fixedGrid = new Grid<>().columns(30, 1, 0).add(fixed);
         fixedGrid.layout(new Rect(0, 0, 30, 40), null);

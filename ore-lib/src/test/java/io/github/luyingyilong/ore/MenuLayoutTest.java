@@ -58,21 +58,21 @@ public final class MenuLayoutTest {
         Window window = new Window(true).content(scroll);
         window.layoutViewport(128, 60, font);
         check(scroll.maxScrollY() > 0, "Overflow scrolls");
-        check(window.pointerPressed(3, 10, null) && actions.isEmpty(), "Press waits for release");
-        window.pointerReleased(3, 30);
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,3, 10, null) && actions.isEmpty(), "Press waits for release");
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,3, 30);
         check(actions.isEmpty(), "Dragging onto another item cancels");
-        window.pointerPressed(3, 10, null); window.pointerReleased(3, 10);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,3, 10, null); io.github.luyingyilong.ore.event.WindowInputs.release(window,3, 10);
         check(actions.equals(List.of("first")) && menu.button("first").buttonPressed(), "Selected action");
         menu.selectedKey("second");
         check(!menu.button("first").buttonPressed() && menu.button("second").buttonPressed()
                 && actions.size() == 1, "Controlled selection has no callback");
         check(!menu.button("disabled").activate(), "Disabled item");
         window.focusManager().requestFocus(menu.button("first"), null);
-        window.keyPressed(GLFW.GLFW_KEY_DOWN, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_DOWN, 0, null);
         check(window.focusManager().focused() == menu.button("second") && actions.size() == 1, "Keyboard navigation");
-        window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(actions.size() == 1, "Keyboard press waits");
-        window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(actions.equals(List.of("first", "second")), "Keyboard release activates");
 
         List<MenuItem> many = IntStream.range(0, 50).mapToObj(i -> MenuItem.item("mail-" + i,
@@ -115,8 +115,8 @@ public final class MenuLayoutTest {
         check(emptyLabel.color() == 0xFF12AB34, "Empty row color can change after construction");
         Rect emptyArea = emptyLabel.absoluteBounds();
         int previousActions = actions.size();
-        window.pointerPressed(emptyArea.x() + 1, emptyArea.y() + 1, null);
-        window.pointerReleased(emptyArea.x() + 1, emptyArea.y() + 1);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,emptyArea.x() + 1, emptyArea.y() + 1, null);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,emptyArea.x() + 1, emptyArea.y() + 1);
         check(actions.size() == previousActions && menu.selectedKey() == null, "Empty rows have no action");
         menu.items(List.of());
         Label wholeEmpty = (Label) sections.children().get(0);

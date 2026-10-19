@@ -28,10 +28,9 @@ public final class OreNavigationContractTest {
         check(calls("io/github/luyingyilong/ore/input/Input", "onKeyPressed")
                         .contains("brachy/modularui/screen/viewport/ModularGuiContext.removeFocus"),
                 "Input consumes Esc by removing native focus, including during preedit");
-        List<String> focusKeys = orderedCalls("io/github/luyingyilong/ore/layout/FocusManager", "keyPressed");
-        int inputEscape = focusKeys.indexOf("io/github/luyingyilong/ore/input/Input.onKeyPressed");
-        int popupEscape = focusKeys.indexOf("io/github/luyingyilong/ore/layout/Control.onFocusKey");
-        check(inputEscape >= 0 && popupEscape > inputEscape, "Native input receives Esc before the top popup");
+        List<String> dispatch = orderedCalls("io/github/luyingyilong/ore/layout/Window", "dispatchInput");
+        check(dispatch.indexOf("io/github/luyingyilong/ore/event/InputEvent.deliver") < dispatch.indexOf("io/github/luyingyilong/ore/layout/Window.unhandledInput"),
+                "Focused Input consumes Escape before unhandled navigation");
         for (String popup : new String[]{"Modal", "Dialog"})
             check(calls("io/github/luyingyilong/ore/" + popup, "onFocusKey").contains("java/lang/Runnable.run"),
                     popup + " delegates Esc to its owner's close callback");

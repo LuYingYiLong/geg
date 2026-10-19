@@ -28,46 +28,45 @@ public final class ButtonInteractionTest {
         window.layoutViewport(100, 100, null);
         check(button.actionMode() == Button.ACTION_MODE.BUTTON_RELEASE && !button.emphasizedSound());
 
-        check(window.pointerPressed(15, 15, null) && events.isEmpty());
-        check(window.pointerReleased(15, 15));
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,15, 15, null) && events.isEmpty());
+        check(io.github.luyingyilong.ore.event.WindowInputs.release(window,15, 15));
         check(events.equals(List.of("CLICK", "action")));
-        check(!window.pointerReleased(15, 15));
+        check(!io.github.luyingyilong.ore.event.WindowInputs.release(window,15, 15));
         events.clear();
-        check(window.pointerPressed(15, 15, null));
-        check(window.pointerReleased(50, 50) && events.isEmpty());
-        window.pointerPressed(50, 50, null);
-        window.pointerReleased(15, 15);
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,15, 15, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.release(window,50, 50) && events.isEmpty());
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,50, 50, null);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,15, 15);
         check(events.isEmpty()); // Pressing outside cannot arm a button.
 
         button.actionMode(Button.ACTION_MODE.BUTTON_PRESS).emphasizedSound(true);
-        check(window.pointerPressed(15, 15, null));
-        button.pressAt(15, 15); // A duplicate dispatch must not fire a second callback.
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,15, 15, null));
         check(events.equals(List.of("BUTTON", "action")));
-        check(window.pointerReleased(15, 15));
+        check(io.github.luyingyilong.ore.event.WindowInputs.release(window,15, 15));
         check(events.size() == 2);
 
         events.clear();
         button.actionMode(Button.ACTION_MODE.BUTTON_RELEASE).emphasizedSound(false);
-        check(window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null));
-        check(window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null)); // OS repeat.
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null)); // OS repeat.
         check(events.isEmpty());
-        check(!window.keyReleased(GLFW.GLFW_KEY_SPACE, 0, null));
-        check(window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null));
+        check(!io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_SPACE, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null));
         check(events.equals(List.of("CLICK", "action")));
-        check(!window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null));
+        check(!io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null));
 
         events.clear();
         button.actionMode(Button.ACTION_MODE.BUTTON_PRESS);
-        check(window.keyPressed(GLFW.GLFW_KEY_SPACE, 0, null));
-        check(window.keyPressed(GLFW.GLFW_KEY_SPACE, 0, null));
-        check(window.keyReleased(GLFW.GLFW_KEY_SPACE, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_SPACE, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_SPACE, 0, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_SPACE, 0, null));
         check(events.equals(List.of("CLICK", "action")));
 
         events.clear();
         button.actionMode(Button.ACTION_MODE.BUTTON_RELEASE);
-        window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null);
         window.focusManager().requestFocus(null, null);
-        window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(events.isEmpty());
 
         Button next = new Button(cue -> events.add(cue.name())).onPress(() -> events.add("next"))
@@ -78,39 +77,39 @@ public final class ButtonInteractionTest {
         button.actionMode(Button.ACTION_MODE.BUTTON_PRESS)
                 .onPress(() -> window.focusManager().requestFocus(next, null));
         window.focusManager().requestFocus(button, null);
-        window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(events.equals(List.of("CLICK")));
-        window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(events.equals(List.of("CLICK"))); // Holding cannot activate the newly focused button.
-        window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
-        window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null);
-        window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null);
+        io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(events.equals(List.of("CLICK", "CLICK", "next")));
         events.clear();
         button.actionMode(Button.ACTION_MODE.BUTTON_RELEASE).onPress(() -> events.add("action"));
 
-        window.pointerPressed(15, 15, null);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,15, 15, null);
         button.visible(false);
         button.visible(true);
-        window.pointerReleased(15, 15);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,15, 15);
         check(events.isEmpty());
-        window.pointerPressed(15, 15, null);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,15, 15, null);
         content.removeChild(button);
         content.addChild(button);
         window.layoutViewport(100, 100, null);
-        window.pointerReleased(15, 15);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,15, 15);
         check(events.isEmpty());
 
-        window.pointerPressed(15, 15, null);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,15, 15, null);
         Control popup = new Control() { @Override public boolean focusScope() { return true; } };
         overlay.add(popup);
         window.layoutViewport(100, 100, null);
-        window.pointerReleased(15, 15);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,15, 15);
         check(events.isEmpty());
         popup.visible(false);
-        window.pointerPressed(15, 15, null);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,15, 15, null);
         window.cancelInteractions();
-        window.pointerReleased(15, 15);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,15, 15);
         check(events.isEmpty());
 
         button.type(Button.Type.TEXT);
@@ -159,24 +158,24 @@ public final class ButtonInteractionTest {
             window.focusManager().keyboardNavigation();
             Rect normal = window.focusManager().outlineBounds();
             check(normal.equals(new Rect(19, 19, 102, 22)));
-            window.keyPressed(GLFW.GLFW_KEY_ENTER, 0, null);
+            io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null);
             Rect held = window.focusManager().outlineBounds();
             check(held.y() == normal.y() + offset && held.bottom() == normal.bottom());
             check(held.x() == normal.x() && held.width() == normal.width());
-            window.keyReleased(GLFW.GLFW_KEY_ENTER, 0, null);
+            io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null);
             check(window.focusManager().outlineBounds().equals(normal));
 
             button.toggleButton(true).buttonPressedNoSignal(true);
             check(window.focusManager().outlineBounds().y() == normal.y() + offset);
             check(window.focusManager().outlineBounds().bottom() == normal.bottom());
             button.buttonPressedNoSignal(false).toggleButton(false);
-            window.pointerPressed(25, 25, null);
+            io.github.luyingyilong.ore.event.WindowInputs.press(window,25, 25, null);
             check(button.focusBounds().y() == 20 + offset);
-            window.pointerDragged(159, 70);
+            io.github.luyingyilong.ore.event.WindowInputs.move(window,159, 70);
             check(button.focusBounds().equals(button.absoluteBounds()));
-            window.pointerDragged(25, 25);
+            io.github.luyingyilong.ore.event.WindowInputs.move(window,25, 25);
             check(button.focusBounds().y() == 20 + offset);
-            window.pointerReleased(159, 70);
+            io.github.luyingyilong.ore.event.WindowInputs.release(window,159, 70);
             check(button.focusBounds().equals(button.absoluteBounds()));
 
             Rect area = button.absoluteBounds();
@@ -213,22 +212,22 @@ public final class ButtonInteractionTest {
         button.position(0, 0).requestedSize(30, 20);
         Window window = new Window(true).content(new Control().addChild(button));
         window.layoutViewport(60, 60, null);
-        window.pointerPressed(5, 5, null);
-        window.pointerReleased(50, 50);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,5, 5, null);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,50, 50);
         check(events.isEmpty() && !button.buttonPressed());
-        window.pointerPressed(5, 5, null);
-        window.pointerReleased(5, 5);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,5, 5, null);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,5, 5);
         check(button.buttonPressed() && events.equals(List.of("CLICK", "pressed:true")));
         events.clear();
-        window.pointerPressed(5, 5, null);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,5, 5, null);
         button.disabled(true).disabled(false); // Disabling while held must disarm the release.
-        window.pointerReleased(5, 5);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,5, 5);
         check(button.buttonPressed() && events.isEmpty());
         button.disabled(true);
         check(!button.acceptsFocus() && !button.activate());
         check(!button.onActivationPressed(GLFW.GLFW_KEY_ENTER));
-        window.pointerPressed(5, 5, null);
-        window.pointerReleased(5, 5);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,5, 5, null);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,5, 5);
         check(events.isEmpty());
         button.buttonPressedNoSignal(false);
         check(!button.buttonPressed());
@@ -284,11 +283,11 @@ public final class ButtonInteractionTest {
         Window window = new Window(true).content(scroll);
         window.layoutViewport(80, 60, font);
         scroll.scrollBy(0, 70);
-        check(window.pointerPressed(15, 15, null));
-        check(window.pointerReleased(15, 15) && actions[0] == 1);
-        check(window.pointerPressed(15, 15, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,15, 15, null));
+        check(io.github.luyingyilong.ore.event.WindowInputs.release(window,15, 15) && actions[0] == 1);
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,15, 15, null));
         scroll.scrollBy(0, 50);
-        window.pointerReleased(15, 15);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,15, 15);
         check(actions[0] == 1);
     }
 

@@ -62,7 +62,22 @@ public final class FocusManager {
         }
     }
 
-    public void pointerPressed(Control hit, ModularGuiContext context) {
+    /** Popup return must not scroll a pointer-selected table into a new position. */
+    public void restoreFocus(Control target, ModularGuiContext context) { requestFocus(target,context,false); }
+    public boolean allowsPopupOwner(Control target) {
+        Overlay layer=window.overlayLayer(); Control blocking=null;
+        if(layer!=null) {
+            var nodes=layer.children();
+            for(int i=nodes.size()-1;i>=0;i--) {
+                Control node=nodes.get(i);
+                if(node instanceof io.github.luyingyilong.ore.window.WindowPopups.Popup)continue;
+                if(node.visible()&&node.focusScope()){blocking=node;break;}
+            }
+        }
+        return inside(target,blocking);
+    }
+
+    void pointerPressed(Control hit, ModularGuiContext context) {
         pointerActivity();
         // A pointer already identifies a visible point. Revealing the whole control here can
         // scroll a wide table/input before Window dispatches that very same press.
@@ -86,7 +101,8 @@ public final class FocusManager {
     /** Virtualized controls call this before reusing a subtree for a different logical record. */
     public void forgetSubtree(Control subtree) {
         java.util.Objects.requireNonNull(subtree);
-        if (inside(focused, subtree)) requestFocus(null, null);
+        window.cancelCaptures(subtree,io.github.luyingyilong.ore.event.CancelEvent.Reason.REBOUND);
+        if (inside(focused, subtree)) requestFocus(null, window.context().mui());
         if (inside(activationOwner, subtree)) cancelActivation();
         remembered.entrySet().removeIf(entry -> inside(entry.getValue(), subtree));
     }
@@ -118,16 +134,10 @@ public final class FocusManager {
         return nativeField(scopeRoot()) != null;
     }
 
-    public boolean keyPressed(int keyCode, int modifiers, ModularGuiContext context) {
+    boolean keyPressed(int keyCode, int modifiers, ModularGuiContext context) {
         synchronizeNativeFocus(context);
         // Keep the physical key latched even if its action opens a new focus scope.
         if (activationKeysDown.contains(keyCode)) return true;
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE
-                && focused instanceof io.github.luyingyilong.ore.input.InputControl input
-                && nativeInputFocused()) {
-            input.widget().onKeyPressed(keyCode, 0, modifiers);
-            return true;
-        }
         if (keyCode == GLFW.GLFW_KEY_TAB || keyCode == GLFW.GLFW_KEY_LEFT
                 || keyCode == GLFW.GLFW_KEY_RIGHT || keyCode == GLFW.GLFW_KEY_UP
                 || keyCode == GLFW.GLFW_KEY_DOWN) keyboardNavigation();
@@ -163,7 +173,9 @@ public final class FocusManager {
         return false;
     }
 
-    public boolean keyReleased(int keyCode, int modifiers, ModularGuiContext context) {
+    boolean activationHeld(int key) { return activationKeysDown.contains(key); }
+
+    boolean keyReleased(int keyCode, int modifiers, ModularGuiContext context) {
         boolean held = activationKeysDown.remove(keyCode);
         if (activationOwner == null || activationKey != keyCode) return held;
         Control captured = activationOwner;
@@ -324,21 +336,11 @@ public final class FocusManager {
     }
 
     private Rect visibleBounds(Control target, Rect area) {
-        for (Control node = target.parent(); node != null; node = node.parent()) {
-            if (node instanceof Scroll scroll) {
-                area = area.translated(-scroll.scrollX(), -scroll.scrollY());
-                Rect viewport = scroll.viewport().translated(scroll.absoluteBounds().x(),
-                        scroll.absoluteBounds().y());
-                area = intersection(area, viewport);
-                if (area == null) return null;
-            }
-            if (node instanceof Table<?> table) {
-                area = intersection(area, table.bodyBounds());
-                if (area == null) return null;
-            }
-            if (node != target && !node.visible()) return null;
-        }
-        return intersection(area, window.absoluteBounds());
+        for(Control node=target;node!=null;node=node.parent())if(!node.visible())return null;
+        Rect result=io.github.luyingyilong.ore.event.EventGeometry.displayed(target,area);
+        Rect clip=io.github.luyingyilong.ore.event.EventGeometry.clip(target);
+        if(clip!=null)result=io.github.luyingyilong.ore.event.EventGeometry.intersect(result,clip);
+        return result.width()==0||result.height()==0?null:result;
     }
 
     /** Buffered table buttons are navigation targets too; focusing one scrolls its row into view. */

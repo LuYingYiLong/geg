@@ -317,29 +317,29 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         window.draw(context, getArea().x, getArea().y);
     }
     @Override public @NotNull Interactable.Result onMousePressed(int button) {
-        window.focusManager().pointerActivity();
-        // SUCCESS also registers this canvas as MUI's held target; STOP alone discards drag events.
-        return button == 0 && window.pointerPressed(mx(), my(), getContext()) ? Interactable.Result.SUCCESS : Interactable.Result.IGNORE;
+        return io.github.luyingyilong.ore.event.WindowInputs.press(window,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,getContext(),button)
+                ?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
     }
     @Override public boolean onMouseReleased(int button) {
-        if (button != 0) return false;
-        return window.pointerReleased(mx(), my());
+        return io.github.luyingyilong.ore.event.WindowInputs.pointer(window,io.github.luyingyilong.ore.event.PointerEvent.Action.RELEASE,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,button);
     }
-    @Override public void onMouseDrag(int button, double x, double y) {
-        if (button != 0) return;
-        window.pointerDragged(mx(), my());
+    @Override public void onMouseDrag(int button,double x,double y) {
+        io.github.luyingyilong.ore.event.WindowInputs.pointer(window,io.github.luyingyilong.ore.event.PointerEvent.Action.MOVE,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,button);
+    }
+    @Override public @NotNull Interactable.Result onCharTyped(char character,int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.text(window,String.valueOf(character),modifiers,getContext())
+                ?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
     }
     @Override public boolean onMouseScrolled(double delta) {
-        if (editor.visible()) return editor.dispatchScroll(mx(), my(), delta, false);
-        if (columnsScroll.hit(mx(), my())) return columnsScroll.dispatchScroll(mx(), my(), delta, net.minecraft.client.gui.screens.Screen.hasShiftDown());
-        if (audiences.hit(mx(), my())) return audiences.scrollBy(-(int) Math.signum(delta) * 24, getContext().getFont());
-        return false;
+        return io.github.luyingyilong.ore.event.WindowInputs.scroll(window,getContext().getAbsMouseX() - getArea().x,getContext().getAbsMouseY() - getArea().y,delta,net.minecraft.client.gui.screens.Screen.hasShiftDown());
     }
-    @Override public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
-        return window.keyPressed(keyCode, modifiers, getContext())
-                ? Interactable.Result.STOP : Interactable.Result.IGNORE;
+    @Override public @NotNull Interactable.Result onKeyPressed(int keyCode,int scanCode,int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.key(window,io.github.luyingyilong.ore.event.KeyEvent.Action.PRESS,keyCode,scanCode,modifiers,getContext())
+                ?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
     }
-    @Override public boolean onKeyReleased(int keyCode, int scanCode, int modifiers) { return window.keyReleased(keyCode, modifiers, getContext()); }
+    @Override public boolean onKeyReleased(int keyCode,int scanCode,int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.key(window,io.github.luyingyilong.ore.event.KeyEvent.Action.RELEASE,keyCode,scanCode,modifiers,getContext());
+    }
     private int mx() { return getContext().getAbsMouseX() - getArea().x; }
     private int my() { return getContext().getAbsMouseY() - getArea().y; }
 }

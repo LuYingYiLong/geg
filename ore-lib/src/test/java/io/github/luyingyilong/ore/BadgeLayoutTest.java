@@ -64,11 +64,11 @@ public final class BadgeLayoutTest {
         Rect normal = badge.bounds();
         check(Math.abs(normal.y() * 2 + normal.height() - button.size().height()) <= 1);
         Rect click = badge.absoluteBounds();
-        check(window.pointerPressed(click.x() + 1, click.y() + 1, null) && actions[0] == 0);
-        check(window.pointerReleased(click.x() + 1, click.y() + 1) && actions[0] == 1);
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,click.x() + 1, click.y() + 1, null) && actions[0] == 0);
+        check(io.github.luyingyilong.ore.event.WindowInputs.release(window,click.x() + 1, click.y() + 1) && actions[0] == 1);
         check(window.focusManager().focused() == button);
-        window.pointerPressed(click.x() + 1, click.y() + 1, null);
-        window.pointerReleased(190, 70);
+        io.github.luyingyilong.ore.event.WindowInputs.press(window,click.x() + 1, click.y() + 1, null);
+        io.github.luyingyilong.ore.event.WindowInputs.release(window,190, 70);
         check(actions[0] == 1);
 
         button.toggleButton(true).buttonPressedNoSignal(true);

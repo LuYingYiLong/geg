@@ -5,10 +5,8 @@ import brachy.modularui.widget.sizer.Unit;
 import io.github.luyingyilong.ore.Drawer;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.layout.Scroll;
 import io.github.luyingyilong.ore.layout.Window;
 import net.minecraft.client.gui.Font;
-import org.lwjgl.glfw.GLFW;
 
 /** Ore layout proxy for a ModularUI text field. ModularUI retains focus and editing. */
 public final class InputControl extends Control {
@@ -21,26 +19,14 @@ public final class InputControl extends Control {
         minimum(1, widget.preferredInputHeight());
         focusable(true);
         focusExpansion(2);
-        widget.tabNavigation(modifiers -> {
-            Control root = this;
-            while (root.parent() != null) root = root.parent();
-            return root instanceof Window window
-                    && window.keyPressed(GLFW.GLFW_KEY_TAB, modifiers, widget.getContext());
-        });
-        widget.mousePressHandler(() -> {
-            Control root = this;
-            while (root.parent() != null) root = root.parent();
-            if (root instanceof Window window)
-                window.focusManager().pointerPressed(this, widget.getContext());
-        });
         widget.focusLostHandler(() -> {
             Control root = this;
             while (root.parent() != null) root = root.parent();
             if (root instanceof Window window)
                 window.focusManager().nativeFocusLost(this);
         });
-        widget.left(() -> displayedBounds().x(), Unit.Measure.PIXEL);
-        widget.top(() -> displayedBounds().y(), Unit.Measure.PIXEL);
+        widget.left(() -> widgetBounds().x(), Unit.Measure.PIXEL);
+        widget.top(() -> widgetBounds().y(), Unit.Measure.PIXEL);
         widget.width(() -> Math.max(1, bounds().width()), Unit.Measure.PIXEL);
         widget.height(() -> Math.max(1, bounds().height()), Unit.Measure.PIXEL);
     }
@@ -51,14 +37,32 @@ public final class InputControl extends Control {
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+        syncWidgetArea();
         widget.drawInTree(context);
     }
 
     public Rect displayedBounds() {
-        Rect area = absoluteBounds();
-        for (Control node = parent(); node != null; node = node.parent())
-            if (node instanceof Scroll scroll) area = area.translated(-scroll.scrollX(), -scroll.scrollY());
-        return area;
+        return io.github.luyingyilong.ore.event.EventGeometry.displayed(this);
+    }
+
+    public Rect widgetBounds() { return displayedBounds().translated(windowContext().originX(),windowContext().originY()); }
+
+    @Override public void input(io.github.luyingyilong.ore.event.InputEvent event) {
+        if(event instanceof io.github.luyingyilong.ore.event.CancelEvent) {
+            widget.cancelPreedit();super.input(event);return;
+        }
+        if(event instanceof io.github.luyingyilong.ore.event.PointerEvent pointer
+                && pointer.action()==io.github.luyingyilong.ore.event.PointerEvent.Action.MOVE
+                && !event.context().mouseDown(pointer.button()))return;
+        syncWidgetArea();
+        widget.receive(event);
+        if(event.accepted() && event instanceof io.github.luyingyilong.ore.event.PointerEvent pointer
+                && pointer.action()==io.github.luyingyilong.ore.event.PointerEvent.Action.PRESS)event.capturePointer();
+    }
+
+    @Override protected void onDetached() {
+        if(widget.isValid() && widget.isFocused())widget.getContext().removeFocus();
+        OreInputMethod.release(widget);
     }
 
     boolean layoutVisible() {
@@ -72,7 +76,7 @@ public final class InputControl extends Control {
             if (node instanceof Drawer drawer && !drawer.isOpen()) return false;
             if (node instanceof Window window) return window.focusManager().allowsNativeInput(this);
         }
-        return true;
+        return false;
     }
 
     float drawingDepth() {
@@ -89,35 +93,14 @@ public final class InputControl extends Control {
     boolean pointerInteractive(int x, int y) { return pointerInteractive(this, x, y); }
 
     public static boolean pointerInteractive(Control target, int x, int y) {
-        for (Control node = target.parent(); node != null; node = node.parent()) {
-            if (!(node instanceof Scroll scroll)) continue;
-            int localX = x, localY = y;
-            for (Control outer = node.parent(); outer != null; outer = outer.parent())
-                if (outer instanceof Scroll ancestor) { localX += ancestor.scrollX(); localY += ancestor.scrollY(); }
-            if (scroll.scrollbarAt(localX, localY)) return false;
-        }
-        return true;
+        var context=target.windowContext();
+        return context.owner()==null || context.owner().pointerOver(target,x-context.originX(),y-context.originY());
     }
 
     /** Share Ore viewport clips with the native field's drawing and pointer checks. */
     Rect drawingClip() {
-        Rect clip = null;
-        for (Control node = parent(); node != null; node = node.parent()) {
-            Rect next = node instanceof Scroll scroll
-                    ? scroll.viewport().translated(scroll.absoluteBounds().x(), scroll.absoluteBounds().y())
-                    : node instanceof Drawer ? node.absoluteBounds() : null;
-            if (next == null) continue;
-            for (Control outer = node.parent(); outer != null; outer = outer.parent())
-                if (outer instanceof Scroll scroll) next = next.translated(-scroll.scrollX(), -scroll.scrollY());
-            if (clip == null) clip = next;
-            else {
-                int x = Math.max(clip.x(), next.x());
-                int y = Math.max(clip.y(), next.y());
-                clip = new Rect(x, y, Math.max(0, Math.min(clip.right(), next.right()) - x),
-                        Math.max(0, Math.min(clip.bottom(), next.bottom()) - y));
-            }
-        }
-        return clip;
+        Rect clip=io.github.luyingyilong.ore.event.EventGeometry.clip(this);
+        return clip==null?null:clip.translated(windowContext().originX(),windowContext().originY());
     }
 
     @Override public void invalidateTextLayout() {
@@ -135,11 +118,22 @@ public final class InputControl extends Control {
     }
 
     void syncWidgetArea() {
-        Rect current = displayedBounds();
-        if (!current.equals(lastArea)) {
-            lastArea = current;
-            widget.scheduleResize();
-        }
+        Rect current = widgetBounds();
+        boolean changed = !current.equals(lastArea);
+        lastArea = current;
+        // Ore layout is authoritative now, not at MUI's next scheduled resize. In particular,
+        // scrolling and moving a modal must update both absolute and relative coordinates.
+        var area = widget.getArea();
+        var parent = widget.isValid() ? widget.getParent() : null;
+        int parentX = parent == null ? 0 : parent.getArea().x;
+        int parentY = parent == null ? 0 : parent.getArea().y;
+        area.x = current.x();
+        area.y = current.y();
+        area.rx = current.x() - parentX;
+        area.ry = current.y() - parentY;
+        area.width = Math.max(1, current.width());
+        area.height = Math.max(1, current.height());
+        if (changed) widget.scheduleResize();
     }
 
     @Override public void visible(boolean visible) {

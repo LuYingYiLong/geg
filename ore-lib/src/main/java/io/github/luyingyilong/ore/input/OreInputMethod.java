@@ -18,6 +18,7 @@ public final class OreInputMethod {
         Input focused;
         Screen screen;
         boolean failed;
+        InputPreedit lastPreedit=InputPreedit.EMPTY;
     }
     private static State state(Input input) { return STATES.computeIfAbsent(input.windowContext(), key -> new State()); }
     public static void releaseWindow(io.github.luyingyilong.ore.window.WindowContext context) {
@@ -103,7 +104,15 @@ public final class OreInputMethod {
             if (input == null) continue;
             if (!context.focused() || !context.nativeWindow() && Minecraft.getInstance().screen != state.screen
                     || !input.isFocused() || !input.inputVisible() || !input.inputMethodInteractive()) { release(input); continue; }
-            try { state.session.update(input, true); } catch (RuntimeException | LinkageError error) { fail(state, error); }
+            try {
+                state.session.update(input, true);
+                InputPreedit preedit=state.session.inlinePreedit(input)?state.session.preedit(input):InputPreedit.EMPTY;
+                if(!preedit.equals(state.lastPreedit)) {
+                    state.lastPreedit=preedit;
+                    if(context.owner()!=null)context.owner().dispatchInput(new io.github.luyingyilong.ore.event.CompositionEvent(
+                            context,io.github.luyingyilong.ore.event.CompositionEvent.Action.UPDATE,preedit));
+                }
+            } catch (RuntimeException | LinkageError error) { fail(state, error); }
         }
     }
 }

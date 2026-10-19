@@ -131,19 +131,19 @@ public final class Splitter extends Container {
         return target.translated(area.x(),area.y()).contains(x,y);
     }
     @Override public Control hitTop(int x,int y) { return atBar(x,y)?this:super.hitTop(x,y); }
-    @Override public boolean dispatchPointer(int x,int y) { return atBar(x,y)?onPointerPressed(x,y):super.dispatchPointer(x,y); }
-    @Override protected boolean onPointerPressed(int x,int y) {
+
+    @Override protected boolean pointerDown(int x,int y) {
         if (!atBar(x,y)) return false;
         Rect area = absoluteBounds();
         grabOffset = horizontal()?x-area.x()-bar.x():y-area.y()-bar.y();
-        dragging = true; pendingFirst = sizes.first(); capturePointer(); resizeStart.accept(sizes); return true;
+        dragging = true; pendingFirst = sizes.first(); resizeStart.accept(sizes); return true;
     }
     private void applyPosition(int position) {
         if (preferredFirst != null) preferredFirst = position;
         else { Sizes target = resolve(extent(),position); ratio = (double)target.first()/Math.max(1,sum(target.first(),target.second())); }
         requestLayout();
     }
-    @Override public boolean dragPointer(int x,int y) {
+    @Override protected boolean pointerMove(int x,int y) {
         if (!dragging) return false;
         if (!resizable || !bothVisible()) { cancelInteraction(); return false; }
         Rect area = absoluteBounds();
@@ -156,7 +156,7 @@ public final class Splitter extends Container {
         }
         return true;
     }
-    @Override public boolean releasePointer(boolean over) {
+    @Override protected boolean pointerUp(boolean over) {
         if (!dragging) return false;
         Sizes target = resolve(extent(),pendingFirst);
         if (lazy && pendingFirst != null) applyPosition(target.first());

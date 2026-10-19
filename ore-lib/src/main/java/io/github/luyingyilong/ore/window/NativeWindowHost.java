@@ -6,12 +6,10 @@ import brachy.modularui.utils.Stencil;
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexSorting;
-import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.input.InputControl;
 import io.github.luyingyilong.ore.input.OreInputMethod;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Window;
-import io.github.luyingyilong.ore.theme.OreTheme;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import org.joml.Matrix4f;
@@ -184,26 +182,18 @@ public final class NativeWindowHost implements WindowHost {
             pointerY = y;
             context.mouse(x, y);
             updateMouse();
-            if (context.mouseDown(0)) {
-                if (!root.pointerDragged(context.mouseX(), context.mouseY())) {
-                    Control field = root.focusManager().focused();
-                    if (field instanceof InputControl input) input.widget().onMouseDrag(0, dx, dy);
-                }
-            }
+            io.github.luyingyilong.ore.event.WindowInputs.move(root,context.mouseX(),context.mouseY());
             dirty = true;
         }));
         GLFW.glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> events.add(() -> pointer(button, action, mods)));
         GLFW.glfwSetKeyCallback(handle, (window, key, scan, action, mods) -> events.add(() -> key(key, scan, action, mods)));
         GLFW.glfwSetCharCallback(handle, (window, codepoint) -> events.add(() -> {
-            if (!context.focused() || root.inspectable() && DebugBridge.backend().picking(root)) return;
-            Control field = root.focusManager().focused();
-            if (field instanceof InputControl input)
-                for (char c : Character.toChars(codepoint)) input.widget().onCharTyped(c, context.modifiers());
+            if (!context.focused()) return;
+            root.dispatchInput(new io.github.luyingyilong.ore.event.TextInputEvent(context,new String(Character.toChars(codepoint)),context.modifiers()));
             dirty = true;
         }));
         GLFW.glfwSetScrollCallback(handle, (window, x, y) -> events.add(() -> {
-            if (root.inspectable() && DebugBridge.backend().picking(root)) return;
-            root.dispatchScroll(context.mouseX(), context.mouseY(), y == 0 ? x : y, x != 0 || (context.modifiers() & GLFW.GLFW_MOD_SHIFT) != 0);
+            root.dispatchInput(new io.github.luyingyilong.ore.event.ScrollEvent(context,context.mouseX(),context.mouseY(),x,y,context.modifiers()));
             dirty = true;
         }));
     }
@@ -217,32 +207,20 @@ public final class NativeWindowHost implements WindowHost {
         context.button(button, action != GLFW.GLFW_RELEASE);
         updateMouse();
         screen.getContext().updateMouseButton(button, action != GLFW.GLFW_RELEASE);
-        if (root.inspectable() && DebugBridge.backend().pointer(root, context.mouseX(), context.mouseY(), button, action != GLFW.GLFW_RELEASE))
-            return;
-        if (button != 0) {
-            root.focusManager().pointerActivity();
-            return;
-        }
-        if (action == GLFW.GLFW_PRESS) {
-            root.pointerPressed(context.mouseX(), context.mouseY(), screen.getContext());
-            Control field = root.focusManager().focused();
-            if (!context.popups().capturing() && field instanceof InputControl input && input.displayedBounds().contains(context.mouseX(), context.mouseY()))
-                input.widget().onMousePressed(button);
-        } else root.pointerReleased(context.mouseX(), context.mouseY());
+        root.dispatchInput(new io.github.luyingyilong.ore.event.PointerEvent(context,
+                action==GLFW.GLFW_PRESS?io.github.luyingyilong.ore.event.PointerEvent.Action.PRESS:io.github.luyingyilong.ore.event.PointerEvent.Action.RELEASE,
+                context.mouseX(),context.mouseY(),button,mods));
         dirty = true;
     }
 
     private void key(int key, int scan, int action, int mods) {
         if (!context.focused()) return;
-        context.key(key, action, mods);
         var mui = screen.getContext();
         mui.updateKey(key, scan, mods, action != GLFW.GLFW_RELEASE);
-        if (root.inspectable() && DebugBridge.backend().key(root, key, action)) return;
-        if (action == GLFW.GLFW_RELEASE) root.keyReleased(key, mods, mui);
-        else if (!root.keyPressed(key, mods, mui)) {
-            Control field = root.focusManager().focused();
-            if (field instanceof InputControl input) input.widget().onKeyPressed(key, scan, mods);
-        }
+        io.github.luyingyilong.ore.event.WindowInputs.key(root,
+                action==GLFW.GLFW_RELEASE?io.github.luyingyilong.ore.event.KeyEvent.Action.RELEASE:
+                action==GLFW.GLFW_REPEAT?io.github.luyingyilong.ore.event.KeyEvent.Action.REPEAT:io.github.luyingyilong.ore.event.KeyEvent.Action.PRESS,
+                key,scan,mods,mui);
         dirty = true;
     }
 
@@ -351,7 +329,7 @@ public final class NativeWindowHost implements WindowHost {
                 root.layoutViewport(context.guiWidth(), context.guiHeight(), mc.font);
                 for (InputControl input : inputs) {
                     var area = input.widget().getArea();
-                    var b = input.displayedBounds();
+                    var b = input.widgetBounds();
                     area.x = b.x();
                     area.y = b.y();
                     area.width = b.width();
