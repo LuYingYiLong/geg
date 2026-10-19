@@ -6,7 +6,9 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 
-/** A skin can be backed by a provider's local PNG, without having a downloadable URL. */
+/**
+ * A skin can be backed by a provider's local PNG, without having a downloadable URL.
+ */
 record AvatarSkinSource(String url, Path image) {
     static AvatarSkinSource from(MinecraftProfileTexture texture) {
         Path image = null;
@@ -21,11 +23,15 @@ record AvatarSkinSource(String url, Path image) {
         return new AvatarSkinSource(texture.getUrl(), image);
     }
 
-    boolean valid() { return image != null || downloadable(url); }
-
     static boolean downloadable(String url) {
         return url != null && url.length() <= 4096 && (url.startsWith("https://") || url.startsWith("http://"));
     }
 
-    static boolean storedImage(String key) { return key != null && key.matches("csl:[0-9a-f]{64}"); }
+    static boolean storedImage(String key) {
+        return key != null && key.matches("csl:[0-9a-f]{64}");
+    }
+
+    boolean valid() {
+        return image != null || downloadable(url);
+    }
 }

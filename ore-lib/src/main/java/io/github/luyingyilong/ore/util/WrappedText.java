@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntToDoubleFunction;
 
-/** Soft lines retain their UTF-16 source columns; wrapping never changes the submitted text. */
+/**
+ * Soft lines retain their UTF-16 source columns; wrapping never changes the submitted text.
+ */
 public final class WrappedText {
-    public record Row(int line, int start, int end, String text, float width) { }
-    public record Position(int row, float x) { }
-    public record Cursor(int column, int line) { }
-
     private final List<Row> rows;
     private final IntToDoubleFunction advance;
 
@@ -39,7 +37,9 @@ public final class WrappedText {
         rows = List.copyOf(result);
     }
 
-    public List<Row> rows() { return rows; }
+    public List<Row> rows() {
+        return rows;
+    }
 
     public float xAt(Row row, int column) {
         int end = Math.max(0, Math.min(row.text().length(), column - row.start()));
@@ -70,5 +70,14 @@ public final class WrappedText {
             column += Character.charCount(cp);
         }
         return new Cursor(row.start() + column, row.line());
+    }
+
+    public record Row(int line, int start, int end, String text, float width) {
+    }
+
+    public record Position(int row, float x) {
+    }
+
+    public record Cursor(int column, int line) {
     }
 }

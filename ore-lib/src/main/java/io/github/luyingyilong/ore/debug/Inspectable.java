@@ -13,9 +13,15 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Inspectable {
     String key() default "";
+
     String group() default "Layout";
-    /** Public one-argument setter; getXxx()/isXxx() defaults to setXxx(value). */
+
+    /**
+     * Public one-argument setter; getXxx()/isXxx() defaults to setXxx(value).
+     */
     String setter() default "";
+
     double min() default -Double.MAX_VALUE;
+
     double max() default Double.MAX_VALUE;
 }

@@ -2,7 +2,9 @@ package io.github.luyingyilong.ore.util;
 
 import java.util.Objects;
 
-/** Remembers the original logical target, never retargeting a held mouse button or key. */
+/**
+ * Remembers the original logical target, never retargeting a held mouse button or key.
+ */
 public final class ReleaseGesture<T> {
     private T pointerTarget;
     private T keyTarget;
@@ -33,10 +35,24 @@ public final class ReleaseGesture<T> {
         return new Release<>(true, Objects.equals(original, current) ? original : null);
     }
 
-    public boolean pointerPending() { return pointerTarget != null; }
-    public boolean pointerPressed(T target) { return Objects.equals(pointerTarget, target); }
-    public boolean keyPressed(T target) { return Objects.equals(keyTarget, target); }
-    public void cancel() { pointerTarget = null; keyTarget = null; key = -1; }
+    public boolean pointerPending() {
+        return pointerTarget != null;
+    }
 
-    public record Release<T>(boolean handled, T target) { }
+    public boolean pointerPressed(T target) {
+        return Objects.equals(pointerTarget, target);
+    }
+
+    public boolean keyPressed(T target) {
+        return Objects.equals(keyTarget, target);
+    }
+
+    public void cancel() {
+        pointerTarget = null;
+        keyTarget = null;
+        key = -1;
+    }
+
+    public record Release<T>(boolean handled, T target) {
+    }
 }

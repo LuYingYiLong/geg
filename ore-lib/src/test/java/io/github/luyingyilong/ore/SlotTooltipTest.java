@@ -23,11 +23,14 @@ public final class SlotTooltipTest {
         Preview preview = new Preview();
         preview.setPosition(30, 40).setRequestedSize(26, 26);
         preview.addChild(new Control().setRequestedSize(26, 26));
-        Control scrollContent = new Control().setPreferred(240, 200).addChild(preview);
+        Control scrollContent = new Control().setPreferred(240, 200);
+        scrollContent.addChild(preview);
         Scroll scroll = new Scroll().setHorizontal(Scroll.BarMode.NEVER).setVertical(Scroll.BarMode.NEVER).setContent(scrollContent);
         scroll.setPosition(10, 10).setRequestedSize(100, 60);
         Overlay overlay = new Overlay();
-        Window window = new Window(true).setContent(new Control().addChild(scroll)).setOverlay(overlay);
+        var childContainer57 = new Control();
+        childContainer57.addChild(scroll);
+        Window window = new Window(true).setContent(childContainer57).setOverlay(overlay);
         window.layoutViewport(200, 140, font);
         check(window.tooltipTarget(42, 68) == preview, "Visible portion of a clipped slot has a tooltip");
         check(window.tooltipTarget(42, 72) == null, "Clipped portion cannot trigger a tooltip");
@@ -43,13 +46,13 @@ public final class SlotTooltipTest {
 
         Preview drawerItem = new Preview(); drawerItem.setMinimum(26, 26);
         Drawer drawer = new Drawer(Component.literal("Drawer")).setAnimationDuration(0).setWidth(100).setContent(drawerItem);
-        overlay.add(drawer); drawer.open(); window.layoutViewport(200, 140, font);
+        overlay.addChild(drawer); drawer.open(); window.layoutViewport(200, 140, font);
         check(window.tooltipTarget(22, 22) == null, "Drawer backdrop blocks underlying slot tooltips");
         Rect p = drawerItem.getAbsoluteBounds();
         check(window.tooltipTarget(p.x() + 2, p.y() + 2) == drawerItem, "A slot in the top Drawer is eligible");
         Preview modalItem = new Preview(); modalItem.setMinimum(26, 26);
         Modal modal = new Modal(Component.literal("Modal"), null, null, null).setSize(100, 90).setContent(modalItem);
-        overlay.add(modal); window.layoutViewport(200, 140, font);
+        overlay.addChild(modal); window.layoutViewport(200, 140, font);
         check(window.tooltipTarget(p.x() + 2, p.y() + 2) != drawerItem, "A higher Modal suppresses Drawer tooltips");
         Rect m = modalItem.getAbsoluteBounds();
         check(window.tooltipTarget(m.x() + 2, m.y() + 2) == modalItem, "Top Modal's own slot remains eligible");

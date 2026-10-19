@@ -38,8 +38,9 @@ final class WindowRenderState implements AutoCloseable {
         GL11.glGetIntegerv(GL11.GL_SCISSOR_BOX, scissor);
         GL11.glGetFloatv(GL11.GL_COLOR_CLEAR_VALUE, clearColor);
         try (var stack = org.lwjgl.system.MemoryStack.stackPush()) {
-            var mask = stack.malloc(4); GL11.glGetBooleanv(GL11.GL_COLOR_WRITEMASK, mask);
-            for (int i=0;i<4;i++) colorMask[i] = mask.get(i) != 0;
+            var mask = stack.malloc(4);
+            GL11.glGetBooleanv(GL11.GL_COLOR_WRITEMASK, mask);
+            for (int i = 0; i < 4; i++) colorMask[i] = mask.get(i) != 0;
         }
         for (int i = 0; i < textures.length; i++) {
             textures[i] = RenderSystem.getShaderTexture(i);
@@ -82,9 +83,12 @@ final class WindowRenderState implements AutoCloseable {
         else GL11.glDisable(GL11.GL_STENCIL_TEST);
         GlStateManager._activeTexture(activeTexture);
         GlStateManager._glUseProgram(program);
-        RenderSystem.stencilFunc(stencilFunc, stencilRef, stencilValueMask); RenderSystem.stencilMask(stencilWriteMask);
+        RenderSystem.stencilFunc(stencilFunc, stencilRef, stencilValueMask);
+        RenderSystem.stencilMask(stencilWriteMask);
         RenderSystem.stencilOp(stencilFail, stencilDepthFail, stencilPass);
         RenderSystem.colorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
-        RenderSystem.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]); RenderSystem.clearDepth(clearDepth); RenderSystem.clearStencil(clearStencil);
+        RenderSystem.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+        RenderSystem.clearDepth(clearDepth);
+        RenderSystem.clearStencil(clearStencil);
     }
 }

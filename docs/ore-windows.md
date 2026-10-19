@@ -4,10 +4,10 @@
 
 ```java
 Input input = new Input().setPlaceholder(Component.literal("输入内容"));
-Box content = new Box().setGap(4)
-        .add(new Label(Component.literal("Title")).setHero(true))
-        .add(new InputControl(input))
-        .add(new Button(Component.literal("Close")));
+Box content = new Box().setGap(4);
+content.addChild(new Label(Component.literal("Title")).setHero(true));
+content.addChild(new InputControl(input));
+content.addChild(new Button(Component.literal("Close")));
 
 Window window = Window.nativeWindow(WindowOptions.defaults("My Ore Window"))
         .setContent(content);

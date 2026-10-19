@@ -1,29 +1,45 @@
 package io.github.luyingyilong.ore.layout;
 
+import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.Inspectable;
-import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.client.gui.Font;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class Box extends Container {
-    public enum Orientation { VERTICAL, HORIZONTAL }
-
     private Orientation orientation = Orientation.VERTICAL;
     private int gap;
 
-    public Box setOrientation(Orientation orientation) { java.util.Objects.requireNonNull(orientation); if (DebugBridge.previewWrite(this, "orientation", orientation)) return this; this.orientation = orientation; requestLayout(); return this; }
-    public Box setGap(int gap) { gap = Math.max(0, gap); if (DebugBridge.previewWrite(this, "gap", gap)) return this; this.gap = gap; requestLayout(); return this; }
     @Inspectable
-    public Orientation getOrientation() { return DebugBridge.value(this, "orientation", orientation); }
-    @Inspectable(min = 0, max = 10000)
-    public int getGap() { return DebugBridge.value(this, "gap", gap); }
-    public Box add(Control child) { addChild(child); return this; }
-    @Override public Box addChild(Control child) { super.addChild(child); return this; }
+    public Orientation getOrientation() {
+        return DebugBridge.value(this, "orientation", orientation);
+    }
 
-    @Override public Size measureSize(Font font, Size available) {
+    public Box setOrientation(Orientation orientation) {
+        java.util.Objects.requireNonNull(orientation);
+        if (DebugBridge.previewWrite(this, "orientation", orientation)) return this;
+        this.orientation = orientation;
+        requestLayout();
+        return this;
+    }
+
+    @Inspectable(min = 0, max = 10000)
+    public int getGap() {
+        return DebugBridge.value(this, "gap", gap);
+    }
+
+    public Box setGap(int gap) {
+        gap = Math.max(0, gap);
+        if (DebugBridge.previewWrite(this, "gap", gap)) return this;
+        this.gap = gap;
+        requestLayout();
+        return this;
+    }
+
+    @Override
+    public Size measureSize(Font font, Size available) {
         if (!isAlive()) return new Size(0, 0);
         Orientation orientation = DebugBridge.value(this, "orientation", this.orientation);
         int gap = DebugBridge.value(this, "gap", this.gap);
@@ -59,12 +75,14 @@ public final class Box extends Container {
                 Math.max(super.measureHeight(font, available.height()), totalHeight));
     }
 
-    @Override public int measureWidth(Font font, int available) {
+    @Override
+    public int measureWidth(Font font, int available) {
         if (!isAlive()) return 0;
         return measureSize(font, new Size(available, available)).width();
     }
 
-    @Override public int measureHeight(Font font, int available) {
+    @Override
+    public int measureHeight(Font font, int available) {
         if (!isAlive()) return 0;
         return measureSize(font, new Size(available, available)).height();
     }
@@ -128,11 +146,13 @@ public final class Box extends Container {
     }
 
     private int mainMinimum(Control child) {
-        Orientation orientation = DebugBridge.value(this,"orientation",this.orientation);
+        Orientation orientation = DebugBridge.value(this, "orientation", this.orientation);
         return orientation == Orientation.VERTICAL ? child.getMinimumHeight() : child.getMinimumWidth();
     }
 
-    /** Freeze children whose proportional slot would be below their minimum, then redistribute. */
+    /**
+     * Freeze children whose proportional slot would be below their minimum, then redistribute.
+     */
     private void allocateExpanded(List<Control> active, int[] sizes, int space) {
         List<Integer> pending = new ArrayList<>();
         for (int index = 0; index < active.size(); index++) if (expands(active.get(index))) pending.add(index);
@@ -166,8 +186,12 @@ public final class Box extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
-            for (Control child : getChildren()) if (child.getParent() == this && child.isAlive() && child.getVisible()) child.draw(context, screenX, screenY);
+            for (Control child : getChildren())
+                if (child.getParent() == this && child.isAlive() && child.getVisible())
+                    child.draw(context, screenX, screenY);
         }
     }
+
+    public enum Orientation {VERTICAL, HORIZONTAL}
 
 }

@@ -16,10 +16,9 @@ public final class WindowContext {
     private static WindowContext current;
     private final UUID id = UUID.randomUUID();
     private final WindowPopups popups = new WindowPopups(this);
-    private io.github.luyingyilong.ore.Label textPainter;
-    public WindowPopups getPopups() { return popups; }
     private final boolean nativeWindow;
     private final Set<Integer> keys = new HashSet<>(), buttons = new HashSet<>();
+    private io.github.luyingyilong.ore.Label textPainter;
     private Window owner;
     private ModularGuiContext mui;
     private long handle;
@@ -27,27 +26,12 @@ public final class WindowContext {
     private double scale = 1, mouseX, mouseY;
     // Scoped to ModularPanel's current mouse-press dispatch, reset at its HEAD/RETURN.
     private boolean orePointerFocus;
-    public void setPointerFocusOwned(boolean owned){orePointerFocus=owned;}
-    public boolean getPointerFocusOwned(){return orePointerFocus;}
     private int modifiers;
-    private int originX,originY;
-    public int getOriginX(){return originX;}
-    public int getOriginY(){return originY;}
-    public void setOrigin(int x,int y){originX=x;originY=y;}
+    private int originX, originY;
     private boolean focused = true;
 
     public WindowContext(boolean nativeWindow) {
         this.nativeWindow = nativeWindow;
-    }
-
-    /** One bounded compatibility painter per host, released with the owning Window's lifetime. */
-    public io.github.luyingyilong.ore.Label getTextPainter() {
-        if (textPainter == null) {
-            if (owner != null && owner.isDisposed()) throw new IllegalStateException("Window has been disposed");
-            textPainter = new io.github.luyingyilong.ore.Label();
-            if (owner != null) owner.ownPart("textPainter", textPainter);
-        }
-        return textPainter;
     }
 
     public static WindowContext getPrimary() {
@@ -60,6 +44,53 @@ public final class WindowContext {
 
     public static WindowContext of(ModularGuiContext mui) {
         return CONTEXTS.getOrDefault(mui, PRIMARY);
+    }
+
+    /**
+     * Pixel-art UI uses whole physical pixels, including at fractional desktop DPI.
+     */
+    static double nativePixelScale(double requestedScale, double contentScale) {
+        if (!Double.isFinite(requestedScale) || requestedScale <= 0
+                || !Double.isFinite(contentScale) || contentScale <= 0)
+            throw new IllegalArgumentException("Invalid native pixel scale");
+        return Math.max(1, Math.floor(requestedScale * Math.max(1, contentScale) + 0.5));
+    }
+
+    public WindowPopups getPopups() {
+        return popups;
+    }
+
+    public boolean getPointerFocusOwned() {
+        return orePointerFocus;
+    }
+
+    public void setPointerFocusOwned(boolean owned) {
+        orePointerFocus = owned;
+    }
+
+    public int getOriginX() {
+        return originX;
+    }
+
+    public int getOriginY() {
+        return originY;
+    }
+
+    public void setOrigin(int x, int y) {
+        originX = x;
+        originY = y;
+    }
+
+    /**
+     * One bounded compatibility painter per host, released with the owning Window's lifetime.
+     */
+    public io.github.luyingyilong.ore.Label getTextPainter() {
+        if (textPainter == null) {
+            if (owner != null && owner.isDisposed()) throw new IllegalStateException("Window has been disposed");
+            textPainter = new io.github.luyingyilong.ore.Label();
+            if (owner != null) owner.ownPart("textPainter", textPainter);
+        }
+        return textPainter;
     }
 
     public Scope enter() {
@@ -116,21 +147,15 @@ public final class WindowContext {
         return Math.max(1, (int) Math.ceil(framebufferHeight / scale));
     }
 
-    /** Preserve exact framebuffer coverage without stretching the rounded layout viewport. */
+    /**
+     * Preserve exact framebuffer coverage without stretching the rounded layout viewport.
+     */
     double getProjectionWidth() {
         return framebufferWidth / scale;
     }
 
     double getProjectionHeight() {
         return framebufferHeight / scale;
-    }
-
-    /** Pixel-art UI uses whole physical pixels, including at fractional desktop DPI. */
-    static double nativePixelScale(double requestedScale, double contentScale) {
-        if (!Double.isFinite(requestedScale) || requestedScale <= 0
-                || !Double.isFinite(contentScale) || contentScale <= 0)
-            throw new IllegalArgumentException("Invalid native pixel scale");
-        return Math.max(1, Math.floor(requestedScale * Math.max(1, contentScale) + 0.5));
     }
 
     public int getFramebufferWidth() {
@@ -200,11 +225,18 @@ public final class WindowContext {
         else buttons.remove(button);
     }
 
-    public void setModifiers(int value){modifiers=value;}
-    public void clearInput(){keys.clear();buttons.clear();modifiers=0;}
+    public void clearInput() {
+        keys.clear();
+        buttons.clear();
+        modifiers = 0;
+    }
 
     public int getModifiers() {
         return modifiers;
+    }
+
+    public void setModifiers(int value) {
+        modifiers = value;
     }
 
     public boolean mouseDown(int button) {

@@ -97,19 +97,22 @@ public final class Button extends Control {
     /** Right-aligned decoration inside the button; null removes it. */
     public Button setBadge(Badge badge) {
         if (this.badge == badge) return this;
-        if (badge != null && badge.getParent() != null) throw new IllegalStateException("Badge already has a parent");
-        if (this.badge != null) removeChild(this.badge);
-        this.badge = badge;
-        if (badge != null) addChild(badge);
-        requestLayout();
+        java.util.List<Control> next = new java.util.ArrayList<>(getChildren());
+        if (this.badge != null) next.remove(this.badge);
+        if (badge != null) next.add(badge);
+        updateChildren(next);
         return this;
     }
     public Badge getBadge() { return badge; }
-    @Override public boolean removeChild(Control child) {
-        boolean removed = super.removeChild(child);
-        if (removed && child == badge) badge = null;
-        return removed;
+    @Override protected void validateChildren(java.util.List<Control> proposed) {
+        if (proposed.stream().filter(Badge.class::isInstance).count() > 1)
+            throw new IllegalStateException("Button accepts one Badge; use setBadge");
     }
+
+    @Override protected void childrenChanged() {
+        badge = getChildren().stream().filter(Badge.class::isInstance).map(Badge.class::cast).findFirst().orElse(null);
+    }
+
     public Signal0 pressed() { return pressed.signal(); }
     public Signal<Boolean> toggled() { return toggled.signal(); }
 

@@ -10,7 +10,9 @@ import java.util.List;
 public final class SplitterTest {
     public static void main(String[] args) {
         Divider horizontal = new Divider(), vertical = new Divider().setLayout(Divider.Layout.VERTICAL);
-        Box lines = new Box().setOrientation(Box.Orientation.HORIZONTAL).add(vertical).add(new Control().setMinimum(5,5));
+        Box lines = new Box().setOrientation(Box.Orientation.HORIZONTAL);
+        lines.addChild(vertical);
+        lines.addChild(new Control().setMinimum(5, 5));
         new Window(true).setContent(lines).layoutViewport(100,80,null);
         check(horizontal.getThickness()==2 && vertical.getBounds().width()==1 && vertical.getBounds().height()==80,"Divider orientation and fixed vertical width");
         check(vertical.getSizeFlagsHorizontal()==SizeFlags.SIZE_SHRINK_CENTER,"Vertical divider shrinks across its thickness");

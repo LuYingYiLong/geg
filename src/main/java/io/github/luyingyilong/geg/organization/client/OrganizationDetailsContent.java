@@ -18,9 +18,9 @@ import net.minecraft.network.chat.Component;
 /** Organization facts above the existing independently scrolling member table. */
 final class OrganizationDetailsContent extends Container {
     private final Descriptions info = new Descriptions().setColumns(1)
-            .add("name", Component.translatable("organization.geg.name"), Component.empty())
-            .add("description", Component.translatable("organization.geg.description"), Component.empty())
-            .add("joinPolicy", Component.translatable("organization.geg.join_policy"), Component.empty());
+            .addItem("name", Component.translatable("organization.geg.name"), Component.empty())
+            .addItem("description", Component.translatable("organization.geg.description"), Component.empty())
+            .addItem("joinPolicy", Component.translatable("organization.geg.join_policy"), Component.empty());
     private final Box column = new Box().setGap(8);
     private final Box profileRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(8);
     private final Button edit = new Button(Component.translatable("organization.geg.edit"));
@@ -33,9 +33,11 @@ final class OrganizationDetailsContent extends Container {
         edit.setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_END).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         edit.setVisible(false);
         profileRow.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        profileRow.add(info).add(edit);
-        column.add(profileRow).add(members);
-        addChild(column);
+        profileRow.addChild(info);
+        profileRow.addChild(edit);
+        column.addChild(profileRow);
+        column.addChild(members);
+        this.addChild(column);
     }
 
     void update(OrganizationSyncPacket.Summary summary) {

@@ -36,12 +36,13 @@ public final class Descriptions extends Container {
     private float fontSize = Label.DEFAULT_FONT_SIZE;
     private List<DescriptionItem> arranged = List.of();
     private int arrangedColumns;
+    private boolean arranging;
 
     public Descriptions() {
         title.setVisible(false);
         title.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        box.add(title);
-        super.addChild(box);
+        box.addChild(title);
+        updateChildren(List.of(box));
         setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
     }
 
@@ -102,43 +103,53 @@ public final class Descriptions extends Container {
     public int getItemGap() { return itemGap; }
 
     /** Add values with stable keys, so callers can update individual labels without replacing nodes. */
-    public Descriptions add(String key, Component label, Component content) {
-        return add(new DescriptionItem(key, label, content));
+    public Descriptions addItem(String key, Component label, Component content) {
+        return addItem(new DescriptionItem(key, label, content));
     }
-    public Descriptions add(DescriptionItem item) {
+    public Descriptions addItem(DescriptionItem item) {
         Objects.requireNonNull(item);
         if (items.containsKey(item.getKey())) throw new IllegalArgumentException("Duplicate description: " + item.getKey());
         if (item.getParent() != null) throw new IllegalStateException("Description already has a parent");
         item.configure(layout, colon, itemGap);
         item.getLabelNode().setColor(labelColor).setFontSize(fontSize);
         item.getContentNode().setColor(contentColor).setFontSize(fontSize);
-        items.put(item.getKey(), item);
-        box.add(item);
+        box.addChild(item);
         requestLayout();
         return this;
     }
     public DescriptionItem getItem(String key) {
-        pruneFreedItems();
         DescriptionItem item = items.get(key);
         if (item == null) throw new IllegalArgumentException("Unknown description: " + key);
         return item;
     }
-    public List<DescriptionItem> getItems() { pruneFreedItems(); return List.copyOf(items.values()); }
-    @Override public Descriptions addChild(Control child) {
-        if (!(child instanceof DescriptionItem item)) throw new IllegalArgumentException("Descriptions accepts DescriptionItem only");
-        return add(item);
+    public List<DescriptionItem> getItems() { return List.copyOf(items.values()); }
+    @Override protected void validateChildren(List<Control> proposed) {
+        if (!isUpdatingChildren()) throw new IllegalStateException("Descriptions has a fixed skeleton; use addItem/removeItem/clearItems");
     }
-    @Override public boolean removeChild(Control child) {
-        return child instanceof DescriptionItem item && items.get(item.getKey()) == item && remove(item.getKey());
+
+    @Override protected void childrenChanged() {
+        if (arranging) return;
+        rows.removeIf(row -> row.getParent() != box);
+        List<DescriptionItem> present = new ArrayList<>();
+        collectItems(box, present);
+        items.values().removeIf(item -> !item.isAlive() || !present.contains(item));
+        for (DescriptionItem item : present) if (item.isAlive()) items.putIfAbsent(item.getKey(), item);
+        arrangedColumns = 0;
     }
-    public boolean remove(String key) {
+
+    private static void collectItems(Control node, List<DescriptionItem> out) {
+        if (node instanceof DescriptionItem item) { out.add(item); return; }
+        for (Control child : node.getChildren()) collectItems(child, out);
+    }
+
+    public boolean removeItem(String key) {
         DescriptionItem item = items.remove(key);
         if (item == null) return false;
         if (item.getParent() != null) item.getParent().removeChild(item);
         requestLayout();
         return true;
     }
-    public Descriptions clear() { for (String key : List.copyOf(items.keySet())) { DescriptionItem item = items.get(key); remove(key); item.queueFree(); } return this; }
+    public Descriptions clearItems() { for (String key : List.copyOf(items.keySet())) { DescriptionItem item = items.get(key); removeItem(key); item.queueFree(); } return this; }
 
     public int effectiveColumns(int width) {
         return Math.max(1, Math.min(columns, (int) (((long) Math.max(0, width) + columnGap) / ((long) columnMinimum() + columnGap))));
@@ -154,35 +165,29 @@ public final class Descriptions extends Container {
     }
 
     private void arrange(int width) {
-        pruneFreedItems();
         List<DescriptionItem> visible = items.values().stream().filter(c -> c.isAlive() && c.getVisible()).toList();
         int count = effectiveColumns(width);
         if (arranged.equals(visible) && arrangedColumns == count) return;
-        for (DescriptionItem item : items.values()) if (item.getParent() != null) item.getParent().removeChild(item);
-        for (Box row : rows) { if (row.getParent() != null) row.getParent().removeChild(row); row.queueFree(); }
-        rows.clear();
-        for (int index = 0; index < visible.size(); index += count) {
-            Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(columnGap);
-            row.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-            for (int column = 0; column < count; column++) {
-                if (index + column < visible.size()) row.add(visible.get(index + column));
-                else row.add(new Control().setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL));
+        arranging = true;
+        try {
+            for (DescriptionItem item : List.copyOf(items.values())) if (item.getParent() != null) item.getParent().removeChild(item);
+            for (Box row : rows) { if (row.getParent() != null) row.getParent().removeChild(row); row.queueFree(); }
+            rows.clear();
+            for (int index = 0; index < visible.size(); index += count) {
+                Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(columnGap);
+                row.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+                for (int column = 0; column < count; column++) {
+                    if (index + column < visible.size()) { row.addChild(visible.get(index + column)); }
+                    else { row.addChild(new Control().setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL)); }
+                }
+                rows.add(row);
+                box.addChild(row);
             }
-            rows.add(row);
-            box.add(row);
-        }
-        // Hidden items remain owned by this descriptions tree and can be shown again later.
-        for (DescriptionItem item : items.values()) if (!item.getVisible()) box.add(item);
-        arranged = visible;
-        arrangedColumns = count;
-    }
-
-    private void pruneFreedItems() {
-        items.values().removeIf(item -> {
-            if (item.isAlive()) return false;
-            if (item.getParent() != null) item.getParent().removeChild(item);
-            return true;
-        });
+            // Hidden items remain owned by this descriptions tree and can be shown again later.
+            for (DescriptionItem item : items.values()) if (!item.getVisible()) { box.addChild(item); }
+            arranged = visible;
+            arrangedColumns = count;
+        } finally { arranging = false; }
     }
 
     private Size measure(Font font, int offeredWidth) {

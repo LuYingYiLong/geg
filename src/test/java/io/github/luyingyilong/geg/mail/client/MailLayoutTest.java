@@ -35,11 +35,18 @@ public final class MailLayoutTest {
         detail.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         Control detailTitle = new Control().setPreferred(40, 12);
         Avatar avatar = new Avatar().setInitials("Sender");
-        Box senderInfo = new Box().setGap(2).add(new Control().setMinimum(0, 10)).add(new Control().setMinimum(0, 10));
+        Box senderInfo = new Box().setGap(2);
+        senderInfo.addChild(new Control().setMinimum(0, 10));
+        senderInfo.addChild(new Control().setMinimum(0, 10));
         senderInfo.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Box senderRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(6).add(avatar).add(senderInfo);
-        Panel detailPanel = new Panel(null).setChild(new Padding(Padding.Insets.all(4))
-                .setChild(new Box().setGap(4).add(detailTitle).add(senderRow).add(detail)));
+        Box senderRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(6);
+        senderRow.addChild(avatar);
+        senderRow.addChild(senderInfo);
+        var childContainer95 = new Box().setGap(4);
+        childContainer95.addChild(detailTitle);
+        childContainer95.addChild(senderRow);
+        childContainer95.addChild(detail);
+        Panel detailPanel = new Panel(null).setChild(new Padding(Padding.Insets.all(4)).setChild(childContainer95));
         Panel menuPanel = new Panel(null).setChild(new Padding(new Padding.Insets(8, 1, 8, 1)).setChild(messages));
         Scroll horizontal = new Scroll().setContent(new MailColumns(menuPanel, detailPanel)).setVertical(Scroll.BarMode.DISABLED);
         horizontal.setMinimum(0, 41).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
@@ -53,12 +60,19 @@ public final class MailLayoutTest {
         audiences.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND | SizeFlags.SIZE_SHRINK_BEGIN)
                 .setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         send.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        Box audienceRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4).add(audiences).add(send);
+        Box audienceRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
+        audienceRow.addChild(audiences);
+        audienceRow.addChild(send);
         audienceRow.setMinimum(0, Button.HEIGHT).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        Padding content = new Padding(Padding.Insets.all(4))
-                .setChild(new Box().setGap(4).add(audienceRow).add(horizontal));
+        var childContainer97 = new Box().setGap(4);
+        childContainer97.addChild(audienceRow);
+        childContainer97.addChild(horizontal);
+        Padding content = new Padding(Padding.Insets.all(4)).setChild(childContainer97);
         content.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Window window = new Window(true).setContent(new Box().setGap(0).add(header).add(content));
+        var childContainer98 = new Box().setGap(0);
+        childContainer98.addChild(header);
+        childContainer98.addChild(content);
+        Window window = new Window(true).setContent(childContainer98);
         for (int height : new int[]{128, 240, 480}) for (int width : new int[]{127, 128, 129, 640, 854}) {
             header.setMinimum(0, 0);
             header.setMinimum(0, header.measureHeight(font, width));

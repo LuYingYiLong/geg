@@ -85,7 +85,8 @@ public final class SwitchTest {
         List<String> events = new ArrayList<>();
         Switch toggle = Signals.configure(Signals.configure(new Switch(false, now::get, cue -> events.add(cue.name())), connected -> connected.toggled().connect(connected, value -> events.add("change:" + value))), connected -> connected.activated().connect(connected, value -> events.add("click:" + value)));
         toggle.setPosition(10, 10).setRequestedSize(28, 15);
-        Control body = new Control().addChild(toggle);
+        Control body = new Control();
+        body.addChild(toggle);
         Overlay overlay = new Overlay();
         Window window = new Window(true).setContent(body).setOverlay(overlay);
         window.layoutViewport(100, 100, null);
@@ -140,7 +141,7 @@ public final class SwitchTest {
         check(events.isEmpty(), "Hide cancels armed press");
         io.github.luyingyilong.ore.event.WindowInputs.press(window,11, 11, null);
         Control modal = new Control() { @Override public boolean getFocusScope() { return true; } };
-        overlay.add(modal);
+        overlay.addChild(modal);
         window.layoutViewport(100, 100, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,11, 11);
         check(events.isEmpty(), "Top layer blocks stale releases");
@@ -153,7 +154,9 @@ public final class SwitchTest {
         int[] changes = {0};
         Switch toggle = Signals.configure(new Switch(false, () -> 0L, cue -> { }), connected -> connected.toggled().connect(connected, value -> changes[0]++));
         toggle.setPosition(10, 80).setRequestedSize(28, 15);
-        Scroll scroll = new Scroll().setContent(new Control().setPreferred(80, 200).addChild(toggle));
+        var childContainer59 = new Control().setPreferred(80, 200);
+        childContainer59.addChild(toggle);
+        Scroll scroll = new Scroll().setContent(childContainer59);
         Window window = new Window(true).setContent(scroll);
         window.layoutViewport(80, 60, font);
         scroll.scrollBy(0, 70);

@@ -63,7 +63,11 @@ public final class Switch extends Container {
         setFocusable(true);
         setFocusExpansion(1);
         spinner.setVisible(false);
-        addChild(spinner);
+        updateChildren(java.util.List.of(spinner));
+    }
+
+    @Override protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
+        if (!isUpdatingChildren()) throw new IllegalStateException("Switch has a fixed skeleton; configure its properties");
     }
 
     public boolean getChecked() { return checked; }

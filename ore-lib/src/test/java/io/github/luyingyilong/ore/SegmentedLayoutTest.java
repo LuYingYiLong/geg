@@ -21,8 +21,9 @@ public final class SegmentedLayoutTest {
         };
         Segmented options = new Segmented(List.of(Component.literal("A"), Component.literal("Longer")));
         check(options.measureWidth(font, 500) == 24 + 52);
-        Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).add(options)
-                .add(new Control().setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL));
+        Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL);
+        row.addChild(options);
+        row.addChild(new Control().setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL));
         Window window = new Window(true).setContent(row);
         window.layoutViewport(300, 20, font);
         check(options.getBounds().equals(new Rect(0, 0, 76, 20)));

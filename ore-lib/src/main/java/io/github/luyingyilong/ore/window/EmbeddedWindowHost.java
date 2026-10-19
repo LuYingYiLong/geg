@@ -4,7 +4,6 @@ import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
 import io.github.luyingyilong.ore.layout.Window;
 import io.github.luyingyilong.ore.screen.OreScreen;
-import io.github.luyingyilong.ore.theme.OreTheme;
 
 /**
  * Existing screens attach lazily on paint; standalone Window.open uses a normal OreScreen.
@@ -32,7 +31,10 @@ public final class EmbeddedWindowHost implements WindowHost {
         open = true;
     }
 
-    public void detached() { open = false; context.detach(); }
+    public void detached() {
+        open = false;
+        context.detach();
+    }
 
     @Override
     public void open(Window root) {

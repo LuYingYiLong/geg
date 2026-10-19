@@ -8,17 +8,21 @@ import io.github.luyingyilong.ore.layout.Panel;
 import io.github.luyingyilong.ore.layout.SizeFlags;
 import io.github.luyingyilong.ore.theme.OreTheme;
 
-/** A themed line: horizontal is 2px high, vertical is exactly 1px wide. */
+/**
+ * A themed line: horizontal is 2px high, vertical is exactly 1px wide.
+ */
 public final class Divider extends Control {
-    public enum Layout { HORIZONTAL, VERTICAL }
-    private Panel horizontalPainter, verticalPainter;
     private final WidgetThemeKey<WidgetTheme> horizontalTheme;
     private final boolean defaultTheme;
+    private Panel horizontalPainter, verticalPainter;
     private Layout layout = Layout.HORIZONTAL;
+    public Divider() {
+        this(null, true);
+    }
 
-    public Divider() { this(null, true); }
-
-    Divider(WidgetThemeKey<WidgetTheme> theme) { this(theme, false); }
+    Divider(WidgetThemeKey<WidgetTheme> theme) {
+        this(theme, false);
+    }
 
     private Divider(WidgetThemeKey<WidgetTheme> theme, boolean defaultTheme) {
         this.horizontalTheme = theme;
@@ -27,7 +31,10 @@ public final class Divider extends Control {
         setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
     }
 
-    public Layout getLayout() { return layout; }
+    public Layout getLayout() {
+        return layout;
+    }
+
     public Divider setLayout(Layout layout) {
         java.util.Objects.requireNonNull(layout);
         if (this.layout == layout) return this;
@@ -39,23 +46,30 @@ public final class Divider extends Control {
             setMinimum(1, 0);
             setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
         }
-        requestLayout(); return this;
+        requestLayout();
+        return this;
     }
 
-    public int getThickness() { return layout == Layout.VERTICAL ? 1 : 2; }
+    public int getThickness() {
+        return layout == Layout.VERTICAL ? 1 : 2;
+    }
 
-    @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+    @Override
+    protected void render(ModularGuiContext context, int screenX, int screenY) {
         var area = getScreenBounds(screenX, screenY);
         if (layout == Layout.VERTICAL) {
             if (verticalPainter == null) verticalPainter = ownPart("verticalPainter", new Panel(OreTheme.V_DIVIDER));
             int width = Math.min(1, area.width());
             verticalPainter.drawAt(context, new io.github.luyingyilong.ore.layout.Rect(
-                    area.x() + (area.width()-width)/2, area.y(), width, area.height()));
+                    area.x() + (area.width() - width) / 2, area.y(), width, area.height()));
         } else {
-            if (horizontalPainter == null) horizontalPainter = ownPart("horizontalPainter", new Panel(defaultTheme ? OreTheme.H_DIVIDER : horizontalTheme));
+            if (horizontalPainter == null)
+                horizontalPainter = ownPart("horizontalPainter", new Panel(defaultTheme ? OreTheme.H_DIVIDER : horizontalTheme));
             int height = Math.min(2, area.height());
             horizontalPainter.drawAt(context, new io.github.luyingyilong.ore.layout.Rect(
-                    area.x(), area.y() + (area.height()-height)/2, area.width(), height));
+                    area.x(), area.y() + (area.height() - height) / 2, area.width(), height));
         }
     }
+
+    public enum Layout {HORIZONTAL, VERTICAL}
 }

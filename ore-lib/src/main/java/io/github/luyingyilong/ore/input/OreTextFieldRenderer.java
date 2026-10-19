@@ -1,13 +1,12 @@
 package io.github.luyingyilong.ore.input;
 
-import io.github.luyingyilong.ore.debug.DebugBridge;
-
 import brachy.modularui.screen.viewport.GuiContext;
 import brachy.modularui.utils.Point;
 import brachy.modularui.utils.PointF;
 import brachy.modularui.widget.sizer.Area;
 import brachy.modularui.widgets.textfield.TextFieldHandler;
 import brachy.modularui.widgets.textfield.TextFieldRenderer;
+import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.theme.OreFonts;
 import io.github.luyingyilong.ore.theme.OreTextMetrics;
 import io.github.luyingyilong.ore.util.TextLines;
@@ -19,8 +18,11 @@ import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 
-/** Styled measured lines also drive MUI caret hit testing, selection and scrolling. */
+/**
+ * Styled measured lines also drive MUI caret hit testing, selection and scrolling.
+ */
 final class OreTextFieldRenderer extends TextFieldRenderer {
+    private final Input owner;
     private InputPreedit preedit = InputPreedit.EMPTY;
     private boolean drawingPreedit;
     private boolean multiline;
@@ -31,27 +33,43 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
     private WrappedText affinityLayout;
     private Point affinityCursor;
     private int affinityRow;
-    void multiline(boolean multiline) { this.multiline = multiline; }
 
-    private final Input owner;
     OreTextFieldRenderer(TextFieldHandler handler, Input owner) {
         super(handler);
         this.owner = owner;
     }
 
-    @Override public float getFontHeight() { return OreTextMetrics.body().lineHeight(scale); }
+    private static Point sourcePosition(String text, int offset) {
+        int start = text.lastIndexOf('\n', Math.max(-1, offset - 1)) + 1;
+        return new Point(offset - start, TextLines.position(text, offset).line());
+    }
 
-    /** The owner sets the row box once; empty text, IME and committed text share that origin. */
-    @Override protected int getStartYOfLines(int count) { return y; }
+    void multiline(boolean multiline) {
+        this.multiline = multiline;
+    }
 
-    @Override protected void draw(GuiGraphics graphics, FormattedCharSequence text, float left, float top) {
+    @Override
+    public float getFontHeight() {
+        return OreTextMetrics.body().lineHeight(scale);
+    }
+
+    /**
+     * The owner sets the row box once; empty text, IME and committed text share that origin.
+     */
+    @Override
+    protected int getStartYOfLines(int count) {
+        return y;
+    }
+
+    @Override
+    protected void draw(GuiGraphics graphics, FormattedCharSequence text, float left, float top) {
         if (simulate || graphics == null) return;
         if (DebugBridge.active() && owner.debugControl() != null) {
             var metrics = OreTextMetrics.body();
             DebugBridge.backend().text(owner.debugControl(), graphics,
                     owner.inputMethodBounds(), left, top + metrics.drawOrigin(scale), getFont().width(text) * scale,
-                    getFontHeight(), top, top + metrics.baseline(scale), top + metrics.drawOrigin(scale) + metrics.inkTop()*scale,
-                    top + metrics.drawOrigin(scale) + metrics.inkBottom()*scale, 8 * scale,
+                    getFontHeight(), top, top + metrics.baseline(scale), top + metrics.drawOrigin(scale) + metrics.inkTop() * scale,
+                    top + metrics.drawOrigin(scale) + metrics.inkBottom() * scale, 8 * scale,
                     "Mojangles → Noto Sans → Minecraft default; native editor", 0);
         }
         graphics.pose().pushPose();
@@ -59,10 +77,14 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
             graphics.pose().translate(left, top + OreTextMetrics.body().drawOrigin(scale), 0);
             graphics.pose().scale(scale, scale, 1);
             OreFonts.draw(graphics, getFont(), text, 0, 0, color, shadow);
-        } finally { graphics.pose().popPose(); }
+        } finally {
+            graphics.pose().popPose();
+        }
     }
 
-    void preedit(InputPreedit preedit) { this.preedit = preedit; }
+    void preedit(InputPreedit preedit) {
+        this.preedit = preedit;
+    }
 
     private InputPreedit.Presentation presentation() {
         return preedit.present(String.join("\n", handler.getText()), offset(handler.getStartCursor()), offset(handler.getEndCursor()));
@@ -95,7 +117,8 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
         return caret;
     }
 
-    @Override protected void drawMeasuredLines(GuiGraphics graphics, List<Line> lines) {
+    @Override
+    protected void drawMeasuredLines(GuiGraphics graphics, List<Line> lines) {
         if (multiline) {
             drawMultiline(graphics);
             return;
@@ -103,8 +126,11 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
         if (!preedit.active()) {
             boolean cursor = renderCursor;
             renderCursor = false;
-            try { super.drawMeasuredLines(graphics, lines); }
-            finally { renderCursor = cursor; }
+            try {
+                super.drawMeasuredLines(graphics, lines);
+            } finally {
+                renderCursor = cursor;
+            }
             if (cursor && !simulate) {
                 Point point = handler.getMainCursor();
                 drawCaret(graphics, getPosOf(lines, point), handler.getText().get(point.y).isEmpty());
@@ -139,29 +165,36 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
         }
     }
 
-    @Override protected void drawMarked(GuiGraphics graphics, List<Line> lines) {
+    @Override
+    protected void drawMarked(GuiGraphics graphics, List<Line> lines) {
         if (!drawingPreedit) super.drawMarked(graphics, lines);
     }
 
-    @Override public void drawMarked(GuiGraphics graphics, float top, float left, float right) {
+    @Override
+    public void drawMarked(GuiGraphics graphics, float top, float left, float right) {
         if (owner.debugControl() != null && DebugBridge.active())
             DebugBridge.backend().primitive(owner.debugControl(), "selection", graphics,
-                    new io.github.luyingyilong.ore.layout.Rect((int)left,(int)top,Math.max(0,(int)Math.ceil(right-left)),(int)Math.ceil(getFontHeight())));
+                    new io.github.luyingyilong.ore.layout.Rect((int) left, (int) top, Math.max(0, (int) Math.ceil(right - left)), (int) Math.ceil(getFontHeight())));
         brachy.modularui.drawable.GuiDraw.drawRect(graphics, left, top, Math.max(0, right - left),
                 getFontHeight(), markedColor);
     }
 
-    @Override public void drawScrolling(GuiGraphics graphics, Line line, float offset, Area area, GuiContext context) {
+    @Override
+    public void drawScrolling(GuiGraphics graphics, Line line, float offset, Area area, GuiContext context) {
         if (!preedit.active()) {
             super.drawScrolling(graphics, line, offset, area, context);
             return;
         }
         context.getStencil().push(x, -500.0F, Math.max(0, (int) maxWidth), 1000.0F);
-        try { drawMeasuredLines(graphics, List.of(line)); }
-        finally { context.getStencil().pop(); }
+        try {
+            drawMeasuredLines(graphics, List.of(line));
+        } finally {
+            context.getStencil().pop();
+        }
     }
 
-    @Override public List<Line> measureLines(List<Component> lines) {
+    @Override
+    public List<Line> measureLines(List<Component> lines) {
         if (multiline) return wrap(lines.stream().map(Component::getString).toList()).rows().stream()
                 .map(row -> new Line(OreFonts.text(Component.literal(row.text())).getVisualOrderText(), row.width())).toList();
         return super.measureLines(lines.stream().map(OreFonts::text).toList());
@@ -181,12 +214,11 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
         return wrapped;
     }
 
-    /** The same final-column allowance is used by editable text and its wrapped hint. */
-    float textWidth() { return Math.max(1, maxWidth - 1); }
-
-    private static Point sourcePosition(String text, int offset) {
-        int start = text.lastIndexOf('\n', Math.max(-1, offset - 1)) + 1;
-        return new Point(offset - start, TextLines.position(text, offset).line());
+    /**
+     * The same final-column allowance is used by editable text and its wrapped hint.
+     */
+    float textWidth() {
+        return Math.max(1, maxWidth - 1);
     }
 
     private PointF wrappedPosition(WrappedText layout, Point point) {
@@ -211,11 +243,13 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
         return new Point(column, line);
     }
 
-    @Override public PointF getPosOf(List<Line> lines, Point point) {
+    @Override
+    public PointF getPosOf(List<Line> lines, Point point) {
         return multiline ? wrappedPosition(wrap(handler.getText()), point) : super.getPosOf(lines, point);
     }
 
-    @Override public Point getCursorPos(List<String> lines, int mouseX, int mouseY) {
+    @Override
+    public Point getCursorPos(List<String> lines, int mouseX, int mouseY) {
         if (!multiline) {
             // A single-line editor has one insertion row, including its top/bottom padding.
             // MUI otherwise derives another vertically aligned origin from the line count,
@@ -276,8 +310,8 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
         InputGeometry.Caret caret = InputGeometry.caret(position.x, position.y, scale, emptyLine);
         if (owner.debugControl() != null && DebugBridge.active())
             DebugBridge.backend().primitive(owner.debugControl(), "caret", graphics,
-                    new io.github.luyingyilong.ore.layout.Rect((int)Math.floor(caret.x()), (int)Math.floor(caret.y()),
-                            Math.max(1,(int)Math.ceil(caret.width())), (int)Math.ceil(caret.height())));
+                    new io.github.luyingyilong.ore.layout.Rect((int) Math.floor(caret.x()), (int) Math.floor(caret.y()),
+                            Math.max(1, (int) Math.ceil(caret.width())), (int) Math.ceil(caret.height())));
         // Font vertices may still be batched. Flush them before the final caret rectangle.
         graphics.flush();
         brachy.modularui.drawable.GuiDraw.drawRect(graphics, caret.x(), caret.y(), caret.width(), caret.height(), cursorColor);
@@ -297,16 +331,17 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
             int right = (int) Math.ceil(getStartX(row.width()) + layout.xAt(row, to) + (newline ? scale : 0));
             int bottom = (int) Math.ceil(top + (index + 1) * getFontHeight());
             if (owner.debugControl() != null && DebugBridge.active()) {
-                int rangeTop = underline ? bottom - 1 : (int)(top + index * getFontHeight());
+                int rangeTop = underline ? bottom - 1 : (int) (top + index * getFontHeight());
                 DebugBridge.backend().primitive(owner.debugControl(), underline ? "preedit" : "selection", graphics,
-                        new io.github.luyingyilong.ore.layout.Rect(left,rangeTop,Math.max(1,right-left),bottom-rangeTop));
+                        new io.github.luyingyilong.ore.layout.Rect(left, rangeTop, Math.max(1, right - left), bottom - rangeTop));
             }
             graphics.fill(left, underline ? bottom - 1 : (int) (top + index * getFontHeight()),
                     Math.max(left + 1, right), bottom, underline ? cursorColor : markedColor);
         }
     }
 
-    @Override public boolean wouldFit(List<String> lines, boolean checkWidth) {
+    @Override
+    public boolean wouldFit(List<String> lines, boolean checkWidth) {
         if (!multiline && maxHeight > 0 && maxHeight < lines.size() * getFontHeight() - scale) return false;
         if (checkWidth && maxWidth > 0)
             for (Line line : measureStringLines(lines))

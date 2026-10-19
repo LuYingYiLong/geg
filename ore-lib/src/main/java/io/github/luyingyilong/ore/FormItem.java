@@ -51,9 +51,11 @@ public final class FormItem extends Container {
         labelNode = new Label(label).setColor(OreTheme.TEXT_WHITE).setOverflow(Label.Overflow.CLIP);
         errorNode = new Label().setColor(OreTheme.TEXT_ERROR).setOverflow(Label.Overflow.CLIP);
         inputNode = field instanceof InputControl node ? node : null;
-        addChild(labelNode);
-        addChild(field);
-        addChild(errorNode);
+        updateChildren(java.util.List.of(labelNode, field, errorNode));
+    }
+
+    @Override protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
+        if (!isUpdatingChildren()) throw new IllegalStateException("FormItem has a fixed field skeleton");
     }
 
     public String getName() { return name; }

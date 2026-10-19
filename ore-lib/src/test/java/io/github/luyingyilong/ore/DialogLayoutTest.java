@@ -21,7 +21,8 @@ public final class DialogLayoutTest {
         Control title = new Control().setMinimum(30, 18)
                 .setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
         Control close = new Control().setMinimum(18, 18);
-        header.add(title).add(close);
+        header.addChild(title);
+        header.addChild(close);
         header.layout(new Rect(0, 0, 100, 18), null);
         check(title.getBounds().width() == 78);
         check(close.getBounds().x() == 82);
@@ -31,7 +32,8 @@ public final class DialogLayoutTest {
                 .setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Control second = new Control().setMinimum(0, 20)
                 .setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        footer.add(first).add(second);
+        footer.addChild(first);
+        footer.addChild(second);
         footer.layout(new Rect(0, 0, 100, 42), null);
         check(first.getBounds().width() == 100 && first.getBounds().y() == 0);
         check(second.getBounds().width() == 100 && second.getBounds().y() == 22);
@@ -46,7 +48,9 @@ public final class DialogLayoutTest {
         headerInset.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         bodyInset.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         footerInset.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        column.add(headerInset).add(bodyInset).add(footerInset);
+        column.addChild(headerInset);
+        column.addChild(bodyInset);
+        column.addChild(footerInset);
         column.layout(new Rect(0, 0, 100, 96), null);
         check(row.getAbsoluteBounds().x() == 8 && row.getAbsoluteBounds().y() == 2);
         check(body.getAbsoluteBounds().x() == 8 && body.getAbsoluteBounds().y() == 24);

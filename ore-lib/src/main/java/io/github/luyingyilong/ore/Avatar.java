@@ -31,10 +31,14 @@ public final class Avatar extends Container {
 
     Avatar(Function<GameProfile, AvatarSkins.Skin> skins) {
         this.skins = Objects.requireNonNull(skins);
-        addChild(initial);
+        updateChildren(java.util.List.of(initial));
         setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         setSize(DEFAULT_SIZE);
         setInitials("");
+    }
+
+    @Override protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
+        if (!isUpdatingChildren()) throw new IllegalStateException("Avatar has a fixed skeleton; configure its properties");
     }
 
     public Avatar setSize(int pixels) {

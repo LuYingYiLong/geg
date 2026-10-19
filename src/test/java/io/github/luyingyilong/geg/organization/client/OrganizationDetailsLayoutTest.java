@@ -30,7 +30,7 @@ public final class OrganizationDetailsLayoutTest {
                 new OrganizationSyncPacket.Member(UUID.randomUUID(), "Member" + index, Organization.Role.MEMBER)).toList();
         Table<OrganizationSyncPacket.Member> table = new Table<OrganizationSyncPacket.Member>()
                 .setRowKey(OrganizationSyncPacket.Member::id)
-                .column(new Table.Column<>("member", Component.literal("成员"), 60, 60, 1, width -> 20,
+                .addColumn(new Table.Column<>("member", Component.literal("成员"), 60, 60, 1, width -> 20,
                         new PlayerIdentityCell<>(OrganizationSyncPacket.Member::id, OrganizationSyncPacket.Member::name)));
         table.setRows(members);
         OrganizationDetailsContent content = new OrganizationDetailsContent(table);
@@ -46,7 +46,9 @@ public final class OrganizationDetailsLayoutTest {
 
         Drawer drawer = new Drawer(Component.literal("公社")).setAnimationDuration(0).setContent(content)
                 .addAction(Signals.configure(new Button(Component.literal("加入申请")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
-        Window window = new Window(true).setContent(new Control()).setOverlay(new Overlay().add(drawer));
+        var childContainer102 = new Overlay();
+        childContainer102.addChild(drawer);
+        Window window = new Window(true).setContent(new Control()).setOverlay(childContainer102);
         drawer.open();
         for (int width : new int[]{127, 128, 129, 427, 640}) {
             drawer.setWidth(Math.max(1, width / 2));

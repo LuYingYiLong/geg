@@ -9,9 +9,12 @@ import brachy.modularui.theme.WidgetTheme;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.luyingyilong.ore.layout.Rect;
 
-/** Bridge batched Minecraft drawing and ModularUI's immediate texture rendering. */
+/**
+ * Bridge batched Minecraft drawing and ModularUI's immediate texture rendering.
+ */
 public final class OreDrawables {
-    private OreDrawables() { }
+    private OreDrawables() {
+    }
 
     public static void draw(ModularGuiContext context, IDrawable drawable, Rect area, WidgetTheme style) {
         if (drawable == null || area.width() <= 0 || area.height() <= 0) return;

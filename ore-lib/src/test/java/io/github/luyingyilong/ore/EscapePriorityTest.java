@@ -27,8 +27,11 @@ public final class EscapePriorityTest {
                 .setSize(120, 80).setContent(new Control().setPreferred(20, 20));
         topModal.closeRequested().connect(topModal, () -> { closed[2]++; topModal.setVisible(false); });
         topModal.setVisible(false);
-        Window window = new Window(true).setContent(new Control())
-                .setOverlay(new Overlay().add(drawer).add(modal).add(topModal)).onBack(() -> closed[3]++);
+        var childContainer24 = new Overlay();
+        childContainer24.addChild(drawer);
+        childContainer24.addChild(modal);
+        childContainer24.addChild(topModal);
+        Window window = new Window(true).setContent(new Control()).setOverlay(childContainer24).onBack(() -> closed[3]++);
         drawer.open();
         window.layoutViewport(320, 200, font);
 

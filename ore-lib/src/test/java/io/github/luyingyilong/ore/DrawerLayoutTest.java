@@ -33,15 +33,17 @@ public final class DrawerLayoutTest {
         int[] clicked = {0};
         Button outside = new Button(Component.literal("Outside"));
         outside.setPosition(4, 4).setRequestedSize(60, 20);
-        Control page = new Control().addChild(outside);
+        Control page = new Control();
+        page.addChild(outside);
         Overlay overlay = new Overlay();
         Window window = new Window(true).setContent(page).setOverlay(overlay);
         Button inside = Signals.configure(new Button(Component.literal("Inside")), connected -> connected.pressed().connect(connected, () -> clicked[0]++));
         inside.setPosition(0, 0).setRequestedSize(60, 20);
-        Control content = new Control().setPreferred(60, 300).addChild(inside);
+        Control content = new Control().setPreferred(60, 300);
+        content.addChild(inside);
         Drawer drawer = Signals.configure(new Drawer(Component.literal("Drawer"), () -> now[0])
                 .setContent(content), connected -> connected.closed().connect(connected, () -> closed[0]++));
-        overlay.add(drawer);
+        overlay.addChild(drawer);
         window.layoutViewport(200, 120, font);
         check(!drawer.getVisible() && !drawer.isOpen());
         window.getFocusManager().requestFocus(outside, null);
@@ -139,7 +141,9 @@ public final class DrawerLayoutTest {
 
     private static void optionalHeader(Font font) {
         Drawer drawer = new Drawer(Component.literal("Title"), () -> 0L, cue -> { }).setAnimationDuration(0);
-        Window window = new Window(true).setContent(new Control()).setOverlay(new Overlay().add(drawer));
+        var childContainer16 = new Overlay();
+        childContainer16.addChild(drawer);
+        Window window = new Window(true).setContent(new Control()).setOverlay(childContainer16);
         drawer.open();
         window.layoutViewport(240, 120, font);
         Control column = drawer.getChildren().get(0).getChildren().get(0);
@@ -179,9 +183,12 @@ public final class DrawerLayoutTest {
         int[] clicked = {0};
         Button inside = Signals.configure(new Button(cue -> { }), connected -> connected.pressed().connect(connected, () -> clicked[0]++));
         inside.setPosition(0, 0).setRequestedSize(40, 20);
-        Drawer drawer = new Drawer(Component.literal("Left"), () -> now[0], cue -> { })
-                .setPlacement(Drawer.Placement.LEFT).setContent(new Control().setPreferred(40, 20).addChild(inside));
-        Window window = new Window(true).setContent(new Control()).setOverlay(new Overlay().add(drawer));
+        var childContainer17 = new Control().setPreferred(40, 20);
+        childContainer17.addChild(inside);
+        Drawer drawer = new Drawer(Component.literal("Left"), () -> now[0], cue -> { }).setPlacement(Drawer.Placement.LEFT).setContent(childContainer17);
+        var childContainer18 = new Overlay();
+        childContainer18.addChild(drawer);
+        Window window = new Window(true).setContent(new Control()).setOverlay(childContainer18);
         check(drawer.getPlacement() == Drawer.Placement.LEFT);
         drawer.open();
         window.layoutViewport(200, 120, font);
@@ -226,7 +233,9 @@ public final class DrawerLayoutTest {
             Drawer drawer = Signals.configure(new Drawer(Component.literal("Close"), () -> 0L, cue -> {
                 if (cue == OreSounds.Cue.DRAWER_CLOSE) closeSounds[0]++;
             }).setAnimationDuration(0), connected -> connected.closed().connect(connected, () -> closed[0]++));
-            Window window = new Window(true).setContent(new Control()).setOverlay(new Overlay().add(drawer));
+            var childContainer19 = new Overlay();
+            childContainer19.addChild(drawer);
+            Window window = new Window(true).setContent(new Control()).setOverlay(childContainer19);
             drawer.open();
             window.layoutViewport(width, 150, font);
             Button close = findIconButton(drawer);
@@ -268,9 +277,12 @@ public final class DrawerLayoutTest {
         int[] actions = {0};
         Button button = Signals.configure(new Button(cue -> { }), connected -> connected.pressed().connect(connected, () -> actions[0]++));
         button.setPosition(0, 0).setRequestedSize(40, 20);
-        Drawer drawer = new Drawer(Component.literal("Pending"), () -> now[0], cue -> { })
-                .setContent(new Control().setPreferred(40, 20).addChild(button));
-        Window window = new Window(true).setContent(new Control()).setOverlay(new Overlay().add(drawer));
+        var childContainer20 = new Control().setPreferred(40, 20);
+        childContainer20.addChild(button);
+        Drawer drawer = new Drawer(Component.literal("Pending"), () -> now[0], cue -> { }).setContent(childContainer20);
+        var childContainer21 = new Overlay();
+        childContainer21.addChild(drawer);
+        Window window = new Window(true).setContent(new Control()).setOverlay(childContainer21);
         drawer.open();
         now[0] = 200;
         window.layoutViewport(200, 120, font);
@@ -304,7 +316,7 @@ public final class DrawerLayoutTest {
     private static void tableAndNestedOverlay(Font font) {
         int[] selected = {-1};
         Table<Integer> table = Signals.configure(new Table<Integer>().setRowKey(row -> row)
-                .column(new Table.Column<>("member", Component.literal("Member"),
+                .addColumn(new Table.Column<>("member", Component.literal("Member"),
                         48, 100, 1, width -> 20, new Table.Cell<>() {
                     @Override public void draw(ModularGuiContext context, Integer row, Rect bounds) { }
                 })), connected -> connected.rowActivated().connect(connected, row -> selected[0] = row));
@@ -324,8 +336,10 @@ public final class DrawerLayoutTest {
         approve.setPosition(20, 20).setRequestedSize(60, 20);
         popup.addChild(approve);
         popup.setVisible(false);
-        Window window = new Window(true).setContent(new Control())
-                .setOverlay(new Overlay().add(drawer).add(popup));
+        var childContainer22 = new Overlay();
+        childContainer22.addChild(drawer);
+        childContainer22.addChild(popup);
+        Window window = new Window(true).setContent(new Control()).setOverlay(childContainer22);
         drawer.open();
         for (int width : new int[]{127, 128, 129, 640}) {
             window.layoutViewport(width, 180, font);
@@ -356,7 +370,8 @@ public final class DrawerLayoutTest {
     private static void fontSizesFollowLabels(Font font) {
         Button button = new Button(Component.literal("Font"));
         int originalWidth = button.measureWidth(font, 200);
-        Control parent = new Control().addChild(button);
+        Control parent = new Control();
+        parent.addChild(button);
         parent.layout(new Rect(0, 0, 200, 100), font);
         button.setFontSize(16.0F);
         check(button.getFontSize() == 16.0F && parent.getLayoutDirty());

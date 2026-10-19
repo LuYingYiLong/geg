@@ -59,7 +59,9 @@ public final class BadgeLayoutTest {
         check(withBadge == withoutBadge + 16);
         badge.setVisible(true);
         button.setPosition(5, 5).setRequestedSize(withBadge, Button.HEIGHT);
-        Window window = new Window(true).setContent(new Control().addChild(button));
+        var childContainer6 = new Control();
+        childContainer6.addChild(button);
+        Window window = new Window(true).setContent(childContainer6);
         window.layoutViewport(200, 80, font);
         check(badge.getBounds().right() == button.getSize().width() - Button.PADDING_X);
         Rect normal = badge.getBounds();

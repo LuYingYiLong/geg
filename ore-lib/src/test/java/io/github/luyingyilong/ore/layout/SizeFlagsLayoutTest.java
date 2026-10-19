@@ -39,7 +39,9 @@ public final class SizeFlagsLayoutTest {
                     .setSizeFlagsStretchRatio(2);
             Control b = new Control().setMinimum(10, 10)
                     .setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-            Box box = new Box().setOrientation(orientation).add(a).add(b);
+            Box box = new Box().setOrientation(orientation);
+            box.addChild(a);
+            box.addChild(b);
             boolean horizontal = orientation == Box.Orientation.HORIZONTAL;
             box.layout(new Rect(0, 0, horizontal ? 120 : 30, horizontal ? 30 : 120), null);
             check((horizontal ? a.getSize().width() : a.getSize().height()) == 80, "Two-thirds slot");
@@ -60,7 +62,7 @@ public final class SizeFlagsLayoutTest {
         }
 
         Box rounding = new Box().setOrientation(Box.Orientation.HORIZONTAL);
-        for (int index = 0; index < 3; index++) rounding.add(new Control().setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL));
+        for (int index = 0; index < 3; index++) { rounding.addChild(new Control().setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL)); }
         rounding.layout(new Rect(0, 0, 10, 10), null);
         check(rounding.getChildren().get(0).getSize().width() == 4
                 && rounding.getChildren().get(1).getSize().width() == 3
@@ -83,12 +85,15 @@ public final class SizeFlagsLayoutTest {
         check(insetChild.getBounds().equals(new Rect(27, 10, 10, 8)), "Padding uses inner slot alignment");
         Grid<Object> grid = new Grid<>().setMode(Grid.LayoutMode.ROWS).setColumns(30, 2, 2);
         Control card = new Control().setPreferred(20, 10).setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_END);
-        grid.add(card).add(new Control().setPreferred(0, 20));
+        grid.addChild(card);
+        grid.addChild(new Control().setPreferred(0, 20));
         grid.layout(new Rect(0, 0, 62, 40), null);
         check(card.getBounds().equals(new Rect(10, 0, 20, 10)), "Grid aligns within fixed-width cells");
         Control fill = new Control().setPreferred(20, 10);
         Control expand = new Control().setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL);
-        Box mainFill = new Box().setOrientation(Box.Orientation.HORIZONTAL).add(fill).add(expand);
+        Box mainFill = new Box().setOrientation(Box.Orientation.HORIZONTAL);
+        mainFill.addChild(fill);
+        mainFill.addChild(expand);
         mainFill.layout(new Rect(0, 0, 100, 20), null);
         check(fill.getSize().width() == 20 && expand.getSize().width() == 80, "Fill does not compete for main-axis space");
         fill.setPreferred(120, 10).setMinimum(30, 10);
@@ -127,7 +132,8 @@ public final class SizeFlagsLayoutTest {
         check(virtual.getActiveViews() < 12, "Virtual binding remains bounded");
         check(io.github.luyingyilong.ore.EventFixture.press(scroll,65, 5) && clicked[0] == 10, "Recycled cards receive layout before interaction");
         Control fixed = new Control().setPreferred(10, 10);
-        Grid<Object> fixedGrid = new Grid<>().setColumns(30, 1, 0).add(fixed);
+        Grid<Object> fixedGrid = new Grid<>().setColumns(30, 1, 0);
+        fixedGrid.addChild(fixed);
         fixedGrid.layout(new Rect(0, 0, 30, 40), null);
         fixed.setPreferred(10, 20);
         fixedGrid.layout(fixedGrid.getBounds(), null);

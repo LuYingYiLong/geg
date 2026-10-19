@@ -47,15 +47,20 @@ public final class NativeInspectorClientTest {
                 signalButton = new Button(Component.literal("Business button"));
                 signalButton.setDebugName("Signal diagnostics button");
                 for (int i = 0; i < 2; i++) subscribeSignalButton();
-                Box content=new Box().setGap(2).add(preview).add(signalButton);
+                var childContainer104 = new Box().setGap(2);
+                childContainer104.addChild(preview);
+                childContainer104.addChild(signalButton);
+                Box content=childContainer104;
                 hintInput = new io.github.luyingyilong.ore.input.Input().setPlaceholder(Component.literal("Stable single-line placeholder"));
                 hintArea = new io.github.luyingyilong.ore.input.TextArea(0);
                 hintArea.setRows(2).setPlaceholder(Component.literal("Stable multiline placeholder / 自动换行的占位文本 ".repeat(4)));
                 var inputNode = new io.github.luyingyilong.ore.input.InputControl(hintInput); inputNode.setDebugName("Retained input probe");
                 var areaNode = new io.github.luyingyilong.ore.input.InputControl(hintArea); areaNode.setDebugName("Retained area probe");
-                content.add(inputNode).add(areaNode).add(new Segmented(java.util.List.of(Component.literal("One"), Component.literal("Two"))));
-                Box rows=new Box();for(int i=0;i<350;i++)rows.add(new Label(Component.literal("Node "+i)));
-                Scroll scroll=new Scroll().setContent(rows);scroll.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);content.add(scroll);
+                content.addChild(inputNode);
+                content.addChild(areaNode);
+                content.addChild(new Segmented(java.util.List.of(Component.literal("One"), Component.literal("Two"))));
+                Box rows=new Box();for(int i=0;i<350;i++){ rows.addChild(new Label(Component.literal("Node "+i))); }
+                Scroll scroll=new Scroll().setContent(rows);scroll.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);content.addChild(scroll);
                 originalRoot = Window.embedded().setContent(content); originalRoot.setDebugName("Original Window"); originalRoot.open();var screen=mc.screen;OreInspector.open();
                 check(mc.screen==screen,"Inspector never replaces main screen"); phase=1;
             } else if(phase==1&&OreInspector.backend().snapshot().nodes().size()>350) {

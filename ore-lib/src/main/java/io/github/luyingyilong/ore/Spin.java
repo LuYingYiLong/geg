@@ -7,7 +7,9 @@ import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.theme.OreIcons;
 import net.minecraft.client.gui.GuiGraphics;
 
-/** A 16-frame loading indicator from a vertical 7x7 sprite strip. */
+/**
+ * A 16-frame loading indicator from a vertical 7x7 sprite strip.
+ */
 public final class Spin extends Control {
     private static final int FRAME_SIZE = 7;
     private static final int FRAME_COUNT = 16;
@@ -20,13 +22,15 @@ public final class Spin extends Control {
         setPreferred(FRAME_SIZE, FRAME_SIZE);
     }
 
+    public long getFrameDuration() {
+        return frameDurationMs;
+    }
+
     public Spin setFrameDuration(long milliseconds) {
         if (milliseconds <= 0L) throw new IllegalArgumentException("Frame duration must be positive");
         frameDurationMs = milliseconds;
         return this;
     }
-
-    public long getFrameDuration() { return frameDurationMs; }
 
     int frameAt(long milliseconds) {
         return (int) Math.floorMod(milliseconds / frameDurationMs, FRAME_COUNT);

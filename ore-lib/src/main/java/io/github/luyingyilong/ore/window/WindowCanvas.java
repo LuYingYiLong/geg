@@ -39,48 +39,75 @@ public final class WindowCanvas extends Widget<WindowCanvas> implements Interact
         if (!root.isAlive()) return;
         List<InputControl> fields = inputs(root);
         for (InputControl old : List.copyOf(registered)) {
-            if (!fields.contains(old)) { old.getWidget().dispose(); registered.remove(old); }
+            if (!fields.contains(old)) {
+                old.getWidget().dispose();
+                registered.remove(old);
+            }
         }
-        for (InputControl field : fields) if (!registered.contains(field)) {
-            if (field.getWidget().isValid()) throw new IllegalStateException("Input already belongs to a MUI host");
-            String pending = field.getWidget().getText();
-            if (field.getWidget().getStringValue() == null) field.getWidget().value(new brachy.modularui.value.StringValue(pending));
-            registered.add(field); field.getWidget().initialise(getPanel(), false);
-        }
+        for (InputControl field : fields)
+            if (!registered.contains(field)) {
+                if (field.getWidget().isValid()) throw new IllegalStateException("Input already belongs to a MUI host");
+                String pending = field.getWidget().getText();
+                if (field.getWidget().getStringValue() == null)
+                    field.getWidget().value(new brachy.modularui.value.StringValue(pending));
+                registered.add(field);
+                field.getWidget().initialise(getPanel(), false);
+            }
         root.prepareTree(context);
         root.layoutViewport(context.getScreenArea().width, context.getScreenArea().height, context.getFont());
         for (InputControl field : fields) {
-            var area = field.getWidget().getArea(); var bounds = field.getWidgetBounds();
-            area.x = bounds.x(); area.y = bounds.y(); area.width = bounds.width(); area.height = bounds.height();
+            var area = field.getWidget().getArea();
+            var bounds = field.getWidgetBounds();
+            area.x = bounds.x();
+            area.y = bounds.y();
+            area.width = bounds.width();
+            area.height = bounds.height();
             field.getWidget().onUpdate();
         }
         root.draw(context, 0, 0);
     }
 
-    @Override public Interactable.Result onMousePressed(int button) {
-        return io.github.luyingyilong.ore.event.WindowInputs.press(root,getContext().getAbsMouseX(),getContext().getAbsMouseY(),getContext(),button)
-                ?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
-    }
-    @Override public boolean onMouseReleased(int button) {
-        return io.github.luyingyilong.ore.event.WindowInputs.pointer(root,io.github.luyingyilong.ore.event.PointerEvent.Action.RELEASE,getContext().getAbsMouseX(),getContext().getAbsMouseY(),button);
-    }
-    @Override public void onMouseDrag(int button,double x,double y) {
-        io.github.luyingyilong.ore.event.WindowInputs.pointer(root,io.github.luyingyilong.ore.event.PointerEvent.Action.MOVE,getContext().getAbsMouseX(),getContext().getAbsMouseY(),button);
-    }
-    @Override public Interactable.Result onKeyPressed(int key,int scan,int modifiers) {
-        return io.github.luyingyilong.ore.event.WindowInputs.key(root,io.github.luyingyilong.ore.event.KeyEvent.Action.PRESS,key,scan,modifiers,getContext())?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
-    }
-    @Override public boolean onKeyReleased(int key,int scan,int modifiers) {
-        return io.github.luyingyilong.ore.event.WindowInputs.key(root,io.github.luyingyilong.ore.event.KeyEvent.Action.RELEASE,key,scan,modifiers,getContext());
-    }
-    @Override public Interactable.Result onCharTyped(char character,int modifiers) {
-        return io.github.luyingyilong.ore.event.WindowInputs.text(root,String.valueOf(character),modifiers,getContext())?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
-    }
-    @Override public boolean onMouseScrolled(double delta) {
-        return io.github.luyingyilong.ore.event.WindowInputs.scroll(root,getContext().getAbsMouseX(),getContext().getAbsMouseY(),delta,net.minecraft.client.gui.screens.Screen.hasShiftDown());
+    @Override
+    public Interactable.Result onMousePressed(int button) {
+        return io.github.luyingyilong.ore.event.WindowInputs.press(root, getContext().getAbsMouseX(), getContext().getAbsMouseY(), getContext(), button)
+                ? Interactable.Result.SUCCESS : Interactable.Result.IGNORE;
     }
 
-    @Override public void dispose() {
-        root.hostDetached(); registered.forEach(input -> input.getWidget().dispose()); registered.clear(); super.dispose();
+    @Override
+    public boolean onMouseReleased(int button) {
+        return io.github.luyingyilong.ore.event.WindowInputs.pointer(root, io.github.luyingyilong.ore.event.PointerEvent.Action.RELEASE, getContext().getAbsMouseX(), getContext().getAbsMouseY(), button);
+    }
+
+    @Override
+    public void onMouseDrag(int button, double x, double y) {
+        io.github.luyingyilong.ore.event.WindowInputs.pointer(root, io.github.luyingyilong.ore.event.PointerEvent.Action.MOVE, getContext().getAbsMouseX(), getContext().getAbsMouseY(), button);
+    }
+
+    @Override
+    public Interactable.Result onKeyPressed(int key, int scan, int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.key(root, io.github.luyingyilong.ore.event.KeyEvent.Action.PRESS, key, scan, modifiers, getContext()) ? Interactable.Result.SUCCESS : Interactable.Result.IGNORE;
+    }
+
+    @Override
+    public boolean onKeyReleased(int key, int scan, int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.key(root, io.github.luyingyilong.ore.event.KeyEvent.Action.RELEASE, key, scan, modifiers, getContext());
+    }
+
+    @Override
+    public Interactable.Result onCharTyped(char character, int modifiers) {
+        return io.github.luyingyilong.ore.event.WindowInputs.text(root, String.valueOf(character), modifiers, getContext()) ? Interactable.Result.SUCCESS : Interactable.Result.IGNORE;
+    }
+
+    @Override
+    public boolean onMouseScrolled(double delta) {
+        return io.github.luyingyilong.ore.event.WindowInputs.scroll(root, getContext().getAbsMouseX(), getContext().getAbsMouseY(), delta, net.minecraft.client.gui.screens.Screen.hasShiftDown());
+    }
+
+    @Override
+    public void dispose() {
+        root.hostDetached();
+        registered.forEach(input -> input.getWidget().dispose());
+        registered.clear();
+        super.dispose();
     }
 }

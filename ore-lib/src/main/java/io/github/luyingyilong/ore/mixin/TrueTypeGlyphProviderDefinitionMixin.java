@@ -16,7 +16,7 @@ public abstract class TrueTypeGlyphProviderDefinitionMixin {
     @Redirect(method = {"load", "m_285764_"},
             at = @At(value = "NEW", target = "com/mojang/blaze3d/font/TrueTypeGlyphProvider"))
     private TrueTypeGlyphProvider ore$correctSideBearing(ByteBuffer memory, STBTTFontinfo font, float size,
-                                                        float oversample, float shiftX, float shiftY, String skip) {
+                                                         float oversample, float shiftX, float shiftY, String skip) {
         return OreTrueTypeGlyphProvider.create(((TrueTypeGlyphProviderDefinition) (Object) this).location(),
                 memory, font, size, oversample, shiftX, shiftY, skip);
     }

@@ -13,9 +13,9 @@ final class MailDetailBody extends Container implements ScrollContent {
     MailDetailBody(Label body, Control... footer) {
         this.body = body;
         body.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        column.add(body);
-        for (Control child : footer) column.add(child);
-        addChild(column);
+        column.addChild(body);
+        for (Control child : footer) { column.addChild(child); }
+        this.addChild(column);
     }
 
     @Override public Size measureSize(Font font, Size available) {

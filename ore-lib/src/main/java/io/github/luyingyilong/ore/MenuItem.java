@@ -5,11 +5,11 @@ import net.minecraft.network.chat.Component;
 import java.util.List;
 import java.util.Objects;
 
-/** Stable keys identify actions; groups are always expanded, non-interactive headings. */
+/**
+ * Stable keys identify actions; groups are always expanded, non-interactive headings.
+ */
 public record MenuItem(String key, Type type, Component label, List<MenuItem> children,
                        Button.Icon icon, boolean disabled) {
-    public enum Type { ITEM, GROUP, EMPTY }
-
     public MenuItem {
         if (Objects.requireNonNull(key).isBlank()) throw new IllegalArgumentException("Menu key is blank");
         Objects.requireNonNull(type);
@@ -27,11 +27,20 @@ public record MenuItem(String key, Type type, Component label, List<MenuItem> ch
         return new MenuItem(key, Type.GROUP, label, children, null, false);
     }
 
-    /** Informational row, without a button, focus target or selection action. */
+    /**
+     * Informational row, without a button, focus target or selection action.
+     */
     public static MenuItem empty(String key, Component label) {
         return new MenuItem(key, Type.EMPTY, label, List.of(), null, false);
     }
 
-    public MenuItem icon(Button.Icon icon) { return new MenuItem(key, type, label, children, icon, disabled); }
-    public MenuItem disabled(boolean disabled) { return new MenuItem(key, type, label, children, icon, disabled); }
+    public MenuItem icon(Button.Icon icon) {
+        return new MenuItem(key, type, label, children, icon, disabled);
+    }
+
+    public MenuItem disabled(boolean disabled) {
+        return new MenuItem(key, type, label, children, icon, disabled);
+    }
+
+    public enum Type {ITEM, GROUP, EMPTY}
 }

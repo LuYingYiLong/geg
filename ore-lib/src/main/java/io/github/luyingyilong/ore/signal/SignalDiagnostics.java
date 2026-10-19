@@ -1,63 +1,70 @@
 package io.github.luyingyilong.ore.signal;
 
-import java.util.ArrayDeque;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-/** Optional, pure Java diagnostics. Snapshots/history never retain owners, slots or controls. */
+/**
+ * Optional, pure Java diagnostics. Snapshots/history never retain owners, slots or controls.
+ */
 public final class SignalDiagnostics {
-    public enum Reason { MANUAL, RECEIVER_CLOSED, SOURCE_CLOSED, OWNER_DISPOSED, BINDING_RESET, SCOPE_CLOSED }
-    public enum Kind { CONNECTED, DISCONNECTED, SIGNAL_CLOSED, SCOPE_CLOSED }
-
-    /** The receiver is the explicit lifetime owner, not an inferred lambda target. */
-    public record Owner(long id, long lifecycleOwnerId, String description, String purpose, boolean closed, boolean excluded) { }
-    public record ConnectionInfo(long id, long signalId, Owner sender, String signalName, Owner receiver,
-                                 String label, String source, long connectedAt, boolean possibleDuplicate) { }
-    public record SignalInfo(long id, Owner sender, String name, int arity, String parameterType,
-                             boolean closed, List<ConnectionInfo> connections) { }
-    public record Event(long sequence, long timestamp, Kind kind, Owner owner, ConnectionInfo connection,
-                        String signalName, Reason reason, int remainingConnections) {
-        public boolean affects(Set<Long> owners) {
-            return matches(owner, owners) || connection != null
-                    && (matches(connection.sender(), owners) || matches(connection.receiver(), owners));
-        }
-    }
-    public record Snapshot(List<SignalInfo> signals, List<ConnectionInfo> incoming, List<Event> history,
-                           long discardedEvents) {
-        public static Snapshot empty() { return new Snapshot(List.of(), List.of(), List.of(), 0); }
-    }
-
     private static final AtomicLong IDENTITIES = new AtomicLong();
     private static final int HISTORY_LIMIT = 512;
     private static final ThreadLocal<History> HISTORY = ThreadLocal.withInitial(History::new);
     private static final ThreadLocal<Integer> SUPPRESSED = ThreadLocal.withInitial(() -> 0);
     private static volatile boolean tracingEnabled;
 
-    private SignalDiagnostics() { }
+    private SignalDiagnostics() {
+    }
 
-    /** Enable early in a development client to also record subscriptions made before Inspector opens. */
-    public static void tracingEnabled(boolean enabled) { tracingEnabled = enabled; }
-    public static boolean tracingEnabled() { return tracingEnabled; }
-    public static void clearHistory() { HISTORY.remove(); }
-    public static long discardedEvents() { return HISTORY.get().discarded; }
+    /**
+     * Enable early in a development client to also record subscriptions made before Inspector opens.
+     */
+    public static void tracingEnabled(boolean enabled) {
+        tracingEnabled = enabled;
+    }
+
+    public static boolean tracingEnabled() {
+        return tracingEnabled;
+    }
+
+    public static void clearHistory() {
+        HISTORY.remove();
+    }
+
+    public static long discardedEvents() {
+        return HISTORY.get().discarded;
+    }
+
     public static TraceGuard suppress(boolean enabled) {
         if (!enabled) return TraceGuard.NONE;
         int depth = SUPPRESSED.get();
         SUPPRESSED.set(depth + 1);
         return new TraceGuard(depth);
     }
-    /** Diagnostic UI scopes created here remain excluded, including their eventual disposal. */
+
+    /**
+     * Diagnostic UI scopes created here remain excluded, including their eventual disposal.
+     */
     public static <T> T withoutTracing(java.util.function.Supplier<T> factory) {
-        try (TraceGuard ignored = suppress(true)) { return factory.get(); }
+        try (TraceGuard ignored = suppress(true)) {
+            return factory.get();
+        }
     }
-    public static void runWithoutTracing(Runnable action) { withoutTracing(() -> { action.run(); return null; }); }
-    static boolean suppressed() { return SUPPRESSED.get() > 0; }
-    static long nextId() { return IDENTITIES.incrementAndGet(); }
+
+    public static void runWithoutTracing(Runnable action) {
+        withoutTracing(() -> {
+            action.run();
+            return null;
+        });
+    }
+
+    static boolean suppressed() {
+        return SUPPRESSED.get() > 0;
+    }
+
+    static long nextId() {
+        return IDENTITIES.incrementAndGet();
+    }
 
     public static long ownerId(SignalOwner owner) {
         owner.getSignalScope().checkThread();
@@ -93,7 +100,9 @@ public final class SignalDiagnostics {
         for (SignalScope child : scope.diagnosticChildren()) collect(child, signals, incoming, visited);
     }
 
-    /** Can be queried after a control has left the tree, using only its frozen IDs. */
+    /**
+     * Can be queried after a control has left the tree, using only its frozen IDs.
+     */
     public static List<Event> history(Set<Long> owners) {
         return HISTORY.get().events.stream().filter(event -> event.affects(owners)).toList();
     }
@@ -147,8 +156,45 @@ public final class SignalDiagnostics {
         if (!tracingEnabled || suppressed() || owner.excluded()
                 || connection != null && (connection.sender().excluded() || connection.receiver().excluded())) return;
         History history = HISTORY.get();
-        if (history.events.size() == HISTORY_LIMIT) { history.events.removeFirst(); history.discarded++; }
+        if (history.events.size() == HISTORY_LIMIT) {
+            history.events.removeFirst();
+            history.discarded++;
+        }
         history.events.addLast(new Event(++history.sequence, System.currentTimeMillis(), kind, owner, connection, name, reason, remaining));
+    }
+
+    public enum Reason {MANUAL, RECEIVER_CLOSED, SOURCE_CLOSED, OWNER_DISPOSED, BINDING_RESET, SCOPE_CLOSED}
+
+    public enum Kind {CONNECTED, DISCONNECTED, SIGNAL_CLOSED, SCOPE_CLOSED}
+
+    /**
+     * The receiver is the explicit lifetime owner, not an inferred lambda target.
+     */
+    public record Owner(long id, long lifecycleOwnerId, String description, String purpose, boolean closed,
+                        boolean excluded) {
+    }
+
+    public record ConnectionInfo(long id, long signalId, Owner sender, String signalName, Owner receiver,
+                                 String label, String source, long connectedAt, boolean possibleDuplicate) {
+    }
+
+    public record SignalInfo(long id, Owner sender, String name, int arity, String parameterType,
+                             boolean closed, List<ConnectionInfo> connections) {
+    }
+
+    public record Event(long sequence, long timestamp, Kind kind, Owner owner, ConnectionInfo connection,
+                        String signalName, Reason reason, int remainingConnections) {
+        public boolean affects(Set<Long> owners) {
+            return matches(owner, owners) || connection != null
+                    && (matches(connection.sender(), owners) || matches(connection.receiver(), owners));
+        }
+    }
+
+    public record Snapshot(List<SignalInfo> signals, List<ConnectionInfo> incoming, List<Event> history,
+                           long discardedEvents) {
+        public static Snapshot empty() {
+            return new Snapshot(List.of(), List.of(), List.of(), 0);
+        }
     }
 
     private static final class History {
@@ -161,13 +207,21 @@ public final class SignalDiagnostics {
         private final int previous;
         private final Thread thread;
         private boolean closed;
-        private TraceGuard(int previous) { this.previous = previous; this.thread = previous < 0 ? null : Thread.currentThread(); }
-        @Override public void close() {
+
+        private TraceGuard(int previous) {
+            this.previous = previous;
+            this.thread = previous < 0 ? null : Thread.currentThread();
+        }
+
+        @Override
+        public void close() {
             if (previous < 0) return;
-            if (Thread.currentThread() != thread) throw new IllegalStateException("Signal trace scope closed on another thread");
+            if (Thread.currentThread() != thread)
+                throw new IllegalStateException("Signal trace scope closed on another thread");
             if (closed) return;
             closed = true;
-            if (previous == 0) SUPPRESSED.remove(); else SUPPRESSED.set(previous);
+            if (previous == 0) SUPPRESSED.remove();
+            else SUPPRESSED.set(previous);
         }
     }
 }

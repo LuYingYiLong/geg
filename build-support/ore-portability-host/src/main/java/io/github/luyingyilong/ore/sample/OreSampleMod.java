@@ -43,11 +43,16 @@ public final class OreSampleMod {
                 if (phase == 0) {
                     var input = new Input().setPlaceholder(Component.literal("Portable input / 中文"));
                     toggle = new Switch();
-                    var switches = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(6)
-                            .add(toggle).add(new Switch(true)).add(new Switch(true).setDisabled(true))
-                            .add(new Switch().setLoading(true));
-                    var content = new Box().setGap(4).add(new Label(Component.literal("Portable Ore")).setHero(true))
-                            .add(new InputControl(input)).add(new Button(Component.literal("Consumer button"))).add(switches);
+                    var switches = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(6);
+                    switches.addChild(toggle);
+                    switches.addChild(new Switch(true));
+                    switches.addChild(new Switch(true).setDisabled(true));
+                    switches.addChild(new Switch().setLoading(true));
+                    var content = new Box().setGap(4);
+                    content.addChild(new Label(Component.literal("Portable Ore")).setHero(true));
+                    content.addChild(new InputControl(input));
+                    content.addChild(new Button(Component.literal("Consumer button")));
+                    content.addChild(switches);
                     root = Window.embedded().setContent(content); root.open(); phase = 1;
                 } else if (phase == 1 && ticks > 15) {
                     if (!OreClient.getOptions().hostModId().equals(ID)) throw new AssertionError("Wrong host identity");

@@ -38,6 +38,15 @@ public final class Tree<T> extends Container implements ScrollContent {
         setFocusable(true);
     }
 
+    @Override protected void validateChildren(List<Control> proposed) {
+        if (!isUpdatingChildren() && proposed.stream().anyMatch(child -> child.getParent() != this))
+            throw new IllegalStateException("Tree owns virtual rows; use setItems");
+    }
+
+    @Override protected void childrenChanged() {
+        rows.values().removeIf(row -> row.getParent() != this);
+    }
+
     public Tree<T> setItems(List<Item<T>> items) {
         Set<String> keys = new HashSet<>();
         for (Item<T> item : items)
@@ -379,7 +388,7 @@ public final class Tree<T> extends Container implements ScrollContent {
 
     private void updateRows() {
         recycled.removeIf(row -> !row.isAlive());
-        for (String key : List.copyOf(rows.keySet())) { Row row = rows.get(key); if (row != null && !row.isAlive()) { rows.remove(key); super.removeChild(row); } }
+        for (String key : List.copyOf(rows.keySet())) { Row row = rows.get(key); if (row != null && !row.isAlive()) { rows.remove(key); removeChild(row); } }
         int start = Math.max(0, (region.y() - region.height()) / rowHeight);
         int end = Math.min(visible.size(), (region.bottom() + region.height() + rowHeight - 1) / rowHeight);
         Set<String> live = new HashSet<>();
@@ -391,7 +400,9 @@ public final class Tree<T> extends Container implements ScrollContent {
             if (row == null) {
                 row = recycled.isEmpty() ? ownPooled(new Row()) : recycled.remove();
                 rows.put(key, row);
-                super.addChild(row);
+                List<Control> next = new ArrayList<>(getChildren());
+                next.add(row);
+                updateChildren(next);
                 io.github.luyingyilong.ore.debug.DebugBridge.backend().binding(row, key);
             }
             row.bind(entry);
@@ -401,9 +412,14 @@ public final class Tree<T> extends Container implements ScrollContent {
             if (!live.contains(key)) {
                 Row row = rows.remove(key);
                 row.resetBindingScope();
-                super.removeChild(row);
+                removeChild(row);
                 if (recycled.size() < 128) recycled.add(row); else row.queueFree();
             }
+        int childIndex = 0;
+        for (int index = start; index < end; index++) {
+            Row row = rows.get(visible.get(index).item.key());
+            if (row != null) moveChild(row, childIndex++);
+        }
     }
 
     @Override
@@ -477,8 +493,8 @@ public final class Tree<T> extends Container implements ScrollContent {
         Row() {
             twist.setFocusable(false);
             label.setFocusable(false);
-            super.addChild(twist);
-            super.addChild(label);
+            addChild(twist);
+            addChild(label);
             twist.pressed().connect(twist, () -> userExpand(entry, !displayedExpanded(entry.item.key())));
             label.pressed().connect(label, () -> select(entry));
         }

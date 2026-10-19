@@ -56,7 +56,7 @@ public final class ChatMessageList extends Container {
                 return new MessageView();
             }
         });
-        addChild(scroll);
+        this.addChild(scroll);
         setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
     }
 
@@ -152,9 +152,9 @@ public final class ChatMessageList extends Container {
 
         MessageView(Supplier<UUID> viewer) {
             this.viewer = java.util.Objects.requireNonNull(viewer);
-            addChild(avatar);
-            addChild(author);
-            addChild(text);
+            this.addChild(avatar);
+            this.addChild(author);
+            this.addChild(text);
         }
 
         public void bind(ChatMessage message) {
@@ -229,7 +229,7 @@ public final class ChatMessageList extends Container {
         private Style hovered;
 
         RichText() {
-            addChild(label);
+            this.addChild(label);
         }
 
         void align(Label.Horizontal alignment) {

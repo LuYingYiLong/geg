@@ -1,13 +1,14 @@
 package io.github.luyingyilong.ore.input;
 
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-/** Optional IMBlocker 5.x adapter; no bundled copy or required mod dependency. */
+/**
+ * Optional IMBlocker 5.x adapter; no bundled copy or required mod dependency.
+ */
 final class ImBlockerInputMethod implements InputMethodSession.Connection {
     private static final String API = "io.github.reserveword.imblocker.common.";
     private final Object container;
@@ -77,7 +78,8 @@ final class ImBlockerInputMethod implements InputMethodSession.Connection {
         }
     }
 
-    @Override public void update() {
+    @Override
+    public void update() {
         try {
             // Register after InputMethodSession owns this connection, so even immediate probes work.
             if (!registered) {
@@ -85,34 +87,47 @@ final class ImBlockerInputMethod implements InputMethodSession.Connection {
                 containerType.getMethod("requestFocus", widgetType).invoke(container, widget);
             }
             updateCaret.invoke(null);
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException(exception);
         }
-        catch (ReflectiveOperationException exception) { throw new IllegalStateException(exception); }
     }
 
-    @Override public void locateFocus() {
-        try { containerType.getMethod("switchFocus", widgetType).invoke(container, widget); }
-        catch (ReflectiveOperationException exception) { throw new IllegalStateException(exception); }
+    @Override
+    public void locateFocus() {
+        try {
+            containerType.getMethod("switchFocus", widgetType).invoke(container, widget);
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException(exception);
+        }
     }
 
-    @Override public InputPreedit preedit() {
+    @Override
+    public InputPreedit preedit() {
         return !closed && Util.getPlatform() == Util.OS.WINDOWS
                 ? WindowsInputMethod.currentPreedit() : InputPreedit.EMPTY;
     }
 
     // IMBlocker owns its preedit/candidate overlays and native context/position changes.
-    @Override public boolean inlinePreedit() { return false; }
+    @Override
+    public boolean inlinePreedit() {
+        return false;
+    }
 
-    @Override public void cancelComposition() {
+    @Override
+    public void cancelComposition() {
         try {
             if (closed || !registered || getFocusOwner.invoke(null) != widget) return;
             // Only cancel our own uncommitted text; never re-associate IMBlocker's context.
             if (Util.getPlatform() == Util.OS.WINDOWS) WindowsInputMethod.cancelCurrentComposition();
             clearPreedit.invoke(preeditOverlay, null, 0);
             clearCandidates.invoke(candidateOverlay, null, 0);
-        } catch (ReflectiveOperationException exception) { throw new IllegalStateException(exception); }
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException(exception);
+        }
     }
 
-    @Override public void close() {
+    @Override
+    public void close() {
         if (closed || !registered) return;
         try {
             boolean owned = getFocusOwner.invoke(null) == widget;
@@ -122,7 +137,8 @@ final class ImBlockerInputMethod implements InputMethodSession.Connection {
             // Do not disable or clear another mod's text field when it has taken focus already.
             if (owned && (next == null || next == container)) setState.invoke(null, false);
             updateCaret.invoke(null);
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException(exception);
         }
-        catch (ReflectiveOperationException exception) { throw new IllegalStateException(exception); }
     }
 }

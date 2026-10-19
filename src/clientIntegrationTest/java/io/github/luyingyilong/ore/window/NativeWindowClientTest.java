@@ -31,11 +31,12 @@ public final class NativeWindowClientTest {
                 input = new Input().setPlaceholder(Component.literal("中文输入 / Input"));
                 pause = mc.options.pauseOnLostFocus;
                 text = new TextArea(0); text.setPlaceholder(Component.literal("Multi-line / 自动换行"));
-                Box body = new Box().setGap(4).add(new Label(Component.literal("Native Ore / 独立窗口")).setHero(true));
-                body.add(new InputControl(input)); body.add(new InputControl(text));
-                body.add(new Button(Component.literal("Button / 按钮")));
-                Box rows = new Box().setGap(2); for (int i = 0; i < 150; i++) rows.add(new Label(Component.literal("Scroll / 内容 " + i)));
-                Scroll scroll = new Scroll().setContent(rows); scroll.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL); body.add(scroll);
+                Box body = new Box().setGap(4);
+                body.addChild(new Label(Component.literal("Native Ore / 独立窗口")).setHero(true));
+                body.addChild(new InputControl(input)); body.addChild(new InputControl(text));
+                body.addChild(new Button(Component.literal("Button / 按钮")));
+                Box rows = new Box().setGap(2); for (int i = 0; i < 150; i++) { rows.addChild(new Label(Component.literal("Scroll / 内容 " + i))); }
+                Scroll scroll = new Scroll().setContent(rows); scroll.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL); body.addChild(scroll);
                 first = Window.nativeWindow(WindowOptions.defaults("Ore Native Test A")).setContent(body); first.open();
                 second = Window.nativeWindow(new WindowOptions("Ore Native Test B", 600, 400, 300, 200, 2))
                         .setContent(new PixelProbe()); second.open(); phase = 1;

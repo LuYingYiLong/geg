@@ -352,7 +352,7 @@ public final class Table<T> extends Container {
 
     private record ActionTarget<T>(String columnKey, int index, Cell<T> cell, Rect cellBounds, Rect bounds) { }
 
-    public Table<T> column(Column<T> column) {
+    public Table<T> addColumn(Column<T> column) {
         cancelInteraction();
         Objects.requireNonNull(column);
         if (columns.stream().anyMatch(existing -> existing.key.equals(column.key)))
@@ -433,10 +433,13 @@ public final class Table<T> extends Container {
     public List<Row<T>> getLayoutRows() { return List.copyOf(layoutRows); }
     public int[] getColumnWidths() { return columnWidths.clone(); }
 
-    @Override public List<Control> getChildren() {
-        // Recycled views may be attached in a different order; keyboard Tab still follows row order.
-        return activeViews.entrySet().stream().sorted(Map.Entry.comparingByKey())
-                .map(entry -> (Control) entry.getValue()).toList();
+    @Override protected void validateChildren(List<Control> proposed) {
+        if (!isUpdatingChildren() && proposed.stream().anyMatch(child -> child.getParent() != this))
+            throw new IllegalStateException("Table owns virtual rows; use setRows/addColumn");
+    }
+
+    @Override protected void childrenChanged() {
+        activeViews.values().removeIf(view -> view.getParent() != this);
     }
 
     public List<Row<T>> getVisibleRows() {
@@ -524,7 +527,7 @@ public final class Table<T> extends Container {
         List<RowView> previous = List.copyOf(activeViews.values());
         activeViews.clear();
         for (RowView view : previous) {
-            if (!view.isAlive()) { super.removeChild(view); continue; }
+            if (!view.isAlive()) { removeChild(view); continue; }
             Row<T> row = next.get(view.row.key());
             if (row == null) recycle(view);
             else {
@@ -543,13 +546,13 @@ public final class Table<T> extends Container {
             }
         }
         view.resetBindingScope();
-        super.removeChild(view);
+        removeChild(view);
         recycledViews.add(view);
     }
 
     private void updateVisible(Font font) {
         recycledViews.removeIf(view -> !view.isAlive());
-        for (int key : List.copyOf(activeViews.keySet())) { RowView view = activeViews.get(key); if (view != null && !view.isAlive()) { activeViews.remove(key); super.removeChild(view); } }
+        for (int key : List.copyOf(activeViews.keySet())) { RowView view = activeViews.get(key); if (view != null && !view.isAlive()) { activeViews.remove(key); removeChild(view); } }
         int buffer = bodyHeight();
         int start = scroll - buffer;
         int end = scroll + bodyHeight() + buffer;
@@ -561,14 +564,18 @@ public final class Table<T> extends Container {
             RowView view = activeViews.remove(index);
             recycle(view);
         }
+        int childIndex = 0;
         for (Row<T> row : layoutRows) if (needed.contains(row.index())) {
             RowView view = activeViews.get(row.index());
             if (view == null) {
                 view = recycledViews.isEmpty() ? ownPooled(new RowView()) : recycledViews.removeFirst();
                 view.bind(row);
-                super.addChild(view);
+                List<Control> next = new ArrayList<>(getChildren());
+                next.add(view);
+                updateChildren(next);
                 activeViews.put(row.index(), view);
             }
+            moveChild(view, childIndex++);
             view.layout(new Rect(0, getHeaderHeight() + row.bounds().y() - scroll,
                     row.bounds().width(), row.bounds().height()), font == null ? lastFont : font);
         }
@@ -833,6 +840,16 @@ public final class Table<T> extends Container {
         private final Map<String, Control> controls = new HashMap<>();
         private final Map<String, Label> captions = new HashMap<>();
 
+        @Override protected void childrenChanged() {
+            int previousSize = controls.size();
+            controls.values().removeIf(control -> control.getParent() != this || !control.isAlive());
+            if (controls.size() != previousSize && Table.this.isAlive()) {
+                if (!dirty) saveAnchor();
+                dirty = true;
+                requestLayout();
+            }
+        }
+
         private void bind(Row<T> row) {
             // Preserve gestures and open menus when only geometry or an equal snapshot changes.
             // A different record or changed data must never inherit a pending activation.
@@ -847,9 +864,14 @@ public final class Table<T> extends Container {
                 if (control != null && !control.isAlive()) { controls.remove(column.key); removeChild(control); control = null; }
                 if (control == null) {
                     control = column.cell.createControl();
-                    if (control != null) { controls.put(column.key, control); addChild(control); }
+                    if (control != null) { controls.put(column.key, control); this.addChild(control); }
                 }
                 if (control != null) column.cell.bindControl(control, row.item());
+            }
+            int childIndex = 0;
+            for (Column<T> column : columns) {
+                Control control = controls.get(column.key);
+                if (control != null && control.getParent() == this) moveChild(control, childIndex++);
             }
         }
 

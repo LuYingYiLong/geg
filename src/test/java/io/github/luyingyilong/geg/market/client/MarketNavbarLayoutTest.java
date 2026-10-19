@@ -52,7 +52,9 @@ public final class MarketNavbarLayoutTest {
         Control search = new Control().setMinimum(64, 18).setPreferred(138, 18)
                 .setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Control filter = new Control().setMinimum(20, 20);
-        Box compact = new Box().setOrientation(Box.Orientation.HORIZONTAL).add(search).add(filter);
+        Box compact = new Box().setOrientation(Box.Orientation.HORIZONTAL);
+        compact.addChild(search);
+        compact.addChild(filter);
         Navbar navbar = new Navbar(Component.literal("Market")).setExtra(compact);
         navbar.layout(new Rect(0, 0, 640, Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING), font);
         check(search.getSize().height() == 18 && filter.getSize().height() == 20);

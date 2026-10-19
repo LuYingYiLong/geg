@@ -86,9 +86,13 @@ public final class AvatarTest {
         Label date = new Label(Component.literal("2026-10-17"));
         name.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         date.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        Box info = new Box().setGap(2).add(name).add(date);
+        Box info = new Box().setGap(2);
+        info.addChild(name);
+        info.addChild(date);
         info.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(6).add(avatar).add(info);
+        Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(6);
+        row.addChild(avatar);
+        row.addChild(info);
         for (int width : new int[]{80, 127, 128, 129, 400}) {
             row.layout(new Rect(0, 0, width, 32), font);
             check(avatar.getSize().equals(new Size(24, 24)) && avatar.getBounds().y() == 4, "Avatar stays square and centered");

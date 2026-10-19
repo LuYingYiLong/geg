@@ -21,9 +21,9 @@ public final class TableInteractionTest {
     public static void main(String[] args) {
         List<String> actions = new ArrayList<>();
         Table<Item> table = new Table<Item>().setRowKey(Item::id)
-                .column(new Table.Column<>("name", Component.literal("Name"), 40, 40, 0, width -> 20,
+                .addColumn(new Table.Column<>("name", Component.literal("Name"), 40, 40, 0, width -> 20,
                         (context, row, bounds) -> { }))
-                .column(new Table.Column<>("action", Component.literal("Action"), 80, 120, 1, width -> 20,
+                .addColumn(new Table.Column<>("action", Component.literal("Action"), 80, 120, 1, width -> 20,
                         new Table.Cell<>() {
                     @Override public void draw(ModularGuiContext context, Item item, Rect bounds) { }
                     @Override public List<Rect> focusTargets(Item item, Rect bounds) {
@@ -100,7 +100,7 @@ public final class TableInteractionTest {
 
         io.github.luyingyilong.ore.event.WindowInputs.press(window,45, 25, null);
         Control popup = new Control() { @Override public boolean getFocusScope() { return true; } };
-        overlay.add(popup);
+        overlay.addChild(popup);
         window.layoutViewport(200, 100, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,45, 25);
         check(actions.size() == before);
@@ -125,7 +125,7 @@ public final class TableInteractionTest {
         Dropdown<String> dropdown = new Dropdown<>("a", 2);
         dropdown.setOptions(List.of(new Dropdown.Option<>("a", Component.literal("A"))));
         Table<Integer> table = new Table<Integer>().setRowKey(row -> row)
-                .column(new Table.Column<>("menu", Component.literal("Menu"), 40, 80, 1, width -> 20,
+                .addColumn(new Table.Column<>("menu", Component.literal("Menu"), 40, 80, 1, width -> 20,
                         new Table.ControlCell<>(() -> dropdown,(control,row)->{})));
         table.setRows(List.of(1));
         Window window = new Window(true).setContent(table);

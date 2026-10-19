@@ -60,9 +60,11 @@ public final class PlayerIdentityCell<T> implements Table.Cell<T> {
 
         private Identity() {
             name.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
-            content = new Padding(new Padding.Insets(INSET_Y, INSET_X, INSET_Y, INSET_X))
-                    .setChild(new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(GAP).add(avatar).add(name));
-            addChild(content);
+            var identityRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(GAP);
+            identityRow.addChild(avatar);
+            identityRow.addChild(name);
+            content = new Padding(new Padding.Insets(INSET_Y, INSET_X, INSET_Y, INSET_X)).setChild(identityRow);
+            this.addChild(content);
         }
 
         @Override public void layout(Rect bounds, Font font) {

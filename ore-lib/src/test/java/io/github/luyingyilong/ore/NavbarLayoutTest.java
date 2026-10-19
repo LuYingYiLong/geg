@@ -39,10 +39,16 @@ public final class NavbarLayoutTest {
         navbar.setExtra(action);
         navbar.setExtra(new Control().setMinimum(60, 20));
         check(back.getParent() == navbar && title.getParent() == navbar && action.getParent() == null, "Replacing extras keeps navigation chrome");
-        check(!navbar.removeChild(back) && !navbar.removeChild(title), "Internal chrome cannot be removed as an extra");
+        for (Control chrome : java.util.List.of(back, title)) {
+            try { navbar.removeChild(chrome); throw new AssertionError("Chrome removal must be rejected"); }
+            catch (IllegalStateException expected) { check(chrome.getParent() == navbar, "Rejected chrome removal is atomic"); }
+        }
         navbar.setExtra();
         Control body = new Control().setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Window window = new Window(true).setContent(new Box().add(navbar).add(body));
+        var childContainer51 = new Box();
+        childContainer51.addChild(navbar);
+        childContainer51.addChild(body);
+        Window window = new Window(true).setContent(childContainer51);
         window.layoutViewport(200, 120, font);
         Rect area = back.getAbsoluteBounds();
         int x = area.x() + area.width() / 2, y = area.y() + area.height() / 2;

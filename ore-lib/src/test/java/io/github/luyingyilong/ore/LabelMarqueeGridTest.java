@@ -37,7 +37,7 @@ public final class LabelMarqueeGridTest {
     private static final class Card extends Container implements Grid.View<Integer> {
         final Label label = new Label().setOverflow(Label.Overflow.MARQUEE);
         int item;
-        Card() { addChild(label); }
+        Card() { this.addChild(label); }
         public void bind(Integer item) { this.item = item; label.setText(Component.literal("A very long market item name " + item)); }
         @Override public void layout(Rect bounds, Font font) {
             super.layout(bounds, font); fitChild(label, new Rect(0, 0, bounds.width(), 12), font);

@@ -183,3 +183,24 @@ ModularUI 3.3.1 的开发测试注册需要 Curios 运行库，正式运行不�
 不参加布局的内部控件使用 `ownPart("name", control)`；虚拟视图使用 `ownPooled(control)` 保留回收期所有权。一个控件不能被不相关的所有者重复拥有。普通资源放入 `getSignalScope().own(resource)`，控件统一由生命周期队列清理。应用无需手工调用 LifecycleScheduler.flush；只有宿主收尾和独立回归测试使用它，输入、信号、布局、绘制及通知期间的 flush 会被拒绝。Drawer 的 closed 仍在关闭动画完成后发送。
 
 Inspector 的共有状态区显示生命周期、树内状态、READY、暂存状态、首次申请位置与原因。已释放选中节点只保留只读记录，禁止编辑、拾取或高亮；历史上限为 512，使用不可变元数据和弱引用，调试会话结束时清空。发布环境不采集申请堆栈。
+
+
+## 子节点与具名槽位
+
+真实父子结构统一由 `Control` 的 final API 提供：`addChild`、`removeChild`、`moveChild`、`getParent`、`getChild`、`getChildren`、`getChildCount`。`addChild` 返回 void，先配置属性，再独立添加；不提供 `add` 或 `attach` 别名。
+
+```java
+Box column = new Box().setGap(4);
+Label title = new Label(Component.literal("Title")).setHero(true);
+column.addChild(title);
+column.addChild(new Button(Component.literal("Continue")));
+column.moveChild(title, 1);
+```
+
+`getChildren()` 是不可变的直接子节点快照，包含隐藏和尚未解绑的待销毁节点；内部部件和脱离树的回收实例不在其中。`moveChild` 只改变真实顺序，不重新触发 ENTER／EXIT／READY，不清理订阅或取消有效手势。
+
+Panel／Padding 使用 `setChild`；Window／Scroll／Dialog／Modal／Drawer 使用 `setContent`；Navbar 通过 `setExtra` 配置右侧控件。替换在完整校验后一次提交，失败保留原树，相同实例不产生变化；卸载的节点仍然存活，永久废弃时由调用方显式 `queueFree`。
+
+Form 的 `addItem`、Descriptions 的 `addItem`／`removeItem`／`clearItems`、Table 的 `addColumn` 表示逻辑配置，不转发或重写真实树 API。固定骨架拒绝外部结构修改；Descriptions 条目的真实父节点可能是内部行 Box，不能向 Descriptions 的普通 children 添加逻辑条目。子类可通过 `validateChildren` 预检查整个拟定列表，通过 `childrenChanged` 在提交后同步直接或后代索引；预检查不得修改树。框架内部批量更新同样执行线程、生命周期、重复挂载及混合所有权环校验。
+
+Grid／Table／Tree 只把活动缓冲实例加入普通 children，并按数据顺序重排。回收和临时卸载不等于销毁；所有权、输入焦点、IME 和信号生命周期规则保持不变。

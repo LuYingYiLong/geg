@@ -3,7 +3,9 @@ package io.github.luyingyilong.ore.layout;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import net.minecraft.client.gui.GuiGraphics;
 
-/** Drawn last, above Ore popups, without taking mouse or keyboard input. */
+/**
+ * Drawn last, above Ore popups, without taking mouse or keyboard input.
+ */
 public final class FocusOverlay extends Control {
     private static final int WHITE = 0xFFFFFFFF;
     private final FocusManager focus;
@@ -12,7 +14,8 @@ public final class FocusOverlay extends Control {
         this.focus = focus;
     }
 
-    @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+    @Override
+    public void draw(ModularGuiContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             Rect bounds = focus.getOutlineBounds();
@@ -37,6 +40,9 @@ public final class FocusOverlay extends Control {
         }
     }
 
-    @Override public Control hitTop(int rootX, int rootY) { return null; }
+    @Override
+    public Control hitTop(int rootX, int rootY) {
+        return null;
+    }
 
 }

@@ -31,10 +31,14 @@ public final class Checkbox extends Container {
         label = ownPart("label", new Label(Objects.requireNonNull(text)).setOpticalCenter(true).setColor(OreTheme.TEXT_WHITE)
                 .setOverflow(Label.Overflow.ELLIPSIS)
                 .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER));
-        addChild(label);
+        updateChildren(java.util.List.of(label));
         setMinimum(ICON_SIZE, HEIGHT);
         setFocusable(true);
         setFocusExpansion(1);
+    }
+
+    @Override protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
+        if (!isUpdatingChildren()) throw new IllegalStateException("Checkbox has a fixed skeleton; configure its properties");
     }
 
     public Checkbox setText(Component text) {

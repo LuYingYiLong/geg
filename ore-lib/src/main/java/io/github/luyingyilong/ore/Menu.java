@@ -47,8 +47,27 @@ public final class Menu extends Container implements ScrollContent {
         this.buttonFactory = Objects.requireNonNull(buttonFactory);
         sections.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         empty.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        super.addChild(sections);
+        updateChildren(java.util.List.of(sections));
         rebuild();
+    }
+
+    @Override protected void validateChildren(java.util.List<Control> proposed) {
+        if (!isUpdatingChildren()) throw new IllegalStateException("Menu has a fixed skeleton; use setItems");
+    }
+
+    @Override protected void childrenChanged() {
+        for (var entry : List.copyOf(buttons.entrySet())) {
+            if (entry.getValue().isAlive() && isDescendant(entry.getValue())) continue;
+            buttons.remove(entry.getKey());
+            SignalScope binding = bindings.remove(entry.getKey());
+            if (binding != null) binding.close();
+        }
+    }
+
+    private boolean isDescendant(Control node) {
+        for (Control parent = node.getParent(); parent != null; parent = parent.getParent())
+            if (parent == this) return true;
+        return false;
     }
 
     public Menu setItems(List<MenuItem> items) {
@@ -86,10 +105,6 @@ public final class Menu extends Container implements ScrollContent {
         return this;
     }
 
-    @Override public Control addChild(Control child) {
-        throw new UnsupportedOperationException("Use Menu.items to populate the menu");
-    }
-    @Override public boolean removeChild(Control child) { return false; }
 
     private static void validateKeys(List<MenuItem> items, Set<String> keys) {
         for (MenuItem item : items) {
@@ -100,7 +115,7 @@ public final class Menu extends Container implements ScrollContent {
 
     private void rebuild() {
         Map<String, Button> previous = new HashMap<>(buttons);
-        for (Button button : previous.values()) button.getParent().removeChild(button);
+        for (Button button : previous.values()) if (button.getParent() != null) button.getParent().removeChild(button);
         for (SignalScope binding : bindings.values()) binding.close();
         bindings.clear();
         if (empty.getParent() != null) empty.getParent().removeChild(empty);
@@ -110,7 +125,7 @@ public final class Menu extends Container implements ScrollContent {
         append(sections, items, previous, false);
         if (buttons.isEmpty() && items.isEmpty()) {
             if (empty.getParent() != null) empty.getParent().removeChild(empty);
-            sections.add(empty);
+            sections.addChild(empty);
         }
         for (Map.Entry<String, Button> entry : previous.entrySet())
             if (!buttons.containsKey(entry.getKey())) entry.getValue().queueFree();
@@ -129,22 +144,23 @@ public final class Menu extends Container implements ScrollContent {
                 title.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
                 Padding heading = new Padding(new Padding.Insets(0, Button.PADDING_X, 0, Button.PADDING_X)).setChild(title);
                 heading.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-                group.add(heading).add(new Divider(dividerTheme));
+                group.addChild(heading);
+                group.addChild(new Divider(dividerTheme));
                 Box children = verticalBox();
                 append(children, item.children(), previous, disabled || item.disabled());
-                group.add(children);
-                parent.add(group);
+                group.addChild(children);
+                parent.addChild(group);
             } else if (item.type() == MenuItem.Type.EMPTY) {
-                if (run == null) { run = verticalBox(); parent.add(run); }
+                if (run == null) { run = verticalBox(); parent.addChild(run); }
                 Label label = new Label(item.label()).setColor(emptyColor).setWrap(Label.Wrap.WORD)
                         .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
                 label.setMinimum(0, Button.HEIGHT);
                 emptyLabels.add(label);
                 Padding inset = new Padding(new Padding.Insets(0, Button.PADDING_X, 0, Button.PADDING_X)).setChild(label);
                 inset.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-                run.add(inset);
+                run.addChild(inset);
             } else {
-                if (run == null) { run = verticalBox(); parent.add(run); }
+                if (run == null) { run = verticalBox(); parent.addChild(run); }
                 Button button = previous.get(item.key());
                 if (button == null) button = Objects.requireNonNull(buttonFactory.get());
                 button.setLabel(item.label()).setIcon(item.icon()).setType(Button.Type.MENU)
@@ -155,7 +171,7 @@ public final class Menu extends Container implements ScrollContent {
                 button.pressed().connect(binding, () -> { setSelectedKey(item.key()); itemActivated.emit(item); });
                 button.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
                 buttons.put(item.key(), button);
-                run.add(button);
+                run.addChild(button);
             }
         }
     }

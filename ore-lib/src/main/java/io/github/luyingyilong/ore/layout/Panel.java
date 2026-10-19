@@ -17,22 +17,16 @@ public final class Panel extends Container {
 
     public Panel(WidgetThemeKey<WidgetTheme> themeKey) { this.themeKey = themeKey; }
     public Panel setChild(Control child) {
-        if (this.child != null) removeChild(this.child);
-        addChild(child);
+        replaceChild(this.child, child);
         return this;
     }
 
-    @Override public Panel addChild(Control child) {
-        if (this.child != null) throw new IllegalStateException("Panel accepts one child");
-        super.addChild(child);
-        this.child = child;
-        return this;
+    @Override protected void validateChildren(java.util.List<Control> proposed) {
+        if (proposed.size() > 1) throw new IllegalStateException("Panel accepts one child; use setChild");
     }
 
-    @Override public boolean removeChild(Control child) {
-        if (!super.removeChild(child)) return false;
-        if (this.child == child) this.child = null;
-        return true;
+    @Override protected void childrenChanged() {
+        child = getChildCount() == 0 ? null : getChild(0);
     }
 
     @Override public Size measureSize(Font font, Size available) {

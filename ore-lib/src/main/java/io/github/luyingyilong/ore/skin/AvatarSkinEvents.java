@@ -5,14 +5,18 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-/** Collect skins while players are online, even when no Ore avatar is currently displayed. */
+/**
+ * Collect skins while players are online, even when no Ore avatar is currently displayed.
+ */
 public final class AvatarSkinEvents {
     private static ClientPacketListener connection;
     private static int ticks;
 
-    private AvatarSkinEvents() { }
+    private AvatarSkinEvents() {
+    }
 
-    @SubscribeEvent public static void tick(TickEvent.ClientTickEvent event) {
+    @SubscribeEvent
+    public static void tick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         var current = Minecraft.getInstance().getConnection();
         if (current != connection) {

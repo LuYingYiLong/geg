@@ -75,8 +75,8 @@ public final class ClientMarketScreen {
 
         quantityItem = new FormItem("quantity", Component.translatable("market.geg.quantity"), quantity);
         priceItem = new FormItem("price", Component.translatable("market.geg.unit_price"), price);
-        detailForm = new Form().add(quantityItem).add(priceItem);
-        tradeForm = new Form().add(new FormItem("quantity",
+        detailForm = new Form().addItem(quantityItem).addItem(priceItem);
+        tradeForm = new Form().addItem(new FormItem("quantity",
                 Component.translatable("market.geg.quantity"), tradeQuantity));
         canvas.bindForms(detailForm, tradeForm);
         canvas.prepareLayout(Minecraft.getInstance().getWindow().getGuiScaledWidth(),

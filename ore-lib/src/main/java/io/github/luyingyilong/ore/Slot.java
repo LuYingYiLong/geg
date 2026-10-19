@@ -22,7 +22,11 @@ public final class Slot extends Control {
     public Slot() {
         setMinimum(SIZE, SIZE);
         setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        addChild(count);
+        updateChildren(java.util.List.of(count));
+    }
+
+    @Override protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
+        if (!isUpdatingChildren()) throw new IllegalStateException("Slot has a fixed skeleton; configure its properties");
     }
 
     public Slot setItem(ItemStack item, int quantity) {

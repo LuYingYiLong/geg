@@ -34,7 +34,9 @@ public final class ReleaseControlsTest {
         int[] changes = {0};
         Checkbox checkbox = Signals.configure(new Checkbox(Component.literal("Label")), connected -> connected.toggled().connect(connected, value -> changes[0]++));
         checkbox.setPosition(10, 10).setRequestedSize(90, 20);
-        Window window = new Window(true).setContent(new Control().addChild(checkbox));
+        var childContainer52 = new Control();
+        childContainer52.addChild(checkbox);
+        Window window = new Window(true).setContent(childContainer52);
         window.layoutViewport(120, 80, font);
         // The Label child is hit first; its Checkbox parent must own the release.
         check(io.github.luyingyilong.ore.event.WindowInputs.press(window,40, 15, null));
@@ -100,7 +102,9 @@ public final class ReleaseControlsTest {
     private static void scrolledSegmented(Font font) {
         Segmented segmented = new Segmented(List.of(Component.literal("A"), Component.literal("B")));
         segmented.setPosition(0, 80).setRequestedSize(100, 20);
-        Scroll scroll = new Scroll().setContent(new Control().setPreferred(100, 200).addChild(segmented));
+        var childContainer53 = new Control().setPreferred(100, 200);
+        childContainer53.addChild(segmented);
+        Scroll scroll = new Scroll().setContent(childContainer53);
         Window window = new Window(true).setContent(scroll);
         window.layoutViewport(120, 60, font);
         scroll.scrollBy(0, 70);
@@ -120,7 +124,10 @@ public final class ReleaseControlsTest {
         Button behind=Signals.configure(new Button(cue->{}), connected -> connected.pressed().connect(connected, ()->underlying[0]++));
         behind.setPosition(100,90).setRequestedSize(20,20);
         Overlay overlay=new Overlay();
-        Window window=new Window(true).setContent(new Control().addChild(dropdown).addChild(behind)).setOverlay(overlay);
+        var childContainer54 = new Control();
+        childContainer54.addChild(dropdown);
+        childContainer54.addChild(behind);
+        Window window=new Window(true).setContent(childContainer54).setOverlay(overlay);
         window.layoutViewport(120,120,font);
         EventFixture.press(window,20,15);check(!dropdown.isOpen());
         EventFixture.release(window,20,15,true);check(dropdown.isOpen());
@@ -148,7 +155,7 @@ public final class ReleaseControlsTest {
         dropdown.activate();window.layoutViewport(120,120,font);before=changes[0];
         EventFixture.press(window,20,55);
         Control modal=new Control(){@Override public boolean getFocusScope(){return true;}};
-        overlay.add(modal);window.layoutViewport(120,120,font);
+        overlay.addChild(modal);window.layoutViewport(120,120,font);
         EventFixture.release(window,20,55,true);check(changes[0]==before&&!dropdown.isOpen());
         modal.setVisible(false);dropdown.activate();EventFixture.press(window,20,55);
         dropdown.setOptions(List.of(option("a"),option("c")));

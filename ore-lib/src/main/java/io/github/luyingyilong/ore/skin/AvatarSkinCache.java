@@ -23,20 +23,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-/** Restores successful skin downloads before contacting the profile service. All disk IO is asynchronous. */
+/**
+ * Restores successful skin downloads before contacting the profile service. All disk IO is asynchronous.
+ */
 final class AvatarSkinCache implements AvatarSkins.Loader {
-    @FunctionalInterface interface TextureLoader {
-        /** Publish only after the image has been decoded successfully, not for its default fallback. */
-        void load(GameProfile profile, String url, Path image, Consumer<ResourceLocation> available);
-    }
-
     private static final Logger LOGGER = LogUtils.getLogger();
     private final Path directory;
     private final Executor executor;
     private final Function<GameProfile, String> resolve;
     private final TextureLoader textures;
     private final Object storeLock = new Object();
-    private record Request(boolean online) { }
     private final Cache<UUID, Request> latest = CacheBuilder.newBuilder()
             .maximumSize(256).expireAfterAccess(10, TimeUnit.MINUTES).build();
 
@@ -47,11 +43,22 @@ final class AvatarSkinCache implements AvatarSkins.Loader {
         this.textures = textures;
     }
 
-    @Override public void load(GameProfile profile, Consumer<ResourceLocation> available) {
+    private static void replace(Path temporary, Path target) throws IOException {
+        try {
+            Files.move(temporary, target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+        } catch (AtomicMoveNotSupportedException ignored) {
+            Files.move(temporary, target, StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    @Override
+    public void load(GameProfile profile, Consumer<ResourceLocation> available) {
         load(profile, available, resolve, false);
     }
 
-    /** The online skin manager may know a custom skin that the Mojang session service cannot resolve. */
+    /**
+     * The online skin manager may know a custom skin that the Mojang session service cannot resolve.
+     */
     void loadKnown(GameProfile profile, String url, Consumer<ResourceLocation> available) {
         load(profile, available, ignored -> url, true);
     }
@@ -72,10 +79,13 @@ final class AvatarSkinCache implements AvatarSkins.Loader {
                     try {
                         Files.write(temporary, png);
                         replace(temporary, target);
-                    } finally { Files.deleteIfExists(temporary); }
+                    } finally {
+                        Files.deleteIfExists(temporary);
+                    }
                 }
                 return key;
-            } catch (IOException | RuntimeException ignored) { /* An unfinished provider download may still have an HTTP URL. */ }
+            } catch (IOException |
+                     RuntimeException ignored) { /* An unfinished provider download may still have an HTTP URL. */ }
         }
         return AvatarSkinSource.downloadable(source.url()) ? source.url() : null;
     }
@@ -129,7 +139,9 @@ final class AvatarSkinCache implements AvatarSkins.Loader {
             if (!AvatarSkinSource.downloadable(url) && !AvatarSkinSource.storedImage(url)) return null;
             Path image = image(url);
             return Files.isRegularFile(image) && Files.size(image) > 0 ? url : null;
-        } catch (IOException | RuntimeException ignored) { return null; }
+        } catch (IOException | RuntimeException ignored) {
+            return null;
+        }
     }
 
     private Path image(String url) {
@@ -153,17 +165,21 @@ final class AvatarSkinCache implements AvatarSkins.Loader {
             LOGGER.debug("Unable to persist Ore avatar for {}", id, failure);
         } finally {
             if (temporary != null) {
-                try { Files.deleteIfExists(temporary); }
-                catch (IOException ignored) { /* A leftover temporary file is never read as an index. */ }
+                try {
+                    Files.deleteIfExists(temporary);
+                } catch (IOException ignored) { /* A leftover temporary file is never read as an index. */ }
             }
         }
     }
 
-    private static void replace(Path temporary, Path target) throws IOException {
-        try {
-            Files.move(temporary, target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
-        } catch (AtomicMoveNotSupportedException ignored) {
-            Files.move(temporary, target, StandardCopyOption.REPLACE_EXISTING);
-        }
+    @FunctionalInterface
+    interface TextureLoader {
+        /**
+         * Publish only after the image has been decoded successfully, not for its default fallback.
+         */
+        void load(GameProfile profile, String url, Path image, Consumer<ResourceLocation> available);
+    }
+
+    private record Request(boolean online) {
     }
 }

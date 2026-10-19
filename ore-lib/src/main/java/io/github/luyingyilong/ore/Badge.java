@@ -27,11 +27,15 @@ public final class Badge extends Container {
 
     public Badge() {
         setMinimum(DOT_SIZE, DOT_SIZE + SHADOW_HEIGHT);
-        addChild(label);
+        updateChildren(java.util.List.of(label));
         label.setVisible(false);
         setType(type);
         setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
     }
+    @Override protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
+        if (!isUpdatingChildren()) throw new IllegalStateException("Badge has a fixed skeleton; configure its properties");
+    }
+
     public Badge(long count) { this(); setCount(count); }
 
     /** Null restores dot mode. Negative counts are rejected. */

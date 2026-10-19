@@ -1,9 +1,5 @@
 package io.github.luyingyilong.ore.input;
 
-import io.github.luyingyilong.ore.signal.*;
-
-import io.github.luyingyilong.ore.debug.DebugBridge;
-
 import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
@@ -14,7 +10,9 @@ import brachy.modularui.widget.WidgetTree;
 import brachy.modularui.widgets.textfield.TextFieldWidget;
 import io.github.luyingyilong.ore.Button;
 import io.github.luyingyilong.ore.Label;
+import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.signal.*;
 import io.github.luyingyilong.ore.theme.OreTheme;
 import io.github.luyingyilong.ore.util.NativePaintPass;
 import io.github.luyingyilong.ore.util.OreLayers;
@@ -28,13 +26,17 @@ import java.util.function.IntPredicate;
 
 public class Input extends TextFieldWidget implements SignalOwner {
     private static final InputShortcuts.Clipboard CLIPBOARD = new InputShortcuts.Clipboard() {
-        @Override public String get() { return io.github.luyingyilong.ore.window.WindowContext.getCurrent().getClipboard(); }
-        @Override public void set(String text) { io.github.luyingyilong.ore.window.WindowContext.getCurrent().setClipboard(text); }
+        @Override
+        public String get() {
+            return io.github.luyingyilong.ore.window.WindowContext.getCurrent().getClipboard();
+        }
+
+        @Override
+        public void set(String text) {
+            io.github.luyingyilong.ore.window.WindowContext.getCurrent().setClipboard(text);
+        }
     };
     private final float depth;
-    private Button.Size controlSize = Button.Size.MEDIUM;
-    private boolean inputVisible = true;
-    private IntPredicate tabNavigation = modifiers -> false;
     private final SignalScope signalScope = new SignalScope();
     private final Label placeholderLabel = new Label().setOverflow(Label.Overflow.VISIBLE);
     private final SignalSource<String> textChanged = new SignalSource<>(this, "textChanged", "String");
@@ -42,41 +44,17 @@ public class Input extends TextFieldWidget implements SignalOwner {
     private final SignalSource0 pointerPressed = new SignalSource0(this, "pointerPressed");
     private final SignalSource0 focusEntered = new SignalSource0(this, "focusEntered");
     private final SignalSource0 focusExited = new SignalSource0(this, "focusExited");
+    private final NativePaintPass paintPass = new NativePaintPass();
+    private Button.Size controlSize = Button.Size.MEDIUM;
+    private boolean inputVisible = true;
+    private IntPredicate tabNavigation = modifiers -> false;
     private boolean submitOnEnter;
     private int silentTextDepth;
     private int textMutationDepth;
     private boolean signalFocused;
     private String observedText = "";
-    @Override public final SignalScope getSignalScope() { return signalScope; }
-    public final Signal<String> textChanged() { return textChanged.signal(); }
-    public final Signal<String> submitted() { return submitted.signal(); }
-    public final Signal0 pointerPressed() { return pointerPressed.signal(); }
-    public final Signal0 focusEntered() { return focusEntered.signal(); }
-    public final Signal0 focusExited() { return focusExited.signal(); }
-    public Input setSubmitOnEnter(boolean value) { submitOnEnter = value; return this; }
-    public boolean getSubmitOnEnter() { return submitOnEnter; }
-    protected final void submitText() {
-        if (this instanceof NumberInput number && !number.commit()) return;
-        submitted.emit(getText());
-    }
-
-    public final void setTextNoSignal(String text) {
-        silentTextDepth++;
-        try { setText(text); }
-        finally { silentTextDepth--; }
-    }
-
-    @Override protected void onTextChanged() {
-        super.onTextChanged();
-        // ModularUI may invoke this hook while its superclass is being constructed.
-        if (textChanged == null || textMutationDepth > 0) return;
-        String text = getText();
-        if (java.util.Objects.equals(observedText, text)) return;
-        observedText = text;
-        if (silentTextDepth == 0) textChanged.emit(text);
-    }
     private InputControl layoutControl;
-    private final NativePaintPass paintPass = new NativePaintPass();
+    private boolean routingInput;
 
     public Input() {
         this(0.0F);
@@ -85,45 +63,119 @@ public class Input extends TextFieldWidget implements SignalOwner {
     public Input(float depth) {
         this.depth = depth;
         // MUI dispose() can be a temporary detach; the signal scope is the permanent lifetime.
-        signalScope.own(() -> { if (layoutControl == null) placeholderLabel.queueFree(); });
+        signalScope.own(() -> {
+            if (layoutControl == null) placeholderLabel.queueFree();
+        });
         handler = new OreTextFieldHandler(this);
         renderer = new OreTextFieldRenderer(handler, this);
         handler.setRenderer(renderer);
         handler.setScrollArea(getScrollArea());
         getScrollArea().setScrollX(io.github.luyingyilong.ore.input.HiddenInputScroll.horizontal());
         // An explicit empty builder prevents TextFieldWidget.onInit from adding its overflow tooltip.
-        tooltipBuilder(tooltip -> { });
+        tooltipBuilder(tooltip -> {
+        });
         showScrollShadows(false);
     }
 
-    protected final OreTextFieldHandler editingHandler() { return (OreTextFieldHandler) handler; }
+    @Override
+    public final SignalScope getSignalScope() {
+        return signalScope;
+    }
 
-    @Override public void setText(String text) {
+    public final Signal<String> textChanged() {
+        return textChanged.signal();
+    }
+
+    public final Signal<String> submitted() {
+        return submitted.signal();
+    }
+
+    public final Signal0 pointerPressed() {
+        return pointerPressed.signal();
+    }
+
+    public final Signal0 focusEntered() {
+        return focusEntered.signal();
+    }
+
+    public final Signal0 focusExited() {
+        return focusExited.signal();
+    }
+
+    public boolean getSubmitOnEnter() {
+        return submitOnEnter;
+    }
+
+    public Input setSubmitOnEnter(boolean value) {
+        submitOnEnter = value;
+        return this;
+    }
+
+    protected final void submitText() {
+        if (this instanceof NumberInput number && !number.commit()) return;
+        submitted.emit(getText());
+    }
+
+    public final void setTextNoSignal(String text) {
+        silentTextDepth++;
+        try {
+            setText(text);
+        } finally {
+            silentTextDepth--;
+        }
+    }
+
+    @Override
+    protected void onTextChanged() {
+        super.onTextChanged();
+        // ModularUI may invoke this hook while its superclass is being constructed.
+        if (textChanged == null || textMutationDepth > 0) return;
+        String text = getText();
+        if (java.util.Objects.equals(observedText, text)) return;
+        observedText = text;
+        if (silentTextDepth == 0) textChanged.emit(text);
+    }
+
+    protected final OreTextFieldHandler editingHandler() {
+        return (OreTextFieldHandler) handler;
+    }
+
+    @Override
+    public void setText(String text) {
         beginTextMutation();
         try {
             super.setText(text);
             editingHandler().clearHistory();
             handler.setCursor(new brachy.modularui.utils.Point(0, 0), false);
-        } finally { endTextMutation(); }
+        } finally {
+            endTextMutation();
+        }
     }
 
-    protected final void beginTextMutation() { textMutationDepth++; }
+    protected final void beginTextMutation() {
+        textMutationDepth++;
+    }
+
     protected final void endTextMutation() {
         if (--textMutationDepth == 0) onTextChanged();
     }
 
-    protected void onEditShortcut() { renderer.setCursor(true); }
+    protected void onEditShortcut() {
+        renderer.setCursor(true);
+    }
+
+    public int getPreferredInputHeight() {
+        return controlSize.getHeight();
+    }
+
+    public Button.Size getControlSize() {
+        return controlSize;
+    }
 
     public Input setControlSize(Button.Size size) {
         controlSize = java.util.Objects.requireNonNull(size);
         height(size.getHeight());
         return this;
-    }
-
-    public int getPreferredInputHeight() { return controlSize.getHeight(); }
-
-    public Button.Size getControlSize() {
-        return controlSize;
     }
 
     public Input setPlaceholder(Component placeholder) {
@@ -142,48 +194,81 @@ public class Input extends TextFieldWidget implements SignalOwner {
         return inputVisible && (layoutControl == null || layoutControl.layoutVisible());
     }
 
-    void layoutControl(InputControl control) { layoutControl = control; control.ownPart("placeholder", placeholderLabel); }
+    void layoutControl(InputControl control) {
+        layoutControl = control;
+        control.ownPart("placeholder", placeholderLabel);
+    }
+
     public final void releaseSession() {
         signalScope.checkThread();
         OreInputMethod.release(this);
         setInputVisible(false);
         signalScope.close(SignalDiagnostics.Reason.OWNER_DISPOSED);
     }
-    /** Validation text can change the owning FormItem's measured height. */
+
+    /**
+     * Validation text can change the owning FormItem's measured height.
+     */
     protected final void invalidateInputLayout() {
         if (layoutControl != null) layoutControl.requestLayout();
     }
 
-    @Override public boolean isEnabled() { return super.isEnabled() && inputVisible(); }
+    @Override
+    public boolean isEnabled() {
+        return super.isEnabled() && inputVisible();
+    }
 
     private boolean layoutInteractive() {
         return isEnabled() && (layoutControl == null || layoutControl.layoutInteractive());
     }
 
-    protected boolean supportsInputMethod() { return true; }
-    /** Uncommitted text is separate from getText()/Form values and never sent to the server. */
+    protected boolean supportsInputMethod() {
+        return true;
+    }
+
+    /**
+     * Uncommitted text is separate from getText()/Form values and never sent to the server.
+     */
     public io.github.luyingyilong.ore.window.WindowContext getWindowContext() {
         return layoutControl != null ? layoutControl.getWindowContext() : isValid()
                 ? io.github.luyingyilong.ore.window.WindowContext.of(getContext())
                 : io.github.luyingyilong.ore.window.WindowContext.getCurrent();
     }
-    public InputPreedit getPreedit() { return OreInputMethod.preedit(this); }
-    public boolean getComposing() { return OreInputMethod.composing(this); }
+
+    public InputPreedit getPreedit() {
+        return OreInputMethod.preedit(this);
+    }
+
+    public boolean getComposing() {
+        return OreInputMethod.composing(this);
+    }
+
     public void cancelPreedit() {
         OreInputMethod.cancelComposition(this);
         clearPreeditDisplay();
     }
-    void clearPreeditDisplay() { ((OreTextFieldRenderer) renderer).preedit(InputPreedit.EMPTY); }
+
+    void clearPreeditDisplay() {
+        ((OreTextFieldRenderer) renderer).preedit(InputPreedit.EMPTY);
+    }
+
     private void refreshPreeditDisplay() {
         ((OreTextFieldRenderer) renderer).preedit(OreInputMethod.inlinePreedit(this) ? getPreedit() : InputPreedit.EMPTY);
     }
-    boolean inputMethodInteractive() { return layoutInteractive(); }
+
+    boolean inputMethodInteractive() {
+        return layoutInteractive();
+    }
+
     Rect inputMethodBounds() {
         return layoutControl == null ? new Rect(getArea().x, getArea().y, getArea().width, getArea().height)
                 : layoutControl.getWidgetBounds();
     }
-    int inputMethodFontHeight() { return (int) Math.ceil(renderer.getFontHeight()); }
-    record Caret(int x, int y) { }
+
+    int inputMethodFontHeight() {
+        return (int) Math.ceil(renderer.getFontHeight());
+    }
+
     Caret inputMethodCaret() {
         Rect area = inputMethodBounds();
         var cursor = ((OreTextFieldRenderer) renderer).caretPosition();
@@ -197,29 +282,35 @@ public class Input extends TextFieldWidget implements SignalOwner {
      * It must not enter MUI's hovering list: even IGNORE stops at a non-click-through widget,
      * blocking the Canvas for pointer, key and character events whenever the mouse is over it.
      */
-    @Override public boolean canHover() {
+    @Override
+    public boolean canHover() {
         return layoutControl == null && layoutInteractive() && super.canHover();
     }
 
-    @Override public boolean canClickThrough() {
+    @Override
+    public boolean canClickThrough() {
         return layoutControl != null || super.canClickThrough();
     }
 
-    @Override public boolean isHovering() {
-        if(layoutControl!=null && routingInput)
-            return layoutControl.pointerInteractive(getContext().getAbsMouseX(),getContext().getAbsMouseY());
+    @Override
+    public boolean isHovering() {
+        if (layoutControl != null && routingInput)
+            return layoutControl.pointerInteractive(getContext().getAbsMouseX(), getContext().getAbsMouseY());
         return super.isHovering();
     }
 
-    @Override public boolean isBelowMouseFor(int button) {
+    @Override
+    public boolean isBelowMouseFor(int button) {
         if (!layoutInteractive()) return false;
-        if (layoutControl != null && !layoutControl.pointerInteractive(getContext().getAbsMouseX(), getContext().getAbsMouseY())) return false;
+        if (layoutControl != null && !layoutControl.pointerInteractive(getContext().getAbsMouseX(), getContext().getAbsMouseY()))
+            return false;
         Rect clip = layoutControl == null ? null : layoutControl.drawingClip();
         if (clip != null && !clip.contains(getContext().getAbsMouseX(), getContext().getAbsMouseY())) return false;
         return super.isBelowMouseFor(button);
     }
 
-    @Override public void onUpdate() {
+    @Override
+    public void onUpdate() {
         if (layoutControl != null) layoutControl.syncWidgetArea();
         super.onUpdate();
     }
@@ -230,83 +321,127 @@ public class Input extends TextFieldWidget implements SignalOwner {
     }
 
 
-    @Override public void onFocus(ModularGuiContext context) {
+    @Override
+    public void onFocus(ModularGuiContext context) {
         editingHandler().endEditGroup();
         super.onFocus(context);
         OreInputMethod.focus(this);
-        if (!signalFocused) { signalFocused = true; focusEntered.emit(); }
+        if (!signalFocused) {
+            signalFocused = true;
+            focusEntered.emit();
+        }
     }
 
-    @Override public void onRemoveFocus(ModularGuiContext context) {
+    @Override
+    public void onRemoveFocus(ModularGuiContext context) {
         editingHandler().endEditGroup();
         OreInputMethod.release(this);
         removeNativeFocus(context);
-        if (signalFocused) { signalFocused = false; focusExited.emit(); }
+        if (signalFocused) {
+            signalFocused = false;
+            focusExited.emit();
+        }
     }
 
-    protected void removeNativeFocus(ModularGuiContext context) { super.onRemoveFocus(context); }
+    protected void removeNativeFocus(ModularGuiContext context) {
+        super.onRemoveFocus(context);
+    }
 
-    @Override public void dispose() {
+    @Override
+    public void dispose() {
         OreInputMethod.release(this);
         super.dispose();
     }
 
-    protected boolean submitsOnEnter() { return submitOnEnter; }
+    protected boolean submitsOnEnter() {
+        return submitOnEnter;
+    }
+
     protected boolean isSubmitKey(int keyCode, int modifiers) {
         return keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER;
     }
 
-    private boolean routingInput;
-    protected final boolean acceptsHostInput() { return layoutControl == null || routingInput; }
+    protected final boolean acceptsHostInput() {
+        return layoutControl == null || routingInput;
+    }
 
-    /** Only InputControl calls this; native callbacks on tree fields cannot edit twice. */
+    /**
+     * Only InputControl calls this; native callbacks on tree fields cannot edit twice.
+     */
     final void receive(io.github.luyingyilong.ore.event.InputEvent event) {
         // Prepare the exact row geometry used by drawing before hit testing. A scroll,
         // modal move or resize may have happened since the last painted frame.
         setupDrawText(getContext(), getWidgetTheme(getPanel().getTheme(), TextFieldTheme.class).theme());
         // MUI editing expects its own local matrix, even when a Canvas delivered the event.
-        var located=brachy.modularui.screen.viewport.LocatedWidget.of(this);
+        var located = brachy.modularui.screen.viewport.LocatedWidget.of(this);
         located.applyMatrix(getContext());
-        routingInput=true;
+        routingInput = true;
         try {
-            boolean handled=false;
-            if(event instanceof io.github.luyingyilong.ore.event.PointerEvent pointer) {
-                switch(pointer.action()) {
-                    case PRESS -> handled=onMousePressed(pointer.button())!=Interactable.Result.IGNORE;
-                    case RELEASE -> handled=onMouseReleased(pointer.button());
-                    case MOVE -> { onMouseDrag(pointer.button(),0,0);handled=true; }
+            boolean handled = false;
+            if (event instanceof io.github.luyingyilong.ore.event.PointerEvent pointer) {
+                switch (pointer.action()) {
+                    case PRESS -> handled = onMousePressed(pointer.button()) != Interactable.Result.IGNORE;
+                    case RELEASE -> handled = onMouseReleased(pointer.button());
+                    case MOVE -> {
+                        onMouseDrag(pointer.button(), 0, 0);
+                        handled = true;
+                    }
                 }
-            } else if(event instanceof io.github.luyingyilong.ore.event.KeyEvent key) {
-                if(key.action()==io.github.luyingyilong.ore.event.KeyEvent.Action.REPEAT && submitsOnEnter()
-                        && (key.keyCode()==GLFW.GLFW_KEY_ENTER || key.keyCode()==GLFW.GLFW_KEY_KP_ENTER)
-                        && (key.modifiers() & GLFW.GLFW_MOD_SHIFT)==0){event.accept();return;}
-                if(key.keyCode()==GLFW.GLFW_KEY_TAB && !getComposing())return;
-                handled=key.action()==io.github.luyingyilong.ore.event.KeyEvent.Action.RELEASE
-                        ?onKeyReleased(key.keyCode(),key.scanCode(),key.modifiers())
-                        :onKeyPressed(key.keyCode(),key.scanCode(),key.modifiers())!=Interactable.Result.IGNORE;
-            } else if(event instanceof io.github.luyingyilong.ore.event.TextInputEvent text) {
-                for(char character:text.text().toCharArray())onCharTyped(character,text.modifiers());
-                handled=true;
-            } else if(event instanceof io.github.luyingyilong.ore.event.ScrollEvent scroll)
-                handled=onMouseScrolled(scroll.delta());
-            else if(event instanceof io.github.luyingyilong.ore.event.CompositionEvent composition) {
-                if(composition.action()==io.github.luyingyilong.ore.event.CompositionEvent.Action.CANCEL)cancelPreedit();
-                else ((OreTextFieldRenderer)renderer).preedit(composition.preedit());
-                handled=true;
+            } else if (event instanceof io.github.luyingyilong.ore.event.KeyEvent key) {
+                if (key.action() == io.github.luyingyilong.ore.event.KeyEvent.Action.REPEAT && submitsOnEnter()
+                        && (key.keyCode() == GLFW.GLFW_KEY_ENTER || key.keyCode() == GLFW.GLFW_KEY_KP_ENTER)
+                        && (key.modifiers() & GLFW.GLFW_MOD_SHIFT) == 0) {
+                    event.accept();
+                    return;
+                }
+                if (key.keyCode() == GLFW.GLFW_KEY_TAB && !getComposing()) return;
+                handled = key.action() == io.github.luyingyilong.ore.event.KeyEvent.Action.RELEASE
+                        ? onKeyReleased(key.keyCode(), key.scanCode(), key.modifiers())
+                        : onKeyPressed(key.keyCode(), key.scanCode(), key.modifiers()) != Interactable.Result.IGNORE;
+            } else if (event instanceof io.github.luyingyilong.ore.event.TextInputEvent text) {
+                for (char character : text.text().toCharArray()) onCharTyped(character, text.modifiers());
+                handled = true;
+            } else if (event instanceof io.github.luyingyilong.ore.event.ScrollEvent scroll)
+                handled = onMouseScrolled(scroll.delta());
+            else if (event instanceof io.github.luyingyilong.ore.event.CompositionEvent composition) {
+                if (composition.action() == io.github.luyingyilong.ore.event.CompositionEvent.Action.CANCEL)
+                    cancelPreedit();
+                else ((OreTextFieldRenderer) renderer).preedit(composition.preedit());
+                handled = true;
             }
-            if(handled)event.accept();
-        } finally {routingInput=false;located.unapplyMatrix(getContext());}
+            if (handled) event.accept();
+        } finally {
+            routingInput = false;
+            located.unapplyMatrix(getContext());
+        }
     }
 
-    @Override public boolean onMouseReleased(int button) { return acceptsHostInput() && super.onMouseReleased(button); }
-    @Override public void onMouseDrag(int button,double x,double y) { if(acceptsHostInput())super.onMouseDrag(button,x,y); }
-    @Override public boolean onMouseScrolled(double delta) { return acceptsHostInput() && super.onMouseScrolled(delta); }
-    @Override public boolean onKeyReleased(int key,int scan,int modifiers) { return acceptsHostInput() && super.onKeyReleased(key,scan,modifiers); }
+    @Override
+    public boolean onMouseReleased(int button) {
+        return acceptsHostInput() && super.onMouseReleased(button);
+    }
 
-    @Override public @NotNull Interactable.Result onMousePressed(int button) {
+    @Override
+    public void onMouseDrag(int button, double x, double y) {
+        if (acceptsHostInput()) super.onMouseDrag(button, x, y);
+    }
+
+    @Override
+    public boolean onMouseScrolled(double delta) {
+        return acceptsHostInput() && super.onMouseScrolled(delta);
+    }
+
+    @Override
+    public boolean onKeyReleased(int key, int scan, int modifiers) {
+        return acceptsHostInput() && super.onKeyReleased(key, scan, modifiers);
+    }
+
+    @Override
+    public @NotNull Interactable.Result onMousePressed(int button) {
         if (!acceptsHostInput()) return Interactable.Result.IGNORE;
         if (!layoutInteractive() || layoutControl != null
-                && !layoutControl.pointerInteractive(getContext().getAbsMouseX(), getContext().getAbsMouseY())) return Interactable.Result.IGNORE;
+                && !layoutControl.pointerInteractive(getContext().getAbsMouseX(), getContext().getAbsMouseY()))
+            return Interactable.Result.IGNORE;
         editingHandler().endEditGroup();
         if (isFocused() && getComposing()) cancelPreedit();
         Interactable.Result result = super.onMousePressed(button);
@@ -314,7 +449,8 @@ public class Input extends TextFieldWidget implements SignalOwner {
         return result;
     }
 
-    @Override public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
+    @Override
+    public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
         if (!acceptsHostInput()) return Interactable.Result.IGNORE;
         if (!layoutInteractive()) return Interactable.Result.IGNORE;
         if (isFocused() && InputShortcuts.matches(keyCode, modifiers)) {
@@ -327,7 +463,10 @@ public class Input extends TextFieldWidget implements SignalOwner {
             return Interactable.Result.SUCCESS;
         }
         if (isFocused() && keyCode == GLFW.GLFW_KEY_ESCAPE) {
-            if (getComposing()) { cancelPreedit(); return Interactable.Result.STOP; }
+            if (getComposing()) {
+                cancelPreedit();
+                return Interactable.Result.STOP;
+            }
             getContext().removeFocus();
             return Interactable.Result.STOP;
         }
@@ -335,14 +474,16 @@ public class Input extends TextFieldWidget implements SignalOwner {
                 || keyCode == GLFW.GLFW_KEY_KP_ENTER)
                 && OreInputMethod.composing(this)) return Interactable.Result.STOP;
         if (submitOnEnter && isFocused() && isSubmitKey(keyCode, modifiers)) {
-            if (!getComposing()) submitText(); return Interactable.Result.STOP;
+            if (!getComposing()) submitText();
+            return Interactable.Result.STOP;
         }
         if (keyCode == GLFW.GLFW_KEY_TAB && isFocused() && tabNavigation.test(modifiers))
             return Interactable.Result.STOP;
         return super.onKeyPressed(keyCode, scanCode, modifiers);
     }
 
-    @Override public @NotNull Interactable.Result onCharTyped(char character, int modifiers) {
+    @Override
+    public @NotNull Interactable.Result onCharTyped(char character, int modifiers) {
         if (!acceptsHostInput()) return Interactable.Result.IGNORE;
         if (!layoutInteractive()) return Interactable.Result.IGNORE;
         // IMBlocker probes custom screens with NUL to discover their real text field focus.
@@ -370,7 +511,9 @@ public class Input extends TextFieldWidget implements SignalOwner {
         if (paintPass.accepts(layoutControl != null) && !drawText) context.getStencil().pop();
     }
 
-    /** Paint at the InputControl's position in the tree, before its Scroll paints the bars. */
+    /**
+     * Paint at the InputControl's position in the tree, before its Scroll paints the bars.
+     */
     void drawInTree(ModularGuiContext context) {
         if (!inputVisible()) return;
         GuiGraphics graphics = context.getGraphics();
@@ -387,18 +530,22 @@ public class Input extends TextFieldWidget implements SignalOwner {
         }
     }
 
-    /** A single-line field centers its hint within its actual, possibly expanded, height. */
+    /**
+     * A single-line field centers its hint within its actual, possibly expanded, height.
+     */
     protected int firstLineTop() {
         return io.github.luyingyilong.ore.input.InputGeometry.centeredLineTop(
                 getArea().getPadding().top(), getArea().paddedHeight(), renderer.getFontHeight());
     }
 
-    @Override protected void setupDrawText(ModularGuiContext context, TextFieldTheme theme) {
+    @Override
+    protected void setupDrawText(ModularGuiContext context, TextFieldTheme theme) {
         super.setupDrawText(context, theme);
         renderer.setPos(getArea().getPadding().left(), firstLineTop());
     }
 
-    @Override protected void drawText(ModularGuiContext context, TextFieldTheme theme) {
+    @Override
+    protected void drawText(ModularGuiContext context, TextFieldTheme theme) {
         Component placeholder = hintText;
         hintText = null;
         try {
@@ -407,10 +554,14 @@ public class Input extends TextFieldWidget implements SignalOwner {
             }
             // The editor paints its caret last, above the placeholder and committed text.
             super.drawText(context, theme);
-        } finally { hintText = placeholder; }
+        } finally {
+            hintText = placeholder;
+        }
     }
 
-    io.github.luyingyilong.ore.layout.Control debugControl() { return layoutControl; }
+    io.github.luyingyilong.ore.layout.Control debugControl() {
+        return layoutControl;
+    }
 
     protected Label placeholderLabel(Component placeholder) {
         int color = hintTextColor == null ? OreTheme.TEXT_SECONDARY : hintTextColor;
@@ -473,8 +624,10 @@ public class Input extends TextFieldWidget implements SignalOwner {
         graphics.pose().translate(0.0F, 0.0F,
                 paintPass.active() ? OreLayers.INPUT : layoutControl == null ? depth : layoutControl.drawingDepth());
         Rect clip = layoutControl == null ? null : layoutControl.drawingClip();
-        if (clip != null) { graphics.enableScissor(clip.x(), clip.y(), clip.right(), clip.bottom());
-            DebugBridge.backend().clip(clip); }
+        if (clip != null) {
+            graphics.enableScissor(clip.x(), clip.y(), clip.right(), clip.bottom());
+            DebugBridge.backend().clip(clip);
+        }
         Rect fieldClip = inputMethodBounds();
         graphics.enableScissor(fieldClip.x(), fieldClip.y(), fieldClip.right(), fieldClip.bottom());
         DebugBridge.backend().clip(fieldClip);
@@ -482,9 +635,16 @@ public class Input extends TextFieldWidget implements SignalOwner {
             draw.run();
             graphics.flush();
         } finally {
-            graphics.disableScissor(); DebugBridge.backend().unclip();
-            if (clip != null) { graphics.disableScissor(); DebugBridge.backend().unclip(); }
+            graphics.disableScissor();
+            DebugBridge.backend().unclip();
+            if (clip != null) {
+                graphics.disableScissor();
+                DebugBridge.backend().unclip();
+            }
             graphics.pose().popPose();
         }
+    }
+
+    record Caret(int x, int y) {
     }
 }

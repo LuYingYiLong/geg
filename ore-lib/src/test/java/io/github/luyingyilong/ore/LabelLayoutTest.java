@@ -39,7 +39,8 @@ public final class LabelLayoutTest {
         Label scaled = new Label(Component.literal("ABCD")).setScale(2.0F).setWrap(Label.Wrap.CHARACTER);
         check(scaled.lines(font, 24).size() == 2);
         check(scaled.measureSize(font, new Size(24, 100)).height() == 2 * scaled.lineHeight(font));
-        Box labelParent = new Box().add(english);
+        Box labelParent = new Box();
+        labelParent.addChild(english);
         labelParent.layout(new Rect(0, 0, 20, 20), font);
         english.setText(Component.literal("Longer label"));
         check(labelParent.getLayoutDirty());
@@ -111,7 +112,8 @@ public final class LabelLayoutTest {
     private static void fontSizeLayout(Font font) {
         Label label = new Label(Component.literal("ABCDE"));
         check(label.getFontSize() == 8.0F && label.measureWidth(font, 100) == 30);
-        Box parent = new Box().add(label);
+        Box parent = new Box();
+        parent.addChild(label);
         parent.layout(new Rect(0, 0, 100, 30), font);
         label.setFontSize(16.0F).setWrap(Label.Wrap.CHARACTER);
         check(parent.getLayoutDirty());
@@ -164,7 +166,8 @@ public final class LabelLayoutTest {
         Label label = new Label(original);
         check(!label.getHero() && label.measureWidth(font, 100) == 12);
         check(label.getStyledText().getStyle().getFont().equals(OreFonts.BODY));
-        Box parent = new Box().add(label);
+        Box parent = new Box();
+        parent.addChild(label);
         parent.layout(new Rect(0, 0, 100, 20), font);
         label.setHero(true);
         check(parent.getLayoutDirty() && label.measureWidth(font, 100) == 8);

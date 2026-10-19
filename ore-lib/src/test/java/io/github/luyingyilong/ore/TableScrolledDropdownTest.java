@@ -23,9 +23,9 @@ public final class TableScrolledDropdownTest {
     private static void retainedDropdown() {
         Dropdown<String> dropdown = dropdown();
         Table<Integer> table = new Table<Integer>().setRowKey(value -> value)
-                .column(new Table.Column<>("name", Component.empty(), 230, 230, 0,
+                .addColumn(new Table.Column<>("name", Component.empty(), 230, 230, 0,
                         width -> 23, (context, row, bounds) -> { }))
-                .column(new Table.Column<>("menu", Component.empty(), 70, 70, 0,
+                .addColumn(new Table.Column<>("menu", Component.empty(), 70, 70, 0,
                         width -> 23, new Table.ControlCell<>(() -> dropdown, (control, row) -> { })));
         table.setMinimum(300, 80);
         table.setRows(List.of(0));
@@ -50,14 +50,14 @@ public final class TableScrolledDropdownTest {
     private static void drawerDropdownAcrossLayout() {
         Dropdown<String> dropdown = dropdown();
         Container wrapper = new Container() {
-            { addChild(dropdown); }
+            { this.addChild(dropdown); }
             @Override public void layout(Rect bounds, net.minecraft.client.gui.Font font) {
                 super.layout(bounds, font);
                 fitChild(dropdown, new Rect(0, 0, bounds.width(), bounds.height()), font);
             }
         };
         Table<Integer> table = new Table<Integer>().setRowKey(value -> value)
-                .column(new Table.Column<>("menu", Component.empty(), 70, 70, 1,
+                .addColumn(new Table.Column<>("menu", Component.empty(), 70, 70, 1,
                         width -> 23, new Table.ControlCell<>(() -> wrapper, (control, row) -> { })));
         table.setMinimum(300, 80);
         table.setRows(List.of(0));
@@ -66,7 +66,9 @@ public final class TableScrolledDropdownTest {
         };
         long[] time = {0};
         Drawer drawer = new Drawer(Component.literal("Members"), () -> time[0], cue -> { }).setContent(table);
-        Window window = Window.embedded().setContent(new Control()).setOverlay(new Overlay().add(drawer));
+        var childContainer61 = new Overlay();
+        childContainer61.addChild(drawer);
+        Window window = Window.embedded().setContent(new Control()).setOverlay(childContainer61);
         drawer.open();
         time[0] = 1000;
         window.layoutViewport(400, 200, font);

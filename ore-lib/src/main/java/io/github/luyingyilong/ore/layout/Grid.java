@@ -15,7 +15,6 @@ import java.util.*;
  */
 public final class Grid<T> extends Container implements ScrollContent {
     private final List<Entry<T>> entries = new ArrayList<>();
-    private final List<Control> fixedChildren = new ArrayList<>();
     private final Map<Integer, View<T>> active = new HashMap<>();
     private final ArrayDeque<View<T>> recycled = new ArrayDeque<>();
     private final List<Integer> visibleIndices = new ArrayList<>();
@@ -39,7 +38,7 @@ public final class Grid<T> extends Container implements ScrollContent {
     private Font layoutFont;
 
     public Grid() {
-        getSignalScope().own(() -> { active.clear(); recycled.clear(); fixedChildren.clear(); entries.clear(); visibleIndices.clear(); });
+        getSignalScope().own(() -> { active.clear(); recycled.clear(); entries.clear(); visibleIndices.clear(); });
         setFocusable(true);
         setFocusExpansion(1);
     }
@@ -111,7 +110,7 @@ public final class Grid<T> extends Container implements ScrollContent {
     }
 
     public Grid<T> setAdapter(Adapter<T> adapter) {
-        if (adapter != null && !fixedChildren.isEmpty())
+        if (adapter != null && this.adapter == null && getChildCount() != 0)
             throw new IllegalStateException("A Grid cannot mix fixed children and an adapter");
         if (this.adapter != adapter) {
             recycleAll();
@@ -125,24 +124,15 @@ public final class Grid<T> extends Container implements ScrollContent {
 
     public Signal<T> itemActivated() { return itemActivated.signal(); }
 
-    public Grid<T> add(Control child) {
-        addChild(child);
-        return this;
+    @Override protected void validateChildren(List<Control> proposed) {
+        if (adapter != null && !isUpdatingChildren()
+                && proposed.stream().anyMatch(child -> child.getParent() != this))
+            throw new IllegalStateException("An adapter Grid owns its views; use setAdapter");
     }
 
-    @Override public Grid<T> addChild(Control child) {
-        if (adapter != null) throw new IllegalStateException("A Grid cannot mix fixed children and an adapter");
-        super.addChild(child);
-        fixedChildren.add(child);
-        invalidate();
-        return this;
-    }
-
-    @Override public boolean removeChild(Control child) {
-        if (!super.removeChild(child)) return false;
-        fixedChildren.remove(child);
-        invalidate();
-        return true;
+    @Override protected void childrenChanged() {
+        if (adapter == null) invalidate();
+        else active.values().removeIf(view -> view instanceof Control control && control.getParent() != this);
     }
 
     @Inspectable
@@ -262,7 +252,7 @@ public final class Grid<T> extends Container implements ScrollContent {
         Map<Object, ArrayDeque<View<T>>> previous = new HashMap<>();
         for (Entry<T> entry : entries) {
             View<T> view = active.get(entry.index());
-            if (view instanceof Control control && !control.isAlive()) { super.removeChild(control); continue; }
+            if (view instanceof Control control && !control.isAlive()) { removeChild(control); continue; }
             if (view != null) previous.computeIfAbsent(entry.key(), key -> new ArrayDeque<>()).add(view);
         }
         entries.clear();
@@ -324,7 +314,7 @@ public final class Grid<T> extends Container implements ScrollContent {
         }
         for (ArrayDeque<View<T>> remaining : previous.values())
             for (View<T> view : remaining) {
-                if (view instanceof Control control) { control.resetBindingScope(); super.removeChild(control); }
+                if (view instanceof Control control) { control.resetBindingScope(); removeChild(control); }
                 recycled.add(view);
             }
         active.clear();
@@ -336,7 +326,7 @@ public final class Grid<T> extends Container implements ScrollContent {
         LayoutMode mode = DebugBridge.value(this, "mode", this.mode);
         int minCardWidth = DebugBridge.value(this, "minCardWidth", this.minCardWidth);
         int gap = DebugBridge.value(this, "gap", this.gap);
-        List<Control> visible = fixedChildren.stream()
+        List<Control> visible = getChildren().stream()
                 .filter(child -> child.getParent() == this && child.isAlive() && child.getVisible()).toList();
         if (visible.isEmpty()) {
             contentWidth = 0;
@@ -370,14 +360,15 @@ public final class Grid<T> extends Container implements ScrollContent {
 
     private void pruneDeadViews() {
         recycled.removeIf(view -> view instanceof Control control && !control.isAlive());
-        for (int key : List.copyOf(active.keySet())) { View<T> view = active.get(key); if (view instanceof Control control && !control.isAlive()) { active.remove(key); super.removeChild(control); } }
+        for (int key : List.copyOf(active.keySet())) { View<T> view = active.get(key); if (view instanceof Control control && !control.isAlive()) { active.remove(key); removeChild(control); } }
     }
 
     private void recycleAll() {
         pruneDeadViews();
-        for (View<T> view : active.values())
-            if (view instanceof Control control) { control.resetBindingScope(); super.removeChild(control); }
-        recycled.addAll(active.values());
+        List<View<T>> previous = List.copyOf(active.values());
+        for (View<T> view : previous)
+            if (view instanceof Control control) { control.resetBindingScope(); removeChild(control); }
+        recycled.addAll(previous);
         active.clear();
         visibleIndices.clear();
         visibilityDirty = true;
@@ -401,7 +392,7 @@ public final class Grid<T> extends Container implements ScrollContent {
         for (int index : List.copyOf(active.keySet()))
             if (!visible.contains(index)) {
                 View<T> view = active.remove(index);
-                if (view instanceof Control control) { control.resetBindingScope(); super.removeChild(control); }
+                if (view instanceof Control control) { control.resetBindingScope(); removeChild(control); }
                 recycled.add(view);
             }
         for (Entry<T> entry : entries)
@@ -409,9 +400,15 @@ public final class Grid<T> extends Container implements ScrollContent {
                 View<T> view = recycled.isEmpty() ? adapter.createView() : recycled.removeFirst();
                 if (view instanceof Control control) { ownPooled(control); control.resetBindingScope(); DebugBridge.backend().binding(control, entry.key()); }
                 view.bind(entry.item());
-                if (view instanceof Control control) super.addChild(control);
+                if (view instanceof Control control) {
+                    List<Control> next = new ArrayList<>(getChildren());
+                    next.add(control);
+                    updateChildren(next);
+                }
                 active.put(entry.index(), view);
             }
+        int childIndex = 0;
+        for (int index : visibleIndices) if (active.get(index) instanceof Control control) moveChild(control, childIndex++);
         for (int index : visibleIndices)
             if (active.get(index) instanceof Control control)
                 fitChild(control, entries.get(index).bounds(), layoutFont);
@@ -427,7 +424,7 @@ public final class Grid<T> extends Container implements ScrollContent {
             Rect origin = getScreenBounds(screenX, screenY);
             Rect viewport = visibleRegion.translated(origin.x(), origin.y());
             if (adapter == null) {
-                for (Control child : List.copyOf(fixedChildren)) {
+                for (Control child : getChildren()) {
                     if (child.getParent() != this || !child.isAlive() || !child.getVisible()) continue;
                     Rect area = child.getAbsoluteBounds();
                     if (area.bottom() >= getAbsoluteBounds().y() + visibleRegion.y() - visibleRegion.height()
@@ -490,7 +487,7 @@ public final class Grid<T> extends Container implements ScrollContent {
 
     public Control hitFixed(int rootX, int rootY) {
         if (adapter != null) return null;
-        for (Control child : List.copyOf(fixedChildren))
+        for (Control child : getChildren())
             if ((child.isAlive() && child.getVisible())
                     && child.getAbsoluteBounds().contains(rootX, rootY)) return child;
         return null;

@@ -43,8 +43,8 @@ public final class ChatComposer extends Container {
         input.setPlaceholder(Component.translatable("chat.geg.compose_hint"));
         Signals.configure(input, connected -> { connected.setSubmitOnEnter(true); connected.submitted().connect(connected, submittedText130 -> this.submit()); }).setKeyHandler(this::key);
         editor.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        addChild(editor);
-        addChild(completion);
+        this.addChild(editor);
+        this.addChild(completion);
         setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         completion.setVisible(false);
     }
@@ -162,7 +162,7 @@ public final class ChatComposer extends Container {
                 Button button = Signals.configure(new Button(Component.literal(suggestion.getText()).withStyle(style -> style.withColor(OreTheme.TEXT_WHITE))).setType(Button.Type.TEXT)
                         .setToggleButton(true).setAlignment(Button.TextAlignment.LEFT), connected -> connected.pressed().connect(connected, () -> apply(suggestion)));
                 button.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-                suggestionButtons.add(button);
+                suggestionButtons.addChild(button);
             }
             // Suggestions stay in a non-modal overlay, so the native editor retains keyboard focus.
         }));
@@ -240,7 +240,7 @@ public final class ChatComposer extends Container {
                 .setChild(new Padding(Padding.Insets.all(1)).setChild(new Scroll().setHorizontal(Scroll.BarMode.DISABLED).setContent(suggestionButtons)));
 
         Completion() {
-            addChild(background);
+            this.addChild(background);
         }
 
         @Override

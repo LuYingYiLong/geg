@@ -54,10 +54,10 @@ public final class PlayerIdentityCellTest {
         int[] actions = {0};
         Table<OrganizationSyncPacket.Member> table = new Table<OrganizationSyncPacket.Member>()
                 .setRowKey(OrganizationSyncPacket.Member::id)
-                .column(new Table.Column<>("member", Component.literal("Member"), 48, 110, 2, width -> 20, cell))
-                .column(new Table.Column<>("role", Component.literal("Role"), 42, 64, 1, width -> 20,
+                .addColumn(new Table.Column<>("member", Component.literal("Member"), 48, 110, 2, width -> 20, cell))
+                .addColumn(new Table.Column<>("role", Component.literal("Role"), 42, 64, 1, width -> 20,
                         new Table.TextCell<>(member -> Component.literal("Member"), OreTheme.TEXT_WHITE)))
-                .column(new Table.Column<>("action", Component.literal("Action"), 70, 82, 1, width -> 20, new Table.Cell<>() {
+                .addColumn(new Table.Column<>("action", Component.literal("Action"), 70, 82, 1, width -> 20, new Table.Cell<>() {
                     @Override public void draw(brachy.modularui.screen.viewport.ModularGuiContext context,
                                                OrganizationSyncPacket.Member row, Rect area) { }
                     @Override public List<Rect> focusTargets(OrganizationSyncPacket.Member row, Rect area) { return List.of(area); }

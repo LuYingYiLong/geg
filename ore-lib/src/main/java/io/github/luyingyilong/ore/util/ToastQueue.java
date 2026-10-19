@@ -7,12 +7,16 @@ import net.minecraft.client.gui.Font;
 
 import java.util.*;
 
-/** Bounded, keyed toast instances survive screen changes without consuming input. */
+/**
+ * Bounded, keyed toast instances survive screen changes without consuming input.
+ */
 public final class ToastQueue {
-    public record Frame(Toast toast, Rect area) { }
     private final Map<String, Toast> messages = new LinkedHashMap<>();
+
     public Toast show(String key, Toast toast) {
-        Objects.requireNonNull(key); Objects.requireNonNull(toast); prune();
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(toast);
+        prune();
         Toast existing = messages.get(key);
         if (existing != null) {
             existing.setText(toast.getText()).setDuration(toast.getDuration()).setType(toast.getType()).refresh();
@@ -20,11 +24,29 @@ public final class ToastQueue {
             return existing;
         }
         while (messages.size() >= 3) messages.remove(messages.keySet().iterator().next()).queueFree();
-        messages.put(key, toast.open()); return toast;
+        messages.put(key, toast.open());
+        return toast;
     }
-    public void clear() { for (Toast toast : List.copyOf(messages.values())) toast.queueFree(); messages.clear(); }
-    public int size() { prune(); return messages.size(); }
-    private void prune() { messages.values().removeIf(toast -> { if (!toast.isAlive() || !toast.getVisible() || toast.getFinished()) { toast.queueFree(); return true; } return false; }); }
+
+    public void clear() {
+        for (Toast toast : List.copyOf(messages.values())) toast.queueFree();
+        messages.clear();
+    }
+
+    public int size() {
+        prune();
+        return messages.size();
+    }
+
+    private void prune() {
+        messages.values().removeIf(toast -> {
+            if (!toast.isAlive() || !toast.getVisible() || toast.getFinished()) {
+                toast.queueFree();
+                return true;
+            }
+            return false;
+        });
+    }
 
     public List<Frame> layout(Font font, int width, int height) {
         prune();
@@ -45,8 +67,13 @@ public final class ToastQueue {
             int x = Math.max(0, (width - size.width()) / 2);
             int offset = (int) Math.round((y + toastHeight + 1) * (1.0D - toast.getProgress()));
             Rect area = new Rect(x, y - offset, size.width(), toastHeight);
-            toast.layout(area, font); frames.add(new Frame(toast, area)); y += toastHeight + 4;
+            toast.layout(area, font);
+            frames.add(new Frame(toast, area));
+            y += toastHeight + 4;
         }
         return List.copyOf(frames);
+    }
+
+    public record Frame(Toast toast, Rect area) {
     }
 }

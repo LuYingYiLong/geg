@@ -24,16 +24,17 @@ final class OrganizationMembershipRow extends Container {
         details.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Label name = new Label(Component.literal(summary.name())).setColor(OreTheme.TEXT_WHITE);
         name.setMinimum(0, 16).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        details.add(name);
+        details.addChild(name);
         description = new Label(Component.literal(summary.description())).setColor(OreTheme.TEXT_SECONDARY)
                 .setWrap(Label.Wrap.CHARACTER).setMaxLines(2).setOverflow(Label.Overflow.ELLIPSIS);
         description.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         description.setVisible(!summary.description().isBlank());
-        details.add(description);
+        details.addChild(description);
         open = new Button(Component.translatable("organization.geg.details"));
         open.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        row.add(details).add(open);
-        addChild(row);
+        row.addChild(details);
+        row.addChild(open);
+        this.addChild(row);
     }
 
     Label descriptionNode() { return description; }

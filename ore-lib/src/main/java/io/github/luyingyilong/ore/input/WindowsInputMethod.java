@@ -12,7 +12,9 @@ import org.lwjgl.glfw.GLFWNativeWin32;
 
 import java.nio.charset.StandardCharsets;
 
-/** Uses Windows' existing IME context; never changes the player's keyboard layout or language. */
+/**
+ * Uses Windows' existing IME context; never changes the player's keyboard layout or language.
+ */
 final class WindowsInputMethod implements InputMethodSession.Connection {
     private final Input input;
     private final WinDef.HWND window;
@@ -24,8 +26,8 @@ final class WindowsInputMethod implements InputMethodSession.Connection {
     private final boolean candidateCaptured;
     private final boolean compositionCaptured;
     private final boolean initialOpen;
-    private boolean closed;
     private final boolean nativeWindow;
+    private boolean closed;
 
     WindowsInputMethod(Input input) {
         this(input, new WinDef.HWND(new Pointer(GLFWNativeWin32.glfwGetWin32Window(input.getWindowContext().getHandle()))));
@@ -35,7 +37,9 @@ final class WindowsInputMethod implements InputMethodSession.Connection {
         this(input, window, Imm.API);
     }
 
-    /** Injectable IMM boundary keeps state restoration testable without a desktop input context. */
+    /**
+     * Injectable IMM boundary keeps state restoration testable without a desktop input context.
+     */
     WindowsInputMethod(Input input, WinDef.HWND window, Imm imm) {
         this.input = input;
         nativeWindow = input != null && input.getWindowContext().getNativeWindow();
@@ -63,7 +67,46 @@ final class WindowsInputMethod implements InputMethodSession.Connection {
         return new WinDef.HWND(new Pointer(handle));
     }
 
-    @Override public void update() {
+    static InputPreedit currentPreedit() {
+        return readPreedit(currentWindow(), Imm.API);
+    }
+
+    private static InputPreedit readPreedit(WinDef.HWND window, Imm imm) {
+        Pointer context = imm.ImmGetContext(window);
+        if (context == null) return InputPreedit.EMPTY;
+        try {
+            int bytes = imm.ImmGetCompositionStringW(context, 0x0008, null, 0); // GCS_COMPSTR
+            if (bytes <= 0 || bytes > InputPreedit.MAX_LENGTH * 2 || (bytes & 1) != 0)
+                return InputPreedit.EMPTY;
+            try (Memory memory = new Memory(bytes)) {
+                int copied = imm.ImmGetCompositionStringW(context, 0x0008, memory, bytes);
+                if (copied <= 0 || copied > bytes || (copied & 1) != 0) return InputPreedit.EMPTY;
+                String text = new String(memory.getByteArray(0, copied), StandardCharsets.UTF_16LE);
+                int cursor = imm.ImmGetCompositionStringW(context, 0x0080, null, 0); // GCS_CURSORPOS
+                return new InputPreedit(text, cursor < 0 ? text.length() : cursor);
+            }
+        } finally {
+            imm.ImmReleaseContext(window, context);
+        }
+    }
+
+    static void cancelCurrentComposition() {
+        cancelComposition(currentWindow(), Imm.API);
+    }
+
+    private static void cancelComposition(WinDef.HWND window, Imm imm) {
+        Pointer context = imm.ImmGetContext(window);
+        if (context == null) return;
+        try {
+            imm.ImmNotifyIME(context, 0x0015, 0x0004, 0); // NI_COMPOSITIONSTR, CPS_CANCEL
+            imm.ImmNotifyIME(context, 0x0011, 0, 0); // NI_CLOSECANDIDATE
+        } finally {
+            imm.ImmReleaseContext(window, context);
+        }
+    }
+
+    @Override
+    public void update() {
         Pointer context = imm.ImmGetContext(window);
         if (context == null) return;
         try {
@@ -86,45 +129,18 @@ final class WindowsInputMethod implements InputMethodSession.Connection {
         }
     }
 
-    static InputPreedit currentPreedit() { return readPreedit(currentWindow(), Imm.API); }
-
-    private static InputPreedit readPreedit(WinDef.HWND window, Imm imm) {
-        Pointer context = imm.ImmGetContext(window);
-        if (context == null) return InputPreedit.EMPTY;
-        try {
-            int bytes = imm.ImmGetCompositionStringW(context, 0x0008, null, 0); // GCS_COMPSTR
-            if (bytes <= 0 || bytes > InputPreedit.MAX_LENGTH * 2 || (bytes & 1) != 0)
-                return InputPreedit.EMPTY;
-            try (Memory memory = new Memory(bytes)) {
-                int copied = imm.ImmGetCompositionStringW(context, 0x0008, memory, bytes);
-                if (copied <= 0 || copied > bytes || (copied & 1) != 0) return InputPreedit.EMPTY;
-                String text = new String(memory.getByteArray(0, copied), StandardCharsets.UTF_16LE);
-                int cursor = imm.ImmGetCompositionStringW(context, 0x0080, null, 0); // GCS_CURSORPOS
-                return new InputPreedit(text, cursor < 0 ? text.length() : cursor);
-            }
-        } finally {
-            imm.ImmReleaseContext(window, context);
-        }
+    @Override
+    public InputPreedit preedit() {
+        return closed ? InputPreedit.EMPTY : readPreedit(window, imm);
     }
 
-    @Override public InputPreedit preedit() { return closed ? InputPreedit.EMPTY : readPreedit(window, imm); }
-
-    static void cancelCurrentComposition() { cancelComposition(currentWindow(), Imm.API); }
-
-    private static void cancelComposition(WinDef.HWND window, Imm imm) {
-        Pointer context = imm.ImmGetContext(window);
-        if (context == null) return;
-        try {
-            imm.ImmNotifyIME(context, 0x0015, 0x0004, 0); // NI_COMPOSITIONSTR, CPS_CANCEL
-            imm.ImmNotifyIME(context, 0x0011, 0, 0); // NI_CLOSECANDIDATE
-        } finally {
-            imm.ImmReleaseContext(window, context);
-        }
+    @Override
+    public void cancelComposition() {
+        if (!closed) cancelComposition(window, imm);
     }
 
-    @Override public void cancelComposition() { if (!closed) cancelComposition(window, imm); }
-
-    @Override public void close() {
+    @Override
+    public void close() {
         if (closed) return;
         try {
             cancelComposition();
@@ -147,17 +163,29 @@ final class WindowsInputMethod implements InputMethodSession.Connection {
 
     public interface Imm extends StdCallLibrary {
         Imm API = Native.load("imm32", Imm.class, W32APIOptions.DEFAULT_OPTIONS);
+
         Pointer ImmGetContext(WinDef.HWND window);
+
         boolean ImmReleaseContext(WinDef.HWND window, Pointer context);
+
         boolean ImmAssociateContextEx(WinDef.HWND window, Pointer context, int flags);
+
         Pointer ImmAssociateContext(WinDef.HWND window, Pointer context);
+
         boolean ImmSetCandidateWindow(Pointer context, CandidateForm form);
+
         boolean ImmSetCompositionWindow(Pointer context, CompositionForm form);
+
         boolean ImmGetCandidateWindow(Pointer context, int index, CandidateForm form);
+
         boolean ImmGetCompositionWindow(Pointer context, CompositionForm form);
+
         boolean ImmGetOpenStatus(Pointer context);
+
         boolean ImmSetOpenStatus(Pointer context, boolean open);
+
         boolean ImmNotifyIME(Pointer context, int action, int index, int value);
+
         int ImmGetCompositionStringW(Pointer context, int index, Pointer buffer, int length);
     }
 

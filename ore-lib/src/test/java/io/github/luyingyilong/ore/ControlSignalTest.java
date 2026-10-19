@@ -12,9 +12,10 @@ public final class ControlSignalTest {
         SignalSource0 external = new SignalSource0(source, "external");
         int[] received = {0};
         Connection connection = external.signal().connect(receiver, () -> received[0]++);
-        Box parent = new Box().add(receiver);
+        Box parent = new Box();
+        parent.addChild(receiver);
         receiver.setVisible(false); receiver.setVisible(true);
-        parent.removeChild(receiver); parent.add(receiver);
+        parent.removeChild(receiver); parent.addChild(receiver);
         external.emit();
         check(received[0] == 1 && connection.isConnected(), "Hide and detach preserve lifetime");
         parent.queueFree(); parent.queueFree();

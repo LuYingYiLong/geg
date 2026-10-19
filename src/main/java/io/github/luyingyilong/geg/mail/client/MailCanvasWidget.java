@@ -114,42 +114,57 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
                 .setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         send.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         audiences.selectionChanged().connect(audiences, index -> selectInbox(MailActionPacket.Scope.values()[index]));
-        Box audienceRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4).add(audiences).add(send);
+        Box audienceRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
+        audienceRow.addChild(audiences);
+        audienceRow.addChild(send);
         audienceRow.setMinimum(0, Button.HEIGHT).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         for (Control label : List.of(detailTitle, detailSender, detailDate, detailText, attachment))
             label.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        Box authorInfo = new Box().setGap(2).add(detailSender).add(detailDate);
+        Box authorInfo = new Box().setGap(2);
+        authorInfo.addChild(detailSender);
+        authorInfo.addChild(detailDate);
         authorInfo.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        detailAuthor.add(detailAvatar).add(authorInfo);
+        detailAuthor.addChild(detailAvatar);
+        detailAuthor.addChild(authorInfo);
         detailAuthor.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         detailScroll = new Scroll().setHorizontal(Scroll.BarMode.DISABLED).setContent(new MailDetailBody(
                 detailText, attachmentDivider, attachment, rewards, detailActions));
         detailScroll.setMinimum(0, 16).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         detailActions.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        Panel detailPanel = new Panel(null).setChild(new Padding(Padding.Insets.all(4))
-                .setChild(new Box().setGap(4).add(detailTitle).add(detailAuthor).add(detailScroll)));
+        var detailColumn = new Box().setGap(4);
+        detailColumn.addChild(detailTitle);
+        detailColumn.addChild(detailAuthor);
+        detailColumn.addChild(detailScroll);
+        Panel detailPanel = new Panel(null).setChild(new Padding(Padding.Insets.all(4)).setChild(detailColumn));
         Panel menuPanel = new Panel(OreTheme.PANEL)
                 .setChild(new Padding(new Padding.Insets(8, 1, 8, 1)).setChild(mailScroll));
         columnsScroll = new Scroll().setVertical(Scroll.BarMode.DISABLED).setContent(new MailColumns(menuPanel, detailPanel));
         columnsScroll.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL); columnsScroll.setMinimum(0, 41);
         Padding padding = new Padding(Padding.Insets.all(4));
         padding.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        window.setContent(new Box().setGap(0).add(navbar).add(
-                padding.setChild(new Box().setGap(4).add(audienceRow).add(columnsScroll))
-        )).setOverlay(overlay);
+        var pageColumn = new Box().setGap(0);
+        pageColumn.addChild(navbar);
+        var mailContent = new Box().setGap(4);
+        mailContent.addChild(audienceRow);
+        mailContent.addChild(columnsScroll);
+        pageColumn.addChild(padding.setChild(mailContent));
+        window.setContent(pageColumn).setOverlay(overlay);
         clearDetail();
         renderInbox();
         scopeItem = new FormItem("scope", tr("mail.geg.scope"), scopes, () -> scope().name());
         targetItem = new FormItem("target", tr("mail.geg.target"), target);
         coinItem = new FormItem("coin", tr("mail.geg.coin_per_player"), coin);
-        form.add(scopeItem).add(targetItem).add(new FormItem("title", tr("mail.geg.subject"), title))
-                .add(new FormItem("body", tr("mail.geg.body"), body)).add(coinItem);
+        form.addItem(scopeItem).addItem(targetItem).addItem(new FormItem("title", tr("mail.geg.subject"), title))
+                .addItem(new FormItem("body", tr("mail.geg.body"), body)).addItem(coinItem);
         form.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         previewText.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        editor.setContent(new Box().setGap(6).add(form).add(previewText));
+        var editorContent = new Box().setGap(6);
+        editorContent.addChild(form);
+        editorContent.addChild(previewText);
+        editor.setContent(editorContent);
         editor.closed().connect(editor, () -> { form.setVisible(false); busy = false; token = null; });
         scopes.selectionChanged().connect(scopes, index -> { targetItem.setActive(scope() != MailActionPacket.Scope.ALL); editAgain(); });
-        overlay.add(editor);
+        overlay.addChild(editor);
     }
     private static String time(long millis) {
         return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").format(Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()));
@@ -221,7 +236,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         if (claimable) return;
         Button action = Signals.configure(new Button(tr("mail.geg.delete")).setType(Button.Type.DESTRUCTIVE), connected -> connected.pressed().connect(connected, () -> { deleting = selected; query(MailActionPacket.Action.DELETE, selected); }));
         action.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        detailActions.add(action); detailActions.setMinimum(0, action.getMinimumHeight()); detailActions.setVisible(true);
+        detailActions.addChild(action); detailActions.setMinimum(0, action.getMinimumHeight()); detailActions.setVisible(true);
     }
     private MailActionPacket.Scope scope() { return organization != null ? MailActionPacket.Scope.ORGANIZATION : MailActionPacket.Scope.values()[scopes.getSelected()]; }
     private void compose(UUID organization) {

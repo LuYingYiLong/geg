@@ -8,7 +8,9 @@ import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.Window;
 import net.minecraft.client.gui.Font;
 
-/** Ore layout proxy for a ModularUI text field. ModularUI retains focus and editing. */
+/**
+ * Ore layout proxy for a ModularUI text field. ModularUI retains focus and editing.
+ */
 public final class InputControl extends Control {
     private final Input widget;
     private Rect lastArea = new Rect(0, 0, 0, 0);
@@ -32,15 +34,38 @@ public final class InputControl extends Control {
         widget.height(() -> Math.max(1, getBounds().height()), Unit.Measure.PIXEL);
     }
 
-    @Override protected boolean lifecycleReady() { return widget.isValid(); }
+    /**
+     * The layout tree, rather than legacy widget constructor depths, owns the rendered layer.
+     */
+    public static float drawingDepth(Control node) {
+        float depth = io.github.luyingyilong.ore.util.OreLayers.INPUT;
+        for (Control parent = node.getParent(); parent != null; parent = parent.getParent())
+            depth += parent.getContentDepth();
+        return depth;
+    }
 
-    public Input getWidget() { return widget; }
-    @Override public int measureHeight(Font font, int available) {
+    public static boolean pointerInteractive(Control target, int x, int y) {
+        var context = target.getWindowContext();
+        return context.getOwner() == null || context.getOwner().pointerOver(target, x - context.getOriginX(), y - context.getOriginY());
+    }
+
+    @Override
+    protected boolean lifecycleReady() {
+        return widget.isValid();
+    }
+
+    public Input getWidget() {
+        return widget;
+    }
+
+    @Override
+    public int measureHeight(Font font, int available) {
         if (!isAlive()) return 0;
         return Math.max(getMinimumHeight(), widget.getPreferredInputHeight());
     }
 
-    @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+    @Override
+    protected void render(ModularGuiContext context, int screenX, int screenY) {
         syncWidgetArea();
         widget.drawInTree(context);
     }
@@ -49,26 +74,34 @@ public final class InputControl extends Control {
         return io.github.luyingyilong.ore.event.EventGeometry.displayed(this);
     }
 
-    public Rect getWidgetBounds() { return getDisplayedBounds().translated(getWindowContext().getOriginX(),getWindowContext().getOriginY()); }
-
-    @Override public void input(io.github.luyingyilong.ore.event.InputEvent event) {
-        if(event instanceof io.github.luyingyilong.ore.event.CancelEvent) {
-            widget.cancelPreedit();super.input(event);return;
-        }
-        if(event instanceof io.github.luyingyilong.ore.event.PointerEvent pointer
-                && pointer.action()==io.github.luyingyilong.ore.event.PointerEvent.Action.MOVE
-                && !event.context().mouseDown(pointer.button()))return;
-        syncWidgetArea();
-        widget.receive(event);
-        if(event.accepted() && event instanceof io.github.luyingyilong.ore.event.PointerEvent pointer
-                && pointer.action()==io.github.luyingyilong.ore.event.PointerEvent.Action.PRESS)event.capturePointer();
+    public Rect getWidgetBounds() {
+        return getDisplayedBounds().translated(getWindowContext().getOriginX(), getWindowContext().getOriginY());
     }
 
-    @Override public void cancelInteraction() {
+    @Override
+    public void input(io.github.luyingyilong.ore.event.InputEvent event) {
+        if (event instanceof io.github.luyingyilong.ore.event.CancelEvent) {
+            widget.cancelPreedit();
+            super.input(event);
+            return;
+        }
+        if (event instanceof io.github.luyingyilong.ore.event.PointerEvent pointer
+                && pointer.action() == io.github.luyingyilong.ore.event.PointerEvent.Action.MOVE
+                && !event.context().mouseDown(pointer.button())) return;
+        syncWidgetArea();
+        widget.receive(event);
+        if (event.accepted() && event instanceof io.github.luyingyilong.ore.event.PointerEvent pointer
+                && pointer.action() == io.github.luyingyilong.ore.event.PointerEvent.Action.PRESS)
+            event.capturePointer();
+    }
+
+    @Override
+    public void cancelInteraction() {
         widget.cancelPreedit();
         if (widget.isValid() && widget.isFocused()) widget.getContext().removeFocus();
         OreInputMethod.release(widget);
     }
+
     boolean layoutVisible() {
         for (Control node = this; node != null; node = node.getParent())
             if (!node.isAlive() || !(node.isAlive() && node.getVisible())) return false;
@@ -87,36 +120,31 @@ public final class InputControl extends Control {
         return drawingDepth(this);
     }
 
-    /** The layout tree, rather than legacy widget constructor depths, owns the rendered layer. */
-    public static float drawingDepth(Control node) {
-        float depth = io.github.luyingyilong.ore.util.OreLayers.INPUT;
-        for (Control parent = node.getParent(); parent != null; parent = parent.getParent()) depth += parent.getContentDepth();
-        return depth;
+    boolean pointerInteractive(int x, int y) {
+        return pointerInteractive(this, x, y);
     }
 
-    boolean pointerInteractive(int x, int y) { return pointerInteractive(this, x, y); }
-
-    public static boolean pointerInteractive(Control target, int x, int y) {
-        var context=target.getWindowContext();
-        return context.getOwner()==null || context.getOwner().pointerOver(target,x-context.getOriginX(),y-context.getOriginY());
-    }
-
-    /** Share Ore viewport clips with the native field's drawing and pointer checks. */
+    /**
+     * Share Ore viewport clips with the native field's drawing and pointer checks.
+     */
     Rect drawingClip() {
-        Rect clip=io.github.luyingyilong.ore.event.EventGeometry.clip(this);
-        return clip==null?null:clip.translated(getWindowContext().getOriginX(),getWindowContext().getOriginY());
+        Rect clip = io.github.luyingyilong.ore.event.EventGeometry.clip(this);
+        return clip == null ? null : clip.translated(getWindowContext().getOriginX(), getWindowContext().getOriginY());
     }
 
-    @Override public void invalidateTextLayout() {
+    @Override
+    public void invalidateTextLayout() {
         widget.scheduleResize();
         super.invalidateTextLayout();
     }
 
-    @Override public boolean acceptsFocus() {
+    @Override
+    public boolean acceptsFocus() {
         return super.acceptsFocus() && widget.inputVisible() && widget.isEnabled() && layoutInteractive();
     }
 
-    @Override public void layout(Rect localBounds, Font font) {
+    @Override
+    public void layout(Rect localBounds, Font font) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(localBounds, font);
@@ -143,7 +171,8 @@ public final class InputControl extends Control {
         if (changed) widget.scheduleResize();
     }
 
-    @Override public void setVisible(boolean visible) {
+    @Override
+    public void setVisible(boolean visible) {
         super.setVisible(visible);
         widget.setInputVisible(visible);
     }

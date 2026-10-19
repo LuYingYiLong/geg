@@ -38,15 +38,18 @@ public final class MailDetailBodyLayoutTest {
         rewards.claimButton().setLabel(Component.literal("领取附件")).setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_END);
         Scroll itemScroll = rewards.scroll();
         Box items = (Box) itemScroll.getChildren().stream().filter(Box.class::isInstance).findFirst().orElseThrow();
-        for (int i = 0; i < 100; i++) items.add(new Control().setMinimum(Slot.SIZE, Slot.SIZE));
+        for (int i = 0; i < 100; i++) { items.addChild(new Control().setMinimum(Slot.SIZE, Slot.SIZE)); }
         itemScroll.setVisible(true);
         MailDetailBody content = new MailDetailBody(body, new Control().setMinimum(0, 2), rewards);
         Scroll detail = new Scroll().setHorizontal(Scroll.BarMode.DISABLED).setContent(content);
         detail.setMinimum(0, 16).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         Control title = new Control().setMinimum(0, 12).setPreferred(0, 12);
         Control author = new Control().setMinimum(0, 24).setPreferred(0, 24);
-        Panel panel = new Panel(null).setChild(new Padding(Padding.Insets.all(4))
-                .setChild(new Box().setGap(4).add(title).add(author).add(detail)));
+        var childContainer92 = new Box().setGap(4);
+        childContainer92.addChild(title);
+        childContainer92.addChild(author);
+        childContainer92.addChild(detail);
+        Panel panel = new Panel(null).setChild(new Padding(Padding.Insets.all(4)).setChild(childContainer92));
         Scroll columns = new Scroll().setVertical(Scroll.BarMode.DISABLED).setContent(new MailColumns(
                 new Scroll().setContent(new Control()), panel));
         Window window = new Window(true).setContent(columns);

@@ -29,23 +29,18 @@ public final class Padding extends Container {
         return this;
     }
     public Padding setChild(Control child) {
-        if (this.child != null) removeChild(this.child);
-        addChild(child);
+        replaceChild(this.child, child);
         return this;
     }
 
-    @Override public Padding addChild(Control child) {
-        if (this.child != null) throw new IllegalStateException("Padding accepts one child");
-        super.addChild(child);
-        this.child = child;
-        return this;
+    @Override protected void validateChildren(java.util.List<Control> proposed) {
+        if (proposed.size() > 1) throw new IllegalStateException("Padding accepts one child; use setChild");
     }
 
-    @Override public boolean removeChild(Control child) {
-        if (!super.removeChild(child)) return false;
-        if (this.child == child) this.child = null;
-        return true;
+    @Override protected void childrenChanged() {
+        child = getChildCount() == 0 ? null : getChild(0);
     }
+
     public Insets getInsets() { if (!DebugBridge.active()) return insets; return new Insets(debugValue("top", insets.top()), debugValue("right", insets.right()),
                 debugValue("bottom", insets.bottom()), debugValue("left", insets.left())); }
 

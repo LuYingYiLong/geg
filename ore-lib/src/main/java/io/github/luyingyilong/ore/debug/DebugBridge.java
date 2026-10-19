@@ -16,6 +16,7 @@ public final class DebugBridge {
     };
     private static Backend backend = NONE;
     private static volatile SetterPreview setterPreview;
+
     private DebugBridge() {
     }
 
@@ -107,7 +108,9 @@ public final class DebugBridge {
     }
 
     public interface Backend {
-        default void lifecycle(Control node, io.github.luyingyilong.ore.layout.LifecycleInfo info) { }
+        default void lifecycle(Control node, io.github.luyingyilong.ore.layout.LifecycleInfo info) {
+        }
+
         default Object value(Control node, String key, Object base) {
             return base;
         }

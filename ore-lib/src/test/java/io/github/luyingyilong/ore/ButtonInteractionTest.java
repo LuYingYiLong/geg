@@ -25,7 +25,8 @@ public final class ButtonInteractionTest {
         Button button = new Button(cue -> events.add(cue.name()));
         io.github.luyingyilong.ore.signal.Connection action = button.pressed().connect(button, () -> events.add("action"));
         button.setPosition(10, 10).setRequestedSize(30, 20);
-        Control content = new Control().addChild(button);
+        Control content = new Control();
+        content.addChild(button);
         Overlay overlay = new Overlay();
         Window window = new Window(true).setContent(content).setOverlay(overlay);
         window.layoutViewport(100, 100, null);
@@ -108,7 +109,7 @@ public final class ButtonInteractionTest {
 
         io.github.luyingyilong.ore.event.WindowInputs.press(window,15, 15, null);
         Control popup = new Control() { @Override public boolean getFocusScope() { return true; } };
-        overlay.add(popup);
+        overlay.addChild(popup);
         window.layoutViewport(100, 100, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,15, 15);
         check(events.isEmpty());
@@ -158,7 +159,9 @@ public final class ButtonInteractionTest {
             int offset = type == Button.Type.TEXT || type == Button.Type.MENU ? 0 : 2;
             Button button = new Button(cue -> { }).setType(type);
             button.setPosition(20, 20).setRequestedSize(100, 20);
-            Window window = new Window(true).setContent(new Control().addChild(button));
+            var childContainer8 = new Control();
+            childContainer8.addChild(button);
+            Window window = new Window(true).setContent(childContainer8);
             window.layoutViewport(160, 80, null);
             window.getFocusManager().requestFocus(button, null);
             window.getFocusManager().keyboardNavigation();
@@ -217,7 +220,9 @@ public final class ButtonInteractionTest {
 
         events.clear();
         button.setPosition(0, 0).setRequestedSize(30, 20);
-        Window window = new Window(true).setContent(new Control().addChild(button));
+        var childContainer9 = new Control();
+        childContainer9.addChild(button);
+        Window window = new Window(true).setContent(childContainer9);
         window.layoutViewport(60, 60, null);
         io.github.luyingyilong.ore.event.WindowInputs.press(window,5, 5, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,50, 50);
@@ -268,7 +273,8 @@ public final class ButtonInteractionTest {
                 12, true, icon, icon, Button.TextAlignment.CENTER);
         check(trailing.trailingIcon().equals(new Rect(44, 6, 8, 8)));
         check(trailing.label().right() + 4 <= trailing.trailingIcon().x());
-        Control parent = new Control().addChild(button);
+        Control parent = new Control();
+        parent.addChild(button);
         parent.layout(new Rect(0, 0, 100, 20), font);
         button.setIcon(null);
         check(button.getIcon() == null && parent.getLayoutDirty());
@@ -285,7 +291,8 @@ public final class ButtonInteractionTest {
         int[] actions = {0};
         Button button = Signals.configure(new Button(cue -> { }), connected -> connected.pressed().connect(connected, () -> actions[0]++));
         button.setPosition(10, 80).setRequestedSize(30, 20);
-        Control content = new Control().setPreferred(80, 200).addChild(button);
+        Control content = new Control().setPreferred(80, 200);
+        content.addChild(button);
         Scroll scroll = new Scroll().setContent(content);
         Window window = new Window(true).setContent(scroll);
         window.layoutViewport(80, 60, font);

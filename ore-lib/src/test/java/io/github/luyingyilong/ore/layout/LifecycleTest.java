@@ -48,7 +48,7 @@ public final class LifecycleTest {
         Probe p = new Probe("p", log) {
             @Override protected void notification(ControlNotification n) {
                 super.notification(n);
-                if(n.type() == ControlNotification.Type.ENTER_TREE) { addChild(added); removeChild(removed); }
+                if(n.type() == ControlNotification.Type.ENTER_TREE) { this.addChild(added); removeChild(removed); }
             }
         };
         p.addChild(removed); Window root = new Window(true).setContent(p); root.prepareTree();

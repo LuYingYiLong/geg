@@ -40,15 +40,17 @@ public final class ClientOrganizationScreen {
             if (checked) unrestricted.setCheckedNoSignal(false);
             else if (!unrestricted.getChecked()) approval.setCheckedNoSignal(true);
         });
-        Box joinChoices = new Box().setGap(2).add(unrestricted).add(approval);
+        Box joinChoices = new Box().setGap(2);
+        joinChoices.addChild(unrestricted);
+        joinChoices.addChild(approval);
         joinChoices.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         unrestricted.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         approval.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        Form form = new Form().add(new FormItem("name",
+        Form form = new Form().addItem(new FormItem("name",
                 Component.translatable("organization.geg.name"), name))
-                .add(new FormItem("description",
+                .addItem(new FormItem("description",
                         Component.translatable("organization.geg.description"), description))
-                .add(new FormItem("join_policy",
+                .addItem(new FormItem("join_policy",
                         Component.translatable("organization.geg.join_policy"), joinChoices,
                         () -> approval.getChecked() ? "approval" : "unrestricted"));
         OrganizationEditForm editor = new OrganizationEditForm();

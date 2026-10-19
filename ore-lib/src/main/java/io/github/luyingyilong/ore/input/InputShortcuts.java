@@ -2,14 +2,12 @@ package io.github.luyingyilong.ore.input;
 
 import org.lwjgl.glfw.GLFW;
 
-/** Clipboard access is supplied by the screen; edits follow the same transactional handler. */
+/**
+ * Clipboard access is supplied by the screen; edits follow the same transactional handler.
+ */
 final class InputShortcuts {
-    interface Clipboard {
-        String get();
-        void set(String text);
+    private InputShortcuts() {
     }
-
-    private InputShortcuts() { }
 
     static boolean matches(int key, int modifiers) {
         if ((modifiers & GLFW.GLFW_MOD_CONTROL) == 0 || (modifiers & GLFW.GLFW_MOD_ALT) != 0) return false;
@@ -51,5 +49,11 @@ final class InputShortcuts {
         // Replace the selection in one validated edit, without MUI's preliminary deletion.
         editor.type(character);
         return true;
+    }
+
+    interface Clipboard {
+        String get();
+
+        void set(String text);
     }
 }

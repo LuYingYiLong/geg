@@ -41,9 +41,24 @@ final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interac
     private final Button chooseChannel = Signals.configure(new Button(Component.translatable("chat.geg.channels")).setSize(Button.Size.SMALL), connected -> connected.pressed().connect(connected, this::showChannels));
     private final Button direct = Signals.configure(new Button(Component.translatable("chat.geg.new_direct").withStyle(style -> style.withColor(OreTheme.TEXT_WHITE)))
             .setType(Button.Type.TEXT), connected -> connected.pressed().connect(connected, this::showContacts));
-    private final Box header = new Box().add(title);
-    private final Box sidebar = new Box().setGap(4).add(direct).add(menuScroll);
-    private final Box conversation = new Box().setGap(4).add(chooseChannel).add(header).add(loading).add(messages).add(newMessages).add(composer);
+    private final Box header = new Box();
+    {
+        header.addChild(title);
+    }
+    private final Box sidebar = new Box().setGap(4);
+    {
+        sidebar.addChild(direct);
+        sidebar.addChild(menuScroll);
+    }
+    private final Box conversation = new Box().setGap(4);
+    {
+        conversation.addChild(chooseChannel);
+        conversation.addChild(header);
+        conversation.addChild(loading);
+        conversation.addChild(messages);
+        conversation.addChild(newMessages);
+        conversation.addChild(composer);
+    }
     private final Content content = new Content();
     private final Drawer drawer = Signals.configure(new Drawer(Component.empty()).setClosable(false)
             .setPlacement(Drawer.Placement.LEFT).setPadding(ChatLayout.DRAWER_PADDING)
@@ -52,8 +67,14 @@ final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interac
     private final InputControl targetControl = new InputControl(target);
     private final Modal channelModal = Signals.configure(new Modal(Component.translatable("chat.geg.channels")).setSize(220, 220).setContent(compactScroll)
             .setDepth(400), connected -> connected.closeRequested().connect(connected, this::closeChannels));
-    private final Modal targetModal = Signals.configure(new Modal(Component.translatable("chat.geg.new_direct")).setSize(260, 240)
-            .setContent(new Box().setGap(4).add(targetControl).add(contactError).add(contactsScroll)).setDepth(400), connected -> connected.closeRequested().connect(connected, this::closeContacts)).addAction(Signals.configure(new Button(Component.translatable("chat.geg.open_direct")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, () -> ClientChatState.openDirect(target.getText()))));
+    private final Modal targetModal;
+    {
+        var contactFields = new Box().setGap(4);
+        contactFields.addChild(targetControl);
+        contactFields.addChild(contactError);
+        contactFields.addChild(contactsScroll);
+        targetModal = Signals.configure(new Modal(Component.translatable("chat.geg.new_direct")).setSize(260, 240).setContent(contactFields).setDepth(400), connected -> connected.closeRequested().connect(connected, this::closeContacts)).addAction(Signals.configure(new Button(Component.translatable("chat.geg.open_direct")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, () -> ClientChatState.openDirect(target.getText()))));
+    }
     private ChatChannel selected;
     private UUID epoch = ChatChannel.NONE;
     private long revision = -1;
@@ -93,7 +114,11 @@ final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interac
         targetModal.setVisible(false);
         target.setMaxLength(40);
         target.setInputVisible(false);
-        window.setContent(new Control()).setOverlay(new Overlay().add(drawer).add(channelModal).add(targetModal));
+        var layers = new Overlay();
+        layers.addChild(drawer);
+        layers.addChild(channelModal);
+        layers.addChild(targetModal);
+        window.setContent(new Control()).setOverlay(layers);
         window.onBack(() -> drawer.close());
         drawer.open();
         if (!initial.isEmpty()) ClientChatState.view(ClientChatState.selected()).draft = initial;

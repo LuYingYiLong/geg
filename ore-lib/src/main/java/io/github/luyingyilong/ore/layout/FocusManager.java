@@ -4,29 +4,42 @@ import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.ore.Table;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-/** One keyboard focus per Ore window, restricted to the topmost visible popup. */
+/**
+ * One keyboard focus per Ore window, restricted to the topmost visible popup.
+ */
 public final class FocusManager {
-    public enum Direction { LEFT, RIGHT, UP, DOWN }
-
     private final Window window;
     private final Map<Control, Control> remembered = new IdentityHashMap<>();
+    private final Set<Integer> activationKeysDown = new HashSet<>();
     private Control scope;
     private Control focused;
     private boolean keyboardFocusVisible;
     private boolean inputPointerFocusVisible;
     private Control activationOwner;
     private int activationKey = -1;
-    private final Set<Integer> activationKeysDown = new HashSet<>();
-
     FocusManager(Window window) {
         this.window = window;
+    }
+
+    private static boolean inside(Control target, Control scope) {
+        if (scope == null) return true;
+        for (Control node = target; node != null; node = node.getParent()) if (node == scope) return true;
+        return false;
+    }
+
+    private static boolean intersects(Rect a, Rect b) {
+        return a.x() < b.right() && b.x() < a.right()
+                && a.y() < b.bottom() && b.y() < a.bottom();
+    }
+
+    private static Rect intersection(Rect a, Rect b) {
+        if (!intersects(a, b)) return null;
+        int left = Math.max(a.x(), b.x());
+        int top = Math.max(a.y(), b.y());
+        return new Rect(left, top, Math.min(a.right(), b.right()) - left,
+                Math.min(a.bottom(), b.bottom()) - top);
     }
 
     public Control getFocused() {
@@ -34,8 +47,12 @@ public final class FocusManager {
         return focused;
     }
 
-    /** Does not validate focus: a native widget may ask while candidates are being collected. */
-    public boolean allowsNativeInput(Control input) { return inside(input, topScope()); }
+    /**
+     * Does not validate focus: a native widget may ask while candidates are being collected.
+     */
+    public boolean allowsNativeInput(Control input) {
+        return inside(input, topScope());
+    }
 
     public void requestFocus(Control target, ModularGuiContext context) {
         requestFocus(target, context, true);
@@ -62,19 +79,28 @@ public final class FocusManager {
         }
     }
 
-    /** Popup return must not scroll a pointer-selected table into a new position. */
-    public void restoreFocus(Control target, ModularGuiContext context) { requestFocus(target,context,false); }
+    /**
+     * Popup return must not scroll a pointer-selected table into a new position.
+     */
+    public void restoreFocus(Control target, ModularGuiContext context) {
+        requestFocus(target, context, false);
+    }
+
     public boolean allowsPopupOwner(Control target) {
-        Overlay layer=window.overlayLayer(); Control blocking=null;
-        if(layer!=null) {
-            var nodes=layer.getChildren();
-            for(int i=nodes.size()-1;i>=0;i--) {
-                Control node=nodes.get(i);
-                if(node instanceof io.github.luyingyilong.ore.window.WindowPopups.Popup)continue;
-                if((node.isAlive() && node.getVisible())&&node.getFocusScope()){blocking=node;break;}
+        Overlay layer = window.overlayLayer();
+        Control blocking = null;
+        if (layer != null) {
+            var nodes = layer.getChildren();
+            for (int i = nodes.size() - 1; i >= 0; i--) {
+                Control node = nodes.get(i);
+                if (node instanceof io.github.luyingyilong.ore.window.WindowPopups.Popup) continue;
+                if ((node.isAlive() && node.getVisible()) && node.getFocusScope()) {
+                    blocking = node;
+                    break;
+                }
             }
         }
-        return inside(target,blocking);
+        return inside(target, blocking);
     }
 
     void pointerPressed(Control hit, ModularGuiContext context) {
@@ -93,29 +119,37 @@ public final class FocusManager {
             requestFocus(null, context);
     }
 
-    /** Called by the MUI widget when Esc or another widget releases its native focus. */
+    /**
+     * Called by the MUI widget when Esc or another widget releases its native focus.
+     */
     public void nativeFocusLost(Control input) {
         if (focused == input) requestFocus(null, null);
     }
 
-    /** Virtualized controls call this before reusing a subtree for a different logical record. */
+    /**
+     * Virtualized controls call this before reusing a subtree for a different logical record.
+     */
     public void forgetSubtree(Control subtree) {
         java.util.Objects.requireNonNull(subtree);
-        window.cancelCaptures(subtree,io.github.luyingyilong.ore.event.CancelEvent.Reason.REBOUND);
+        window.cancelCaptures(subtree, io.github.luyingyilong.ore.event.CancelEvent.Reason.REBOUND);
         if (inside(focused, subtree)) {
             // Do not validate the new scope here: that could restore a different control and
             // immediately clear it while the old popup is only being detached/queued.
-            Control previous = focused; focused = null;
+            Control previous = focused;
+            focused = null;
             inputPointerFocusVisible = false;
             previous.notifyFocusChanged(false);
             var mui = window.getContext().getMui();
-            if (mui != null && previous instanceof io.github.luyingyilong.ore.input.InputControl && mui.isFocused()) mui.removeFocus();
+            if (mui != null && previous instanceof io.github.luyingyilong.ore.input.InputControl && mui.isFocused())
+                mui.removeFocus();
         }
         if (inside(activationOwner, subtree)) cancelActivation();
         remembered.entrySet().removeIf(entry -> inside(entry.getValue(), subtree));
     }
 
-    /** Any mouse button switches away from visible keyboard navigation. */
+    /**
+     * Any mouse button switches away from visible keyboard navigation.
+     */
     public void pointerActivity() {
         keyboardFocusVisible = false;
         inputPointerFocusVisible = false;
@@ -181,7 +215,9 @@ public final class FocusManager {
         return false;
     }
 
-    boolean activationHeld(int key) { return activationKeysDown.contains(key); }
+    boolean activationHeld(int key) {
+        return activationKeysDown.contains(key);
+    }
 
     boolean keyReleased(int keyCode, int modifiers, ModularGuiContext context) {
         boolean held = activationKeysDown.remove(keyCode);
@@ -322,7 +358,9 @@ public final class FocusManager {
         return null;
     }
 
-    private Control scopeRoot() { return scope == null ? window.contentNode() : scope; }
+    private Control scopeRoot() {
+        return scope == null ? window.contentNode() : scope;
+    }
 
     private boolean eligible(Control target) {
         if (!target.acceptsFocus() || !inside(target, scope)) return false;
@@ -333,25 +371,22 @@ public final class FocusManager {
         return false;
     }
 
-    private static boolean inside(Control target, Control scope) {
-        if (scope == null) return true;
-        for (Control node = target; node != null; node = node.getParent()) if (node == scope) return true;
-        return false;
-    }
-
     private Rect visibleBounds(Control target) {
         return visibleBounds(target, target.getFocusBounds());
     }
 
     private Rect visibleBounds(Control target, Rect area) {
-        for(Control node=target;node!=null;node=node.getParent())if(!(node.isAlive() && node.getVisible()))return null;
-        Rect result=io.github.luyingyilong.ore.event.EventGeometry.displayed(target,area);
-        Rect clip=io.github.luyingyilong.ore.event.EventGeometry.clip(target);
-        if(clip!=null)result=io.github.luyingyilong.ore.event.EventGeometry.intersect(result,clip);
-        return result.width()==0||result.height()==0?null:result;
+        for (Control node = target; node != null; node = node.getParent())
+            if (!(node.isAlive() && node.getVisible())) return null;
+        Rect result = io.github.luyingyilong.ore.event.EventGeometry.displayed(target, area);
+        Rect clip = io.github.luyingyilong.ore.event.EventGeometry.clip(target);
+        if (clip != null) result = io.github.luyingyilong.ore.event.EventGeometry.intersect(result, clip);
+        return result.width() == 0 || result.height() == 0 ? null : result;
     }
 
-    /** Buffered table buttons are navigation targets too; focusing one scrolls its row into view. */
+    /**
+     * Buffered table buttons are navigation targets too; focusing one scrolls its row into view.
+     */
     private Rect navigationBounds(Control target) {
         Rect visible = visibleBounds(target);
         if (visible != null) return visible;
@@ -366,19 +401,6 @@ public final class FocusManager {
             if (node instanceof Scroll scroll) area = area.translated(-scroll.getScrollX(), -scroll.getScrollY());
         }
         return buffered ? area : null;
-    }
-
-    private static boolean intersects(Rect a, Rect b) {
-        return a.x() < b.right() && b.x() < a.right()
-                && a.y() < b.bottom() && b.y() < a.bottom();
-    }
-
-    private static Rect intersection(Rect a, Rect b) {
-        if (!intersects(a, b)) return null;
-        int left = Math.max(a.x(), b.x());
-        int top = Math.max(a.y(), b.y());
-        return new Rect(left, top, Math.min(a.right(), b.right()) - left,
-                Math.min(a.bottom(), b.bottom()) - top);
     }
 
     private void reveal(Control target) {
@@ -407,4 +429,6 @@ public final class FocusManager {
         }
         return null;
     }
+
+    public enum Direction {LEFT, RIGHT, UP, DOWN}
 }

@@ -19,8 +19,7 @@ public final class MailAttachmentsLayoutTest {
         Scroll scroll = rewards.scroll();
         Box items = (Box) scroll.getChildren().stream().filter(Box.class::isInstance).findFirst().orElseThrow();
         // Geometry is independent of item registries; the server GameTest verifies item binding and NBT.
-        for (int i = 0; i < 100; i++) items.add(new Control().setMinimum(Slot.SIZE, Slot.SIZE)
-                .setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER));
+        for (int i = 0; i < 100; i++) { items.addChild(new Control().setMinimum(Slot.SIZE, Slot.SIZE).setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER)); }
         scroll.setVisible(true);
         rewards.claimButton().setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_END);
         for (int width : new int[]{120, 127, 128, 129, 300, 600}) {

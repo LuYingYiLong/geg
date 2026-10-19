@@ -49,7 +49,7 @@ public final class VirtualSignalLifetimeTest {
             check(created.stream().allMatch(Control::isDisposed) && refresh.signal().connectionCount() == 0, "Destroy active and pooled grid views");
 
             List<Control> cells = new ArrayList<>();
-            Table<Integer> table = new Table<Integer>().setRowKey(value -> value).column(new Table.Column<>("id", Component.empty(),
+            Table<Integer> table = new Table<Integer>().setRowKey(value -> value).addColumn(new Table.Column<>("id", Component.empty(),
                     40, 100, 1, width -> 23, new Table.ControlCell<>(() -> {
                         Control control = new Control(); cells.add(control); return control;
                     }, (control, value) -> refresh.signal().connect(control.getBindingScope(), () -> observed.add(value)))));

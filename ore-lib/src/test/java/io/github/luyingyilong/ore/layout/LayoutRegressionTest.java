@@ -32,7 +32,8 @@ public final class LayoutRegressionTest {
         Box limited = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
         Control left = new Control().setMinimum(30, 12);
         Control right = new Control().setMinimum(30, 12);
-        limited.addChild(left).addChild(right);
+        limited.addChild(left);
+        limited.addChild(right);
         limited.layout(new Rect(0, 0, 50, 12), null);
         check(left.getBounds().width() == 30 && right.getBounds().width() == 30);
         check(right.getBounds().right() == 64);
@@ -48,8 +49,9 @@ public final class LayoutRegressionTest {
                 .setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsStretchRatio(1.0F);
         Control weightedB = new Control().setMinimum(10, 10)
                 .setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsStretchRatio(2.0F);
-        Box weighted = new Box().setOrientation(Box.Orientation.HORIZONTAL)
-                .add(weightedA).add(weightedB);
+        Box weighted = new Box().setOrientation(Box.Orientation.HORIZONTAL);
+        weighted.addChild(weightedA);
+        weighted.addChild(weightedB);
         weighted.layout(new Rect(0, 0, 100, 10), null);
         check(weightedA.getBounds().width() + weightedB.getBounds().width() == 100);
         check(weightedB.getBounds().width() > weightedA.getBounds().width());
@@ -128,7 +130,8 @@ public final class LayoutRegressionTest {
         grid.itemActivated().connect(grid, chosen::add);
         check(io.github.luyingyilong.ore.EventFixture.press(gridScroll,5, 5) && chosen.equals(List.of(items.get(0))));
 
-        Box tall = new Box().add(new Control().setMinimum(30, 80));
+        Box tall = new Box();
+        tall.addChild(new Control().setMinimum(30, 80));
         Scroll scroll = new Scroll().setContent(tall).setHorizontal(Scroll.BarMode.DISABLED);
         scroll.layout(new Rect(0, 0, 50, 50), null);
         check(scroll.getVerticalVisible() && scroll.getViewport().width() == 44);
@@ -149,8 +152,9 @@ public final class LayoutRegressionTest {
         scroll.setVertical(Scroll.BarMode.DISABLED);
         scroll.layout(new Rect(0, 0, 50, 50), null);
         check(scroll.getScrollY() == 0 && !scroll.scrollBy(0, 5));
-        Box wide = new Box().setOrientation(Box.Orientation.HORIZONTAL)
-                .add(new Control().setMinimum(40, 20)).add(new Control().setMinimum(40, 20));
+        Box wide = new Box().setOrientation(Box.Orientation.HORIZONTAL);
+        wide.addChild(new Control().setMinimum(40, 20));
+        wide.addChild(new Control().setMinimum(40, 20));
         Scroll sideways = new Scroll().setContent(wide).setVertical(Scroll.BarMode.DISABLED);
         sideways.layout(new Rect(0, 0, 50, 50), null);
         check(sideways.getHorizontalVisible() && sideways.getViewport().height() == 44
@@ -170,8 +174,10 @@ public final class LayoutRegressionTest {
             }
         };
         target.setMinimum(30, 20);
-        Scroll withChild = new Scroll().setContent(new Box()
-                .add(new Control().setMinimum(30, 80)).add(target));
+        var childContainer39 = new Box();
+        childContainer39.addChild(new Control().setMinimum(30, 80));
+        childContainer39.addChild(target);
+        Scroll withChild = new Scroll().setContent(childContainer39);
         withChild.layout(new Rect(0, 0, 50, 50), null);
         withChild.setScroll(0, 60);
         check(withChild.getScrollY() == 50 && io.github.luyingyilong.ore.EventFixture.press(withChild,10, 35)
@@ -189,7 +195,9 @@ public final class LayoutRegressionTest {
         Control first = new Control().setPreferred(0, 10);
         Control second = new Control().setPreferred(0, 20);
         Control third = new Control().setPreferred(0, 10);
-        fixed.add(first).add(second).add(third);
+        fixed.addChild(first);
+        fixed.addChild(second);
+        fixed.addChild(third);
         fixed.layout(new Rect(0, 0, 62, 60), null);
         check(first.getBounds().equals(new Rect(0, 0, 30, 10)));
         check(second.getBounds().equals(new Rect(32, 0, 30, 20)));
@@ -205,7 +213,8 @@ public final class LayoutRegressionTest {
         Overlay overlay = new Overlay();
         Control lower = new Control();
         Control upper = new Control();
-        overlay.add(lower).add(upper);
+        overlay.addChild(lower);
+        overlay.addChild(upper);
         overlay.layout(new Rect(0, 0, 20, 20), null);
         check(overlay.hitTop(5, 5) == upper);
         List<String> clicks = new ArrayList<>();
@@ -223,7 +232,9 @@ public final class LayoutRegressionTest {
                 return true;
             }
         };
-        Overlay clickable = new Overlay().add(clickLower).add(clickUpper);
+        Overlay clickable = new Overlay();
+        clickable.addChild(clickLower);
+        clickable.addChild(clickUpper);
         clickable.layout(new Rect(0, 0, 20, 20), null);
         check(io.github.luyingyilong.ore.EventFixture.press(clickable,5, 5) && clicks.equals(List.of("upper")));
         clickUpper.setVisible(false);

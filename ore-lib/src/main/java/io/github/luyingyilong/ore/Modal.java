@@ -75,7 +75,9 @@ public final class Modal extends Container {
         close.setMinimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
         close.setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         close.pressed().connect(close, () -> closeRequested.emit());
-        headerRow.add(headerSpacer).add(titleLabel).add(close);
+        headerRow.addChild(headerSpacer);
+        headerRow.addChild(titleLabel);
+        headerRow.addChild(close);
         header.setChild(new Padding(new Padding.Insets(0, 1, 0, 1)).setChild(headerRow));
         header.setMinimum(0, HEADER_HEIGHT).setPreferred(0, HEADER_HEIGHT)
                 .setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
@@ -85,9 +87,23 @@ public final class Modal extends Container {
         footer.setChild(footerInset);
         footer.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         footer.setVisible(false);
-        column.add(header).add(bodyInset).add(footer);
+        column.addChild(header);
+        column.addChild(bodyInset);
+        column.addChild(footer);
         background.setChild(new Padding(Padding.Insets.all(FRAME_INSET)).setChild(column));
-        addChild(background);
+        updateChildren(List.of(background));
+    }
+
+    @Override protected void validateChildren(List<Control> proposed) {
+        if (!isUpdatingChildren()) throw new IllegalStateException("Modal has a fixed skeleton; use setContent/addAction");
+    }
+
+    @Override protected void childrenChanged() {
+        content = bodyInset.getChildCount() == 0 ? null : bodyInset.getChild(0);
+        actions.clear();
+        for (Control child : footerButtons.getChildren()) if (child instanceof Button button && button.isAlive()) actions.add(button);
+        footer.setMinimum(0, actions.isEmpty() ? 0 : FOOTER_INSET * 2 + actions.size() * Button.HEIGHT + (actions.size() - 1) * BUTTON_GAP);
+        footer.setVisible(!actions.isEmpty());
     }
 
     public Modal setSize(int width, int height) {
@@ -138,9 +154,10 @@ public final class Modal extends Container {
     }
 
     public Modal setContent(Control content) {
-        this.content = Objects.requireNonNull(content);
-        content.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        if (this.content == content) return this;
+        Objects.requireNonNull(content);
         bodyInset.setChild(content);
+        content.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         return this;
     }
 
@@ -155,8 +172,7 @@ public final class Modal extends Container {
     public Modal addAction(Button button) {
         Objects.requireNonNull(button);
         button.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        actions.add(button);
-        footerButtons.add(button);
+        footerButtons.addChild(button);
         footer.setVisible(true);
         footer.setMinimum(0, FOOTER_INSET * 2 + actions.size() * Button.HEIGHT
                 + (actions.size() - 1) * BUTTON_GAP);

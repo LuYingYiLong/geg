@@ -26,10 +26,10 @@ public final class DescriptionsLayoutTest {
             }
         };
         Descriptions details = new Descriptions().setTitle(Component.literal("组织信息"))
-                .add("name", Component.literal("名称"), Component.literal("橡木公社"))
-                .add("leader", Component.literal("领袖"), Component.literal("Player"))
-                .add("members", Component.literal("成员"), Component.literal("8"))
-                .add("description", Component.literal("介绍"), Component.literal("中英文长段落 Long description 😀").withStyle(ChatFormatting.GOLD));
+                .addItem("name", Component.literal("名称"), Component.literal("橡木公社"))
+                .addItem("leader", Component.literal("领袖"), Component.literal("Player"))
+                .addItem("members", Component.literal("成员"), Component.literal("8"))
+                .addItem("description", Component.literal("介绍"), Component.literal("中英文长段落 Long description 😀").withStyle(ChatFormatting.GOLD));
         check(details.getChildren().size() == 1 && details.getChildren().get(0) instanceof Box, "Descriptions is a retained Box tree");
         check(details.getColumns() == 3 && details.getLayout() == Descriptions.Layout.HORIZONTAL && details.getColon(), "Lightweight defaults");
         for (int width : new int[]{80, 96, 127, 128, 129, 199, 200, 303, 304, 500}) {
@@ -66,7 +66,7 @@ public final class DescriptionsLayoutTest {
         check(name.getContentNode().getSize().width() == name.getSize().width(), "Vertical text uses full column width");
 
         details.setLabelColor(OreTheme.TEXT_DARK).setContentColor(OreTheme.TEXT_SECONDARY).setFontSize(12).setTitleFontSize(16);
-        details.add("new", Component.literal("时间"), Component.literal("2026-10-17"));
+        details.addItem("new", Component.literal("时间"), Component.literal("2026-10-17"));
         check(details.getItem("new").getLabelNode().getFontSize() == 12 && name.getContentNode().getFontSize() == 12, "Shared fonts apply to current and future items");
         check(name.getLabelNode().getColor() == OreTheme.TEXT_DARK && details.getItem("new").getContentNode().getColor() == OreTheme.TEXT_SECONDARY, "Ore color defaults are configurable");
         check(details.getTitleFontSize() == 16, "Independent title font size");
@@ -79,28 +79,30 @@ public final class DescriptionsLayoutTest {
         details.getItem("leader").setVisible(true);
         layout(details, font, 200);
         check(details.getItem("leader").getParent() == name.getParent(), "Shown items return to their original order");
-        check(details.removeChild(details.getItem("members")) && details.getItems().size() == 4, "Tree removal updates the keyed items");
+        DescriptionItem removed = details.getItem("members");
+        check(removed.getParent().removeChild(removed) && details.getItems().size() == 4, "Real parent removal updates the keyed items");
         DescriptionItem extra = new DescriptionItem("tree", Component.literal("来源"), Component.literal("addChild"));
-        details.addChild(extra);
-        check(details.getItem("tree") == extra, "addChild accepts description items");
-        rejects(() -> details.add("name", Component.empty(), Component.empty()));
+        details.addItem(extra);
+        check(details.getItem("tree") == extra, "addItem registers a description without forwarding tree operations");
+        rejects(() -> details.addItem("name", Component.empty(), Component.empty()));
         rejects(() -> details.addChild(new Control()));
-        rejects(() -> new Descriptions().add(extra));
+        rejects(() -> new Descriptions().addItem(extra));
         rejects(() -> details.setColumns(0));
         rejects(() -> details.setMinimumColumnWidth(0));
         rejects(() -> details.setFontSize(Float.NaN));
         rejects(() -> details.setRowGap(-1));
 
-        Box parent = new Box().add(details);
+        Box parent = new Box();
+        parent.addChild(details);
         layout(details, font, 300);
         name.setContent(Component.literal("Changed"));
         check(parent.getLayoutDirty(), "Value changes reach enclosing containers");
-        details.clear().setTitle(Component.empty());
+        details.clearItems().setTitle(Component.empty());
         check(details.measureSize(font, new Size(100, 100)).height() == 0 && details.getItems().isEmpty(), "Empty descriptions take no height");
         check(name.getParent() == null && extra.getParent() == null, "Clear releases item ownership for reuse");
         check(details.getSizeFlagsVertical() == SizeFlags.SIZE_SHRINK_BEGIN, "Default vertical size follows content");
 
-        Descriptions overflow = new Descriptions().add("long", Component.literal("名称"), Component.literal("中文内容 😀 ".repeat(30)));
+        Descriptions overflow = new Descriptions().addItem("long", Component.literal("名称"), Component.literal("中文内容 😀 ".repeat(30)));
         Scroll viewport = new Scroll().setContent(overflow);
         viewport.layout(new Rect(0, 0, 80, 40), font);
         check(overflow.getSize().width() >= 96 && viewport.getMaxScrollX() > 0 && viewport.getMaxScrollY() > 0,

@@ -1,26 +1,58 @@
 package io.github.luyingyilong.ore.event;
+
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.ore.layout.Window;
-/** Thin host conversion only; all routing and editing belongs to Window. */
+
+/**
+ * Thin host conversion only; all routing and editing belongs to Window.
+ */
 public final class WindowInputs {
-    private WindowInputs(){}
-    public static boolean press(Window w,int x,int y,ModularGuiContext mui){return press(w,x,y,mui,0);}
-    public static boolean press(Window w,int x,int y,ModularGuiContext mui,int button){
-        if(mui!=null)w.getContext().bind(mui);
-        boolean handled=w.dispatchInput(new PointerEvent(w.getContext(),PointerEvent.Action.PRESS,x,y,button,w.getContext().getModifiers()));
-        if(mui!=null && handled)w.getContext().setPointerFocusOwned(true);
+    private WindowInputs() {
+    }
+
+    public static boolean press(Window w, int x, int y, ModularGuiContext mui) {
+        return press(w, x, y, mui, 0);
+    }
+
+    public static boolean press(Window w, int x, int y, ModularGuiContext mui, int button) {
+        if (mui != null) w.getContext().bind(mui);
+        boolean handled = w.dispatchInput(new PointerEvent(w.getContext(), PointerEvent.Action.PRESS, x, y, button, w.getContext().getModifiers()));
+        if (mui != null && handled) w.getContext().setPointerFocusOwned(true);
         return handled;
     }
-    public static boolean release(Window w,int x,int y){return pointer(w,PointerEvent.Action.RELEASE,x,y,0);}
-    public static boolean move(Window w,int x,int y){return pointer(w,PointerEvent.Action.MOVE,x,y,0);}
-    public static boolean pointer(Window w,PointerEvent.Action action,int x,int y,int button){return w.dispatchInput(new PointerEvent(w.getContext(),action,x,y,button,w.getContext().getModifiers()));}
-    public static boolean keyDown(Window w,int key,int modifiers,ModularGuiContext mui){return key(w,KeyEvent.Action.PRESS,key,0,modifiers,mui);}
-    public static boolean keyUp(Window w,int key,int modifiers,ModularGuiContext mui){return key(w,KeyEvent.Action.RELEASE,key,0,modifiers,mui);}
-    public static boolean key(Window w,KeyEvent.Action action,int key,int scan,int modifiers,ModularGuiContext mui){
-        if(mui!=null)w.getContext().bind(mui);
-        if(action==KeyEvent.Action.PRESS && w.getContext().keyDown(key))action=KeyEvent.Action.REPEAT;
-        return w.dispatchInput(new KeyEvent(w.getContext(),action,key,scan,modifiers));
+
+    public static boolean release(Window w, int x, int y) {
+        return pointer(w, PointerEvent.Action.RELEASE, x, y, 0);
     }
-    public static boolean scroll(Window w,int x,int y,double delta,boolean horizontal){return w.dispatchInput(new ScrollEvent(w.getContext(),x,y,horizontal?delta:0,horizontal?0:delta,w.getContext().getModifiers()));}
-    public static boolean text(Window w,String text,int modifiers,ModularGuiContext mui){if(mui!=null)w.getContext().bind(mui);return w.dispatchInput(new TextInputEvent(w.getContext(),text,modifiers));}
+
+    public static boolean move(Window w, int x, int y) {
+        return pointer(w, PointerEvent.Action.MOVE, x, y, 0);
+    }
+
+    public static boolean pointer(Window w, PointerEvent.Action action, int x, int y, int button) {
+        return w.dispatchInput(new PointerEvent(w.getContext(), action, x, y, button, w.getContext().getModifiers()));
+    }
+
+    public static boolean keyDown(Window w, int key, int modifiers, ModularGuiContext mui) {
+        return key(w, KeyEvent.Action.PRESS, key, 0, modifiers, mui);
+    }
+
+    public static boolean keyUp(Window w, int key, int modifiers, ModularGuiContext mui) {
+        return key(w, KeyEvent.Action.RELEASE, key, 0, modifiers, mui);
+    }
+
+    public static boolean key(Window w, KeyEvent.Action action, int key, int scan, int modifiers, ModularGuiContext mui) {
+        if (mui != null) w.getContext().bind(mui);
+        if (action == KeyEvent.Action.PRESS && w.getContext().keyDown(key)) action = KeyEvent.Action.REPEAT;
+        return w.dispatchInput(new KeyEvent(w.getContext(), action, key, scan, modifiers));
+    }
+
+    public static boolean scroll(Window w, int x, int y, double delta, boolean horizontal) {
+        return w.dispatchInput(new ScrollEvent(w.getContext(), x, y, horizontal ? delta : 0, horizontal ? 0 : delta, w.getContext().getModifiers()));
+    }
+
+    public static boolean text(Window w, String text, int modifiers, ModularGuiContext mui) {
+        if (mui != null) w.getContext().bind(mui);
+        return w.dispatchInput(new TextInputEvent(w.getContext(), text, modifiers));
+    }
 }

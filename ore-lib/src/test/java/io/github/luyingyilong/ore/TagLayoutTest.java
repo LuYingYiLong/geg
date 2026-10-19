@@ -18,7 +18,8 @@ public final class TagLayoutTest {
         check(tag.getText().getString().equals("状态"));
         Size natural = tag.measureSize(font, new Size(120, 40));
         check(natural.equals(new Size(20, 14)));
-        Box parent = new Box().setOrientation(Box.Orientation.HORIZONTAL).add(tag);
+        Box parent = new Box().setOrientation(Box.Orientation.HORIZONTAL);
+        parent.addChild(tag);
         parent.layout(new Rect(0, 0, 120, 40), font);
         check(tag.getSize().equals(natural) && tag.getBounds().y() == 13);
         tag.setOutlined(true);

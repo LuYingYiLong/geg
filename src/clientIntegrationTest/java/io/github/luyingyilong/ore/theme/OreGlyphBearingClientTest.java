@@ -48,14 +48,15 @@ public final class OreGlyphBearingClientTest {
                     });
                 }
                 Box content = new Box().setGap(6);
-                content.add(new Label(Component.literal("Ore punctuation / 全角与半角符号")).setHero(true));
-                content.add(new Label(Component.literal(SAMPLE)));
-                content.add(new Label(Component.literal("【中文】「中文」，。；：！？ABC + 123")));
-                content.add(new Label(Component.literal(SAMPLE)).setFontSize(12));
-                content.add(new Button(Component.literal("组织（2） / Group (2)")));
+                content.addChild(new Label(Component.literal("Ore punctuation / 全角与半角符号")).setHero(true));
+                content.addChild(new Label(Component.literal(SAMPLE)));
+                content.addChild(new Label(Component.literal("【中文】「中文」，。；：！？ABC + 123")));
+                content.addChild(new Label(Component.literal(SAMPLE)).setFontSize(12));
+                content.addChild(new Button(Component.literal("组织（2） / Group (2)")));
                 input = new Input(); input.setTextNoSignal("中文（English）中文");
                 area = new TextArea(0).setRows(3); area.setTextNoSignal(SAMPLE + "\n【多行文本】（括号）");
-                content.add(new InputControl(input)).add(new InputControl(area));
+                content.addChild(new InputControl(input));
+                content.addChild(new InputControl(area));
                 root = Window.embedded().setContent(new Padding(Padding.Insets.all(8)).setChild(content)).open();
             } else if (ticks >= 25) {
                 check(input.getText().equals("中文（English）中文") && area.getText().contains("（括号）"),

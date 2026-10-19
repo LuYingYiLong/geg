@@ -30,10 +30,15 @@ public final class DescriptionItem extends Container {
         this.label.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         this.content.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         this.content.setSizeFlagsStretchRatio(2.0F);
-        box.add(this.label).add(this.content);
-        super.addChild(box);
+        box.addChild(this.label);
+        box.addChild(this.content);
+        updateChildren(java.util.List.of(box));
         updateLabel();
         setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+    }
+
+    @Override protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
+        if (!isUpdatingChildren()) throw new IllegalStateException("DescriptionItem has a fixed field skeleton");
     }
 
     public String getKey() { return key; }

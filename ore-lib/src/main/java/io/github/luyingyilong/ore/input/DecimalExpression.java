@@ -3,7 +3,9 @@ package io.github.luyingyilong.ore.input;
 import java.math.BigDecimal;
 import java.util.regex.Pattern;
 
-/** Exact, deliberately small arithmetic grammar for numeric fields. */
+/**
+ * Exact, deliberately small arithmetic grammar for numeric fields.
+ */
 public final class DecimalExpression {
     public static final Pattern INPUT_PATTERN = Pattern.compile("[0-9.\\s+*/()\\-]*");
     public static final int MAX_LENGTH = 64;

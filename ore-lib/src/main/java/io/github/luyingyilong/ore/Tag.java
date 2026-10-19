@@ -22,8 +22,12 @@ public final class Tag extends Container {
     private boolean outlined;
     private Type type = Type.NEUTRAL;
     public Tag() {
-        addChild(label);
+        updateChildren(java.util.List.of(label));
         setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+    }
+
+    @Override protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
+        if (!isUpdatingChildren()) throw new IllegalStateException("Tag has a fixed skeleton; configure its properties");
     }
 
     public Tag(Component text) {

@@ -5,7 +5,9 @@ public final class ControlOffsetTest {
     public static void main(String[] args) {
         Control first = new Control().setMinimum(20, 10).setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN);
         Control second = new Control().setMinimum(20, 10).setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN);
-        Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4).add(first).add(second);
+        Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
+        row.addChild(first);
+        row.addChild(second);
         row.layout(new Rect(10, 20, 80, 20), null);
         Rect assigned = first.getBounds(), neighbor = second.getBounds();
         Size natural = row.measureSize(null, new Size(80, 20));
@@ -33,7 +35,8 @@ public final class ControlOffsetTest {
 
         Probe button = new Probe();
         button.setPosition(20, 100).setRequestedSize(30, 20).setOffset(5, -2);
-        Control content = new Control().setMinimum(100, 300).addChild(button);
+        Control content = new Control().setMinimum(100, 300);
+        content.addChild(button);
         Scroll scroll = new Scroll().setHorizontal(Scroll.BarMode.DISABLED).setContent(content);
         scroll.setOffset(3, 4);
         Window window = new Window(true).setContent(scroll);

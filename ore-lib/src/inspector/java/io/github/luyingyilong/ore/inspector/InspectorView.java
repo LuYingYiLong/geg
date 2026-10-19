@@ -45,28 +45,23 @@ public final class InspectorView {
         targets.itemActivated().connect(targets, id -> backend.execute(new InspectorCommand(InspectorCommand.Operation.TARGET, id, -1, "", "", false)));
         targets.setMinimum(110, 22);
         targets.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL);
-        Box tools = new Box()
-                .setOrientation(Box.Orientation.HORIZONTAL)
-                .setGap(3)
-                .add(pick)
-                .add(undo)
-                .add(redo)
-                .add(button("restore_all", () -> action(InspectorCommand.Operation.RESET_ALL)))
-                .add(targets);
+        Box tools = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(3);
+        tools.addChild(pick);
+        tools.addChild(undo);
+        tools.addChild(redo);
+        tools.addChild(button("restore_all", () -> action(InspectorCommand.Operation.RESET_ALL)));
+        tools.addChild(targets);
         tools.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        Box flags = new Box()
-                .setOrientation(Box.Orientation.HORIZONTAL)
-                .setGap(6)
-                .add(flag("layout", true))
-                .add(flag("text", true))
-                .add(flag("all", false));
+        Box flags = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(6);
+        flags.addChild(flag("layout", true));
+        flags.addChild(flag("text", true));
+        flags.addChild(flag("all", false));
         flags.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         Scroll treeScroll = new Scroll().setContent(tree);
         treeScroll.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Box left = new Box()
-                .setGap(4)
-                .add(new InputControl(search))
-                .add(treeScroll);
+        Box left = new Box().setGap(4);
+        left.addChild(new InputControl(search));
+        left.addChild(treeScroll);
         left.setMinimum(110, 0);
         properties.setMinimum(0, 0);
         Scroll propertyScroll = new Scroll()
@@ -83,16 +78,19 @@ public final class InspectorView {
             signalScroll.setVisible(index == 1);
             if (index == 1) signalPanel.update(snapshot.signals());
         });
-        Box right = new Box().setGap(4).add(views).add(lifecycleStatus).add(propertyScroll).add(signalScroll);
+        Box right = new Box().setGap(4);
+        right.addChild(views);
+        right.addChild(lifecycleStatus);
+        right.addChild(propertyScroll);
+        right.addChild(signalScroll);
         right.setMinimum(190, 0);
         Splitter split = new Splitter(left, right).setRatio(0.34);
         split.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Box root = new Box()
-                .setGap(4)
-                .add(tools)
-                .add(flags)
-                .add(split)
-                .add(message);
+        Box root = new Box().setGap(4);
+        root.addChild(tools);
+        root.addChild(flags);
+        root.addChild(split);
+        root.addChild(message);
         message.setMinimum(0, 16).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         window = Window
                 .nativeWindow(WindowOptions.defaults("Ore Inspector"))
@@ -200,11 +198,12 @@ public final class InspectorView {
         editors.clear();
         readonlyLabels.clear();
         if (node == null) {
-            properties.add(new Label(tr("select_node")).setWrap(Label.Wrap.WORD));
+            properties.addChild(new Label(tr("select_node")).setWrap(Label.Wrap.WORD));
             return;
         }
-        properties.add(title).add(crumbs);
-        properties.add(button("restore_node", () -> {
+        properties.addChild(title);
+        properties.addChild(crumbs);
+        properties.addChild(button("restore_node", () -> {
             backend.execute(new InspectorCommand(InspectorCommand.Operation.RESET_NODE, selected, -1, "", "", false));
             synchronizeEditors();
         }).setDisabled(node.internal()));
@@ -212,16 +211,16 @@ public final class InspectorView {
         for (var property : node.properties()) {
             if (!group.equals(property.group())) {
                 group = property.group();
-                properties.add(new Label(tr("group." + group)).setHero(true));
+                properties.addChild(new Label(tr("group." + group)).setHero(true));
             }
             if (property.readonly()) {
                 Label readonly = new Label(Component.literal(property.name() + ": " + property.effective())).setWrap(Label.Wrap.CHARACTER).setColor(OreTheme.TEXT_SECONDARY);
                 readonlyLabels.put(property.name(), readonly);
-                properties.add(readonly);
+                properties.addChild(readonly);
             } else {
                 Editor editor = new Editor(property);
                 editors.put(property.index(), editor);
-                properties.add(editor.body);
+                properties.addChild(editor.body);
             }
         }
     }
@@ -248,7 +247,7 @@ public final class InspectorView {
                             if (!refreshing) apply(String.valueOf(value));
                         }));
                 checkbox = check;
-                form.add(new FormItem(property.name(), Component.empty(), check, () -> String.valueOf(check.getChecked())));
+                form.addItem(new FormItem(property.name(), Component.empty(), check, () -> String.valueOf(check.getChecked())));
             } else if (property.kind().equals("enum")) {
                 Dropdown<String> choices = new Dropdown<>(String.valueOf(property.effective()), 6);
                 choices.setOptions(property.options().stream().map(option -> new Dropdown.Option<>(option, Component.literal(option))).toList());
@@ -256,7 +255,7 @@ public final class InspectorView {
                 choices.itemActivated().connect(choices, value -> {
                     if (!refreshing) apply(value);
                 });
-                form.add(new FormItem(property.name(), Component.literal(property.name()), choices, () -> choices.getSelected()));
+                form.addItem(new FormItem(property.name(), Component.literal(property.name()), choices, () -> choices.getSelected()));
             } else {
                 boolean integer = property.kind().equals("number") && !property.name().equals("color")
                         && property.effective() instanceof Integer;
@@ -269,11 +268,12 @@ public final class InspectorView {
                 input.autoUpdateOnChange(true);
                 input.setTextNoSignal(String.valueOf(property.effective()));
                 observedText = input.getText();
-                form.add(new FormItem(property.name(), Component.literal(property.name()), input));
+                form.addItem(new FormItem(property.name(), Component.literal(property.name()), input));
             }
             form.setVisible(true);
-            body.add(form);
-            body.add(validation).add(base);
+            body.addChild(form);
+            body.addChild(validation);
+            body.addChild(base);
             refresh(property);
         }
 
@@ -333,7 +333,7 @@ public final class InspectorView {
 
         PropertyViewport(Box content) {
             this.content = content;
-            super.addChild(content);
+            addChild(content);
         }
 
         @Override

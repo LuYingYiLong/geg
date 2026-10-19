@@ -7,18 +7,10 @@ import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 import org.lwjgl.glfw.GLFWNativeWin32;
 
-/** Separate HIMC: IMBlocker's primary-window state must not affect the secondary window. */
+/**
+ * Separate HIMC: IMBlocker's primary-window state must not affect the secondary window.
+ */
 final class NativeImeContext implements AutoCloseable {
-    private interface Imm extends StdCallLibrary {
-        Imm API = Native.load("imm32", Imm.class, W32APIOptions.DEFAULT_OPTIONS);
-        Pointer ImmCreateContext();
-        boolean ImmDestroyContext(Pointer context);
-        Pointer ImmGetContext(WinDef.HWND window);
-        boolean ImmReleaseContext(WinDef.HWND window, Pointer context);
-        Pointer ImmAssociateContext(WinDef.HWND window, Pointer context);
-        boolean ImmGetOpenStatus(Pointer context);
-        boolean ImmSetOpenStatus(Pointer context, boolean open);
-    }
     private final WinDef.HWND window;
     private final Pointer previous, owned;
     private boolean closed;
@@ -29,10 +21,33 @@ final class NativeImeContext implements AutoCloseable {
         if (previous != null) Imm.API.ImmReleaseContext(window, previous);
         owned = Imm.API.ImmCreateContext();
         if (owned == null) throw new IllegalStateException("Windows could not create an independent IME context");
-        Imm.API.ImmAssociateContext(window, owned); Imm.API.ImmSetOpenStatus(owned, open);
+        Imm.API.ImmAssociateContext(window, owned);
+        Imm.API.ImmSetOpenStatus(owned, open);
     }
-    @Override public void close() {
-        if (closed) return; closed = true;
-        Imm.API.ImmAssociateContext(window, previous); Imm.API.ImmDestroyContext(owned);
+
+    @Override
+    public void close() {
+        if (closed) return;
+        closed = true;
+        Imm.API.ImmAssociateContext(window, previous);
+        Imm.API.ImmDestroyContext(owned);
+    }
+
+    private interface Imm extends StdCallLibrary {
+        Imm API = Native.load("imm32", Imm.class, W32APIOptions.DEFAULT_OPTIONS);
+
+        Pointer ImmCreateContext();
+
+        boolean ImmDestroyContext(Pointer context);
+
+        Pointer ImmGetContext(WinDef.HWND window);
+
+        boolean ImmReleaseContext(WinDef.HWND window, Pointer context);
+
+        Pointer ImmAssociateContext(WinDef.HWND window, Pointer context);
+
+        boolean ImmGetOpenStatus(Pointer context);
+
+        boolean ImmSetOpenStatus(Pointer context, boolean open);
     }
 }

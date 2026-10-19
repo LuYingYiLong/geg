@@ -36,8 +36,7 @@ public final class Navbar extends Container {
         back.pressed().connect(this, () -> backAction.run());
         back.setMinimum(BACK_BUTTON_SIZE, BACK_BUTTON_SIZE);
         back.setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        addChild(this.title);
-        addChild(back);
+        updateChildren(List.of(this.title, back));
         setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
     }
 
@@ -57,22 +56,24 @@ public final class Navbar extends Container {
 
 
 
-    @Override public Navbar addChild(Control child) {
-        super.addChild(child);
-        if (child != title && child != back) extra.add(child);
-        return this;
+    @Override protected void validateChildren(List<Control> proposed) {
+        if (!isUpdatingChildren() && (proposed.size() < 2 || proposed.get(0) != title || proposed.get(1) != back
+                || proposed.stream().anyMatch(child -> child.getParent() != this)))
+            throw new IllegalStateException("Navbar has a fixed skeleton; use setExtra");
     }
 
-    @Override public boolean removeChild(Control child) {
-        if (child == title || child == back || !super.removeChild(child)) return false;
-        extra.remove(child);
-        return true;
+    @Override protected void childrenChanged() {
+        extra.clear();
+        for (Control child : getChildren()) if (child != title && child != back) extra.add(child);
     }
 
-    /** Replaces the action slots; each control retains its own minimum and desired size. */
+    /** Replaces right-side actions atomically, preserving retained controls. */
     public Navbar setExtra(Control... controls) {
-        for (Control control : List.copyOf(extra)) removeChild(control);
-        for (Control control : controls) addChild(control);
+        List<Control> next = new ArrayList<>();
+        next.add(title);
+        next.add(back);
+        next.addAll(List.of(controls));
+        updateChildren(next);
         return this;
     }
 

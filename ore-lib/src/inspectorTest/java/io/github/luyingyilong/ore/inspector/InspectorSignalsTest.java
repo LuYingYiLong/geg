@@ -19,7 +19,8 @@ public final class InspectorSignalsTest {
         Button button = new Button(Component.literal("Purchase"));
         button.setDebugName("Purchase button");
         Control receiver = new Control();
-        root.add(button).add(receiver);
+        root.addChild(button);
+        root.addChild(receiver);
         int[] actions = {0};
         for (int i = 0; i < 2; i++) subscribe(button, receiver, actions);
         InspectorSignals signals = new InspectorSignals();

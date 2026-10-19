@@ -17,10 +17,11 @@ public final class OverlayMutationTest {
         };
         Control closer = new Control() {
             @Override public void layout(Rect bounds, Font font) {
-                super.layout(bounds, font); queueFree(); removed.queueFree(); layout.add(added);
+                super.layout(bounds, font); queueFree(); removed.queueFree(); layout.addChild(added);
             }
         };
-        layout.add(closer).add(removed);
+        layout.addChild(closer);
+        layout.addChild(removed);
         layout.layout(viewport, null);
         check(layouts[0] == 0 && layouts[1] == 0, "Removed layers are skipped; added layers wait for the next pass");
         layout.layout(viewport, null);
@@ -29,9 +30,10 @@ public final class OverlayMutationTest {
 
         Overlay drawing = new Overlay();
         int[] paints = {0};
-        drawing.add(new Control() {
+        drawing.addChild(new Control() {
             @Override public void draw(ModularGuiContext context, int x, int y) { drawing.queueFree(); }
-        }).add(new Control() {
+        });
+        drawing.addChild(new Control() {
             @Override public void draw(ModularGuiContext context, int x, int y) { paints[0]++; }
         });
         drawing.draw(null, 0, 0);
@@ -39,7 +41,8 @@ public final class OverlayMutationTest {
 
         Overlay picking = new Overlay();
         Control underneath = new Control();
-        picking.add(underneath).add(new Control() {
+        picking.addChild(underneath);
+        picking.addChild(new Control() {
             @Override public Control hitTop(int x, int y) { underneath.queueFree(); queueFree(); return null; }
         });
         picking.layout(viewport, null);

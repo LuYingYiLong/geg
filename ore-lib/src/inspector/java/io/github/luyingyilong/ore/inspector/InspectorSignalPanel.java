@@ -102,7 +102,7 @@ final class InspectorSignalPanel {
     private Label add(Component text, boolean heading) {
         Label label = new Label(text).setWrap(Label.Wrap.CHARACTER).setHero(heading)
                 .setColor(heading ? OreTheme.TEXT_WHITE : OreTheme.TEXT_SECONDARY);
-        body.add(label);
+        body.addChild(label);
         return label;
     }
 }

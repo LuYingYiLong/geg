@@ -1,22 +1,20 @@
 package io.github.luyingyilong.ore.input;
 
-import io.github.luyingyilong.ore.signal.*;
-
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.TextFieldTheme;
+import io.github.luyingyilong.ore.signal.Signal;
+import io.github.luyingyilong.ore.signal.SignalSource;
 import io.github.luyingyilong.ore.theme.OreTheme;
 import net.minecraft.network.chat.Component;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
-/** An Input whose committed value is an exact integer or fixed-precision decimal. */
+/**
+ * An Input whose committed value is an exact integer or fixed-precision decimal.
+ */
 public final class NumberInput extends Input {
     private final SignalSource<BigDecimal> valueCommitted = new SignalSource<>(this, "valueCommitted", "BigDecimal");
-    public Signal<BigDecimal> valueCommitted() { return valueCommitted.signal(); }
-    /** WARNING keeps invalid text; CLAMP applies bounds on Enter, focus loss or Form submission. */
-    public enum BoundaryStrategy { WARNING, CLAMP }
-
     private final NumberInputRules rules;
     private Component error;
 
@@ -27,9 +25,27 @@ public final class NumberInput extends Input {
         setPattern(DecimalExpression.INPUT_PATTERN);
         autoUpdateOnChange(false);
     }
-    public NumberInput() { this(0); }
-    public NumberInput setDecimalPlaces(int places) { rules.decimalPlaces(places); refreshRangeWarning(); return this; }
-    public int getDecimalPlaces() { return rules.decimalPlaces(); }
+    public NumberInput() {
+        this(0);
+    }
+
+    public Signal<BigDecimal> valueCommitted() {
+        return valueCommitted.signal();
+    }
+
+    public int getDecimalPlaces() {
+        return rules.decimalPlaces();
+    }
+
+    public NumberInput setDecimalPlaces(int places) {
+        rules.decimalPlaces(places);
+        refreshRangeWarning();
+        return this;
+    }
+
+    public BigDecimal getMinimumValue() {
+        return rules.minimum();
+    }
 
     public NumberInput setMinimumValue(BigDecimal minimum) {
         BigDecimal previous = rules.minimum();
@@ -37,31 +53,59 @@ public final class NumberInput extends Input {
         if (!Objects.equals(previous, rules.minimum())) refreshRangeWarning();
         return this;
     }
-    public NumberInput setMinimumValue(long minimum) { return setMinimumValue(BigDecimal.valueOf(minimum)); }
-    public NumberInput setMinimumValue(String minimum) { return setMinimumValue(new BigDecimal(minimum)); }
-    public BigDecimal getMinimumValue() { return rules.minimum(); }
+
+    public NumberInput setMinimumValue(long minimum) {
+        return setMinimumValue(BigDecimal.valueOf(minimum));
+    }
+
+    public NumberInput setMinimumValue(String minimum) {
+        return setMinimumValue(new BigDecimal(minimum));
+    }
+
+    public BigDecimal getMaximumValue() {
+        return rules.maximum();
+    }
+
     public NumberInput setMaximumValue(BigDecimal maximum) {
         BigDecimal previous = rules.maximum();
         rules.maximum(maximum);
         if (!Objects.equals(previous, rules.maximum())) refreshRangeWarning();
         return this;
     }
-    public NumberInput setMaximumValue(long maximum) { return setMaximumValue(BigDecimal.valueOf(maximum)); }
-    public NumberInput setMaximumValue(String maximum) { return setMaximumValue(new BigDecimal(maximum)); }
-    public BigDecimal getMaximumValue() { return rules.maximum(); }
+
+    public NumberInput setMaximumValue(long maximum) {
+        return setMaximumValue(BigDecimal.valueOf(maximum));
+    }
+
+    public NumberInput setMaximumValue(String maximum) {
+        return setMaximumValue(new BigDecimal(maximum));
+    }
+
+    public BoundaryStrategy getBoundaryStrategy() {
+        return rules.strategy();
+    }
+
     public NumberInput setBoundaryStrategy(BoundaryStrategy strategy) {
         BoundaryStrategy previous = rules.strategy();
         rules.strategy(strategy);
         if (previous != strategy) refreshRangeWarning();
         return this;
     }
-    public BoundaryStrategy getBoundaryStrategy() { return rules.strategy(); }
 
     public Component getError() {
         return error;
     }
 
-    @Override protected boolean supportsInputMethod() { return false; }
+    private void setError(Component error) {
+        if (Objects.equals(this.error, error)) return;
+        this.error = error;
+        invalidateInputLayout();
+    }
+
+    @Override
+    protected boolean supportsInputMethod() {
+        return false;
+    }
 
     public void setAvailableMaximum(BigDecimal maximum) {
         BigDecimal previous = rules.maximum();
@@ -73,12 +117,6 @@ public final class NumberInput extends Input {
         setError(null);
     }
 
-    private void setError(Component error) {
-        if (Objects.equals(this.error, error)) return;
-        this.error = error;
-        invalidateInputLayout();
-    }
-
     private Component rangeError() {
         if (rules.empty()) return Component.translatable("ore.number.empty_range");
         return Component.translatable("ore.number.out_of_bounds",
@@ -87,9 +125,14 @@ public final class NumberInput extends Input {
     }
 
     private void refreshRangeWarning() {
-        try { rules.resolve(getText()); setError(null); }
-        catch (NumberInputRules.OutOfBounds exception) { setError(rangeError()); }
-        catch (ArithmeticException | IllegalArgumentException exception) { setError(null); }
+        try {
+            rules.resolve(getText());
+            setError(null);
+        } catch (NumberInputRules.OutOfBounds exception) {
+            setError(rangeError());
+        } catch (ArithmeticException | IllegalArgumentException exception) {
+            setError(null);
+        }
     }
 
     public boolean commit() {
@@ -108,16 +151,21 @@ public final class NumberInput extends Input {
         }
     }
 
-    @Override protected void onTextChanged() {
+    @Override
+    protected void onTextChanged() {
         if (rules != null) refreshRangeWarning();
         super.onTextChanged();
     }
 
-    @Override protected void drawText(ModularGuiContext context, TextFieldTheme theme) {
+    @Override
+    protected void drawText(ModularGuiContext context, TextFieldTheme theme) {
         int color = renderer.getColor();
         if (error != null) renderer.setColor(OreTheme.TEXT_ERROR);
-        try { super.drawText(context, theme); }
-        finally { renderer.setColor(color); }
+        try {
+            super.drawText(context, theme);
+        } finally {
+            renderer.setColor(color);
+        }
     }
 
     @Override
@@ -125,4 +173,9 @@ public final class NumberInput extends Input {
         commit();
         super.onRemoveFocus(context);
     }
+
+    /**
+     * WARNING keeps invalid text; CLAMP applies bounds on Enter, focus loss or Form submission.
+     */
+    public enum BoundaryStrategy {WARNING, CLAMP}
 }

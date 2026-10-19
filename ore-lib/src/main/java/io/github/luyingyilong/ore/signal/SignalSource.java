@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-/** The emitter capability stays private in the declaring component. */
+/**
+ * The emitter capability stays private in the declaring component.
+ */
 public final class SignalSource<T> implements AutoCloseable {
     private static final System.Logger LOG = System.getLogger(SignalSource.class.getName());
     private final SignalScope lifetime;
@@ -15,12 +17,14 @@ public final class SignalSource<T> implements AutoCloseable {
     private final String parameterType;
     private final int arity;
     private final ArrayList<Subscription<T>> subscriptions = new ArrayList<>();
-    private boolean closed;
     private final Signal<T> view = new Signal<>() {
-        @Override public Connection connect(SignalOwner owner, Consumer<? super T> slot) {
+        @Override
+        public Connection connect(SignalOwner owner, Consumer<? super T> slot) {
             return connect(owner, "", slot);
         }
-        @Override public Connection connect(SignalOwner owner, String label, Consumer<? super T> slot) {
+
+        @Override
+        public Connection connect(SignalOwner owner, String label, Consumer<? super T> slot) {
             lifetime.requireOpen();
             if (closed) throw new IllegalStateException("Signal is closed: " + description);
             SignalScope receiver = Objects.requireNonNull(owner).getSignalScope();
@@ -32,14 +36,22 @@ public final class SignalSource<T> implements AutoCloseable {
             if (SignalDiagnostics.tracingEnabled()) SignalDiagnostics.connected(subscription.diagnosticSnapshot(false));
             return subscription;
         }
-        @Override public int connectionCount() { lifetime.checkThread(); return subscriptions.size(); }
+
+        @Override
+        public int connectionCount() {
+            lifetime.checkThread();
+            return subscriptions.size();
+        }
     };
+    private boolean closed;
 
     public SignalSource(SignalOwner owner, String name) {
         this(owner, name, "T");
     }
 
-    /** Diagnostic type name only; the generic Signal<T> still enforces slot types. */
+    /**
+     * Diagnostic type name only; the generic Signal<T> still enforces slot types.
+     */
     public SignalSource(SignalOwner owner, String name, String parameterType) {
         this(owner, name, 1, parameterType);
     }
@@ -62,7 +74,9 @@ public final class SignalSource<T> implements AutoCloseable {
         return SignalDiagnostics.signalInfo(diagnosticId, lifetime.diagnosticOwner(), name, arity, parameterType, closed, connections);
     }
 
-    public Signal<T> signal() { return view; }
+    public Signal<T> signal() {
+        return view;
+    }
 
     public void emit(T value) {
         lifetime.checkThread();
@@ -70,15 +84,17 @@ public final class SignalSource<T> implements AutoCloseable {
         try (var guard = DispatchGuard.enter()) {
             for (Subscription<T> subscription : new ArrayList<>(subscriptions)) {
                 if (!subscription.isConnected()) continue;
-                try { subscription.slot.accept(value); }
-                catch (RuntimeException error) {
+                try {
+                    subscription.slot.accept(value);
+                } catch (RuntimeException error) {
                     LOG.log(System.Logger.Level.ERROR, "Ore signal slot failed: " + description, error);
                 }
             }
         }
     }
 
-    @Override public void close() {
+    @Override
+    public void close() {
         close(SignalDiagnostics.Reason.SOURCE_CLOSED);
     }
 
@@ -93,16 +109,18 @@ public final class SignalSource<T> implements AutoCloseable {
 
     static final class Subscription<T> implements Connection {
         private final Thread thread = Thread.currentThread();
-        private SignalSource<T> source;
-        private SignalScope receiver;
-        private Consumer<? super T> slot;
         private final long id = SignalDiagnostics.nextId();
         private final String label;
         private final String subscriptionSource = SignalDiagnostics.subscriptionSource();
         private final long connectedAt = System.currentTimeMillis();
+        private SignalSource<T> source;
+        private SignalScope receiver;
+        private Consumer<? super T> slot;
 
         Subscription(SignalSource<T> source, SignalScope receiver, String label, Consumer<? super T> slot) {
-            this.source = source; this.receiver = receiver; this.slot = slot;
+            this.source = source;
+            this.receiver = receiver;
+            this.slot = slot;
             this.label = label;
         }
 
@@ -112,12 +130,21 @@ public final class SignalSource<T> implements AutoCloseable {
         }
 
         private void checkThread() {
-            if (Thread.currentThread() != thread) throw new IllegalStateException("Connection access from another thread");
+            if (Thread.currentThread() != thread)
+                throw new IllegalStateException("Connection access from another thread");
         }
-        @Override public boolean isConnected() { checkThread(); return source != null; }
-        @Override public void disconnect() {
+
+        @Override
+        public boolean isConnected() {
+            checkThread();
+            return source != null;
+        }
+
+        @Override
+        public void disconnect() {
             disconnect(SignalDiagnostics.Reason.MANUAL);
         }
+
         void disconnect(SignalDiagnostics.Reason reason) {
             checkThread();
             if (source == null) return;
@@ -125,7 +152,9 @@ public final class SignalSource<T> implements AutoCloseable {
             source.subscriptions.remove(this);
             receiver.detach(this);
             int remaining = source.subscriptions.size();
-            source = null; receiver = null; slot = null;
+            source = null;
+            receiver = null;
+            slot = null;
             if (info != null) SignalDiagnostics.disconnected(info, reason, remaining);
         }
     }

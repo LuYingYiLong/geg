@@ -8,7 +8,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 
-/** Window paints the scrim; suppress MUI's additional world-background gradient. */
+/**
+ * Window paints the scrim; suppress MUI's additional world-background gradient.
+ */
 public final class OreScreen extends ScreenWrapper {
     private static final java.util.Set<OreScreen> SESSIONS = java.util.Collections.newSetFromMap(new java.util.WeakHashMap<>());
     private final java.util.Set<io.github.luyingyilong.ore.layout.Window> roots =
@@ -16,10 +18,39 @@ public final class OreScreen extends ScreenWrapper {
     private Screen retainedParent;
     private boolean initialized;
 
-    private OreScreen(ModularScreen screen) { super(screen); SESSIONS.add(this); }
+    private OreScreen(ModularScreen screen) {
+        super(screen);
+        SESSIONS.add(this);
+    }
 
     public static void attachRoot(io.github.luyingyilong.ore.layout.Window root) {
         if (Minecraft.getInstance().screen instanceof OreScreen screen) screen.roots.add(root);
+    }
+
+    public static void disposeSessions() {
+        for (OreScreen screen : java.util.List.copyOf(SESSIONS)) screen.endSession();
+    }
+
+    public static void open(ModularScreen screen) {
+        // MUI's client-only open(screen, settings) path ignores customGui.
+        // Construct the wrapper directly, after installing the same default settings.
+        if (Minecraft.getInstance().screen instanceof OreScreen parent) parent.suspendRoots();
+        screen.getContext().setSettings(new UISettings());
+        // MUI retains the actual parent screen and reopens its existing panels on return.
+        screen.openParentOnClose(true);
+        ClientGUI.open(new OreScreen(screen));
+    }
+
+    /**
+     * Close only the current MUI screen, returning through its retained parent chain.
+     */
+    public static void back() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft == null) return;
+        if (minecraft.screen instanceof OreScreen current) {
+            current.screen().close();
+            current.endSession();
+        } else if (minecraft.screen != null) minecraft.screen.onClose();
     }
 
     private void endSession() {
@@ -31,11 +62,8 @@ public final class OreScreen extends ScreenWrapper {
         SESSIONS.remove(this);
     }
 
-    public static void disposeSessions() {
-        for (OreScreen screen : java.util.List.copyOf(SESSIONS)) screen.endSession();
-    }
-
-    @Override public void init() {
+    @Override
+    public void init() {
         // MUI treats returning from a vanilla dialog as opening a new child of that dialog.
         // Keep this wrapper's original return target when its existing UI is resumed.
         if (initialized) screen().getContext().setParent(retainedParent);
@@ -50,31 +78,13 @@ public final class OreScreen extends ScreenWrapper {
         for (var root : java.util.List.copyOf(roots)) if (root.isAlive()) root.hostDetached();
     }
 
-    @Override public void removed() {
+    @Override
+    public void removed() {
         suspendRoots();
         super.removed();
     }
 
-    public static void open(ModularScreen screen) {
-        // MUI's client-only open(screen, settings) path ignores customGui.
-        // Construct the wrapper directly, after installing the same default settings.
-        if (Minecraft.getInstance().screen instanceof OreScreen parent) parent.suspendRoots();
-        screen.getContext().setSettings(new UISettings());
-        // MUI retains the actual parent screen and reopens its existing panels on return.
-        screen.openParentOnClose(true);
-        ClientGUI.open(new OreScreen(screen));
+    @Override
+    public void renderBackground(GuiGraphics graphics) {
     }
-
-    /** Close only the current MUI screen, returning through its retained parent chain. */
-    public static void back() {
-        Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft == null) return;
-        if (minecraft.screen instanceof OreScreen current) {
-            current.screen().close();
-            current.endSession();
-        }
-        else if (minecraft.screen != null) minecraft.screen.onClose();
-    }
-
-    @Override public void renderBackground(GuiGraphics graphics) { }
 }

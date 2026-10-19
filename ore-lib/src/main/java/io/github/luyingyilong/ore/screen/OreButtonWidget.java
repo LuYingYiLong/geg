@@ -29,7 +29,9 @@ public final class OreButtonWidget extends AbstractWidget {
         super(0, 0, 32, Button.HEIGHT, narration);
         this.button = Objects.requireNonNull(button);
         if (button.getParent() != null) throw new IllegalArgumentException("Button already belongs to a control tree");
-        root.setContent(new io.github.luyingyilong.ore.layout.Control().addChild(button));
+        var contentRoot = new io.github.luyingyilong.ore.layout.Control();
+        contentRoot.addChild(button);
+        root.setContent(contentRoot);
     }
 
     public Button button() { return button; }

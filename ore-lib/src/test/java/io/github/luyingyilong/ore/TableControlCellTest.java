@@ -27,8 +27,8 @@ public final class TableControlCellTest {
         private Actions(List<String> events) {
             buy = Signals.configure(new Button(cue -> events.add(cue.name())).setSize(Button.Size.SMALL), connected -> connected.pressed().connect(connected, () -> events.add(row.id() + ":buy")));
             favorite = Signals.configure(new Button(cue -> events.add(cue.name())).setSize(Button.Size.SMALL).setToggleButton(true), connected -> connected.pressed().connect(connected, () -> events.add(row.id() + ":favorite:" + favoriteState())));
-            addChild(buy);
-            addChild(favorite);
+            this.addChild(buy);
+            this.addChild(favorite);
         }
 
         private boolean favoriteState() { return favorite.getButtonPressed(); }
@@ -50,9 +50,9 @@ public final class TableControlCellTest {
         List<String> events = new ArrayList<>();
         int[] created = {0};
         Table<Item> table = new Table<Item>().setRowKey(Item::id)
-                .column(new Table.Column<>("name", Component.literal("Name"), 40, 40, 0,
+                .addColumn(new Table.Column<>("name", Component.literal("Name"), 40, 40, 0,
                         width -> 20, (context, row, bounds) -> { }))
-                .column(new Table.Column<>("actions", Component.literal("Actions"), 110, 160, 1,
+                .addColumn(new Table.Column<>("actions", Component.literal("Actions"), 110, 160, 1,
                         width -> 20, new Table.ControlCell<>(() -> {
                             created[0]++;
                             return new Actions(events);
@@ -169,7 +169,7 @@ public final class TableControlCellTest {
         target = actions(table, 0).buy.getAbsoluteBounds();
         io.github.luyingyilong.ore.event.WindowInputs.press(window,target.x() + 1, target.y() + 1, null);
         Control popup = new Control() { @Override public boolean getFocusScope() { return true; } };
-        overlay.add(popup);
+        overlay.addChild(popup);
         window.layoutViewport(129, 150, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,target.x() + 1, target.y() + 1);
         check(events.isEmpty());

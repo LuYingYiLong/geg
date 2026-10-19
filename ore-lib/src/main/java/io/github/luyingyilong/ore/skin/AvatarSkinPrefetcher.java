@@ -11,23 +11,22 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-/** Observes server identities without replacing an offline-mode UUID with a skin provider's UUID. */
+/**
+ * Observes server identities without replacing an offline-mode UUID with a skin provider's UUID.
+ */
 final class AvatarSkinPrefetcher {
-    @FunctionalInterface interface Source {
-        void load(GameProfile profile, Consumer<AvatarSkinSource> available);
-    }
-    private record Observation(String textures) { }
     private final Cache<UUID, Observation> observed = CacheBuilder.newBuilder()
             .maximumSize(1024).expireAfterWrite(5, TimeUnit.MINUTES).build();
     private final Source source;
     private final BiConsumer<GameProfile, AvatarSkinSource> available;
-
     AvatarSkinPrefetcher(Source source, BiConsumer<GameProfile, AvatarSkinSource> available) {
         this.source = source;
         this.available = available;
     }
 
-    /** Returns whether a new lookup was started, allowing the tick bridge to limit its work. */
+    /**
+     * Returns whether a new lookup was started, allowing the tick bridge to limit its work.
+     */
     synchronized boolean observe(GameProfile profile) {
         if (profile.getId() == null) return false;
         String textures = profile.getProperties().get("textures").stream().map(Property::getValue)
@@ -49,5 +48,15 @@ final class AvatarSkinPrefetcher {
         return true;
     }
 
-    synchronized void clear() { observed.invalidateAll(); }
+    synchronized void clear() {
+        observed.invalidateAll();
+    }
+
+    @FunctionalInterface
+    interface Source {
+        void load(GameProfile profile, Consumer<AvatarSkinSource> available);
+    }
+
+    private record Observation(String textures) {
+    }
 }

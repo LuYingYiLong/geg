@@ -3,6 +3,7 @@ package io.github.luyingyilong.ore;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import io.github.luyingyilong.ore.input.NumberInput;
 import io.github.luyingyilong.ore.layout.Container;
+import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.Size;
 import net.minecraft.client.gui.Font;
@@ -33,12 +34,25 @@ public final class Form extends Container {
         return chosen == Layout.HORIZONTAL && viewportWidth <= 128 ? Layout.VERTICAL : chosen;
     }
 
-    public Form add(FormItem item) {
-        if (items.containsKey(item.getName())) throw new IllegalArgumentException("Duplicate field: " + item.getName());
-        items.put(item.getName(), item);
+    public Form addItem(FormItem item) {
         addChild(item);
-        item.setInputVisible(getVisible() && item.getActive());
         return this;
+    }
+
+    @Override protected void validateChildren(java.util.List<Control> proposed) {
+        java.util.Set<String> names = new java.util.HashSet<>();
+        for (Control child : proposed) {
+            if (!(child instanceof FormItem item)) throw new IllegalArgumentException("Form accepts FormItem; use addItem");
+            if (!names.add(item.getName())) throw new IllegalArgumentException("Duplicate field: " + item.getName());
+        }
+    }
+
+    @Override protected void childrenChanged() {
+        items.clear();
+        for (Control child : getChildren()) if (child instanceof FormItem item && item.isAlive()) {
+            items.put(item.getName(), item);
+            item.setInputVisible(getVisible() && item.getActive());
+        }
     }
 
     @Override public void setVisible(boolean visible) {

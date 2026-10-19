@@ -1,6 +1,8 @@
 package io.github.luyingyilong.ore.layout;
 
-/** Width and height in GUI pixels. */
+/**
+ * Width and height in GUI pixels.
+ */
 public record Size(int width, int height) {
     public Size {
         width = Math.max(0, width);

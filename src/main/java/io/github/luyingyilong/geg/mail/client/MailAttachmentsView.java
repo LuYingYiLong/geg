@@ -15,19 +15,23 @@ final class MailAttachmentsView extends Container {
     private final Box items = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(2);
     private final Scroll scroll = new Scroll().setHorizontal(Scroll.BarMode.NEVER).setVertical(Scroll.BarMode.DISABLED).setContent(items);
     private final Button claim = new Button(Component.translatable("mail.geg.claim")).setType(Button.Type.PRIMARY);
-    private final Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4).add(scroll).add(claim);
+    private final Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
+    {
+        row.addChild(scroll);
+        row.addChild(claim);
+    }
 
     MailAttachmentsView(Runnable action) {
         items.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
         scroll.setMinimum(0, Slot.SIZE).setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL);
         Signals.configure(claim, connected -> connected.pressed().connect(connected, action)).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        addChild(row);
+        this.addChild(row);
         setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
     }
 
     void attachments(List<MailItem> values, boolean hasAttachments, boolean claimed) {
         for (Control child : items.getChildren()) { if (child.getParent() != null) child.getParent().removeChild(child); child.queueFree(); }
-        for (MailItem value : values) items.add(new Slot().setItem(value.item(), value.quantity()));
+        for (MailItem value : values) { items.addChild(new Slot().setItem(value.item(), value.quantity())); }
         scroll.setVisible(!values.isEmpty());
         claim.setLabel(Component.translatable(claimed ? "mail.geg.claimed" : "mail.geg.claim"))
                 .setDisabled(!hasAttachments || claimed).setVisible(hasAttachments);

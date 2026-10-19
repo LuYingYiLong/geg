@@ -36,12 +36,14 @@ final class OrganizationEditForm {
         });
         unrestricted.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         approval.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        Box choices = new Box().setGap(2).add(unrestricted).add(approval);
+        Box choices = new Box().setGap(2);
+        choices.addChild(unrestricted);
+        choices.addChild(approval);
         choices.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         form = new Form()
-                .add(new FormItem("name", Component.translatable("organization.geg.name"), name, () -> name.getText().getString()))
-                .add(new FormItem("description", Component.translatable("organization.geg.description"), description))
-                .add(new FormItem("join_policy", Component.translatable("organization.geg.join_policy"), choices,
+                .addItem(new FormItem("name", Component.translatable("organization.geg.name"), name, () -> name.getText().getString()))
+                .addItem(new FormItem("description", Component.translatable("organization.geg.description"), description))
+                .addItem(new FormItem("join_policy", Component.translatable("organization.geg.join_policy"), choices,
                         () -> policy().name()));
         form.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         scroll = new Scroll().setHorizontal(Scroll.BarMode.DISABLED).setContent(form);

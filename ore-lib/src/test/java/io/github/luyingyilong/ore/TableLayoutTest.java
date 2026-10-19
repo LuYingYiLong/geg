@@ -31,11 +31,11 @@ public final class TableLayoutTest {
         };
         Table<Integer> table = Signals.configure(new Table<Integer>()
                 .setRowKey(row -> row), connected -> connected.rowActivated().connect(connected, selected::add))
-                .column(new Table.Column<>("status", Component.literal("Status"),
+                .addColumn(new Table.Column<>("status", Component.literal("Status"),
                         110, 110, 1, width -> 20, text))
-                .column(new Table.Column<>("price", Component.literal("Price"),
+                .addColumn(new Table.Column<>("price", Component.literal("Price"),
                         96, 96, 0, width -> 10, text))
-                .column(new Table.Column<>("action", Component.literal("Action"),
+                .addColumn(new Table.Column<>("action", Component.literal("Action"),
                         104, 104, 0, width -> width >= 104 ? 19 : 39, action));
         List<Integer> rows = new ArrayList<>();
         for (int index = 0; index < 20; index++) rows.add(index);
@@ -96,7 +96,7 @@ public final class TableLayoutTest {
             }
         };
         Table<Integer> wrapped = new Table<Integer>().setRowKey(row -> row)
-                .column(new Table.Column<>("name", Component.literal("Name"),
+                .addColumn(new Table.Column<>("name", Component.literal("Name"),
                         48, 80, 1, width -> 20, variableHeight));
         wrapped.setRows(List.of(0, 1, 2));
         wrapped.layout(new Rect(0, 0, 100, 100), null);

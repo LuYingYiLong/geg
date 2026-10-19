@@ -27,8 +27,8 @@ public final class ReviewedDefectsTest {
     private static void descriptionsDeletion() {
         Font font = font();
         Descriptions descriptions = new Descriptions().setColumns(1)
-                .add("one", Component.literal("Name"), Component.literal("Alice"))
-                .add("two", Component.literal("Details"), Component.literal("Example"));
+                .addItem("one", Component.literal("Name"), Component.literal("Alice"))
+                .addItem("two", Component.literal("Details"), Component.literal("Example"));
         Rect area = new Rect(0, 0, 200, 100);
         descriptions.layout(area, font);
         descriptions.getItem("one").queueFree();
@@ -36,8 +36,8 @@ public final class ReviewedDefectsTest {
         check(descriptions.getItems().size() == 1, "Pending deletion must leave the descriptions index immediately");
         LifecycleScheduler.flush();
         descriptions.layout(area, font);
-        check(!descriptions.remove("one"), "Deleted description no longer has an indexed entry");
-        descriptions.add("one", Component.literal("Replacement"), Component.literal("Bob"));
+        check(!descriptions.removeItem("one"), "Deleted description no longer has an indexed entry");
+        descriptions.addItem("one", Component.literal("Replacement"), Component.literal("Bob"));
         descriptions.layout(area, font);
         descriptions.getItem("two").setVisible(false);
         descriptions.layout(area, font);
@@ -45,7 +45,7 @@ public final class ReviewedDefectsTest {
         LifecycleScheduler.flush();
         descriptions.layout(area, font);
         check(descriptions.getItems().size() == 1, "Freed hidden items must also leave the index");
-        descriptions.clear();
+        descriptions.clearItems();
         descriptions.layout(area, font);
         check(descriptions.getItems().isEmpty(), "Clear after individual deletion is safe");
         descriptions.queueFree();
@@ -126,10 +126,13 @@ public final class ReviewedDefectsTest {
             for (int width : new int[]{100, 127, 128, 129}) {
                 Label label = new Label(Component.literal(text)).setWrap(Label.Wrap.CHARACTER);
                 label.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL);
-                Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4)
-                        .add(label).add(new Control().setMinimum(50, 10));
+                Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
+                row.addChild(label);
+                row.addChild(new Control().setMinimum(50, 10));
                 Control footer = new Control().setMinimum(0, 10);
-                Box column = new Box().add(row).add(footer);
+                Box column = new Box();
+                column.addChild(row);
+                column.addChild(footer);
                 column.layout(new Rect(0, 0, width, 200), font);
                 int required = label.measureSize(font, new Size(label.getSize().width(), 200)).height();
                 check(label.getSize().height() >= required, "Row must measure wrapping at the allocated child width");
@@ -142,7 +145,7 @@ public final class ReviewedDefectsTest {
 
     private static void formVisibility() {
         Form form = new Form();
-        form.add(new FormItem("example", Component.literal("Example"), new Control().setMinimum(10, 10), () -> "value"));
+        form.addItem(new FormItem("example", Component.literal("Example"), new Control().setMinimum(10, 10), () -> "value"));
         Control generic = form;
         List<Boolean> changes = new ArrayList<>();
         form.visibilityChanged().connect(form, changes::add);
@@ -161,7 +164,9 @@ public final class ReviewedDefectsTest {
         for (Grid.LayoutMode mode : Grid.LayoutMode.values()) {
             Control first = new Control().setMinimum(10, 20), second = new Control().setMinimum(10, 30);
             first.setVisible(false);
-            Grid<Object> grid = new Grid<>().setMode(mode).setColumns(10, 1, 4).add(first).add(second);
+            Grid<Object> grid = new Grid<>().setMode(mode).setColumns(10, 1, 4);
+            grid.addChild(first);
+            grid.addChild(second);
             Rect area = new Rect(0, 0, 50, 100);
             grid.layout(area, null);
             check(second.getBounds().y() == 0 && grid.getContentHeight() == 30, "Hidden fixed children reserve no cells");

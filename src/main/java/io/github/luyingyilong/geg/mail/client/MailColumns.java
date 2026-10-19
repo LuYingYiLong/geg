@@ -16,10 +16,11 @@ final class MailColumns extends Container implements ScrollContent {
     private Size extent = new Size(0, 0);
 
     MailColumns(Control messages, Control detail) {
-        columns = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4)
-                .add(new Column(messages, 100, 180, SizeFlags.SIZE_EXPAND_FILL))
-                .add(new Column(detail, 120, 300, SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsStretchRatio(2.0F));
-        super.addChild(columns);
+        var columnRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
+        columnRow.addChild(new Column(messages, 100, 180, SizeFlags.SIZE_EXPAND_FILL));
+        columnRow.addChild(new Column(detail, 120, 300, SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsStretchRatio(2.0F));
+        columns = columnRow;
+        addChild(columns);
     }
 
     @Override public Size measureSize(Font font, Size available) {
@@ -44,7 +45,7 @@ final class MailColumns extends Container implements ScrollContent {
             this.content = content;
             this.desiredWidth = desiredWidth;
             setMinimum(minimumWidth, 35).setSizeFlagsHorizontal(flags).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
-            addChild(content);
+            this.addChild(content);
         }
 
         @Override public Size measureSize(Font font, Size available) { return new Size(desiredWidth, getMinimumHeight()); }

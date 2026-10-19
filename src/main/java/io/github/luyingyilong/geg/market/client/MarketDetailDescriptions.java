@@ -23,10 +23,10 @@ final class MarketDetailDescriptions extends Container {
 
     MarketDetailDescriptions() {
         for (Field field : Field.values()) {
-            info.add(field.name(), Component.translatable(field.label), Component.empty());
+            info.addItem(field.name(), Component.translatable(field.label), Component.empty());
             info.getItem(field.name()).setVisible(false);
         }
-        addChild(info);
+        this.addChild(info);
     }
 
     void show(Map<Field, Component> values) {

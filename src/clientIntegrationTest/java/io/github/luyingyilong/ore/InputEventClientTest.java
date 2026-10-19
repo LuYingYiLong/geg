@@ -33,7 +33,11 @@ public final class InputEventClientTest {
                 fieldNode=new InputControl(field);textNode=new InputControl(text);
                 field.textChanged().connect(fieldNode, value -> fieldChanges++);
                 text.textChanged().connect(textNode, value -> textChanges++);
-                var box=new Box().setGap(4).add(fieldNode).add(textNode).add(new Button(Component.literal("Click")));
+                var childContainer103 = new Box().setGap(4);
+                childContainer103.addChild(fieldNode);
+                childContainer103.addChild(textNode);
+                childContainer103.addChild(new Button(Component.literal("Click")));
+                var box=childContainer103;
                 window=Window.embedded().setContent(box).onBack(()->{});window.open();phase=1;
             } else if(phase==1&&field.isValid()&&text.isValid()&&window.getContext().getMui()!=null&&ticks>15) {
                 var p=fieldNode.getWidgetBounds();

@@ -45,7 +45,7 @@ public final class Toast extends Container {
     Toast(LongSupplier clock, Consumer<OreSounds.Cue> sound) {
         this.clock = Objects.requireNonNull(clock);
         this.sound = Objects.requireNonNull(sound);
-        addChild(label);
+        updateChildren(java.util.List.of(label));
         setType(type);
         setVisible(false);
         setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
@@ -53,6 +53,10 @@ public final class Toast extends Container {
 
     private static double easeIn(double phase) {
         return Math.pow(Math.min(1.0D, Math.max(0.0D, phase)), 3.0D);
+    }
+
+    @Override protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
+        if (!isUpdatingChildren()) throw new IllegalStateException("Toast has a fixed skeleton; configure its properties");
     }
 
     public static Rect shadowBounds(Rect area) {

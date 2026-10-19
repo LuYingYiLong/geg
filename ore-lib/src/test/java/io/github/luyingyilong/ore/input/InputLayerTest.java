@@ -37,7 +37,9 @@ public final class InputLayerTest {
         Control field = new Control().setPreferred(80, 200);
         Scroll inner = new Scroll().setEmbedded(true).setContent(field);
         inner.setPosition(0, 100).setRequestedSize(80, 60);
-        Scroll outer = new Scroll().setEmbedded(true).setContent(new Control().setPreferred(100, 300).addChild(inner));
+        var childContainer25 = new Control().setPreferred(100, 300);
+        childContainer25.addChild(inner);
+        Scroll outer = new Scroll().setEmbedded(true).setContent(childContainer25);
         Window window = new Window(true).setContent(outer);
         window.layoutViewport(100, 60, null);
         outer.scrollBy(0, 80);

@@ -19,7 +19,7 @@ public final class TableScrolledButtonsTest {
         private final Button button;
         Cell(List<String> events) {
             button = Signals.configure(new Button(cue -> { }), connected -> connected.pressed().connect(connected, () -> events.add(action.id())));
-            addChild(button);
+            this.addChild(button);
         }
         void bind(Action action) {
             this.action = action;
@@ -40,15 +40,17 @@ public final class TableScrolledButtonsTest {
                 new Action("Approve", Button.Type.PRIMARY, false),
                 new Action("Reject", Button.Type.DESTRUCTIVE, false));
         Table<Action> table = new Table<Action>().setRowKey(Action::id)
-                .column(new Table.Column<>("name", Component.empty(), 230, 230, 0,
+                .addColumn(new Table.Column<>("name", Component.empty(), 230, 230, 0,
                         width -> 23, (context, row, bounds) -> { }))
-                .column(new Table.Column<>("action", Component.empty(), 70, 70, 1,
+                .addColumn(new Table.Column<>("action", Component.empty(), 70, 70, 1,
                         width -> 23, new Table.ControlCell<>(() -> new Cell(events), Cell::bind)));
         table.setMinimum(300, 80);
         table.setRows(data);
         long[] time = {0};
         Drawer drawer = new Drawer(Component.literal("Actions"), () -> time[0], cue -> { }).setContent(table);
-        Window window = Window.embedded().setContent(new Control()).setOverlay(new Overlay().add(drawer));
+        var childContainer60 = new Overlay();
+        childContainer60.addChild(drawer);
+        Window window = Window.embedded().setContent(new Control()).setOverlay(childContainer60);
         drawer.open();time[0] = 1000;
         window.layoutViewport(400, 220, font);
         drawer.getBodyScroll().setScroll(drawer.getBodyScroll().getMaxScrollX(), 0);

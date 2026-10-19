@@ -18,7 +18,10 @@ public final class InputEventDispatchTest {
         Probe parent=new Probe("parent",calls),child=new Probe("child",calls),lower=new Probe("lower",calls);
         parent.consume=true;child.consume=false;lower.consume=true;
         child.setPosition(10,5).setRequestedSize(30,20);parent.addChild(child);
-        Control page=new Control().addChild(lower.setRequestedSize(100,60)).addChild(parent.setRequestedSize(100,60));
+        var childContainer26 = new Control();
+        childContainer26.addChild(lower.setRequestedSize(100, 60));
+        childContainer26.addChild(parent.setRequestedSize(100, 60));
+        Control page=childContainer26;
         Window root=new Window(true).setContent(page);root.layoutViewport(100,60,null);
         check(WindowInputs.press(root,12,8,null),"Parent consumes child hit");
         check(calls.equals(List.of("child:PRESS:2,3","parent:PRESS:12,8")),"One target path, no lower sibling");
@@ -30,7 +33,10 @@ public final class InputEventDispatchTest {
     private static void capture() {
         List<String> calls=new ArrayList<>();Probe a=new Probe("a",calls),b=new Probe("b",calls);
         a.consume=true;b.consume=true;a.setRequestedSize(30,30);b.setPosition(40,0).setRequestedSize(30,30);
-        Window root=new Window(true).setContent(new Control().addChild(a).addChild(b));root.layoutViewport(100,60,null);
+        var childContainer27 = new Control();
+        childContainer27.addChild(a);
+        childContainer27.addChild(b);
+        Window root=new Window(true).setContent(childContainer27);root.layoutViewport(100,60,null);
         root.dispatchInput(new PointerEvent(root.getContext(),PointerEvent.Action.PRESS,5,5,0,0));
         root.dispatchInput(new PointerEvent(root.getContext(),PointerEvent.Action.PRESS,45,5,1,0));
         root.dispatchInput(new PointerEvent(root.getContext(),PointerEvent.Action.RELEASE,45,5,1,0));
@@ -47,9 +53,13 @@ public final class InputEventDispatchTest {
     private static void coordinates() {
         List<String> calls=new ArrayList<>();Probe child=new Probe("item",calls);child.consume=true;
         child.setPosition(80,100).setRequestedSize(30,30);
-        Scroll inner=new Scroll().setContent(new Control().setPreferred(300,400).addChild(child));
+        var childContainer28 = new Control().setPreferred(300, 400);
+        childContainer28.addChild(child);
+        Scroll inner=new Scroll().setContent(childContainer28);
         inner.setPosition(40,50).setRequestedSize(100,100);
-        Scroll outer=new Scroll().setContent(new Control().setPreferred(300,400).addChild(inner));
+        var childContainer29 = new Control().setPreferred(300, 400);
+        childContainer29.addChild(inner);
+        Scroll outer=new Scroll().setContent(childContainer29);
         Window root=new Window(true).setContent(outer);root.layoutViewport(140,140,null);
         outer.setScroll(20,30);inner.setScroll(70,90);
         Rect visible=EventGeometry.displayed(child);
@@ -85,7 +95,10 @@ public final class InputEventDispatchTest {
         Window root=new Window(true);
         Button button=Signals.configure(new Button(cue->{}).setActionMode(Button.ACTION_MODE.BUTTON_PRESS), connected -> connected.pressed().connect(connected, ()->root.getFocusManager().requestFocus(trap,null)));
         button.setRequestedSize(30,20);
-        root.setContent(new Control().addChild(button).addChild(trap));root.layoutViewport(100,40,null);
+        var childContainer30 = new Control();
+        childContainer30.addChild(button);
+        childContainer30.addChild(trap);
+        root.setContent(childContainer30);root.layoutViewport(100,40,null);
         root.getFocusManager().requestFocus(button,null);
         WindowInputs.keyDown(root,org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE,0,null);
         WindowInputs.keyDown(root,org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE,0,null);

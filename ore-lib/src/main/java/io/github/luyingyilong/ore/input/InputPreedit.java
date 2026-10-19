@@ -1,6 +1,8 @@
 package io.github.luyingyilong.ore.input;
 
-/** Uncommitted IME text. Cursor offsets use UTF-16, matching Windows IMM and MUI's handler. */
+/**
+ * Uncommitted IME text. Cursor offsets use UTF-16, matching Windows IMM and MUI's handler.
+ */
 public record InputPreedit(String text, int cursor) {
     public static final InputPreedit EMPTY = new InputPreedit("", 0);
     public static final int MAX_LENGTH = 4096;
@@ -11,9 +13,20 @@ public record InputPreedit(String text, int cursor) {
         cursor = boundary(text, cursor);
     }
 
-    public boolean active() { return !text.isEmpty(); }
+    private static int boundary(String text, int index) {
+        int result = Math.max(0, Math.min(text.length(), index));
+        if (result > 0 && result < text.length() && Character.isLowSurrogate(text.charAt(result))
+                && Character.isHighSurrogate(text.charAt(result - 1))) result--;
+        return result;
+    }
 
-    /** The replacement is only a presentation; callers retain their original committed value. */
+    public boolean active() {
+        return !text.isEmpty();
+    }
+
+    /**
+     * The replacement is only a presentation; callers retain their original committed value.
+     */
     public Presentation present(String committed, int selectionStart, int selectionEnd) {
         int start = boundary(committed, Math.min(selectionStart, selectionEnd));
         int end = boundary(committed, Math.max(selectionStart, selectionEnd));
@@ -22,12 +35,6 @@ public record InputPreedit(String text, int cursor) {
                 start, start + cursor, start + text.length());
     }
 
-    private static int boundary(String text, int index) {
-        int result = Math.max(0, Math.min(text.length(), index));
-        if (result > 0 && result < text.length() && Character.isLowSurrogate(text.charAt(result))
-                && Character.isHighSurrogate(text.charAt(result - 1))) result--;
-        return result;
+    public record Presentation(String text, int start, int cursor, int end) {
     }
-
-    public record Presentation(String text, int start, int cursor, int end) { }
 }

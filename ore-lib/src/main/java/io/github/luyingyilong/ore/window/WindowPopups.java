@@ -39,7 +39,8 @@ public final class WindowPopups {
                 dismiss(false);
                 if(next!=null) {
                     owner=next;popup=new Popup(next);
-                    context.getOwner().getPopupOverlay().add(popup);
+                    var popupOverlay = context.getOwner().getPopupOverlay();
+                    popupOverlay.addChild(popup);
                     popup.layout(context.getOwner().getBounds(),context.getMui()==null?null:context.getMui().getFont());
                 }
             }
@@ -71,7 +72,7 @@ public final class WindowPopups {
         private final Items items=new Items();
         Popup(Dropdown<?> trigger) {
             this.trigger=trigger;options=trigger.getOptions();
-            panel.addChild(scroll);scroll.setContent(items);addChild(panel);
+            panel.addChild(scroll);scroll.setContent(items);this.addChild(panel);
             scroll.setVertical(Scroll.BarMode.NEVER).setHorizontal(Scroll.BarMode.DISABLED);
             for(var option:options) {
                 Button button=Signals.configure(new Button(option.label()).setType(Button.Type.MENU).setAlignment(Button.TextAlignment.LEFT)

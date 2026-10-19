@@ -42,9 +42,10 @@ public final class ScrollInteractionTest {
                     case 1 -> scroll.setVertical(Scroll.BarMode.DISABLED);
                     case 2 -> window.removeChild(scroll);
                     case 3 -> window.cancelInteractions();
-                    case 4 -> window.overlayLayer().add(new Control() {
+                    case 4 -> { var childContainer45 = window.overlayLayer();
+        childContainer45.addChild(new Control() {
                         @Override public boolean getFocusScope() { return true; }
-                    });
+                    }); }
                     case 5 -> scroll.getVerticalBar().setVisible(false);
                     default -> throw new AssertionError();
                 }
@@ -67,7 +68,8 @@ public final class ScrollInteractionTest {
     private static void nestedScroll() {
         Scroll inner = new Scroll().setContent(new Control().setMinimum(300, 400));
         inner.setPosition(40, 80).setRequestedSize(100, 80);
-        Control content = new Control().setMinimum(400, 600).addChild(inner);
+        Control content = new Control().setMinimum(400, 600);
+        content.addChild(inner);
         Scroll outer = new Scroll().setContent(content);
         Window window = new Window(true).setContent(outer);
         window.layoutViewport(160, 140, null);

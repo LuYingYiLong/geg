@@ -32,7 +32,7 @@ public final class PainterReuseTest {
         Table.TextCell<Integer> cell = new Table.TextCell<Integer>(value -> text, 0xFFFFFFFF).setWrap(Label.Wrap.WORD).setMaxLines(3);
         PlayerIdentityCell<Integer> identity = new PlayerIdentityCell<>(value -> new UUID(0, value), value -> "Player " + value);
         Table<Integer> table = new Table<Integer>().setRowKey(value -> value)
-                .column(new Table.Column<>("body", Component.literal("Text"), 20, 160, 1, width -> 32, cell));
+                .addColumn(new Table.Column<>("body", Component.literal("Text"), 20, 160, 1, width -> 32, cell));
         table.setRows(List.of(1, 2, 3, 4, 5));
         table.layout(new Rect(0, 0, 240, 110), font);
         List<Label> rowLabels = labels(table);

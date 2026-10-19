@@ -23,7 +23,9 @@ public final class FocusNavigationTest {
         Button left = button(10, 10);
         Button right = button(40, 10);
         Button bottom = button(10, 42);
-        content.addChild(left).addChild(right).addChild(bottom);
+        content.addChild(left);
+        content.addChild(right);
+        content.addChild(bottom);
         Overlay overlay = new Overlay();
         window.setContent(content).setOverlay(overlay);
         window.layoutViewport(100, 100, null);
@@ -51,7 +53,7 @@ public final class FocusNavigationTest {
         Popup popup = new Popup();
         Button action = button(12, 12);
         popup.addChild(action);
-        overlay.add(popup);
+        overlay.addChild(popup);
         window.layoutViewport(100, 100, null);
         check(focus.getFocused() == action);
         check(!io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null));
@@ -102,7 +104,7 @@ public final class FocusNavigationTest {
         int[] activated = {0};
         Table<Integer> table = new Table<Integer>()
                 .setRowKey(value -> value)
-                .column(new Table.Column<>("action", Component.literal("Action"),
+                .addColumn(new Table.Column<>("action", Component.literal("Action"),
                         40, 80, 1, width -> 20, new Table.Cell<>() {
                     @Override public void draw(ModularGuiContext context, Integer row, Rect bounds) { }
                     @Override public List<Rect> focusTargets(Integer row, Rect bounds) {
@@ -165,7 +167,8 @@ public final class FocusNavigationTest {
         Control content = new Control();
         Control input = new Control().setFocusable(true);
         Button button = button(40, 0);
-        content.addChild(input).addChild(button);
+        content.addChild(input);
+        content.addChild(button);
         window.setContent(content);
         window.layoutViewport(100, 30, null);
         FocusManager focus = window.getFocusManager();

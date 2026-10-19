@@ -59,7 +59,9 @@ public final class MarketDetailLayoutTest {
         Modal modal = constructor.newInstance(Component.literal("Item"), null, null, null).setSize(340, 224).setContent(details)
                 .addAction(Signals.configure(new Button(Component.literal("撤单")).setType(Button.Type.DESTRUCTIVE), actionButton -> actionButton.pressed().connect(actionButton, () -> { })))
                 .addAction(Signals.configure(new Button(Component.literal("改价")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
-        Window window = new Window(true).setContent(new Control()).setOverlay(new Overlay().add(modal));
+        var childContainer99 = new Overlay();
+        childContainer99.addChild(modal);
+        Window window = new Window(true).setContent(new Control()).setOverlay(childContainer99);
         for (int width : new int[]{127, 128, 129, 427, 640}) {
             window.layoutViewport(width, 240, font);
             check(modal.getPanelBounds().x() == (width - Math.min(340, width)) / 2, "Secondary modal stays centered");
@@ -69,9 +71,11 @@ public final class MarketDetailLayoutTest {
 
         // Blocking the background search must not hide or disable its native MUI widget.
         Control search = new Control().setPosition(10, 0).setRequestedSize(138, 18).setFocusable(true);
-        window.setContent(new Control().addChild(search));
+        var childContainer100 = new Control();
+        childContainer100.addChild(search);
+        window.setContent(childContainer100);
         Control quantityField = new Control().setPreferred(100, 20).setFocusable(true);
-        Form quantityForm = new Form().add(new FormItem("quantity", Component.literal("Quantity"), quantityField, () -> "1"));
+        Form quantityForm = new Form().addItem(new FormItem("quantity", Component.literal("Quantity"), quantityField, () -> "1"));
         quantityForm.setVisible(true);
         MarketCanvasWidget.QuantityContent quantityContent = new MarketCanvasWidget.QuantityContent(index -> { });
         quantityContent.bindForm(quantityForm);
@@ -82,7 +86,9 @@ public final class MarketDetailLayoutTest {
         Overlay layers = new Overlay();
         // Move the existing secondary modal into the new two-level overlay.
         modal.getParent().removeChild(modal);
-        window.setOverlay(layers.add(modal).add(quantity));
+        layers.addChild(modal);
+        layers.addChild(quantity);
+        window.setOverlay(layers);
         quantity.setVisible(false);
         check(search.getVisible() && !window.getFocusManager().allowsNativeInput(search),
                 "Search stays visible while the secondary modal blocks native input");

@@ -76,20 +76,33 @@ public final class Dialog extends Container {
         close.setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         close.pressed().connect(close, () -> closeRequested.emit());
         header.setMinimum(0, CLOSE_SIZE).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        header.add(titleLabel).add(close);
+        header.addChild(titleLabel);
+        header.addChild(close);
         headerInset.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        column.add(headerInset);
+        column.addChild(headerInset);
         footer.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         footerInset.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         footerInset.setVisible(false);
-        column.add(footerInset);
+        column.addChild(footerInset);
         panel.setChild(column);
-        addChild(panel);
+        updateChildren(List.of(panel));
     }
 
     @Override public Dialog setMinimum(int width, int height) {
         super.setMinimum(width, height);
         return this;
+    }
+
+    @Override protected void validateChildren(List<Control> proposed) {
+        if (!isUpdatingChildren()) throw new IllegalStateException("Dialog has a fixed skeleton; use setContent/addAction");
+    }
+
+    @Override protected void childrenChanged() {
+        content = bodyInset.getChildCount() == 0 ? null : bodyInset.getChild(0);
+        actions.clear();
+        for (Control child : footer.getChildren()) if (child instanceof Button button && button.isAlive()) actions.add(button);
+        footer.setMinimum(0, actionHeight(actions.size()));
+        footerInset.setVisible(!actions.isEmpty());
     }
 
     public Dialog setTitle(Component title) {
@@ -118,13 +131,15 @@ public final class Dialog extends Container {
     }
 
     public Dialog setContent(Control content) {
-        this.content = Objects.requireNonNull(content);
-        content.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        if (this.content == content) return this;
+        Objects.requireNonNull(content);
         bodyInset.setChild(content);
+        content.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         if (bodyInset.getParent() == null) {
             bodyInset.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
             column.removeChild(footerInset);
-            column.add(bodyInset).add(footerInset);
+            column.addChild(bodyInset);
+            column.addChild(footerInset);
         }
         return this;
     }
@@ -140,7 +155,6 @@ public final class Dialog extends Container {
     public Dialog addAction(Button button) {
         Objects.requireNonNull(button);
         button.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        actions.add(button);
         footer.addChild(button);
         footer.setMinimum(0, actionHeight(actions.size()));
         footerInset.setVisible(true);
