@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.FocusManager;
 import io.github.luyingyilong.ore.layout.Overlay;
@@ -25,7 +25,7 @@ public final class TableInteractionTest {
                         (context, row, bounds) -> { }))
                 .addColumn(new Table.Column<>("action", Component.literal("Action"), 80, 120, 1, width -> 20,
                         new Table.Cell<>() {
-                    @Override public void draw(ModularGuiContext context, Item item, Rect bounds) { }
+                    @Override public void draw(DrawContext context, Item item, Rect bounds) { }
                     @Override public List<Rect> focusTargets(Item item, Rect bounds) {
                         int width = (bounds.width() - 6) / 2;
                         return List.of(new Rect(bounds.x() + 2, bounds.y() + 2, width, 18),

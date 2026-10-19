@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.Box;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Control;
@@ -49,7 +49,7 @@ public final class PlayerIdentityCell<T> implements Table.Cell<T> {
         identity.name.setText(Component.literal(name));
     }
 
-    @Override public void draw(ModularGuiContext context, T row, Rect bounds) {
+    @Override public void draw(DrawContext context, T row, Rect bounds) {
         // The retained subtree is rendered and clipped by Table.RowView.
     }
 

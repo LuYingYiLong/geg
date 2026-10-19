@@ -103,6 +103,9 @@ public final class WindowManager {
 
     @SubscribeEvent
     public static void shutdown(GameShuttingDownEvent event) {
+        ScreenInputBridge.clear();
+        RecipeCanvasFrames.clear();
+        for (ScreenWindowHost host : ScreenWindowHost.getHosts()) host.close();
         for (NativeWindowHost host : List.copyOf(WINDOWS)) {
             host.getContext().getOwner().close();
             host.destroy();

@@ -272,9 +272,10 @@ public class Input extends TextFieldWidget implements SignalOwner {
     Caret inputMethodCaret() {
         Rect area = inputMethodBounds();
         var cursor = ((OreTextFieldRenderer) renderer).caretPosition();
-        return new Caret(
+        Rect caret = toHost(new Rect(
                 area.x() + Math.max(0, Math.min(area.width() - 2, (int) cursor.x)),
-                area.y() + Math.max(0, Math.min(area.height(), (int) cursor.y - getScrollY() + inputMethodFontHeight())));
+                area.y() + Math.max(0, Math.min(area.height(), (int) cursor.y - getScrollY() + inputMethodFontHeight())), 0, 0));
+        return new Caret(caret.x(), caret.y());
     }
 
     /**
@@ -375,6 +376,13 @@ public class Input extends TextFieldWidget implements SignalOwner {
         // MUI editing expects its own local matrix, even when a Canvas delivered the event.
         var located = brachy.modularui.screen.viewport.LocatedWidget.of(this);
         located.applyMatrix(getContext());
+        int hostMouseX = getContext().getAbsMouseX(), hostMouseY = getContext().getAbsMouseY();
+        if (layoutControl != null && (event instanceof io.github.luyingyilong.ore.event.PointerEvent
+                || event instanceof io.github.luyingyilong.ore.event.ScrollEvent)) {
+            var field = layoutControl.getWidgetBounds();
+            var tree = layoutControl.getAbsoluteBounds();
+            getContext().updateState(event.treeX() - tree.x() + field.x(), event.treeY() - tree.y() + field.y(), 0);
+        }
         routingInput = true;
         try {
             boolean handled = false;
@@ -413,6 +421,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
         } finally {
             routingInput = false;
             located.unapplyMatrix(getContext());
+            getContext().updateState(hostMouseX, hostMouseY, 0);
         }
     }
 
@@ -500,7 +509,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
             if (inputVisible()) {
                 withDepth(context, () -> super.preDraw(context, true));
             }
-        } else {
+        } else if (!hasCanvasTransform()) {
             super.preDraw(context, false);
         }
     }
@@ -508,7 +517,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
     @Override
     public void postDraw(ModularGuiContext context, boolean drawText) {
         // Pair the native text clip, but omit AbstractScrollWidget's scrollbar/shadow painting.
-        if (paintPass.accepts(layoutControl != null) && !drawText) context.getStencil().pop();
+        if (paintPass.accepts(layoutControl != null) && !drawText && !hasCanvasTransform()) context.getStencil().pop();
     }
 
     /**
@@ -576,7 +585,9 @@ public class Input extends TextFieldWidget implements SignalOwner {
         label.layout(new Rect(getArea().getPadding().left(), top, getArea().paddedWidth(),
                 Math.max(0, Math.min(controlSize.getHeight(), getArea().height - top))), context.getFont());
         if (layoutControl != null) DebugBridge.backend().internal(layoutControl, "placeholder", label);
-        label.draw(context, 0, 0);
+        try (var frame = io.github.luyingyilong.ore.window.MuiDrawing.begin(context, getWindowContext())) {
+            label.draw(frame, 0, 0);
+        }
     }
 
     @Override
@@ -628,7 +639,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
             graphics.enableScissor(clip.x(), clip.y(), clip.right(), clip.bottom());
             DebugBridge.backend().clip(clip);
         }
-        Rect fieldClip = inputMethodBounds();
+        Rect fieldClip = toHost(inputMethodBounds());
         graphics.enableScissor(fieldClip.x(), fieldClip.y(), fieldClip.right(), fieldClip.bottom());
         DebugBridge.backend().clip(fieldClip);
         try {
@@ -643,6 +654,15 @@ public class Input extends TextFieldWidget implements SignalOwner {
             }
             graphics.pose().popPose();
         }
+    }
+
+    private boolean hasCanvasTransform() {
+        return layoutControl != null && io.github.luyingyilong.ore.window.CanvasRegion.find(layoutControl) != null;
+    }
+
+    protected final Rect toHost(Rect raw) {
+        var region = layoutControl == null ? null : io.github.luyingyilong.ore.window.CanvasRegion.find(layoutControl);
+        return region == null ? raw : region.getTransform().toScreen(raw);
     }
 
     record Caret(int x, int y) {

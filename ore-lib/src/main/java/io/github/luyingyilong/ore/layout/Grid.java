@@ -5,7 +5,7 @@ import io.github.luyingyilong.ore.signal.*;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.Inspectable;
 import io.github.luyingyilong.ore.debug.DebugProperty;
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import net.minecraft.client.gui.Font;
 
 import java.util.*;
@@ -415,7 +415,7 @@ public final class Grid<T> extends Container implements ScrollContent {
     }
 
     @Override
-    public void draw(ModularGuiContext context, int screenX, int screenY) {
+    public void draw(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
@@ -510,7 +510,7 @@ public final class Grid<T> extends Container implements ScrollContent {
     public interface View<T> {
         void bind(T item);
 
-        void draw(ModularGuiContext context, Rect screenBounds, boolean hovered);
+        void draw(DrawContext context, Rect screenBounds, boolean hovered);
     }
 
     public record Entry<T>(int index, T item, Object key, Rect bounds) {

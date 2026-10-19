@@ -5,7 +5,7 @@ import io.github.luyingyilong.ore.signal.Signals;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
 import brachy.modularui.api.widget.Interactable;
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
 import io.github.luyingyilong.ore.*;
@@ -224,7 +224,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
             fitChild(approve, new Rect(width + 4, top, width, Button.Size.SMALL.getHeight()), font);
         }
 
-        @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+        @Override protected void render(DrawContext context, int screenX, int screenY) {
             reject.setDisabled(selectedOrganizationId == null);
             approve.setDisabled(selectedOrganizationId == null);
         }
@@ -275,7 +275,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
             fitChild(button, actionBounds(new Rect(0, 0, bounds.width(), bounds.height())), font);
         }
 
-        @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+        @Override protected void render(DrawContext context, int screenX, int screenY) {
             update(button.getScreenBounds(screenX, screenY).contains(context.getAbsMouseX(), context.getAbsMouseY()));
             button.setDisabled(!joinDrawer.isOpen() || Minecraft.getInstance().player == null);
         }
@@ -648,14 +648,20 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     @Override
-    public void draw(ModularGuiContext context, WidgetThemeEntry<?> theme) {
+    public void draw(brachy.modularui.screen.viewport.ModularGuiContext mui, WidgetThemeEntry<?> theme) {
+        try (DrawContext frame = io.github.luyingyilong.ore.window.MuiDrawing.begin(mui, window.getContext())) {
+            drawFrame(frame, theme);
+        }
+    }
+
+    private void drawFrame(DrawContext context, WidgetThemeEntry<?> theme) {
         if (!window.isAlive()) return;
         Rect area = new Rect(getArea().x, getArea().y, getArea().width, getArea().height);
         if (area.width() == 0 || area.height() == 0) return;
         applicationsModal.setSize(Math.min(320, area.width()), Math.min(220, area.height())).centered();
         disbandConfirmation.setSize(Math.min(240, area.width()), Math.min(120, area.height())).centered();
         options.setOrientation(area.width() < 252 ? Box.Orientation.VERTICAL : Box.Orientation.HORIZONTAL);
-        window.prepareTree(context);
+        window.prepareTree();
         window.layoutViewport(area.width(), area.height(), context.getFont());
         window.draw(context, area.x(), area.y());
     }
@@ -720,7 +726,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         }
 
         @Override
-        protected void render(ModularGuiContext context, int screenX, int screenY) {
+        protected void render(DrawContext context, int screenX, int screenY) {
             Rect area = getScreenBounds(screenX, screenY);
             int x = area.x() + (area.width() - 16) / 2;
             int y = area.y() + (area.height() - 16) / 2;

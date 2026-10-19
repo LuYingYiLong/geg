@@ -5,7 +5,7 @@ import io.github.luyingyilong.ore.signal.Signals;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
 import brachy.modularui.api.widget.Interactable;
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
 import io.github.luyingyilong.ore.*;
@@ -206,7 +206,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 .setScrollEndPauseMs(700L);
     }
 
-    private static void withOverlayDepth(ModularGuiContext context, float depth, Runnable render) {
+    private static void withOverlayDepth(DrawContext context, float depth, Runnable render) {
         GuiGraphics graphics = context.getGraphics();
         graphics.flush();
         graphics.pose().pushPose();
@@ -331,7 +331,13 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     @Override
-    public void draw(ModularGuiContext context, WidgetThemeEntry<?> theme) {
+    public void draw(brachy.modularui.screen.viewport.ModularGuiContext mui, WidgetThemeEntry<?> theme) {
+        try (DrawContext frame = io.github.luyingyilong.ore.window.MuiDrawing.begin(mui, window.getContext())) {
+            drawFrame(frame, theme);
+        }
+    }
+
+    private void drawFrame(DrawContext context, WidgetThemeEntry<?> theme) {
         if (!window.isAlive()) return;
         Font font = context.getFont();
         int x = getArea().x;
@@ -349,7 +355,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             lastLanguage = language;
             rebuild(width, height, search);
         }
-        window.prepareTree(context);
+        window.prepareTree();
         prepareLayout(width, height, font);
         window.draw(context, x, y);
     }
@@ -462,8 +468,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         return result;
     }
 
-    private void drawText(Component text, int x, int y, int width, int height, int color) {
-        Label.draw(getContext(), text, new Rect(x, y, Math.max(0, width), Math.max(0, height)),
+    private void drawText(DrawContext context, Component text, int x, int y, int width, int height, int color) {
+        Label.draw(context, text, new Rect(x, y, Math.max(0, width), Math.max(0, height)),
                 color, Label.Overflow.CLIP, Label.Horizontal.LEFT, Label.Vertical.TOP);
     }
 
@@ -473,22 +479,22 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         table.addColumn(new Table.Column<>("status", Component.translatable("market.geg.status"),
                 110, 110, 1, width -> 20, new Table.Cell<>() {
             @Override
-            public void draw(ModularGuiContext context, MarketDetail offer, Rect area) {
+            public void draw(DrawContext context, MarketDetail offer, Rect area) {
                 int top = area.y() + (area.height() >= 23 ? 3 : 0);
                 Component status = Component.translatable(offer.buyOrder()
                                 ? "market.geg.buying" : "market.geg.selling")
                         .copy().append(Component.literal(" x" + offer.quantity()));
-                drawText(status, area.x() + 4, top, area.width() - 8, 10,
+                drawText(context, status, area.x() + 4, top, area.width() - 8, 10,
                         offer.buyOrder() ? ACCENT : TEXT);
-                drawText(Component.literal(offer.ownerName()), area.x() + 4, top + 10,
+                drawText(context, Component.literal(offer.ownerName()), area.x() + 4, top + 10,
                         area.width() - 8, 10, SECONDARY_TEXT);
             }
         }));
         table.addColumn(new Table.Column<>("price", Component.translatable("market.geg.unit_price"),
                 96, 96, 0, width -> 10, new Table.Cell<>() {
             @Override
-            public void draw(ModularGuiContext context, MarketDetail offer, Rect area) {
-                drawText(Component.literal(MoneyCurrency.COIN.format(offer.unitPrice())),
+            public void draw(DrawContext context, MarketDetail offer, Rect area) {
+                drawText(context, Component.literal(MoneyCurrency.COIN.format(offer.unitPrice())),
                         area.x() + 4, area.y() + Math.max(0, (area.height() - 10) / 2),
                         area.width() - 8, 10, TEXT);
             }
@@ -583,7 +589,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             fitChild(favorite, areas[1], font);
         }
 
-        @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+        @Override protected void render(DrawContext context, int screenX, int screenY) {
             syncFavorite();
         }
     }
@@ -840,7 +846,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             if(horizontal)return false;int before=scroll;scrollBy(-(int)Math.signum(delta)*24);return before!=scroll;
         }
 
-        @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+        @Override public void draw(DrawContext context, int screenX, int screenY) {
             Rect area = getScreenBounds(screenX, screenY);
             if (area.width() <= 0 || area.height() <= 0) return;
             context.getGraphics().enableScissor(area.x(), area.y(), area.right(), area.bottom());
@@ -1127,7 +1133,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                     Math.max(0, bounds.height() - 10)), font);
         }
 
-        @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+        @Override protected void render(DrawContext context, int screenX, int screenY) {
             Rect area = getScreenBounds(screenX, screenY);
             background.drawAt(context, area);
             boolean ended = card.kind == Kind.FAVORITE && card.favorite != null && card.favorite.ended();
@@ -1136,7 +1142,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), 0x24FFFFFF);
         }
 
-        @Override public void draw(ModularGuiContext context, Rect area, boolean hovered) {
+        @Override public void draw(DrawContext context, Rect area, boolean hovered) {
             layout(new Rect(area.x(), area.y(), area.width(), area.height()), context.getFont());
             draw(context, 0, 0);
         }

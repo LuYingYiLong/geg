@@ -5,7 +5,7 @@ import io.github.luyingyilong.ore.signal.Signals;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
 import brachy.modularui.api.widget.Interactable;
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
 import io.github.luyingyilong.ore.*;
@@ -312,7 +312,13 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     void close() { form.setVisible(false); window.cancelInteractions(); }
     @Override public void dispose() {
         window.hostDetached(); close(); super.dispose(); }
-    @Override public void draw(ModularGuiContext context, WidgetThemeEntry<?> theme) {
+    @Override public void draw(brachy.modularui.screen.viewport.ModularGuiContext mui, WidgetThemeEntry<?> theme) {
+        try (DrawContext frame = io.github.luyingyilong.ore.window.MuiDrawing.begin(mui, window.getContext())) {
+            drawFrame(frame, theme);
+        }
+    }
+
+    private void drawFrame(DrawContext context, WidgetThemeEntry<?> theme) {
         if (!window.isAlive()) return;
         int width = getArea().width, height = getArea().height;
         int drawerWidth = width < 320 ? width : width / 2;
@@ -322,7 +328,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         // Clear the previous minimum so a two-row navbar can return to one row on resize.
         navbar.setMinimum(0, 0);
         navbar.setMinimum(0, navbar.measureHeight(context.getFont(), width));
-        window.prepareTree(context);
+        window.prepareTree();
         window.layoutViewport(width, height, context.getFont());
         if (inbox.catchingUp() || mailScroll.getScrollY() + mailScroll.getViewport().height() * 2 >= mailMenu.getContentExtent().height()) {
             MailActionPacket next = inbox.nextBatch();

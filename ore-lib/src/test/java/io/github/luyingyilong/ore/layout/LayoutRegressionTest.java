@@ -1,7 +1,7 @@
 package io.github.luyingyilong.ore.layout;
 
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.Segmented;
 import io.github.luyingyilong.ore.theme.OreFonts;
 import net.minecraft.client.gui.Font;
@@ -93,7 +93,7 @@ public final class LayoutRegressionTest {
                     @Override public Grid.View<Integer> createView() {
                         return new Grid.View<>() {
                             @Override public void bind(Integer item) { }
-                            @Override public void draw(ModularGuiContext context, Rect area, boolean hovered) { }
+                            @Override public void draw(DrawContext context, Rect area, boolean hovered) { }
                         };
                     }
                 });

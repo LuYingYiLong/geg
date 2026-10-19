@@ -415,7 +415,8 @@ public final class FocusManager {
             }
             if (node instanceof Scroll scroll) area = area.translated(-scroll.getScrollX(), -scroll.getScrollY());
         }
-        return buffered ? area : null;
+        var canvas = io.github.luyingyilong.ore.window.CanvasRegion.find(target);
+        return buffered ? canvas == null ? area : canvas.getTransform().toScreen(area) : null;
     }
 
     private void reveal(Control target) {

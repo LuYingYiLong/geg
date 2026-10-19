@@ -5,7 +5,7 @@ import io.github.luyingyilong.ore.signal.*;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
 import brachy.modularui.api.drawable.IDrawable;
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import io.github.luyingyilong.ore.layout.Control;
@@ -205,7 +205,7 @@ public final class Segmented extends Control {
 
     @Override public void cancelInteraction() { gesture.cancel(); }
 
-    @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+    @Override protected void render(DrawContext context, int screenX, int screenY) {
         Rect viewport = getScreenBounds(screenX, screenY);
         if (viewport.width() <= 0 || viewport.height() <= 0) return;
         int contentWidth = Math.max(viewport.width(), minimumRowWidth(context.getFont()));
@@ -215,10 +215,10 @@ public final class Segmented extends Control {
             revealSelected = false;
         }
         GuiGraphics graphics = context.getGraphics();
-        graphics.enableScissor(viewport.x(), viewport.y(), viewport.right(), viewport.bottom());
-        DebugBridge.backend().clip(viewport);
+        context.enableScissor(viewport.x(), viewport.y(), viewport.right(), viewport.bottom());
+        DebugBridge.backend().clip(context.toScreenRect(viewport));
         drawOptions(context, viewport.x() - scrollX, viewport.y(), contentWidth, selectedIndex);
-        graphics.disableScissor(); DebugBridge.backend().unclip();
+        context.disableScissor(); DebugBridge.backend().unclip();
     }
 
     private void ensureSelectedVisible(int contentWidth, int viewportWidth) {
@@ -253,7 +253,7 @@ public final class Segmented extends Control {
         return true;
     }
 
-    private void drawOptions(ModularGuiContext context, int x, int y,
+    private void drawOptions(DrawContext context, int x, int y,
                      int width, int selectedIndex) {
         int height = size.getHeight();
         GuiGraphics graphics = context.getGraphics();
@@ -276,8 +276,8 @@ public final class Segmented extends Control {
             IDrawable background = style.getBackground();
             if (background != null) {
                 int inset = Math.min(topInset, height);
-                background.draw(context, optionX, y + inset,
-                        optionWidth, height - inset, style);
+                io.github.luyingyilong.ore.theme.OreDrawables.draw(context, background,
+                        new Rect(optionX, y + inset, optionWidth, height - inset), style);
             }
 
             Label text = optionLabels.get(index).setColor(style.getTextColor()).setShadow(style.isTextShadow());

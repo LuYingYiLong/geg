@@ -4,7 +4,7 @@ import io.github.luyingyilong.ore.signal.*;
 
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.theme.WidgetThemeKey;
@@ -231,7 +231,7 @@ public final class Modal extends Container {
         }
     }
 
-    @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+    @Override protected void render(DrawContext context, int screenX, int screenY) {
         Rect area = getScreenBounds(screenX, screenY);
         context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.OVERLAY_COLOR);
         WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.FLOATING_HEADER);
@@ -239,7 +239,7 @@ public final class Modal extends Container {
         titleLabel.setColor(style.getTextColor()).setShadow(style.isTextShadow());
     }
 
-    @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+    @Override public void draw(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);

@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
@@ -105,7 +105,7 @@ public final class Badge extends Container {
     Rect faceBounds(Rect area) { return new Rect(area.x(), area.y(), area.width(), Math.max(0, area.height() - SHADOW_HEIGHT)); }
     Rect shadowBounds(Rect area) { return new Rect(area.x(), Math.max(area.y(), area.bottom() - SHADOW_HEIGHT), area.width(), Math.min(SHADOW_HEIGHT, area.height())); }
 
-    @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+    @Override protected void render(DrawContext context, int screenX, int screenY) {
         Rect area = getScreenBounds(screenX, screenY);
         if (area.width() <= 0 || area.height() <= 0) return;
         Rect face = faceBounds(area), shadow = shadowBounds(area);

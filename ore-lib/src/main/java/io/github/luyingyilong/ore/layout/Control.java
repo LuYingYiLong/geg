@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore.layout;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.DebugProperty;
 import io.github.luyingyilong.ore.debug.Inspectable;
@@ -830,7 +830,7 @@ public class Control implements SignalOwner {
         }
     }
 
-    public void draw(ModularGuiContext context, int screenX, int screenY) {
+    public void draw(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var phase = DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
@@ -842,7 +842,7 @@ public class Control implements SignalOwner {
         }
     }
 
-    protected void render(ModularGuiContext context, int screenX, int screenY) {
+    protected void render(DrawContext context, int screenX, int screenY) {
     }
 
     /**
@@ -852,7 +852,7 @@ public class Control implements SignalOwner {
         return false;
     }
 
-    public void renderTooltip(ModularGuiContext context, int mouseX, int mouseY) {
+    public void renderTooltip(DrawContext context, int mouseX, int mouseY) {
     }
 
     /**

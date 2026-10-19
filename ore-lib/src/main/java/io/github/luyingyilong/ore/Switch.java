@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Rect;
@@ -227,7 +227,7 @@ public final class Switch extends Container {
     }
 
     @Override
-    protected void render(ModularGuiContext context, int screenX, int screenY) {
+    protected void render(DrawContext context, int screenX, int screenY) {
         Rect base = baseBounds().translated(screenX, screenY);
         Rect thumb = thumbBounds();
         layoutSpinner(thumb, null);

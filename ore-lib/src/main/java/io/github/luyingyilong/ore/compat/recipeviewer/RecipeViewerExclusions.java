@@ -31,6 +31,12 @@ public final class RecipeViewerExclusions {
     public static List<Rect> getAreas(Screen screen) {
         if (screen == null) return List.of();
         List<Rect> areas = new ArrayList<>();
+        var external = io.github.luyingyilong.ore.window.ScreenWindowHost.get(screen);
+        if (external != null && external.isOpen()) {
+            areas.addAll(external.getExclusionAreas());
+            for (Control child : external.getWindow().getChildren())
+                if (child instanceof Overlay) collectControls(child, areas);
+        }
         if (screen instanceof OreScreen oreScreen)
             for (Window window : oreScreen.getWindows())
                 if (window.getHost().isOpen()) areas.addAll(getAreas(window));
@@ -58,7 +64,7 @@ public final class RecipeViewerExclusions {
     private static void collectControls(Control node, List<Rect> areas) {
         if (!available(node)) return;
         // Overlay and the bare, non-painting Control are routing/layout roots, not surfaces.
-        if (node instanceof Overlay || node.getClass() == Control.class) {
+        if (node instanceof Overlay || node.getClass() == Control.class || node.getClass() == io.github.luyingyilong.ore.layout.Container.class) {
             for (Control child : node.getChildren()) collectControls(child, areas);
             return;
         }

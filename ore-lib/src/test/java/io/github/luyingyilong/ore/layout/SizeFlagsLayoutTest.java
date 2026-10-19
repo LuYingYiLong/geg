@@ -109,7 +109,7 @@ public final class SizeFlagsLayoutTest {
                 setPreferred(40, 30);
                 setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_END);
             }
-            @Override public void draw(brachy.modularui.screen.viewport.ModularGuiContext context, Rect area, boolean hovered) { }
+            @Override public void draw(io.github.luyingyilong.ore.render.DrawContext context, Rect area, boolean hovered) { }
         }
         int[] clicked = {-1};
         Grid<Integer> virtual = Signals.configure(new Grid<Integer>().setAdapter(new Grid.Adapter<>() {

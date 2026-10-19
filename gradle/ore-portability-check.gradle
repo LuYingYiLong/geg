@@ -8,6 +8,7 @@ tasks.register('prepareOrePortabilityFixture') {
         def library = new File(destination, 'libraries/controls')
         project.sync { from 'ore-lib/src'; into new File(library, 'src') }
         project.sync { from 'ore-lib/gradle'; into new File(library, 'gradle') }
+        project.sync { from 'ore-lib/docs'; into new File(library, 'docs') }
         project.copy { from 'ore-lib/build.gradle', 'ore-lib/README.md'; into library }
         project.sync { from 'build-support/ore-portability-host/src'; into new File(destination, 'src') }
         project.copy {

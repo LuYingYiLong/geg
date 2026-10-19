@@ -1,7 +1,7 @@
 package io.github.luyingyilong.ore.layout;
 
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.Button;
 import io.github.luyingyilong.ore.Checkbox;
 import io.github.luyingyilong.ore.Table;
@@ -82,7 +82,7 @@ public final class FocusNavigationTest {
             @Override public Grid.View<Integer> createView() {
                 return new Grid.View<>() {
                     @Override public void bind(Integer item) { }
-                    @Override public void draw(ModularGuiContext context, Rect area, boolean hovered) { }
+                    @Override public void draw(DrawContext context, Rect area, boolean hovered) { }
                 };
             }
         });
@@ -106,7 +106,7 @@ public final class FocusNavigationTest {
                 .setRowKey(value -> value)
                 .addColumn(new Table.Column<>("action", Component.literal("Action"),
                         40, 80, 1, width -> 20, new Table.Cell<>() {
-                    @Override public void draw(ModularGuiContext context, Integer row, Rect bounds) { }
+                    @Override public void draw(DrawContext context, Integer row, Rect bounds) { }
                     @Override public List<Rect> focusTargets(Integer row, Rect bounds) {
                         return List.of(new Rect(bounds.x() + 2, bounds.y() + 2, 20, 18));
                     }

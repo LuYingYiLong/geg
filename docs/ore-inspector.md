@@ -109,4 +109,4 @@ public Label setFontSize(float value) {
 
 客户端夹具只有显式加入 `clientIntegrationTest` 输出时才运行，不应在普通游戏世界开启。发布 JAR 不包含 Inspector、测试或调试语言资源。
 
-Inspector 通过 `META-INF/services/io.github.luyingyilong.ore.OreClientExtension` 自动接入开发客户端，注册 F8 和事件监听；不需要 GEG 开发启动桥。正常 IDEA runClient 使用 main 模块，运行前会构建 Inspector。该服务描述和 inspector 源码集输出均不进入发布 JAR、服务端或数据生成。
+Inspector 通过 `META-INF/services/io.github.luyingyilong.ore.OreClientExtension` 自动接入开发客户端，注册 F8 和事件监听；不需要 GEG 开发启动桥。正常 IDEA runClient 使用 clientDevelopment 模块，运行前会构建 Inspector。该模块额外提供 JEI 测试运行时，详见 [开发客户端说明](development-client.md)。该服务描述和 inspector 源码集输出均不进入发布 JAR、服务端或数据生成。

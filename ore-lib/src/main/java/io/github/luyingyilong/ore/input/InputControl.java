@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore.input;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import brachy.modularui.widget.sizer.Unit;
 import io.github.luyingyilong.ore.Drawer;
 import io.github.luyingyilong.ore.layout.Control;
@@ -65,9 +65,9 @@ public final class InputControl extends Control {
     }
 
     @Override
-    protected void render(ModularGuiContext context, int screenX, int screenY) {
+    protected void render(DrawContext context, int screenX, int screenY) {
         syncWidgetArea();
-        widget.drawInTree(context);
+        widget.drawInTree(context.getWindowContext().getMui());
     }
 
     public Rect getDisplayedBounds() {
@@ -75,7 +75,8 @@ public final class InputControl extends Control {
     }
 
     public Rect getWidgetBounds() {
-        return getDisplayedBounds().translated(getWindowContext().getOriginX(), getWindowContext().getOriginY());
+        return io.github.luyingyilong.ore.event.EventGeometry.untransformed(this, getAbsoluteBounds())
+                .translated(getWindowContext().getOriginX(), getWindowContext().getOriginY());
     }
 
     @Override

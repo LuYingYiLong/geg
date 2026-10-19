@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.luyingyilong.ore.layout.Container;
@@ -105,7 +105,7 @@ public final class Avatar extends Container {
         }
     }
 
-    @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+    @Override protected void render(DrawContext context, int screenX, int screenY) {
         var current = skin();
         var texture = current == null ? null : current.texture();
         initial.setVisible(texture == null);

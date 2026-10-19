@@ -1,7 +1,7 @@
 package io.github.luyingyilong.geg.chat.client;
 
 import brachy.modularui.api.widget.Interactable;
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
 import io.github.luyingyilong.geg.chat.ChatChannel;
@@ -251,7 +251,13 @@ final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interac
     }
 
     @Override
-    public void draw(ModularGuiContext context, WidgetThemeEntry<?> theme) {
+    public void draw(brachy.modularui.screen.viewport.ModularGuiContext mui, WidgetThemeEntry<?> theme) {
+        try (DrawContext frame = io.github.luyingyilong.ore.window.MuiDrawing.begin(mui, window.getContext())) {
+            drawFrame(frame, theme);
+        }
+    }
+
+    private void drawFrame(DrawContext context, WidgetThemeEntry<?> theme) {
         if (!window.isAlive()) return;
         int width = getArea().width, height = getArea().height;
         drawer.setWidth(ChatLayout.drawerWidth(width));
@@ -271,10 +277,10 @@ final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interac
             String error = ClientChatState.view(ClientChatState.selected()).status;
             contactError.setText(error.isEmpty() ? Component.empty() : tr(error)).setVisible(!error.isEmpty());
         }
-        window.prepareTree(context);
+        window.prepareTree();
         window.layoutViewport(width, height, context.getFont());
         if (focusComposer && drawer.isOpen() && !channelModal.getVisible() && !targetModal.getVisible()) {
-            window.getFocusManager().requestFocus(composer.editor(), context);
+            window.getFocusManager().requestFocus(composer.editor(), window.getContext().getMui());
             focusComposer = false;
         }
         window.draw(context, getArea().x, getArea().y);

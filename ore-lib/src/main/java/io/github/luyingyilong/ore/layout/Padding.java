@@ -2,7 +2,7 @@ package io.github.luyingyilong.ore.layout;
 
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.DebugProperty;
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import net.minecraft.client.gui.Font;
 
 import java.util.Objects;
@@ -81,7 +81,7 @@ public final class Padding extends Container {
     }
 
     @Override
-    public void draw(ModularGuiContext context, int screenX, int screenY) {
+    public void draw(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);

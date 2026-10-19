@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore.debug;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.Window;
@@ -16,6 +16,16 @@ public final class DebugBridge {
     };
     private static Backend backend = NONE;
     private static volatile SetterPreview setterPreview;
+    private static HostShortcut hostShortcut = (key, scan) -> false;
+
+    @FunctionalInterface public interface HostShortcut { boolean handle(int key, int scan); }
+
+    /** Registered only by the optional development frontend, even before an Inspector is open. */
+    public static void setHostShortcut(HostShortcut shortcut) {
+        hostShortcut = shortcut == null ? (key, scan) -> false : shortcut;
+    }
+
+    public static boolean handleHostShortcut(int key, int scan) { return hostShortcut.handle(key, scan); }
 
     private DebugBridge() {
     }
@@ -119,7 +129,7 @@ public final class DebugBridge {
             node.debugProperties(result);
         }
 
-        default void paint(Control node, ModularGuiContext context, int x, int y) {
+        default void paint(Control node, DrawContext context, int x, int y) {
         }
 
         default void clip(Rect area) {
@@ -137,10 +147,10 @@ public final class DebugBridge {
         default void removed(Control node) {
         }
 
-        default void begin(Window root, ModularGuiContext context, int x, int y) {
+        default void begin(Window root, DrawContext context, int x, int y) {
         }
 
-        default void end(Window root, ModularGuiContext context, int x, int y) {
+        default void end(Window root, DrawContext context, int x, int y) {
         }
 
         default void text(Control node, GuiGraphics graphics, Rect area, float x, float y,

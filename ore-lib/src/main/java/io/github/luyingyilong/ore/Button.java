@@ -7,7 +7,7 @@ import io.github.luyingyilong.ore.debug.Inspectable;
 import io.github.luyingyilong.ore.debug.DebugProperty;
 import brachy.modularui.api.ITheme;
 import brachy.modularui.api.drawable.IDrawable;
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.theme.WidgetThemeKey;
@@ -197,7 +197,7 @@ public final class Button extends Control {
         return backgroundBounds(getAbsoluteBounds(), type, visuallyPressed());
     }
 
-    @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+    @Override protected void render(DrawContext context, int screenX, int screenY) {
         Rect area = getScreenBounds(screenX, screenY);
         boolean hovered = area.contains(context.getAbsMouseX(), context.getAbsMouseY());
         pointerHovered = hovered;
@@ -206,7 +206,7 @@ public final class Button extends Control {
     }
 
     /** Composite controls reuse Button's appearance while retaining their own activation behavior. */
-    void drawPresentation(ModularGuiContext context, Rect area, boolean hovered, boolean pressed) {
+    void drawPresentation(DrawContext context, Rect area, boolean hovered, boolean pressed) {
         if (!isAlive()) return;
         Type type = DebugBridge.value(this, "type", this.type);
         DebugBridge.backend().internal(this, "label", label);
@@ -264,56 +264,56 @@ public final class Button extends Control {
     @Override public void cancelInteraction() { pointerPressed = false; pointerHovered = false; activationKey = -1; }
     @Override public void onFocusChanged(boolean focused) { if (!focused) cancelInteraction(); }
 
-    public static void draw(ModularGuiContext context, int x, int y, int width,
+    public static void draw(DrawContext context, int x, int y, int width,
                             Component label) {
         draw(context, x, y, width, Size.MEDIUM, label);
     }
 
-    public static void draw(ModularGuiContext context, int x, int y, int width,
+    public static void draw(DrawContext context, int x, int y, int width,
                             Size size, Component label) {
         draw(context, x, y, width, size.getHeight(), label, (Icon) null);
     }
 
-    public static void draw(ModularGuiContext context, int x, int y, int width,
+    public static void draw(DrawContext context, int x, int y, int width,
                             int height, Component label, Type type) {
         draw(context, x, y, width, height, label, null, TextAlignment.CENTER, type);
     }
 
-    public static void draw(ModularGuiContext context, int x, int y, int width,
+    public static void draw(DrawContext context, int x, int y, int width,
                             Size size, Component label, TextAlignment alignment) {
         draw(context, x, y, width, size.getHeight(), label, null, alignment);
     }
 
-    public static void draw(ModularGuiContext context, int x, int y, int width,
+    public static void draw(DrawContext context, int x, int y, int width,
                             Size size, Component label, Icon trailingIcon,
                             TextAlignment alignment) {
         draw(context, x, y, width, size.getHeight(), label, trailingIcon, alignment);
     }
 
-    static void draw(ModularGuiContext context, int x, int y, int width,
+    static void draw(DrawContext context, int x, int y, int width,
                      int height, Component label, Icon trailingIcon) {
         draw(context, x, y, width, height, label, trailingIcon, TextAlignment.CENTER);
     }
 
-    static void draw(ModularGuiContext context, int x, int y, int width,
+    static void draw(DrawContext context, int x, int y, int width,
                      int height, Component label, Icon trailingIcon,
                      TextAlignment alignment) {
         draw(context, x, y, width, height, label, trailingIcon, alignment, Type.SECONDARY);
     }
 
-    static void draw(ModularGuiContext context, int x, int y, int width,
+    static void draw(DrawContext context, int x, int y, int width,
                      int height, Component label, Icon trailingIcon,
                      TextAlignment alignment, Type type) {
         drawLabelled(context, x, y, width, height, Label.immediate(context, label), trailingIcon, alignment, type);
     }
 
-    static void draw(ModularGuiContext context, int x, int y, int width, int height,
+    static void draw(DrawContext context, int x, int y, int width, int height,
                      Component label, Icon trailingIcon, TextAlignment alignment, boolean hovered, boolean pressed) {
         drawLabelled(context, x, y, width, height, Label.immediate(context, label), null, trailingIcon,
                 alignment, Type.SECONDARY, hovered, pressed);
     }
 
-    private static void drawLabelled(ModularGuiContext context, int x, int y, int width,
+    private static void drawLabelled(DrawContext context, int x, int y, int width,
                                      int height, Label label, Icon trailingIcon,
                                      TextAlignment alignment, Type type) {
         boolean hovered = contains(x, y, width, height,
@@ -322,20 +322,20 @@ public final class Button extends Control {
                 type, hovered, hovered && leftMousePressed());
     }
 
-    private static void drawLabelled(ModularGuiContext context, int x, int y, int width,
+    private static void drawLabelled(DrawContext context, int x, int y, int width,
                                      int height, Label label, Icon icon, Icon trailingIcon, TextAlignment alignment,
                                      Type type, boolean hovered, boolean pressed) {
         drawLabelled(context, x, y, width, height, label, icon, trailingIcon, alignment,
                 type, hovered, pressed, false);
     }
 
-    private static void drawLabelled(ModularGuiContext context, int x, int y, int width,
+    private static void drawLabelled(DrawContext context, int x, int y, int width,
                                      int height, Label label, Icon icon, Icon trailingIcon, TextAlignment alignment,
                                      Type type, boolean hovered, boolean pressed, boolean disabled) {
         drawLabelled(context, x, y, width, height, label, icon, trailingIcon, alignment, type, hovered, pressed, disabled, 0);
     }
 
-    private static void drawLabelled(ModularGuiContext context, int x, int y, int width,
+    private static void drawLabelled(DrawContext context, int x, int y, int width,
                                      int height, Label label, Icon icon, Icon trailingIcon, TextAlignment alignment,
                                      Type type, boolean hovered, boolean pressed, boolean disabled, int reservedRight) {
         pressed = pressed && !disabled;
@@ -351,7 +351,7 @@ public final class Button extends Control {
             int color = textBackgroundColor(hovered, pressed);
             if (color != 0) graphics.fill(backgroundArea.x(), backgroundArea.y(), backgroundArea.right(), backgroundArea.bottom(), color);
         } else if (background != null && paintsThemedBackground(type, hovered, pressed)) {
-            background.draw(context, backgroundArea.x(), backgroundArea.y(), backgroundArea.width(), backgroundArea.height(), style);
+            io.github.luyingyilong.ore.theme.OreDrawables.draw(context, background, backgroundArea, style);
         }
 
         boolean hasLabel = !label.getText().getString().isEmpty();

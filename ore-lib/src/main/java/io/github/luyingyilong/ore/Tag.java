@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.Size;
@@ -103,7 +103,7 @@ public final class Tag extends Container {
     }
 
     @Override
-    protected void render(ModularGuiContext context, int screenX, int screenY) {
+    protected void render(DrawContext context, int screenX, int screenY) {
         Rect area = getScreenBounds(screenX, screenY);
         if (area.width() <= 0 || area.height() <= 0) return;
         var graphics = context.getGraphics();

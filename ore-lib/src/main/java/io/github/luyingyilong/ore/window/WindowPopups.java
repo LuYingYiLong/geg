@@ -2,7 +2,7 @@ package io.github.luyingyilong.ore.window;
 
 import io.github.luyingyilong.ore.signal.Signals;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.*;
 import io.github.luyingyilong.ore.event.EventGeometry;
 import io.github.luyingyilong.ore.layout.*;
@@ -62,7 +62,7 @@ public final class WindowPopups {
         private final List<? extends Dropdown.Option<?>> options;
         private final Container panel=new Container() {
             private Panel background;
-            @Override protected void render(ModularGuiContext mui,int x,int y) {
+            @Override protected void render(DrawContext mui,int x,int y) {
                 if (background == null) background = ownPart("background", new Panel(OreTheme.DROPDOWN_PANEL));
                 background.drawAt(mui,getScreenBounds(x,y));
             }
@@ -114,7 +114,7 @@ public final class WindowPopups {
             layoutChild(panel,new Rect(x,y,width,height),font);
             scroll.layout(new Rect(1,1,Math.max(0,width-2),Math.max(0,height-2)),font);
         }
-        @Override public void draw(ModularGuiContext mui,int x,int y){
+        @Override public void draw(DrawContext mui,int x,int y){
             layout(context.getOwner().getBounds(),mui.getFont());
             var g=mui.getGraphics();g.flush();g.pose().pushPose();
             try{g.pose().translate(0,0,6500);super.draw(mui,x,y);g.flush();}finally{g.pose().popPose();}

@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
@@ -42,6 +42,6 @@ public final class LabelMarqueeGridTest {
         @Override public void layout(Rect bounds, Font font) {
             super.layout(bounds, font); fitChild(label, new Rect(0, 0, bounds.width(), 12), font);
         }
-        public void draw(ModularGuiContext context, Rect bounds, boolean hovered) { }
+        public void draw(DrawContext context, Rect bounds, boolean hovered) { }
     }
 }

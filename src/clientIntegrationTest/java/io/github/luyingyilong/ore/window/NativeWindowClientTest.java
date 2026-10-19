@@ -103,7 +103,7 @@ public final class NativeWindowClientTest {
         try (var image = Screenshot.takeScreenshot(((NativeWindowHost)window.getHost()).renderTarget())) { image.writeToFile(path); }
     }
     private static final class PixelProbe extends Control {
-        @Override protected void render(brachy.modularui.screen.viewport.ModularGuiContext context, int x, int y) {
+        @Override protected void render(io.github.luyingyilong.ore.render.DrawContext context, int x, int y) {
             var area = getScreenBounds(x, y);
             for (int column=0; column<16; column++)
                 context.getGraphics().fill(area.x()+7+column,area.y()+9,area.x()+8+column,area.y()+17,

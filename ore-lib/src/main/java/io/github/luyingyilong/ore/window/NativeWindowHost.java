@@ -30,7 +30,7 @@ public final class NativeWindowHost implements WindowHost {
     private final WindowOptions options;
     private final WindowContext context = new WindowContext(true);
     private final ArrayDeque<Runnable> events = new ArrayDeque<>();
-    private final Set<InputControl> inputs = Collections.newSetFromMap(new IdentityHashMap<>());
+    private MuiInputHost inputHost;
     private long handle, lastFrame;
     private int frames;
     private Window root;
@@ -135,28 +135,8 @@ public final class NativeWindowHost implements WindowHost {
             GL.setCapabilities(mainCapabilities);
             resize();
             installCallbacks();
-            ModularPanel<?> panel = new ModularPanel<>("ore_native_inputs").full().disableThemeBackground(true);
-            screen = new DetachedMuiScreen(panel);
-            screen.construct(new brachy.modularui.api.IMuiScreen() {
-                @Override
-                public ModularScreen screen() {
-                    return screen;
-                }
-
-                @Override
-                public net.minecraft.client.gui.screens.Screen wrappedScreen() {
-                    return null;
-                }
-
-                @Override
-                public void updateGuiArea(brachy.modularui.utils.Rectangle area) {
-                }
-            });
-            screen.getContext().setSettings(new brachy.modularui.screen.UISettings());
-            screen.onResize(context.getGuiWidth(), context.getGuiHeight());
-            screen.useTheme(io.github.luyingyilong.ore.OreClient.getOptions().defaultTheme());
-            context.bind(screen.getContext());
-            screen.onOpen();
+            inputHost = new MuiInputHost(context, null, this::isOpen, root::close);
+            screen = inputHost.getScreen();
             prepareInputs();
             WindowManager.add(this);
             GLFW.glfwShowWindow(handle);
@@ -258,21 +238,7 @@ public final class NativeWindowHost implements WindowHost {
     }
 
     private void prepareInputs() {
-        List<InputControl> live = WindowCanvas.inputs(root);
-        for (InputControl old : List.copyOf(inputs))
-            if (!live.contains(old)) {
-                old.getWidget().dispose();
-                inputs.remove(old);
-            }
-        for (InputControl input : live)
-            if (!inputs.contains(input)) {
-                if (input.getWidget().isValid()) throw new IllegalStateException("Input already belongs to a MUI host");
-                inputs.add(input);
-                String pending = input.getWidget().getText();
-                if (input.getWidget().getStringValue() == null)
-                    input.getWidget().value(new brachy.modularui.value.StringValue(pending));
-                input.getWidget().initialise(screen.getMainPanel(), false);
-            }
+        inputHost.prepare(root);
     }
 
     void frame() {
@@ -331,7 +297,7 @@ public final class NativeWindowHost implements WindowHost {
                 Stencil.reset();
                 root.prepareTree(mui);
                 root.layoutViewport(context.getGuiWidth(), context.getGuiHeight(), mc.font);
-                for (InputControl input : inputs) {
+                for (InputControl input : WindowCanvas.inputs(root)) {
                     var area = input.getWidget().getArea();
                     var b = input.getWidgetBounds();
                     area.x = b.x();
@@ -340,7 +306,7 @@ public final class NativeWindowHost implements WindowHost {
                     area.height = b.height();
                     input.getWidget().onUpdate();
                 }
-                root.draw(mui, 0, 0);
+                try (var frame = io.github.luyingyilong.ore.window.MuiDrawing.begin(mui, context)) { root.draw(frame, 0, 0); }
                 graphics.flush();
             } finally {
                 mui.popViewport(null);
@@ -392,9 +358,7 @@ public final class NativeWindowHost implements WindowHost {
         io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
         OreInputMethod.releaseWindow(context);
         if (screen != null && screen.getContext().isFocused()) screen.getContext().removeFocus();
-        for (InputControl input : inputs) input.getWidget().dispose();
-        inputs.clear();
-        if (screen != null) screen.onClose();
+        if (inputHost != null) inputHost.close();
         context.detach();
         if (ime != null) {
             ime.close();
@@ -426,36 +390,4 @@ public final class NativeWindowHost implements WindowHost {
 
     }
 
-    private final class DetachedMuiScreen extends ModularScreen {
-        private boolean fieldFocused;
-
-        DetachedMuiScreen(ModularPanel<?> panel) {
-            super(io.github.luyingyilong.ore.OreClient.getOptions().hostModId(), panel);
-        }
-
-        @Override
-        public boolean isFocused() {
-            return fieldFocused;
-        }
-
-        @Override
-        public void setFocused(boolean focused) {
-            fieldFocused = focused;
-        }
-
-        @Override
-        public boolean isActive() {
-            return isOpen();
-        }
-
-        @Override
-        public void close() {
-            root.close();
-        }
-
-        @Override
-        public void close(boolean back) {
-            root.close();
-        }
-    }
 }

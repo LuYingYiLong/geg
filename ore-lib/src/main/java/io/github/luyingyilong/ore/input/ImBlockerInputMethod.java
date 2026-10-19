@@ -18,10 +18,7 @@ final class ImBlockerInputMethod implements InputMethodSession.Connection {
     private final Method updateCaret;
     private final Method getFocusOwner;
     private final Method setState;
-    private final Object preeditOverlay;
-    private final Object candidateOverlay;
-    private final Method clearPreedit;
-    private final Method clearCandidates;
+    private final ImBlockerOverlayAccess overlays;
     private boolean registered;
     private boolean closed;
 
@@ -37,12 +34,7 @@ final class ImBlockerInputMethod implements InputMethodSession.Connection {
             updateCaret = Class.forName(API + "IMManager").getMethod("updateCaretPosition");
             setState = Class.forName(API + "IMManager").getMethod("setState", boolean.class);
             getFocusOwner = Class.forName(API + "gui.FocusManager").getMethod("getFocusOwner");
-            Class<?> preeditType = Class.forName(API + "gui.UniversalIMEPreeditOverlay");
-            Class<?> candidateType = Class.forName(API + "gui.UniversalIMECandidateOverlay");
-            preeditOverlay = preeditType.getMethod("getInstance").invoke(null);
-            candidateOverlay = candidateType.getMethod("getInstance").invoke(null);
-            clearPreedit = preeditType.getMethod("preeditContentUpdated", String.class, int.class);
-            clearCandidates = candidateType.getMethod("candidateListUpdated", String[].class, int.class);
+            overlays = new ImBlockerOverlayAccess();
             widget = Proxy.newProxyInstance(widgetType.getClassLoader(), new Class<?>[]{widgetType},
                     (proxy, method, args) -> {
                         return switch (method.getName()) {
@@ -56,7 +48,7 @@ final class ImBlockerInputMethod implements InputMethodSession.Connection {
                             case "getGuiScale" -> input.getWindowContext().getGuiScale();
                             case "getFontHeight" -> input.inputMethodFontHeight();
                             case "getBoundsAbs" -> {
-                                var area = input.inputMethodBounds();
+                                var area = input.toHost(input.inputMethodBounds());
                                 yield rectangle.newInstance((double) area.x(), (double) area.y(),
                                         (double) area.width(), (double) area.height(),
                                         input.getWindowContext().getGuiScale());
@@ -119,8 +111,7 @@ final class ImBlockerInputMethod implements InputMethodSession.Connection {
             if (closed || !registered || getFocusOwner.invoke(null) != widget) return;
             // Only cancel our own uncommitted text; never re-associate IMBlocker's context.
             if (Util.getPlatform() == Util.OS.WINDOWS) WindowsInputMethod.cancelCurrentComposition();
-            clearPreedit.invoke(preeditOverlay, null, 0);
-            clearCandidates.invoke(candidateOverlay, null, 0);
+            overlays.clear();
         } catch (ReflectiveOperationException exception) {
             throw new IllegalStateException(exception);
         }

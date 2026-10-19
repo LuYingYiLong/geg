@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore.layout;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import net.minecraft.client.gui.GuiGraphics;
 
 /**
@@ -15,7 +15,7 @@ public final class FocusOverlay extends Control {
     }
 
     @Override
-    public void draw(ModularGuiContext context, int screenX, int screenY) {
+    public void draw(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             Rect bounds = focus.getOutlineBounds();

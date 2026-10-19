@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeKey;
 import io.github.luyingyilong.ore.layout.Control;
@@ -55,7 +55,7 @@ public final class Divider extends Control {
     }
 
     @Override
-    protected void render(ModularGuiContext context, int screenX, int screenY) {
+    protected void render(DrawContext context, int screenX, int screenY) {
         var area = getScreenBounds(screenX, screenY);
         if (layout == Layout.VERTICAL) {
             if (verticalPainter == null) verticalPainter = ownPart("verticalPainter", new Panel(OreTheme.V_DIVIDER));

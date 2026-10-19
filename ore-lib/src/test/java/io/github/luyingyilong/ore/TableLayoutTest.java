@@ -2,7 +2,7 @@ package io.github.luyingyilong.ore;
 
 import io.github.luyingyilong.ore.signal.Signals;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.Rect;
 import net.minecraft.network.chat.Component;
 
@@ -19,7 +19,7 @@ public final class TableLayoutTest {
         List<Integer> acted = new ArrayList<>();
         Table.Cell<Integer> text = (context, row, bounds) -> { };
         Table.Cell<Integer> action = new Table.Cell<>() {
-            @Override public void draw(ModularGuiContext context, Integer row, Rect bounds) { }
+            @Override public void draw(DrawContext context, Integer row, Rect bounds) { }
 
             @Override public boolean click(Integer row, Rect bounds, int mouseX, int mouseY) {
                 if (bounds.contains(mouseX, mouseY)) {
@@ -88,7 +88,7 @@ public final class TableLayoutTest {
         }
 
         Table.Cell<Integer> variableHeight = new Table.Cell<>() {
-            @Override public void draw(ModularGuiContext context, Integer row, Rect bounds) { }
+            @Override public void draw(DrawContext context, Integer row, Rect bounds) { }
 
             @Override public int measureHeight(net.minecraft.client.gui.Font font,
                                                Integer row, int width) {

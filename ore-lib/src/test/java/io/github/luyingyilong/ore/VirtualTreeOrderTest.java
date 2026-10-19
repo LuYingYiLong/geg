@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
@@ -23,7 +23,7 @@ public final class VirtualTreeOrderTest {
         final class Card extends Control implements Grid.View<Integer> {
             Card() { created.add(this); }
             @Override public void bind(Integer item) { setDebugName(item.toString()); }
-            @Override public void draw(ModularGuiContext context, Rect area, boolean hovered) { }
+            @Override public void draw(DrawContext context, Rect area, boolean hovered) { }
         }
         Grid<Integer> grid = new Grid<Integer>().setAdapter(new Grid.Adapter<>() {
             @Override public int getSize() { return data.size(); }

@@ -4,7 +4,7 @@ import io.github.luyingyilong.ore.signal.*;
 
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.FocusManager;
@@ -34,9 +34,9 @@ import java.util.function.Supplier;
 /** Fixed-header table whose rows use the Ore bar theme and shared draw/hit geometry. */
 public final class Table<T> extends Container {
     public interface Cell<T> {
-        void draw(ModularGuiContext context, T row, Rect bounds);
+        void draw(DrawContext context, T row, Rect bounds);
 
-        default void draw(ModularGuiContext context, T row, Rect bounds, CellState state) {
+        default void draw(DrawContext context, T row, Rect bounds, CellState state) {
             draw(context, row, bounds);
         }
 
@@ -71,7 +71,7 @@ public final class Table<T> extends Container {
         @Override @SuppressWarnings("unchecked") public void bindControl(Control control, T row) {
             binder.accept((C) control, row);
         }
-        @Override public void draw(ModularGuiContext context, T row, Rect bounds) { }
+        @Override public void draw(DrawContext context, T row, Rect bounds) { }
     }
 
     /** Indices use the same order as Cell.focusTargets, so painting and activation agree. */
@@ -132,7 +132,7 @@ public final class Table<T> extends Container {
                     + 2 * verticalInset;
         }
 
-        @Override public void draw(ModularGuiContext context, T row, Rect bounds) {
+        @Override public void draw(DrawContext context, T row, Rect bounds) {
             // RowView owns the retained Padding/Label subtree, including clipping and disposal.
         }
 
@@ -634,7 +634,7 @@ public final class Table<T> extends Container {
     }
 
     @Override
-    public void draw(ModularGuiContext context, int screenX, int screenY) {
+    public void draw(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
@@ -647,8 +647,8 @@ public final class Table<T> extends Container {
             drawingBody = body;
             if (body.height() <= 0) return;
             GuiGraphics graphics = context.getGraphics();
-            graphics.enableScissor(body.x(), body.y(), body.right(), body.bottom());
-            DebugBridge.backend().clip(body);
+            context.enableScissor(body.x(), body.y(), body.right(), body.bottom());
+            DebugBridge.backend().clip(context.toScreenRect(body));
             if (rows.isEmpty()) {
                 drawText(this, "empty", emptyLabel.setText(empty), context, new Rect(body.x() + 2, body.y() + 8,
                                 Math.max(0, body.width() - 4), 12));
@@ -658,11 +658,11 @@ public final class Table<T> extends Container {
                     if (view != null) view.draw(context, screenX, screenY);
                 }
             }
-            graphics.disableScissor(); DebugBridge.backend().unclip();
+            context.disableScissor(); DebugBridge.backend().unclip();
         }
     }
 
-    private void drawHeader(ModularGuiContext context, Rect area) {
+    private void drawHeader(DrawContext context, Rect area) {
         int x = area.x();
         for (int index = 0; index < columns.size(); index++) {
             Column<T> column = columns.get(index);
@@ -672,14 +672,14 @@ public final class Table<T> extends Container {
         }
     }
 
-    private void drawText(Control owner, String name, Label label, ModularGuiContext context, Rect area) {
+    private void drawText(Control owner, String name, Label label, DrawContext context, Rect area) {
         label.setColor(headerColor).setOverflow(Label.Overflow.CLIP).setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
         label.layout(area, context.getFont());
         DebugBridge.backend().internal(owner, name, label);
         label.draw(context, 0, 0);
     }
 
-    private void drawRegularRow(ModularGuiContext context, T item, Rect row) {
+    private void drawRegularRow(DrawContext context, T item, Rect row) {
         int x = row.x();
         for (int index = 0; index < columns.size(); index++) {
             int width = columnWidths[index];
@@ -688,11 +688,11 @@ public final class Table<T> extends Container {
         }
     }
 
-    private void drawCell(ModularGuiContext context, Column<T> column, T item, Rect bounds) {
+    private void drawCell(DrawContext context, Column<T> column, T item, Rect bounds) {
         if (bounds.width() <= 0 || bounds.height() <= 0) return;
         GuiGraphics graphics = context.getGraphics();
-        graphics.enableScissor(bounds.x(), bounds.y(), bounds.right(), bounds.bottom());
-        DebugBridge.backend().clip(bounds);
+        context.enableScissor(bounds.x(), bounds.y(), bounds.right(), bounds.bottom());
+        DebugBridge.backend().clip(context.toScreenRect(bounds));
         try {
             List<Rect> targets = column.cell.focusTargets(item, bounds);
             int pointerIndex = -1;
@@ -706,11 +706,11 @@ public final class Table<T> extends Container {
             }
             column.cell.draw(context, item, bounds, new CellState(pointerIndex, keyIndex));
         } finally {
-            graphics.disableScissor(); DebugBridge.backend().unclip();
+            context.disableScissor(); DebugBridge.backend().unclip();
         }
     }
 
-    private void drawCompactRow(ModularGuiContext context, T item, Rect row, RowView view) {
+    private void drawCompactRow(DrawContext context, T item, Rect row, RowView view) {
         int x = row.x() + COMPACT_INSET;
         int width = Math.max(0, row.width() - 2 * COMPACT_INSET);
         int y = row.y() + COMPACT_INSET;
@@ -895,7 +895,7 @@ public final class Table<T> extends Container {
         }
     }
 
-        @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+        @Override public void draw(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
@@ -905,14 +905,14 @@ public final class Table<T> extends Container {
                     if (control == null || !(control.isAlive() && control.getVisible())) continue;
                     Rect area = control.getScreenBounds(screenX, screenY);
                     context.getGraphics().enableScissor(area.x(), area.y(), area.right(), area.bottom());
-                    DebugBridge.backend().clip(area);
+                    DebugBridge.backend().clip(context.toScreenRect(area));
                     try { control.draw(context, screenX, screenY); }
                     finally { context.getGraphics().disableScissor(); DebugBridge.backend().unclip(); }
                 }
         }
     }
 
-        @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+        @Override protected void render(DrawContext context, int screenX, int screenY) {
             Rect area = getScreenBounds(screenX, screenY);
             rowBackground.drawAt(context, area);
             if (compact) drawCompactRow(context, row.item(), area, this);

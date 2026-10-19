@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.DebugProperty;
 import io.github.luyingyilong.ore.debug.Inspectable;
@@ -89,18 +89,18 @@ public final class Label extends Control {
         return result;
     }
 
-    public static void draw(Control owner, ModularGuiContext context, Component text, Rect area, int color,
+    public static void draw(Control owner, DrawContext context, Component text, Rect area, int color,
                             Overflow overflow, Horizontal horizontal, Vertical vertical) {
         immediate(context, text).setColor(color).setOverflow(overflow).setAlignment(horizontal, vertical)
                 .paint(context.getGraphics(), context.getFont(), area, context.getAbsMouseX(), context.getAbsMouseY(), owner);
     }
 
-    public static void draw(ModularGuiContext context, Component text, Rect area, int color,
+    public static void draw(DrawContext context, Component text, Rect area, int color,
                             Overflow overflow, Horizontal horizontal, Vertical vertical) {
         draw(context, text, area, color, false, overflow, horizontal, vertical);
     }
 
-    public static void draw(ModularGuiContext context, Component text, Rect area, int color,
+    public static void draw(DrawContext context, Component text, Rect area, int color,
                             boolean shadow, Overflow overflow, Horizontal horizontal, Vertical vertical) {
         immediate(context, text).setColor(color).setShadow(shadow).setOverflow(overflow).setAlignment(horizontal, vertical)
                 .paint(context.getGraphics(), context.getFont(), area, context.getAbsMouseX(), context.getAbsMouseY(), null);
@@ -109,8 +109,8 @@ public final class Label extends Control {
     /**
      * Compatibility painters borrow one window-owned scratch label; retained UI should own its Labels.
      */
-    static Label immediate(ModularGuiContext context, Component text) {
-        return io.github.luyingyilong.ore.window.WindowContext.of(context).getTextPainter().setText(text)
+    static Label immediate(DrawContext context, Component text) {
+        return context.getWindowContext().getTextPainter().setText(text)
                 .setHero(false).setFontSize(DEFAULT_FONT_SIZE).setScale(1.0F).setWrap(Wrap.NONE).setMaxLines(Integer.MAX_VALUE)
                 .setShadow(false).setOpticalCenter(false);
     }
@@ -451,11 +451,11 @@ public final class Label extends Control {
     }
 
     @Override
-    protected void render(ModularGuiContext context, int screenX, int screenY) {
+    protected void render(DrawContext context, int screenX, int screenY) {
         drawAt(context, getScreenBounds(screenX, screenY));
     }
 
-    private void drawAt(ModularGuiContext context, Rect area) {
+    private void drawAt(DrawContext context, Rect area) {
         paint(context.getGraphics(), context.getFont(), area, context.getAbsMouseX(), context.getAbsMouseY());
     }
 
@@ -479,8 +479,8 @@ public final class Label extends Control {
         int scrollOffset = overflow == Overflow.MARQUEE
                 ? marqueeOffset(font, area.width(), System.nanoTime() / 1_000_000L, area.contains(mouseX, mouseY)) : 0;
         if (overflow != Overflow.VISIBLE) {
-            graphics.enableScissor(area.x(), area.y(), area.right(), area.bottom());
-            DebugBridge.backend().clip(area);
+            DrawContext.enableTransformedScissor(graphics, area.x(), area.y(), area.right(), area.bottom());
+            DebugBridge.backend().clip(DrawContext.toScreenRect(graphics.pose().last().pose(), area));
         }
         for (int index = 0; index < visibleLines; index++) {
             FormattedCharSequence line = lines.get(index);

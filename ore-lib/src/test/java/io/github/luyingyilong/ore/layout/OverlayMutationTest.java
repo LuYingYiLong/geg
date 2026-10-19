@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore.layout;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import net.minecraft.client.gui.Font;
 
 /** Closing animations may synchronously detach layers or dispose their entire window. */
@@ -31,10 +31,10 @@ public final class OverlayMutationTest {
         Overlay drawing = new Overlay();
         int[] paints = {0};
         drawing.addChild(new Control() {
-            @Override public void draw(ModularGuiContext context, int x, int y) { drawing.queueFree(); }
+            @Override public void draw(DrawContext context, int x, int y) { drawing.queueFree(); }
         });
         drawing.addChild(new Control() {
-            @Override public void draw(ModularGuiContext context, int x, int y) { paints[0]++; }
+            @Override public void draw(DrawContext context, int x, int y) { paints[0]++; }
         });
         drawing.draw(null, 0, 0);
         check(drawing.isQueuedForDeletion() && paints[0] == 0, "Closing the root during draw does not paint destroyed layers");

@@ -34,6 +34,10 @@ final class WindowRenderState implements AutoCloseable {
     private final int clearStencil = GL11.glGetInteger(GL11.GL_STENCIL_CLEAR_VALUE);
 
     WindowRenderState() {
+        this(true);
+    }
+
+    WindowRenderState(boolean resetModelView) {
         GL11.glGetIntegerv(GL11.GL_VIEWPORT, viewport);
         GL11.glGetIntegerv(GL11.GL_SCISSOR_BOX, scissor);
         GL11.glGetFloatv(GL11.GL_COLOR_CLEAR_VALUE, clearColor);
@@ -49,7 +53,7 @@ final class WindowRenderState implements AutoCloseable {
         }
         GlStateManager._activeTexture(activeTexture);
         RenderSystem.getModelViewStack().pushPose();
-        RenderSystem.getModelViewStack().setIdentity();
+        if (resetModelView) RenderSystem.getModelViewStack().setIdentity();
         RenderSystem.applyModelViewMatrix();
     }
 

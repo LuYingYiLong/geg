@@ -28,6 +28,11 @@ public final class OreInspector {
         if (initialized || FMLEnvironment.production) return;
         io.github.luyingyilong.ore.signal.SignalDiagnostics.tracingEnabled(true);
         forgeBus.register(OreInspector.class);
+        DebugBridge.setHostShortcut((key, scan) -> {
+            if (!OPEN.matches(key, scan)) return false;
+            open();
+            return true;
+        });
         initialized = true;
     }
 

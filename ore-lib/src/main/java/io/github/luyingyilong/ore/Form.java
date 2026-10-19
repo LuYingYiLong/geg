@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.input.NumberInput;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Control;
@@ -122,7 +122,7 @@ public final class Form extends Container {
     }
 
     /** Compatibility entry point until a modal directly owns the Form node. */
-    public int draw(ModularGuiContext context, int x, int y, int width, int viewportWidth) {
+    public int draw(DrawContext context, int x, int y, int width, int viewportWidth) {
         if (!getVisible()) return y;
         Font font = context.getFont();
         int height = measureSize(font, new Size(width, viewportWidth)).height();

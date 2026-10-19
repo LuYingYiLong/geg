@@ -1,0 +1,149 @@
+buildscript {
+    repositories { mavenCentral() }
+    dependencies { classpath 'org.ow2.asm:asm-commons:9.8' }
+}
+
+import org.objectweb.asm.ClassReader
+import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.Opcodes
+import org.objectweb.asm.commons.ClassRemapper
+import org.objectweb.asm.commons.Remapper
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import java.util.zip.ZipOutputStream
+
+// Opt-in development adaptation. Never change the installed/production IMBlocker jar.
+// Mixin 0.8.5's runtime refmap remapper ignores a missing target's descriptor on its
+// second search pass, incorrectly matching IMBlocker's optional int GUI-scale hook
+// against 1.20.1's double method. Translate SRG references ahead of time instead.
+def sourcePath = providers.gradleProperty('imBlockerDevelopmentJar')
+if (!sourcePath.isPresent()) return
+
+def original = file(sourcePath.get())
+if (!original.isFile()) throw new GradleException("IMBlocker jar not found: $original")
+new ZipFile(original).withCloseable { zip ->
+    def metadata = zip.getEntry('META-INF/mods.toml')
+    if (metadata == null || !(zip.getInputStream(metadata).getText('UTF-8') =~ /modId\s*=\s*"imblocker"/).find())
+        throw new GradleException('imBlockerDevelopmentJar must point to the Forge IMBlocker jar')
+}
+
+// fg.deobf accepts Maven coordinates. Stage an immutable, content-addressed copy in
+// build/, then let ForgeGradle perform its normal code remapping before annotations.
+def digest = java.security.MessageDigest.getInstance('SHA-256').digest(original.bytes).encodeHex().toString()
+def repository = layout.buildDirectory.dir('client-development/source-repo').get().asFile
+def version = "dev-${digest}"
+def artifact = new File(repository, "dev/ore/tools/imblocker/$version/imblocker-${version}.jar")
+if (!artifact.exists()) {
+    artifact.parentFile.mkdirs()
+    java.nio.file.Files.copy(original.toPath(), artifact.toPath())
+    new File(artifact.parentFile, "imblocker-${version}.pom").text = """<project>
+<modelVersion>4.0.0</modelVersion><groupId>dev.ore.tools</groupId>
+<artifactId>imblocker</artifactId><version>$version</version></project>
+"""
+}
+repositories.maven { url = repository.toURI(); content { includeGroup 'dev.ore.tools' } }
+configurations {
+    imBlockerDevelopmentSource { canBeConsumed = false }
+}
+dependencies {
+    imBlockerDevelopmentSource(fg.deobf("dev.ore.tools:imblocker:$version")) { transitive = false }
+}
+
+def preparedJar = layout.buildDirectory.file('client-development/imblocker-official-dev.jar')
+def prepare = tasks.register('prepareDevelopmentImBlocker') {
+    dependsOn tasks.named('createSrgToMcp')
+    inputs.files configurations.imBlockerDevelopmentSource
+    inputs.file tasks.named('createSrgToMcp').flatMap { it.output }
+    outputs.file preparedJar
+    doLast {
+        def names = [:]
+        tasks.named('createSrgToMcp').get().output.get().asFile.eachLine('UTF-8') { line ->
+            def words = line.split(' ')
+            if (words[0] == 'MD:' || words[0] == 'FD:') {
+                def from = words[1].tokenize('/').last()
+                def to = words[words[0] == 'MD:' ? 3 : 2].tokenize('/').last()
+                if (from ==~ /[mf]_\d+_/) names[from] = to
+            }
+        }
+        if (names['m_109093_'] != 'render') throw new GradleException('Expected the Forge 1.20.1 SRG-to-official mapping')
+        def translate = { String text -> text.replaceAll(/\b[mf]_\d+_\b/) { String name -> names[name] ?: name } }
+        def target = preparedJar.get().asFile
+        target.parentFile.mkdirs()
+        new ZipFile(configurations.imBlockerDevelopmentSource.singleFile).withCloseable { source ->
+            new ZipOutputStream(new FileOutputStream(target)).withCloseable { output ->
+                source.entries().each { entry ->
+                    output.putNextEntry(new ZipEntry(entry.name))
+                    byte[] bytes = source.getInputStream(entry).bytes
+                    if (entry.name.endsWith('.class')) {
+                        def writer = new ClassWriter(0)
+                        def remapper = new Remapper() {
+                            @Override Object mapValue(Object value) {
+                                return value instanceof String ? translate(value) : super.mapValue(value)
+                            }
+                        }
+                        new ClassReader(bytes).accept(new ClassRemapper(writer, remapper), 0)
+                        bytes = writer.toByteArray()
+                    } else if (entry.name.endsWith('.refmap.json')) {
+                        bytes = translate(new String(bytes, 'UTF-8')).getBytes('UTF-8')
+                    }
+                    output.write(bytes)
+                    output.closeEntry()
+                }
+            }
+        }
+        logger.lifecycle('Prepared development-only IMBlocker references; original jar and optional method descriptors preserved')
+    }
+}
+
+def verify = tasks.register('verifyDevelopmentImBlocker') {
+    dependsOn prepare
+    doLast {
+        if (java.security.MessageDigest.getInstance('SHA-256').digest(original.bytes).encodeHex().toString() != digest)
+            throw new GradleException('The original IMBlocker jar changed during development preparation')
+        def signatures = { byte[] bytes ->
+            def result = []
+            new ClassReader(bytes).accept(new ClassVisitor(Opcodes.ASM9) {
+                @Override org.objectweb.asm.MethodVisitor visitMethod(int access, String name, String descriptor,
+                                                                      String signature, String[] exceptions) {
+                    result.add(name + descriptor)
+                    return null
+                }
+            }, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES)
+            return result
+        }
+        new ZipFile(configurations.imBlockerDevelopmentSource.singleFile).withCloseable { input ->
+            new ZipFile(preparedJar.get().asFile).withCloseable { output ->
+                input.entries().each { entry ->
+                    def written = output.getEntry(entry.name)
+                    if (written == null) throw new GradleException("Lost IMBlocker entry: ${entry.name}")
+                    byte[] before = input.getInputStream(entry).bytes
+                    byte[] after = output.getInputStream(written).bytes
+                    if (entry.name.endsWith('.class')) {
+                        if (signatures(before) != signatures(after))
+                            throw new GradleException("IMBlocker method signatures changed: ${entry.name}")
+                    } else if (!entry.name.endsWith('.refmap.json') && !Arrays.equals(before, after)) {
+                        throw new GradleException("IMBlocker metadata/asset changed: ${entry.name}")
+                    }
+                }
+                def hook = 'io/github/reserveword/imblocker/mixin/WindowMixin.class'
+                def methods = signatures(output.getInputStream(output.getEntry(hook)).bytes)
+                ['D', 'I'].each { parameter ->
+                    if (!methods.contains("onScaleFactorChanged(${parameter}Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V".toString()))
+                        throw new GradleException("Missing original $parameter WindowMixin overload")
+                }
+            }
+        }
+        logger.lifecycle('Development IMBlocker signatures, metadata/assets and original source integrity verified')
+    }
+}
+
+// The file is already remapped. Only the client tool source set receives it.
+dependencies.add('clientDevelopmentRuntime', files(preparedJar).builtBy(prepare))
+minecraft.runs.client {
+    property 'mixin.env.disableRefMap', 'true'
+    property 'mixin.env.remapRefMap', 'false'
+}
+tasks.matching { it.name in ['prepareRunClient', 'prepareRunClientCompile', 'genIntellijRuns', 'verifyClientDevelopment'] }.configureEach {
+    dependsOn verify
+}

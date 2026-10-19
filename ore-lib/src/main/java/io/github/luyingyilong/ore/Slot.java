@@ -2,7 +2,7 @@ package io.github.luyingyilong.ore;
 
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.SizeFlags;
@@ -46,7 +46,7 @@ public final class Slot extends Control {
 
     @Override public boolean hasTooltip() { return !item.isEmpty(); }
 
-    @Override public void renderTooltip(ModularGuiContext context, int mouseX, int mouseY) {
+    @Override public void renderTooltip(DrawContext context, int mouseX, int mouseY) {
         context.getGraphics().renderTooltip(context.getFont(), item, mouseX, mouseY);
     }
 
@@ -55,18 +55,18 @@ public final class Slot extends Control {
         count.layout(new Rect(1, 12, Math.max(0, bounds.width() - 2), 12), font);
     }
 
-    @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+    @Override protected void render(DrawContext context, int screenX, int screenY) {
         Rect area = getScreenBounds(screenX, screenY);
         if (backgroundVisible) {
             var style = context.getTheme().getItemSlotTheme().theme();
             if (style.getBackground() != null)
-                style.getBackground().draw(context, area.x(), area.y(), area.width(), area.height(), style);
+                io.github.luyingyilong.ore.theme.OreDrawables.draw(context, style.getBackground(), area, style);
         }
         if (item.isEmpty()) return;
         context.getGraphics().renderItem(item, area.x() + (area.width() - 16) / 2, area.y() + 3);
     }
 
-    @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
+    @Override public void draw(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);

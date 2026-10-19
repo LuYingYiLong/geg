@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
@@ -37,7 +37,7 @@ public final class Spin extends Control {
     }
 
     @Override
-    protected void render(ModularGuiContext context, int screenX, int screenY) {
+    protected void render(DrawContext context, int screenX, int screenY) {
         Rect area = getScreenBounds(screenX, screenY);
         if (area.width() < FRAME_SIZE || area.height() < FRAME_SIZE) return;
         int frame = frameAt(System.nanoTime() / 1_000_000L);

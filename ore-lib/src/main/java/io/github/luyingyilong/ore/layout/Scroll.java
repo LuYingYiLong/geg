@@ -1,7 +1,7 @@
 package io.github.luyingyilong.ore.layout;
 
 import brachy.modularui.api.drawable.IDrawable;
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import io.github.luyingyilong.ore.debug.DebugBridge;
@@ -278,7 +278,7 @@ public final class Scroll extends Container {
     }
 
     @Override
-    public void draw(ModularGuiContext context, int screenX, int screenY) {
+    public void draw(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
@@ -287,12 +287,12 @@ public final class Scroll extends Container {
                 Rect clip = viewport.translated(screenX + getAbsoluteBounds().x(),
                         screenY + getAbsoluteBounds().y());
                 GuiGraphics graphics = context.getGraphics();
-                graphics.enableScissor(clip.x(), clip.y(), clip.right(), clip.bottom());
-                DebugBridge.backend().clip(clip);
+                context.enableScissor(clip.x(), clip.y(), clip.right(), clip.bottom());
+                DebugBridge.backend().clip(context.toScreenRect(clip));
                 try {
                     content.draw(context, screenX - getScrollX(), screenY - getScrollY());
                 } finally {
-                    graphics.disableScissor();
+                    context.disableScissor();
                     DebugBridge.backend().unclip();
                 }
             }
@@ -482,7 +482,7 @@ public final class Scroll extends Container {
         }
 
         @Override
-        protected void render(ModularGuiContext context, int screenX, int screenY) {
+        protected void render(DrawContext context, int screenX, int screenY) {
             int length = trackLength();
             if (length <= 0) return;
             GuiGraphics graphics = context.getGraphics();

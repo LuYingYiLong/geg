@@ -16,7 +16,7 @@
 
 ## 运行与打包
 
-正常 runClient 挂载 GEG main、ore-lib main 和 ore-lib inspector；server、gameTestServer、data 只挂载 GEG main 和 ore-lib main。IDEA 客户端运行前构建 inspectorClasses。
+正常 runClient 挂载 GEG main、ore-lib main 和 ore-lib inspector，并由 clientDevelopment 源码集类路径提供仅客户端使用的 JEI；server、gameTestServer、data 只挂载 GEG main 和 ore-lib main。IDEA 客户端运行前构建 inspectorClasses，详见 [开发客户端说明](development-client.md)。
 
 Inspector 的 `META-INF/services/io.github.luyingyilong.ore.OreClientExtension` 仅在 inspector 输出中，调用 OreClient.initialize 后自动注册 F8。主源码不链接 Inspector 实现。
 

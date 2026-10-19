@@ -64,7 +64,7 @@ public final class WindowCanvas extends Widget<WindowCanvas> implements Interact
             area.height = bounds.height();
             field.getWidget().onUpdate();
         }
-        root.draw(context, 0, 0);
+        try (var frame = io.github.luyingyilong.ore.window.MuiDrawing.begin(context, root.getContext())) { root.draw(frame, 0, 0); }
     }
 
     @Override

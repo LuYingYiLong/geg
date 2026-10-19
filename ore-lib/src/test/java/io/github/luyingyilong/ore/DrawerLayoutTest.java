@@ -2,7 +2,7 @@ package io.github.luyingyilong.ore;
 
 import io.github.luyingyilong.ore.signal.Signals;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Overlay;
 import io.github.luyingyilong.ore.layout.Rect;
@@ -318,7 +318,7 @@ public final class DrawerLayoutTest {
         Table<Integer> table = Signals.configure(new Table<Integer>().setRowKey(row -> row)
                 .addColumn(new Table.Column<>("member", Component.literal("Member"),
                         48, 100, 1, width -> 20, new Table.Cell<>() {
-                    @Override public void draw(ModularGuiContext context, Integer row, Rect bounds) { }
+                    @Override public void draw(DrawContext context, Integer row, Rect bounds) { }
                 })), connected -> connected.rowActivated().connect(connected, row -> selected[0] = row));
         table.setMinimum(0, 60);
         table.setRows(IntStream.range(0, 300).boxed().toList());

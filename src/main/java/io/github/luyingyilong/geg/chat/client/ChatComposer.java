@@ -259,7 +259,7 @@ public final class ChatComposer extends Container {
         }
 
         @Override
-        public void draw(brachy.modularui.screen.viewport.ModularGuiContext context, int x, int y) {
+        public void draw(io.github.luyingyilong.ore.render.DrawContext context, int x, int y) {
             var graphics = context.getGraphics();
             graphics.flush();
             graphics.pose().pushPose();

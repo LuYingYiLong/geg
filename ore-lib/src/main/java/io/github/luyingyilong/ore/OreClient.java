@@ -26,6 +26,8 @@ public final class OreClient {
         forgeBus.register(io.github.luyingyilong.ore.compat.recipeviewer.RecipeViewerInputGuard.class);
         forgeBus.register(AvatarSkinEvents.class);
         forgeBus.register(WindowManager.class);
+        forgeBus.register(io.github.luyingyilong.ore.window.ScreenHostEvents.class);
+        forgeBus.register(io.github.luyingyilong.ore.window.ScreenInputBridge.class);
         forgeBus.register(OreToasts.class);
         initialized = true;
         java.util.ServiceLoader.load(OreClientExtension.class, OreClientExtension.class.getClassLoader())

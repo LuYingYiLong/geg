@@ -79,7 +79,8 @@ public final class RecipeViewerClientTest {
         for (String id : viewerIds(viewer)) check(ModList.get().isLoaded(id), "Requested viewer is loaded: " + id);
     }
 
-    static boolean viewersReady(String viewer) throws ReflectiveOperationException {
+    public static boolean viewersReady(String viewer) throws ReflectiveOperationException {
+        if (viewer.equals("jei")) return ModList.get().isLoaded("jei") && getJeiRuntime() != null;
         if (!viewer.equals("jei+emi")) return true;
         return getJeiRuntime() != null
                 && (boolean) Class.forName("dev.emi.emi.runtime.EmiReloadManager").getMethod("isLoaded").invoke(null);

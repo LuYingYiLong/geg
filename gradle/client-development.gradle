@@ -1,0 +1,52 @@
+// Optional tools for the IDEA/Gradle client only. Never publish or embed these mods.
+repositories {
+    maven { url = 'https://maven.blamejared.com'; content { includeGroup 'mezz.jei' } }
+}
+configurations {
+    clientDevelopmentRuntime {
+        canBeConsumed = false
+        canBeResolved = true
+    }
+}
+sourceSets {
+    clientDevelopment {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+configurations.clientDevelopmentRuntimeOnly.extendsFrom configurations.clientDevelopmentRuntime
+dependencies {
+    clientDevelopmentRuntime(fg.deobf('mezz.jei:jei-1.20.1-forge:15.20.0.105')) {
+        transitive = false // This Forge artifact requires only Minecraft and Forge.
+    }
+}
+
+// A real client-only source-set classpath is required for Forge's mod discovery.
+// Merely appending to legacyClassPath.file makes classes visible without loading JEI.
+minecraft.runs.client {
+    source sourceSets.clientDevelopment
+    ideaModule "${project.name}.clientDevelopment"
+}
+
+tasks.register('verifyClientDevelopment') {
+    doLast {
+        def tools = configurations.clientDevelopmentRuntime.files
+        def expectedCount = providers.gradleProperty('imBlockerDevelopmentJar').isPresent() ? 2 : 1
+        if (tools.size() != expectedCount || !tools.any { it.name.startsWith('jei-1.20.1-forge-15.20.0.105') })
+            throw new GradleException("Unexpected client development mods: $tools")
+        if (configurations.runtimeClasspath.files.any { it.name.startsWith('jei-') })
+            throw new GradleException('JEI leaked into the shared runtime classpath')
+        ['server', 'gameTestServer', 'data'].each { name ->
+            def sources = minecraft.runs.getByName(name).allSources
+            if (sources.contains(sourceSets.clientDevelopment))
+                throw new GradleException("Client tool classpath leaked into $name")
+        }
+        if (!sourceSets.clientDevelopment.runtimeClasspath.files.containsAll(tools))
+            throw new GradleException('Client launcher is missing the JEI runtime')
+        logger.lifecycle('Client JEI configured; shared/server and published dependencies remain unchanged')
+    }
+}
+
+if (providers.gradleProperty('imBlockerDevelopmentJar').isPresent()) {
+    apply from: file('gradle/imblocker-development.gradle')
+}

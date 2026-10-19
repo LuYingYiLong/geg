@@ -123,11 +123,13 @@ public final class TextArea extends Input {
         label.layout(new Rect(left, top, width, height), context.getFont());
         // Native field text uses a translated pose; GuiGraphics scissor coordinates remain global.
         Rect field = inputMethodBounds();
-        context.getGraphics().enableScissor(field.x() + left, field.y() + top,
-                field.x() + left + width, field.y() + top + height);
+        Rect hintClip = toHost(new Rect(field.x() + left, field.y() + top, width, height));
+        context.getGraphics().enableScissor(hintClip.x(), hintClip.y(), hintClip.right(), hintClip.bottom());
         if (debugControl() != null) DebugBridge.backend().internal(debugControl(), "placeholder", label);
         try {
-            label.draw(context, 0, 0);
+            try (var frame = io.github.luyingyilong.ore.window.MuiDrawing.begin(context, getWindowContext())) {
+            label.draw(frame, 0, 0);
+        }
         } finally {
             context.getGraphics().disableScissor();
         }

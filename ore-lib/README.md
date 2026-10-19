@@ -15,6 +15,12 @@ Ore 是嵌入宿主 Mod 的客户端 UI 库，依赖 Java 17、Forge 1.20.1、Mo
 
 ## JEI / EMI / REI 避让
 
+### 在配方区域嵌入 Ore
+
+新增 `Canvas`、`DrawContext` 和 `ScreenWindowHost`，支持把控件树放入查看器的自定义配方区域，以及普通外部 Screen。内容保持透明，多个区域共享焦点和输入分发，弹层统一在宿主 Overlay 绘制。具体 API、三种查看器接线及生命周期说明见 [Canvas 接入文档](docs/canvas.md)。
+
+外部 Screen 使用独立的 `ScreenInputBridge → Window.dispatchInput` 链，不借用当前 OreScreen 的 MUI 事件处理器。EMI 的早期原始输入经过受宿主会话约束的桥接；已转发但未处理的事件不会在 Forge Screen 事件中再次发送。查看器原生物品槽继续负责配方快捷键与转移语义。
+
 三个查看器分别通过自己的可选插件入口读取 `RecipeViewerExclusions`，不要求安装其中任何一个，也不将其 API 或 Mod 打入宿主 JAR。编译 API 固定为 JEI 15.20.0.105、EMI 1.1.24、REI 12.1.785（Forge 1.20.1）。
 
 `OreScreen` 中的可见窗口及原版 Screen 中的 `OreButtonWidget` 自动提供 GUI 像素矩形，包含按钮 Badge 改变后的实际宽度。页面正文按布局范围避让；Drawer、Modal、Dialog 和 Dropdown 弹出层使用面板范围，忽略全屏遮罩。空的基础 `Control` 不绘制，因此仅遍历其子节点。原生窗口、暂存界面、隐藏或待销毁节点不占用主窗口区域；动画、偏移、缩放和界面尺寸变化都使用当前布局结果，无需宿主业务手写固定坐标。

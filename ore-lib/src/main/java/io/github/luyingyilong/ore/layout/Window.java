@@ -1,6 +1,7 @@
 package io.github.luyingyilong.ore.layout;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.event.*;
 import io.github.luyingyilong.ore.screen.OreScreen;
@@ -31,6 +32,7 @@ public final class Window extends Container {
     private WindowHost host;
     private boolean inspectable = true;
     private boolean closedNotified;
+    private boolean backEnabled = true;
     private Control content;
     private Overlay overlay;
     private int fontRevision = -1;
@@ -58,6 +60,15 @@ public final class Window extends Container {
         root.host = new NativeWindowHost(options);
         root.getContext().setOwner(root);
         root.onBack = root::close;
+        return root;
+    }
+
+    /** A coordinating root on an existing Screen; it never owns that Screen's navigation. */
+    public static Window external(ScreenWindowHost host) {
+        Window root = new Window(true);
+        root.host = java.util.Objects.requireNonNull(host);
+        root.getContext().setOwner(root);
+        root.backEnabled = false;
         return root;
     }
 
@@ -125,6 +136,10 @@ public final class Window extends Container {
 
     public void requestFocus() {
         host.requestFocus();
+    }
+
+    public void setSuspended(boolean suspended) {
+        suspendTree(suspended);
     }
 
     public Signal0 closed() {
@@ -220,6 +235,12 @@ public final class Window extends Container {
         if (dispatching != null) throw new IllegalStateException("Reentrant input dispatch");
         try (var lifecycleGuard = DispatchGuard.enter(); var ignored = getContext().enter(); var trace = SignalDiagnostics.suppress(!inspectable)) {
             dispatching = event;
+            if (inspectable && event instanceof KeyEvent shortcut && shortcut.action() == KeyEvent.Action.PRESS
+                    && DebugBridge.handleHostShortcut(shortcut.keyCode(), shortcut.scanCode())) {
+                event.begin(this);
+                event.accept();
+                return true;
+            }
             getContext().setModifiers(event.modifiers());
             if (event instanceof KeyEvent key)
                 getContext().key(key.keyCode(), key.action() == KeyEvent.Action.RELEASE ? 0 : 1, key.modifiers());
@@ -326,7 +347,7 @@ public final class Window extends Container {
                     ? focusManager.keyReleased(key.keyCode(), key.modifiers(), getContext().getMui())
                     : focusManager.keyPressed(key.keyCode(), key.modifiers(), getContext().getMui());
             if (handled) event.accept();
-            else if (key.action() == KeyEvent.Action.PRESS && key.keyCode() == GLFW.GLFW_KEY_ESCAPE) {
+            else if (backEnabled && key.action() == KeyEvent.Action.PRESS && key.keyCode() == GLFW.GLFW_KEY_ESCAPE) {
                 onBack.run();
                 event.accept();
             }
@@ -337,6 +358,10 @@ public final class Window extends Container {
         Control hit = overlay == null ? null : overlay.hitTop(x, y);
         return hit == null && content != null ? content.hitTop(x, y) : hit;
     }
+
+    public boolean getPointerCaptured(int button) { return pointerCaptures.containsKey(button); }
+
+    public Control getPointerTarget(int x, int y) { return pointerTarget(x, y); }
 
     public boolean pointerOver(Control control, int x, int y) {
         for (Control node = pointerTarget(x, y); node != null; node = node.getParent())
@@ -354,7 +379,7 @@ public final class Window extends Container {
         return null;
     }
 
-    private void drawTooltip(ModularGuiContext context, int screenX, int screenY) {
+    private void drawTooltip(DrawContext context, int screenX, int screenY) {
         int mouseX = context.getAbsMouseX(), mouseY = context.getAbsMouseY();
         Control target = tooltipTarget(mouseX - screenX, mouseY - screenY);
         if (target == null) return;
@@ -462,17 +487,17 @@ public final class Window extends Container {
     }
 
     @Override
-    public void draw(ModularGuiContext context, int screenX, int screenY) {
+    public void draw(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         if (!getVisible()) return;
-        this.getContext().bind(context);
+
         this.getContext().setOrigin(screenX, screenY);
         if (host instanceof EmbeddedWindowHost embedded) {
             closedNotified = false;
             embedded.attached();
             WindowManager.embedded(this);
-            this.getContext().setDimensions(context.getScreenArea().width, context.getScreenArea().height,
-                    context.getScreenArea().width, context.getScreenArea().height, 1);
+            this.getContext().setDimensions(context.getViewport().width(), context.getViewport().height(),
+                    context.getViewport().width(), context.getViewport().height(), 1);
         }
         try (var phase = DispatchGuard.enter(); var frame = this.getContext().enter(); var trace = SignalDiagnostics.suppress(!inspectable)) {
             if (host instanceof EmbeddedWindowHost && dispatching == null) {
@@ -490,10 +515,26 @@ public final class Window extends Container {
             if (layers != null && layers.getParent() == this && layers.isAlive())
                 layers.draw(context, screenX, screenY);
 
-            focusManager.synchronizeNativeFocus(context);
+            focusManager.synchronizeNativeFocus(getContext().getMui());
             focusOverlay.draw(context, screenX, screenY);
             drawTooltip(context, screenX, screenY);
             DebugBridge.backend().end(this, context, screenX, screenY);
+        }
+    }
+
+    /** External hosts render recipe bodies in their native callback, then these layers once. */
+    public void drawExternalOverlay(DrawContext context) {
+        if (!isAlive() || !getVisible() || isSuspended()) return;
+        try (var phase = DispatchGuard.enter(); var active = getContext().enter()) {
+            getContext().getPopups().synchronize();
+            if (overlay != null && overlay.isAlive()) {
+                overlay.layout(getBounds(), context.getFont());
+                overlay.draw(context, 0, 0);
+            }
+            focusManager.synchronizeNativeFocus(getContext().getMui());
+            focusOverlay.draw(context, 0, 0);
+            drawTooltip(context, 0, 0);
+            DebugBridge.backend().end(this, context, 0, 0);
         }
     }
 }

@@ -14,6 +14,12 @@ public final class EventGeometry {
     }
 
     public static Rect displayed(Control control, Rect area) {
+        area = untransformed(control, area);
+        var canvas = io.github.luyingyilong.ore.window.CanvasRegion.find(control);
+        return canvas == null ? area : canvas.getTransform().toScreen(area);
+    }
+
+    public static Rect untransformed(Control control, Rect area) {
         for (Control child = control, node = control.getParent(); node != null; child = node, node = node.getParent())
             if (node instanceof Scroll scroll && scroll.isContentChild(child))
                 area = area.translated(-scroll.getScrollX(), -scroll.getScrollY());
@@ -25,7 +31,12 @@ public final class EventGeometry {
     }
 
     public static Rect point(Control control, int x, int y) {
-        Rect area = displayed(control);
+        var canvas = io.github.luyingyilong.ore.window.CanvasRegion.find(control);
+        if (canvas != null) {
+            x = (int) Math.floor(canvas.getTransform().toLocalX(x));
+            y = (int) Math.floor(canvas.getTransform().toLocalY(y));
+        }
+        Rect area = untransformed(control, control.getAbsoluteBounds());
         var tree = control.getAbsoluteBounds();
         return new Rect(x + tree.x() - area.x(), y + tree.y() - area.y(), 0, 0);
     }
@@ -42,6 +53,7 @@ public final class EventGeometry {
             if (node instanceof Scroll scroll && scroll.isContentChild(child))
                 next = displayed(node, scroll.getViewport().translated(node.getAbsoluteBounds().x(), node.getAbsoluteBounds().y()));
             else if (node instanceof Table<?> table) next = displayed(node, table.getBodyBounds());
+            else if (node instanceof io.github.luyingyilong.ore.window.CanvasRegion region) next = region.getHostBounds();
             else if (node instanceof Window) next = node.getAbsoluteBounds();
             if (next != null) clip = clip == null ? next : intersect(clip, next);
         }

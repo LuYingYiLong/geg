@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import io.github.luyingyilong.ore.debug.DebugBridge;
@@ -345,7 +345,7 @@ public final class Drawer extends Container {
     }
 
     @Override
-    public void draw(ModularGuiContext context, int screenX, int screenY) {
+    public void draw(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             if (!isAlive()) return;
@@ -358,8 +358,8 @@ public final class Drawer extends Container {
             graphics.flush();
             graphics.pose().pushPose();
             graphics.pose().translate(0.0F, 0.0F, depth);
-            graphics.enableScissor(viewport.x(), viewport.y(), viewport.right(), viewport.bottom());
-            DebugBridge.backend().clip(viewport);
+            context.enableScissor(viewport.x(), viewport.y(), viewport.right(), viewport.bottom());
+            DebugBridge.backend().clip(context.toScreenRect(viewport));
             try {
                 graphics.fill(viewport.x(), viewport.y(), viewport.right(), viewport.bottom(), maskColor());
                 if (background == null) background = ownPart("background", new Panel(OreTheme.FLOATING_BACKGROUND));
@@ -370,7 +370,7 @@ public final class Drawer extends Container {
                 frame.draw(context, screenX, screenY);
                 graphics.flush();
             } finally {
-                graphics.disableScissor();
+                context.disableScissor();
                 DebugBridge.backend().unclip();
                 graphics.pose().popPose();
             }

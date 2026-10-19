@@ -1,6 +1,6 @@
 package io.github.luyingyilong.geg.chat.client;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.geg.chat.ChatChannel;
 import io.github.luyingyilong.geg.chat.ChatMessage;
 import io.github.luyingyilong.ore.debug.DebugBridge;
@@ -191,19 +191,19 @@ public final class ChatMessageList extends Container {
         }
 
         @Override
-        public void draw(ModularGuiContext context, int screenX, int screenY) {
+        public void draw(DrawContext context, int screenX, int screenY) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
             if (system(message)) drawCommandPart(context, screenX, screenY);
             else drawPlayerPart(context, screenX, screenY);
         }
 
-        private void drawPlayerPart(ModularGuiContext context, int screenX, int screenY) {
+        private void drawPlayerPart(DrawContext context, int screenX, int screenY) {
             if (avatar.getVisible()) avatar.draw(context, screenX, screenY);
             if (author.getVisible()) author.draw(context, screenX, screenY);
             if (text.getVisible()) text.draw(context, screenX, screenY);
         }
 
-        private void drawCommandPart(ModularGuiContext context, int screenX, int screenY) {
+        private void drawCommandPart(DrawContext context, int screenX, int screenY) {
             if (text.getVisible()) text.draw(context, screenX, screenY);
         }
 
@@ -217,7 +217,7 @@ public final class ChatMessageList extends Container {
             return false;
         }
 
-        public void draw(ModularGuiContext context, Rect area, boolean hovered) {
+        public void draw(DrawContext context, Rect area, boolean hovered) {
             layout(area, context.getFont());
             draw(context, 0, 0);
         }
@@ -260,7 +260,7 @@ public final class ChatMessageList extends Container {
         }
 
         @Override
-        protected void render(ModularGuiContext context, int screenX, int screenY) {
+        protected void render(DrawContext context, int screenX, int screenY) {
             hovered = style(context.getFont(), context.getAbsMouseX(), context.getAbsMouseY(), getScreenBounds(screenX, screenY));
         }
 
@@ -270,7 +270,7 @@ public final class ChatMessageList extends Container {
         }
 
         @Override
-        public void renderTooltip(ModularGuiContext context, int x, int y) {
+        public void renderTooltip(DrawContext context, int x, int y) {
             context.getGraphics().renderComponentHoverEffect(context.getFont(), hovered, x, y);
         }
 

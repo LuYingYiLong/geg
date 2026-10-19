@@ -78,7 +78,7 @@ public final class OreButtonWidget extends AbstractWidget {
         if (!active) button.setDisabled(true);
         try (var host = hostContext.enter()) {
             graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            button.draw(context, 0, 0);
+            try (var frame = io.github.luyingyilong.ore.window.MuiDrawing.begin(context, hostContext)) { button.draw(frame, 0, 0); }
             if (isFocused() && active && !button.getDisabled() && minecraft.getLastInputType().isKeyboard()) {
                 Rect outline = button.getFocusBounds();
                 int extra = button.getFocusExpansion();

@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore.inspector;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.Button;
 import io.github.luyingyilong.ore.Drawer;
 import io.github.luyingyilong.ore.Table;
@@ -128,7 +128,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
     }
 
     @Override
-    public void begin(Window root, ModularGuiContext context, int x, int y) {
+    public void begin(Window root, DrawContext context, int x, int y) {
         clientThread();
         if (!root.getInspectable()) {
             collecting = false;
@@ -153,7 +153,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
     }
 
     @Override
-    public void paint(Control c, ModularGuiContext context, int x, int y) {
+    public void paint(Control c, DrawContext context, int x, int y) {
         if (!collecting) return;
         float depth = context.getGraphics().pose().last().pose().m32(), treeDepth = 0;
         for (Control node = c; node != null; node = node.getParent()) treeDepth += node.getContentDepth();
@@ -186,17 +186,19 @@ public final class InspectorBackend implements DebugBridge.Backend {
         Vector4f top = matrix.transform(new Vector4f(x, inkTop, 0, 1)), bottom = matrix.transform(new Vector4f(x, inkBottom, 0, 1));
         // GUI pose transforms include the native editor's local translation; the camera projection is separate.
         Vector4f row = matrix.transform(new Vector4f(x, rowTop, 0, 1));
-        Rect line = new Rect((int) Math.floor(point.x), (int) Math.floor(row.y), Math.max(0, (int) Math.ceil(width)), Math.max(1, (int) Math.ceil(height)));
-        texts.computeIfAbsent(c, k -> new ArrayList<>()).add(new TextGeometry(line, base.y, point.y, top.y, bottom.y, fontSize, fonts, scroll, clips.peek()));
+        Vector4f end = matrix.transform(new Vector4f(x + width, rowTop + height, 0, 1));
+        Rect line = new Rect((int) Math.floor(point.x), (int) Math.floor(row.y),
+                Math.max(0, (int) Math.ceil(end.x) - (int) Math.floor(point.x)), Math.max(1, (int) Math.ceil(end.y) - (int) Math.floor(row.y)));
+        texts.computeIfAbsent(c, k -> new ArrayList<>()).add(new TextGeometry(line, base.y, point.y, top.y, bottom.y,
+                fontSize * Math.abs(matrix.m11()), fonts, scroll * Math.abs(matrix.m00()), clips.peek()));
         if (!painted.containsKey(c)) painted.put(c, new Geometry(line, clips.peek(), matrix.m32(), ++drawOrder));
     }
 
     @Override
     public void primitive(Control c, String kind, GuiGraphics graphics, Rect area) {
         if (!collecting) return;
-        var p = graphics.pose().last().pose().transform(new Vector4f(area.x(), area.y(), 0, 1));
         primitives.computeIfAbsent(c, k -> new ArrayList<>()).add(new Primitive(kind,
-                new Rect((int) p.x, (int) p.y, area.width(), area.height()), clips.peek()));
+                DrawContext.toScreenRect(graphics.pose().last().pose(), area), clips.peek()));
     }
 
     @Override
@@ -238,7 +240,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
     }
 
     @Override
-    public void end(Window root, ModularGuiContext context, int x, int y) {
+    public void end(Window root, DrawContext context, int x, int y) {
         if (!collecting || this.root != root) return;
         rebuildNodes(root);
         if (picking) hovered = pick(context.getAbsMouseX(), context.getAbsMouseY());

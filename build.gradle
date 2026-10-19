@@ -28,6 +28,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             // ModularUI's published refmap targets SRG names; this dev run uses official names.
             property 'mixin.env.disableRefMap', 'true'
+            property 'mixin.env.remapRefMap', 'false'
             args '--mixin.config', 'geg.mixins.json', '--mixin.config', 'ore.mixins.json'
 
             mods {
@@ -70,7 +71,7 @@ sourceSets {
                 project(':ore-lib').sourceSets.main.output + project(':ore-lib').sourceSets.inspector.output
     }
 }
-// IDEA uses the main module; compile Inspector explicitly before its client launcher runs.
+// Compile Inspector explicitly before the client launcher runs.
 // ForgeGradle resolves a run's custom source set classes task in the host project.
 tasks.register('inspectorClasses') { dependsOn ':ore-lib:inspectorClasses' }
 tasks.matching { it.name == 'prepareRunClientCompile' }.configureEach {
@@ -85,6 +86,7 @@ dependencies {
     compileOnly project(':ore-lib')
     testImplementation project(':ore-lib')
     clientIntegrationTestCompileOnly project(':ore-lib').sourceSets.inspector.output
+    clientIntegrationTestCompileOnly files(project(':ore-lib').configurations.compileClasspath)
     implementation fg.deobf('curse.maven:curios-309927:6418456')
     compileOnly fg.deobf('curse.maven:lightmans-currency-472521:9048567')
     compileOnly fg.deobf('curse.maven:ftb-quests-forge-289412:4872462')
@@ -163,3 +165,5 @@ tasks.named('oreTest') { dependsOn ':ore-lib:oreTest' }
 apply from: file('gradle/ore-release-check.gradle')
 
 apply from: file('gradle/ore-portability-check.gradle')
+
+apply from: file('gradle/client-development.gradle')

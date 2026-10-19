@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Panel;
@@ -180,7 +180,7 @@ public final class Navbar extends Container {
         return used;
     }
 
-    @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+    @Override protected void render(DrawContext context, int screenX, int screenY) {
         if (background == null) background = ownPart("background", new Panel(OreTheme.HEADER_PANEL));
         Rect area = getScreenBounds(screenX, screenY);
         background.drawAt(context, new Rect(area.x(), area.y(), area.width(), Math.max(0, area.height() - BOTTOM_PADDING)));

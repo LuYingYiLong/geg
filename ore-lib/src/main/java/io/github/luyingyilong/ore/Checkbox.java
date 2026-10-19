@@ -2,7 +2,7 @@ package io.github.luyingyilong.ore;
 
 import io.github.luyingyilong.ore.signal.*;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.theme.OreIcons;
@@ -87,7 +87,7 @@ public final class Checkbox extends Container {
         }
     }
 
-    @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
+    @Override protected void render(DrawContext context, int screenX, int screenY) {
         Rect area = getScreenBounds(screenX, screenY);
         boolean hovered = area.contains(context.getAbsMouseX(), context.getAbsMouseY());
         ResourceLocation texture = texture(hovered, gesture.keyPressed(true)

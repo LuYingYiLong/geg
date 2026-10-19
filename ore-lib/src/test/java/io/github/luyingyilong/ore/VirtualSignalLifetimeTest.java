@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import brachy.modularui.screen.viewport.ModularGuiContext;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.signal.*;
 import net.minecraft.client.gui.Font;
@@ -21,7 +21,7 @@ public final class VirtualSignalLifetimeTest {
                 @Override public void bind(Integer item) {
                     refresh.signal().connect(getBindingScope(), () -> observed.add(item));
                 }
-                @Override public void draw(ModularGuiContext context, Rect bounds, boolean hovered) { }
+                @Override public void draw(DrawContext context, Rect bounds, boolean hovered) { }
             }
             Grid<Integer> grid = new Grid<Integer>().setAdapter(new Grid.Adapter<>() {
                 @Override public int getSize() { return data.size(); }
