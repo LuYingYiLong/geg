@@ -20,6 +20,6 @@ final class OrganizationFeedback {
                     "organization.geg.result.approved_notice" -> Toast.Type.PRIMARY;
             default -> Toast.Type.WARNING;
         };
-        OreToasts.show("geg:organization:feedback", new Toast(Component.translatable(key)).type(type));
+        OreToasts.show("geg:organization:feedback", new Toast(Component.translatable(key)).setType(type));
     }
 }

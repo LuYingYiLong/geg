@@ -23,7 +23,7 @@ public final class TableScrolledButtonsTest {
         }
         void bind(Action action) {
             this.action = action;
-            button.label(Component.literal(action.id())).type(action.type()).toggleButton(action.toggle());
+            button.setLabel(Component.literal(action.id())).setType(action.type()).setToggleButton(action.toggle());
         }
         @Override public void layout(Rect area, Font font) {
             super.layout(area, font);
@@ -39,21 +39,21 @@ public final class TableScrolledButtonsTest {
                 new Action("Favorite", Button.Type.SECONDARY, true),
                 new Action("Approve", Button.Type.PRIMARY, false),
                 new Action("Reject", Button.Type.DESTRUCTIVE, false));
-        Table<Action> table = new Table<Action>().rowKey(Action::id)
+        Table<Action> table = new Table<Action>().setRowKey(Action::id)
                 .column(new Table.Column<>("name", Component.empty(), 230, 230, 0,
                         width -> 23, (context, row, bounds) -> { }))
                 .column(new Table.Column<>("action", Component.empty(), 70, 70, 1,
                         width -> 23, new Table.ControlCell<>(() -> new Cell(events), Cell::bind)));
-        table.minimum(300, 80);
-        table.rows(data);
+        table.setMinimum(300, 80);
+        table.setRows(data);
         long[] time = {0};
-        Drawer drawer = new Drawer(Component.literal("Actions"), () -> time[0], cue -> { }).content(table);
-        Window window = Window.embedded().content(new Control()).overlay(new Overlay().add(drawer));
+        Drawer drawer = new Drawer(Component.literal("Actions"), () -> time[0], cue -> { }).setContent(table);
+        Window window = Window.embedded().setContent(new Control()).setOverlay(new Overlay().add(drawer));
         drawer.open();time[0] = 1000;
         window.layoutViewport(400, 220, font);
-        drawer.bodyScroll().setScroll(drawer.bodyScroll().maxScrollX(), 0);
+        drawer.getBodyScroll().setScroll(drawer.getBodyScroll().getMaxScrollX(), 0);
         for (Action action : data) {
-            Cell cell = table.children().stream().flatMap(row -> row.children().stream())
+            Cell cell = table.getChildren().stream().flatMap(row -> row.getChildren().stream())
                     .filter(Cell.class::isInstance).map(Cell.class::cast)
                     .filter(value -> value.action.id().equals(action.id())).findFirst().orElseThrow();
             Rect area = EventGeometry.displayed(cell.button);
@@ -64,12 +64,12 @@ public final class TableScrolledButtonsTest {
             check(events.size()==before, action.id()+" must wait for release");
             WindowInputs.release(window, x, y);
             check(events.size()==before+1 && events.get(before).equals(action.id()), action.id()+" release after layout");
-            if(action.toggle())check(cell.button.buttonPressed(), "Favorite stays toggled");
+            if(action.toggle())check(cell.button.getButtonPressed(), "Favorite stays toggled");
             WindowInputs.press(window, x, y, null);
             window.layoutViewport(400, 220, font);
             WindowInputs.release(window, 0, 0);
             check(events.size()==before+1, action.id()+" drag-out cancels");
-            window.focusManager().restoreFocus(cell.button, null);
+            window.getFocusManager().restoreFocus(cell.button, null);
             WindowInputs.keyDown(window, GLFW.GLFW_KEY_SPACE, 0, null);
             window.layoutViewport(400, 220, font);
             WindowInputs.keyUp(window, GLFW.GLFW_KEY_SPACE, 0, null);

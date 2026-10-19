@@ -19,45 +19,45 @@ public final class VirtualSignalLifetimeTest {
             final class View extends Control implements Grid.View<Integer> {
                 View() { created.add(this); }
                 @Override public void bind(Integer item) {
-                    refresh.signal().connect(bindingScope(), () -> observed.add(item));
+                    refresh.signal().connect(getBindingScope(), () -> observed.add(item));
                 }
                 @Override public void draw(ModularGuiContext context, Rect bounds, boolean hovered) { }
             }
-            Grid<Integer> grid = new Grid<Integer>().adapter(new Grid.Adapter<>() {
-                @Override public int size() { return data.size(); }
-                @Override public Integer item(int index) { return data.get(index); }
-                @Override public Object key(Integer item) { return item; }
+            Grid<Integer> grid = new Grid<Integer>().setAdapter(new Grid.Adapter<>() {
+                @Override public int getSize() { return data.size(); }
+                @Override public Integer getItem(int index) { return data.get(index); }
+                @Override public Object getKey(Integer item) { return item; }
                 @Override public int measureHeight(Integer item, int width, Font font) { return 24; }
                 @Override public Grid.View<Integer> createView() { return new View(); }
             });
-            Scroll scroll = new Scroll().content(grid);
+            Scroll scroll = new Scroll().setContent(grid);
             scroll.layout(new Rect(0, 0, 310, 100), null);
-            Control removedView = grid.children().get(0);
+            Control removedView = grid.getChildren().get(0);
             removedView.queueFree(); LifecycleScheduler.flush();
             grid.invalidate(); scroll.layout(new Rect(0, 0, 310, 100), null);
-            check(grid.children().stream().allMatch(Control::isAlive) && removedView.isDisposed(), "A freed grid view is replaced, never rebound");
-            int active = grid.activeViews();
+            check(grid.getChildren().stream().allMatch(Control::isAlive) && removedView.isDisposed(), "A freed grid view is replaced, never rebound");
+            int active = grid.getActiveViews();
             for (int i = 0; i < 4; i++) { grid.invalidate(); scroll.layout(new Rect(0, 0, 310, 100), null); }
             refresh.emit();
             check(observed.size() == active && refresh.signal().connectionCount() == active, "Equal-key refresh does not accumulate subscriptions");
             observed.clear();
             scroll.setScroll(0, 10000);
             refresh.emit();
-            check(observed.size() == grid.activeViews() && observed.stream().allMatch(id -> id > 200), "Pooled nodes do not retain old item callbacks");
+            check(observed.size() == grid.getActiveViews() && observed.stream().allMatch(id -> id > 200), "Pooled nodes do not retain old item callbacks");
             scroll.queueFree();
             io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
             check(created.stream().allMatch(Control::isDisposed) && refresh.signal().connectionCount() == 0, "Destroy active and pooled grid views");
 
             List<Control> cells = new ArrayList<>();
-            Table<Integer> table = new Table<Integer>().rowKey(value -> value).column(new Table.Column<>("id", Component.empty(),
+            Table<Integer> table = new Table<Integer>().setRowKey(value -> value).column(new Table.Column<>("id", Component.empty(),
                     40, 100, 1, width -> 23, new Table.ControlCell<>(() -> {
                         Control control = new Control(); cells.add(control); return control;
-                    }, (control, value) -> refresh.signal().connect(control.bindingScope(), () -> observed.add(value)))));
-            table.rows(data); table.layout(new Rect(0, 0, 120, 100), null);
-            Control removedRow = table.children().get(0); removedRow.queueFree(); LifecycleScheduler.flush();
-            table.rows(data); table.layout(new Rect(0, 0, 120, 100), null);
-            check(table.children().stream().allMatch(Control::isAlive), "A freed table row is replaced, never rebound");
-            for (int i = 0; i < 4; i++) { table.rows(data); table.layout(new Rect(0, 0, 120, 100), null); }
+                    }, (control, value) -> refresh.signal().connect(control.getBindingScope(), () -> observed.add(value)))));
+            table.setRows(data); table.layout(new Rect(0, 0, 120, 100), null);
+            Control removedRow = table.getChildren().get(0); removedRow.queueFree(); LifecycleScheduler.flush();
+            table.setRows(data); table.layout(new Rect(0, 0, 120, 100), null);
+            check(table.getChildren().stream().allMatch(Control::isAlive), "A freed table row is replaced, never rebound");
+            for (int i = 0; i < 4; i++) { table.setRows(data); table.layout(new Rect(0, 0, 120, 100), null); }
             observed.clear(); refresh.emit();
             check(observed.size() == refresh.signal().connectionCount() && observed.stream().distinct().count() == observed.size(), "Table binders replace data-scoped connections");
             table.queueFree();

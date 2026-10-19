@@ -28,36 +28,36 @@ public final class Checkbox extends Container {
     private final ReleaseGesture<Boolean> gesture = new ReleaseGesture<>();
 
     public Checkbox(Component text) {
-        label = ownPart("label", new Label(Objects.requireNonNull(text)).opticalCenter(true).color(OreTheme.TEXT_WHITE)
-                .overflow(Label.Overflow.ELLIPSIS)
-                .align(Label.Horizontal.LEFT, Label.Vertical.CENTER));
+        label = ownPart("label", new Label(Objects.requireNonNull(text)).setOpticalCenter(true).setColor(OreTheme.TEXT_WHITE)
+                .setOverflow(Label.Overflow.ELLIPSIS)
+                .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER));
         addChild(label);
-        minimum(ICON_SIZE, HEIGHT);
-        focusable(true);
-        focusExpansion(1);
+        setMinimum(ICON_SIZE, HEIGHT);
+        setFocusable(true);
+        setFocusExpansion(1);
     }
 
-    public Checkbox text(Component text) {
-        label.text(Objects.requireNonNull(text));
+    public Checkbox setText(Component text) {
+        label.setText(Objects.requireNonNull(text));
         return this;
     }
 
-    public boolean checked() {
+    public boolean getChecked() {
         return checked;
     }
 
     /** State setters notify only when the value changes. */
-    public Checkbox checked(boolean checked) {
+    public Checkbox setChecked(boolean checked) {
         if (this.checked == checked) return this;
         this.checked = checked;
         toggled.emit(checked);
         return this;
     }
 
-    public Checkbox enabled(boolean enabled) {
+    public Checkbox setEnabled(boolean enabled) {
         this.enabled = enabled;
         if (!enabled) cancelInteraction();
-        label.color(enabled ? OreTheme.TEXT_WHITE : OreTheme.TEXT_DISABLED);
+        label.setColor(enabled ? OreTheme.TEXT_WHITE : OreTheme.TEXT_DISABLED);
         return this;
     }
 
@@ -66,12 +66,12 @@ public final class Checkbox extends Container {
 
     @Override public int measureWidth(Font font, int available) {
         if (!isAlive()) return 0;
-        return Math.max(minimumWidth(), ICON_SIZE + ICON_GAP + label.measureWidth(font, available));
+        return Math.max(getMinimumWidth(), ICON_SIZE + ICON_GAP + label.measureWidth(font, available));
     }
 
     @Override public int measureHeight(Font font, int available) {
         if (!isAlive()) return 0;
-        return Math.max(minimumHeight(), label.measureHeight(font, available));
+        return Math.max(getMinimumHeight(), label.measureHeight(font, available));
     }
 
     @Override public void layout(Rect bounds, Font font) {
@@ -84,7 +84,7 @@ public final class Checkbox extends Container {
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-        Rect area = screenBounds(screenX, screenY);
+        Rect area = getScreenBounds(screenX, screenY);
         boolean hovered = area.contains(context.getAbsMouseX(), context.getAbsMouseY());
         ResourceLocation texture = texture(hovered, gesture.keyPressed(true)
                 || hovered && gesture.pointerPending());
@@ -102,19 +102,19 @@ public final class Checkbox extends Container {
     }
 
     @Override protected boolean pointerUp(boolean over) {
-        var release = gesture.pointerUp(true, over && enabled && visible());
+        var release = gesture.pointerUp(true, over && enabled && getVisible());
         if (release.target() != null) activate();
         return release.handled();
     }
 
     @Override public boolean onActivationPressed(int keyCode) {
-        if (!enabled || !visible()) return false;
+        if (!enabled || !getVisible()) return false;
         gesture.keyDown(keyCode, true);
         return true;
     }
 
     @Override public boolean onActivationReleased(int keyCode) {
-        var release = gesture.keyUp(keyCode, enabled && visible() ? true : null);
+        var release = gesture.keyUp(keyCode, enabled && getVisible() ? true : null);
         if (release.target() != null) activate();
         return release.handled();
     }
@@ -125,9 +125,9 @@ public final class Checkbox extends Container {
     @Override public boolean acceptsFocus() { return enabled && super.acceptsFocus(); }
 
     @Override public boolean activate() {
-        if (!enabled || !visible()) return false;
+        if (!enabled || !getVisible()) return false;
         OreSounds.play(OreSounds.Cue.CLICK);
-        checked(!checked);
+        setChecked(!checked);
         return true;
     }
 

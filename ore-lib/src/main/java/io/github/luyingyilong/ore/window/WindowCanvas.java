@@ -31,7 +31,7 @@ public final class WindowCanvas extends Widget<WindowCanvas> implements Interact
     private static void collect(Control c, List<InputControl> out) {
         if (!c.isAlive()) return;
         if (c instanceof InputControl input) out.add(input);
-        c.children().forEach(child -> collect(child, out));
+        c.getChildren().forEach(child -> collect(child, out));
     }
 
     @Override
@@ -39,20 +39,20 @@ public final class WindowCanvas extends Widget<WindowCanvas> implements Interact
         if (!root.isAlive()) return;
         List<InputControl> fields = inputs(root);
         for (InputControl old : List.copyOf(registered)) {
-            if (!fields.contains(old)) { old.widget().dispose(); registered.remove(old); }
+            if (!fields.contains(old)) { old.getWidget().dispose(); registered.remove(old); }
         }
         for (InputControl field : fields) if (!registered.contains(field)) {
-            if (field.widget().isValid()) throw new IllegalStateException("Input already belongs to a MUI host");
-            String pending = field.widget().getText();
-            if (field.widget().getStringValue() == null) field.widget().value(new brachy.modularui.value.StringValue(pending));
-            registered.add(field); field.widget().initialise(getPanel(), false);
+            if (field.getWidget().isValid()) throw new IllegalStateException("Input already belongs to a MUI host");
+            String pending = field.getWidget().getText();
+            if (field.getWidget().getStringValue() == null) field.getWidget().value(new brachy.modularui.value.StringValue(pending));
+            registered.add(field); field.getWidget().initialise(getPanel(), false);
         }
         root.prepareTree(context);
         root.layoutViewport(context.getScreenArea().width, context.getScreenArea().height, context.getFont());
         for (InputControl field : fields) {
-            var area = field.widget().getArea(); var bounds = field.widgetBounds();
+            var area = field.getWidget().getArea(); var bounds = field.getWidgetBounds();
             area.x = bounds.x(); area.y = bounds.y(); area.width = bounds.width(); area.height = bounds.height();
-            field.widget().onUpdate();
+            field.getWidget().onUpdate();
         }
         root.draw(context, 0, 0);
     }
@@ -81,6 +81,6 @@ public final class WindowCanvas extends Widget<WindowCanvas> implements Interact
     }
 
     @Override public void dispose() {
-        root.hostDetached(); registered.forEach(input -> input.widget().dispose()); registered.clear(); super.dispose();
+        root.hostDetached(); registered.forEach(input -> input.getWidget().dispose()); registered.clear(); super.dispose();
     }
 }

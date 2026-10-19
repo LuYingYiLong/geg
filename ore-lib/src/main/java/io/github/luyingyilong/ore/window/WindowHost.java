@@ -3,8 +3,8 @@ package io.github.luyingyilong.ore.window;
 import io.github.luyingyilong.ore.layout.Window;
 
 public interface WindowHost {
-    WindowContext context();
-    boolean nativeWindow();
+    WindowContext getContext();
+    boolean getNativeWindow();
     boolean isOpen();
     void open(Window window);
     void close();

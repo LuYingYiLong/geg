@@ -112,7 +112,7 @@ public final class AvatarSkins {
 
     private static synchronized AvatarSkinCache clientCache(Minecraft minecraft) {
         if (persistent == null) {
-            persistent = new AvatarSkinCache(io.github.luyingyilong.ore.OreClient.options().avatarCacheDirectory(),
+            persistent = new AvatarSkinCache(io.github.luyingyilong.ore.OreClient.getOptions().avatarCacheDirectory(),
                     Util.backgroundExecutor(), profile -> {
                         var service = minecraft.getMinecraftSessionService();
                         var textures = service.getTextures(profile, false);

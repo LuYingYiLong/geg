@@ -17,7 +17,7 @@ public final class WindowContext {
     private final UUID id = UUID.randomUUID();
     private final WindowPopups popups = new WindowPopups(this);
     private io.github.luyingyilong.ore.Label textPainter;
-    public WindowPopups popups() { return popups; }
+    public WindowPopups getPopups() { return popups; }
     private final boolean nativeWindow;
     private final Set<Integer> keys = new HashSet<>(), buttons = new HashSet<>();
     private Window owner;
@@ -27,13 +27,13 @@ public final class WindowContext {
     private double scale = 1, mouseX, mouseY;
     // Scoped to ModularPanel's current mouse-press dispatch, reset at its HEAD/RETURN.
     private boolean orePointerFocus;
-    public void pointerFocusOwned(boolean owned){orePointerFocus=owned;}
-    public boolean pointerFocusOwned(){return orePointerFocus;}
+    public void setPointerFocusOwned(boolean owned){orePointerFocus=owned;}
+    public boolean getPointerFocusOwned(){return orePointerFocus;}
     private int modifiers;
     private int originX,originY;
-    public int originX(){return originX;}
-    public int originY(){return originY;}
-    public void origin(int x,int y){originX=x;originY=y;}
+    public int getOriginX(){return originX;}
+    public int getOriginY(){return originY;}
+    public void setOrigin(int x,int y){originX=x;originY=y;}
     private boolean focused = true;
 
     public WindowContext(boolean nativeWindow) {
@@ -41,7 +41,7 @@ public final class WindowContext {
     }
 
     /** One bounded compatibility painter per host, released with the owning Window's lifetime. */
-    public io.github.luyingyilong.ore.Label textPainter() {
+    public io.github.luyingyilong.ore.Label getTextPainter() {
         if (textPainter == null) {
             if (owner != null && owner.isDisposed()) throw new IllegalStateException("Window has been disposed");
             textPainter = new io.github.luyingyilong.ore.Label();
@@ -50,11 +50,11 @@ public final class WindowContext {
         return textPainter;
     }
 
-    public static WindowContext primary() {
+    public static WindowContext getPrimary() {
         return PRIMARY;
     }
 
-    public static WindowContext current() {
+    public static WindowContext getCurrent() {
         return current == null ? PRIMARY : current;
     }
 
@@ -68,23 +68,23 @@ public final class WindowContext {
         return () -> current = previous;
     }
 
-    public UUID id() {
+    public UUID getId() {
         return id;
     }
 
-    public boolean nativeWindow() {
+    public boolean getNativeWindow() {
         return nativeWindow;
     }
 
-    public Window owner() {
+    public Window getOwner() {
         return owner;
     }
 
-    public void owner(Window owner) {
+    public void setOwner(Window owner) {
         this.owner = owner;
     }
 
-    public ModularGuiContext mui() {
+    public ModularGuiContext getMui() {
         return mui;
     }
 
@@ -100,28 +100,28 @@ public final class WindowContext {
         buttons.clear();
     }
 
-    public long handle() {
+    public long getHandle() {
         return nativeWindow ? handle : Minecraft.getInstance().getWindow().getWindow();
     }
 
-    void handle(long handle) {
+    void setHandle(long handle) {
         this.handle = handle;
     }
 
-    public int guiWidth() {
+    public int getGuiWidth() {
         return Math.max(1, (int) Math.ceil(framebufferWidth / scale));
     }
 
-    public int guiHeight() {
+    public int getGuiHeight() {
         return Math.max(1, (int) Math.ceil(framebufferHeight / scale));
     }
 
     /** Preserve exact framebuffer coverage without stretching the rounded layout viewport. */
-    double projectionWidth() {
+    double getProjectionWidth() {
         return framebufferWidth / scale;
     }
 
-    double projectionHeight() {
+    double getProjectionHeight() {
         return framebufferHeight / scale;
     }
 
@@ -133,15 +133,15 @@ public final class WindowContext {
         return Math.max(1, Math.floor(requestedScale * Math.max(1, contentScale) + 0.5));
     }
 
-    public int framebufferWidth() {
+    public int getFramebufferWidth() {
         return framebufferWidth;
     }
 
-    public int framebufferHeight() {
+    public int getFramebufferHeight() {
         return framebufferHeight;
     }
 
-    public double guiScale() {
+    public double getGuiScale() {
         return nativeWindow ? scale : Minecraft.getInstance().getWindow().getGuiScale();
     }
 
@@ -153,7 +153,7 @@ public final class WindowContext {
         return guiY * scale * windowHeight / framebufferHeight;
     }
 
-    public void dimensions(int width, int height, int framebufferWidth, int framebufferHeight, double scale) {
+    public void setDimensions(int width, int height, int framebufferWidth, int framebufferHeight, double scale) {
         if (width < 1 || height < 1 || framebufferWidth < 1 || framebufferHeight < 1 || !Double.isFinite(scale) || scale <= 0)
             throw new IllegalArgumentException("Invalid window dimensions");
         this.windowWidth = width;
@@ -163,24 +163,24 @@ public final class WindowContext {
         this.scale = scale;
     }
 
-    public void mouse(double clientX, double clientY) {
+    public void setMouse(double clientX, double clientY) {
         mouseX = clientX * framebufferWidth / windowWidth / scale;
         mouseY = clientY * framebufferHeight / windowHeight / scale;
     }
 
-    public int mouseX() {
+    public int getMouseX() {
         return (int) mouseX;
     }
 
-    public int mouseY() {
+    public int getMouseY() {
         return (int) mouseY;
     }
 
-    public boolean focused() {
-        return !nativeWindow ? GLFW.glfwGetWindowAttrib(handle(), GLFW.GLFW_FOCUSED) != 0 : focused;
+    public boolean getFocused() {
+        return !nativeWindow ? GLFW.glfwGetWindowAttrib(getHandle(), GLFW.GLFW_FOCUSED) != 0 : focused;
     }
 
-    public void focused(boolean focused) {
+    public void setFocused(boolean focused) {
         this.focused = focused;
         if (!focused) {
             keys.clear();
@@ -200,28 +200,28 @@ public final class WindowContext {
         else buttons.remove(button);
     }
 
-    public void modifiers(int value){modifiers=value;}
+    public void setModifiers(int value){modifiers=value;}
     public void clearInput(){keys.clear();buttons.clear();modifiers=0;}
 
-    public int modifiers() {
+    public int getModifiers() {
         return modifiers;
     }
 
     public boolean mouseDown(int button) {
-        return nativeWindow || owner != null ? buttons.contains(button) : GLFW.glfwGetMouseButton(handle(), button) == GLFW.GLFW_PRESS;
+        return nativeWindow || owner != null ? buttons.contains(button) : GLFW.glfwGetMouseButton(getHandle(), button) == GLFW.GLFW_PRESS;
     }
 
     public boolean keyDown(int key) {
-        return nativeWindow || owner != null ? keys.contains(key) : GLFW.glfwGetKey(handle(), key) == GLFW.GLFW_PRESS;
+        return nativeWindow || owner != null ? keys.contains(key) : GLFW.glfwGetKey(getHandle(), key) == GLFW.GLFW_PRESS;
     }
 
-    public String clipboard() {
-        String value = GLFW.glfwGetClipboardString(handle());
+    public String getClipboard() {
+        String value = GLFW.glfwGetClipboardString(getHandle());
         return value == null ? "" : value;
     }
 
-    public void clipboard(String text) {
-        GLFW.glfwSetClipboardString(handle(), text);
+    public void setClipboard(String text) {
+        GLFW.glfwSetClipboardString(getHandle(), text);
     }
 
     public interface Scope extends AutoCloseable {

@@ -15,29 +15,29 @@ public final class InputControl extends Control {
 
     public InputControl(Input widget) {
         this.widget = widget;
-        signalScope().own(widget::releaseSession);
+        getSignalScope().own(widget::releaseSession);
         widget.layoutControl(this);
-        minimum(1, widget.preferredInputHeight());
-        focusable(true);
-        focusExpansion(2);
+        setMinimum(1, widget.getPreferredInputHeight());
+        setFocusable(true);
+        setFocusExpansion(2);
         widget.focusExited().connect(this, () -> {
             Control root = this;
-            while (root.parent() != null) root = root.parent();
+            while (root.getParent() != null) root = root.getParent();
             if (root instanceof Window window)
-                window.focusManager().nativeFocusLost(this);
+                window.getFocusManager().nativeFocusLost(this);
         });
-        widget.left(() -> widgetBounds().x(), Unit.Measure.PIXEL);
-        widget.top(() -> widgetBounds().y(), Unit.Measure.PIXEL);
-        widget.width(() -> Math.max(1, bounds().width()), Unit.Measure.PIXEL);
-        widget.height(() -> Math.max(1, bounds().height()), Unit.Measure.PIXEL);
+        widget.left(() -> getWidgetBounds().x(), Unit.Measure.PIXEL);
+        widget.top(() -> getWidgetBounds().y(), Unit.Measure.PIXEL);
+        widget.width(() -> Math.max(1, getBounds().width()), Unit.Measure.PIXEL);
+        widget.height(() -> Math.max(1, getBounds().height()), Unit.Measure.PIXEL);
     }
 
     @Override protected boolean lifecycleReady() { return widget.isValid(); }
 
-    public Input widget() { return widget; }
+    public Input getWidget() { return widget; }
     @Override public int measureHeight(Font font, int available) {
         if (!isAlive()) return 0;
-        return Math.max(minimumHeight(), widget.preferredInputHeight());
+        return Math.max(getMinimumHeight(), widget.getPreferredInputHeight());
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
@@ -45,11 +45,11 @@ public final class InputControl extends Control {
         widget.drawInTree(context);
     }
 
-    public Rect displayedBounds() {
+    public Rect getDisplayedBounds() {
         return io.github.luyingyilong.ore.event.EventGeometry.displayed(this);
     }
 
-    public Rect widgetBounds() { return displayedBounds().translated(windowContext().originX(),windowContext().originY()); }
+    public Rect getWidgetBounds() { return getDisplayedBounds().translated(getWindowContext().getOriginX(),getWindowContext().getOriginY()); }
 
     @Override public void input(io.github.luyingyilong.ore.event.InputEvent event) {
         if(event instanceof io.github.luyingyilong.ore.event.CancelEvent) {
@@ -70,15 +70,15 @@ public final class InputControl extends Control {
         OreInputMethod.release(widget);
     }
     boolean layoutVisible() {
-        for (Control node = this; node != null; node = node.parent())
-            if (!node.isAlive() || !(node.isAlive() && node.visible())) return false;
+        for (Control node = this; node != null; node = node.getParent())
+            if (!node.isAlive() || !(node.isAlive() && node.getVisible())) return false;
         return true;
     }
 
     boolean layoutInteractive() {
-        for (Control node = this; node != null; node = node.parent()) {
+        for (Control node = this; node != null; node = node.getParent()) {
             if (node instanceof Drawer drawer && !drawer.isOpen()) return false;
-            if (node instanceof Window window) return window.focusManager().allowsNativeInput(this);
+            if (node instanceof Window window) return window.getFocusManager().allowsNativeInput(this);
         }
         return false;
     }
@@ -90,21 +90,21 @@ public final class InputControl extends Control {
     /** The layout tree, rather than legacy widget constructor depths, owns the rendered layer. */
     public static float drawingDepth(Control node) {
         float depth = io.github.luyingyilong.ore.util.OreLayers.INPUT;
-        for (Control parent = node.parent(); parent != null; parent = parent.parent()) depth += parent.contentDepth();
+        for (Control parent = node.getParent(); parent != null; parent = parent.getParent()) depth += parent.getContentDepth();
         return depth;
     }
 
     boolean pointerInteractive(int x, int y) { return pointerInteractive(this, x, y); }
 
     public static boolean pointerInteractive(Control target, int x, int y) {
-        var context=target.windowContext();
-        return context.owner()==null || context.owner().pointerOver(target,x-context.originX(),y-context.originY());
+        var context=target.getWindowContext();
+        return context.getOwner()==null || context.getOwner().pointerOver(target,x-context.getOriginX(),y-context.getOriginY());
     }
 
     /** Share Ore viewport clips with the native field's drawing and pointer checks. */
     Rect drawingClip() {
         Rect clip=io.github.luyingyilong.ore.event.EventGeometry.clip(this);
-        return clip==null?null:clip.translated(windowContext().originX(),windowContext().originY());
+        return clip==null?null:clip.translated(getWindowContext().getOriginX(),getWindowContext().getOriginY());
     }
 
     @Override public void invalidateTextLayout() {
@@ -125,7 +125,7 @@ public final class InputControl extends Control {
     }
 
     void syncWidgetArea() {
-        Rect current = widgetBounds();
+        Rect current = getWidgetBounds();
         boolean changed = !current.equals(lastArea);
         lastArea = current;
         // Ore layout is authoritative now, not at MUI's next scheduled resize. In particular,
@@ -143,8 +143,8 @@ public final class InputControl extends Control {
         if (changed) widget.scheduleResize();
     }
 
-    @Override public void visible(boolean visible) {
-        super.visible(visible);
+    @Override public void setVisible(boolean visible) {
+        super.setVisible(visible);
         widget.setInputVisible(visible);
     }
 }

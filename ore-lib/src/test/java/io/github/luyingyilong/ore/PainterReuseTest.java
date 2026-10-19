@@ -24,16 +24,16 @@ public final class PainterReuseTest {
         Label reference = new Label(text);
         for (Label.Wrap wrap : Label.Wrap.values()) for (Label.Overflow overflow : Label.Overflow.values())
             for (int width : new int[]{1, 12, 127, 128, 129}) for (int maxLines : new int[]{1, 2, Integer.MAX_VALUE}) {
-                reference.wrap(wrap).overflow(overflow).maxLines(maxLines);
+                reference.setWrap(wrap).setOverflow(overflow).setMaxLines(maxLines);
                 check(reference.measureHeight(font, width) == Label.measureTextHeight(font, text, width, wrap, overflow, maxLines),
                         "Allocation-free measurements match Label's styled wrapping and precision");
             }
 
-        Table.TextCell<Integer> cell = new Table.TextCell<Integer>(value -> text, 0xFFFFFFFF).wrap(Label.Wrap.WORD).maxLines(3);
+        Table.TextCell<Integer> cell = new Table.TextCell<Integer>(value -> text, 0xFFFFFFFF).setWrap(Label.Wrap.WORD).setMaxLines(3);
         PlayerIdentityCell<Integer> identity = new PlayerIdentityCell<>(value -> new UUID(0, value), value -> "Player " + value);
-        Table<Integer> table = new Table<Integer>().rowKey(value -> value)
+        Table<Integer> table = new Table<Integer>().setRowKey(value -> value)
                 .column(new Table.Column<>("body", Component.literal("Text"), 20, 160, 1, width -> 32, cell));
-        table.rows(List.of(1, 2, 3, 4, 5));
+        table.setRows(List.of(1, 2, 3, 4, 5));
         table.layout(new Rect(0, 0, 240, 110), font);
         List<Label> rowLabels = labels(table);
         check(!rowLabels.isEmpty(), "Text cells have retained row controls");
@@ -56,8 +56,8 @@ public final class PainterReuseTest {
         check(rowLabels.stream().allMatch(Control::isDisposed), "Table disposes retained text cells");
 
         Window first = Window.embedded(), second = Window.embedded();
-        Label firstPainter = first.context().textPainter();
-        check(firstPainter == first.context().textPainter() && firstPainter != second.context().textPainter(), "Compatibility painters are reused and isolated per Window");
+        Label firstPainter = first.getContext().getTextPainter();
+        check(firstPainter == first.getContext().getTextPainter() && firstPainter != second.getContext().getTextPainter(), "Compatibility painters are reused and isolated per Window");
         first.queueFree();
         io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
         check(firstPainter.isDisposed(), "Compatibility painter ends with its Window");
@@ -69,7 +69,7 @@ public final class PainterReuseTest {
     private static List<Label> labels(Control root) {
         List<Label> labels = new ArrayList<>();
         if (root instanceof Label label) labels.add(label);
-        for (Control child : root.children()) labels.addAll(labels(child));
+        for (Control child : root.getChildren()) labels.addAll(labels(child));
         return labels;
     }
 

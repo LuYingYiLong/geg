@@ -46,10 +46,10 @@ public final class MarketMarqueeClientTest {
             } else if (phase == 1 && waiting > 30) {
                 Object canvas = field(null, ClientMarketScreen.class, "canvas");
                 Grid<?> grid = (Grid<?>) field(canvas, canvas.getClass(), "grid");
-                Control card = grid.children().get(0);
+                Control card = grid.getChildren().get(0);
                 name = (Label) field(card, card.getClass(), "name");
-                var area = name.absoluteBounds();
-                System.out.println("MARQUEE_AREA " + area + " textWidth=" + mc.font.width(name.styledText()));
+                var area = name.getAbsoluteBounds();
+                System.out.println("MARQUEE_AREA " + area + " textWidth=" + mc.font.width(name.getStyledText()));
                 var move = mc.mouseHandler.getClass().getDeclaredMethod("onMove", long.class, double.class, double.class);
                 move.setAccessible(true);
                 move.invoke(mc.mouseHandler, mc.getWindow().getWindow(),

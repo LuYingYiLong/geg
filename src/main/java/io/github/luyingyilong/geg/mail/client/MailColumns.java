@@ -16,9 +16,9 @@ final class MailColumns extends Container implements ScrollContent {
     private Size extent = new Size(0, 0);
 
     MailColumns(Control messages, Control detail) {
-        columns = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4)
+        columns = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4)
                 .add(new Column(messages, 100, 180, SizeFlags.SIZE_EXPAND_FILL))
-                .add(new Column(detail, 120, 300, SizeFlags.SIZE_EXPAND_FILL).sizeFlagsStretchRatio(2.0F));
+                .add(new Column(detail, 120, 300, SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsStretchRatio(2.0F));
         super.addChild(columns);
     }
 
@@ -32,8 +32,8 @@ final class MailColumns extends Container implements ScrollContent {
         fitChild(columns, new Rect(0, 0, extent.width(), extent.height()), font);
     }
 
-    @Override public Size contentExtent() { return extent; }
-    @Override public void visibleRegion(Rect region) { }
+    @Override public Size getContentExtent() { return extent; }
+    @Override public void setVisibleRegion(Rect region) { }
 
     /** Long titles/body text must not determine how much width a column receives. */
     private static final class Column extends Container {
@@ -43,11 +43,11 @@ final class MailColumns extends Container implements ScrollContent {
         Column(Control content, int minimumWidth, int desiredWidth, int flags) {
             this.content = content;
             this.desiredWidth = desiredWidth;
-            minimum(minimumWidth, 35).sizeFlagsHorizontal(flags).sizeFlagsVertical(SizeFlags.SIZE_FILL);
+            setMinimum(minimumWidth, 35).setSizeFlagsHorizontal(flags).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
             addChild(content);
         }
 
-        @Override public Size measureSize(Font font, Size available) { return new Size(desiredWidth, minimumHeight()); }
+        @Override public Size measureSize(Font font, Size available) { return new Size(desiredWidth, getMinimumHeight()); }
 
         @Override public void layout(Rect bounds, Font font) {
             super.layout(bounds, font);

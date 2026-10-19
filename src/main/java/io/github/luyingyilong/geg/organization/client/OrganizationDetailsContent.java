@@ -17,45 +17,45 @@ import net.minecraft.network.chat.Component;
 
 /** Organization facts above the existing independently scrolling member table. */
 final class OrganizationDetailsContent extends Container {
-    private final Descriptions info = new Descriptions().columns(1)
+    private final Descriptions info = new Descriptions().setColumns(1)
             .add("name", Component.translatable("organization.geg.name"), Component.empty())
             .add("description", Component.translatable("organization.geg.description"), Component.empty())
             .add("joinPolicy", Component.translatable("organization.geg.join_policy"), Component.empty());
-    private final Box column = new Box().gap(8);
-    private final Box profileRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(8);
+    private final Box column = new Box().setGap(8);
+    private final Box profileRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(8);
     private final Button edit = new Button(Component.translatable("organization.geg.edit"));
 
     OrganizationDetailsContent(Table<OrganizationSyncPacket.Member> members) {
-        info.item("description").contentNode().wrap(Label.Wrap.CHARACTER)
-                .maxLines(Integer.MAX_VALUE).overflow(Label.Overflow.VISIBLE);
-        members.minimum(0, 60).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        info.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL);
-        edit.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_END).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        edit.visible(false);
-        profileRow.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+        info.getItem("description").getContentNode().setWrap(Label.Wrap.CHARACTER)
+                .setMaxLines(Integer.MAX_VALUE).setOverflow(Label.Overflow.VISIBLE);
+        members.setMinimum(0, 60).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        info.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL);
+        edit.setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_END).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        edit.setVisible(false);
+        profileRow.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         profileRow.add(info).add(edit);
         column.add(profileRow).add(members);
         addChild(column);
     }
 
     void update(OrganizationSyncPacket.Summary summary) {
-        info.item("name").content(Component.literal(summary.name()));
-        info.item("description").content(summary.description().isBlank()
+        info.getItem("name").setContent(Component.literal(summary.name()));
+        info.getItem("description").setContent(summary.description().isBlank()
                 ? Component.translatable("organization.geg.no_description") : Component.literal(summary.description()));
-        info.item("joinPolicy").content(Component.translatable(summary.joinPolicy() == Organization.JoinPolicy.APPROVAL
+        info.getItem("joinPolicy").setContent(Component.translatable(summary.joinPolicy() == Organization.JoinPolicy.APPROVAL
                 ? "organization.geg.join_approval" : "organization.geg.join_unrestricted"));
     }
 
     Descriptions descriptions() { return info; }
     io.github.luyingyilong.ore.signal.Signal0 editRequested() { return edit.pressed(); }
-    void editable(boolean editable) { edit.visible(editable); }
+    void editable(boolean editable) { edit.setVisible(editable); }
     Button editButton() { return edit; }
 
     private void measureProfile(Font font, Size available) {
-        Size action = edit.visible() ? edit.measureSize(font, available) : new Size(0, 0);
-        int infoWidth = Math.max(0, available.width() - action.width() - (edit.visible() ? 8 : 0));
+        Size action = edit.getVisible() ? edit.measureSize(font, available) : new Size(0, 0);
+        int infoWidth = Math.max(0, available.width() - action.width() - (edit.getVisible() ? 8 : 0));
         int height = Math.max(action.height(), info.measureSize(font, new Size(infoWidth, available.height())).height());
-        if (profileRow.minimumHeight() != height) profileRow.minimum(0, height);
+        if (profileRow.getMinimumHeight() != height) profileRow.setMinimum(0, height);
     }
 
     @Override public Size measureSize(Font font, Size available) {

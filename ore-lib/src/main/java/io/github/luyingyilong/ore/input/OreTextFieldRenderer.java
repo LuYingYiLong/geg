@@ -174,7 +174,7 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
             wrappedWidth = maxWidth;
             wrappedScale = scale;
             fontRevision = OreFonts.revision();
-            Style style = Style.EMPTY.withFont(io.github.luyingyilong.ore.OreClient.options().bodyFont());
+            Style style = Style.EMPTY.withFont(io.github.luyingyilong.ore.OreClient.getOptions().bodyFont());
             wrapped = new WrappedText(source, textWidth(),
                     cp -> getFont().getSplitter().stringWidth(FormattedCharSequence.codepoint(cp, style)) * scale);
         }

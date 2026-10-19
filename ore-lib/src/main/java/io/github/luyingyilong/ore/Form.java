@@ -17,14 +17,13 @@ public final class Form extends Container {
 
     private final Map<String, FormItem> items = new LinkedHashMap<>();
     private Layout layout = Layout.VERTICAL;
-    private boolean shown;
     private int lastBottom;
 
     public Form() {
-        visible(false);
+        setVisible(false);
     }
 
-    public Form layout(Layout layout) {
+    public Form setLayout(Layout layout) {
         this.layout = Objects.requireNonNull(layout);
         requestLayout();
         return this;
@@ -35,43 +34,41 @@ public final class Form extends Container {
     }
 
     public Form add(FormItem item) {
-        if (items.containsKey(item.name())) throw new IllegalArgumentException("Duplicate field: " + item.name());
-        items.put(item.name(), item);
+        if (items.containsKey(item.getName())) throw new IllegalArgumentException("Duplicate field: " + item.getName());
+        items.put(item.getName(), item);
         addChild(item);
-        item.setInputVisible(shown && item.active());
+        item.setInputVisible(getVisible() && item.getActive());
         return this;
     }
 
-    public void setVisible(boolean visible) {
-        shown = visible;
-        super.visible(visible);
-        for (FormItem item : items.values()) item.setInputVisible(visible && item.active());
+    @Override public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        for (FormItem item : items.values()) item.setInputVisible(visible && item.getActive());
     }
 
-    @Override public boolean visible() { return shown; }
-    public int bottom() { return lastBottom; }
+    public int getBottom() { return lastBottom; }
 
-    public String value(String name) {
+    public String getValue(String name) {
         FormItem item = items.get(name);
         if (item == null) throw new IllegalArgumentException("Unknown field: " + name);
-        return item.value();
+        return item.getValue();
     }
 
     /** MUI widgets are siblings of the Ore canvas, so hide fields outside a scrolled viewport. */
     public void clipInputs(Rect viewport) {
         for (FormItem item : items.values()) {
-            if (item.inputNode() == null) continue;
-            Rect area = item.inputNode().absoluteBounds();
+            if (item.getInputNode() == null) continue;
+            Rect area = item.getInputNode().getAbsoluteBounds();
             boolean fullyVisible = area.x() >= viewport.x() && area.right() <= viewport.right()
                     && area.y() >= viewport.y() && area.bottom() <= viewport.bottom();
-            item.setInputVisible(shown && item.active() && fullyVisible);
+            item.setInputVisible(getVisible() && item.getActive() && fullyVisible);
         }
     }
 
     public boolean validate() {
-        if (!shown) return false;
+        if (!getVisible()) return false;
         for (FormItem item : items.values()) {
-            if (item.active() && item.input() instanceof NumberInput number && !number.commit()) {
+            if (item.getActive() && item.getInput() instanceof NumberInput number && !number.commit()) {
                 requestLayout();
                 return false;
             }
@@ -84,12 +81,12 @@ public final class Form extends Container {
         if (!isAlive()) return new Size(0, 0);
         boolean horizontal = effectiveLayout(layout, available.width()) == Layout.HORIZONTAL;
         int height = 0;
-        for (FormItem item : items.values()) if (item.active()) {
-            item.horizontal(horizontal);
+        for (FormItem item : items.values()) if (item.getActive()) {
+            item.setHorizontal(horizontal);
             height += item.rowHeight(font, available.width());
         }
-        return new Size(Math.max(minimumWidth(), available.width()),
-                Math.max(minimumHeight(), height));
+        return new Size(Math.max(getMinimumWidth(), available.width()),
+                Math.max(getMinimumHeight(), height));
     }
 
     @Override public void layout(Rect bounds, Font font) {
@@ -99,9 +96,9 @@ public final class Form extends Container {
             boolean horizontal = effectiveLayout(layout, bounds.width()) == Layout.HORIZONTAL;
             int top = 0;
             for (FormItem item : items.values()) {
-                item.horizontal(horizontal);
-                item.visible(item.active());
-                if (!item.active()) continue;
+                item.setHorizontal(horizontal);
+                item.setVisible(item.getActive());
+                if (!item.getActive()) continue;
                 int height = item.rowHeight(font, bounds.width());
                 fitChild(item, new Rect(0, top, bounds.width(), height), font);
                 top += height;
@@ -112,7 +109,7 @@ public final class Form extends Container {
 
     /** Compatibility entry point until a modal directly owns the Form node. */
     public int draw(ModularGuiContext context, int x, int y, int width, int viewportWidth) {
-        if (!shown) return y;
+        if (!getVisible()) return y;
         Font font = context.getFont();
         int height = measureSize(font, new Size(width, viewportWidth)).height();
         layout(new Rect(x, y, width, height), font);

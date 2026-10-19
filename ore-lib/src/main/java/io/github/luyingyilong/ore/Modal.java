@@ -41,16 +41,16 @@ public final class Modal extends Container {
     private final Panel background;
     private final Box column = new Box();
     private final Panel header;
-    private final Box headerRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
+    private final Box headerRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
     private final Control headerSpacer = new Control();
-    private final Label titleLabel = new Label().opticalCenter(true).overflow(Label.Overflow.ELLIPSIS)
-            .align(Label.Horizontal.CENTER, Label.Vertical.CENTER);
-    private final Button close = new Button().type(Button.Type.TEXT)
-            .icon(OreIcons.CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);
+    private final Label titleLabel = new Label().setOpticalCenter(true).setOverflow(Label.Overflow.ELLIPSIS)
+            .setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER);
+    private final Button close = new Button().setType(Button.Type.TEXT)
+            .setIcon(OreIcons.CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);
     private final Padding bodyInset = new Padding(Padding.Insets.all(BODY_INSET));
     private final Panel footer;
-    private final Box footerButtons = new Box().gap(BUTTON_GAP);
-    private final Padding footerInset = new Padding(Padding.Insets.all(FOOTER_INSET)).child(footerButtons);
+    private final Box footerButtons = new Box().setGap(BUTTON_GAP);
+    private final Padding footerInset = new Padding(Padding.Insets.all(FOOTER_INSET)).setChild(footerButtons);
     private final List<Button> actions = new ArrayList<>();
     private Control content;
     private final SignalSource0 closeRequested = new SignalSource0(this, "closeRequested");
@@ -69,28 +69,28 @@ public final class Modal extends Container {
         background = new Panel(backgroundTheme);
         header = new Panel(headerTheme);
         footer = new Panel(footerTheme);
-        title(title);
-        titleLabel.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
-        headerSpacer.minimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
-        close.minimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
-        close.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        setTitle(title);
+        titleLabel.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
+        headerSpacer.setMinimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
+        close.setMinimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
+        close.setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         close.pressed().connect(close, () -> closeRequested.emit());
         headerRow.add(headerSpacer).add(titleLabel).add(close);
-        header.child(new Padding(new Padding.Insets(0, 1, 0, 1)).child(headerRow));
-        header.minimum(0, HEADER_HEIGHT).preferred(0, HEADER_HEIGHT)
-                .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        bodyInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        bodyInset.minimum(0, BODY_INSET * 2);
-        footerButtons.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        footer.child(footerInset);
-        footer.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        footer.visible(false);
+        header.setChild(new Padding(new Padding.Insets(0, 1, 0, 1)).setChild(headerRow));
+        header.setMinimum(0, HEADER_HEIGHT).setPreferred(0, HEADER_HEIGHT)
+                .setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        bodyInset.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        bodyInset.setMinimum(0, BODY_INSET * 2);
+        footerButtons.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        footer.setChild(footerInset);
+        footer.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        footer.setVisible(false);
         column.add(header).add(bodyInset).add(footer);
-        background.child(new Padding(Padding.Insets.all(FRAME_INSET)).child(column));
+        background.setChild(new Padding(Padding.Insets.all(FRAME_INSET)).setChild(column));
         addChild(background);
     }
 
-    public Modal size(int width, int height) {
+    public Modal setSize(int width, int height) {
         int nextWidth = Math.max(0, width);
         int nextHeight = Math.max(0, height);
         if (requestedWidth != nextWidth || requestedHeight != nextHeight) {
@@ -102,7 +102,7 @@ public final class Modal extends Container {
     }
 
     /** Coordinates are relative to the GUI viewport, not the operating-system window. */
-    public Modal position(int x, int y) {
+    public Modal setPosition(int x, int y) {
         if (!Objects.equals(customX, x) || !Objects.equals(customY, y)) {
             customX = x;
             customY = y;
@@ -120,54 +120,54 @@ public final class Modal extends Container {
         return this;
     }
 
-    public Modal title(Component title) {
-        titleLabel.text(Objects.requireNonNull(title));
+    public Modal setTitle(Component title) {
+        titleLabel.setText(Objects.requireNonNull(title));
         return this;
     }
 
-    public Modal fontSize(float fontSize) { titleLabel.fontSize(fontSize); return this; }
-    public float fontSize() { return titleLabel.fontSize(); }
+    public Modal setFontSize(float fontSize) { titleLabel.setFontSize(fontSize); return this; }
+    public float getFontSize() { return titleLabel.getFontSize(); }
 
     public Signal0 closeRequested() { return closeRequested.signal(); }
 
-    @Override public float contentDepth() { return depth; }
+    @Override public float getContentDepth() { return depth; }
 
-    public Modal depth(float depth) {
+    public Modal setDepth(float depth) {
         this.depth = depth;
         return this;
     }
 
-    public Modal content(Control content) {
+    public Modal setContent(Control content) {
         this.content = Objects.requireNonNull(content);
-        content.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        bodyInset.child(content);
+        content.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        bodyInset.setChild(content);
         return this;
     }
 
     public Modal clearActions() {
-        for (Button action : List.copyOf(actions)) { if (action.parent() != null) action.parent().removeChild(action); action.queueFree(); }
+        for (Button action : List.copyOf(actions)) { if (action.getParent() != null) action.getParent().removeChild(action); action.queueFree(); }
         actions.clear();
-        footer.visible(false);
-        footer.minimum(0, 0);
+        footer.setVisible(false);
+        footer.setMinimum(0, 0);
         return this;
     }
 
     public Modal addAction(Button button) {
         Objects.requireNonNull(button);
-        button.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        button.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         actions.add(button);
         footerButtons.add(button);
-        footer.visible(true);
-        footer.minimum(0, FOOTER_INSET * 2 + actions.size() * Button.HEIGHT
+        footer.setVisible(true);
+        footer.setMinimum(0, FOOTER_INSET * 2 + actions.size() * Button.HEIGHT
                 + (actions.size() - 1) * BUTTON_GAP);
         return this;
     }
 
-    public Rect panelBounds() {
-        return background.absoluteBounds();
+    public Rect getPanelBounds() {
+        return background.getAbsoluteBounds();
     }
 
-    @Override public boolean focusScope() { return true; }
+    @Override public boolean getFocusScope() { return true; }
 
     @Override public boolean onFocusKey(int keyCode, int modifiers) {
         if (keyCode != GLFW.GLFW_KEY_ESCAPE) return false;
@@ -175,8 +175,8 @@ public final class Modal extends Container {
         return true;
     }
 
-    public Rect contentBounds() {
-        return content == null ? new Rect(0, 0, 0, 0) : content.absoluteBounds();
+    public Rect getContentBounds() {
+        return content == null ? new Rect(0, 0, 0, 0) : content.getAbsoluteBounds();
     }
 
     public static Rect centeredBounds(int width, int height, int viewportWidth, int viewportHeight) {
@@ -204,11 +204,11 @@ public final class Modal extends Container {
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(viewport, font);
             int desiredWidth = requestedWidth > 0 ? requestedWidth
-                    : Math.max(minimumWidth(), background.measureSize(font,
+                    : Math.max(getMinimumWidth(), background.measureSize(font,
                             new Size(viewport.width(), viewport.height())).width());
             int fittedWidth = Math.max(1, Math.min(desiredWidth, Math.max(1, viewport.width())));
             int desiredHeight = requestedHeight > 0 ? requestedHeight
-                    : Math.max(minimumHeight(), background.measureSize(font,
+                    : Math.max(getMinimumHeight(), background.measureSize(font,
                             new Size(fittedWidth, viewport.height())).height());
             fitChild(background, fittedBounds(desiredWidth, desiredHeight, customX, customY,
                     viewport.width(), viewport.height()), font);
@@ -216,18 +216,18 @@ public final class Modal extends Container {
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-        Rect area = screenBounds(screenX, screenY);
+        Rect area = getScreenBounds(screenX, screenY);
         context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.OVERLAY_COLOR);
         WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.FLOATING_HEADER);
         WidgetTheme style = entry == null ? context.getTheme().getPanelTheme().theme() : entry.theme();
-        titleLabel.color(style.getTextColor()).shadow(style.isTextShadow());
+        titleLabel.setColor(style.getTextColor()).setShadow(style.isTextShadow());
     }
 
     @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
-            if (!visible()) return;
+            if (!getVisible()) return;
             GuiGraphics graphics = context.getGraphics();
             graphics.flush();
             graphics.pose().pushPose();
@@ -243,7 +243,7 @@ public final class Modal extends Container {
 
     /** The topmost modal consumes clicks both inside and outside its panel. */
     @Override protected boolean pointerDown(int rootX, int rootY) {
-        if (!visible()) return false;
+        if (!getVisible()) return false;
         if (!background.hit(rootX, rootY)) {
             OreSounds.play(OreSounds.Cue.CLICK);
             closeRequested.emit();

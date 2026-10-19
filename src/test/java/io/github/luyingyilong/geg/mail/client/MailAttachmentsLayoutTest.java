@@ -15,42 +15,42 @@ public final class MailAttachmentsLayoutTest {
         int[] claims = {0};
         MailAttachmentsView rewards = new MailAttachmentsView(() -> claims[0]++);
         rewards.attachments(List.of(), true, false);
-        check(rewards.visible() && rewards.claimButton().visible() && !rewards.claimButton().disabled());
+        check(rewards.getVisible() && rewards.claimButton().getVisible() && !rewards.claimButton().getDisabled());
         Scroll scroll = rewards.scroll();
-        Box items = (Box) scroll.children().stream().filter(Box.class::isInstance).findFirst().orElseThrow();
+        Box items = (Box) scroll.getChildren().stream().filter(Box.class::isInstance).findFirst().orElseThrow();
         // Geometry is independent of item registries; the server GameTest verifies item binding and NBT.
-        for (int i = 0; i < 100; i++) items.add(new Control().minimum(Slot.SIZE, Slot.SIZE)
-                .sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER));
-        scroll.visible(true);
-        rewards.claimButton().sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_END);
+        for (int i = 0; i < 100; i++) items.add(new Control().setMinimum(Slot.SIZE, Slot.SIZE)
+                .setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER));
+        scroll.setVisible(true);
+        rewards.claimButton().setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_END);
         for (int width : new int[]{120, 127, 128, 129, 300, 600}) {
             rewards.layout(new Rect(0, 0, width, Slot.SIZE), font);
             check(rewards.measureSize(font, new Size(width, 300)).equals(new Size(0, Slot.SIZE)));
-            check(scroll.maxScrollX() > 0 && scroll.maxScrollY() == 0);
-            check(!scroll.horizontalVisible() && !scroll.verticalVisible());
-            check(scroll.bounds().right() + 4 == rewards.claimButton().bounds().x());
-            check(rewards.claimButton().bounds().right() == width);
-            check(scroll.size().height() == Slot.SIZE && items.size().height() == Slot.SIZE);
-            check(items.children().get(99).bounds().right() == 100 * Slot.SIZE + 99 * 2);
+            check(scroll.getMaxScrollX() > 0 && scroll.getMaxScrollY() == 0);
+            check(!scroll.getHorizontalVisible() && !scroll.getVerticalVisible());
+            check(scroll.getBounds().right() + 4 == rewards.claimButton().getBounds().x());
+            check(rewards.claimButton().getBounds().right() == width);
+            check(scroll.getSize().height() == Slot.SIZE && items.getSize().height() == Slot.SIZE);
+            check(items.getChildren().get(99).getBounds().right() == 100 * Slot.SIZE + 99 * 2);
             scroll.setScroll(0, 0);
-            check(io.github.luyingyilong.ore.EventFixture.scroll(rewards,1, 1, -1, false) && scroll.scrollX() > 0);
+            check(io.github.luyingyilong.ore.EventFixture.scroll(rewards,1, 1, -1, false) && scroll.getScrollX() > 0);
             scroll.setScroll(Integer.MAX_VALUE, 0);
-            check(scroll.scrollX() == scroll.maxScrollX());
+            check(scroll.getScrollX() == scroll.getMaxScrollX());
         }
         // A completed attachment, including coin-only mail, retains its disabled claim button.
         rewards.attachments(List.of(), true, true);
-        check(rewards.visible() && rewards.claimButton().visible() && rewards.claimButton().disabled());
+        check(rewards.getVisible() && rewards.claimButton().getVisible() && rewards.claimButton().getDisabled());
         check(!rewards.claimButton().acceptsFocus());
         rewards.layout(new Rect(0, 0, 300, Slot.SIZE), font);
-        Rect button = rewards.claimButton().absoluteBounds();
+        Rect button = rewards.claimButton().getAbsoluteBounds();
         io.github.luyingyilong.ore.EventFixture.press(rewards,button.x()+1,button.y()+1);
         check(!rewards.claimButton().activate() && claims[0] == 0);
-        check(rewards.claimButton().bounds().width() == 300);
+        check(rewards.claimButton().getBounds().width() == 300);
         // Switching to an unclaimed or partially claimed mail re-enables the same button.
         rewards.attachments(List.of(), true, false);
-        check(rewards.claimButton().visible() && !rewards.claimButton().disabled());
+        check(rewards.claimButton().getVisible() && !rewards.claimButton().getDisabled());
         rewards.attachments(List.of(), false, false);
-        check(!rewards.visible() && !rewards.claimButton().visible() && items.children().isEmpty());
+        check(!rewards.getVisible() && !rewards.claimButton().getVisible() && items.getChildren().isEmpty());
     }
     private static void check(boolean condition) {
         if (!condition) throw new AssertionError("Mail attachment strip layout regression");

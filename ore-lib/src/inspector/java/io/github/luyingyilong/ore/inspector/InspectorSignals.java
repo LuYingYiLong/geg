@@ -23,7 +23,7 @@ final class InspectorSignals {
         selected = new WeakReference<>(control);
         Set<Long> ids = new HashSet<>();
         ids.add(SignalDiagnostics.ownerId(control));
-        if (control instanceof InputControl input) ids.add(SignalDiagnostics.ownerId(input.widget()));
+        if (control instanceof InputControl input) ids.add(SignalDiagnostics.ownerId(input.getWidget()));
         ownerIds = Set.copyOf(ids);
     }
 
@@ -36,7 +36,7 @@ final class InspectorSignals {
             return new InspectorSnapshot.SignalPanel(id, name, "unavailable", data, names);
         }
         SignalOwner[] owners = control instanceof InputControl input
-                ? new SignalOwner[]{control, input.widget()} : new SignalOwner[]{control};
+                ? new SignalOwner[]{control, input.getWidget()} : new SignalOwner[]{control};
         return new InspectorSnapshot.SignalPanel(id, name, control.isDisposed() ? "disposed" : attached ? "attached" : "detached",
                 SignalDiagnostics.inspect(owners), names);
     }

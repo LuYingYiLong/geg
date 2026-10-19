@@ -16,7 +16,7 @@ public final class Panel extends Container {
     private Control child;
 
     public Panel(WidgetThemeKey<WidgetTheme> themeKey) { this.themeKey = themeKey; }
-    public Panel child(Control child) {
+    public Panel setChild(Control child) {
         if (this.child != null) removeChild(this.child);
         addChild(child);
         return this;
@@ -38,8 +38,8 @@ public final class Panel extends Container {
     @Override public Size measureSize(Font font, Size available) {
         if (!isAlive()) return new Size(0, 0);
         Size childSize = child == null ? new Size(0, 0) : child.desiredSize(font, available);
-        return new Size(Math.max(minimumWidth(), childSize.width()),
-                Math.max(minimumHeight(), childSize.height()));
+        return new Size(Math.max(getMinimumWidth(), childSize.width()),
+                Math.max(getMinimumHeight(), childSize.height()));
     }
 
     @Override
@@ -48,8 +48,8 @@ public final class Panel extends Container {
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(localBounds, font);
             if (child != null) fitChild(child, new Rect(0, 0,
-                    Math.max(child.minimumWidth(), localBounds.width()),
-                    Math.max(child.minimumHeight(), localBounds.height())), font);
+                    Math.max(child.getMinimumWidth(), localBounds.width()),
+                    Math.max(child.getMinimumHeight(), localBounds.height())), font);
         }
     }
 
@@ -58,8 +58,8 @@ public final class Panel extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
-            drawAt(context, screenBounds(screenX, screenY));
-            if (child != null && (child.isAlive() && child.visible())) child.draw(context, screenX, screenY);
+            drawAt(context, getScreenBounds(screenX, screenY));
+            if (child != null && (child.isAlive() && child.getVisible())) child.draw(context, screenX, screenY);
         }
     }
 

@@ -38,8 +38,8 @@ public final class Window extends Container {
     public Window(boolean fullscreen) {
         this.fullscreen = fullscreen;
         host = new EmbeddedWindowHost();
-        host.context().owner(this);
-        signalScope().own(this::releaseHost);
+        host.getContext().setOwner(this);
+        getSignalScope().own(this::releaseHost);
     }
 
     public static Window embedded() {
@@ -51,17 +51,17 @@ public final class Window extends Container {
     public static Window nativeWindow(WindowOptions options) {
         Window root = new Window(true);
         root.host = new NativeWindowHost(options);
-        root.context().owner(root);
+        root.getContext().setOwner(root);
         root.onBack = root::close;
         return root;
     }
 
-    public WindowHost host() {
+    public WindowHost getHost() {
         return host;
     }
 
-    public WindowContext context() {
-        return host.context();
+    public WindowContext getContext() {
+        return host.getContext();
     }
 
     public Window open() {
@@ -75,7 +75,7 @@ public final class Window extends Container {
         if (closedNotified) return;
         closedNotified = true;
         cancelInteractions();
-        io.github.luyingyilong.ore.input.OreInputMethod.releaseWindow(context());
+        io.github.luyingyilong.ore.input.OreInputMethod.releaseWindow(getContext());
         DebugBridge.backend().close(this);
         host.close();
         closed.emit();
@@ -85,7 +85,7 @@ public final class Window extends Container {
         if (closedNotified) return;
         closedNotified = true;
         cancelInteractions();
-        io.github.luyingyilong.ore.input.OreInputMethod.releaseWindow(context());
+        io.github.luyingyilong.ore.input.OreInputMethod.releaseWindow(getContext());
         DebugBridge.backend().close(this);
         if (host instanceof EmbeddedWindowHost embedded) embedded.detached();
         closed.emit();
@@ -95,19 +95,19 @@ public final class Window extends Container {
     public void hostDetached() {
         suspendTree(true);
         cancelInteractions();
-        io.github.luyingyilong.ore.input.OreInputMethod.releaseWindow(context());
+        io.github.luyingyilong.ore.input.OreInputMethod.releaseWindow(getContext());
         if (host instanceof EmbeddedWindowHost embedded) embedded.detached();
     }
 
     public void prepareTree(ModularGuiContext mui) {
-        context().bind(mui);
+        getContext().bind(mui);
         if (host instanceof EmbeddedWindowHost embedded) { embedded.attached(); WindowManager.embedded(this); }
         prepareTree();
     }
 
     public void prepareTree() {
         if (!isAlive()) return;
-        if (!isInsideTree()) enterTree(context(), false, true);
+        if (!isInsideTree()) enterTree(getContext(), false, true);
         else suspendTree(false);
         LifecycleScheduler.prepare(this);
         LifecycleScheduler.notifications();
@@ -124,29 +124,29 @@ public final class Window extends Container {
     }
 
     private void releaseHost() {
-        context().popups().cancel();
+        getContext().getPopups().cancel();
         hostClosed();
         DebugBridge.backend().close(this);
         if (host instanceof EmbeddedWindowHost embedded) embedded.detached();
         else host.close();
     }
 
-    public boolean inspectable() {
+    public boolean getInspectable() {
         return inspectable;
     }
 
-    public Window inspectable(boolean value) {
+    public Window setInspectable(boolean value) {
         inspectable = value;
         return this;
     }
 
-    public Window content(Control content) {
+    public Window setContent(Control content) {
         if (this.content != null) removeChild(this.content);
         addChild(content);
         return this;
     }
 
-    public Window overlay(Overlay overlay) {
+    public Window setOverlay(Overlay overlay) {
         if (this.overlay != null) removeChild(this.overlay);
         addChild(overlay);
         return this;
@@ -174,16 +174,16 @@ public final class Window extends Container {
         return true;
     }
 
-    public Overlay popupOverlay() {
-        if(overlay==null)overlay(new Overlay());
+    public Overlay getPopupOverlay() {
+        if(overlay==null)setOverlay(new Overlay());
         return overlay;
     }
 
-    public boolean fullscreen() {
+    public boolean getFullscreen() {
         return fullscreen;
     }
 
-    public FocusManager focusManager() {
+    public FocusManager getFocusManager() {
         return focusManager;
     }
 
@@ -203,16 +203,16 @@ public final class Window extends Container {
     /** The sole event entrance for embedded, native and business hosts. */
     public boolean dispatchInput(InputEvent event) {
         if (!isAlive() || isSuspended()) return false;
-        if (event.context() != context()) throw new IllegalArgumentException("Event belongs to another Window");
+        if (event.context() != getContext()) throw new IllegalArgumentException("Event belongs to another Window");
         if(event.dispatched())throw new IllegalStateException("InputEvent already dispatched");
         if (inputThread == null) inputThread = Thread.currentThread();
         if (Thread.currentThread() != inputThread) throw new IllegalStateException("Input must run on the client thread");
         if (dispatching != null) throw new IllegalStateException("Reentrant input dispatch");
-        try (var lifecycleGuard = DispatchGuard.enter(); var ignored = context().enter(); var trace = SignalDiagnostics.suppress(!inspectable)) {
+        try (var lifecycleGuard = DispatchGuard.enter(); var ignored = getContext().enter(); var trace = SignalDiagnostics.suppress(!inspectable)) {
             dispatching = event;
-            context().modifiers(event.modifiers());
-            if(event instanceof KeyEvent key)context().key(key.keyCode(),key.action()==KeyEvent.Action.RELEASE?0:1,key.modifiers());
-            context().popups().synchronize();
+            getContext().setModifiers(event.modifiers());
+            if(event instanceof KeyEvent key)getContext().key(key.keyCode(),key.action()==KeyEvent.Action.RELEASE?0:1,key.modifiers());
+            getContext().getPopups().synchronize();
             validateCaptures();
             if (event instanceof CancelEvent) {
                 event.begin(this); cancelInteractions(); event.accept(); return true;
@@ -220,18 +220,18 @@ public final class Window extends Container {
             boolean picking=inspectable && DebugBridge.backend().picking(this);
             if(picking!=wasPicking) {
                 cancelPointer();focusManager.cancelActivation();
-                if(picking && focusManager.focused() instanceof io.github.luyingyilong.ore.input.InputControl field)field.widget().cancelPreedit();
+                if(picking && focusManager.getFocused() instanceof io.github.luyingyilong.ore.input.InputControl field)field.getWidget().cancelPreedit();
                 wasPicking=picking;
             }
             boolean intercepted=picking;
             if(inspectable && event instanceof PointerEvent pointer && pointer.action()!=PointerEvent.Action.MOVE)
-                intercepted|=DebugBridge.backend().pointer(this,pointer.windowX()+context().originX(),pointer.windowY()+context().originY(),pointer.button(),pointer.action()==PointerEvent.Action.PRESS);
+                intercepted|=DebugBridge.backend().pointer(this,pointer.windowX()+getContext().getOriginX(),pointer.windowY()+getContext().getOriginY(),pointer.button(),pointer.action()==PointerEvent.Action.PRESS);
             if(inspectable && event instanceof KeyEvent key)
                 intercepted|=DebugBridge.backend().key(this,key.keyCode(),key.action()==KeyEvent.Action.RELEASE?GLFW.GLFW_RELEASE:GLFW.GLFW_PRESS);
             if(intercepted){event.begin(this);cancelPointer();event.accept();return true;}
             if(event instanceof KeyEvent key && focusManager.activationHeld(key.keyCode())) {
-                event.begin(focusManager.focused());
-                if(key.action()==KeyEvent.Action.RELEASE)focusManager.keyReleased(key.keyCode(),key.modifiers(),context().mui());
+                event.begin(focusManager.getFocused());
+                if(key.action()==KeyEvent.Action.RELEASE)focusManager.keyReleased(key.keyCode(),key.modifiers(),getContext().getMui());
                 event.accept();return true;
             }
             if(event instanceof KeyEvent key && key.action()==KeyEvent.Action.REPEAT && key.keyCode()==GLFW.GLFW_KEY_ESCAPE) {
@@ -240,20 +240,20 @@ public final class Window extends Container {
             Control target;
             if (event instanceof PointerEvent pointer) {
                 lastPointerX=pointer.windowX();lastPointerY=pointer.windowY();
-                if(pointer.action()!=PointerEvent.Action.MOVE)context().button(pointer.button(),pointer.action()==PointerEvent.Action.PRESS);
+                if(pointer.action()!=PointerEvent.Action.MOVE)getContext().button(pointer.button(),pointer.action()==PointerEvent.Action.PRESS);
                 if (pointer.action()==PointerEvent.Action.PRESS) {
                     Control previous=pointerCaptures.remove(pointer.button()); if(previous!=null)previous.cancelInteraction();
                     focusManager.cancelActivation();
                     target=pointerTarget(pointer.windowX(),pointer.windowY());
-                    focusManager.pointerPressed(target,context().mui());
+                    focusManager.pointerPressed(target,getContext().getMui());
                 } else target=pointerCaptures.get(pointer.button());
                 if(target==null && pointer.action()==PointerEvent.Action.MOVE)target=pointerTarget(pointer.windowX(),pointer.windowY());
             } else if(event instanceof ScrollEvent scroll) target=pointerTarget(scroll.windowX(),scroll.windowY());
-            else target=focusManager.focused();
+            else target=focusManager.getFocused();
             event.begin(target);
             if(target!=null) {
                 List<Control> path=new ArrayList<>();
-                for(Control node=target;node!=null && node!=this;node=node.parent())path.add(node);
+                for(Control node=target;node!=null && node!=this;node=node.getParent())path.add(node);
                 for(Control node:path) {
                     if(!attachedAndVisible(node))break;
                     int x=0,y=0;
@@ -270,7 +270,7 @@ public final class Window extends Container {
             }
             if(!event.accepted())unhandledInput(event);
             if(event instanceof PointerEvent pointer && pointer.action()==PointerEvent.Action.RELEASE)pointerCaptures.remove(pointer.button());
-            context().popups().synchronize();
+            getContext().getPopups().synchronize();
             validateCaptures();
             return event.accepted();
         } catch(RuntimeException | Error error) {
@@ -286,8 +286,8 @@ public final class Window extends Container {
     public void unhandledInput(InputEvent event) {
         if(event instanceof KeyEvent key) {
             boolean handled=key.action()==KeyEvent.Action.RELEASE
-                    ?focusManager.keyReleased(key.keyCode(),key.modifiers(),context().mui())
-                    :focusManager.keyPressed(key.keyCode(),key.modifiers(),context().mui());
+                    ?focusManager.keyReleased(key.keyCode(),key.modifiers(),getContext().getMui())
+                    :focusManager.keyPressed(key.keyCode(),key.modifiers(),getContext().getMui());
             if(handled)event.accept();
             else if(key.action()==KeyEvent.Action.PRESS && key.keyCode()==GLFW.GLFW_KEY_ESCAPE){onBack.run();event.accept();}
         }
@@ -299,15 +299,15 @@ public final class Window extends Container {
     }
 
     public boolean pointerOver(Control control,int x,int y) {
-        for(Control node=pointerTarget(x,y);node!=null;node=node.parent())if(node==control)return true;
+        for(Control node=pointerTarget(x,y);node!=null;node=node.getParent())if(node==control)return true;
         return false;
     }
 
     public Control tooltipTarget(int rootX, int rootY) {
-        if (context().popups().open()) return null;
-        if (!visible() || !hit(rootX, rootY)) return null;
-        for (Control node = pointerTarget(rootX, rootY); node != null && node != this; node = node.parent()) {
-            if ((!node.isAlive() || !node.visible())) return null;
+        if (getContext().getPopups().open()) return null;
+        if (!getVisible() || !hit(rootX, rootY)) return null;
+        for (Control node = pointerTarget(rootX, rootY); node != null && node != this; node = node.getParent()) {
+            if ((!node.isAlive() || !node.getVisible())) return null;
             if (node.hasTooltip() && focusManager.allowsNativeInput(node)) return node;
         }
         return null;
@@ -318,7 +318,7 @@ public final class Window extends Container {
         Control target = tooltipTarget(mouseX - screenX, mouseY - screenY);
         if (target == null) return;
         float depth = 0.0F;
-        for (Control node = target; node != null && node != this; node = node.parent()) depth += node.contentDepth();
+        for (Control node = target; node != null && node != this; node = node.getParent()) depth += node.getContentDepth();
         var graphics = context.getGraphics();
         graphics.flush();
         graphics.pose().pushPose();
@@ -332,8 +332,8 @@ public final class Window extends Container {
     }
 
     private boolean attachedAndVisible(Control target) {
-        for(Control node=target;node!=null;node=node.parent()) {
-            if((!node.isAlive() || !node.visible()))return false;
+        for(Control node=target;node!=null;node=node.getParent()) {
+            if((!node.isAlive() || !node.getVisible()))return false;
             if(node==this)return true;
         }
         return false;
@@ -341,7 +341,7 @@ public final class Window extends Container {
 
     public void cancelCaptures(Control subtree,CancelEvent.Reason reason) {
         for(var entry:List.copyOf(pointerCaptures.entrySet())) {
-            for(Control node=entry.getValue();node!=null;node=node.parent()) {
+            for(Control node=entry.getValue();node!=null;node=node.getParent()) {
                 if(node==subtree) {
                     pointerCaptures.remove(entry.getKey());
                     cancelTarget(entry.getValue(),reason);
@@ -351,7 +351,7 @@ public final class Window extends Container {
         }
     }
     private void cancelTarget(Control target,CancelEvent.Reason reason) {
-        CancelEvent cancel=new CancelEvent(context(),reason);cancel.begin(target);cancel.deliver(target,0,0);
+        CancelEvent cancel=new CancelEvent(getContext(),reason);cancel.begin(target);cancel.deliver(target,0,0);
     }
 
     private void validateCaptures() {
@@ -367,7 +367,7 @@ public final class Window extends Container {
         for(Control target:captured)cancelTarget(target,CancelEvent.Reason.LOST_FOCUS);
     }
     @Override public void cancelInteraction() {
-        context().popups().cancel();cancelPointer();focusManager.resetInput();context().clearInput();
+        getContext().getPopups().cancel();cancelPointer();focusManager.resetInput();getContext().clearInput();
     }
 
     public void layoutViewport(int width, int height, Font font) {
@@ -376,7 +376,7 @@ public final class Window extends Container {
 
         if (!isAlive()) return;
         validateCaptures();
-        context().popups().synchronize();
+        getContext().getPopups().synchronize();
         if (fontRevision != OreFonts.revision()) {
             fontRevision = OreFonts.revision();
             invalidateTextLayout();
@@ -412,30 +412,30 @@ public final class Window extends Container {
     @Override
     public void draw(ModularGuiContext context, int screenX, int screenY) {
         if (!isAlive()) return;
-        if (!visible()) return;
-        this.context().bind(context);
-        this.context().origin(screenX,screenY);
+        if (!getVisible()) return;
+        this.getContext().bind(context);
+        this.getContext().setOrigin(screenX,screenY);
         if (host instanceof EmbeddedWindowHost embedded) {
             closedNotified = false;
             embedded.attached();
             WindowManager.embedded(this);
-            this.context().dimensions(context.getScreenArea().width, context.getScreenArea().height,
+            this.getContext().setDimensions(context.getScreenArea().width, context.getScreenArea().height,
                     context.getScreenArea().width, context.getScreenArea().height, 1);
         }
-        try (var phase = DispatchGuard.enter(); var frame = this.context().enter(); var trace = SignalDiagnostics.suppress(!inspectable)) {
+        try (var phase = DispatchGuard.enter(); var frame = this.getContext().enter(); var trace = SignalDiagnostics.suppress(!inspectable)) {
             if(host instanceof EmbeddedWindowHost && dispatching==null) {
                 int x=context.getAbsMouseX()-screenX,y=context.getAbsMouseY()-screenY;
                 if(x!=lastPointerX||y!=lastPointerY)
-                    dispatchInput(new PointerEvent(this.context(),PointerEvent.Action.MOVE,x,y,0,this.context().modifiers()));
+                    dispatchInput(new PointerEvent(this.getContext(),PointerEvent.Action.MOVE,x,y,0,this.getContext().getModifiers()));
             }
             Control body = content;
             Overlay layers = overlay;
             DebugBridge.backend().begin(this, context, screenX, screenY);
             DebugBridge.backend().paint(this, context, screenX, screenY);
-            Rect area = screenBounds(screenX, screenY);
+            Rect area = getScreenBounds(screenX, screenY);
             context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.OVERLAY_COLOR);
-            if (body != null && body.parent() == this && body.isAlive()) body.draw(context, screenX, screenY);
-            if (layers != null && layers.parent() == this && layers.isAlive()) layers.draw(context, screenX, screenY);
+            if (body != null && body.getParent() == this && body.isAlive()) body.draw(context, screenX, screenY);
+            if (layers != null && layers.getParent() == this && layers.isAlive()) layers.draw(context, screenX, screenY);
 
             focusManager.synchronizeNativeFocus(context);
             focusOverlay.draw(context, screenX, screenY);

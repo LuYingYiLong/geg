@@ -13,7 +13,7 @@ public final class ControlSignalTest {
         int[] received = {0};
         Connection connection = external.signal().connect(receiver, () -> received[0]++);
         Box parent = new Box().add(receiver);
-        receiver.visible(false); receiver.visible(true);
+        receiver.setVisible(false); receiver.setVisible(true);
         parent.removeChild(receiver); parent.add(receiver);
         external.emit();
         check(received[0] == 1 && connection.isConnected(), "Hide and detach preserve lifetime");
@@ -21,10 +21,10 @@ public final class ControlSignalTest {
         io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
         external.emit();
         check(receiver.isDisposed() && !connection.isConnected() && received[0] == 1, "Parent destroys receiver");
-        check(parent.children().isEmpty() && receiver.parent() == null, "Destroyed tree releases ownership");
+        check(parent.getChildren().isEmpty() && receiver.getParent() == null, "Destroyed tree releases ownership");
 
         Control row = new Control();
-        Connection bound = external.signal().connect(row.bindingScope(), () -> received[0]++);
+        Connection bound = external.signal().connect(row.getBindingScope(), () -> received[0]++);
         Connection structural = external.signal().connect(row, () -> received[0]++);
         row.resetBindingScope();
         check(!bound.isConnected() && structural.isConnected(), "Rebinding retains only structural connections");
@@ -36,7 +36,7 @@ public final class ControlSignalTest {
         List<String> actions = new ArrayList<>();
         button.pressed().connect(button, () -> actions.add("pressed"));
         button.toggled().connect(button, value -> actions.add("state:" + value));
-        button.toggleButton(true).buttonPressed(true).buttonPressed(true);
+        button.setToggleButton(true).setButtonPressed(true).setButtonPressed(true);
         check(actions.equals(List.of("state:true")), "Programmatic state is not activation");
         button.setButtonPressedNoSignal(false);
         button.activate();
@@ -48,15 +48,15 @@ public final class ControlSignalTest {
         Checkbox checkbox = new Checkbox(Component.empty());
         List<Boolean> changes = new ArrayList<>();
         checkbox.toggled().connect(checkbox, changes::add);
-        checkbox.checked(true).checked(true).setCheckedNoSignal(false);
-        check(changes.equals(List.of(true)) && !checkbox.checked(), "Checked equality and silent setter");
+        checkbox.setChecked(true).setChecked(true).setCheckedNoSignal(false);
+        check(changes.equals(List.of(true)) && !checkbox.getChecked(), "Checked equality and silent setter");
 
         Dropdown<Integer> dropdown = new Dropdown<>(1, 4);
         dropdown.setOptions(List.of(new Dropdown.Option<>(1, Component.literal("A")), new Dropdown.Option<>(2, Component.literal("B"))));
         List<Integer> selections = new ArrayList<>(), activations = new ArrayList<>();
         dropdown.selectionChanged().connect(dropdown, selections::add);
         dropdown.itemActivated().connect(dropdown, activations::add);
-        dropdown.select(2); dropdown.select(2); dropdown.selected(1);
+        dropdown.select(2); dropdown.select(2); dropdown.setSelected(1);
         check(selections.equals(List.of(2, 1)) && activations.equals(List.of(2, 2)), "Reselection and property changes are distinct");
         dropdown.setSelectedNoSignal(2);
         check(selections.size() == 2, "Silent dropdown setter");

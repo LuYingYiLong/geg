@@ -15,7 +15,7 @@ public final class ToastQueue {
         Objects.requireNonNull(key); Objects.requireNonNull(toast); prune();
         Toast existing = messages.get(key);
         if (existing != null) {
-            existing.text(toast.text()).duration(toast.duration()).type(toast.type()).refresh();
+            existing.setText(toast.getText()).setDuration(toast.getDuration()).setType(toast.getType()).refresh();
             if (existing != toast) toast.queueFree();
             return existing;
         }
@@ -24,7 +24,7 @@ public final class ToastQueue {
     }
     public void clear() { for (Toast toast : List.copyOf(messages.values())) toast.queueFree(); messages.clear(); }
     public int size() { prune(); return messages.size(); }
-    private void prune() { messages.values().removeIf(toast -> { if (!toast.isAlive() || !toast.visible() || toast.finished()) { toast.queueFree(); return true; } return false; }); }
+    private void prune() { messages.values().removeIf(toast -> { if (!toast.isAlive() || !toast.getVisible() || toast.getFinished()) { toast.queueFree(); return true; } return false; }); }
 
     public List<Frame> layout(Font font, int width, int height) {
         prune();
@@ -43,7 +43,7 @@ public final class ToastQueue {
             Size size = toast.measureSize(font, new Size(available, height));
             int toastHeight = Math.min(size.height(), Math.max(1, height - top - 1));
             int x = Math.max(0, (width - size.width()) / 2);
-            int offset = (int) Math.round((y + toastHeight + 1) * (1.0D - toast.progress()));
+            int offset = (int) Math.round((y + toastHeight + 1) * (1.0D - toast.getProgress()));
             Rect area = new Rect(x, y - offset, size.width(), toastHeight);
             toast.layout(area, font); frames.add(new Frame(toast, area)); y += toastHeight + 4;
         }

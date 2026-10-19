@@ -46,14 +46,14 @@ public final class Drawer extends Container {
 
     private final LongSupplier clock;
     private final Consumer<OreSounds.Cue> soundPlayer;
-    private final Label title = new Label().hero(true).opticalCenter(true).overflow(Label.Overflow.ELLIPSIS)
-            .align(Label.Horizontal.LEFT, Label.Vertical.CENTER).color(OreTheme.TEXT_WHITE);
-    private final Box header = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
+    private final Label title = new Label().setHero(true).setOpticalCenter(true).setOverflow(Label.Overflow.ELLIPSIS)
+            .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER).setColor(OreTheme.TEXT_WHITE);
+    private final Box header = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
     private final Button closeButton;
-    private final Box footer = new Box().gap(2);
+    private final Box footer = new Box().setGap(2);
     private final Scroll body = new Scroll();
-    private final Box column = new Box().gap(4);
-    private final Padding frame = new Padding(Padding.Insets.all(PADDING)).child(column);
+    private final Box column = new Box().setGap(4);
+    private final Padding frame = new Padding(Padding.Insets.all(PADDING)).setChild(column);
     private Panel background;
     private int titleColor = OreTheme.TEXT_WHITE;
     private final SignalSource0 closed = new SignalSource0(this, "closed");
@@ -80,51 +80,51 @@ public final class Drawer extends Container {
     Drawer(Component title, LongSupplier clock, Consumer<OreSounds.Cue> soundPlayer) {
         this.clock = Objects.requireNonNull(clock);
         this.soundPlayer = Objects.requireNonNull(soundPlayer);
-        this.title.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
-        closeButton = Signals.configure(new Button().type(Button.Type.TEXT)
-                .icon(OreIcons.CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE), connected -> connected.pressed().connect(connected, this::close));
-        closeButton.minimum(CLOSE_SIZE, CLOSE_SIZE);
-        closeButton.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        this.title.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
+        closeButton = Signals.configure(new Button().setType(Button.Type.TEXT)
+                .setIcon(OreIcons.CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE), connected -> connected.pressed().connect(connected, this::close));
+        closeButton.setMinimum(CLOSE_SIZE, CLOSE_SIZE);
+        closeButton.setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         header.add(this.title).add(closeButton);
-        header.minimum(0, CLOSE_SIZE).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        body.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        footer.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        footer.visible(false);
+        header.setMinimum(0, CLOSE_SIZE).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        body.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        footer.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        footer.setVisible(false);
         column.add(header).add(body).add(footer);
         super.addChild(frame);
-        super.visible(false);
-        title(title);
+        super.setVisible(false);
+        setTitle(title);
     }
 
-    public Drawer title(Component text) {
-        title.text(Objects.requireNonNull(text)); updateHeader(); return this;
+    public Drawer setTitle(Component text) {
+        title.setText(Objects.requireNonNull(text)); updateHeader(); return this;
     }
     /** Controls the close button; Escape and mask-click dismissal remain independent. */
-    public Drawer closable(boolean closable) {
+    public Drawer setClosable(boolean closable) {
         this.closable = closable; updateHeader(); return this;
     }
-    public boolean closable() { return closable; }
+    public boolean getClosable() { return closable; }
     private void updateHeader() {
-        closeButton.visible(closable);
-        header.visible(closable || !title.getText().getString().isBlank());
+        closeButton.setVisible(closable);
+        header.setVisible(closable || !title.getText().getString().isBlank());
         requestLayout();
     }
-    public Drawer titleColor(int color) { titleColor = color; title.color(color); return this; }
-    public int titleColor() { return titleColor; }
-    public Drawer fontSize(float fontSize) { title.fontSize(fontSize); return this; }
-    public float fontSize() { return title.fontSize(); }
+    public Drawer setTitleColor(int color) { titleColor = color; title.setColor(color); return this; }
+    public int getTitleColor() { return titleColor; }
+    public Drawer setFontSize(float fontSize) { title.setFontSize(fontSize); return this; }
+    public float getFontSize() { return title.getFontSize(); }
 
     /** Inner spacing around the header, body and footer; defaults to 4px on every side. */
-    public Drawer padding(Padding.Insets insets) {
-        frame.insets(Objects.requireNonNull(insets));
+    public Drawer setPadding(Padding.Insets insets) {
+        frame.setInsets(Objects.requireNonNull(insets));
         return this;
     }
-    public Drawer padding(int top, int right, int bottom, int left) {
-        return padding(new Padding.Insets(top, right, bottom, left));
+    public Drawer setPadding(int top, int right, int bottom, int left) {
+        return setPadding(new Padding.Insets(top, right, bottom, left));
     }
-    public Padding.Insets padding() { return frame.insets(); }
+    public Padding.Insets getPadding() { return frame.getInsets(); }
 
-    public Drawer placement(Placement placement) {
+    public Drawer setPlacement(Placement placement) {
         Objects.requireNonNull(placement);
         if (DebugBridge.previewWrite(this, "placement", placement)) return this;
         this.placement = placement;
@@ -132,16 +132,16 @@ public final class Drawer extends Container {
         return this;
     }
     @Inspectable
-    public Placement placement() {
+    public Placement getPlacement() {
         Placement placement = DebugBridge.value(this, "placement", this.placement);
         return placement;
     }
 
     /** Zero (the default) uses half the GUI viewport; explicit widths are viewport-limited. */
-    @Inspectable(setter = "width", min = 0, max = 100000)
-    public int requestedWidth() { return DebugBridge.value(this, "requestedWidth", requestedWidth); }
+    @Inspectable(setter = "setWidth", min = 0, max = 100000)
+    public int getRequestedWidth() { return DebugBridge.value(this, "requestedWidth", requestedWidth); }
 
-    public Drawer width(int width) {
+    public Drawer setWidth(int width) {
         if (width < 0) throw new IllegalArgumentException("Drawer width cannot be negative");
         if (DebugBridge.previewWrite(this, "requestedWidth", width)) return this;
         requestedWidth = width;
@@ -149,40 +149,40 @@ public final class Drawer extends Container {
         return this;
     }
 
-    public Drawer content(Control content) {
-        body.content(Objects.requireNonNull(content));
+    public Drawer setContent(Control content) {
+        body.setContent(Objects.requireNonNull(content));
         return this;
     }
 
     /** Public children belong to the scrollable body, not the viewport-sized overlay. */
-    @Override public Drawer addChild(Control content) { return content(content); }
+    @Override public Drawer addChild(Control content) { return setContent(content); }
 
-    public Scroll bodyScroll() { return body; }
+    public Scroll getBodyScroll() { return body; }
 
     public Drawer addAction(Button button) {
         Objects.requireNonNull(button);
-        button.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        button.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         footer.addChild(button);
-        footer.minimum(0, footer.children().size() * Button.HEIGHT
-                + Math.max(0, footer.children().size() - 1) * 2);
-        footer.visible(true);
+        footer.setMinimum(0, footer.getChildren().size() * Button.HEIGHT
+                + Math.max(0, footer.getChildren().size() - 1) * 2);
+        footer.setVisible(true);
         return this;
     }
 
     public Drawer clearActions() {
-        for (Control child : footer.children()) { if (child.parent() != null) child.parent().removeChild(child); child.queueFree(); }
-        footer.minimum(0, 0);
-        footer.visible(false);
+        for (Control child : footer.getChildren()) { if (child.getParent() != null) child.getParent().removeChild(child); child.queueFree(); }
+        footer.setMinimum(0, 0);
+        footer.setVisible(false);
         return this;
     }
 
     public Signal0 closed() { return closed.signal(); }
-    @Override public float contentDepth() { return depth; }
+    @Override public float getContentDepth() { return depth; }
 
-    public Drawer depth(float depth) { this.depth = depth; return this; }
-    public float depth() { return depth; }
+    public Drawer setDepth(float depth) { this.depth = depth; return this; }
+    public float getDepth() { return depth; }
 
-    public Drawer animationDuration(long milliseconds) {
+    public Drawer setAnimationDuration(long milliseconds) {
         if (milliseconds < 0) throw new IllegalArgumentException("Duration cannot be negative");
         advanceAnimation();
         durationMs = milliseconds;
@@ -203,18 +203,18 @@ public final class Drawer extends Container {
         transitionFrom = progress;
         transitionStart = clock.getAsLong();
         animating = true;
-        super.visible(true);
+        super.setVisible(true);
         requestLayout();
         advanceAnimation();
         return this;
     }
 
     /** Remains visible and intercepts input until the closing animation finishes. */
-    @Override public void visible(boolean visible) { open(visible); }
+    @Override public void setVisible(boolean visible) { open(visible); }
     public boolean isOpen() { return targetOpen; }
-    public boolean animating() { return animating; }
-    public Rect panelBounds() { return frame.absoluteBounds(); }
-    @Override public boolean focusScope() { return true; }
+    public boolean getAnimating() { return animating; }
+    public Rect getPanelBounds() { return frame.getAbsoluteBounds(); }
+    @Override public boolean getFocusScope() { return true; }
 
     private void advanceAnimation() {
         if (!animating) return;
@@ -228,7 +228,7 @@ public final class Drawer extends Container {
         if (phase == 1.0D) {
             animating = false;
             if (!targetOpen) {
-                super.visible(false);
+                super.setVisible(false);
                 closed.emit();
             }
         }
@@ -251,13 +251,13 @@ public final class Drawer extends Container {
         Placement placement = DebugBridge.value(this, "placement", this.placement);
         int requestedWidth = DebugBridge.value(this, "requestedWidth", this.requestedWidth);
         advanceAnimation();
-        int viewportWidth = Math.max(1, bounds().width());
+        int viewportWidth = Math.max(1, getBounds().width());
         int width = Math.min(viewportWidth, Math.max(1,
                 requestedWidth == 0 ? viewportWidth / 2 : requestedWidth));
         int visibleWidth = (int) Math.round(width * progress);
         int x = placement == Placement.LEFT ? visibleWidth - width : viewportWidth - visibleWidth;
         // Move the actual layout rectangle, so hit tests, focus and native inputs follow the slide.
-        fitChild(frame, new Rect(x, 0, width, bounds().height()), font);
+        fitChild(frame, new Rect(x, 0, width, getBounds().height()), font);
     }
 
     @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
@@ -265,11 +265,11 @@ public final class Drawer extends Container {
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             if (!isAlive()) return;
             DebugBridge.backend().paint(this, context, screenX, screenY);
-            if (!visible()) return;
+            if (!getVisible()) return;
             layoutPanel(context.getFont());
-            if (!visible()) return;
+            if (!getVisible()) return;
             GuiGraphics graphics = context.getGraphics();
-            Rect viewport = screenBounds(screenX, screenY);
+            Rect viewport = getScreenBounds(screenX, screenY);
             graphics.flush();
             graphics.pose().pushPose();
             graphics.pose().translate(0.0F, 0.0F, depth);
@@ -280,8 +280,8 @@ public final class Drawer extends Container {
                 if (background == null) background = ownPart("background", new Panel(OreTheme.FLOATING_BACKGROUND));
                 WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.FLOATING_BACKGROUND);
                 WidgetTheme style = entry == null ? context.getTheme().getPanelTheme().theme() : entry.theme();
-                title.color(titleColor).shadow(style.isTextShadow());
-                background.drawAt(context, frame.screenBounds(screenX, screenY));
+                title.setColor(titleColor).setShadow(style.isTextShadow());
+                background.drawAt(context, frame.getScreenBounds(screenX, screenY));
                 frame.draw(context, screenX, screenY);
                 graphics.flush();
             } finally {
@@ -307,7 +307,7 @@ public final class Drawer extends Container {
     }
 
     @Override public boolean onFocusKey(int keyCode, int modifiers) {
-        if (!targetOpen) return visible();
+        if (!targetOpen) return getVisible();
         if (keyCode != GLFW.GLFW_KEY_ESCAPE) return false;
         close();
         return true;
@@ -316,7 +316,7 @@ public final class Drawer extends Container {
 
     @Override public void debugProperties(java.util.List<DebugProperty> out) {
         super.debugProperties(out);
-        out.add(DebugProperty.number(title,"fontSize","Text",title::fontSize,0.0001,256));
+        out.add(DebugProperty.number(title,"fontSize","Text",title::getFontSize,0.0001,256));
         java.util.List<DebugProperty> paddingProperties = new java.util.ArrayList<>();
         frame.debugProperties(paddingProperties);
         paddingProperties.stream().filter(p -> java.util.Set.of("top","right","bottom","left").contains(p.key())).forEach(out::add);

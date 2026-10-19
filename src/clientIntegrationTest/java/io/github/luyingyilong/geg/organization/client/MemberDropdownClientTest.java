@@ -44,8 +44,8 @@ public final class MemberDropdownClientTest {
                 var root=canvas.getClass().getDeclaredField("window");root.setAccessible(true);window=(Window)root.get(canvas);
                 var scroll = canvas.getClass().getDeclaredField("membershipsScroll"); scroll.setAccessible(true); membershipsScroll = (Scroll)scroll.get(canvas);
                 var list = canvas.getClass().getDeclaredField("organizationList"); list.setAccessible(true); organizationList = (Box)list.get(canvas);
-                shell = membershipsScroll.parent().children();
-                Control previousRow = organizationList.children().get(0);
+                shell = membershipsScroll.getParent().getChildren();
+                Control previousRow = organizationList.getChildren().get(0);
                 for (int i = 0; i < 20; i++) ClientOrganizationScreen.acceptSnapshot(snapshot);
                 verifyMemberships();
                 check(previousRow.isQueuedForDeletion() || previousRow.isDisposed(), "Replaced rows are permanently cleaned up");
@@ -53,16 +53,16 @@ public final class MemberDropdownClientTest {
             }else if(phase==2&&ticks>45){
                 verifyMemberships();
                 capture("organization-list-before-details.png");
-                check(membershipsScroll.maxScrollY() > 0, "Only the organization list overflows its Scroll viewport");
-                check(shell.get(0).absoluteBounds().y() == 0, "Navbar stays at the top");
+                check(membershipsScroll.getMaxScrollY() > 0, "Only the organization list overflows its Scroll viewport");
+                check(shell.get(0).getAbsoluteBounds().y() == 0, "Navbar stays at the top");
                 membershipsScroll.setScroll(0, 30);
                 ClientOrganizationScreen.acceptSnapshot(snapshot); verifyMemberships();
-                check(membershipsScroll.scrollY() == 30, "A snapshot preserves the list's scroll position");
+                check(membershipsScroll.getScrollY() == 30, "A snapshot preserves the list's scroll position");
                 var show=canvas.getClass().getDeclaredMethod("showDetails",UUID.class);show.setAccessible(true);show.invoke(canvas,selected);
                 phase=10;
             }else if(phase==10&&ticks>55){
                 dropdown=find(window);check(dropdown!=null,"Retained member dropdown exists");
-                var a=EventGeometry.displayed(dropdown);x=a.x()+a.width()/2+window.context().originX();y=a.y()+a.height()/2+window.context().originY();
+                var a=EventGeometry.displayed(dropdown);x=a.x()+a.width()/2+window.getContext().getOriginX();y=a.y()+a.height()/2+window.getContext().getOriginY();
                 movePointer(x,y); phase=11;
             }else if(phase==11&&ticks>58){
                 mouse(org.lwjgl.glfw.GLFW.GLFW_PRESS);
@@ -70,15 +70,15 @@ public final class MemberDropdownClientTest {
             }else if(phase==3&&ticks>61){
                 mouse(org.lwjgl.glfw.GLFW.GLFW_RELEASE);
                 check(dropdown.isOpen(),"Member dropdown opens after rendered frames");
-                check(window.context().popups().open(),"Overlay popup present");
-                window.context().popups().cancel();
+                check(window.getContext().getPopups().open(),"Overlay popup present");
+                window.getContext().getPopups().cancel();
                 var close=canvas.getClass().getDeclaredMethod("closeDetails"); close.setAccessible(true); close.invoke(canvas);
                 closedAt=ticks;phase=4;
             }else if(phase==4&&ticks>closedAt+15){
                 verifyMemberships();
-                check(window.children().stream().noneMatch(Control::isDisposed), "Returning from details retains a live root tree");
+                check(window.getChildren().stream().noneMatch(Control::isDisposed), "Returning from details retains a live root tree");
                 ClientOrganizationScreen.acceptSnapshot(new OrganizationSyncPacket(List.of(),List.of(),""));
-                check(organizationList.children().isEmpty(), "Leaving the last organization clears old rows");
+                check(organizationList.getChildren().isEmpty(), "Leaving the last organization clears old rows");
                 ClientOrganizationScreen.acceptSnapshot(snapshot);verifyMemberships();
                 closedAt=ticks;phase=5;
             }else if(phase==5&&ticks>closedAt+5){
@@ -101,19 +101,19 @@ public final class MemberDropdownClientTest {
     private static void capture(String name)throws Exception{
         var mc=Minecraft.getInstance();var path=mc.gameDirectory.toPath().resolve("screenshots/"+name);java.nio.file.Files.createDirectories(path.getParent());
         try(var image=net.minecraft.client.Screenshot.takeScreenshot(mc.getMainRenderTarget())){image.writeToFile(path);}
-        var field=net.minecraft.client.gui.GuiGraphics.class.getDeclaredField("scissorStack");field.setAccessible(true);var stack=field.get(window.context().mui().getGraphics());
+        var field=net.minecraft.client.gui.GuiGraphics.class.getDeclaredField("scissorStack");field.setAccessible(true);var stack=field.get(window.getContext().getMui().getGraphics());
         var rectangles=stack.getClass().getDeclaredField("stack");rectangles.setAccessible(true);
         check(((java.util.Collection<?>)rectangles.get(stack)).isEmpty(), "No clip remains after rendering " + name);
     }
     private static void verifyMemberships(){
         check(!membershipsScroll.isDisposed() && !organizationList.isDisposed(), "The list Scroll survives refreshes");
-        check(membershipsScroll.parent().children().equals(shell), "Navbar, action row and Scroll are reused");
-        check(organizationList.children().size()==snapshot.organizations().size(), "All memberships are present");
-        check(organizationList.children().stream().noneMatch(Control::isDisposed), "Visible organization rows are alive");
+        check(membershipsScroll.getParent().getChildren().equals(shell), "Navbar, action row and Scroll are reused");
+        check(organizationList.getChildren().size()==snapshot.organizations().size(), "All memberships are present");
+        check(organizationList.getChildren().stream().noneMatch(Control::isDisposed), "Visible organization rows are alive");
     }
     private static Dropdown<?> find(Control node){
-        if(node instanceof Dropdown<?> d && d.visible()&&!d.options().isEmpty())return d;
-        for(var child:node.children()){var d=find(child);if(d!=null)return d;}return null;
+        if(node instanceof Dropdown<?> d && d.getVisible()&&!d.getOptions().isEmpty())return d;
+        for(var child:node.getChildren()){var d=find(child);if(d!=null)return d;}return null;
     }
     private static void check(boolean value,String message){if(!value)throw new AssertionError(message);}
 }

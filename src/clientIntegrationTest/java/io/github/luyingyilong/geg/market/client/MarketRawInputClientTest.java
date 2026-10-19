@@ -41,10 +41,10 @@ public final class MarketRawInputClientTest {
                 number.textChanged().connect(number, value -> textSignals++);
             }else if(phase==2&&ticks>45){
                 Form form=(Form)field(ClientMarketScreen.class,null,"detailForm");
-                var node=form.children().stream().filter(FormItem.class::isInstance).map(FormItem.class::cast)
-                        .filter(item -> item.name().equals("quantity")).findFirst().orElseThrow().inputNode();
+                var node=form.getChildren().stream().filter(FormItem.class::isInstance).map(FormItem.class::cast)
+                        .filter(item -> item.getName().equals("quantity")).findFirst().orElseThrow().getInputNode();
                 check(!number.canHover() && number.canClickThrough(), "Tree editor must not block Canvas in native MUI hit testing");
-                var a=node.widgetBounds();x=a.x()+8;y=a.y()+a.height()/2;
+                var a=node.getWidgetBounds();x=a.x()+8;y=a.y()+a.height()/2;
                 move(x,y);phase=3;
             }else if(phase==3&&ticks>48){
                 mouse(GLFW.GLFW_PRESS);state("PRESS");phase=4;
@@ -113,7 +113,7 @@ public final class MarketRawInputClientTest {
     private static void mouse(int action){var cb=GLFW.glfwSetMouseButtonCallback(handle(),null);GLFW.glfwSetMouseButtonCallback(handle(),cb);cb.invoke(handle(),0,action,0);}
     private static void key(int code,int modifiers){var cb=GLFW.glfwSetKeyCallback(handle(),null);GLFW.glfwSetKeyCallback(handle(),cb);cb.invoke(handle(),code,0,GLFW.GLFW_PRESS,modifiers);cb.invoke(handle(),code,0,GLFW.GLFW_RELEASE,modifiers);}
     private static void text(String value){var cb=GLFW.glfwSetCharModsCallback(handle(),null);GLFW.glfwSetCharModsCallback(handle(),cb);check(cb!=null,"Minecraft character/modifier callback present");value.codePoints().forEach(cp->cb.invoke(handle(),cp,0));}
-    private static void state(String label){System.out.println("RAW_STATE "+label+" focused="+number.isFocused()+" enabled="+number.isEnabled()+" ore="+window.focusManager().focused()+" text="+number.getText()+" mouse="+window.context().mui().getAbsMouseX()+","+window.context().mui().getAbsMouseY()+" cursor="+InputGeometryProbe.cursor(number).x);}
+    private static void state(String label){System.out.println("RAW_STATE "+label+" focused="+number.isFocused()+" enabled="+number.isEnabled()+" ore="+window.getFocusManager().getFocused()+" text="+number.getText()+" mouse="+window.getContext().getMui().getAbsMouseX()+","+window.getContext().getMui().getAbsMouseY()+" cursor="+InputGeometryProbe.cursor(number).x);}
     private static Object field(Class<?> type,Object owner,String name)throws Exception{var f=type.getDeclaredField(name);f.setAccessible(true);return f.get(owner);}
     private static void check(boolean value,String message){if(!value)throw new AssertionError(message);}
 }

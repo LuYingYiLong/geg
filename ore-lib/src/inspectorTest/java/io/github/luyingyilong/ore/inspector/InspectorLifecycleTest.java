@@ -10,7 +10,7 @@ public final class InspectorLifecycleTest {
             @Override public void lifecycle(Control control, LifecycleInfo info) { history.record(control, info); }
         });
         try {
-            Control root = new Control().debugName("root"), child = new Control().debugName("child"), part = new Control().debugName("part");
+            Control root = new Control().setDebugName("root"), child = new Control().setDebugName("child"), part = new Control().setDebugName("part");
             root.addChild(child); root.ownPart("label", part); root.queueFree("host ended"); LifecycleScheduler.flush();
             var list = history.snapshot();
             check(list.size() == 3 && list.stream().allMatch(i -> i.state() == LifecycleState.FREED), "Final cleanup records for entire ownership tree");

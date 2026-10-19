@@ -17,28 +17,28 @@ public final class LabelMarqueeGridTest {
                 return count[0] * 6;
             }
         };
-        Grid<Integer> grid = new Grid<Integer>().columns(96, 4, 4).adapter(new Grid.Adapter<>() {
-            public int size() { return 100; }
-            public Integer item(int index) { return index; }
-            public Object key(Integer item) { return item; }
+        Grid<Integer> grid = new Grid<Integer>().setColumns(96, 4, 4).setAdapter(new Grid.Adapter<>() {
+            public int getSize() { return 100; }
+            public Integer getItem(int index) { return index; }
+            public Object getKey(Integer item) { return item; }
             public int measureHeight(Integer item, int width, Font font) { return 42; }
             public Grid.View<Integer> createView() { return new Card(); }
         });
-        Scroll scroll = new Scroll().horizontal(Scroll.BarMode.DISABLED).content(grid);
+        Scroll scroll = new Scroll().setHorizontal(Scroll.BarMode.DISABLED).setContent(grid);
         int offset = 0;
         for (int frame = 0; frame < 30; frame++) {
             scroll.layout(new Rect(0, 0, 396, 90), font);
-            Card first = (Card) grid.children().stream().filter(child -> ((Card) child).item == 0).findFirst().orElseThrow();
-            offset = first.label.marqueeOffset(font, first.label.bounds().width(), 1000 + frame * 100L, true);
+            Card first = (Card) grid.getChildren().stream().filter(child -> ((Card) child).item == 0).findFirst().orElseThrow();
+            offset = first.label.marqueeOffset(font, first.label.getBounds().width(), 1000 + frame * 100L, true);
         }
         if (offset <= 0) throw new AssertionError("Repeated grid layout keeps resetting the visible label's marquee");
     }
 
     private static final class Card extends Container implements Grid.View<Integer> {
-        final Label label = new Label().overflow(Label.Overflow.MARQUEE);
+        final Label label = new Label().setOverflow(Label.Overflow.MARQUEE);
         int item;
         Card() { addChild(label); }
-        public void bind(Integer item) { this.item = item; label.text(Component.literal("A very long market item name " + item)); }
+        public void bind(Integer item) { this.item = item; label.setText(Component.literal("A very long market item name " + item)); }
         @Override public void layout(Rect bounds, Font font) {
             super.layout(bounds, font); fitChild(label, new Rect(0, 0, bounds.width(), 12), font);
         }

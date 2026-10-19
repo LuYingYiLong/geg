@@ -31,36 +31,36 @@ public final class ToastLayoutTest {
             }
         };
         long[] now = {0}; List<OreSounds.Cue> sounds = new ArrayList<>();
-        Toast toast = new Toast(() -> now[0], sounds::add).text(Component.literal("New mail")).duration(1000);
-        check(new Toast().duration() == 3000 && toast.type() == Toast.Type.NEUTRAL && !toast.visible());
+        Toast toast = new Toast(() -> now[0], sounds::add).setText(Component.literal("New mail")).setDuration(1000);
+        check(new Toast().getDuration() == 3000 && toast.getType() == Toast.Type.NEUTRAL && !toast.getVisible());
         ToastQueue queue = new ToastQueue(); queue.show("mail", toast);
-        check(toast.progress() == 0 && queue.layout(font, 320, 240).get(0).area().bottom() < 0);
+        check(toast.getProgress() == 0 && queue.layout(font, 320, 240).get(0).area().bottom() < 0);
         toast.open(); check(sounds.equals(List.of(OreSounds.Cue.TOAST)));
-        now[0] = 90; check(toast.progress() > 0 && toast.progress() < 1);
+        now[0] = 90; check(toast.getProgress() > 0 && toast.getProgress() < 1);
         now[0] = 180;
         Rect shown = queue.layout(font, 320, 240).get(0).area();
         check(shown.y() == 8 && shown.x() * 2 + shown.width() == 320);
         check(Toast.shadowBounds(shown).equals(shown.translated(1, 1)) && OreTheme.TOAST_SHADOW == 0x4D000000);
-        now[0] = 1180; check(toast.progress() == 1 && !toast.finished());
-        now[0] = 1260; check(toast.progress() > 0 && toast.progress() < 1);
-        now[0] = 1340; check(toast.finished() && queue.size() == 0);
+        now[0] = 1180; check(toast.getProgress() == 1 && !toast.getFinished());
+        now[0] = 1260; check(toast.getProgress() > 0 && toast.getProgress() < 1);
+        now[0] = 1340; check(toast.getFinished() && queue.size() == 0);
 
         now[0] = 2000;
-        Toast persistent = new Toast(() -> now[0], sounds::add).text(Component.literal("Working")).duration(0).open();
-        now[0] = 100000; check(!persistent.finished() && persistent.progress() == 1);
-        persistent.close(); now[0] += 80; double progress = persistent.progress(); persistent.close();
-        check(progress > 0 && progress < 1); now[0] += 80; check(persistent.finished());
+        Toast persistent = new Toast(() -> now[0], sounds::add).setText(Component.literal("Working")).setDuration(0).open();
+        now[0] = 100000; check(!persistent.getFinished() && persistent.getProgress() == 1);
+        persistent.close(); now[0] += 80; double progress = persistent.getProgress(); persistent.close();
+        check(progress > 0 && progress < 1); now[0] += 80; check(persistent.getFinished());
 
         queue.clear(); now[0] = 200000; sounds.clear();
-        Toast first = new Toast(() -> now[0], sounds::add).text(Component.literal("First"));
+        Toast first = new Toast(() -> now[0], sounds::add).setText(Component.literal("First"));
         queue.show("shared", first); now[0] += 1000;
-        Toast updated = queue.show("shared", new Toast(() -> now[0], sounds::add).text(Component.literal("Updated"))
-                .type(Toast.Type.INFORMATIVE).duration(5000));
+        Toast updated = queue.show("shared", new Toast(() -> now[0], sounds::add).setText(Component.literal("Updated"))
+                .setType(Toast.Type.INFORMATIVE).setDuration(5000));
         check(updated == first && queue.size() == 1 && sounds.size() == 1);
-        check(first.text().getString().equals("Updated") && first.duration() == 5000 && first.progress() == 1);
-        now[0] += 4000; check(!first.finished());
+        check(first.getText().getString().equals("Updated") && first.getDuration() == 5000 && first.getProgress() == 1);
+        now[0] += 4000; check(!first.getFinished());
         for (int i = 0; i < 4; i++) queue.show("item:" + i, new Toast(() -> now[0], sounds::add)
-                .text(Component.literal("邮件提示".repeat(30))).duration(0));
+                .setText(Component.literal("邮件提示".repeat(30))).setDuration(0));
         check(queue.size() == 3);
         now[0] += Toast.ENTER_DURATION;
         for (int width : new int[]{127, 128, 129, 854}) for (int height : new int[]{40, 127, 240}) {
@@ -73,30 +73,30 @@ public final class ToastLayoutTest {
             }
         }
         for (Toast.Type type : Toast.Type.values()) {
-            first.type(type);
-            check(type.color() == Tag.Type.valueOf(type.name()).color());
-            check(((Label) first.children().get(0)).color() == Tag.Type.valueOf(type.name()).textColor());
+            first.setType(type);
+            check(type.getColor() == Tag.Type.valueOf(type.name()).getColor());
+            check(((Label) first.getChildren().get(0)).getColor() == Tag.Type.valueOf(type.name()).textColor());
         }
         textCentering(font);
         queue.clear(); check(queue.size() == 0);
-        try { first.duration(-1); throw new AssertionError("Negative duration accepted"); } catch (IllegalArgumentException expected) { }
+        try { first.setDuration(-1); throw new AssertionError("Negative duration accepted"); } catch (IllegalArgumentException expected) { }
     }
     private static void textCentering(Font font) {
         Toast toast = new Toast(() -> 0L, cue -> { }).open();
-        Label label = (Label) toast.children().get(0);
+        Label label = (Label) toast.getChildren().get(0);
         for (String text : new String[]{"Success", "领取成功", "邮件附件领取成功，请检查背包"}) {
-            toast.text(Component.literal(text));
+            toast.setText(Component.literal(text));
             for (int width : new int[]{64, 127, 128, 129, 320}) {
                 Size size = toast.measureSize(font, new Size(width, 200));
                 for (int extraHeight : new int[]{0, 1, 12}) {
                     Rect face = new Rect(10, 20, size.width(), size.height() + extraHeight);
                     toast.layout(face, font);
                     Rect textArea = toast.textBounds(face);
-                    check(label.absoluteBounds().equals(textArea));
+                    check(label.getAbsoluteBounds().equals(textArea));
                     int lines = label.displayedLines(font, textArea.width(), textArea.height()).size();
                     float startY = textArea.y() + label.firstLineOrigin(textArea.height(), lines);
                     float visibleHeight = OreTextMetrics.body().opticalHeight(lines, 1);
-                    check(label.opticalCenter());
+                    check(label.getOpticalCenter());
                     check(Math.abs(2 * startY + visibleHeight - (2 * face.y() + face.height())) <= 1);
                     check(startY >= face.y() + 1 && startY + visibleHeight <= face.bottom() - 1);
                     check(textArea.bottom() == face.bottom() - 2);

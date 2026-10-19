@@ -17,7 +17,7 @@ public final class InspectorSignalsTest {
         SignalDiagnostics.clearHistory();
         Box root = new Box();
         Button button = new Button(Component.literal("Purchase"));
-        button.debugName("Purchase button");
+        button.setDebugName("Purchase button");
         Control receiver = new Control();
         root.add(button).add(receiver);
         int[] actions = {0};
@@ -34,10 +34,10 @@ public final class InspectorSignalsTest {
 
         InspectorSignalPanel view = new InspectorSignalPanel();
         view.update(panel);
-        int labels = view.body().children().size();
-        Control original = view.body().children().get(0);
+        int labels = view.body().getChildren().size();
+        Control original = view.body().getChildren().get(0);
         view.update(panel);
-        check(view.body().children().size() == labels && view.body().children().get(0) == original, "Unchanged snapshots do not rebuild diagnostic controls");
+        check(view.body().getChildren().size() == labels && view.body().getChildren().get(0) == original, "Unchanged snapshots do not rebuild diagnostic controls");
         check(actions[0] == 0, "Reading and displaying signals cannot activate business callbacks");
 
         root.removeChild(button);
@@ -56,7 +56,7 @@ public final class InspectorSignalsTest {
 
         // Inspector Tree rows can be instantiated during layout rather than update().
         Control[] lazy = {null};
-        Window diagnosticWindow = Window.embedded().inspectable(false).content(new Control() {
+        Window diagnosticWindow = Window.embedded().setInspectable(false).setContent(new Control() {
             @Override public void layout(Rect bounds, net.minecraft.client.gui.Font font) {
                 super.layout(bounds, font);
                 if (lazy[0] == null) {

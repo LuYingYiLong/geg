@@ -30,41 +30,41 @@ public final class Dropdown<T> extends Control {
     public Dropdown(T initialValue,int maxVisibleItems){this(initialValue,maxVisibleItems,Button.Size.MEDIUM);}
     public Dropdown(T initialValue,int maxVisibleItems,Button.Size size){
         selected=initialValue;this.maxVisibleItems=Math.max(1,maxVisibleItems);this.size=Objects.requireNonNull(size);
-        triggerButton=ownPart("trigger", new Button().size(size).alignment(Button.TextAlignment.LEFT).trailingIcon(ARROW));
-        minimum(0,size.height());focusable(true);focusExpansion(1);
+        triggerButton=ownPart("trigger", new Button().setSize(size).setAlignment(Button.TextAlignment.LEFT).setTrailingIcon(ARROW));
+        setMinimum(0,size.getHeight());setFocusable(true);setFocusExpansion(1);
     }
     public Signal<T> selectionChanged(){return selectionChanged.signal();}
     public Signal<T> itemActivated(){return itemActivated.signal();}
-    public Dropdown<T> selected(T value){T before=selected;setSelectedNoSignal(value);if(!Objects.equals(before,selected))selectionChanged.emit(selected);return this;}
+    public Dropdown<T> setSelected(T value){T before=selected;setSelectedNoSignal(value);if(!Objects.equals(before,selected))selectionChanged.emit(selected);return this;}
     public Dropdown<T> setSelectedNoSignal(T value){
         if(value!=null&&options.stream().noneMatch(option->Objects.equals(option.value(),value)))throw new IllegalArgumentException("Unknown dropdown option");
         if(!Objects.equals(selected,value)){selected=value;requestLayout();}return this;
     }
 
-    public Dropdown<T> triggerLabel(Component label){triggerLabel=Objects.requireNonNull(label);requestLayout();return this;}
-    public Dropdown<T> icon(Button.Icon icon){triggerButton.icon(icon);requestLayout();return this;}
-    public Dropdown<T> icon(ResourceLocation texture,int width,int height){return icon(new Button.Icon(texture,width,height));}
-    public Button.Icon icon(){return triggerButton.icon();}
-    public Dropdown<T> type(Button.Type type){triggerButton.type(type);return this;}
-    public Button.Type type(){return triggerButton.type();}
-    public Dropdown<T> showArrow(boolean value){showArrow=value;triggerButton.trailingIcon(value?ARROW:null);requestLayout();return this;}
-    public boolean showArrow(){return showArrow;}
-    public Dropdown<T> checkable(boolean value){checkable=value;return this;}
-    public boolean checkable(){return checkable;}
-    public Button.Size controlSize(){return size;}
-    public int maxVisibleItems(){return maxVisibleItems;}
-    public List<Option<T>> options(){return options;}
-    public T selected(){return selected;}
+    public Dropdown<T> setTriggerLabel(Component label){triggerLabel=Objects.requireNonNull(label);requestLayout();return this;}
+    public Dropdown<T> setIcon(Button.Icon icon){triggerButton.setIcon(icon);requestLayout();return this;}
+    public Dropdown<T> setIcon(ResourceLocation texture,int width,int height){return setIcon(new Button.Icon(texture,width,height));}
+    public Button.Icon getIcon(){return triggerButton.getIcon();}
+    public Dropdown<T> setType(Button.Type type){triggerButton.setType(type);return this;}
+    public Button.Type getType(){return triggerButton.getType();}
+    public Dropdown<T> setShowArrow(boolean value){showArrow=value;triggerButton.setTrailingIcon(value?ARROW:null);requestLayout();return this;}
+    public boolean getShowArrow(){return showArrow;}
+    public Dropdown<T> setCheckable(boolean value){checkable=value;return this;}
+    public boolean getCheckable(){return checkable;}
+    public Button.Size getControlSize(){return size;}
+    public int getMaxVisibleItems(){return maxVisibleItems;}
+    public List<Option<T>> getOptions(){return options;}
+    public T getSelected(){return selected;}
     public boolean isOpen(){return open;}
     public void setOptions(List<Option<T>> values){
         List<Option<T>> next=List.copyOf(values);
         if(!options.equals(next)){close();options=next;requestLayout();}
-        if(options.stream().noneMatch(option->Objects.equals(option.value(),selected)))selected(options.isEmpty()?null:options.get(0).value());
+        if(options.stream().noneMatch(option->Objects.equals(option.value(),selected)))setSelected(options.isEmpty()?null:options.get(0).value());
     }
     public void select(T value){
         close();
         if(options.stream().noneMatch(option->Objects.equals(option.value(),value)))return;
-        selected(value);
+        setSelected(value);
         itemActivated.emit(value);
     }
     public void close(){open=false;cancelInteraction();}
@@ -72,10 +72,10 @@ public final class Dropdown<T> extends Control {
     @Override public void onFocusChanged(boolean focused){if(!focused)cancelInteraction();}
     @Override public boolean acceptsFocus(){return super.acceptsFocus()&&!options.isEmpty();}
     private Component text(){return triggerLabel!=null?triggerLabel:options.stream().filter(option->Objects.equals(option.value(),selected)).findFirst().map(Option::label).orElse(Component.empty());}
-    @Override public int measureWidth(Font font,int available){triggerButton.label(text());return Math.max(super.measureWidth(font,available),triggerButton.measureWidth(font,available));}
+    @Override public int measureWidth(Font font,int available){triggerButton.setLabel(text());return Math.max(super.measureWidth(font,available),triggerButton.measureWidth(font,available));}
     @Override public int measureHeight(Font font,int available){return Math.max(super.measureHeight(font,available),triggerButton.measureHeight(font,available));}
     @Override protected void render(ModularGuiContext context,int x,int y){
-        Rect area=screenBounds(x,y);triggerButton.label(text());
+        Rect area=getScreenBounds(x,y);triggerButton.setLabel(text());
         DebugBridge.backend().internal(this,"trigger",triggerButton);
         boolean hovered=area.contains(context.getAbsMouseX(),context.getAbsMouseY());
         triggerButton.drawPresentation(context,area,hovered,activationKey!=-1||held&&hovered);
@@ -83,7 +83,7 @@ public final class Dropdown<T> extends Control {
     @Override protected boolean pointerDown(int x,int y){if(!hit(x,y)||options.isEmpty())return false;held=true;return true;}
     @Override protected boolean pointerUp(int x,int y,boolean over){boolean pending=held;held=false;if(pending&&over)activate();return pending;}
     @Override public boolean activate(){
-        if(!visible()||options.isEmpty())return false;
+        if(!getVisible()||options.isEmpty())return false;
         OreSounds.play(OreSounds.Cue.CLICK);open=!open;return true;
     }
     @Override public boolean onActivationPressed(int key){if(!acceptsFocus())return false;if(activationKey==-1)activationKey=key;return true;}

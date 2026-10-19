@@ -15,7 +15,7 @@ public final class FocusOverlay extends Control {
     @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
-            Rect bounds = focus.outlineBounds();
+            Rect bounds = focus.getOutlineBounds();
             if (bounds == null || bounds.width() < 2 || bounds.height() < 2) return;
             int x = screenX + bounds.x();
             int y = screenY + bounds.y();

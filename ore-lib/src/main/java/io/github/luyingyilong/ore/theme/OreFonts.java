@@ -22,7 +22,7 @@ public final class OreFonts {
     public static Component text(Component text, boolean hero) {
         // A child with its own font keeps that font through Component style inheritance.
         if (!text.getStyle().getFont().equals(Style.DEFAULT_FONT)) return text;
-        return text.copy().withStyle(style -> style.withFont(hero ? io.github.luyingyilong.ore.OreClient.options().heroFont() : io.github.luyingyilong.ore.OreClient.options().bodyFont()));
+        return text.copy().withStyle(style -> style.withFont(hero ? io.github.luyingyilong.ore.OreClient.getOptions().heroFont() : io.github.luyingyilong.ore.OreClient.getOptions().bodyFont()));
     }
 
     /** Alpha is explicit ARGB, including 0; vanilla treats alpha 0..3 as opaque RGB colors. */

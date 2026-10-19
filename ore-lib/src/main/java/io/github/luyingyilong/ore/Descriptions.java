@@ -20,8 +20,8 @@ import java.util.Objects;
 public final class Descriptions extends Container {
     public enum Layout { HORIZONTAL, VERTICAL }
 
-    private final Box box = new Box().gap(6);
-    private final Label title = new Label().wrap(Label.Wrap.CHARACTER).color(OreTheme.TEXT_WHITE);
+    private final Box box = new Box().setGap(6);
+    private final Label title = new Label().setWrap(Label.Wrap.CHARACTER).setColor(OreTheme.TEXT_WHITE);
     private final Map<String, DescriptionItem> items = new LinkedHashMap<>();
     private final List<Box> rows = new ArrayList<>();
     private Layout layout = Layout.HORIZONTAL;
@@ -38,68 +38,68 @@ public final class Descriptions extends Container {
     private int arrangedColumns;
 
     public Descriptions() {
-        title.visible(false);
-        title.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+        title.setVisible(false);
+        title.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         box.add(title);
         super.addChild(box);
-        sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+        setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
     }
 
-    public Descriptions title(Component text) {
-        title.text(Objects.requireNonNull(text));
-        title.visible(!text.getString().isEmpty());
+    public Descriptions setTitle(Component text) {
+        title.setText(Objects.requireNonNull(text));
+        title.setVisible(!text.getString().isEmpty());
         return this;
     }
-    public Component title() { return title.text(); }
-    public Label titleNode() { return title; }
-    public Descriptions titleColor(int color) { title.color(color); return this; }
-    public Descriptions titleFontSize(float pixels) { title.fontSize(pixels); return this; }
-    public float titleFontSize() { return title.fontSize(); }
-    public Descriptions labelColor(int color) {
-        labelColor = color; for (DescriptionItem item : items.values()) item.labelNode().color(color); return this;
+    public Component getTitle() { return title.getText(); }
+    public Label getTitleNode() { return title; }
+    public Descriptions setTitleColor(int color) { title.setColor(color); return this; }
+    public Descriptions setTitleFontSize(float pixels) { title.setFontSize(pixels); return this; }
+    public float getTitleFontSize() { return title.getFontSize(); }
+    public Descriptions setLabelColor(int color) {
+        labelColor = color; for (DescriptionItem item : items.values()) item.getLabelNode().setColor(color); return this;
     }
-    public int labelColor() { return labelColor; }
-    public Descriptions contentColor(int color) {
-        contentColor = color; for (DescriptionItem item : items.values()) item.contentNode().color(color); return this;
+    public int getLabelColor() { return labelColor; }
+    public Descriptions setContentColor(int color) {
+        contentColor = color; for (DescriptionItem item : items.values()) item.getContentNode().setColor(color); return this;
     }
-    public int contentColor() { return contentColor; }
-    public Descriptions fontSize(float pixels) {
+    public int getContentColor() { return contentColor; }
+    public Descriptions setFontSize(float pixels) {
         if (!(pixels > 0.0F) || !Float.isFinite(pixels)) throw new IllegalArgumentException("Font size must be positive and finite");
         fontSize = pixels;
-        for (DescriptionItem item : items.values()) { item.labelNode().fontSize(pixels); item.contentNode().fontSize(pixels); }
+        for (DescriptionItem item : items.values()) { item.getLabelNode().setFontSize(pixels); item.getContentNode().setFontSize(pixels); }
         requestLayout();
         return this;
     }
-    public float fontSize() { return fontSize; }
-    public Descriptions layout(Layout layout) { this.layout = Objects.requireNonNull(layout); configureItems(); return this; }
-    public Layout layout() { return layout; }
-    public Descriptions colon(boolean colon) { this.colon = colon; configureItems(); return this; }
-    public boolean colon() { return colon; }
-    public Descriptions columns(int columns) {
+    public float getFontSize() { return fontSize; }
+    public Descriptions setLayout(Layout layout) { this.layout = Objects.requireNonNull(layout); configureItems(); return this; }
+    public Layout getLayout() { return layout; }
+    public Descriptions setColon(boolean colon) { this.colon = colon; configureItems(); return this; }
+    public boolean getColon() { return colon; }
+    public Descriptions setColumns(int columns) {
         if (columns < 1) throw new IllegalArgumentException("At least one column is required");
         this.columns = columns; requestLayout(); return this;
     }
-    public int columns() { return columns; }
-    public Descriptions minimumColumnWidth(int pixels) {
+    public int getColumns() { return columns; }
+    public Descriptions setMinimumColumnWidth(int pixels) {
         if (pixels < 1) throw new IllegalArgumentException("Column minimum must be positive");
         minimumColumnWidth = pixels; requestLayout(); return this;
     }
-    public int minimumColumnWidth() { return minimumColumnWidth; }
-    public Descriptions rowGap(int pixels) {
+    public int getMinimumColumnWidth() { return minimumColumnWidth; }
+    public Descriptions setRowGap(int pixels) {
         if (pixels < 0) throw new IllegalArgumentException("Negative row gap");
-        rowGap = pixels; box.gap(pixels); return this;
+        rowGap = pixels; box.setGap(pixels); return this;
     }
-    public int rowGap() { return rowGap; }
-    public Descriptions columnGap(int pixels) {
+    public int getRowGap() { return rowGap; }
+    public Descriptions setColumnGap(int pixels) {
         if (pixels < 0) throw new IllegalArgumentException("Negative column gap");
         columnGap = pixels; arrangedColumns = 0; requestLayout(); return this;
     }
-    public int columnGap() { return columnGap; }
-    public Descriptions itemGap(int pixels) {
+    public int getColumnGap() { return columnGap; }
+    public Descriptions setItemGap(int pixels) {
         if (pixels < 0) throw new IllegalArgumentException("Negative item gap");
         itemGap = pixels; configureItems(); return this;
     }
-    public int itemGap() { return itemGap; }
+    public int getItemGap() { return itemGap; }
 
     /** Add values with stable keys, so callers can update individual labels without replacing nodes. */
     public Descriptions add(String key, Component label, Component content) {
@@ -107,33 +107,34 @@ public final class Descriptions extends Container {
     }
     public Descriptions add(DescriptionItem item) {
         Objects.requireNonNull(item);
-        if (items.containsKey(item.key())) throw new IllegalArgumentException("Duplicate description: " + item.key());
-        if (item.parent() != null) throw new IllegalStateException("Description already has a parent");
+        if (items.containsKey(item.getKey())) throw new IllegalArgumentException("Duplicate description: " + item.getKey());
+        if (item.getParent() != null) throw new IllegalStateException("Description already has a parent");
         item.configure(layout, colon, itemGap);
-        item.labelNode().color(labelColor).fontSize(fontSize);
-        item.contentNode().color(contentColor).fontSize(fontSize);
-        items.put(item.key(), item);
+        item.getLabelNode().setColor(labelColor).setFontSize(fontSize);
+        item.getContentNode().setColor(contentColor).setFontSize(fontSize);
+        items.put(item.getKey(), item);
         box.add(item);
         requestLayout();
         return this;
     }
-    public DescriptionItem item(String key) {
+    public DescriptionItem getItem(String key) {
+        pruneFreedItems();
         DescriptionItem item = items.get(key);
         if (item == null) throw new IllegalArgumentException("Unknown description: " + key);
         return item;
     }
-    public List<DescriptionItem> items() { return List.copyOf(items.values()); }
+    public List<DescriptionItem> getItems() { pruneFreedItems(); return List.copyOf(items.values()); }
     @Override public Descriptions addChild(Control child) {
         if (!(child instanceof DescriptionItem item)) throw new IllegalArgumentException("Descriptions accepts DescriptionItem only");
         return add(item);
     }
     @Override public boolean removeChild(Control child) {
-        return child instanceof DescriptionItem item && items.get(item.key()) == item && remove(item.key());
+        return child instanceof DescriptionItem item && items.get(item.getKey()) == item && remove(item.getKey());
     }
     public boolean remove(String key) {
         DescriptionItem item = items.remove(key);
         if (item == null) return false;
-        item.parent().removeChild(item);
+        if (item.getParent() != null) item.getParent().removeChild(item);
         requestLayout();
         return true;
     }
@@ -144,7 +145,7 @@ public final class Descriptions extends Container {
     }
 
     private int columnMinimum() {
-        return Math.max(minimumColumnWidth, items.values().stream().filter(c -> c.isAlive() && c.visible()).mapToInt(Control::minimumWidth).max().orElse(0));
+        return Math.max(minimumColumnWidth, items.values().stream().filter(c -> c.isAlive() && c.getVisible()).mapToInt(Control::getMinimumWidth).max().orElse(0));
     }
 
     private void configureItems() {
@@ -153,43 +154,52 @@ public final class Descriptions extends Container {
     }
 
     private void arrange(int width) {
-        List<DescriptionItem> visible = items.values().stream().filter(c -> c.isAlive() && c.visible()).toList();
+        pruneFreedItems();
+        List<DescriptionItem> visible = items.values().stream().filter(c -> c.isAlive() && c.getVisible()).toList();
         int count = effectiveColumns(width);
         if (arranged.equals(visible) && arrangedColumns == count) return;
-        for (DescriptionItem item : items.values()) item.parent().removeChild(item);
-        for (Box row : rows) { if (row.parent() != null) row.parent().removeChild(row); row.queueFree(); }
+        for (DescriptionItem item : items.values()) if (item.getParent() != null) item.getParent().removeChild(item);
+        for (Box row : rows) { if (row.getParent() != null) row.getParent().removeChild(row); row.queueFree(); }
         rows.clear();
         for (int index = 0; index < visible.size(); index += count) {
-            Box row = new Box().orientation(Box.Orientation.HORIZONTAL).gap(columnGap);
-            row.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+            Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(columnGap);
+            row.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
             for (int column = 0; column < count; column++) {
                 if (index + column < visible.size()) row.add(visible.get(index + column));
-                else row.add(new Control().sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL));
+                else row.add(new Control().setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL));
             }
             rows.add(row);
             box.add(row);
         }
         // Hidden items remain owned by this descriptions tree and can be shown again later.
-        for (DescriptionItem item : items.values()) if (!item.visible()) box.add(item);
+        for (DescriptionItem item : items.values()) if (!item.getVisible()) box.add(item);
         arranged = visible;
         arrangedColumns = count;
     }
 
+    private void pruneFreedItems() {
+        items.values().removeIf(item -> {
+            if (item.isAlive()) return false;
+            if (item.getParent() != null) item.getParent().removeChild(item);
+            return true;
+        });
+    }
+
     private Size measure(Font font, int offeredWidth) {
-        int width = Math.max(minimumWidth(), items.values().stream().anyMatch(Control::visible)
+        int width = Math.max(getMinimumWidth(), items.values().stream().anyMatch(Control::getVisible)
                 ? Math.max(columnMinimum(), offeredWidth) : offeredWidth);
         arrange(width);
-        int height = title.visible() ? title.measureHeight(font, width) : 0;
+        int height = title.getVisible() ? title.measureHeight(font, width) : 0;
         int columnWidth = Math.max(1, (width - Math.max(0, arrangedColumns - 1) * columnGap) / Math.max(1, arrangedColumns));
         for (Box row : rows) {
             int rowHeight = 0;
-            for (Control child : row.children()) if (child instanceof DescriptionItem item) {
+            for (Control child : row.getChildren()) if (child instanceof DescriptionItem item) {
                 rowHeight = Math.max(rowHeight, item.measureSize(font, new Size(columnWidth, Integer.MAX_VALUE)).height());
             }
             if (height > 0) height += rowGap;
             height += rowHeight;
         }
-        return new Size(width, Math.max(minimumHeight(), height));
+        return new Size(width, Math.max(getMinimumHeight(), height));
     }
 
     @Override public Size measureSize(Font font, Size available) {
@@ -207,9 +217,9 @@ public final class Descriptions extends Container {
             // Boxes receive explicit measured row heights; each item still lays out its own label/value Box.
             int columnWidth = Math.max(1, (measured.width() - Math.max(0, arrangedColumns - 1) * columnGap) / Math.max(1, arrangedColumns));
             for (Box row : rows) {
-                int height = row.children().stream().filter(DescriptionItem.class::isInstance)
+                int height = row.getChildren().stream().filter(DescriptionItem.class::isInstance)
                         .mapToInt(child -> child.measureSize(font, new Size(columnWidth, Integer.MAX_VALUE)).height()).max().orElse(0);
-                if (row.minimumHeight() != height) row.minimum(0, height);
+                if (row.getMinimumHeight() != height) row.setMinimum(0, height);
             }
             fitChild(box, new Rect(0, 0, measured.width(), Math.max(measured.height(), bounds.height())), font);
         }

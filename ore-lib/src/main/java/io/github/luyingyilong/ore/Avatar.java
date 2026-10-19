@@ -18,7 +18,7 @@ import java.util.function.Function;
 /** A square player face with the hat layer and vanilla default; unidentified sources use initials. */
 public final class Avatar extends Container {
     public static final int DEFAULT_SIZE = 24;
-    private final Label initial = ownPart("initial", new Label().align(Label.Horizontal.CENTER, Label.Vertical.CENTER));
+    private final Label initial = ownPart("initial", new Label().setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER));
     private final Function<GameProfile, AvatarSkins.Skin> skins;
     private GameProfile profile;
     private AvatarSkins.Skin skin;
@@ -32,24 +32,24 @@ public final class Avatar extends Container {
     Avatar(Function<GameProfile, AvatarSkins.Skin> skins) {
         this.skins = Objects.requireNonNull(skins);
         addChild(initial);
-        sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        size(DEFAULT_SIZE);
-        initials("");
+        setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        setSize(DEFAULT_SIZE);
+        setInitials("");
     }
 
-    public Avatar size(int pixels) {
+    public Avatar setSize(int pixels) {
         if (pixels < 1) throw new IllegalArgumentException("Avatar size must be positive");
-        minimum(pixels, pixels).preferred(pixels, pixels);
-        initial.fontSize(Math.max(8.0F, pixels / 2.0F));
+        setMinimum(pixels, pixels).setPreferred(pixels, pixels);
+        initial.setFontSize(Math.max(8.0F, pixels / 2.0F));
         return this;
     }
 
-    public Avatar player(UUID id, String name) {
+    public Avatar setPlayer(UUID id, String name) {
         String display = Objects.requireNonNullElse(name, "");
-        return id == null && display.isBlank() ? initials(display) : player(new GameProfile(id, display));
+        return id == null && display.isBlank() ? setInitials(display) : setPlayer(new GameProfile(id, display));
     }
 
-    public Avatar player(GameProfile player) {
+    public Avatar setPlayer(GameProfile player) {
         Objects.requireNonNull(player);
         if (profile != null && profile.equals(player) && profile.getProperties().equals(player.getProperties())) return this;
         profile = new GameProfile(player.getId(), player.getName());
@@ -59,7 +59,7 @@ public final class Avatar extends Container {
     }
 
     /** Source-only/system identities deliberately do not issue a player-skin lookup. */
-    public Avatar initials(String name) {
+    public Avatar setInitials(String name) {
         profile = null;
         reset(Objects.requireNonNullElse(name, ""));
         return this;
@@ -69,15 +69,15 @@ public final class Avatar extends Container {
         this.name = name;
         requested = false;
         skin = null;
-        initial.text(Component.literal(initial(name))).visible(true);
+        initial.setText(Component.literal(initial(name))).setVisible(true);
     }
 
-    public String name() { return name; }
-    public UUID playerId() { return profile == null ? null : profile.getId(); }
-    public Avatar hatLayer(boolean hatLayer) { this.hatLayer = hatLayer; return this; }
-    public boolean hatLayer() { return hatLayer; }
-    public Avatar backgroundColor(int color) { backgroundColor = color; return this; }
-    public int backgroundColor() { return backgroundColor; }
+    public String getName() { return name; }
+    public UUID getPlayerId() { return profile == null ? null : profile.getId(); }
+    public Avatar setHatLayer(boolean hatLayer) { this.hatLayer = hatLayer; return this; }
+    public boolean getHatLayer() { return hatLayer; }
+    public Avatar setBackgroundColor(int color) { backgroundColor = color; return this; }
+    public int getBackgroundColor() { return backgroundColor; }
 
     static String initial(String name) {
         String text = name.strip();
@@ -104,8 +104,8 @@ public final class Avatar extends Container {
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
         var current = skin();
         var texture = current == null ? null : current.texture();
-        initial.visible(texture == null);
-        Rect area = screenBounds(screenX, screenY);
+        initial.setVisible(texture == null);
+        Rect area = getScreenBounds(screenX, screenY);
         var graphics = context.getGraphics();
         int side = Math.min(area.width(), area.height());
         int x = area.x() + (area.width() - side) / 2, y = area.y() + (area.height() - side) / 2;

@@ -25,13 +25,13 @@ public final class TableControlCellTest {
         private final Button favorite;
 
         private Actions(List<String> events) {
-            buy = Signals.configure(new Button(cue -> events.add(cue.name())).size(Button.Size.SMALL), connected -> connected.pressed().connect(connected, () -> events.add(row.id() + ":buy")));
-            favorite = Signals.configure(new Button(cue -> events.add(cue.name())).size(Button.Size.SMALL).toggleButton(true), connected -> connected.pressed().connect(connected, () -> events.add(row.id() + ":favorite:" + favoriteState())));
+            buy = Signals.configure(new Button(cue -> events.add(cue.name())).setSize(Button.Size.SMALL), connected -> connected.pressed().connect(connected, () -> events.add(row.id() + ":buy")));
+            favorite = Signals.configure(new Button(cue -> events.add(cue.name())).setSize(Button.Size.SMALL).setToggleButton(true), connected -> connected.pressed().connect(connected, () -> events.add(row.id() + ":favorite:" + favoriteState())));
             addChild(buy);
             addChild(favorite);
         }
 
-        private boolean favoriteState() { return favorite.buttonPressed(); }
+        private boolean favoriteState() { return favorite.getButtonPressed(); }
         private void bind(Item row) {
             this.row = row;
             favorite.setButtonPressedNoSignal(row.favorite());
@@ -49,7 +49,7 @@ public final class TableControlCellTest {
     public static void main(String[] args) {
         List<String> events = new ArrayList<>();
         int[] created = {0};
-        Table<Item> table = new Table<Item>().rowKey(Item::id)
+        Table<Item> table = new Table<Item>().setRowKey(Item::id)
                 .column(new Table.Column<>("name", Component.literal("Name"), 40, 40, 0,
                         width -> 20, (context, row, bounds) -> { }))
                 .column(new Table.Column<>("actions", Component.literal("Actions"), 110, 160, 1,
@@ -58,19 +58,19 @@ public final class TableControlCellTest {
                             return new Actions(events);
                         }, Actions::bind)));
         List<Item> rows = IntStream.range(0, 500).mapToObj(i -> new Item(i, false)).toList();
-        table.rows(rows);
+        table.setRows(rows);
         Overlay overlay = new Overlay();
-        Window window = new Window(true).content(table).overlay(overlay);
+        Window window = new Window(true).setContent(table).setOverlay(overlay);
         window.layoutViewport(200, 100, null);
         check(!table.acceptsFocus() && created[0] < 10);
         Actions first = actions(table, 0);
-        Rect buy = first.buy.absoluteBounds();
-        Rect favorite = first.favorite.absoluteBounds();
+        Rect buy = first.buy.getAbsoluteBounds();
+        Rect favorite = first.favorite.getAbsoluteBounds();
         int x = buy.x() + 2;
         int y = buy.y() + 2;
         check(buy.height() == favorite.height() && buy.height() == 18);
         check(io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null) && events.isEmpty());
-        check(window.focusManager().focused() == first.buy);
+        check(window.getFocusManager().getFocused() == first.buy);
         check(io.github.luyingyilong.ore.event.WindowInputs.release(window,favorite.x() + 2, favorite.y() + 2) && events.isEmpty());
         io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,x, y);
@@ -79,16 +79,16 @@ public final class TableControlCellTest {
         events.clear();
         io.github.luyingyilong.ore.event.WindowInputs.press(window,favorite.x() + 2, favorite.y() + 2, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,favorite.x() + 2, favorite.y() + 2);
-        check(first.favorite.buttonPressed() && events.equals(List.of("CLICK", "0:favorite:true")));
+        check(first.favorite.getButtonPressed() && events.equals(List.of("CLICK", "0:favorite:true")));
 
         events.clear();
-        first.buy.disabled(true);
+        first.buy.setDisabled(true);
         io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,x, y);
         check(events.isEmpty() && !first.buy.acceptsFocus());
-        first.buy.disabled(false);
+        first.buy.setDisabled(false);
         io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null);
-        table.rows(List.copyOf(rows));
+        table.setRows(List.copyOf(rows));
         window.layoutViewport(200, 100, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,x, y);
         check(events.equals(List.of("CLICK", "0:buy"))); // Equal snapshots preserve in-flight clicks.
@@ -101,33 +101,33 @@ public final class TableControlCellTest {
         table.setScroll(0);
         io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null);
         Button focusedBeforeRefresh = actions(table, 0).buy;
-        table.rows(IntStream.range(0, 500).mapToObj(i -> new Item(i, true)).toList());
+        table.setRows(IntStream.range(0, 500).mapToObj(i -> new Item(i, true)).toList());
         window.layoutViewport(200, 100, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,x, y);
-        check(events.isEmpty() && actions(table, 0).favorite.buttonPressed());
-        check(window.focusManager().focused() == focusedBeforeRefresh);
+        check(events.isEmpty() && actions(table, 0).favorite.getButtonPressed());
+        check(window.getFocusManager().getFocused() == focusedBeforeRefresh);
 
         // Inserting a row changes indices, but stable keys preserve the original button instances.
         List<Item> inserted = new ArrayList<>();
         inserted.add(new Item(-1, false));
         inserted.addAll(IntStream.range(0, 500).mapToObj(i -> new Item(i, true)).toList());
-        table.rows(inserted);
+        table.setRows(inserted);
         window.layoutViewport(200, 100, null);
         check(actions(table, 0).buy == focusedBeforeRefresh);
-        table.rows(inserted.subList(1, inserted.size()));
+        table.setRows(inserted.subList(1, inserted.size()));
         window.layoutViewport(200, 100, null);
         check(actions(table, 0).buy == focusedBeforeRefresh);
 
         // Scroll through the entire data source: callbacks must use the rebound row, not the old row.
         int initialCreated = created[0];
-        for (int scroll = 0; scroll < table.contentHeight(); scroll += 70) table.setScroll(scroll);
+        for (int scroll = 0; scroll < table.getContentHeight(); scroll += 70) table.setScroll(scroll);
         check(created[0] < 20 && created[0] <= initialCreated + 8);
-        check(window.focusManager().focused() == null); // Recycling cannot focus an unrelated record.
+        check(window.getFocusManager().getFocused() == null); // Recycling cannot focus an unrelated record.
         table.setScroll(1000);
-        Table.Row<Item> visible = table.visibleRows().stream()
-                .filter(row -> row.bounds().y() >= table.scroll()).findFirst().orElseThrow();
+        Table.Row<Item> visible = table.getVisibleRows().stream()
+                .filter(row -> row.bounds().y() >= table.getScroll()).findFirst().orElseThrow();
         Actions current = actions(table, visible.index());
-        Rect target = current.buy.absoluteBounds();
+        Rect target = current.buy.getAbsoluteBounds();
         io.github.luyingyilong.ore.event.WindowInputs.press(window,target.x() + 2, target.y() + 2, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,target.x() + 2, target.y() + 2);
         check(events.equals(List.of("CLICK", visible.item().id() + ":buy")));
@@ -136,18 +136,18 @@ public final class TableControlCellTest {
         // Keyboard focuses real Button nodes, reveals buffered rows, and fires only after release.
         table.setScroll(0);
         first = actions(table, 0);
-        window.focusManager().requestFocus(first.buy, null);
+        window.getFocusManager().requestFocus(first.buy, null);
         io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null);
-        check(window.focusManager().focused() == first.favorite);
+        check(window.getFocusManager().getFocused() == first.favorite);
         io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_SPACE, 0, null);
         io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_SPACE, 0, null);
         check(events.isEmpty());
         io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_SPACE, 0, null);
         check(events.equals(List.of("CLICK", "0:favorite:false")));
         for (int i = 0; i < 15; i++) io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_DOWN, 0, null);
-        check(table.scroll() > 0 && window.focusManager().focused() instanceof Button);
-        Rect focus = window.focusManager().focused().absoluteBounds();
-        check(focus.y() >= table.bodyBounds().y() && focus.bottom() <= table.bodyBounds().bottom());
+        check(table.getScroll() > 0 && window.getFocusManager().getFocused() instanceof Button);
+        Rect focus = window.getFocusManager().getFocused().getAbsoluteBounds();
+        check(focus.y() >= table.getBodyBounds().y() && focus.bottom() <= table.getBodyBounds().bottom());
 
         // Header and buffered rows never receive body clicks, including compact layouts.
         events.clear();
@@ -158,17 +158,17 @@ public final class TableControlCellTest {
         for (int width : new int[]{127, 128, 129}) {
             table.scrollToTop();
             window.layoutViewport(width, 150, null);
-            check(table.compact());
-            target = actions(table, 0).buy.absoluteBounds();
+            check(table.getCompact());
+            target = actions(table, 0).buy.getAbsoluteBounds();
             io.github.luyingyilong.ore.event.WindowInputs.press(window,target.x() + 1, target.y() + 1, null);
             io.github.luyingyilong.ore.event.WindowInputs.release(window,target.x() + 1, target.y() + 1);
             check(events.equals(List.of("CLICK", "0:buy")));
             events.clear();
         }
 
-        target = actions(table, 0).buy.absoluteBounds();
+        target = actions(table, 0).buy.getAbsoluteBounds();
         io.github.luyingyilong.ore.event.WindowInputs.press(window,target.x() + 1, target.y() + 1, null);
-        Control popup = new Control() { @Override public boolean focusScope() { return true; } };
+        Control popup = new Control() { @Override public boolean getFocusScope() { return true; } };
         overlay.add(popup);
         window.layoutViewport(129, 150, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,target.x() + 1, target.y() + 1);
@@ -176,7 +176,7 @@ public final class TableControlCellTest {
     }
 
     private static Actions actions(Table<Item> table, int index) {
-        return table.children().stream().flatMap(row -> row.children().stream())
+        return table.getChildren().stream().flatMap(row -> row.getChildren().stream())
                 .filter(Actions.class::isInstance).map(Actions.class::cast)
                 .filter(actions -> actions.row.id() == index).findFirst().orElseThrow();
     }

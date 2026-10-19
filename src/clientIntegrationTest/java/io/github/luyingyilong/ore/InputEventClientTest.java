@@ -28,17 +28,17 @@ public final class InputEventClientTest {
         try {
             if(++ticks>800)throw new AssertionError("Input event client timeout phase "+phase);
             if(phase==0) {
-                field=new Input().placeholder(Component.literal("Input / 输入"));
-                text=Signals.configure(new TextArea(0).rows(3), connected -> { connected.submitOnEnter(true); connected.submitted().connect(connected, submittedText131 ->submissions++); });
+                field=new Input().setPlaceholder(Component.literal("Input / 输入"));
+                text=Signals.configure(new TextArea(0).setRows(3), connected -> { connected.setSubmitOnEnter(true); connected.submitted().connect(connected, submittedText131 ->submissions++); });
                 fieldNode=new InputControl(field);textNode=new InputControl(text);
                 field.textChanged().connect(fieldNode, value -> fieldChanges++);
                 text.textChanged().connect(textNode, value -> textChanges++);
-                var box=new Box().gap(4).add(fieldNode).add(textNode).add(new Button(Component.literal("Click")));
-                window=Window.embedded().content(box).onBack(()->{});window.open();phase=1;
-            } else if(phase==1&&field.isValid()&&text.isValid()&&window.context().mui()!=null&&ticks>15) {
-                var p=fieldNode.widgetBounds();
+                var box=new Box().setGap(4).add(fieldNode).add(textNode).add(new Button(Component.literal("Click")));
+                window=Window.embedded().setContent(box).onBack(()->{});window.open();phase=1;
+            } else if(phase==1&&field.isValid()&&text.isValid()&&window.getContext().getMui()!=null&&ticks>15) {
+                var p=fieldNode.getWidgetBounds();
                 // MUI ScreenWrapper receives input from Forge Pre events, not vanilla Screen callbacks.
-                window.context().mui().updateState(p.x()+5,p.y()+8,0);
+                window.getContext().getMui().updateState(p.x()+5,p.y()+8,0);
                 check(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.MouseButtonPressed.Pre(mc.screen,p.x()+5,p.y()+8,0)),"Real MUI press accepted");
                 net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.MouseButtonReleased.Pre(mc.screen,p.x()+5,p.y()+8,0));
                 check(field.isFocused(),"Window focuses native field");
@@ -64,12 +64,12 @@ public final class InputEventClientTest {
                 field.setTextNoSignal("中文");
                 net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.KeyPressed.Pre(mc.screen,GLFW.GLFW_KEY_ESCAPE,0,0));
                 net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.KeyReleased.Pre(mc.screen,GLFW.GLFW_KEY_ESCAPE,0,0));
-                check(!field.isFocused()&&window.host().isOpen(),"Esc blurs without closing Window");
+                check(!field.isFocused()&&window.getHost().isOpen(),"Esc blurs without closing Window");
                 phase=2;
             } else if(phase==2) {
-                window.focusManager().requestFocus(textNode,window.context().mui());
+                window.getFocusManager().requestFocus(textNode,window.getContext().getMui());
                 String value="第一行中文\n第二行自动换行测试\n第三行";
-                window.context().clipboard(value);
+                window.getContext().setClipboard(value);
                 net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.KeyPressed.Pre(mc.screen,GLFW.GLFW_KEY_V,0,GLFW.GLFW_MOD_CONTROL));
                 net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.KeyReleased.Pre(mc.screen,GLFW.GLFW_KEY_V,0,GLFW.GLFW_MOD_CONTROL));
                 check(text.getText().equals(value),"Multiline paste exactly once");
@@ -86,17 +86,17 @@ public final class InputEventClientTest {
                 net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.KeyPressed.Pre(mc.screen,GLFW.GLFW_KEY_ESCAPE,0,0));
                 net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.KeyReleased.Pre(mc.screen,GLFW.GLFW_KEY_ESCAPE,0,0));
                 check(!text.isFocused(),"TextArea Esc blur");
-                window.focusManager().requestFocus(textNode, window.context().mui());
-                window.dispatchInput(new io.github.luyingyilong.ore.event.CompositionEvent(window.context(),
+                window.getFocusManager().requestFocus(textNode, window.getContext().getMui());
+                window.dispatchInput(new io.github.luyingyilong.ore.event.CompositionEvent(window.getContext(),
                         io.github.luyingyilong.ore.event.CompositionEvent.Action.UPDATE, new InputPreedit("nihao", 5)));
                 String committed = text.getText();
                 textNode.queueFree();
-                check(!text.isFocused() && window.focusManager().focused() != textNode, "Queue immediately releases native input focus");
-                check(!text.signalScope().isClosed(), "Logical session survives until the safe cleanup boundary");
-                window.dispatchInput(new io.github.luyingyilong.ore.event.TextInputEvent(window.context(), "stale", 0));
+                check(!text.isFocused() && window.getFocusManager().getFocused() != textNode, "Queue immediately releases native input focus");
+                check(!text.getSignalScope().isClosed(), "Logical session survives until the safe cleanup boundary");
+                window.dispatchInput(new io.github.luyingyilong.ore.event.TextInputEvent(window.getContext(), "stale", 0));
                 check(text.getText().equals(committed), "Queued input cannot receive stale commits");
                 LifecycleScheduler.flush();
-                check(text.signalScope().isClosed() && textNode.isDisposed(), "Input and preedit session permanently cleaned once");
+                check(text.getSignalScope().isClosed() && textNode.isDisposed(), "Input and preedit session permanently cleaned once");
                 System.out.println("ORE_INPUT_LIFECYCLE_CLIENT_PASS");
                 window.close();phase=99;
                 System.out.println("ORE_INPUT_EVENT_CLIENT_PASS");mc.stop();

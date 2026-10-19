@@ -5,10 +5,10 @@ import io.github.luyingyilong.ore.event.*;
 public final class EventFixture {
     private EventFixture(){}
     public static Window root(Control control){
-        Control top=control;while(top.parent()!=null)top=top.parent();
+        Control top=control;while(top.getParent()!=null)top=top.getParent();
         if(top instanceof Window window)return window;
         Window window=new Window(true);window.layout(new Rect(0,0,8192,8192),null);
-        if(top instanceof Overlay overlay)window.overlay(overlay);else window.content(top);
+        if(top instanceof Overlay overlay)window.setOverlay(overlay);else window.setContent(top);
         return window;
     }
     public static boolean press(Control control,int x,int y){return WindowInputs.press(root(control),x,y,null);}

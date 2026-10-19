@@ -15,7 +15,7 @@ public final class OreClient {
     private static OreClientOptions options = OreClientOptions.defaults(Path.of("ore", "avatars"));
     private static boolean initialized;
     private OreClient() { }
-    public static OreClientOptions options() { return options; }
+    public static OreClientOptions getOptions() { return options; }
     public static synchronized void initialize(OreClientOptions supplied, IEventBus modBus, IEventBus forgeBus) {
         Objects.requireNonNull(supplied); Objects.requireNonNull(modBus); Objects.requireNonNull(forgeBus);
         if (initialized) return;

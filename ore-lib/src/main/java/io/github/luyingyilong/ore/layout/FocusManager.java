@@ -29,7 +29,7 @@ public final class FocusManager {
         this.window = window;
     }
 
-    public Control focused() {
+    public Control getFocused() {
         validate();
         return focused;
     }
@@ -57,7 +57,7 @@ public final class FocusManager {
         }
         if (context != null) {
             if (target instanceof io.github.luyingyilong.ore.input.InputControl input) {
-                if (!input.widget().isFocused()) context.focus(input.widget());
+                if (!input.getWidget().isFocused()) context.focus(input.getWidget());
             } else if (context.isFocused()) context.removeFocus();
         }
     }
@@ -67,11 +67,11 @@ public final class FocusManager {
     public boolean allowsPopupOwner(Control target) {
         Overlay layer=window.overlayLayer(); Control blocking=null;
         if(layer!=null) {
-            var nodes=layer.children();
+            var nodes=layer.getChildren();
             for(int i=nodes.size()-1;i>=0;i--) {
                 Control node=nodes.get(i);
                 if(node instanceof io.github.luyingyilong.ore.window.WindowPopups.Popup)continue;
-                if((node.isAlive() && node.visible())&&node.focusScope()){blocking=node;break;}
+                if((node.isAlive() && node.getVisible())&&node.getFocusScope()){blocking=node;break;}
             }
         }
         return inside(target,blocking);
@@ -82,7 +82,7 @@ public final class FocusManager {
         // A pointer already identifies a visible point. Revealing the whole control here can
         // scroll a wide table/input before Window dispatches that very same press.
         validate(false);
-        for (Control control = hit; control != null; control = control.parent()) {
+        for (Control control = hit; control != null; control = control.getParent()) {
             if (control.acceptsFocus() && inside(control, scope)) {
                 requestFocus(control, context, false);
                 inputPointerFocusVisible = control instanceof io.github.luyingyilong.ore.input.InputControl;
@@ -108,7 +108,7 @@ public final class FocusManager {
             Control previous = focused; focused = null;
             inputPointerFocusVisible = false;
             previous.notifyFocusChanged(false);
-            var mui = window.context().mui();
+            var mui = window.getContext().getMui();
             if (mui != null && previous instanceof io.github.luyingyilong.ore.input.InputControl && mui.isFocused()) mui.removeFocus();
         }
         if (inside(activationOwner, subtree)) cancelActivation();
@@ -138,7 +138,7 @@ public final class FocusManager {
         }
     }
 
-    public boolean nativeInputFocused() {
+    public boolean getNativeInputFocused() {
         return nativeField(scopeRoot()) != null;
     }
 
@@ -150,7 +150,7 @@ public final class FocusManager {
                 || keyCode == GLFW.GLFW_KEY_RIGHT || keyCode == GLFW.GLFW_KEY_UP
                 || keyCode == GLFW.GLFW_KEY_DOWN) keyboardNavigation();
         // TextFieldWidget owns its caret keys; Tab is the explicit way out of editing.
-        if (nativeInputFocused() && keyCode != GLFW.GLFW_KEY_TAB) return false;
+        if (getNativeInputFocused() && keyCode != GLFW.GLFW_KEY_TAB) return false;
         if (scope != null && scope.onFocusKey(keyCode, modifiers)) return true;
         if (keyCode == GLFW.GLFW_KEY_TAB) {
             if (moveTab((modifiers & GLFW.GLFW_MOD_SHIFT) != 0 ? -1 : 1, context)) return true;
@@ -208,14 +208,14 @@ public final class FocusManager {
         activationKeysDown.clear();
     }
 
-    public Rect outlineBounds() {
+    public Rect getOutlineBounds() {
         validate();
         if (focused == null || !keyboardFocusVisible
                 && !(inputPointerFocusVisible
                 && focused instanceof io.github.luyingyilong.ore.input.InputControl)) return null;
         Rect area = visibleBounds(focused);
         if (area == null) return null;
-        int pad = focused.focusExpansion();
+        int pad = focused.getFocusExpansion();
         return new Rect(area.x() - pad, area.y() - pad,
                 area.width() + pad * 2, area.height() + pad * 2);
     }
@@ -276,9 +276,9 @@ public final class FocusManager {
     }
 
     private void collect(Control node, List<Control> result) {
-        if (!(node.isAlive() && node.visible())) return;
+        if (!(node.isAlive() && node.getVisible())) return;
         if (node.acceptsFocus() && navigationBounds(node) != null) result.add(node);
-        for (Control child : node.children()) collect(child, result);
+        for (Control child : node.getChildren()) collect(child, result);
     }
 
     private void validate() {
@@ -314,10 +314,10 @@ public final class FocusManager {
     private Control topScope() {
         Overlay overlay = window.overlayLayer();
         if (overlay == null) return null;
-        List<Control> layers = overlay.children();
+        List<Control> layers = overlay.getChildren();
         for (int index = layers.size() - 1; index >= 0; index--) {
             Control layer = layers.get(index);
-            if ((layer.isAlive() && layer.visible()) && layer.focusScope()) return layer;
+            if ((layer.isAlive() && layer.getVisible()) && layer.getFocusScope()) return layer;
         }
         return null;
     }
@@ -326,8 +326,8 @@ public final class FocusManager {
 
     private boolean eligible(Control target) {
         if (!target.acceptsFocus() || !inside(target, scope)) return false;
-        for (Control node = target; node != null; node = node.parent()) {
-            if (!(node.isAlive() && node.visible())) return false;
+        for (Control node = target; node != null; node = node.getParent()) {
+            if (!(node.isAlive() && node.getVisible())) return false;
             if (node == window) return true;
         }
         return false;
@@ -335,16 +335,16 @@ public final class FocusManager {
 
     private static boolean inside(Control target, Control scope) {
         if (scope == null) return true;
-        for (Control node = target; node != null; node = node.parent()) if (node == scope) return true;
+        for (Control node = target; node != null; node = node.getParent()) if (node == scope) return true;
         return false;
     }
 
     private Rect visibleBounds(Control target) {
-        return visibleBounds(target, target.focusBounds());
+        return visibleBounds(target, target.getFocusBounds());
     }
 
     private Rect visibleBounds(Control target, Rect area) {
-        for(Control node=target;node!=null;node=node.parent())if(!(node.isAlive() && node.visible()))return null;
+        for(Control node=target;node!=null;node=node.getParent())if(!(node.isAlive() && node.getVisible()))return null;
         Rect result=io.github.luyingyilong.ore.event.EventGeometry.displayed(target,area);
         Rect clip=io.github.luyingyilong.ore.event.EventGeometry.clip(target);
         if(clip!=null)result=io.github.luyingyilong.ore.event.EventGeometry.intersect(result,clip);
@@ -355,15 +355,15 @@ public final class FocusManager {
     private Rect navigationBounds(Control target) {
         Rect visible = visibleBounds(target);
         if (visible != null) return visible;
-        Rect area = target.focusBounds();
+        Rect area = target.getFocusBounds();
         boolean buffered = false;
-        for (Control node = target.parent(); node != null; node = node.parent()) {
-            if (!(node.isAlive() && node.visible())) return null;
+        for (Control node = target.getParent(); node != null; node = node.getParent()) {
+            if (!(node.isAlive() && node.getVisible())) return null;
             if (node instanceof Table<?> table) {
-                if (visibleBounds(table, table.bodyBounds()) == null) return null;
+                if (visibleBounds(table, table.getBodyBounds()) == null) return null;
                 buffered = true;
             }
-            if (node instanceof Scroll scroll) area = area.translated(-scroll.scrollX(), -scroll.scrollY());
+            if (node instanceof Scroll scroll) area = area.translated(-scroll.getScrollX(), -scroll.getScrollY());
         }
         return buffered ? area : null;
     }
@@ -382,26 +382,26 @@ public final class FocusManager {
     }
 
     private void reveal(Control target) {
-        Rect area = target.focusBounds();
-        for (Control node = target.parent(); node != null; node = node.parent()) {
+        Rect area = target.getFocusBounds();
+        for (Control node = target.getParent(); node != null; node = node.getParent()) {
             if (node instanceof Table<?> table) {
                 table.revealControl(target);
-                area = target.focusBounds();
+                area = target.getFocusBounds();
             }
             if (node instanceof Scroll scroll) {
-                Rect origin = scroll.absoluteBounds();
+                Rect origin = scroll.getAbsoluteBounds();
                 scroll.ensureVisible(new Rect(area.x() - origin.x(), area.y() - origin.y(),
                         area.width(), area.height()));
-                area = area.translated(-scroll.scrollX(), -scroll.scrollY());
+                area = area.translated(-scroll.getScrollX(), -scroll.getScrollY());
             }
         }
     }
 
     private Control nativeField(Control node) {
-        if (node == null || !(node.isAlive() && node.visible())) return null;
+        if (node == null || !(node.isAlive() && node.getVisible())) return null;
         if (node instanceof io.github.luyingyilong.ore.input.InputControl input
-                && input.widget().isFocused() && input.acceptsFocus()) return input;
-        for (Control child : node.children()) {
+                && input.getWidget().isFocused() && input.acceptsFocus()) return input;
+        for (Control child : node.getChildren()) {
             Control found = nativeField(child);
             if (found != null) return found;
         }

@@ -27,24 +27,24 @@ import java.util.function.Supplier;
  */
 public final class ChatMessageList extends Container {
     private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.systemDefault());
-    private final Grid<ChatMessage> grid = new Grid<ChatMessage>().columns(1, 1, 6);
-    private final Scroll scroll = new Scroll().horizontal(Scroll.BarMode.DISABLED).content(grid);
+    private final Grid<ChatMessage> grid = new Grid<ChatMessage>().setColumns(1, 1, 6);
+    private final Scroll scroll = new Scroll().setHorizontal(Scroll.BarMode.DISABLED).setContent(grid);
     private List<ChatMessage> values = List.of();
     private boolean follow = true;
     private int newMessages;
     private int pendingRestore = -1;
 
     public ChatMessageList() {
-        grid.adapter(new Grid.Adapter<>() {
-            public int size() {
+        grid.setAdapter(new Grid.Adapter<>() {
+            public int getSize() {
                 return values.size();
             }
 
-            public ChatMessage item(int index) {
+            public ChatMessage getItem(int index) {
                 return values.get(index);
             }
 
-            public Object key(ChatMessage item) {
+            public Object getKey(ChatMessage item) {
                 return item.id();
             }
 
@@ -57,7 +57,7 @@ public final class ChatMessageList extends Container {
             }
         });
         addChild(scroll);
-        sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
     }
 
     private static boolean system(ChatMessage item) {
@@ -95,7 +95,7 @@ public final class ChatMessageList extends Container {
     }
 
     public boolean atBottom() {
-        return scroll.scrollY() >= scroll.maxScrollY() - 2;
+        return scroll.getScrollY() >= scroll.getMaxScrollY() - 2;
     }
 
     public int newMessages() {
@@ -103,7 +103,7 @@ public final class ChatMessageList extends Container {
     }
 
     public int activeViews() {
-        return grid.activeViews();
+        return grid.getActiveViews();
     }
 
     public void bottom() {
@@ -120,7 +120,7 @@ public final class ChatMessageList extends Container {
 
     @Override
     public Size measureSize(Font font, Size available) {
-        return minimumSize();
+        return getMinimumSize();
     }
 
     @Override
@@ -132,7 +132,7 @@ public final class ChatMessageList extends Container {
             pendingRestore = -1;
         }
         if (follow) {
-            scroll.setScroll(0, scroll.maxScrollY());
+            scroll.setScroll(0, scroll.getMaxScrollY());
             follow = false;
         }
         if (atBottom()) newMessages = 0;
@@ -140,8 +140,8 @@ public final class ChatMessageList extends Container {
 
     static final class MessageView extends Container implements Grid.View<ChatMessage> {
         final RichText text = new RichText();
-        private final Avatar avatar = new Avatar().size(20);
-        private final Label author = new Label().color(OreTheme.TEXT_SECONDARY).overflow(Label.Overflow.ELLIPSIS);
+        private final Avatar avatar = new Avatar().setSize(20);
+        private final Label author = new Label().setColor(OreTheme.TEXT_SECONDARY).setOverflow(Label.Overflow.ELLIPSIS);
         private final Supplier<UUID> viewer;
         private ChatMessage message;
         private boolean outgoing;
@@ -163,15 +163,15 @@ public final class ChatMessageList extends Container {
             outgoing = !system && message.sender().equals(viewer.get());
             Label.Horizontal alignment = system ? Label.Horizontal.CENTER
                     : outgoing ? Label.Horizontal.RIGHT : Label.Horizontal.LEFT;
-            avatar.visible(!system);
-            author.visible(!system);
-            if (avatar.visible()) avatar.player(message.sender(), message.senderName());
+            avatar.setVisible(!system);
+            author.setVisible(!system);
+            if (avatar.getVisible()) avatar.setPlayer(message.sender(), message.senderName());
             String time = TIME.format(Instant.ofEpochMilli(message.time()));
             String name = message.senderName();
             String playerInfo = outgoing ? time + "  " + name : name + "  " + time;
-            author.text(Component.literal(name.isEmpty() ? time : playerInfo));
-            author.align(alignment, Label.Vertical.TOP);
-            text.label.text(message.text());
+            author.setText(Component.literal(name.isEmpty() ? time : playerInfo));
+            author.setAlignment(alignment, Label.Vertical.TOP);
+            text.label.setText(message.text());
             text.align(alignment);
         }
 
@@ -198,13 +198,13 @@ public final class ChatMessageList extends Container {
         }
 
         private void drawPlayerPart(ModularGuiContext context, int screenX, int screenY) {
-            if (avatar.visible()) avatar.draw(context, screenX, screenY);
-            if (author.visible()) author.draw(context, screenX, screenY);
-            if (text.visible()) text.draw(context, screenX, screenY);
+            if (avatar.getVisible()) avatar.draw(context, screenX, screenY);
+            if (author.getVisible()) author.draw(context, screenX, screenY);
+            if (text.getVisible()) text.draw(context, screenX, screenY);
         }
 
         private void drawCommandPart(ModularGuiContext context, int screenX, int screenY) {
-            if (text.visible()) text.draw(context, screenX, screenY);
+            if (text.getVisible()) text.draw(context, screenX, screenY);
         }
 
         @Override
@@ -224,7 +224,7 @@ public final class ChatMessageList extends Container {
     }
 
     static final class RichText extends Container {
-        final Label label = new Label().wrap(Label.Wrap.WORD);
+        final Label label = new Label().setWrap(Label.Wrap.WORD);
         private Label.Horizontal alignment = Label.Horizontal.LEFT;
         private Style hovered;
 
@@ -234,7 +234,7 @@ public final class ChatMessageList extends Container {
 
         void align(Label.Horizontal alignment) {
             this.alignment = alignment;
-            label.align(alignment, Label.Vertical.TOP);
+            label.setAlignment(alignment, Label.Vertical.TOP);
         }
 
         @Override
@@ -248,7 +248,7 @@ public final class ChatMessageList extends Container {
             var lines = label.lines(font, area.width());
             int row = (y - area.y()) / label.lineHeight(font);
             if (row >= lines.size()) return null;
-            float scale = label.scale() * (label.fontSize() / Label.DEFAULT_FONT_SIZE);
+            float scale = label.getScale() * (label.getFontSize() / Label.DEFAULT_FONT_SIZE);
             int lineWidth = (int) Math.ceil(font.width(lines.get(row)) * scale);
             int left = area.x() + switch (alignment) {
                 case LEFT -> 0;
@@ -261,7 +261,7 @@ public final class ChatMessageList extends Container {
 
         @Override
         protected void render(ModularGuiContext context, int screenX, int screenY) {
-            hovered = style(context.getFont(), context.getAbsMouseX(), context.getAbsMouseY(), screenBounds(screenX, screenY));
+            hovered = style(context.getFont(), context.getAbsMouseX(), context.getAbsMouseY(), getScreenBounds(screenX, screenY));
         }
 
         @Override
@@ -277,7 +277,7 @@ public final class ChatMessageList extends Container {
         @Override
         protected boolean pointerDown(int x, int y) {
             var mc = Minecraft.getInstance();
-            Style style = style(mc.font, x, y, absoluteBounds());
+            Style style = style(mc.font, x, y, getAbsoluteBounds());
             return style != null && style.getClickEvent() != null && mc.screen != null && mc.screen.handleComponentClicked(style);
         }
     }

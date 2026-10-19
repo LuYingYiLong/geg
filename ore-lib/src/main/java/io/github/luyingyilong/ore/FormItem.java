@@ -48,31 +48,31 @@ public final class FormItem extends Container {
         this.input = input;
         this.field = Objects.requireNonNull(field);
         this.value = Objects.requireNonNull(value);
-        labelNode = new Label(label).color(OreTheme.TEXT_WHITE).overflow(Label.Overflow.CLIP);
-        errorNode = new Label().color(OreTheme.TEXT_ERROR).overflow(Label.Overflow.CLIP);
+        labelNode = new Label(label).setColor(OreTheme.TEXT_WHITE).setOverflow(Label.Overflow.CLIP);
+        errorNode = new Label().setColor(OreTheme.TEXT_ERROR).setOverflow(Label.Overflow.CLIP);
         inputNode = field instanceof InputControl node ? node : null;
         addChild(labelNode);
         addChild(field);
         addChild(errorNode);
     }
 
-    public String name() { return name; }
-    public Component label() { return label; }
-    public Input input() { return input; }
-    public InputControl inputNode() { return inputNode; }
-    public boolean active() { return active; }
+    public String getName() { return name; }
+    public Component getLabel() { return label; }
+    public Input getInput() { return input; }
+    public InputControl getInputNode() { return inputNode; }
+    public boolean getActive() { return active; }
     public void setActive(boolean active) {
         this.active = active;
-        visible(active);
-        setInputVisible(active && parent() instanceof Form form && form.visible());
+        setVisible(active);
+        setInputVisible(active && getParent() instanceof Form form && form.getVisible());
     }
     public void setInputVisible(boolean visible) {
         if (input != null) input.setInputVisible(visible);
     }
-    public String value() { return value.get(); }
-    public Component error() { return input instanceof NumberInput number ? number.error() : null; }
+    public String getValue() { return value.get(); }
+    public Component getError() { return input instanceof NumberInput number ? number.getError() : null; }
 
-    public void horizontal(boolean horizontal) {
+    public void setHorizontal(boolean horizontal) {
         if (this.horizontal == horizontal) return;
         this.horizontal = horizontal;
         requestLayout();
@@ -80,7 +80,7 @@ public final class FormItem extends Container {
 
     public int rowHeight(Font font, int width) {
         return (horizontal ? 0 : LABEL_HEIGHT + GAP) + fieldHeight(font, width) + 1
-                + (error() == null ? 0 : ERROR_HEIGHT) + ROW_GAP;
+                + (getError() == null ? 0 : ERROR_HEIGHT) + ROW_GAP;
     }
 
     private int fieldHeight(Font font, int width) {
@@ -91,8 +91,8 @@ public final class FormItem extends Container {
 
     @Override public Size measureSize(Font font, Size available) {
         if (!isAlive()) return new Size(0, 0);
-        return new Size(Math.max(minimumWidth(), available.width()),
-                Math.max(minimumHeight(), rowHeight(font, available.width())));
+        return new Size(Math.max(getMinimumWidth(), available.width()),
+                Math.max(getMinimumHeight(), rowHeight(font, available.width())));
     }
 
     @Override public void layout(Rect bounds, Font font) {
@@ -107,9 +107,9 @@ public final class FormItem extends Container {
             int controlHeight = fieldHeight(font, width);
             fitChild(labelNode, new Rect(0, horizontal ? 5 : 0, labelWidth, LABEL_HEIGHT), font);
             fitChild(field, new Rect(controlX, controlY, controlWidth, controlHeight), font);
-            Component error = error();
-            errorNode.text(error == null ? Component.empty() : error);
-            errorNode.visible(error != null);
+            Component error = getError();
+            errorNode.setText(error == null ? Component.empty() : error);
+            errorNode.setVisible(error != null);
             fitChild(errorNode, new Rect(0, controlY + controlHeight + 1,
                     width, error == null ? 0 : ERROR_HEIGHT), font);
         }

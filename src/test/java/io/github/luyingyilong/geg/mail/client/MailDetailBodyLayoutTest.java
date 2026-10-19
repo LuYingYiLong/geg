@@ -31,43 +31,43 @@ public final class MailDetailBodyLayoutTest {
                 return lines.isEmpty() ? List.of(FormattedCharSequence.EMPTY) : lines;
             }
         };
-        Label body = new Label(Component.literal(TEXT)).wrap(Label.Wrap.WORD);
+        Label body = new Label(Component.literal(TEXT)).setWrap(Label.Wrap.WORD);
         int[] claims = {0};
         MailAttachmentsView rewards = new MailAttachmentsView(() -> claims[0]++);
         rewards.attachments(List.of(), true, false);
-        rewards.claimButton().label(Component.literal("领取附件")).sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_END);
+        rewards.claimButton().setLabel(Component.literal("领取附件")).setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_END);
         Scroll itemScroll = rewards.scroll();
-        Box items = (Box) itemScroll.children().stream().filter(Box.class::isInstance).findFirst().orElseThrow();
-        for (int i = 0; i < 100; i++) items.add(new Control().minimum(Slot.SIZE, Slot.SIZE));
-        itemScroll.visible(true);
-        MailDetailBody content = new MailDetailBody(body, new Control().minimum(0, 2), rewards);
-        Scroll detail = new Scroll().horizontal(Scroll.BarMode.DISABLED).content(content);
-        detail.minimum(0, 16).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Control title = new Control().minimum(0, 12).preferred(0, 12);
-        Control author = new Control().minimum(0, 24).preferred(0, 24);
-        Panel panel = new Panel(null).child(new Padding(Padding.Insets.all(4))
-                .child(new Box().gap(4).add(title).add(author).add(detail)));
-        Scroll columns = new Scroll().vertical(Scroll.BarMode.DISABLED).content(new MailColumns(
-                new Scroll().content(new Control()), panel));
-        Window window = new Window(true).content(columns);
+        Box items = (Box) itemScroll.getChildren().stream().filter(Box.class::isInstance).findFirst().orElseThrow();
+        for (int i = 0; i < 100; i++) items.add(new Control().setMinimum(Slot.SIZE, Slot.SIZE));
+        itemScroll.setVisible(true);
+        MailDetailBody content = new MailDetailBody(body, new Control().setMinimum(0, 2), rewards);
+        Scroll detail = new Scroll().setHorizontal(Scroll.BarMode.DISABLED).setContent(content);
+        detail.setMinimum(0, 16).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        Control title = new Control().setMinimum(0, 12).setPreferred(0, 12);
+        Control author = new Control().setMinimum(0, 24).setPreferred(0, 24);
+        Panel panel = new Panel(null).setChild(new Padding(Padding.Insets.all(4))
+                .setChild(new Box().setGap(4).add(title).add(author).add(detail)));
+        Scroll columns = new Scroll().setVertical(Scroll.BarMode.DISABLED).setContent(new MailColumns(
+                new Scroll().setContent(new Control()), panel));
+        Window window = new Window(true).setContent(columns);
         for (String text : new String[]{TEXT, TEXT.repeat(20), TEXT}) {
-            body.text(Component.literal(text));
+            body.setText(Component.literal(text));
             for (int width : new int[]{127, 128, 129, 480, 854}) {
                 window.layoutViewport(width, 240, font);
-                check(content.size().width() == detail.viewport().width());
-                check(content.contentExtent().width() == detail.viewport().width() && detail.maxScrollX() == 0);
-                if (font.width(body.text()) > body.size().width()) check(body.lines(font, body.size().width()).size() > 1);
-                check(body.lines(font, body.size().width()).stream().allMatch(line -> font.width(line) <= body.size().width()));
-                int naturalHeight = body.lines(font, body.size().width()).size() * body.lineHeight(font);
-                check(body.size().height() >= naturalHeight && SizeFlags.expands(body.sizeFlagsVertical()));
-                check(rewards.absoluteBounds().bottom() == content.absoluteBounds().y() + content.contentExtent().height());
-                check(rewards.claimButton().absoluteBounds().right() == content.absoluteBounds().right());
-                check(itemScroll.maxScrollX() > 0 && !itemScroll.horizontalVisible());
-                if (detail.maxScrollY() == 0) check(rewards.absoluteBounds().bottom() == detail.absoluteBounds().bottom());
+                check(content.getSize().width() == detail.getViewport().width());
+                check(content.getContentExtent().width() == detail.getViewport().width() && detail.getMaxScrollX() == 0);
+                if (font.width(body.getText()) > body.getSize().width()) check(body.lines(font, body.getSize().width()).size() > 1);
+                check(body.lines(font, body.getSize().width()).stream().allMatch(line -> font.width(line) <= body.getSize().width()));
+                int naturalHeight = body.lines(font, body.getSize().width()).size() * body.lineHeight(font);
+                check(body.getSize().height() >= naturalHeight && SizeFlags.expands(body.getSizeFlagsVertical()));
+                check(rewards.getAbsoluteBounds().bottom() == content.getAbsoluteBounds().y() + content.getContentExtent().height());
+                check(rewards.claimButton().getAbsoluteBounds().right() == content.getAbsoluteBounds().right());
+                check(itemScroll.getMaxScrollX() > 0 && !itemScroll.getHorizontalVisible());
+                if (detail.getMaxScrollY() == 0) check(rewards.getAbsoluteBounds().bottom() == detail.getAbsoluteBounds().bottom());
                 // The reward remains reachable after scrolling a long body or a narrow two-column page.
-                columns.setScroll(columns.maxScrollX(), 0);
-                detail.setScroll(0, detail.maxScrollY());
-                Rect button = rewards.claimButton().absoluteBounds().translated(-columns.scrollX(), -detail.scrollY());
+                columns.setScroll(columns.getMaxScrollX(), 0);
+                detail.setScroll(0, detail.getMaxScrollY());
+                Rect button = rewards.claimButton().getAbsoluteBounds().translated(-columns.getScrollX(), -detail.getScrollY());
                 check(button.x() >= 0 && button.right() <= width && button.bottom() <= 240);
                 check(io.github.luyingyilong.ore.event.WindowInputs.press(window,button.x() + 2, button.y() + 2, null));
                 check(io.github.luyingyilong.ore.event.WindowInputs.release(window,button.x() + 2, button.y() + 2));

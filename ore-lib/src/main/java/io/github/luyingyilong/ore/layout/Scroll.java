@@ -49,11 +49,11 @@ public final class Scroll extends Container {
     public Scroll() {
         super.addChild(verticalBar);
         super.addChild(horizontalBar);
-        verticalBar.visible(false);
-        horizontalBar.visible(false);
+        verticalBar.setVisible(false);
+        horizontalBar.setVisible(false);
     }
 
-    public Scroll content(Control content) {
+    public Scroll setContent(Control content) {
         if (this.content != null) removeChild(this.content);
         addChild(content);
         return this;
@@ -76,7 +76,7 @@ public final class Scroll extends Container {
     }
 
     /** False by default: visible bars reserve 6px and draw a track; true overlays only the grabbers. */
-    public Scroll embedded(boolean embedded) {
+    public Scroll setEmbedded(boolean embedded) {
         if (DebugBridge.previewWrite(this, "embedded", embedded)) return this;
         if (this.embedded != embedded) {
             this.embedded = embedded;
@@ -85,30 +85,30 @@ public final class Scroll extends Container {
         return this;
     }
 
-    public Scroll wheelStep(int pixels) {
+    public Scroll setWheelStep(int pixels) {
         if (pixels < 1) throw new IllegalArgumentException("Wheel step must be positive");
         wheelStep = pixels;
         return this;
     }
 
-    public Scroll vertical(BarMode mode) { verticalBar.mode(mode); return this; }
-    public Scroll horizontal(BarMode mode) { horizontalBar.mode(mode); return this; }
-    public VScrollBar verticalBar() { return verticalBar; }
-    public HScrollBar horizontalBar() { return horizontalBar; }
+    public Scroll setVertical(BarMode mode) { verticalBar.setMode(mode); return this; }
+    public Scroll setHorizontal(BarMode mode) { horizontalBar.setMode(mode); return this; }
+    public VScrollBar getVerticalBar() { return verticalBar; }
+    public HScrollBar getHorizontalBar() { return horizontalBar; }
     @Inspectable
-    public boolean embedded() { return debugValue("embedded", embedded); }
+    public boolean getEmbedded() { return debugValue("embedded", embedded); }
     /** Uses the same rectangles as pointer dispatch, including embedded bars. */
     public boolean scrollbarAt(int rootX, int rootY) {
         return showVertical && verticalBar.hit(rootX, rootY) || showHorizontal && horizontalBar.hit(rootX, rootY);
     }
-    public boolean verticalVisible() { return showVertical; }
-    public boolean horizontalVisible() { return showHorizontal; }
-    public Rect viewport() { return viewport; }
-    public Size contentExtent() { return extent; }
-    public int scrollX() { return Math.min(maxScrollX(), debugValue("scrollX", scrollX)); }
-    public int scrollY() { return Math.min(maxScrollY(), debugValue("scrollY", scrollY)); }
-    public int maxScrollX() { return Math.max(0, extent.width() - viewport.width()); }
-    public int maxScrollY() { return Math.max(0, extent.height() - viewport.height()); }
+    public boolean getVerticalVisible() { return showVertical; }
+    public boolean getHorizontalVisible() { return showHorizontal; }
+    public Rect getViewport() { return viewport; }
+    public Size getContentExtent() { return extent; }
+    public int getScrollX() { return Math.min(getMaxScrollX(), debugValue("scrollX", scrollX)); }
+    public int getScrollY() { return Math.min(getMaxScrollY(), debugValue("scrollY", scrollY)); }
+    public int getMaxScrollX() { return Math.max(0, extent.width() - viewport.width()); }
+    public int getMaxScrollY() { return Math.max(0, extent.height() - viewport.height()); }
     public boolean isContentChild(Control child) { return child == content; }
 
     public void scrollToTop() {
@@ -117,8 +117,8 @@ public final class Scroll extends Container {
     }
 
     public void setScroll(int x, int y) {
-        scrollX = horizontalBar.mode() == BarMode.DISABLED ? 0 : clamp(x, maxScrollX());
-        scrollY = verticalBar.mode() == BarMode.DISABLED ? 0 : clamp(y, maxScrollY());
+        scrollX = horizontalBar.getMode() == BarMode.DISABLED ? 0 : clamp(x, getMaxScrollX());
+        scrollY = verticalBar.getMode() == BarMode.DISABLED ? 0 : clamp(y, getMaxScrollY());
         updateVisibleRegion();
     }
 
@@ -142,12 +142,12 @@ public final class Scroll extends Container {
 
     @Override public Size measureSize(Font font, Size available) {
         if (!isAlive()) return new Size(0, 0);
-        if (content == null) return minimumSize();
+        if (content == null) return getMinimumSize();
         Size measured = content.desiredSize(font, available);
-        int reserveX = !embedded() && verticalBar.mode() == BarMode.ALWAYS ? BAR_SIZE : 0;
-        int reserveY = !embedded() && horizontalBar.mode() == BarMode.ALWAYS ? BAR_SIZE : 0;
-        return new Size(Math.max(minimumWidth(), measured.width() + reserveX),
-                Math.max(minimumHeight(), measured.height() + reserveY));
+        int reserveX = !getEmbedded() && verticalBar.getMode() == BarMode.ALWAYS ? BAR_SIZE : 0;
+        int reserveY = !getEmbedded() && horizontalBar.getMode() == BarMode.ALWAYS ? BAR_SIZE : 0;
+        return new Size(Math.max(getMinimumWidth(), measured.width() + reserveX),
+                Math.max(getMinimumHeight(), measured.height() + reserveY));
     }
 
     @Override public int measureWidth(Font font, int available) {
@@ -164,12 +164,12 @@ public final class Scroll extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(localBounds, font);
-            boolean vertical = verticalBar.mode() == BarMode.ALWAYS;
-            boolean horizontal = horizontalBar.mode() == BarMode.ALWAYS;
+            boolean vertical = verticalBar.getMode() == BarMode.ALWAYS;
+            boolean horizontal = horizontalBar.getMode() == BarMode.ALWAYS;
             for (int pass = 0; pass < 4; pass++) {
                 measureContent(localBounds, font, vertical, horizontal);
-                boolean nextVertical = visibleFor(verticalBar.mode(), extent.height() > viewport.height());
-                boolean nextHorizontal = visibleFor(horizontalBar.mode(), extent.width() > viewport.width());
+                boolean nextVertical = visibleFor(verticalBar.getMode(), extent.height() > viewport.height());
+                boolean nextHorizontal = visibleFor(horizontalBar.getMode(), extent.width() > viewport.width());
                 if (vertical == nextVertical && horizontal == nextHorizontal) break;
                 vertical = nextVertical;
                 horizontal = nextHorizontal;
@@ -178,24 +178,24 @@ public final class Scroll extends Container {
             measureContent(localBounds, font, vertical, horizontal);
             showVertical = vertical;
             showHorizontal = horizontal;
-            verticalBar.visible(showVertical);
-            horizontalBar.visible(showHorizontal);
+            verticalBar.setVisible(showVertical);
+            horizontalBar.setVisible(showHorizontal);
             int corner = showVertical && showHorizontal ? BAR_SIZE : 0;
             layoutChild(verticalBar, new Rect(localBounds.width() - BAR_SIZE, 0, BAR_SIZE,
-                    Math.max(0, embedded() ? localBounds.height() - corner : viewport.height())), font);
+                    Math.max(0, getEmbedded() ? localBounds.height() - corner : viewport.height())), font);
             layoutChild(horizontalBar, new Rect(0, localBounds.height() - BAR_SIZE,
-                    Math.max(0, embedded() ? localBounds.width() - corner : viewport.width()), BAR_SIZE), font);
+                    Math.max(0, getEmbedded() ? localBounds.width() - corner : viewport.width()), BAR_SIZE), font);
             if (content instanceof ScrollContent virtual) {
                 int restored = virtual.consumeRestoredScrollY();
-                if (restored >= 0) scrollY = restored + content.bounds().y();
+                if (restored >= 0) scrollY = restored + content.getBounds().y();
             }
             setScroll(scrollX, scrollY);
         }
     }
 
     private void measureContent(Rect bounds, Font font, boolean vertical, boolean horizontal) {
-        int width = Math.max(0, bounds.width() - (!embedded() && vertical ? BAR_SIZE : 0));
-        int height = Math.max(0, bounds.height() - (!embedded() && horizontal ? BAR_SIZE : 0));
+        int width = Math.max(0, bounds.width() - (!getEmbedded() && vertical ? BAR_SIZE : 0));
+        int height = Math.max(0, bounds.height() - (!getEmbedded() && horizontal ? BAR_SIZE : 0));
         viewport = new Rect(0, 0, width, height);
         if (content == null) {
             extent = new Size(width, height);
@@ -203,21 +203,21 @@ public final class Scroll extends Container {
         }
         if (content instanceof ScrollContent virtual) {
             fitChild(content, new Rect(0, 0, width, height), font);
-            Size size = virtual.contentExtent();
-            extent = new Size(Math.max(width, content.bounds().x() + size.width()),
-                    Math.max(height, content.bounds().y() + size.height()));
+            Size size = virtual.getContentExtent();
+            extent = new Size(Math.max(width, content.getBounds().x() + size.width()),
+                    Math.max(height, content.getBounds().y() + size.height()));
         } else {
             Size measured = content.desiredSize(font, new Size(width, height));
             int contentWidth = Math.max(width, measured.width());
             int contentHeight = Math.max(height, measured.height());
             fitChild(content, new Rect(0, 0, contentWidth, contentHeight), font);
-            extent = new Size(Math.max(width, content.bounds().right()), Math.max(height, content.bounds().bottom()));
+            extent = new Size(Math.max(width, content.getBounds().right()), Math.max(height, content.getBounds().bottom()));
         }
     }
 
     private void updateVisibleRegion() {
         if (content instanceof ScrollContent virtual)
-            virtual.visibleRegion(new Rect(scrollX() - content.bounds().x(), scrollY() - content.bounds().y(),
+            virtual.setVisibleRegion(new Rect(getScrollX() - content.getBounds().x(), getScrollY() - content.getBounds().y(),
                     viewport.width(), viewport.height()));
     }
 
@@ -233,15 +233,15 @@ public final class Scroll extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
-            if (!visible()) return;
+            if (!getVisible()) return;
             if (content != null && viewport.width() > 0 && viewport.height() > 0) {
-                Rect clip = viewport.translated(screenX + absoluteBounds().x(),
-                        screenY + absoluteBounds().y());
+                Rect clip = viewport.translated(screenX + getAbsoluteBounds().x(),
+                        screenY + getAbsoluteBounds().y());
                 GuiGraphics graphics = context.getGraphics();
                 graphics.enableScissor(clip.x(), clip.y(), clip.right(), clip.bottom());
             DebugBridge.backend().clip(clip);
                 try {
-                    content.draw(context, screenX - scrollX(), screenY - scrollY());
+                    content.draw(context, screenX - getScrollX(), screenY - getScrollY());
                 } finally {
                     graphics.disableScissor(); DebugBridge.backend().unclip();
                 }
@@ -264,7 +264,7 @@ public final class Scroll extends Container {
         if (!hit(rootX, rootY)) return false;
         int amount = -(int) Math.signum(delta) * wheelStep;
         if (amount == 0) return false;
-        if (horizontal || maxScrollY() == 0) {
+        if (horizontal || getMaxScrollY() == 0) {
             if (scrollBy(amount, 0)) return true;
             if (horizontal) return false;
         }
@@ -275,20 +275,20 @@ public final class Scroll extends Container {
         if (!hit(rootX, rootY)) return null;
         if (showVertical && verticalBar.hit(rootX, rootY)) return verticalBar;
         if (showHorizontal && horizontalBar.hit(rootX, rootY)) return horizontalBar;
-        if (!viewport.translated(absoluteBounds().x(), absoluteBounds().y()).contains(rootX, rootY))
+        if (!viewport.translated(getAbsoluteBounds().x(), getAbsoluteBounds().y()).contains(rootX, rootY))
             return this;
-        Control hit = content == null ? null : content.hitTop(rootX + scrollX(), rootY + scrollY());
+        Control hit = content == null ? null : content.hitTop(rootX + getScrollX(), rootY + getScrollY());
         return hit == null ? this : hit;
     }
 
     public boolean dragTo(int rootX, int rootY) {
         if (dragging == null) return false;
-        Rect track = dragging.absoluteBounds();
+        Rect track = dragging.getAbsoluteBounds();
         int coordinate = dragging.vertical ? rootY : rootX;
         int start = dragging.vertical ? track.y() : track.x();
         int travel = Math.max(0, dragging.trackLength() - dragging.grabberLength());
         int position = clamp(coordinate - grabOffset - start, travel);
-        int maximum = dragging.vertical ? maxScrollY() : maxScrollX();
+        int maximum = dragging.vertical ? getMaxScrollY() : getMaxScrollX();
         int next = travel == 0 ? 0 : (int) Math.round((double) position * maximum / travel);
         if (dragging.vertical) setScroll(scrollX, next);
         else setScroll(next, scrollY);
@@ -321,12 +321,12 @@ public final class Scroll extends Container {
         private ScrollBar(Scroll owner, boolean vertical) {
             this.owner = owner;
             this.vertical = vertical;
-            minimum(BAR_SIZE, BAR_SIZE);
+            setMinimum(BAR_SIZE, BAR_SIZE);
         }
 
-        public BarMode mode() { return owner.debugValue(vertical ? "verticalMode" : "horizontalMode", mode); }
+        public BarMode getMode() { return owner.debugValue(vertical ? "verticalMode" : "horizontalMode", mode); }
 
-        public ScrollBar mode(BarMode mode) {
+        public ScrollBar setMode(BarMode mode) {
             BarMode next = Objects.requireNonNull(mode);
             if (this.mode != next) {
                 if (owner.dragging == this) owner.endDrag();
@@ -338,7 +338,7 @@ public final class Scroll extends Container {
         }
 
         private int trackLength() {
-            return Math.max(0, vertical ? bounds().height() : bounds().width());
+            return Math.max(0, vertical ? getBounds().height() : getBounds().width());
         }
 
         private int grabberLength() {
@@ -351,11 +351,11 @@ public final class Scroll extends Container {
         }
 
         Rect grabberBounds() {
-            Rect bar = absoluteBounds();
+            Rect bar = getAbsoluteBounds();
             int length = grabberLength();
             int travel = Math.max(0, trackLength() - length);
-            int maximum = vertical ? owner.maxScrollY() : owner.maxScrollX();
-            int scroll = vertical ? owner.scrollY() : owner.scrollX();
+            int maximum = vertical ? owner.getMaxScrollY() : owner.getMaxScrollX();
+            int scroll = vertical ? owner.getScrollY() : owner.getScrollX();
             int position = maximum == 0 ? 0 : (int) Math.round((double) travel * scroll / maximum);
             return vertical ? new Rect(bar.x(), bar.y() + position, BAR_SIZE, length)
                     : new Rect(bar.x() + position, bar.y(), length, BAR_SIZE);
@@ -363,8 +363,8 @@ public final class Scroll extends Container {
 
         /** The 2px end inset is visual only; the grabber still travels over the whole bar. */
         Rect trackBounds() {
-            Rect bar = absoluteBounds();
-            if (owner.embedded() || trackLength() <= 2 * TRACK_INSET)
+            Rect bar = getAbsoluteBounds();
+            if (owner.getEmbedded() || trackLength() <= 2 * TRACK_INSET)
                 return new Rect(bar.x(), bar.y(), 0, 0);
             return vertical
                     ? new Rect(bar.x() + (BAR_SIZE - 2) / 2, bar.y() + TRACK_INSET, 2, bar.height() - 2 * TRACK_INSET)
@@ -379,7 +379,7 @@ public final class Scroll extends Container {
         }
 
         @Override protected boolean pointerMove(int rootX, int rootY) {
-            return visible() && mode != BarMode.DISABLED && owner.dragTo(rootX, rootY);
+            return getVisible() && mode != BarMode.DISABLED && owner.dragTo(rootX, rootY);
         }
 
         @Override protected boolean pointerUp(int rootX, int rootY, boolean over) {
@@ -412,19 +412,19 @@ public final class Scroll extends Container {
     public static final class VScrollBar extends ScrollBar {
         private VScrollBar(Scroll owner) { super(owner, true); }
 
-        @Override public VScrollBar mode(BarMode mode) { super.mode(mode); return this; }
+        @Override public VScrollBar setMode(BarMode mode) { super.setMode(mode); return this; }
     }
 
     public static final class HScrollBar extends ScrollBar {
         private HScrollBar(Scroll owner) { super(owner, false); }
 
-        @Override public HScrollBar mode(BarMode mode) { super.mode(mode); return this; }
+        @Override public HScrollBar setMode(BarMode mode) { super.setMode(mode); return this; }
     }
     @Override public void debugProperties(java.util.List<DebugProperty> out) {
         super.debugProperties(out);
-        out.add(DebugProperty.choice(this,"verticalMode","Layout",()->verticalBar.mode()));
-        out.add(DebugProperty.choice(this,"horizontalMode","Layout",()->horizontalBar.mode()));
-        out.add(DebugProperty.number(this,"scrollX","Layout",this::scrollX,0,Integer.MAX_VALUE));
-        out.add(DebugProperty.number(this,"scrollY","Layout",this::scrollY,0,Integer.MAX_VALUE));
+        out.add(DebugProperty.choice(this,"verticalMode","Layout",()->verticalBar.getMode()));
+        out.add(DebugProperty.choice(this,"horizontalMode","Layout",()->horizontalBar.getMode()));
+        out.add(DebugProperty.number(this,"scrollX","Layout",this::getScrollX,0,Integer.MAX_VALUE));
+        out.add(DebugProperty.number(this,"scrollY","Layout",this::getScrollY,0,Integer.MAX_VALUE));
     }
 }

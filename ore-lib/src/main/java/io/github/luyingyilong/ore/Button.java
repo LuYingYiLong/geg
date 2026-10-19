@@ -24,7 +24,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.function.Consumer;
 
 public final class Button extends Control {
-    public static final int HEIGHT = Size.MEDIUM.height();
+    public static final int HEIGHT = Size.MEDIUM.getHeight();
     public static final int PADDING_X = 8;
     private static final int ICON_GAP = 4;
     private static final int ICON_PADDING = 4;
@@ -55,56 +55,56 @@ public final class Button extends Control {
 
     Button(Consumer<OreSounds.Cue> soundPlayer) {
         this.soundPlayer = java.util.Objects.requireNonNull(soundPlayer);
-        minimum(0, buttonSize.height());
-        focusable(true);
-        focusExpansion(1);
+        setMinimum(0, buttonSize.getHeight());
+        setFocusable(true);
+        setFocusExpansion(1);
     }
 
     public Button(Component label) {
         this();
-        label(label);
+        setLabel(label);
     }
 
-    public Button label(Component label) {
-        if (!this.label.getText().equals(label)) { this.label.text(label); requestLayout(); }
+    public Button setLabel(Component label) {
+        if (!this.label.getText().equals(label)) { this.label.setText(label); requestLayout(); }
         return this;
     }
-    public Button hero(boolean hero) { label.hero(hero); requestLayout(); return this; }
-    public boolean hero() { return label.hero(); }
-    public Button fontSize(float fontSize) { label.fontSize(fontSize); requestLayout(); return this; }
-    public float fontSize() { return label.fontSize(); }
-    public Button size(Size size) { this.buttonSize = java.util.Objects.requireNonNull(size); minimum(0, size.height()); return this; }
-    public Button type(Type type) { java.util.Objects.requireNonNull(type); if (DebugBridge.previewWrite(this, "type", type)) return this; this.type = type; return this; }
+    public Button setHero(boolean hero) { label.setHero(hero); requestLayout(); return this; }
+    public boolean getHero() { return label.getHero(); }
+    public Button setFontSize(float fontSize) { label.setFontSize(fontSize); requestLayout(); return this; }
+    public float getFontSize() { return label.getFontSize(); }
+    public Button setSize(Size size) { this.buttonSize = java.util.Objects.requireNonNull(size); setMinimum(0, size.getHeight()); return this; }
+    public Button setType(Type type) { java.util.Objects.requireNonNull(type); if (DebugBridge.previewWrite(this, "type", type)) return this; this.type = type; return this; }
     @Inspectable(group = "Appearance")
-    public Type type() {
+    public Type getType() {
         Type type = DebugBridge.value(this, "type", this.type);
         return type;
     }
-    public Button emphasizedSound(boolean emphasized) { emphasizedSound = emphasized; return this; }
-    public boolean emphasizedSound() { return emphasizedSound; }
-    public Button actionMode(ACTION_MODE actionMode) {
+    public Button setEmphasizedSound(boolean emphasized) { emphasizedSound = emphasized; return this; }
+    public boolean getEmphasizedSound() { return emphasizedSound; }
+    public Button setActionMode(ACTION_MODE actionMode) {
         this.actionMode = java.util.Objects.requireNonNull(actionMode);
         cancelInteraction();
         return this;
     }
-    public ACTION_MODE actionMode() { return actionMode; }
-    public Button alignment(TextAlignment alignment) { this.alignment = java.util.Objects.requireNonNull(alignment); return this; }
+    public ACTION_MODE getActionMode() { return actionMode; }
+    public Button setAlignment(TextAlignment alignment) { this.alignment = java.util.Objects.requireNonNull(alignment); return this; }
     /** Leading icon with text, or a centered icon when the label is empty. Null clears it. */
-    public Button icon(Icon icon) { this.icon = icon; requestLayout(); return this; }
-    public Button icon(ResourceLocation texture, int width, int height) { return icon(new Icon(texture, width, height)); }
-    public Icon icon() { return icon; }
-    public Button trailingIcon(Icon icon) { this.trailingIcon = icon; requestLayout(); return this; }
+    public Button setIcon(Icon icon) { this.icon = icon; requestLayout(); return this; }
+    public Button setIcon(ResourceLocation texture, int width, int height) { return setIcon(new Icon(texture, width, height)); }
+    public Icon getIcon() { return icon; }
+    public Button setTrailingIcon(Icon icon) { this.trailingIcon = icon; requestLayout(); return this; }
     /** Right-aligned decoration inside the button; null removes it. */
-    public Button badge(Badge badge) {
+    public Button setBadge(Badge badge) {
         if (this.badge == badge) return this;
-        if (badge != null && badge.parent() != null) throw new IllegalStateException("Badge already has a parent");
+        if (badge != null && badge.getParent() != null) throw new IllegalStateException("Badge already has a parent");
         if (this.badge != null) removeChild(this.badge);
         this.badge = badge;
         if (badge != null) addChild(badge);
         requestLayout();
         return this;
     }
-    public Badge badge() { return badge; }
+    public Badge getBadge() { return badge; }
     @Override public boolean removeChild(Control child) {
         boolean removed = super.removeChild(child);
         if (removed && child == badge) badge = null;
@@ -113,16 +113,16 @@ public final class Button extends Control {
     public Signal0 pressed() { return pressed.signal(); }
     public Signal<Boolean> toggled() { return toggled.signal(); }
 
-    public Button toggleButton(boolean toggleButton) {
+    public Button setToggleButton(boolean toggleButton) {
         this.toggleButton = toggleButton;
-        if (!toggleButton) buttonPressed(false);
+        if (!toggleButton) setButtonPressed(false);
         return this;
     }
-    public boolean toggleButton() { return toggleButton; }
-    public boolean buttonPressed() { return buttonPressed; }
+    public boolean getToggleButton() { return toggleButton; }
+    public boolean getButtonPressed() { return buttonPressed; }
 
     /** Programmatic state updates never activate the button or play its sound. */
-    public Button buttonPressed(boolean value) {
+    public Button setButtonPressed(boolean value) {
         boolean previous = buttonPressed;
         setButtonPressedNoSignal(value);
         if (previous != buttonPressed) toggled.emit(buttonPressed);
@@ -136,21 +136,21 @@ public final class Button extends Control {
 
 
 
-    public Button disabled(boolean disabled) {
+    public Button setDisabled(boolean disabled) {
         this.disabled = disabled;
         if (disabled) cancelInteraction();
         return this;
     }
-    public boolean disabled() { return disabled; }
+    public boolean getDisabled() { return disabled; }
     @Override public boolean acceptsFocus() { return !disabled && super.acceptsFocus(); }
 
     @Override public int measureWidth(Font font, int available) {
         if (!isAlive()) return 0;
         int reserved = badgeReservation(font);
         if (icon != null && !hasLabel() && trailingIcon == null)
-            return Math.max(minimumWidth(), Math.max(buttonSize.height(), icon.width
+            return Math.max(getMinimumWidth(), Math.max(buttonSize.getHeight(), icon.width
                     + 2 * (hasBadge() ? PADDING_X : ICON_PADDING)) + reserved);
-        return Math.max(minimumWidth(), label.measureWidth(font, available) + 2 * PADDING_X
+        return Math.max(getMinimumWidth(), label.measureWidth(font, available) + 2 * PADDING_X
                 + (icon == null ? 0 : icon.width + (hasLabel() ? ICON_GAP : 0))
                 + (trailingIcon == null ? 0 : trailingIcon.width + ICON_GAP) + reserved);
     }
@@ -162,7 +162,7 @@ public final class Button extends Control {
         return Math.max(height, hasBadge() ? badge.measureHeight(font, available) + 4 : 0);
     }
 
-    private boolean hasBadge() { return badge != null && badge.visible(); }
+    private boolean hasBadge() { return badge != null && badge.getVisible(); }
     private int badgeReservation(Font font) { return hasBadge() ? badge.measureWidth(font, Integer.MAX_VALUE) + ICON_GAP : 0; }
 
     @Override public void layout(Rect bounds, Font font) {
@@ -177,9 +177,9 @@ public final class Button extends Control {
         Type type = DebugBridge.value(this, "type", this.type);
         if (!hasBadge()) return;
         io.github.luyingyilong.ore.layout.Size natural = badge.measureSize(font,
-                new io.github.luyingyilong.ore.layout.Size(size().width(), size().height()));
-        badge.layout(new Rect(size().width() - PADDING_X - natural.width(),
-                (size().height() - natural.height()) / 2 + pressedOffset(type, visuallyPressed()),
+                new io.github.luyingyilong.ore.layout.Size(getSize().width(), getSize().height()));
+        badge.layout(new Rect(getSize().width() - PADDING_X - natural.width(),
+                (getSize().height() - natural.height()) / 2 + pressedOffset(type, visuallyPressed()),
                 natural.width(), natural.height()), font);
     }
 
@@ -189,13 +189,13 @@ public final class Button extends Control {
         return !disabled && (buttonPressed || activationKey != -1 || pointerPressed && pointerHovered);
     }
 
-    @Override public Rect focusBounds() {
+    @Override public Rect getFocusBounds() {
         Type type = DebugBridge.value(this, "type", this.type);
-        return backgroundBounds(absoluteBounds(), type, visuallyPressed());
+        return backgroundBounds(getAbsoluteBounds(), type, visuallyPressed());
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-        Rect area = screenBounds(screenX, screenY);
+        Rect area = getScreenBounds(screenX, screenY);
         boolean hovered = area.contains(context.getAbsMouseX(), context.getAbsMouseY());
         pointerHovered = hovered;
         layoutBadge(context.getFont());
@@ -223,9 +223,9 @@ public final class Button extends Control {
     }
 
     @Override public boolean activate() {
-        if (!visible() || disabled) return false;
+        if (!getVisible() || disabled) return false;
         soundPlayer.accept(emphasizedSound ? OreSounds.Cue.BUTTON : OreSounds.Cue.CLICK);
-        buttonPressed(toggleButton ? !buttonPressed : true);
+        setButtonPressed(toggleButton ? !buttonPressed : true);
         pressed.emit();
         return true;
     }
@@ -244,7 +244,7 @@ public final class Button extends Control {
     }
 
     @Override public boolean onActivationPressed(int keyCode) {
-        if (!visible() || disabled) return false;
+        if (!getVisible() || disabled) return false;
         if (activationKey != -1) return true;
         activationKey = keyCode;
         if (actionMode == ACTION_MODE.BUTTON_PRESS) activate();
@@ -268,7 +268,7 @@ public final class Button extends Control {
 
     public static void draw(ModularGuiContext context, int x, int y, int width,
                             Size size, Component label) {
-        draw(context, x, y, width, size.height(), label, (Icon) null);
+        draw(context, x, y, width, size.getHeight(), label, (Icon) null);
     }
 
     public static void draw(ModularGuiContext context, int x, int y, int width,
@@ -278,13 +278,13 @@ public final class Button extends Control {
 
     public static void draw(ModularGuiContext context, int x, int y, int width,
                             Size size, Component label, TextAlignment alignment) {
-        draw(context, x, y, width, size.height(), label, null, alignment);
+        draw(context, x, y, width, size.getHeight(), label, null, alignment);
     }
 
     public static void draw(ModularGuiContext context, int x, int y, int width,
                             Size size, Component label, Icon trailingIcon,
                             TextAlignment alignment) {
-        draw(context, x, y, width, size.height(), label, trailingIcon, alignment);
+        draw(context, x, y, width, size.getHeight(), label, trailingIcon, alignment);
     }
 
     static void draw(ModularGuiContext context, int x, int y, int width,
@@ -355,8 +355,8 @@ public final class Button extends Control {
         ContentLayout content = contentLayout(new Rect(x, y, Math.max(0, width - reservedRight), height),
                 hasLabel ? label.measureWidth(context.getFont(), width) : 0, hasLabel, icon, trailingIcon, alignment, type, pressed);
         if (hasLabel) {
-            label.color(style.getTextColor()).shadow(style.isTextShadow()).opticalCenter(true)
-                .overflow(Label.Overflow.ELLIPSIS).align(switch (alignment) {
+            label.setColor(style.getTextColor()).setShadow(style.isTextShadow()).setOpticalCenter(true)
+                .setOverflow(Label.Overflow.ELLIPSIS).setAlignment(switch (alignment) {
                     case LEFT -> Label.Horizontal.LEFT;
                     case CENTER -> Label.Horizontal.CENTER;
                     case RIGHT -> Label.Horizontal.RIGHT;
@@ -443,7 +443,7 @@ public final class Button extends Control {
     }
 
     static boolean leftMousePressed() {
-        return io.github.luyingyilong.ore.window.WindowContext.current().mouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT);
+        return io.github.luyingyilong.ore.window.WindowContext.getCurrent().mouseDown(GLFW.GLFW_MOUSE_BUTTON_LEFT);
     }
 
     public static boolean contains(int x, int y, int width, int height,
@@ -487,13 +487,13 @@ public final class Button extends Control {
             this.height = height;
         }
 
-        public int height() {
+        public int getHeight() {
             return height;
         }
     }
     @Override public void debugProperties(java.util.List<DebugProperty> out) {
         super.debugProperties(out);
-        out.add(DebugProperty.bool(label,"hero","Text",label::hero));
-        out.add(DebugProperty.number(label,"fontSize","Text",label::fontSize,0.0001,256));
+        out.add(DebugProperty.bool(label,"hero","Text",label::getHero));
+        out.add(DebugProperty.number(label,"fontSize","Text",label::getFontSize,0.0001,256));
     }
 }

@@ -44,11 +44,11 @@ public final class ClientMailScreen {
 
     public static void open(UUID organization) {
         if (canvas != null && ModularScreen.isActive("geg", "mail")) return;
-        Input title = new Input(250).placeholder(Component.translatable("mail.geg.title_hint"));
+        Input title = new Input(250).setPlaceholder(Component.translatable("mail.geg.title_hint"));
         title.setMaxLength(128);
         TextArea body = new TextArea(250);
-        body.placeholder(Component.translatable("mail.geg.body_hint"));
-        Input target = new Input(250).placeholder(Component.translatable("mail.geg.target_hint"));
+        body.setPlaceholder(Component.translatable("mail.geg.body_hint"));
+        Input target = new Input(250).setPlaceholder(Component.translatable("mail.geg.target_hint"));
         target.setMaxLength(64);
         NumberInput coin = GegInputs.coin(250, true);
         coin.value(new brachy.modularui.value.StringValue("0.00"));
@@ -73,7 +73,7 @@ public final class ClientMailScreen {
 
     public static void accept(MailSyncPacket packet) {
         if (NOTIFICATIONS.accept(packet)) OreToasts.show("geg:new_mail",
-                new Toast(Component.translatable("mail.geg.new_mail")).type(Toast.Type.INFORMATIVE));
+                new Toast(Component.translatable("mail.geg.new_mail")).setType(Toast.Type.INFORMATIVE));
         unread = packet.unread();
         admin = packet.admin();
         if (canvas != null) canvas.accept(packet);

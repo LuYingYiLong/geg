@@ -28,42 +28,42 @@ public final class NumberInput extends Input {
         autoUpdateOnChange(false);
     }
     public NumberInput() { this(0); }
-    public NumberInput decimalPlaces(int places) { rules.decimalPlaces(places); refreshRangeWarning(); return this; }
-    public int decimalPlaces() { return rules.decimalPlaces(); }
+    public NumberInput setDecimalPlaces(int places) { rules.decimalPlaces(places); refreshRangeWarning(); return this; }
+    public int getDecimalPlaces() { return rules.decimalPlaces(); }
 
-    public NumberInput minimumValue(BigDecimal minimum) {
+    public NumberInput setMinimumValue(BigDecimal minimum) {
         BigDecimal previous = rules.minimum();
         rules.minimum(minimum);
         if (!Objects.equals(previous, rules.minimum())) refreshRangeWarning();
         return this;
     }
-    public NumberInput minimumValue(long minimum) { return minimumValue(BigDecimal.valueOf(minimum)); }
-    public NumberInput minimumValue(String minimum) { return minimumValue(new BigDecimal(minimum)); }
-    public BigDecimal minimumValue() { return rules.minimum(); }
-    public NumberInput maximumValue(BigDecimal maximum) {
+    public NumberInput setMinimumValue(long minimum) { return setMinimumValue(BigDecimal.valueOf(minimum)); }
+    public NumberInput setMinimumValue(String minimum) { return setMinimumValue(new BigDecimal(minimum)); }
+    public BigDecimal getMinimumValue() { return rules.minimum(); }
+    public NumberInput setMaximumValue(BigDecimal maximum) {
         BigDecimal previous = rules.maximum();
         rules.maximum(maximum);
         if (!Objects.equals(previous, rules.maximum())) refreshRangeWarning();
         return this;
     }
-    public NumberInput maximumValue(long maximum) { return maximumValue(BigDecimal.valueOf(maximum)); }
-    public NumberInput maximumValue(String maximum) { return maximumValue(new BigDecimal(maximum)); }
-    public BigDecimal maximumValue() { return rules.maximum(); }
-    public NumberInput boundaryStrategy(BoundaryStrategy strategy) {
+    public NumberInput setMaximumValue(long maximum) { return setMaximumValue(BigDecimal.valueOf(maximum)); }
+    public NumberInput setMaximumValue(String maximum) { return setMaximumValue(new BigDecimal(maximum)); }
+    public BigDecimal getMaximumValue() { return rules.maximum(); }
+    public NumberInput setBoundaryStrategy(BoundaryStrategy strategy) {
         BoundaryStrategy previous = rules.strategy();
         rules.strategy(strategy);
         if (previous != strategy) refreshRangeWarning();
         return this;
     }
-    public BoundaryStrategy boundaryStrategy() { return rules.strategy(); }
+    public BoundaryStrategy getBoundaryStrategy() { return rules.strategy(); }
 
-    public Component error() {
+    public Component getError() {
         return error;
     }
 
     @Override protected boolean supportsInputMethod() { return false; }
 
-    public void availableMaximum(BigDecimal maximum) {
+    public void setAvailableMaximum(BigDecimal maximum) {
         BigDecimal previous = rules.maximum();
         rules.availableMaximum(maximum);
         if (!Objects.equals(previous, rules.maximum())) refreshRangeWarning();

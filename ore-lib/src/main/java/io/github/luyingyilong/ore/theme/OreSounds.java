@@ -11,7 +11,7 @@ import java.util.Locale;
 public final class OreSounds {
     public enum Cue { CLICK, BUTTON, DRAWER_OPEN, DRAWER_CLOSE, TOAST }
     private OreSounds() { }
-    public static void play(Cue cue) { OreClient.options().soundPlayer().accept(cue); }
+    public static void play(Cue cue) { OreClient.getOptions().soundPlayer().accept(cue); }
     public static void playDefault(Cue cue) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft == null) return;

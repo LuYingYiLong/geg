@@ -96,7 +96,7 @@ public final class DebugOverrides {
     private void collect(Control c, Set<Control> nodes) {
         nodes.add(c);
         InspectorProperties.properties(c).forEach(p -> nodes.add(p.target()));
-        c.children().forEach(child -> collect(child, nodes));
+        c.getChildren().forEach(child -> collect(child, nodes));
     }
 
     public void clear() {

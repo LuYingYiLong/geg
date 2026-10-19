@@ -30,8 +30,8 @@ public final class PlayerIdentityCell<T> implements Table.Cell<T> {
     }
 
     private static Label nameLabel() {
-        return new Label().color(OreTheme.TEXT_WHITE).wrap(Label.Wrap.CHARACTER).maxLines(2)
-                .overflow(Label.Overflow.ELLIPSIS).align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+        return new Label().setColor(OreTheme.TEXT_WHITE).setWrap(Label.Wrap.CHARACTER).setMaxLines(2)
+                .setOverflow(Label.Overflow.ELLIPSIS).setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
     }
 
     @Override public int measureHeight(Font font, T row, int width) {
@@ -45,8 +45,8 @@ public final class PlayerIdentityCell<T> implements Table.Cell<T> {
     @Override public void bindControl(Control control, T row) {
         Identity identity = (Identity) control;
         String name = playerName.apply(row);
-        identity.avatar.player(playerId.apply(row), name);
-        identity.name.text(Component.literal(name));
+        identity.avatar.setPlayer(playerId.apply(row), name);
+        identity.name.setText(Component.literal(name));
     }
 
     @Override public void draw(ModularGuiContext context, T row, Rect bounds) {
@@ -54,14 +54,14 @@ public final class PlayerIdentityCell<T> implements Table.Cell<T> {
     }
 
     private static final class Identity extends Container {
-        private final Avatar avatar = new Avatar().size(AVATAR_SIZE);
+        private final Avatar avatar = new Avatar().setSize(AVATAR_SIZE);
         private final Label name = nameLabel();
         private final Padding content;
 
         private Identity() {
-            name.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
+            name.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
             content = new Padding(new Padding.Insets(INSET_Y, INSET_X, INSET_Y, INSET_X))
-                    .child(new Box().orientation(Box.Orientation.HORIZONTAL).gap(GAP).add(avatar).add(name));
+                    .setChild(new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(GAP).add(avatar).add(name));
             addChild(content);
         }
 

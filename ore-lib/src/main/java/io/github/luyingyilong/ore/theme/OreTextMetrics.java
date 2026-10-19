@@ -59,8 +59,8 @@ public final class OreTextMetrics {
         // Include the vanilla bitmap capital box even when the sample TTF also contains Latin glyphs.
         Bounds bitmap = new Bounds(0, 8, 0, 7);
         try {
-            Bounds fallback = bitmap.include(load(resources, io.github.luyingyilong.ore.OreClient.options().fallbackFont()));
-            Bounds hero = fallback.include(load(resources, io.github.luyingyilong.ore.OreClient.options().heroFont()));
+            Bounds fallback = bitmap.include(load(resources, io.github.luyingyilong.ore.OreClient.getOptions().fallbackFont()));
+            Bounds hero = fallback.include(load(resources, io.github.luyingyilong.ore.OreClient.getOptions().heroFont()));
             families = new Families(fallback.profile(), hero.profile());
         } catch (IOException | RuntimeException exception) {
             families = new Families(DEFAULT, DEFAULT);

@@ -56,21 +56,21 @@ public final class Switch extends Container {
         checked = defaultChecked;
         animationFrom = checked ? TRAVEL : 0;
         animationStart = clock.getAsLong();
-        minimum(WIDTH, HEIGHT);
-        preferred(WIDTH, HEIGHT);
-        sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN);
-        sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        focusable(true);
-        focusExpansion(1);
-        spinner.visible(false);
+        setMinimum(WIDTH, HEIGHT);
+        setPreferred(WIDTH, HEIGHT);
+        setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN);
+        setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        setFocusable(true);
+        setFocusExpansion(1);
+        spinner.setVisible(false);
         addChild(spinner);
     }
 
-    public boolean checked() { return checked; }
+    public boolean getChecked() { return checked; }
 
     public Signal<Boolean> toggled() { return toggled.signal(); }
     public Signal<Boolean> activated() { return activated.signal(); }
-    public Switch checked(boolean value) {
+    public Switch setChecked(boolean value) {
         boolean previous = checked;
         setCheckedNoSignal(value);
         if (previous != checked) toggled.emit(checked);
@@ -88,29 +88,29 @@ public final class Switch extends Container {
         return this;
     }
 
-    public boolean disabled() { return disabled; }
+    public boolean getDisabled() { return disabled; }
 
-    public Switch disabled(boolean value) {
+    public Switch setDisabled(boolean value) {
         disabled = value;
         if (value) cancelInteraction();
         return this;
     }
 
-    public boolean loading() { return loading; }
+    public boolean getLoading() { return loading; }
 
     /** Loading preserves the selected state and blocks further activation. */
-    public Switch loading(boolean value) {
+    public Switch setLoading(boolean value) {
         loading = value;
-        spinner.visible(value);
+        spinner.setVisible(value);
         if (value) cancelInteraction();
         return this;
     }
 
 
-    public long animationDuration() { return animationDuration; }
+    public long getAnimationDuration() { return animationDuration; }
 
     /** Milliseconds; zero places the thumb immediately at its target. */
-    public Switch animationDuration(long milliseconds) {
+    public Switch setAnimationDuration(long milliseconds) {
         if (milliseconds < 0L) throw new IllegalArgumentException("Animation duration must not be negative");
         if (animationDuration == milliseconds) return this;
         long now = clock.getAsLong();
@@ -121,9 +121,9 @@ public final class Switch extends Container {
     }
 
     @Override public int measureWidth(Font font, int available) {
-        if (!isAlive()) return 0; return Math.max(WIDTH, minimumWidth()); }
+        if (!isAlive()) return 0; return Math.max(WIDTH, getMinimumWidth()); }
     @Override public int measureHeight(Font font, int available) {
-        if (!isAlive()) return 0; return Math.max(HEIGHT, minimumHeight()); }
+        if (!isAlive()) return 0; return Math.max(HEIGHT, getMinimumHeight()); }
 
     @Override public void layout(Rect bounds, Font font) {
         if (!isAlive()) return;
@@ -135,7 +135,7 @@ public final class Switch extends Container {
 
     /** Extra allocated space never stretches the textures or enlarges the clickable area. */
     Rect artworkBounds() {
-        Rect area = absoluteBounds();
+        Rect area = getAbsoluteBounds();
         return new Rect(area.x() + Math.max(0, (area.width() - WIDTH) / 2),
                 area.y() + Math.max(0, (area.height() - HEIGHT) / 2), WIDTH, HEIGHT);
     }
@@ -150,8 +150,8 @@ public final class Switch extends Container {
         return new Rect(area.x() + (int) Math.round(offsetAt(clock.getAsLong())), area.y(), THUMB_WIDTH, HEIGHT);
     }
 
-    @Override public Rect focusBounds() { return thumbBounds(); }
-    @Override public boolean hit(int rootX, int rootY) { return visible() && artworkBounds().contains(rootX, rootY); }
+    @Override public Rect getFocusBounds() { return thumbBounds(); }
+    @Override public boolean hit(int rootX, int rootY) { return getVisible() && artworkBounds().contains(rootX, rootY); }
     @Override public boolean acceptsFocus() { return available() && super.acceptsFocus(); }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
@@ -176,7 +176,7 @@ public final class Switch extends Container {
     }
 
     private void layoutSpinner(Rect thumb, Font font) {
-        Rect origin = absoluteBounds();
+        Rect origin = getAbsoluteBounds();
         fitChild(spinner, new Rect(thumb.x() - origin.x() + (THUMB_WIDTH - 7) / 2,
                 thumb.y() - origin.y() + (HEIGHT - 7) / 2, 7, 7), font);
     }
@@ -200,19 +200,19 @@ public final class Switch extends Container {
     @Override protected boolean pointerMove(int rootX, int rootY) { return gesture.pointerPending(); }
 
     @Override protected boolean pointerUp(boolean over) {
-        var release = gesture.pointerUp(true, over && available() && visible());
+        var release = gesture.pointerUp(true, over && available() && getVisible());
         if (release.target() != null) activate();
         return release.handled();
     }
 
     @Override public boolean onActivationPressed(int keyCode) {
-        if (!available() || !visible() || keyCode != GLFW.GLFW_KEY_ENTER && keyCode != GLFW.GLFW_KEY_SPACE) return false;
+        if (!available() || !getVisible() || keyCode != GLFW.GLFW_KEY_ENTER && keyCode != GLFW.GLFW_KEY_SPACE) return false;
         gesture.keyDown(keyCode, true);
         return true;
     }
 
     @Override public boolean onActivationReleased(int keyCode) {
-        var release = gesture.keyUp(keyCode, available() && visible() ? true : null);
+        var release = gesture.keyUp(keyCode, available() && getVisible() ? true : null);
         if (release.target() != null) activate();
         return release.handled();
     }
@@ -221,10 +221,10 @@ public final class Switch extends Container {
     @Override public void onFocusChanged(boolean focused) { if (!focused) cancelInteraction(); }
 
     @Override public boolean activate() {
-        if (!available() || !visible()) return false;
+        if (!available() || !getVisible()) return false;
         boolean next = !checked;
         soundPlayer.accept(OreSounds.Cue.CLICK);
-        checked(next);
+        setChecked(next);
         activated.emit(next);
         return true;
     }

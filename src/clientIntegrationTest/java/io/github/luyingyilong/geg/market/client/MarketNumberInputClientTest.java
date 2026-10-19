@@ -37,13 +37,13 @@ public final class MarketNumberInputClientTest {
                 number=(NumberInput)field(ClientMarketScreen.class,null,"quantity");phase=2;
             }else if(phase==2&&ticks>45){
                 var form=(Form)field(ClientMarketScreen.class,null,"detailForm");
-                var node=form.children().stream().filter(io.github.luyingyilong.ore.FormItem.class::isInstance).map(io.github.luyingyilong.ore.FormItem.class::cast).filter(item -> item.name().equals("quantity")).findFirst().orElseThrow().inputNode();
-                var a=node.widgetBounds();x=a.x()+8;y=a.y()+a.height()/2;
-                window.context().mui().updateState(x,y,0);
+                var node=form.getChildren().stream().filter(io.github.luyingyilong.ore.FormItem.class::isInstance).map(io.github.luyingyilong.ore.FormItem.class::cast).filter(item -> item.getName().equals("quantity")).findFirst().orElseThrow().getInputNode();
+                var a=node.getWidgetBounds();x=a.x()+8;y=a.y()+a.height()/2;
+                window.getContext().getMui().updateState(x,y,0);
                 check(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.MouseButtonPressed.Pre(mc.screen,x,y,0)),"Number press accepted");
                 phase=3;
             }else if(phase==3&&ticks>48){
-                window.context().mui().updateState(x,y,0);
+                window.getContext().getMui().updateState(x,y,0);
                 net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.MouseButtonReleased.Pre(mc.screen,x,y,0));
                 check(number.isFocused(),"Market NumberInput holds focus across frames");
                 key(GLFW.GLFW_KEY_A,GLFW.GLFW_MOD_CONTROL);
@@ -56,14 +56,14 @@ public final class MarketNumberInputClientTest {
                 io.github.luyingyilong.ore.input.InputGeometryProbe.verifyLineHit(number);
                 x=io.github.luyingyilong.ore.input.InputGeometryProbe.clickX(number,2);
                 var a=number.getArea();y=a.y+1;
-                window.context().mui().updateState(x,y,0);
+                window.getContext().getMui().updateState(x,y,0);
                 net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.MouseButtonPressed.Pre(mc.screen,x,y,0));
                 net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.MouseButtonReleased.Pre(mc.screen,x,y,0));
                 var cursor=io.github.luyingyilong.ore.input.InputGeometryProbe.cursor(number);
                 check(cursor.x==2,"Clicked column 2, got "+cursor.x+","+cursor.y);
                 var form=(Form)field(ClientMarketScreen.class,null,"detailForm");
-                var priceNode=form.children().stream().filter(io.github.luyingyilong.ore.FormItem.class::isInstance)
-                        .map(io.github.luyingyilong.ore.FormItem.class::cast).filter(item -> item.name().equals("price")).findFirst().orElseThrow().inputNode();
+                var priceNode=form.getChildren().stream().filter(io.github.luyingyilong.ore.FormItem.class::isInstance)
+                        .map(io.github.luyingyilong.ore.FormItem.class::cast).filter(item -> item.getName().equals("price")).findFirst().orElseThrow().getInputNode();
                 verifyField(priceNode,(NumberInput)field(ClientMarketScreen.class,null,"price"));
                 Object canvas=field(ClientMarketScreen.class,null,"canvas");
                 var menu=MarketCanvasWidget.class.getDeclaredField("quantityMenu");menu.setAccessible(true);menu.setBoolean(canvas,true);
@@ -72,35 +72,35 @@ public final class MarketNumberInputClientTest {
                 phase=5;
             }else if(phase==5&&ticks>75){
                 var form=(Form)field(ClientMarketScreen.class,null,"tradeForm");
-                var node=((io.github.luyingyilong.ore.FormItem)form.children().get(0)).inputNode();
+                var node=((io.github.luyingyilong.ore.FormItem)form.getChildren().get(0)).getInputNode();
                 verifyField(node,(NumberInput)field(ClientMarketScreen.class,null,"tradeQuantity"));
                 phase=99;System.out.println("GEG_MARKET_NUMBER_CLIENT_PASS");mc.stop();
             }
         }catch(Throwable error){phase=99;error.printStackTrace();System.out.println("GEG_MARKET_NUMBER_CLIENT_FAIL");mc.stop();}
     }
     private static void verifyField(io.github.luyingyilong.ore.input.InputControl node, NumberInput input)throws Exception {
-        input.availableMaximum(java.math.BigDecimal.valueOf(64));
+        input.setAvailableMaximum(java.math.BigDecimal.valueOf(64));
         input.getStringValue().setStringValue("12+34");input.setText("12+34");
         // Move after the last paint: MUI's deferred resize must not leave stale local coordinates.
-        node.offset(2,0);
+        node.setOffset(2,0);
         int px=io.github.luyingyilong.ore.input.InputGeometryProbe.clickX(input,2);
-        int py=node.widgetBounds().y()+node.bounds().height()-1;
+        int py=node.getWidgetBounds().y()+node.getBounds().height()-1;
         io.github.luyingyilong.ore.input.InputGeometryProbe.resetClickSequence(input);
-        var mc=Minecraft.getInstance();window.context().mui().updateState(px,py,0);
+        var mc=Minecraft.getInstance();window.getContext().getMui().updateState(px,py,0);
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.MouseButtonPressed.Pre(mc.screen,px,py,0));
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.MouseButtonReleased.Pre(mc.screen,px,py,0));
         check(input.isFocused(),"Moved NumberInput focuses");
         var point=io.github.luyingyilong.ore.input.InputGeometryProbe.cursor(input);
         check(point.x==2,"Moved NumberInput caret at column 2, got "+point.x);
-        var expected=node.widgetBounds();var actual=input.getArea();
+        var expected=node.getWidgetBounds();var actual=input.getArea();
         check(actual.x==expected.x() && actual.y==expected.y() && actual.rx==actual.x-input.getParent().getArea().x && actual.ry==actual.y-input.getParent().getArea().y,"Native area and relative transform follow Ore immediately");
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.CharacterTyped.Pre(mc.screen,'1',0));
         check(input.getText().equals("121+34"),"Insert at clicked caret");
         key(GLFW.GLFW_KEY_A,GLFW.GLFW_MOD_CONTROL);
         for(char c:"1+1".toCharArray())net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.CharacterTyped.Pre(mc.screen,c,0));
         key(GLFW.GLFW_KEY_ENTER,0);
-        check(input.getText().equals(input.decimalPlaces()==0?"2":"2.00"),"Moved field commits arithmetic");
-        node.offset(0,0);
+        check(input.getText().equals(input.getDecimalPlaces()==0?"2":"2.00"),"Moved field commits arithmetic");
+        node.setOffset(0,0);
     }
     private static Object field(Class<?> type,Object owner,String name)throws Exception{var f=type.getDeclaredField(name);f.setAccessible(true);return f.get(owner);}
     private static void key(int code,int modifiers){var mc=Minecraft.getInstance();net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.KeyPressed.Pre(mc.screen,code,0,modifiers));net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.KeyReleased.Pre(mc.screen,code,0,modifiers));}

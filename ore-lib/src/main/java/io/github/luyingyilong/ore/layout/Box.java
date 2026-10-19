@@ -14,12 +14,12 @@ public final class Box extends Container {
     private Orientation orientation = Orientation.VERTICAL;
     private int gap;
 
-    public Box orientation(Orientation orientation) { java.util.Objects.requireNonNull(orientation); if (DebugBridge.previewWrite(this, "orientation", orientation)) return this; this.orientation = orientation; requestLayout(); return this; }
-    public Box gap(int gap) { gap = Math.max(0, gap); if (DebugBridge.previewWrite(this, "gap", gap)) return this; this.gap = gap; requestLayout(); return this; }
+    public Box setOrientation(Orientation orientation) { java.util.Objects.requireNonNull(orientation); if (DebugBridge.previewWrite(this, "orientation", orientation)) return this; this.orientation = orientation; requestLayout(); return this; }
+    public Box setGap(int gap) { gap = Math.max(0, gap); if (DebugBridge.previewWrite(this, "gap", gap)) return this; this.gap = gap; requestLayout(); return this; }
     @Inspectable
-    public Orientation orientation() { return DebugBridge.value(this, "orientation", orientation); }
+    public Orientation getOrientation() { return DebugBridge.value(this, "orientation", orientation); }
     @Inspectable(min = 0, max = 10000)
-    public int gap() { return DebugBridge.value(this, "gap", gap); }
+    public int getGap() { return DebugBridge.value(this, "gap", gap); }
     public Box add(Control child) { addChild(child); return this; }
     @Override public Box addChild(Control child) { super.addChild(child); return this; }
 
@@ -30,7 +30,8 @@ public final class Box extends Container {
         int totalWidth = 0;
         int totalHeight = 0;
         int count = 0;
-        for (Control child : children()) if (child.parent() == this && child.isAlive() && child.visible()) {
+        List<Control> active = activeChildren();
+        for (Control child : active) {
             Size measured = child.desiredSize(font, available);
             totalWidth = orientation == Orientation.HORIZONTAL ? totalWidth + measured.width()
                     : Math.max(totalWidth, measured.width());
@@ -39,8 +40,21 @@ public final class Box extends Container {
             count++;
         }
         int gaps = Math.max(0, count - 1) * gap;
-        if (orientation == Orientation.HORIZONTAL) totalWidth += gaps;
-        else totalHeight += gaps;
+        if (orientation == Orientation.HORIZONTAL) {
+            totalWidth += gaps;
+            // Wrapping depends on the width the child will actually receive, not the
+            // entire row width. Use the same allocation as layout before measuring height.
+            int[] widths = allocateSizes(active, font, available.width(), available.height());
+            totalHeight = 0;
+            for (int index = 0; index < active.size(); index++) {
+                Control child = active.get(index);
+                int width = widths[index];
+                if (!SizeFlags.fills(child.getSizeFlagsHorizontal()))
+                    width = Math.min(width, child.desiredSize(font, new Size(width, available.height())).width());
+                width = Math.max(child.getMinimumWidth(), width);
+                totalHeight = Math.max(totalHeight, child.desiredSize(font, new Size(width, available.height())).height());
+            }
+        } else totalHeight += gaps;
         return new Size(Math.max(super.measureWidth(font, available.width()), totalWidth),
                 Math.max(super.measureHeight(font, available.height()), totalHeight));
     }
@@ -62,30 +76,10 @@ public final class Box extends Container {
             Orientation orientation = DebugBridge.value(this, "orientation", this.orientation);
             int gap = DebugBridge.value(this, "gap", this.gap);
             super.layout(localBounds, font);
-            List<Control> active = children().stream().filter(c -> c.isAlive() && c.visible()).toList();
+            List<Control> active = activeChildren();
             int axis = orientation == Orientation.VERTICAL ? localBounds.height() : localBounds.width();
             int cross = orientation == Orientation.VERTICAL ? localBounds.width() : localBounds.height();
-            int space = Math.max(0, axis - Math.max(0, active.size() - 1) * gap);
-            int[] sizes = new int[active.size()];
-            int fixed = 0;
-            for (int index = 0; index < active.size(); index++) {
-                Control child = active.get(index);
-                Size measured = child.desiredSize(font, orientation == Orientation.VERTICAL
-                        ? new Size(cross, axis) : new Size(axis, cross));
-                sizes[index] = orientation == Orientation.VERTICAL ? measured.height() : measured.width();
-                if (!expands(child)) fixed += sizes[index];
-            }
-            int expandedMinimum = active.stream().filter(this::expands).mapToInt(this::mainMinimum).sum();
-            int shortage = Math.max(0, fixed + expandedMinimum - space);
-            for (int index = 0; index < active.size() && shortage > 0; index++) {
-                Control child = active.get(index);
-                if (expands(child)) continue;
-                int reduction = Math.min(shortage, sizes[index] - mainMinimum(child));
-                sizes[index] -= reduction;
-                fixed -= reduction;
-                shortage -= reduction;
-            }
-            allocateExpanded(active, sizes, Math.max(0, space - fixed));
+            int[] sizes = allocateSizes(active, font, axis, cross);
             int cursor = 0;
             for (int index = 0; index < active.size(); index++) {
                 Control child = active.get(index);
@@ -97,15 +91,45 @@ public final class Box extends Container {
         }
     }
 
+    private List<Control> activeChildren() {
+        return getChildren().stream().filter(child -> child.getParent() == this && child.isAlive() && child.getVisible()).toList();
+    }
+
+    private int[] allocateSizes(List<Control> active, Font font, int axis, int cross) {
+        Orientation orientation = getOrientation();
+        int space = Math.max(0, axis - Math.max(0, active.size() - 1) * getGap());
+        int[] sizes = new int[active.size()];
+        int fixed = 0;
+        for (int index = 0; index < active.size(); index++) {
+            Control child = active.get(index);
+            Size measured = child.desiredSize(font, orientation == Orientation.VERTICAL
+                    ? new Size(cross, axis) : new Size(axis, cross));
+            sizes[index] = orientation == Orientation.VERTICAL ? measured.height() : measured.width();
+            if (!expands(child)) fixed += sizes[index];
+        }
+        int expandedMinimum = active.stream().filter(this::expands).mapToInt(this::mainMinimum).sum();
+        int shortage = Math.max(0, fixed + expandedMinimum - space);
+        for (int index = 0; index < active.size() && shortage > 0; index++) {
+            Control child = active.get(index);
+            if (expands(child)) continue;
+            int reduction = Math.min(shortage, sizes[index] - mainMinimum(child));
+            sizes[index] -= reduction;
+            fixed -= reduction;
+            shortage -= reduction;
+        }
+        allocateExpanded(active, sizes, Math.max(0, space - fixed));
+        return sizes;
+    }
+
     private boolean expands(Control child) {
         Orientation orientation = DebugBridge.value(this, "orientation", this.orientation);
         return SizeFlags.expands(orientation == Orientation.VERTICAL
-                ? child.sizeFlagsVertical() : child.sizeFlagsHorizontal());
+                ? child.getSizeFlagsVertical() : child.getSizeFlagsHorizontal());
     }
 
     private int mainMinimum(Control child) {
         Orientation orientation = DebugBridge.value(this,"orientation",this.orientation);
-        return orientation == Orientation.VERTICAL ? child.minimumHeight() : child.minimumWidth();
+        return orientation == Orientation.VERTICAL ? child.getMinimumHeight() : child.getMinimumWidth();
     }
 
     /** Freeze children whose proportional slot would be below their minimum, then redistribute. */
@@ -114,15 +138,15 @@ public final class Box extends Container {
         for (int index = 0; index < active.size(); index++) if (expands(active.get(index))) pending.add(index);
         int remaining = space;
         while (!pending.isEmpty()) {
-            double weight = pending.stream().mapToDouble(index -> active.get(index).sizeFlagsStretchRatio()).sum();
+            double weight = pending.stream().mapToDouble(index -> active.get(index).getSizeFlagsStretchRatio()).sum();
             List<Integer> frozen = new ArrayList<>();
             for (int index : pending)
-                if (remaining * (double) active.get(index).sizeFlagsStretchRatio() / weight < mainMinimum(active.get(index)))
+                if (remaining * (double) active.get(index).getSizeFlagsStretchRatio() / weight < mainMinimum(active.get(index)))
                     frozen.add(index);
             if (frozen.isEmpty()) {
                 int assigned = 0;
                 for (int index : pending) {
-                    sizes[index] = (int) Math.floor(remaining * (double) active.get(index).sizeFlagsStretchRatio() / weight);
+                    sizes[index] = (int) Math.floor(remaining * (double) active.get(index).getSizeFlagsStretchRatio() / weight);
                     assigned += sizes[index];
                 }
                 int remainder = remaining - assigned;
@@ -142,7 +166,7 @@ public final class Box extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
-            for (Control child : children()) if (child.parent() == this && child.isAlive() && child.visible()) child.draw(context, screenX, screenY);
+            for (Control child : getChildren()) if (child.getParent() == this && child.isAlive() && child.getVisible()) child.draw(context, screenX, screenY);
         }
     }
 

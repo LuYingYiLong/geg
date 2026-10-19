@@ -20,57 +20,57 @@ Tree 的展开按钮使用 `arrow_right_light`／`arrow_down_light` 的 7×7 图
 
 | 属性／接口 | 行为与默认值 |
 | --- | --- |
-| `rowHeight(int)`／`indent(int)` | 行高 22px（最小 18px），每层缩进 10px |
-| `blockNode(boolean)` | 默认 true，节点按钮占满行；false 时只占名称和图标所需宽度 |
-| `showSwitcher(boolean)` | 默认 true；false 时同时移除箭头列的占位 |
-| `switcherIcon((item, expanded) -> Icon)` | 自定义展开／折叠图标 |
-| `showIcon(boolean)` | 默认 false；显示 Item 的可选图标 |
-| `disabled(boolean)`／`selectable(boolean)` | 默认 false／true；禁用整树交互，或仅禁止用户选中节点 |
-| `defaultExpandAll(boolean)` | 默认 true，保持旧行为；决定后续新节点的初始展开状态 |
-| `expandedKeys(Collection)`／`expandedKeys()` | 设置／读取展开的分支键集合；程序更新不触发回调 |
-| `expanded(key, boolean)`／`expandAll(boolean)` | 控制单个分支或全部分支 |
-| `onExpand(event)` | 用户展开／折叠时返回 Item、展开状态和不可变展开键快照 |
-| `selected(key)`／`onSelect(value)` | 程序设置选中项不触发回调；用户选择时回传节点值 |
+| `setRowHeight(int)`／`setIndent(int)` | 行高 22px（最小 18px），每层缩进 10px |
+| `setBlockNode(boolean)` | 默认 true，节点按钮占满行；false 时只占名称和图标所需宽度 |
+| `setShowSwitcher(boolean)` | 默认 true；false 时同时移除箭头列的占位 |
+| `setSwitcherIcon((item, expanded) -> Icon)` | 自定义展开／折叠图标 |
+| `setShowIcon(boolean)` | 默认 false；显示 Item 的可选图标 |
+| `setDisabled(boolean)`／`setSelectable(boolean)` | 默认 false／true；禁用整树交互，或仅禁止用户选中节点 |
+| `setDefaultExpandAll(boolean)` | 默认 true，保持旧行为；决定后续新节点的初始展开状态 |
+| `setExpandedKeys(Collection)`／`getExpandedKeys()` | 设置／读取展开的分支键集合；受控刷新使用 `setExpandedKeysNoSignal` |
+| `setExpanded(key, boolean)`／`expandAll(boolean)` | 控制单个分支或全部分支 |
+| `expansionChanged()` | 展开状态变化时返回 Item、展开状态和不可变展开键快照 |
+| `setSelected(key)`／`selectionChanged()` | 选中值变化时回传节点值；受控刷新使用 `setSelectedNoSignal` |
 
 四参数 `Item(key, parent, text, value)` 保持兼容；完整构造支持 `disabled`、`selectable`、`Button.Icon`。禁用节点不响应选择／展开；不可选择的分支仍可展开和通过键盘遍历。方向键跳过禁用节点：右键展开或进入子节点，左键折叠或返回父节点，上下键遍历。搜索临时展开匹配路径，清除搜索后恢复先前展开状态。数据拒绝重复键、缺失父节点和环。
 
 ```java
 Tree<String> tree = new Tree<String>()
-        .rowHeight(22).indent(12).blockNode(true)
-        .defaultExpandAll(false).showIcon(true)
-        .onSelect(key -> selectObject(key))
-        .onExpand(event -> expandedChanged(event.item().key(), event.expanded()));
-tree.items(nodes);
-Scroll scroll = new Scroll().content(tree);
+        .setRowHeight(22).setIndent(12).setBlockNode(true)
+        .setDefaultExpandAll(false).setShowIcon(true);
+tree.selectionChanged().connect(window, this::selectObject);
+tree.expansionChanged().connect(window, event -> expandedChanged(event.item().key(), event.expanded()));
+tree.setItems(nodes);
+Scroll scroll = new Scroll().setContent(tree);
 ```
 
 ## Ore Splitter 与 Divider
 
-`Splitter` 是双面板容器，已替换原有类名及 Inspector 使用处。水平排列对应竖分隔线，垂直排列对应横分隔线。`Divider.layout(Divider.Layout.VERTICAL)` 使用 `OreTheme.V_DIVIDER`，固定宽度 1px；默认 HORIZONTAL 使用 `H_DIVIDER`，固定高度 2px。主题在首次绘制时加载。
+`Splitter` 是双面板容器，已替换原有类名及 Inspector 使用处。水平排列对应竖分隔线，垂直排列对应横分隔线。`Divider.setLayout(Divider.Layout.VERTICAL)` 使用 `OreTheme.V_DIVIDER`，固定宽度 1px；默认 HORIZONTAL 使用 `H_DIVIDER`，固定高度 2px。主题在首次绘制时加载。
 
 | Splitter 属性／接口 | 默认值及含义 |
 | --- | --- |
-| `orientation(Orientation)` | HORIZONTAL，左右排列；VERTICAL 上下排列 |
-| `ratio(double)` | 0.35，首面板所占比例，切换为比例尺寸模式 |
-| `firstSize(int)` | 设置首面板的期望像素尺寸，切换为像素模式 |
-| `firstSize()`／`secondSize()`／`sizes()` | 读取最近布局实际分配的尺寸 |
+| `setOrientation(Orientation)` | HORIZONTAL，左右排列；VERTICAL 上下排列 |
+| `setRatio(double)` | 0.35，首面板所占比例，切换为比例尺寸模式 |
+| `setFirstSize(int)` | 设置首面板的期望像素尺寸，切换为像素模式 |
+| `getFirstSize()`／`getSecondSize()`／`getSizes()` | 读取最近布局实际分配的尺寸 |
 | `firstMinimum`／`secondMinimum` | 0，与子控件自己的最小尺寸取较大值 |
 | `firstMaximum`／`secondMaximum` | Integer.MAX_VALUE，可设置像素上限 |
-| `gap(int)` | 4px，两面板之间的保留空间 |
-| `dragSize(int)` | 6px，居中的拖拽热区，独立于线条粗细 |
-| `showDivider(boolean)` | true；隐藏线条不改变 gap，也不禁用拖拽 |
-| `resizable(boolean)` | true；false 时禁止用户拖拽 |
-| `lazy(boolean)` | false；true 时拖动只移动分隔线，释放后提交面板尺寸 |
-| `onResizeStart`／`onResize`／`onResizeEnd` | 用户拖拽的开始、变化及结束，接收 `Sizes(first, second)` |
+| `setGap(int)` | 4px，两面板之间的保留空间 |
+| `setDragSize(int)` | 6px，居中的拖拽热区，独立于线条粗细 |
+| `setShowDivider(boolean)` | true；隐藏线条不改变 gap，也不禁用拖拽 |
+| `setResizable(boolean)` | true；false 时禁止用户拖拽 |
+| `setLazy(boolean)` | false；true 时拖动只移动分隔线，释放后提交面板尺寸 |
+| `resizeStarted()`／`resized()`／`resizeEnded()` | 用户拖拽的开始、变化及结束，接收 `Sizes(first, second)` |
 
-程序设置尺寸不触发拖拽回调。中断拖拽不触发结束回调，lazy 预览会撤销；移出控件后仍可拖动和释放。最小尺寸不足时允许溢出，最大尺寸之和不足以填满容器时余量留空；子控件自身最小尺寸优先。只有一个面板可见时，它填满容器并隐藏分隔线。
+程序设置尺寸不触发拖拽开始或结束信号；尺寸变化发送 resized，受控回填可使用静默 setter。中断拖拽不触发结束回调，lazy 预览会撤销；移出控件后仍可拖动和释放。最小尺寸不足时允许溢出，最大尺寸之和不足以填满容器时余量留空；子控件自身最小尺寸优先。只有一个面板可见时，它填满容器并隐藏分隔线。
 
 ```java
 Splitter splitter = new Splitter(left, right)
-        .orientation(Splitter.Orientation.HORIZONTAL)
-        .ratio(0.34).firstMinimum(110).secondMinimum(190)
-        .showDivider(true).resizable(true).gap(4).dragSize(6)
-        .onResizeEnd(sizes -> saveSplit(sizes.first(), sizes.second()));
+        .setOrientation(Splitter.Orientation.HORIZONTAL)
+        .setRatio(0.34).setFirstMinimum(110).setSecondMinimum(190)
+        .setShowDivider(true).setResizable(true).setGap(4).setDragSize(6);
+splitter.resizeEnded().connect(window, sizes -> saveSplit(sizes.first(), sizes.second()));
 ```
 
 ## 属性接入
@@ -79,11 +79,11 @@ Splitter splitter = new Splitter(left, right)
 
 ```java
 @Inspectable(group = "Text", min = 0.0001, max = 256)
-public float fontSize() {
+public float getFontSize() {
     return DebugBridge.value(this, "fontSize", fontSize);
 }
 
-public Label fontSize(float value) {
+public Label setFontSize(float value) {
     if (!(value > 0.0F) || !Float.isFinite(value))
         throw new IllegalArgumentException("Invalid font size");
     // 在校验之后、任何字段修改和副作用之前截住 Inspector 预检

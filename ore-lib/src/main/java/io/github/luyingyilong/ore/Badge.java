@@ -20,22 +20,22 @@ public final class Badge extends Container {
     private static final int PADDING_X = 2;
     // Mojangles digits are seven pixels high; their advance includes one trailing spacing pixel.
     private static final int TRAILING_SPACING = 1;
-    private final Label label = ownPart("label", new Label().opticalCenter(true).align(Label.Horizontal.LEFT, Label.Vertical.CENTER));
+    private final Label label = ownPart("label", new Label().setOpticalCenter(true).setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER));
     private Long count;
     private long overflowCount = 99L;
     private Tag.Type type = Tag.Type.PRIMARY;
 
     public Badge() {
-        minimum(DOT_SIZE, DOT_SIZE + SHADOW_HEIGHT);
+        setMinimum(DOT_SIZE, DOT_SIZE + SHADOW_HEIGHT);
         addChild(label);
-        label.visible(false);
-        type(type);
-        sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        label.setVisible(false);
+        setType(type);
+        setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
     }
-    public Badge(long count) { this(); count(count); }
+    public Badge(long count) { this(); setCount(count); }
 
     /** Null restores dot mode. Negative counts are rejected. */
-    public Badge count(Long count) {
+    public Badge setCount(Long count) {
         if (count != null && count < 0L) throw new IllegalArgumentException("Badge count cannot be negative");
         if (!Objects.equals(this.count, count)) {
             this.count = count;
@@ -44,9 +44,9 @@ public final class Badge extends Container {
         }
         return this;
     }
-    public Badge count(long count) { return count(Long.valueOf(count)); }
-    public Long count() { return count; }
-    public Badge overflowCount(long overflowCount) {
+    public Badge setCount(long count) { return setCount(Long.valueOf(count)); }
+    public Long getCount() { return count; }
+    public Badge setOverflowCount(long overflowCount) {
         if (overflowCount <= 0L) throw new IllegalArgumentException("Badge overflow count must be positive");
         if (this.overflowCount != overflowCount) {
             this.overflowCount = overflowCount;
@@ -55,21 +55,21 @@ public final class Badge extends Container {
         }
         return this;
     }
-    public long overflowCount() { return overflowCount; }
-    public Badge type(Tag.Type type) {
+    public long getOverflowCount() { return overflowCount; }
+    public Badge setType(Tag.Type type) {
         this.type = Objects.requireNonNull(type);
-        label.color(type.textColor());
+        label.setColor(type.textColor());
         return this;
     }
-    public Tag.Type type() { return type; }
-    public String displayText() {
+    public Tag.Type getType() { return type; }
+    public String getDisplayText() {
         return count == null ? "" : count > overflowCount ? overflowCount + "+" : Long.toString(count);
     }
     private void updateText() {
         int side = count == null ? DOT_SIZE : MIN_COUNT_SIZE;
-        minimum(side, side + SHADOW_HEIGHT);
-        label.text(Component.literal(displayText()));
-        label.visible(count != null);
+        setMinimum(side, side + SHADOW_HEIGHT);
+        label.setText(Component.literal(getDisplayText()));
+        label.setVisible(count != null);
     }
 
     @Override public Size measureSize(Font font, Size available) {
@@ -102,12 +102,12 @@ public final class Badge extends Container {
     Rect shadowBounds(Rect area) { return new Rect(area.x(), Math.max(area.y(), area.bottom() - SHADOW_HEIGHT), area.width(), Math.min(SHADOW_HEIGHT, area.height())); }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-        Rect area = screenBounds(screenX, screenY);
+        Rect area = getScreenBounds(screenX, screenY);
         if (area.width() <= 0 || area.height() <= 0) return;
         Rect face = faceBounds(area), shadow = shadowBounds(area);
         var graphics = context.getGraphics();
         graphics.fill(shadow.x(), shadow.y(), shadow.right(), shadow.bottom(), OreTheme.TEXT_DARK);
-        graphics.fill(face.x(), face.y(), face.right(), face.bottom(), type.color());
+        graphics.fill(face.x(), face.y(), face.right(), face.bottom(), type.getColor());
     }
 
     /** Decoration never steals pointer or keyboard input from the owning button. */

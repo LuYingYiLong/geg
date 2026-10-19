@@ -5,13 +5,13 @@ import io.github.luyingyilong.ore.Table;
 public final class EventGeometry {
     private EventGeometry() {}
     public static Rect displayed(Control control, Rect area) {
-        for(Control child=control,node=control.parent();node!=null;child=node,node=node.parent())
-            if(node instanceof Scroll scroll && scroll.isContentChild(child))area=area.translated(-scroll.scrollX(),-scroll.scrollY());
+        for(Control child=control,node=control.getParent();node!=null;child=node,node=node.getParent())
+            if(node instanceof Scroll scroll && scroll.isContentChild(child))area=area.translated(-scroll.getScrollX(),-scroll.getScrollY());
         return area;
     }
-    public static Rect displayed(Control control){return displayed(control,control.absoluteBounds());}
+    public static Rect displayed(Control control){return displayed(control,control.getAbsoluteBounds());}
     public static Rect point(Control control,int x,int y){
-        Rect area=displayed(control);var tree=control.absoluteBounds();
+        Rect area=displayed(control);var tree=control.getAbsoluteBounds();
         return new Rect(x+tree.x()-area.x(),y+tree.y()-area.y(),0,0);
     }
     public static Rect intersect(Rect a,Rect b){
@@ -20,17 +20,17 @@ public final class EventGeometry {
     }
     public static Rect clip(Control control){
         Rect clip=null;
-        for(Control child=control,node=control.parent();node!=null;child=node,node=node.parent()){
+        for(Control child=control,node=control.getParent();node!=null;child=node,node=node.getParent()){
             Rect next=null;
-            if(node instanceof Scroll scroll && scroll.isContentChild(child))next=displayed(node,scroll.viewport().translated(node.absoluteBounds().x(),node.absoluteBounds().y()));
-            else if(node instanceof Table<?> table)next=displayed(node,table.bodyBounds());
-            else if(node instanceof Window)next=node.absoluteBounds();
+            if(node instanceof Scroll scroll && scroll.isContentChild(child))next=displayed(node,scroll.getViewport().translated(node.getAbsoluteBounds().x(),node.getAbsoluteBounds().y()));
+            else if(node instanceof Table<?> table)next=displayed(node,table.getBodyBounds());
+            else if(node instanceof Window)next=node.getAbsoluteBounds();
             if(next!=null)clip=clip==null?next:intersect(clip,next);
         }
         return clip;
     }
     public static boolean contains(Control control,int x,int y){
-        if(control==null || !(control.isAlive() && control.visible()))return false;
+        if(control==null || !(control.isAlive() && control.getVisible()))return false;
         Rect clip=clip(control);Rect p=point(control,x,y);
         return (clip==null||clip.contains(x,y))&&control.hit(p.x(),p.y());
     }

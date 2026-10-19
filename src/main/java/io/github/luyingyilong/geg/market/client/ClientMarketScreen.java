@@ -43,34 +43,34 @@ public final class ClientMarketScreen {
         }
         search = new Input(175.0F);
         search.setInputVisible(true);
-        search.placeholder(Component.translatable("market.geg.search"));
+        search.setPlaceholder(Component.translatable("market.geg.search"));
         search.setMaxLength(80);
         search.autoUpdateOnChange(true);
-        search.controlSize(Button.Size.SMALL);
+        search.setControlSize(Button.Size.SMALL);
         canvas = new MarketCanvasWidget(search);
 
         quantity = GegInputs.quantity(250.0F)
-                .minimumValue(1).boundaryStrategy(NumberInput.BoundaryStrategy.CLAMP);
+                .setMinimumValue(1).setBoundaryStrategy(NumberInput.BoundaryStrategy.CLAMP);
         quantityValue = new StringValue("");
         quantity.value(quantityValue);
-        quantity.placeholder(Component.translatable("market.geg.quantity"));
-        quantity.controlSize(Button.Size.MEDIUM);
+        quantity.setPlaceholder(Component.translatable("market.geg.quantity"));
+        quantity.setControlSize(Button.Size.MEDIUM);
         quantity.setInputVisible(false);
 
         price = GegInputs.coin(250.0F, false)
-                .minimumValue("0.01").boundaryStrategy(NumberInput.BoundaryStrategy.CLAMP);
+                .setMinimumValue("0.01").setBoundaryStrategy(NumberInput.BoundaryStrategy.CLAMP);
         priceValue = new StringValue("");
         price.value(priceValue);
-        price.placeholder(Component.translatable("market.geg.unit_price"));
-        price.controlSize(Button.Size.MEDIUM);
+        price.setPlaceholder(Component.translatable("market.geg.unit_price"));
+        price.setControlSize(Button.Size.MEDIUM);
         price.setInputVisible(false);
 
         tradeQuantity = GegInputs.quantity(320.0F)
-                .minimumValue(1).boundaryStrategy(NumberInput.BoundaryStrategy.CLAMP);
+                .setMinimumValue(1).setBoundaryStrategy(NumberInput.BoundaryStrategy.CLAMP);
         tradeQuantityValue = new StringValue("1");
         tradeQuantity.value(tradeQuantityValue);
-        tradeQuantity.placeholder(Component.translatable("market.geg.quantity"));
-        tradeQuantity.controlSize(Button.Size.MEDIUM);
+        tradeQuantity.setPlaceholder(Component.translatable("market.geg.quantity"));
+        tradeQuantity.setControlSize(Button.Size.MEDIUM);
         tradeQuantity.setInputVisible(false);
 
         quantityItem = new FormItem("quantity", Component.translatable("market.geg.quantity"), quantity);
@@ -118,26 +118,26 @@ public final class ClientMarketScreen {
     }
 
     static String quantityText() {
-        return detailForm == null ? "" : detailForm.value("quantity");
+        return detailForm == null ? "" : detailForm.getValue("quantity");
     }
 
     static String priceText() {
-        return detailForm == null ? "" : detailForm.value("price");
+        return detailForm == null ? "" : detailForm.getValue("price");
     }
 
     static String tradeQuantityText() {
-        return tradeForm == null ? "" : tradeForm.value("quantity");
+        return tradeForm == null ? "" : tradeForm.getValue("quantity");
     }
 
     static boolean validateDetailForm() { return detailForm != null && detailForm.validate(); }
     static boolean validateTradeForm() { return tradeForm != null && tradeForm.validate(); }
-    static void setDetailQuantityMaximum(int maximum) { quantity.availableMaximum(java.math.BigDecimal.valueOf(maximum)); }
-    static void setTradeQuantityMaximum(int maximum) { tradeQuantity.availableMaximum(java.math.BigDecimal.valueOf(maximum)); }
+    static void setDetailQuantityMaximum(int maximum) { quantity.setAvailableMaximum(java.math.BigDecimal.valueOf(maximum)); }
+    static void setTradeQuantityMaximum(int maximum) { tradeQuantity.setAvailableMaximum(java.math.BigDecimal.valueOf(maximum)); }
 
     static void showTradeQuantity(boolean show) {
         tradeForm.setVisible(show);
         if (show) {
-            tradeQuantity.availableMaximum(java.math.BigDecimal.valueOf(Integer.MAX_VALUE));
+            tradeQuantity.setAvailableMaximum(java.math.BigDecimal.valueOf(Integer.MAX_VALUE));
             setTradeQuantity(1);
         }
     }
@@ -154,7 +154,7 @@ public final class ClientMarketScreen {
         priceItem.setActive(showPrice);
         detailForm.setVisible(showQuantity || showPrice);
         if (showQuantity) {
-            quantity.availableMaximum(java.math.BigDecimal.valueOf(Integer.MAX_VALUE));
+            quantity.setAvailableMaximum(java.math.BigDecimal.valueOf(Integer.MAX_VALUE));
             String text = Integer.toString(initialQuantity);
             quantityValue.setStringValue(text);
             quantity.setTextNoSignal(text);

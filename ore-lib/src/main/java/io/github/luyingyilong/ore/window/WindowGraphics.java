@@ -22,12 +22,12 @@ final class WindowGraphics extends GuiGraphics {
 
     @Override
     public int guiWidth() {
-        return context.guiWidth();
+        return context.getGuiWidth();
     }
 
     @Override
     public int guiHeight() {
-        return context.guiHeight();
+        return context.getGuiHeight();
     }
 
     @Override
@@ -57,9 +57,9 @@ final class WindowGraphics extends GuiGraphics {
             return;
         }
         Rect area = clips.peek();
-        double scale = context.guiScale();
+        double scale = context.getGuiScale();
         int x = (int) Math.floor(area.x() * scale), right = (int) Math.ceil(area.right() * scale);
         int top = (int) Math.floor(area.y() * scale), bottom = (int) Math.ceil(area.bottom() * scale);
-        RenderSystem.enableScissor(x, context.framebufferHeight() - bottom, Math.max(0, right - x), Math.max(0, bottom - top));
+        RenderSystem.enableScissor(x, context.getFramebufferHeight() - bottom, Math.max(0, right - x), Math.max(0, bottom - top));
     }
 }

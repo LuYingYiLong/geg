@@ -19,12 +19,12 @@ public final class OreButtonWidgetTest {
         };
         List<String> events = new ArrayList<>();
         Badge unread = new Badge(7);
-        Button button = Signals.configure(new Button(cue -> events.add(cue.name())).label(Component.literal("Mail"))
-                .badge(unread), connected -> connected.pressed().connect(connected, () -> events.add("open")));
+        Button button = Signals.configure(new Button(cue -> events.add(cue.name())).setLabel(Component.literal("Mail"))
+                .setBadge(unread), connected -> connected.pressed().connect(connected, () -> events.add("open")));
         OreButtonWidget widget = new OreButtonWidget(button, Component.literal("Mail, 7 unread"));
         widget.place(font, 4, 50, 32);
         check(widget.button() == button && widget.getWidth() == 56 && widget.getY() == 50);
-        var badge = unread.absoluteBounds();
+        var badge = unread.getAbsoluteBounds();
         check(widget.mouseClicked(badge.x() + 1, badge.y() + 1, 0) && events.isEmpty());
         check(widget.mouseReleased(badge.x() + 1, badge.y() + 1, 0));
         check(events.equals(List.of("CLICK", "open")) && !widget.pointerHeld());
@@ -51,16 +51,16 @@ public final class OreButtonWidgetTest {
         widget.active = false;
         check(!widget.mouseClicked(8, 54, 0));
         widget.active = true;
-        button.disabled(true);
+        button.setDisabled(true);
         check(!widget.mouseClicked(8, 54, 0));
-        button.disabled(false);
-        unread.count(120);
+        button.setDisabled(false);
+        unread.setCount(120);
         widget.place(font, 4, 50, 32);
-        check(unread.displayText().equals("99+") && widget.getWidth() == 66);
-        unread.visible(false);
+        check(unread.getDisplayText().equals("99+") && widget.getWidth() == 66);
+        unread.setVisible(false);
         widget.place(font, 4, 50, 32);
         check(widget.getWidth() == 40);
-        button.offset(2, -1);
+        button.setOffset(2, -1);
         widget.place(font, 4, 50, 32);
         check(widget.getRectangle().left() == 6 && widget.getRectangle().top() == 49);
         check(!widget.isMouseOver(4, 50) && widget.isMouseOver(6, 49));

@@ -21,9 +21,9 @@ import java.util.List;
  */
 public final class ChatComposer extends Container {
     private final brachy.modularui.value.StringValue inputValue = new brachy.modularui.value.StringValue("");
-    private final TextArea input = new TextArea(210).rows(1);
+    private final TextArea input = new TextArea(210).setRows(1);
     private final InputControl editor = new InputControl(input);
-    private final Box suggestionButtons = new Box().gap(0);
+    private final Box suggestionButtons = new Box().setGap(0);
     private final Completion completion = new Completion();
     private List<Suggestion> suggestions = List.of();
     private String completionSource = "", suppressedSource = "";
@@ -40,13 +40,13 @@ public final class ChatComposer extends Container {
     public ChatComposer() {
         input.value(inputValue);
         input.setMaxLength(1024);
-        input.placeholder(Component.translatable("chat.geg.compose_hint"));
-        Signals.configure(input, connected -> { connected.submitOnEnter(true); connected.submitted().connect(connected, submittedText130 -> this.submit()); }).keyHandler(this::key);
-        editor.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+        input.setPlaceholder(Component.translatable("chat.geg.compose_hint"));
+        Signals.configure(input, connected -> { connected.setSubmitOnEnter(true); connected.submitted().connect(connected, submittedText130 -> this.submit()); }).setKeyHandler(this::key);
+        editor.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         addChild(editor);
         addChild(completion);
-        sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        completion.visible(false);
+        setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+        completion.setVisible(false);
     }
 
     public TextArea input() {
@@ -72,7 +72,7 @@ public final class ChatComposer extends Container {
             displayedDraft = ClientChatState.view(bound).draft;
             inputValue.setStringValue(displayedDraft);
             input.setTextNoSignal(displayedDraft);
-            input.cursorOffset(displayedDraft.length());
+            input.setCursorOffset(displayedDraft.length());
             dismissSuggestions();
         }
     }
@@ -88,7 +88,7 @@ public final class ChatComposer extends Container {
     public void update() {
         if (!editorInitialized) {
             // MUI initializes its StringValue after this tree is assembled and resets the caret.
-            input.cursorOffset(input.getText().length());
+            input.setCursorOffset(input.getText().length());
             editorInitialized = true;
         }
         bind();
@@ -100,14 +100,14 @@ public final class ChatComposer extends Container {
             inputValue.setStringValue(displayedDraft);
         } else store();
         updateSuggestions();
-        completion.visible(suggestionsVisible());
+        completion.setVisible(suggestionsVisible());
     }
 
     private void submit() {
         store();
         var view = ClientChatState.view(ClientChatState.selected());
         String value = input.getText();
-        if (input.composing()) return;
+        if (input.getComposing()) return;
         if (value.isBlank()) {
             dismissSuggestions();
             emptySubmitted.emit();
@@ -137,14 +137,14 @@ public final class ChatComposer extends Container {
 
     private void updateSuggestions() {
         String value = input.getText();
-        int caret = input.cursorOffset();
-        if (!input.isFocused() || input.composing() || !value.startsWith("/") || value.contains("\n") || value.equals(suppressedSource)) {
-            if (completion.visible()) completion.visible(false);
+        int caret = input.getCursorOffset();
+        if (!input.isFocused() || input.getComposing() || !value.startsWith("/") || value.contains("\n") || value.equals(suppressedSource)) {
+            if (completion.getVisible()) completion.setVisible(false);
             return;
         }
         if (value.equals(completionSource) && caret == completionCursor) return;
         suggestions = List.of();
-        completion.visible(false);
+        completion.setVisible(false);
         completionSource = value;
         completionCursor = caret;
         long token = ++completionRevision;
@@ -157,11 +157,11 @@ public final class ChatComposer extends Container {
             if (token != completionRevision || !input.isFocused() || !input.getText().equals(value)) return;
             suggestions = result.getList().stream().limit(8).toList();
             suggestionIndex = 0;
-            for (Control child : suggestionButtons.children()) { if (child.parent() != null) child.parent().removeChild(child); child.queueFree(); }
+            for (Control child : suggestionButtons.getChildren()) { if (child.getParent() != null) child.getParent().removeChild(child); child.queueFree(); }
             for (Suggestion suggestion : suggestions) {
-                Button button = Signals.configure(new Button(Component.literal(suggestion.getText()).withStyle(style -> style.withColor(OreTheme.TEXT_WHITE))).type(Button.Type.TEXT)
-                        .toggleButton(true).alignment(Button.TextAlignment.LEFT), connected -> connected.pressed().connect(connected, () -> apply(suggestion)));
-                button.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+                Button button = Signals.configure(new Button(Component.literal(suggestion.getText()).withStyle(style -> style.withColor(OreTheme.TEXT_WHITE))).setType(Button.Type.TEXT)
+                        .setToggleButton(true).setAlignment(Button.TextAlignment.LEFT), connected -> connected.pressed().connect(connected, () -> apply(suggestion)));
+                button.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
                 suggestionButtons.add(button);
             }
             // Suggestions stay in a non-modal overlay, so the native editor retains keyboard focus.
@@ -177,7 +177,7 @@ public final class ChatComposer extends Container {
     }
 
     public boolean suggestionsVisible() {
-        return input.isFocused() && !input.composing() && !suggestions.isEmpty()
+        return input.isFocused() && !input.getComposing() && !suggestions.isEmpty()
                 && input.getText().equals(completionSource) && !input.getText().equals(suppressedSource);
     }
 
@@ -216,7 +216,7 @@ public final class ChatComposer extends Container {
     public void dismissSuggestions() {
         suppressedSource = input.getText();
         suggestions = List.of();
-        completion.visible(false);
+        completion.setVisible(false);
         completionRevision++;
     }
 
@@ -229,7 +229,7 @@ public final class ChatComposer extends Container {
     public void layout(Rect bounds, Font font) {
         super.layout(bounds, font);
         fitChild(editor, new Rect(0, 0, bounds.width(), bounds.height()), font);
-        if (completion.visible()) {
+        if (completion.getVisible()) {
             int height = Math.min(132, suggestionButtons.measureSize(font, new Size(bounds.width(), 200)).height() + 2);
             layoutChild(completion, new Rect(0, -height - 2, bounds.width(), height), font);
         }
@@ -237,14 +237,14 @@ public final class ChatComposer extends Container {
 
     private final class Completion extends Container {
         private final Panel background = new Panel(OreTheme.PANEL)
-                .child(new Padding(Padding.Insets.all(1)).child(new Scroll().horizontal(Scroll.BarMode.DISABLED).content(suggestionButtons)));
+                .setChild(new Padding(Padding.Insets.all(1)).setChild(new Scroll().setHorizontal(Scroll.BarMode.DISABLED).setContent(suggestionButtons)));
 
         Completion() {
             addChild(background);
         }
 
         @Override
-        public float contentDepth() {
+        public float getContentDepth() {
             return 50;
         }
 
@@ -253,7 +253,7 @@ public final class ChatComposer extends Container {
             super.layout(bounds, font);
             fitChild(background, new Rect(0, 0, bounds.width(), bounds.height()), font);
             int i = 0;
-            for (Control node : suggestionButtons.children())
+            for (Control node : suggestionButtons.getChildren())
                 if (node instanceof Button button)
                     button.setButtonPressedNoSignal(i++ == suggestionIndex);
         }

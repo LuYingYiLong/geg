@@ -30,69 +30,69 @@ import java.util.UUID;
 
 public final class MailLayoutTest {
     public static void main(String[] args) {
-        Scroll messages = new Scroll().content(new Control().preferred(100, 1200));
-        Scroll detail = new Scroll().content(new Control().preferred(120, 1600));
-        detail.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Control detailTitle = new Control().preferred(40, 12);
-        Avatar avatar = new Avatar().initials("Sender");
-        Box senderInfo = new Box().gap(2).add(new Control().minimum(0, 10)).add(new Control().minimum(0, 10));
-        senderInfo.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Box senderRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(6).add(avatar).add(senderInfo);
-        Panel detailPanel = new Panel(null).child(new Padding(Padding.Insets.all(4))
-                .child(new Box().gap(4).add(detailTitle).add(senderRow).add(detail)));
-        Panel menuPanel = new Panel(null).child(new Padding(new Padding.Insets(8, 1, 8, 1)).child(messages));
-        Scroll horizontal = new Scroll().content(new MailColumns(menuPanel, detailPanel)).vertical(Scroll.BarMode.DISABLED);
-        horizontal.minimum(0, 41).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        Scroll messages = new Scroll().setContent(new Control().setPreferred(100, 1200));
+        Scroll detail = new Scroll().setContent(new Control().setPreferred(120, 1600));
+        detail.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        Control detailTitle = new Control().setPreferred(40, 12);
+        Avatar avatar = new Avatar().setInitials("Sender");
+        Box senderInfo = new Box().setGap(2).add(new Control().setMinimum(0, 10)).add(new Control().setMinimum(0, 10));
+        senderInfo.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        Box senderRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(6).add(avatar).add(senderInfo);
+        Panel detailPanel = new Panel(null).setChild(new Padding(Padding.Insets.all(4))
+                .setChild(new Box().setGap(4).add(detailTitle).add(senderRow).add(detail)));
+        Panel menuPanel = new Panel(null).setChild(new Padding(new Padding.Insets(8, 1, 8, 1)).setChild(messages));
+        Scroll horizontal = new Scroll().setContent(new MailColumns(menuPanel, detailPanel)).setVertical(Scroll.BarMode.DISABLED);
+        horizontal.setMinimum(0, 41).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         Font font = new Font(id -> null, false) {
             @Override public int width(FormattedText text) { return text.getString().length() * 6; }
         };
         Button send = new Button(Component.literal("Compose"));
-        send.minimum(56, Button.HEIGHT);
+        send.setMinimum(56, Button.HEIGHT);
         Navbar header = new Navbar(Component.literal("Mail"));
         Segmented audiences = new Segmented(List.of(Component.literal("Player"), Component.literal("Organization"), Component.literal("Server")));
-        audiences.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND | SizeFlags.SIZE_SHRINK_BEGIN)
-                .sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        send.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        Box audienceRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4).add(audiences).add(send);
-        audienceRow.minimum(0, Button.HEIGHT).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        audiences.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND | SizeFlags.SIZE_SHRINK_BEGIN)
+                .setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        send.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        Box audienceRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4).add(audiences).add(send);
+        audienceRow.setMinimum(0, Button.HEIGHT).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Padding content = new Padding(Padding.Insets.all(4))
-                .child(new Box().gap(4).add(audienceRow).add(horizontal));
-        content.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Window window = new Window(true).content(new Box().gap(0).add(header).add(content));
+                .setChild(new Box().setGap(4).add(audienceRow).add(horizontal));
+        content.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        Window window = new Window(true).setContent(new Box().setGap(0).add(header).add(content));
         for (int height : new int[]{128, 240, 480}) for (int width : new int[]{127, 128, 129, 640, 854}) {
-            header.minimum(0, 0);
-            header.minimum(0, header.measureHeight(font, width));
+            header.setMinimum(0, 0);
+            header.setMinimum(0, header.measureHeight(font, width));
             window.layoutViewport(width, height, font);
-            check(header.bounds().y() == 0 && header.size().height() >= Navbar.ROW_HEIGHT);
-            check(header.size().height() == Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING);
-            check(audiences.absoluteBounds().x() == 4);
-            check(audiences.size().width() == Math.min(width - 12 - send.size().width(), audiences.minimumRowWidth(font)));
-            check(send.absoluteBounds().right() == width - 4 && send.parent() == audiences.parent());
-            check(send.absoluteBounds().y() == audiences.absoluteBounds().y());
-            check(content.absoluteBounds().y() == header.bounds().bottom());
-            check(content.absoluteBounds().bottom() == height);
-            check(menuPanel.size().width() >= 100 && detailPanel.size().width() >= 120);
-            check(detail.size().height() == detailPanel.size().height() - 52);
-            check(avatar.size().equals(new Size(24, 24)) && senderInfo.size().width() == senderRow.size().width() - 30);
-            int titleTop = detailTitle.absoluteBounds().y(), senderTop = senderRow.absoluteBounds().y();
+            check(header.getBounds().y() == 0 && header.getSize().height() >= Navbar.ROW_HEIGHT);
+            check(header.getSize().height() == Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING);
+            check(audiences.getAbsoluteBounds().x() == 4);
+            check(audiences.getSize().width() == Math.min(width - 12 - send.getSize().width(), audiences.minimumRowWidth(font)));
+            check(send.getAbsoluteBounds().right() == width - 4 && send.getParent() == audiences.getParent());
+            check(send.getAbsoluteBounds().y() == audiences.getAbsoluteBounds().y());
+            check(content.getAbsoluteBounds().y() == header.getBounds().bottom());
+            check(content.getAbsoluteBounds().bottom() == height);
+            check(menuPanel.getSize().width() >= 100 && detailPanel.getSize().width() >= 120);
+            check(detail.getSize().height() == detailPanel.getSize().height() - 52);
+            check(avatar.getSize().equals(new Size(24, 24)) && senderInfo.getSize().width() == senderRow.getSize().width() - 30);
+            int titleTop = detailTitle.getAbsoluteBounds().y(), senderTop = senderRow.getAbsoluteBounds().y();
             detail.scrollBy(0, 100);
-            check(detailTitle.absoluteBounds().y() == titleTop && senderRow.absoluteBounds().y() == senderTop);
-            check(detail.absoluteBounds().y() == senderRow.absoluteBounds().bottom() + 4);
-            check(messages.maxScrollY() > 0 && detail.maxScrollY() > 0);
-            check(messages.size().height() == horizontal.viewport().height() - 16);
-            check(messages.size().width() == menuPanel.size().width() - 2);
-            check(messages.absoluteBounds().y() == menuPanel.absoluteBounds().y() + 8);
-            check(horizontal.maxScrollX() == Math.max(0, 224 - (width - 8)));
-            check(horizontal.absoluteBounds().y() >= header.bounds().bottom() + audienceRow.bounds().height());
-            check(horizontal.absoluteBounds().bottom() == height - 4);
-            check(menuPanel.absoluteBounds().bottom() == horizontal.absoluteBounds().y() + horizontal.viewport().height());
-            check(detailPanel.absoluteBounds().bottom() == messages.absoluteBounds().bottom() + 8);
-            horizontal.setScroll(horizontal.maxScrollX(), 0);
-            check(horizontal.scrollX() == horizontal.maxScrollX());
-            send.visible(false);
+            check(detailTitle.getAbsoluteBounds().y() == titleTop && senderRow.getAbsoluteBounds().y() == senderTop);
+            check(detail.getAbsoluteBounds().y() == senderRow.getAbsoluteBounds().bottom() + 4);
+            check(messages.getMaxScrollY() > 0 && detail.getMaxScrollY() > 0);
+            check(messages.getSize().height() == horizontal.getViewport().height() - 16);
+            check(messages.getSize().width() == menuPanel.getSize().width() - 2);
+            check(messages.getAbsoluteBounds().y() == menuPanel.getAbsoluteBounds().y() + 8);
+            check(horizontal.getMaxScrollX() == Math.max(0, 224 - (width - 8)));
+            check(horizontal.getAbsoluteBounds().y() >= header.getBounds().bottom() + audienceRow.getBounds().height());
+            check(horizontal.getAbsoluteBounds().bottom() == height - 4);
+            check(menuPanel.getAbsoluteBounds().bottom() == horizontal.getAbsoluteBounds().y() + horizontal.getViewport().height());
+            check(detailPanel.getAbsoluteBounds().bottom() == messages.getAbsoluteBounds().bottom() + 8);
+            horizontal.setScroll(horizontal.getMaxScrollX(), 0);
+            check(horizontal.getScrollX() == horizontal.getMaxScrollX());
+            send.setVisible(false);
             window.layoutViewport(width, height, font);
-            check(audiences.size().width() == Math.min(width - 8, audiences.minimumRowWidth(font)));
-            send.visible(true);
+            check(audiences.getSize().width() == Math.min(width - 8, audiences.minimumRowWidth(font)));
+            send.setVisible(true);
         }
         for (boolean read : new boolean[]{false, true}) for (long coin : new long[]{0, 100})
                 for (boolean hasItems : new boolean[]{false, true}) {

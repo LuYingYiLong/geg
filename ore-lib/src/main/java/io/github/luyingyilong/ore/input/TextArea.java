@@ -23,15 +23,15 @@ public final class TextArea extends Input {
     private int minimumRows, maximumRows;
     private int automaticRows;
     private int pendingCursor = -1;
-    @Override public TextArea submitOnEnter(boolean value) { super.submitOnEnter(value); return this; }
-    public TextArea keyHandler(java.util.function.BiPredicate<Integer, Integer> handler) {
+    @Override public TextArea setSubmitOnEnter(boolean value) { super.setSubmitOnEnter(value); return this; }
+    public TextArea setKeyHandler(java.util.function.BiPredicate<Integer, Integer> handler) {
         keyHandler = java.util.Objects.requireNonNull(handler); return this;
     }
-    public int cursorOffset() {
+    public int getCursorOffset() {
         var caret = handler.getMainCursor();
         return TextLines.offset(handler.getText(), caret.x, caret.y);
     }
-    public TextArea cursorOffset(int offset) {
+    public TextArea setCursorOffset(int offset) {
         if (!isValid()) { pendingCursor = Math.max(0, offset); return this; }
         pendingCursor = -1;
         var lines = handler.getText();
@@ -46,9 +46,9 @@ public final class TextArea extends Input {
     /** Completion is one undoable edit, preserving the rest of the document and its cursor. */
     public void applyCompletion(String value, int offset) {
         if (!editingHandler().replaceAll(value)) return;
-        cursorOffset(offset);
+        setCursorOffset(offset);
     }
-    public TextArea autoHeight(int minimumRows, int maximumRows) {
+    public TextArea setAutoHeight(int minimumRows, int maximumRows) {
         if (minimumRows < 1 || maximumRows > 20 || maximumRows < minimumRows) throw new IllegalArgumentException("Invalid row range");
         this.minimumRows = minimumRows; this.maximumRows = maximumRows; this.rows = minimumRows;
         return this;
@@ -62,7 +62,7 @@ public final class TextArea extends Input {
         setTextAlignment(brachy.modularui.utils.Alignment.TopLeft);
         getScrollArea().setScrollY(HiddenInputScroll.vertical());
     }
-    public TextArea rows(int rows) {
+    public TextArea setRows(int rows) {
         if (rows < 1 || rows > 20) throw new IllegalArgumentException("Rows must be between 1 and 20");
         this.rows = rows;
         minimumRows = maximumRows = automaticRows = 0;
@@ -77,7 +77,7 @@ public final class TextArea extends Input {
     /** Multiline editors keep both the hint and caret on the first row, even when expanded. */
     @Override protected int firstLineTop() {
         return io.github.luyingyilong.ore.input.InputGeometry.firstLineTop(
-                getArea().getPadding().top(), getArea().paddedHeight(), controlSize().height(), renderer.getFontHeight());
+                getArea().getPadding().top(), getArea().paddedHeight(), getControlSize().getHeight(), renderer.getFontHeight());
     }
     @Override protected void drawPlaceholder(ModularGuiContext context, Component placeholder) {
         int top = firstLineTop();
@@ -85,7 +85,7 @@ public final class TextArea extends Input {
         int height = Math.max(0, getArea().height - getArea().getPadding().bottom() - top);
         if (height == 0) return;
         Label label = placeholderLabel(placeholder);
-        label.maxLines(Math.max(1, height / label.lineHeight(context.getFont())));
+        label.setMaxLines(Math.max(1, height / label.lineHeight(context.getFont())));
         int left = getArea().getPadding().left();
         label.layout(new Rect(left, top, width, height), context.getFont());
         // Native field text uses a translated pose; GuiGraphics scissor coordinates remain global.
@@ -97,15 +97,15 @@ public final class TextArea extends Input {
         finally { context.getGraphics().disableScissor(); }
     }
     @Override protected Label placeholderLabel(Component placeholder) {
-        return super.placeholderLabel(placeholder).wrap(Label.Wrap.WORD);
+        return super.placeholderLabel(placeholder).setWrap(Label.Wrap.WORD);
     }
-    @Override public int preferredInputHeight() {
+    @Override public int getPreferredInputHeight() {
         int count = minimumRows == 0 ? rows : Math.max(minimumRows, Math.min(maximumRows, automaticRows));
-        return controlSize().height() + (count - 1) * OreTextMetrics.body().lineHeight(scale);
+        return getControlSize().getHeight() + (count - 1) * OreTextMetrics.body().lineHeight(scale);
     }
     @Override public void onUpdate() {
         super.onUpdate();
-        if (pendingCursor >= 0 && isValid()) cursorOffset(pendingCursor);
+        if (pendingCursor >= 0 && isValid()) setCursorOffset(pendingCursor);
         updateTextScroll();
         if (minimumRows > 0) {
             int next = Math.max(minimumRows, Math.min(maximumRows,
@@ -151,12 +151,12 @@ public final class TextArea extends Input {
 
     @Override public @NotNull Interactable.Result onKeyPressed(int keyCode, int scanCode, int modifiers) {
         if (!acceptsHostInput()) return Interactable.Result.IGNORE;
-        if (submitOnEnter() && inputMethodInteractive() && isFocused() && keyCode == GLFW.GLFW_KEY_ESCAPE && composing()) {
+        if (getSubmitOnEnter() && inputMethodInteractive() && isFocused() && keyCode == GLFW.GLFW_KEY_ESCAPE && getComposing()) {
             cancelPreedit(); return Interactable.Result.STOP;
         }
-        if (inputMethodInteractive() && isFocused() && !composing() && keyHandler.test(keyCode, modifiers))
+        if (inputMethodInteractive() && isFocused() && !getComposing() && keyHandler.test(keyCode, modifiers))
             return Interactable.Result.STOP;
-        if (inputMethodInteractive() && isFocused() && !composing()
+        if (inputMethodInteractive() && isFocused() && !getComposing()
                 && (modifiers & (GLFW.GLFW_MOD_CONTROL | GLFW.GLFW_MOD_ALT)) == 0
                 && (keyCode == GLFW.GLFW_KEY_UP || keyCode == GLFW.GLFW_KEY_DOWN
                 || keyCode == GLFW.GLFW_KEY_HOME || keyCode == GLFW.GLFW_KEY_END)) {

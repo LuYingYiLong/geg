@@ -23,18 +23,18 @@ public final class ModalLayoutTest {
         Font font = new Font(id -> null, false) {
             @Override public int width(FormattedText text) { return text.getString().length() * 6; }
         };
-        Modal modal = new Modal(Component.literal("Members"), null, null, null).size(180, 120)
-                .content(new Control().preferred(40, 20));
+        Modal modal = new Modal(Component.literal("Members"), null, null, null).setSize(180, 120)
+                .setContent(new Control().setPreferred(40, 20));
         for (int width : new int[]{127, 128, 129, 640}) {
             modal.layout(new Rect(0, 0, width, 240), font);
             Button close = iconButton(modal);
-            check(close != null && close.size().width() == 20 && close.size().height() == 20);
+            check(close != null && close.getSize().width() == 20 && close.getSize().height() == 20);
         }
     }
 
     private static Button iconButton(Control node) {
-        if (node instanceof Button button && button.icon() != null) return button;
-        for (Control child : node.children()) {
+        if (node instanceof Button button && button.getIcon() != null) return button;
+        for (Control child : node.getChildren()) {
             Button found = iconButton(child);
             if (found != null) return found;
         }

@@ -49,18 +49,18 @@ public final class Segmented extends Control {
             throw new IllegalArgumentException("Segmented requires at least one option");
         }
         this.options = List.copyOf(options);
-        optionLabels = options.stream().map(option -> new Label(option).opticalCenter(true)
-                .overflow(Label.Overflow.CLIP).align(Label.Horizontal.CENTER, Label.Vertical.CENTER)).toList();
+        optionLabels = options.stream().map(option -> new Label(option).setOpticalCenter(true)
+                .setOverflow(Label.Overflow.CLIP).setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER)).toList();
         for (int i = 0; i < optionLabels.size(); i++) ownPart("option_" + i, optionLabels.get(i));
         this.size = java.util.Objects.requireNonNull(size);
-        minimum(0, size.height());
-        focusable(true);
-        focusExpansion(1);
+        setMinimum(0, size.getHeight());
+        setFocusable(true);
+        setFocusExpansion(1);
     }
 
     public Signal<Integer> selectionChanged() { return selectionChanged.signal(); }
 
-    public Segmented selected(int index) {
+    public Segmented setSelected(int index) {
         int previous = selectedIndex;
         setSelectedNoSignal(index);
         if (previous != selectedIndex) selectionChanged.emit(selectedIndex);
@@ -78,24 +78,24 @@ public final class Segmented extends Control {
         return this;
     }
 
-    public int selected() { return selectedIndex; }
+    public int getSelected() { return selectedIndex; }
 
-    public int scrollX() { return scrollX; }
+    public int getScrollX() { return scrollX; }
 
     @Override public void invalidateTextLayout() {
         revealSelected = true;
         super.invalidateTextLayout();
     }
 
-    @Override public Rect focusBounds() {
-        Rect area = absoluteBounds();
+    @Override public Rect getFocusBounds() {
+        Rect area = getAbsoluteBounds();
         int width = Math.max(area.width(), minimumRowWidth(layoutFont));
         int index = focused ? focusedIndex : selectedIndex;
         int left = optionStart(index, width, layoutFont);
         int right = optionStart(index + 1, width, layoutFont);
         int inset = topInset(index, true);
         return new Rect(area.x() + left - scrollX, area.y() + inset,
-                right - left + 1, Math.max(0, size.height() - inset));
+                right - left + 1, Math.max(0, size.getHeight() - inset));
     }
 
     @Override public void onFocusChanged(boolean focused) {
@@ -117,8 +117,8 @@ public final class Segmented extends Control {
         cancelInteraction();
         focusedIndex = next;
         revealSelected = true;
-        if (layoutFont != null && bounds().width() > 0)
-            ensureSelectedVisible(Math.max(bounds().width(), minimumRowWidth(layoutFont)), bounds().width());
+        if (layoutFont != null && getBounds().width() > 0)
+            ensureSelectedVisible(Math.max(getBounds().width(), minimumRowWidth(layoutFont)), getBounds().width());
         return true;
     }
 
@@ -127,9 +127,9 @@ public final class Segmented extends Control {
     }
 
     private boolean selectFromInput(int index) {
-        if (!visible()) return false;
+        if (!getVisible()) return false;
         OreSounds.play(OreSounds.Cue.CLICK);
-        selected(index);
+        setSelected(index);
         focusedIndex = index;
         return true;
     }
@@ -175,7 +175,7 @@ public final class Segmented extends Control {
     }
 
     @Override protected boolean wheel(int x,int y,double delta,boolean horizontal) {
-        return windowContext().mui()!=null && scrollBy(-(int)Math.signum(delta)*24,windowContext().mui().getFont());
+        return getWindowContext().getMui()!=null && scrollBy(-(int)Math.signum(delta)*24,getWindowContext().getMui().getFont());
     }
 
     @Override protected boolean pointerDown(int rootX, int rootY) {
@@ -186,19 +186,19 @@ public final class Segmented extends Control {
 
     @Override protected boolean pointerUp(int rootX, int rootY, boolean over) {
         int index = layoutFont == null ? -1 : indexAt(0, 0, rootX, rootY, layoutFont);
-        var release = gesture.pointerUp(index < 0 ? null : index, over && visible());
+        var release = gesture.pointerUp(index < 0 ? null : index, over && getVisible());
         if (release.target() != null) selectFromInput(release.target());
         return release.handled();
     }
 
     @Override public boolean onActivationPressed(int keyCode) {
-        if (!visible()) return false;
+        if (!getVisible()) return false;
         gesture.keyDown(keyCode, focusedIndex);
         return true;
     }
 
     @Override public boolean onActivationReleased(int keyCode) {
-        var release = gesture.keyUp(keyCode, visible() ? focusedIndex : null);
+        var release = gesture.keyUp(keyCode, getVisible() ? focusedIndex : null);
         if (release.target() != null) selectFromInput(release.target());
         return release.handled();
     }
@@ -206,7 +206,7 @@ public final class Segmented extends Control {
     @Override public void cancelInteraction() { gesture.cancel(); }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-        Rect viewport = screenBounds(screenX, screenY);
+        Rect viewport = getScreenBounds(screenX, screenY);
         if (viewport.width() <= 0 || viewport.height() <= 0) return;
         int contentWidth = Math.max(viewport.width(), minimumRowWidth(context.getFont()));
         scrollX = Math.min(scrollX, contentWidth - viewport.width());
@@ -239,14 +239,14 @@ public final class Segmented extends Control {
     }
 
     private int indexAt(int screenX, int screenY, int mouseX, int mouseY, Font font) {
-        Rect viewport = screenBounds(screenX, screenY);
+        Rect viewport = getScreenBounds(screenX, screenY);
         if (!viewport.contains(mouseX, mouseY)) return -1;
         int contentWidth = Math.max(viewport.width(), minimumRowWidth(font));
         return hitIndex(viewport.x() - scrollX, viewport.y(), contentWidth, mouseX, mouseY, font);
     }
 
     public boolean scrollBy(int amount, Font font) {
-        int max = Math.max(0, minimumRowWidth(font) - bounds().width());
+        int max = Math.max(0, minimumRowWidth(font) - getBounds().width());
         if (max == 0) return false;
         cancelInteraction();
         scrollX = Math.max(0, Math.min(max, scrollX + amount));
@@ -255,7 +255,7 @@ public final class Segmented extends Control {
 
     private void drawOptions(ModularGuiContext context, int x, int y,
                      int width, int selectedIndex) {
-        int height = size.height();
+        int height = size.getHeight();
         GuiGraphics graphics = context.getGraphics();
         WidgetThemeEntry<WidgetTheme> selectedEntry = context.getTheme()
                 .getWidgetTheme(OreTheme.SEGMENTED_BUTTON_SELECTED);
@@ -280,7 +280,7 @@ public final class Segmented extends Control {
                         optionWidth, height - inset, style);
             }
 
-            Label text = optionLabels.get(index).color(style.getTextColor()).shadow(style.isTextShadow());
+            Label text = optionLabels.get(index).setColor(style.getTextColor()).setShadow(style.isTextShadow());
             text.layout(new Rect(
                             optionX + TEXT_PADDING, y + topInset,
                             Math.max(0, optionWidth - 2 * TEXT_PADDING), height), context.getFont());
@@ -301,7 +301,7 @@ public final class Segmented extends Control {
     }
 
     private int hitIndex(int x, int y, int width, int mouseX, int mouseY, Font font) {
-        int height = size.height();
+        int height = size.getHeight();
         if (!Button.contains(x, y, width, height, mouseX, mouseY)) {
             return -1;
         }

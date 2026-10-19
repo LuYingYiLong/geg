@@ -81,7 +81,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
 
     @Override
     public void slot(Control c, Rect slot) {
-        if (c.windowContext().owner() == null || c.windowContext().owner().inspectable()) slots.put(c, slot);
+        if (c.getWindowContext().getOwner() == null || c.getWindowContext().getOwner().getInspectable()) slots.put(c, slot);
     }
 
     @Override
@@ -100,7 +100,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
     }
 
     @Override public void lifecycle(Control control, LifecycleInfo info) {
-        if (control.windowContext().owner() != null && !control.windowContext().owner().inspectable()) return;
+        if (control.getWindowContext().getOwner() != null && !control.getWindowContext().getOwner().getInspectable()) return;
         Node node = nodes.values().stream().filter(n -> n.control == control).findFirst().orElse(null);
         if (node != null && node.id.equals(selected) || selectedLifecycle != null && selectedLifecycle.id() == info.id()) selectedLifecycle = info;
         lifecycleHistory.record(control, info);
@@ -114,7 +114,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
 
     private String id(Control c) {
         long epoch = 1;
-        for (Control n = c; n != null; n = n.parent()) {
+        for (Control n = c; n != null; n = n.getParent()) {
             Binding b = bindings.get(n);
             if (b != null) epoch = 31 * epoch + b.generation;
             epoch = 31 * epoch + lifecycles.getOrDefault(n, 0L);
@@ -130,7 +130,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
     @Override
     public void begin(Window root, ModularGuiContext context, int x, int y) {
         clientThread();
-        if (!root.inspectable()) {
+        if (!root.getInspectable()) {
             collecting = false;
             return;
         }
@@ -156,8 +156,8 @@ public final class InspectorBackend implements DebugBridge.Backend {
     public void paint(Control c, ModularGuiContext context, int x, int y) {
         if (!collecting) return;
         float depth = context.getGraphics().pose().last().pose().m32(), treeDepth = 0;
-        for (Control node = c; node != null; node = node.parent()) treeDepth += node.contentDepth();
-        Rect area = c.screenBounds(x, y);
+        for (Control node = c; node != null; node = node.getParent()) treeDepth += node.getContentDepth();
+        Rect area = c.getScreenBounds(x, y);
         var matrix = context.getGraphics().pose().last().pose();
         Vector4f start = matrix.transform(new Vector4f(area.x(), area.y(), 0, 1));
         Vector4f end = matrix.transform(new Vector4f(area.right(), area.bottom(), 0, 1));
@@ -275,10 +275,10 @@ public final class InspectorBackend implements DebugBridge.Backend {
 
     private void collectOwnedParts(Control owner, Set<Control> seen) {
         if (!owner.isAlive() || !seen.add(owner)) return;
-        for (Control child : owner.children()) if (child.parent() == owner) collectOwnedParts(child, seen);
-        for (var entry : owner.ownedParts().entrySet()) {
+        for (Control child : owner.getChildren()) if (child.getParent() == owner) collectOwnedParts(child, seen);
+        for (var entry : owner.getOwnedParts().entrySet()) {
             Control part = entry.getValue();
-            if (part.parent() == null) parts.putIfAbsent(part, new Part(owner, entry.getKey()));
+            if (part.getParent() == null) parts.putIfAbsent(part, new Part(owner, entry.getKey()));
             collectOwnedParts(part, seen);
         }
     }
@@ -291,11 +291,11 @@ public final class InspectorBackend implements DebugBridge.Backend {
 
     private void walk(Control c, String parent, boolean ancestorVisible, String reason) {
         if (!c.isAlive()) return;
-        boolean visible = ancestorVisible && c.visible();
+        boolean visible = ancestorVisible && c.getVisible();
         String hidden = visible ? "" : !ancestorVisible ? reason : c.getClass().getSimpleName() + ".visible=false";
         String key = id(c);
-        nodes.put(key, new Node(key, parent, c, c.debugName().isEmpty() ? c.getClass().getSimpleName() : c.debugName(), visible, hidden, painted.get(c), false));
-        for (Control child : c.children()) if (child.parent() == c) walk(child, key, visible, hidden);
+        nodes.put(key, new Node(key, parent, c, c.getDebugName().isEmpty() ? c.getClass().getSimpleName() : c.getDebugName(), visible, hidden, painted.get(c), false));
+        for (Control child : c.getChildren()) if (child.getParent() == c) walk(child, key, visible, hidden);
     }
 
     String pick(int x, int y) {
@@ -345,10 +345,10 @@ public final class InspectorBackend implements DebugBridge.Backend {
                 case SELECT -> {
                     valid(command.node());
                     selected = command.node();
-                    selectedLifecycle = nodes.get(selected).control.lifecycleInfo();
+                    selectedLifecycle = nodes.get(selected).control.getLifecycleInfo();
                 }
                 case TARGET -> {
-                    Window next = targets.keySet().stream().filter(w -> w.context().id().toString().equals(command.node())).findFirst().orElseThrow(() -> new IllegalArgumentException("Window no longer exists"));
+                    Window next = targets.keySet().stream().filter(w -> w.getContext().getId().toString().equals(command.node())).findFirst().orElseThrow(() -> new IllegalArgumentException("Window no longer exists"));
                     if (root != null) root.cancelInteractions();
                     root = next;
                     nodes.clear();
@@ -423,7 +423,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
     }
 
     private boolean attached(Control c) {
-        for (Control n = c; n != null; n = n.parent()) if (n == root) return true;
+        for (Control n = c; n != null; n = n.getParent()) if (n == root) return true;
         Part part = parts.get(c);
         return part != null && attached(part.owner);
     }
@@ -447,18 +447,18 @@ public final class InspectorBackend implements DebugBridge.Backend {
                         overrides.contains(p.target(), p.key()), n.internal, base instanceof Component component ? Component.Serializer.toJson(component) : ""));
             }
             readonly(props, "visible", n.visible);
-            readonly(props, "focusable", n.control.focusable());
-            readonly(props, "layoutDirty", n.control.layoutDirty());
-            readonly(props, "requestedPlacement", n.control.debugRequestedBounds());
-            readonly(props, "actualBounds", n.control.layoutBounds());
-            if (n.control instanceof Drawer drawer) readonly(props, "panelBounds", drawer.panelBounds());
-            if (n.control instanceof Scroll scroll) readonly(props, "viewport", scroll.viewport());
+            readonly(props, "focusable", n.control.getFocusable());
+            readonly(props, "layoutDirty", n.control.getLayoutDirty());
+            readonly(props, "requestedPlacement", n.control.getDebugRequestedBounds());
+            readonly(props, "actualBounds", n.control.getLayoutBounds());
+            if (n.control instanceof Drawer drawer) readonly(props, "panelBounds", drawer.getPanelBounds());
+            if (n.control instanceof Scroll scroll) readonly(props, "viewport", scroll.getViewport());
             if (n.control instanceof Button button) {
-                readonly(props, "disabled", button.disabled());
-                readonly(props, "buttonPressed", button.buttonPressed());
+                readonly(props, "disabled", button.getDisabled());
+                readonly(props, "buttonPressed", button.getButtonPressed());
             }
             if (n.control instanceof io.github.luyingyilong.ore.input.InputControl input)
-                readonly(props, "inputValue", input.widget().getText());
+                readonly(props, "inputValue", input.getWidget().getText());
             Binding binding = bindings.get(n.control);
             if (binding != null) {
                 readonly(props, "stableKey", String.valueOf(binding.key));
@@ -469,19 +469,19 @@ public final class InspectorBackend implements DebugBridge.Backend {
                 readonly(props, "inputGeometry", primitives.get(n.control).toString());
             Integer total = null, instances = null;
             if (n.control instanceof Grid<?> grid) {
-                total = grid.entries().size();
-                instances = grid.activeViews();
+                total = grid.getEntries().size();
+                instances = grid.getActiveViews();
             }
             if (n.control instanceof Table<?> table) {
-                total = table.layoutRows().size();
-                instances = table.activeViews();
+                total = table.getLayoutRows().size();
+                instances = table.getActiveViews();
             }
             String reason = !n.visible ? n.reason : n.geometry == null ? "Not rendered (outside viewport or buffer)" : "";
             out.add(new InspectorSnapshot.Node(n.id, n.parent, n.name, n.control.getClass().getSimpleName(), n.visible, n.internal, reason,
-                    n.geometry == null ? n.control.absoluteBounds() : n.geometry.area, total, instances, List.copyOf(props)));
+                    n.geometry == null ? n.control.getAbsoluteBounds() : n.geometry.area, total, instances, List.copyOf(props)));
         }
-        List<InspectorSnapshot.Target> windows = targets.entrySet().stream().map(e -> new InspectorSnapshot.Target(e.getKey().context().id().toString(),
-                        e.getKey().debugName().isBlank() ? "Window" : e.getKey().debugName(), e.getKey().host().nativeWindow(), System.nanoTime() - e.getValue() < 500_000_000L))
+        List<InspectorSnapshot.Target> windows = targets.entrySet().stream().map(e -> new InspectorSnapshot.Target(e.getKey().getContext().getId().toString(),
+                        e.getKey().getDebugName().isBlank() ? "Window" : e.getKey().getDebugName(), e.getKey().getHost().getNativeWindow(), System.nanoTime() - e.getValue() < 500_000_000L))
                 .sorted(Comparator.comparing(InspectorSnapshot.Target::id)).toList();
         snapshot = new InspectorSnapshot(++sequence, root == null || System.nanoTime() - lastFrame > 300_000_000L, selected, picking, error,
                 overrides.canUndo(), overrides.canRedo(), windows, List.copyOf(out), signalSnapshot(), lifecycleSnapshot(), lifecycleHistory.snapshot());
@@ -490,7 +490,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
 
     private LifecycleInfo lifecycleSnapshot() {
         Node current = nodes.get(selected);
-        if (current != null) selectedLifecycle = current.control.lifecycleInfo();
+        if (current != null) selectedLifecycle = current.control.getLifecycleInfo();
         return selectedLifecycle;
     }
 
@@ -501,7 +501,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
         for (Node node : nodes.values()) {
             names.put(io.github.luyingyilong.ore.signal.SignalDiagnostics.ownerId(node.control), node.name);
             if (node.control instanceof io.github.luyingyilong.ore.input.InputControl input)
-                names.put(io.github.luyingyilong.ore.signal.SignalDiagnostics.ownerId(input.widget()), node.name + " / Input");
+                names.put(io.github.luyingyilong.ore.signal.SignalDiagnostics.ownerId(input.getWidget()), node.name + " / Input");
         }
         return signalInspector.snapshot(names, current != null);
     }
@@ -533,17 +533,17 @@ public final class InspectorBackend implements DebugBridge.Backend {
                 if (area.width() == 0 || area.height() == 0) continue;
                 if (layout) {
                     Rect slot = slots.get(n.control);
-                    if (slot != null && n.control.parent() != null) {
-                        Rect parent = displayed(n.control.parent());
+                    if (slot != null && n.control.getParent() != null) {
+                        Rect parent = displayed(n.control.getParent());
                         outline(g, slot.translated(parent.x(), parent.y()), 0xFFFFCC66);
                     }
                     if (geo.clip != null) outline(g, geo.clip, 0xFFCE8AFF);
                     if (n.control instanceof Scroll scroll)
-                        outline(g, scroll.viewport().translated(geo.area.x(), geo.area.y()), 0xFFCE8AFF);
+                        outline(g, scroll.getViewport().translated(geo.area.x(), geo.area.y()), 0xFFCE8AFF);
                     if (n.control instanceof Box box) {
                         Rect before = null;
-                        for (Control child : box.children())
-                            if (child.visible()) {
+                        for (Control child : box.getChildren())
+                            if (child.getVisible()) {
                                 Rect current = displayed(child);
                                 if (before != null) {
                                     if (current.y() >= before.bottom())
@@ -555,14 +555,14 @@ public final class InspectorBackend implements DebugBridge.Backend {
                             }
                     }
                     if (n.control instanceof Padding padding) {
-                        var inset = padding.insets();
+                        var inset = padding.getInsets();
                         Rect a = geo.area;
                         g.fill(a.x(), a.y(), a.right(), a.y() + inset.top(), 0x40FFA34D);
                         g.fill(a.x(), a.bottom() - inset.bottom(), a.right(), a.bottom(), 0x40FFA34D);
                         g.fill(a.x(), a.y(), a.x() + inset.left(), a.bottom(), 0x40FFA34D);
                         g.fill(a.right() - inset.right(), a.y(), a.right(), a.bottom(), 0x40FFA34D);
                     }
-                    Rect min = new Rect(geo.area.x(), geo.area.y(), n.control.minimumWidth(), n.control.minimumHeight());
+                    Rect min = new Rect(geo.area.x(), geo.area.y(), n.control.getMinimumWidth(), n.control.getMinimumHeight());
                     outline(g, min, 0xFF63E688);
                     outline(g, area, 0xFF68D5FF);
                 }
@@ -587,10 +587,10 @@ public final class InspectorBackend implements DebugBridge.Backend {
     private Rect displayed(Control c) {
         Geometry geometry = painted.get(c);
         if (geometry != null) return geometry.area;
-        Rect area = c.absoluteBounds().translated(originX, originY);
-        for (Control child = c, n = c.parent(); n != null; child = n, n = n.parent())
+        Rect area = c.getAbsoluteBounds().translated(originX, originY);
+        for (Control child = c, n = c.getParent(); n != null; child = n, n = n.getParent())
             if (n instanceof Scroll scroll && scroll.isContentChild(child))
-                area = area.translated(-scroll.scrollX(), -scroll.scrollY());
+                area = area.translated(-scroll.getScrollX(), -scroll.getScrollY());
         return area;
     }
 

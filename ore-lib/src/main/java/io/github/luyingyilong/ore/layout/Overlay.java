@@ -20,7 +20,7 @@ public final class Overlay extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(localBounds, font);
-            for (Control layer : children()) if (layer.parent() == this && layer.isAlive())
+            for (Control layer : getChildren()) if (layer.getParent() == this && layer.isAlive())
                 layoutChild(layer, new Rect(0, 0, localBounds.width(), localBounds.height()), font);
         }
     }
@@ -30,16 +30,16 @@ public final class Overlay extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
-            for (Control layer : children()) if (layer.parent() == this && layer.isAlive() && layer.visible())
+            for (Control layer : getChildren()) if (layer.getParent() == this && layer.isAlive() && layer.getVisible())
                 layer.draw(context, screenX, screenY);
         }
     }
 
     @Override public Control hitTop(int rootX, int rootY) {
-        List<Control> layers = children();
+        List<Control> layers = getChildren();
         for (int index = layers.size() - 1; index >= 0; index--) {
             Control layer = layers.get(index);
-            if (layer.parent() != this || !layer.isAlive()) continue;
+            if (layer.getParent() != this || !layer.isAlive()) continue;
             Control hit = layer.hitTop(rootX, rootY);
             if (hit != null) return hit;
         }

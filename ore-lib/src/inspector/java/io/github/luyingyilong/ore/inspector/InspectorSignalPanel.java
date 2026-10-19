@@ -18,7 +18,7 @@ import java.util.Objects;
 final class InspectorSignalPanel {
     private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("HH:mm:ss.SSS").withZone(ZoneId.systemDefault());
     private static final int VISIBLE_HISTORY_LIMIT = 120;
-    private final Box body = new Box().gap(4);
+    private final Box body = new Box().setGap(4);
     private InspectorSnapshot.SignalPanel previous;
 
     private static Component tr(String key, Object... arguments) {
@@ -36,7 +36,7 @@ final class InspectorSignalPanel {
     private void updateInternal(InspectorSnapshot.SignalPanel panel) {
         if (Objects.equals(previous, panel)) return;
         previous = panel;
-        for (Control child : body.children()) { if (child.parent() != null) child.parent().removeChild(child); child.queueFree(); }
+        for (Control child : body.getChildren()) { if (child.getParent() != null) child.getParent().removeChild(child); child.queueFree(); }
         if (panel.state().equals("empty")) {
             add(tr("select_node"), false);
             return;
@@ -52,7 +52,7 @@ final class InspectorSignalPanel {
             add(Component.literal((multipleOwners ? owner(panel, signal.sender()) + "." : "")
                             + signal.name() + "(" + signal.parameterType() + ")  #" + signal.id() + " - ")
                     .append(tr(signal.closed() ? "signals.closed_count" : "signals.active_count", signal.connections().size())), false)
-                    .color(OreTheme.TEXT_WHITE);
+                    .setColor(OreTheme.TEXT_WHITE);
             for (var connection : signal.connections()) connection(panel, connection, false);
         }
         add(tr("signals.incoming", data.incoming().size()), true);
@@ -79,7 +79,7 @@ final class InspectorSignalPanel {
                         ? "signals.remaining_scope" : "signals.remaining_signal", event.remainingConnections()));
             Label historyLine = add(line, false);
             if (event.kind() == SignalDiagnostics.Kind.SCOPE_CLOSED && event.remainingConnections() > 0)
-                historyLine.color(OreTheme.TEXT_ERROR);
+                historyLine.setColor(OreTheme.TEXT_ERROR);
         }
         if (data.discardedEvents() > 0) add(tr("signals.discarded", data.discardedEvents()), false);
     }
@@ -91,7 +91,7 @@ final class InspectorSignalPanel {
         if (!connection.label().isEmpty()) add(tr("signals.slot_label", connection.label()), false);
         add(connection.source().isEmpty() ? tr("signals.source_unavailable") : tr("signals.source", connection.source()), false);
         if (connection.possibleDuplicate())
-            add(tr("signals.duplicate"), false).color(OreTheme.TEXT_ERROR);
+            add(tr("signals.duplicate"), false).setColor(OreTheme.TEXT_ERROR);
     }
 
     private String owner(InspectorSnapshot.SignalPanel panel, SignalDiagnostics.Owner owner) {
@@ -100,8 +100,8 @@ final class InspectorSignalPanel {
     }
 
     private Label add(Component text, boolean heading) {
-        Label label = new Label(text).wrap(Label.Wrap.CHARACTER).hero(heading)
-                .color(heading ? OreTheme.TEXT_WHITE : OreTheme.TEXT_SECONDARY);
+        Label label = new Label(text).setWrap(Label.Wrap.CHARACTER).setHero(heading)
+                .setColor(heading ? OreTheme.TEXT_WHITE : OreTheme.TEXT_SECONDARY);
         body.add(label);
         return label;
     }

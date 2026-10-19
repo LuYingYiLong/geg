@@ -69,7 +69,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private static final int SECONDARY_TEXT = OreTheme.TEXT_SECONDARY;
     private static final int CARD_GAP = 4;
     private static final int MIN_CARD_WIDTH = 96;
-    private static final int FOOTER_HEIGHT = Button.Size.MEDIUM.height();
+    private static final int FOOTER_HEIGHT = Button.Size.MEDIUM.getHeight();
     private static final int FAVORITE_BUTTON_WIDTH = 51;
     private final Segmented footerOptions = new Segmented(Arrays.stream(Tab.values())
             .map(Tab::title).toList());
@@ -78,30 +78,30 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             Component.translatable("market.geg.buying")), Button.Size.SMALL);
     private final List<Card> cards = new ArrayList<>();
     private final Dropdown<String> filterDropdown = new Dropdown<>("all", 8)
-            .triggerLabel(Component.empty()).icon(OreIcons.FILTER, 16, 16)
-            .showArrow(false).type(Button.Type.TEXT);
-    private final Window window = (Window) new Window(true).debugName("Market Window");
+            .setTriggerLabel(Component.empty()).setIcon(OreIcons.FILTER, 16, 16)
+            .setShowArrow(false).setType(Button.Type.TEXT);
+    private final Window window = (Window) new Window(true).setDebugName("Market Window");
     private final Grid<Card> grid = new Grid<>();
-    private final Scroll gridScroll = new Scroll().content(grid);
+    private final Scroll gridScroll = new Scroll().setContent(grid);
     private final BodyContent body = new BodyContent();
     private final Table<MarketDetail> offerTable = createOfferTable();
     private final DetailContent detailContent = new DetailContent();
     private final QuantityContent quantityContent = new QuantityContent(this::adjustTradeQuantity);
-    private final Modal detailModal = Signals.configure(new Modal(Component.empty()).size(340, 224).centered()
-            .content(detailContent), connected -> connected.closeRequested().connect(connected, this::closeModal));
-    private final Modal quantityModal = Signals.configure(new Modal(Component.empty()).size(224, 0).centered()
-            .content(quantityContent), connected -> connected.closeRequested().connect(connected, this::closeQuantityMenu)).depth(300.0F);
+    private final Modal detailModal = Signals.configure(new Modal(Component.empty()).setSize(340, 224).centered()
+            .setContent(detailContent), connected -> connected.closeRequested().connect(connected, this::closeModal));
+    private final Modal quantityModal = Signals.configure(new Modal(Component.empty()).setSize(224, 0).centered()
+            .setContent(quantityContent), connected -> connected.closeRequested().connect(connected, this::closeQuantityMenu)).setDepth(300.0F);
     private final Navbar navbar = new Navbar(Component.translatable("market.geg.title"))
-            .titleColor(HEADER_TEXT);
+            .setTitleColor(HEADER_TEXT);
     private final InputControl searchSlot;
-    private final Label coinBalance = new Label().color(HEADER_TEXT)
-            .overflow(Label.Overflow.ELLIPSIS).maximumWidth(128)
-            .align(Label.Horizontal.RIGHT, Label.Vertical.CENTER);
-    private final Padding footerSlot = new Padding(new Padding.Insets(4, 0, 0, 0)).child(footerOptions);
-    private final Label publishFee = new Label().color(SECONDARY_TEXT)
-            .overflow(Label.Overflow.CLIP).align(Label.Horizontal.RIGHT, Label.Vertical.CENTER);
+    private final Label coinBalance = new Label().setColor(HEADER_TEXT)
+            .setOverflow(Label.Overflow.ELLIPSIS).setMaximumWidth(128)
+            .setAlignment(Label.Horizontal.RIGHT, Label.Vertical.CENTER);
+    private final Padding footerSlot = new Padding(new Padding.Insets(4, 0, 0, 0)).setChild(footerOptions);
+    private final Label publishFee = new Label().setColor(SECONDARY_TEXT)
+            .setOverflow(Label.Overflow.CLIP).setAlignment(Label.Horizontal.RIGHT, Label.Vertical.CENTER);
     private final Padding publishSlot = new Padding(new Padding.Insets(7, 6, 2, 6))
-            .child(new Box().orientation(Box.Orientation.HORIZONTAL).gap(6)
+            .setChild(new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(6)
                     .add(publishOptions).add(publishFee));
     private final Overlay overlay = new Overlay();
     private Tab tab = Tab.MARKET;
@@ -118,21 +118,21 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     MarketCanvasWidget(Input search) {
         searchSlot = new InputControl(search);
-        coinBalance.minimum(32, Button.Size.MEDIUM.height());
-        searchSlot.minimum(64, Button.Size.SMALL.height()).preferred(138, Button.Size.SMALL.height())
-                .sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        filterDropdown.minimum(Button.Size.MEDIUM.height(), Button.Size.MEDIUM.height());
-        Box spaceCompactBox = new Box().orientation(Box.Orientation.HORIZONTAL).gap(0);
+        coinBalance.setMinimum(32, Button.Size.MEDIUM.getHeight());
+        searchSlot.setMinimum(64, Button.Size.SMALL.getHeight()).setPreferred(138, Button.Size.SMALL.getHeight())
+                .setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        filterDropdown.setMinimum(Button.Size.MEDIUM.getHeight(), Button.Size.MEDIUM.getHeight());
+        Box spaceCompactBox = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(0);
         spaceCompactBox.add(searchSlot).add(filterDropdown);
-        navbar.extra(coinBalance, spaceCompactBox);
-        publishSlot.minimum(0, 27).preferred(0, 27)
-                .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        publishOptions.minimum(96, Button.Size.SMALL.height()).preferred(134, Button.Size.SMALL.height())
-                .sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        publishFee.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
-        footerSlot.minimum(0, FOOTER_HEIGHT + 4).preferred(0, FOOTER_HEIGHT + 4)
-                .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        footerOptions.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
+        navbar.setExtra(coinBalance, spaceCompactBox);
+        publishSlot.setMinimum(0, 27).setPreferred(0, 27)
+                .setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        publishOptions.setMinimum(96, Button.Size.SMALL.getHeight()).setPreferred(134, Button.Size.SMALL.getHeight())
+                .setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        publishFee.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
+        footerSlot.setMinimum(0, FOOTER_HEIGHT + 4).setPreferred(0, FOOTER_HEIGHT + 4)
+                .setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        footerOptions.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
         footerOptions.selectionChanged().connect(footerOptions, index -> {
             Tab next = Tab.values()[index];
             if (next != tab) {
@@ -151,23 +151,23 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             dirty = true;
         });
         grid.itemActivated().connect(grid, this::openModal);
-        body.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        body.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         Box column = new Box().add(navbar).add(publishSlot).add(body).add(footerSlot);
-        window.content(column).overlay(overlay);
-        grid.columns(MIN_CARD_WIDTH, 4, CARD_GAP).mode(Grid.LayoutMode.MASONRY)
-                .adapter(new Grid.Adapter<>() {
+        window.setContent(column).setOverlay(overlay);
+        grid.setColumns(MIN_CARD_WIDTH, 4, CARD_GAP).setMode(Grid.LayoutMode.MASONRY)
+                .setAdapter(new Grid.Adapter<>() {
                     @Override
-                    public int size() {
+                    public int getSize() {
                         return cards.size();
                     }
 
                     @Override
-                    public Card item(int index) {
+                    public Card getItem(int index) {
                         return cards.get(index);
                     }
 
                     @Override
-                    public Object key(Card card) {
+                    public Object getKey(Card card) {
                         return cardKey(card);
                     }
 
@@ -186,14 +186,14 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                     }
                 });
         overlay.add(detailModal).add(quantityModal);
-        detailModal.visible(false);
-        quantityModal.visible(false);
+        detailModal.setVisible(false);
+        quantityModal.setVisible(false);
     }
 
     private static Label scrollingCardLabel(int color) {
-        return new Label(Component.empty()).color(color).overflow(Label.Overflow.MARQUEE)
-                .scrollTrigger(Label.ScrollTrigger.HOVER).scrollSpeed(20.0F)
-                .scrollEndPause(700L);
+        return new Label(Component.empty()).setColor(color).setOverflow(Label.Overflow.MARQUEE)
+                .setScrollTrigger(Label.ScrollTrigger.HOVER).setScrollSpeed(20.0F)
+                .setScrollEndPauseMs(700L);
     }
 
     private static void withOverlayDepth(ModularGuiContext context, float depth, Runnable render) {
@@ -269,28 +269,28 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     void prepareLayout(int width, int height, Font font) {
-        publishSlot.visible(tab == Tab.SELL);
+        publishSlot.setVisible(tab == Tab.SELL);
         publishOptions.setSelectedNoSignal(requestMode ? 1 : 0);
-        publishFee.visible(width >= 230);
-        publishFee.text(Component.translatable("market.geg.seller_fee",
+        publishFee.setVisible(width >= 230);
+        publishFee.setText(Component.translatable("market.geg.seller_fee",
                 MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints())));
-        navbar.title(Component.translatable(ClientMarketState.marketEnabled()
+        navbar.setTitle(Component.translatable(ClientMarketState.marketEnabled()
                 ? "market.geg.title" : "market.geg.title_closed"));
         coinBalance.setText(Component.translatable("market.geg.header_balance",
                 MoneyCurrency.COIN.format(ClientMoneyState.balance().coinMinorUnits())));
         body.refresh();
-        detailModal.visible(modal != null);
-        quantityModal.visible(modal != null && quantityMenu);
+        detailModal.setVisible(modal != null);
+        quantityModal.setVisible(modal != null && quantityMenu);
         if (modal != null) {
             updatePublishQuantityLimit();
-            detailModal.title(modal.title());
+            detailModal.setTitle(modal.title());
             detailContent.refresh();
             configureDetailActions();
         }
         if (quantityMenu) {
             MarketDetail offer = selectedDetail();
             ClientMarketScreen.setTradeQuantityMaximum(maxTradeQuantity(offer));
-            quantityModal.title(offer != null && offer.buyOrder()
+            quantityModal.setTitle(offer != null && offer.buyOrder()
                     ? Component.translatable("market.geg.fulfill_title_fee",
                     MoneyCurrency.COIN.format(ClientMarketState.feeBasisPoints()))
                     : Component.translatable("market.geg.quantity"));
@@ -317,7 +317,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             quantityMenu = false;
             ClientMarketScreen.showFields(false, false, 0, 0L);
         }
-        if (modal != null) offerTable.rows(modal.offers);
+        if (modal != null) offerTable.setRows(modal.offers);
     }
 
     @Override
@@ -358,7 +358,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 .distinct().sorted().forEach(value ->
                         modOptions.add(new Dropdown.Option<>(value, Component.literal(value))));
         filterDropdown.setOptions(modOptions);
-        String filter = filterDropdown.selected();
+        String filter = filterDropdown.getSelected();
 
         String query = search.trim().toLowerCase(Locale.ROOT);
         cards.clear();
@@ -459,7 +459,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     private Table<MarketDetail> createOfferTable() {
         Table<MarketDetail> table = new Table<>();
-        Signals.configure(table.rowKey(offer -> offer.id()).headerColor(SECONDARY_TEXT), connected -> connected.rowActivated().connect(connected, offer -> selectedDetailId = offer.id()));
+        Signals.configure(table.setRowKey(offer -> offer.id()).setHeaderColor(SECONDARY_TEXT), connected -> connected.rowActivated().connect(connected, offer -> selectedDetailId = offer.id()));
         table.column(new Table.Column<>("status", Component.translatable("market.geg.status"),
                 110, 110, 1, width -> 20, new Table.Cell<>() {
             @Override
@@ -484,8 +484,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             }
         }));
         table.column(new Table.Column<>("action", Component.translatable("market.geg.operation"),
-                104, 104, 0, width -> width >= 104 ? Button.Size.SMALL.height()
-                        : Button.Size.SMALL.height() * 2 + 2, new Table.ControlCell<>(OfferActions::new, OfferActions::bind)));
+                104, 104, 0, width -> width >= 104 ? Button.Size.SMALL.getHeight()
+                        : Button.Size.SMALL.getHeight() * 2 + 2, new Table.ControlCell<>(OfferActions::new, OfferActions::bind)));
 
         return table;
     }
@@ -514,22 +514,22 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         detailModal.clearActions();
         if (modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE) {
             if (modal.kind == Kind.FAVORITE && modal.favorite.ended())
-                detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.unfavorite")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::secondaryModalAction)));
-            detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.request_this")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::primaryModalAction)));
+                detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.unfavorite")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::secondaryModalAction)));
+            detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.request_this")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::primaryModalAction)));
         } else if (modal.kind == Kind.OWN || modal.kind == Kind.OWN_REQUEST) {
-            detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.cancel_listing")).type(Button.Type.DESTRUCTIVE), actionButton -> actionButton.pressed().connect(actionButton, this::secondaryModalAction)));
-            detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.reprice")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::primaryModalAction)));
+            detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.cancel_listing")).setType(Button.Type.DESTRUCTIVE), actionButton -> actionButton.pressed().connect(actionButton, this::secondaryModalAction)));
+            detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.reprice")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::primaryModalAction)));
         } else if (modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE) {
             detailModal.addAction(Signals.configure(new Button(Component.translatable(requestMode
-                    ? "market.geg.confirm_request" : "market.geg.confirm_list")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::primaryModalAction)));
+                    ? "market.geg.confirm_request" : "market.geg.confirm_list")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::primaryModalAction)));
         }
     }
 
     private void configureQuantityActions() {
         MarketDetail offer = selectedDetail();
-        quantityModal.clearActions().addAction(Signals.configure(new Button(Component.translatable("market.geg.cancel")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeQuantityMenu)))
+        quantityModal.clearActions().addAction(Signals.configure(new Button(Component.translatable("market.geg.cancel")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeQuantityMenu)))
                 .addAction(Signals.configure(new Button(Component.translatable(offer != null && offer.buyOrder()
-                        ? "market.geg.confirm_fulfill" : "market.geg.confirm_buy")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::confirmQuantity)));
+                        ? "market.geg.confirm_fulfill" : "market.geg.confirm_buy")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::confirmQuantity)));
     }
 
     private void closeQuantityMenu() {
@@ -540,7 +540,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     /** Each virtual row retains two real Buttons, with callbacks rebound to the current order. */
     private final class OfferActions extends Container {
         private MarketDetail offer;
-        private final Button trade = Signals.configure(new Button().size(Button.Size.SMALL), connected -> connected.pressed().connect(connected, () -> {
+        private final Button trade = Signals.configure(new Button().setSize(Button.Size.SMALL), connected -> connected.pressed().connect(connected, () -> {
             selectedDetailId = offer.id();
             quantityMenu = true;
             quantityContent.scroll = 0;
@@ -548,20 +548,20 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             ClientMarketScreen.setTradeQuantityMaximum(maxTradeQuantity(offer));
             configureQuantityActions();
         }));
-        private final Button favorite = Signals.configure(new Button().size(Button.Size.SMALL).toggleButton(true), connected -> connected.pressed().connect(connected, () -> toggleOfferFavorite(offer)));
+        private final Button favorite = Signals.configure(new Button().setSize(Button.Size.SMALL).setToggleButton(true), connected -> connected.pressed().connect(connected, () -> toggleOfferFavorite(offer)));
 
         private OfferActions() { addChild(trade); addChild(favorite); }
 
         private void bind(MarketDetail offer) {
             this.offer = offer;
-            trade.label(Component.translatable(offer.buyOrder() ? "market.geg.fulfill" : "market.geg.buy"));
+            trade.setLabel(Component.translatable(offer.buyOrder() ? "market.geg.fulfill" : "market.geg.buy"));
             syncFavorite();
         }
 
         private void syncFavorite() {
             boolean selected = ClientMarketState.favorites().stream()
                     .anyMatch(value -> value.orderId() == offer.id());
-            favorite.setButtonPressedNoSignal(selected).label(Component.translatable(selected
+            favorite.setButtonPressedNoSignal(selected).setLabel(Component.translatable(selected
                     ? "market.geg.favorited" : "market.geg.favorite"));
         }
 
@@ -669,12 +669,12 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             case OWN, OWN_REQUEST -> ClientMarketScreen.showFields(false, true, 0, card.price);
             default -> ClientMarketScreen.showFields(false, false, 0, 0L);
         }
-        offerTable.rows(card.offers);
+        offerTable.setRows(card.offers);
     }
 
     private void closeModal() {
         modal = null;
-        offerTable.rows(List.of());
+        offerTable.setRows(List.of());
         offerTable.scrollToTop();
         quantityMenu = false;
         ClientMarketScreen.showTradeQuantity(false);
@@ -783,12 +783,12 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     private final class BodyContent extends Container {
-        private final Padding inset = new Padding(new Padding.Insets(4, 4, 0, 4)).child(gridScroll);
+        private final Padding inset = new Padding(new Padding.Insets(4, 4, 0, 4)).setChild(gridScroll);
         private final Spin loadingSpin = new Spin();
-        private final Label empty = new Label().color(SECONDARY_TEXT)
-                .overflow(Label.Overflow.CLIP)
-                .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
-        private final Box status = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4)
+        private final Label empty = new Label().setColor(SECONDARY_TEXT)
+                .setOverflow(Label.Overflow.CLIP)
+                .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+        private final Box status = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4)
                 .add(loadingSpin).add(empty);
 
         private BodyContent() {
@@ -797,9 +797,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         }
 
         private void refresh() {
-            status.visible(cards.isEmpty());
-            loadingSpin.visible(!ClientMarketState.ready());
-            empty.text(Component.translatable(ClientMarketState.ready()
+            status.setVisible(cards.isEmpty());
+            loadingSpin.setVisible(!ClientMarketState.ready());
+            empty.setText(Component.translatable(ClientMarketState.ready()
                     ? "market.geg.empty" : "market.geg.loading"));
         }
 
@@ -817,18 +817,18 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         protected int contentHeight;
 
         public void scrollBy(int amount) {
-            scroll = Math.max(0, Math.min(Math.max(0, contentHeight - bounds().height()), scroll + amount));
+            scroll = Math.max(0, Math.min(Math.max(0, contentHeight - getBounds().height()), scroll + amount));
         }
 
         @Override public Control hitTop(int x,int y) {
-            return absoluteBounds().contains(x,y)?super.hitTop(x,y):null;
+            return getAbsoluteBounds().contains(x,y)?super.hitTop(x,y):null;
         }
         @Override protected boolean wheel(int x,int y,double delta,boolean horizontal) {
             if(horizontal)return false;int before=scroll;scrollBy(-(int)Math.signum(delta)*24);return before!=scroll;
         }
 
         @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
-            Rect area = screenBounds(screenX, screenY);
+            Rect area = getScreenBounds(screenX, screenY);
             if (area.width() <= 0 || area.height() <= 0) return;
             context.getGraphics().enableScissor(area.x(), area.y(), area.right(), area.bottom());
             super.draw(context, screenX, screenY);
@@ -840,9 +840,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         private final MarketDetailDescriptions info = new MarketDetailDescriptions();
         private final Spin loadingSpin = new Spin();
         private final Label loadingLabel = new Label(Component.translatable("market.geg.loading"))
-                .color(SECONDARY_TEXT).overflow(Label.Overflow.CLIP)
-                .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
-        private final Box loadingRow = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4)
+                .setColor(SECONDARY_TEXT).setOverflow(Label.Overflow.CLIP)
+                .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+        private final Box loadingRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4)
                 .add(loadingSpin).add(loadingLabel);
         private Form form;
 
@@ -859,13 +859,13 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
         private void refresh() {
             boolean offers = modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE;
-            offerTable.visible(offers);
-            info.visible(!offers);
+            offerTable.setVisible(offers);
+            info.setVisible(!offers);
             boolean loading = offers && modal.offers.isEmpty()
                     && ClientMarketState.isDetailLoading(modal.item);
-            loadingRow.visible(loading);
+            loadingRow.setVisible(loading);
             if (offers) {
-                offerTable.empty(loading ? Component.empty()
+                offerTable.setEmpty(loading ? Component.empty()
                         : Component.translatable("market.geg.out_of_stock"));
                 return;
             }
@@ -902,33 +902,33 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             super.layout(bounds, font);
             int width = bounds.width();
             int height = bounds.height();
-            if (offerTable.visible()) {
+            if (offerTable.getVisible()) {
                 scroll = 0;
                 contentHeight = height;
                 fitChild(offerTable, new Rect(0, 0, width, height), font);
                 int loadingWidth = Math.min(Math.max(0, width - 4),
                         loadingRow.measureWidth(font, width));
-                fitChild(loadingRow, new Rect(2, offerTable.headerHeight() + 8,
+                fitChild(loadingRow, new Rect(2, offerTable.getHeaderHeight() + 8,
                         loadingWidth, 12), font);
                 return;
             }
             int infoHeight = info.measureSize(font, new Size(width, height)).height();
             int formTop = infoHeight + 6;
-            int formHeight = form != null && form.visible()
+            int formHeight = form != null && form.getVisible()
                     ? form.measureSize(font, new Size(width, height)).height() : 0;
             contentHeight = formHeight > 0 ? formTop + formHeight : infoHeight;
             scroll = Math.min(scroll, Math.max(0, contentHeight - height));
             fitChild(info, new Rect(0, -scroll, width, infoHeight), font);
-            if (form != null && form.visible())
+            if (form != null && form.getVisible())
                 fitChild(form, new Rect(0, formTop - scroll, width, formHeight), font);
-            if (form != null && form.visible()) form.clipInputs(absoluteBounds());
+            if (form != null && form.getVisible()) form.clipInputs(getAbsoluteBounds());
         }
     }
 
     static final class QuantityContent extends ScrollableContent {
         private static final int QUICK_BUTTON_GAP = 2;
         private static final int QUICK_BUTTON_MIN_WIDTH = 30;
-        private static final int QUICK_BUTTON_ROW_HEIGHT = Button.Size.MEDIUM.height() + QUICK_BUTTON_GAP;
+        private static final int QUICK_BUTTON_ROW_HEIGHT = Button.Size.MEDIUM.getHeight() + QUICK_BUTTON_GAP;
         private final List<Button> quickButtons = new ArrayList<>();
         private Form form;
 
@@ -959,9 +959,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         }
 
         @Override public Size measureSize(Font font, Size available) {
-            int width = Math.max(minimumWidth(), available.width());
+            int width = Math.max(getMinimumWidth(), available.width());
             int formHeight = form == null ? 0 : form.measureSize(font, new Size(width, available.height())).height();
-            return new Size(width, Math.max(minimumHeight(), contentHeight(formHeight, columns(width))));
+            return new Size(width, Math.max(getMinimumHeight(), contentHeight(formHeight, columns(width))));
         }
 
         @Override public void layout(Rect bounds, Font font) {
@@ -976,7 +976,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             contentHeight = contentHeight(formHeight, columns);
             scroll = Math.min(scroll, Math.max(0, contentHeight - height));
             if (form != null) fitChild(form, new Rect(0, -scroll, width, formHeight), font);
-            if (form != null) form.clipInputs(absoluteBounds());
+            if (form != null) form.clipInputs(getAbsoluteBounds());
             for (int index = 0; index < quickButtons.size(); index++) {
                 int row = index / columns;
                 int column = index % columns;
@@ -986,7 +986,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 int right = (column + 1) * rowWidth / buttonsInRow + column * QUICK_BUTTON_GAP;
                 fitChild(quickButtons.get(index), new Rect(left,
                         buttonTop + row * QUICK_BUTTON_ROW_HEIGHT - scroll,
-                        right - left, Button.Size.MEDIUM.height()), font);
+                        right - left, Button.Size.MEDIUM.getHeight()), font);
             }
         }
 
@@ -1056,18 +1056,18 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         private final Label name = scrollingCardLabel(TEXT);
         private final Label count = scrollingCardLabel(SECONDARY_TEXT);
         private final Label price = scrollingCardLabel(ACCENT);
-        private final Slot icon = new Slot().backgroundVisible(false);
-        private final Box textColumn = new Box().gap(1);
-        private final Box row = new Box().orientation(Box.Orientation.HORIZONTAL).gap(5);
+        private final Slot icon = new Slot().setBackgroundVisible(false);
+        private final Box textColumn = new Box().setGap(1);
+        private final Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(5);
         private Card card;
 
         private CardView() {
-            name.minimum(0, 10).preferred(0, 10).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-            count.minimum(0, 10).preferred(0, 10).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-            price.minimum(0, 10).preferred(0, 10).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-            icon.minimum(16, 20).preferred(16, 20).sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_FILL);
+            name.setMinimum(0, 10).setPreferred(0, 10).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+            count.setMinimum(0, 10).setPreferred(0, 10).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+            price.setMinimum(0, 10).setPreferred(0, 10).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+            icon.setMinimum(16, 20).setPreferred(16, 20).setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
             textColumn.add(name).add(count).add(price);
-            textColumn.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
+            textColumn.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
             row.add(icon).add(textColumn);
             addChild(row);
         }
@@ -1075,10 +1075,10 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         @Override
         public void bind(Card card) {
             this.card = card;
-            name.text(card.title());
-            icon.item(card.item, 1);
-            icon.visible(!card.item.isEmpty());
-            count.text(switch (card.kind) {
+            name.setText(card.title());
+            icon.setItem(card.item, 1);
+            icon.setVisible(!card.item.isEmpty());
+            count.setText(switch (card.kind) {
                 case GROUP -> Component.translatable("market.geg.market_count", card.quantity, card.buyQuantity);
                 case OWN, OWN_REQUEST, FAVORITE -> Component.translatable("market.geg.count", card.quantity);
                 case INVENTORY -> Component.translatable("market.geg.inventory_count", card.quantity);
@@ -1093,23 +1093,23 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                         : Component.translatable("market.geg.price", MoneyCurrency.COIN.format(card.price));
                 default -> Component.empty();
             };
-            price.text(priceText).color(ended ? SECONDARY_TEXT : ACCENT);
-            price.visible(!priceText.getString().isEmpty());
+            price.setText(priceText).setColor(ended ? SECONDARY_TEXT : ACCENT);
+            price.setVisible(!priceText.getString().isEmpty());
         }
 
         @Override public void layout(Rect bounds, Font font) {
             super.layout(bounds, font);
             for (Label label : List.of(name, count, price)) {
                 int lineHeight = label.lineHeight(font);
-                if (label.minimumHeight() != lineHeight)
-                    label.minimum(0, lineHeight).preferred(0, lineHeight);
+                if (label.getMinimumHeight() != lineHeight)
+                    label.setMinimum(0, lineHeight).setPreferred(0, lineHeight);
             }
             fitChild(row, new Rect(5, 5, Math.max(0, bounds.width() - 10),
                     Math.max(0, bounds.height() - 10)), font);
         }
 
         @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-            Rect area = screenBounds(screenX, screenY);
+            Rect area = getScreenBounds(screenX, screenY);
             background.drawAt(context, area);
             boolean ended = card.kind == Kind.FAVORITE && card.favorite != null && card.favorite.ended();
             if (ended) context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), 0xA032383D);

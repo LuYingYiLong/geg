@@ -30,13 +30,13 @@ public class Control implements SignalOwner {
     private boolean signalFocused;
     private SignalScope bindingScope;
 
-    @Override public final SignalScope signalScope() { return signalScope; }
+    @Override public final SignalScope getSignalScope() { return signalScope; }
     public final Signal0 focusEntered() { return focusEntered.signal(); }
     public final Signal0 focusExited() { return focusExited.signal(); }
     public final Signal<Boolean> visibilityChanged() { return visibilityChanged.signal(); }
     public final boolean isDisposed() { return lifecycleState == LifecycleState.FREED; }
     /** Connections capturing the current virtual row/item belong here, not to the reusable view. */
-    public final SignalScope bindingScope() {
+    public final SignalScope getBindingScope() {
         signalScope.checkThread();
         if (!isAlive()) throw new IllegalStateException("Control has been disposed");
         if (bindingScope == null) bindingScope = signalScope.child("binding");
@@ -47,13 +47,13 @@ public class Control implements SignalOwner {
         for (Control child : ownedSnapshot()) if (child.isAlive()) child.resetBindingScope();
     }
 
-    public final LifecycleState lifecycleState() { return lifecycleState; }
+    public final LifecycleState getLifecycleState() { return lifecycleState; }
     public final boolean isAlive() { return lifecycleState == LifecycleState.ALIVE; }
     public final boolean isQueuedForDeletion() { return lifecycleState == LifecycleState.QUEUED_FOR_FREE || lifecycleState == LifecycleState.FREEING; }
     public final boolean isInsideTree() { return insideTree; }
     public final boolean isReady() { return ready; }
     public final boolean isSuspended() { return suspended; }
-    public final LifecycleInfo lifecycleInfo() {
+    public final LifecycleInfo getLifecycleInfo() {
         return new LifecycleInfo(SignalDiagnostics.ownerId(this), debugName.isEmpty() ? getClass().getSimpleName() : debugName,
                 lifecycleState, insideTree, ready, suspended, freeReason, freeSource);
     }
@@ -69,8 +69,8 @@ public class Control implements SignalOwner {
                         + "." + f.getMethodName() + "(" + f.getFileName() + ":" + f.getLineNumber() + ")").collect(java.util.stream.Collectors.joining("\n"))) : "";
         markForFree(reason, source);
         LifecycleScheduler.enqueue(this);
-        Window window = treeContext == null ? null : treeContext.owner();
-        if (window != null) { window.cancelCaptures(this, CancelEvent.Reason.DETACHED); window.focusManager().forgetSubtree(this); }
+        Window window = treeContext == null ? null : treeContext.getOwner();
+        if (window != null) { window.cancelCaptures(this, CancelEvent.Reason.DETACHED); window.getFocusManager().forgetSubtree(this); }
         cancelInteractions();
         requestLayout();
     }
@@ -85,8 +85,8 @@ public class Control implements SignalOwner {
         freeReason = reason; freeSource = source;
         freeOwned = ownedSnapshot();
         publishLifecycle();
-        for (Control child : freeOwned) child.markForFree(child.parent == this ? "parent cleanup: " + debugName()
-                : "owned part cleanup: " + debugName(), source);
+        for (Control child : freeOwned) child.markForFree(child.parent == this ? "parent cleanup: " + getDebugName()
+                : "owned part cleanup: " + getDebugName(), source);
     }
     /** Register a non-layout component. Its active-tree lifetime follows this owner. */
     public final <T extends Control> T ownPart(String name, T part) {
@@ -107,14 +107,24 @@ public class Control implements SignalOwner {
         if (!isAlive() || !part.isAlive()) throw new IllegalStateException("Cannot own a pending/freed control");
         if (part.lifecycleOwner != null && part.lifecycleOwner != this || part.parent != null && part.parent != this)
             throw new IllegalStateException("Control already has a lifecycle owner");
-        for (Control node = this; node != null; node = node.parent != null ? node.parent : node.lifecycleOwner)
-            if (node == part) throw new IllegalArgumentException("Lifecycle ownership cycle");
+        requireAcyclicChild(part);
     }
-    public final java.util.Map<String, Control> ownedParts() { return java.util.Map.copyOf(parts); }
+    /** Layout children, internal parts and pooled controls form one ownership graph. */
+    private void requireAcyclicChild(Control child) {
+        java.util.Set<Control> visited = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        java.util.ArrayDeque<Control> pending = new java.util.ArrayDeque<>();
+        pending.add(child);
+        while (!pending.isEmpty()) {
+            Control node = pending.removeFirst();
+            if (node == this) throw new IllegalArgumentException("Control ownership cannot contain a cycle");
+            if (visited.add(node)) pending.addAll(node.ownedSnapshot());
+        }
+    }
+    public final java.util.Map<String, Control> getOwnedParts() { return java.util.Map.copyOf(parts); }
     private List<Control> ownedSnapshot() {
         java.util.Set<Control> seen = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
         List<Control> result = new ArrayList<>();
-        for (Control c : children()) if (c.parent == this && seen.add(c)) result.add(c);
+        for (Control c : getChildren()) if (c.parent == this && seen.add(c)) result.add(c);
         for (Control c : List.copyOf(parts.values())) if (seen.add(c)) result.add(c);
         for (Control c : List.copyOf(pooled)) if (seen.add(c)) result.add(c);
         return result;
@@ -122,7 +132,7 @@ public class Control implements SignalOwner {
     private List<Control> activeOwnedSnapshot() {
         java.util.Set<Control> seen = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
         List<Control> result = new ArrayList<>();
-        for (Control c : children()) if (c.parent == this && seen.add(c)) result.add(c);
+        for (Control c : getChildren()) if (c.parent == this && seen.add(c)) result.add(c);
         for (Control c : List.copyOf(parts.values())) if (seen.add(c)) result.add(c);
         return result;
     }
@@ -138,7 +148,7 @@ public class Control implements SignalOwner {
         catch (RuntimeException error) { lifecycleError("notification " + notice.type(), error); }
     }
     private void lifecycleError(String phase, RuntimeException error) {
-        System.getLogger(Control.class.getName()).log(System.Logger.Level.ERROR, "Ore " + phase + ": " + debugName(), error);
+        System.getLogger(Control.class.getName()).log(System.Logger.Level.ERROR, "Ore " + phase + ": " + getDebugName(), error);
     }
     final void enterTree(io.github.luyingyilong.ore.window.WindowContext context, boolean paused, boolean ancestorVisible) {
         if (!isAlive() || insideTree) return;
@@ -150,8 +160,14 @@ public class Control implements SignalOwner {
     protected boolean lifecycleReady() { return true; }
     final void readySubtree() {
         if (!insideTree || !isAlive()) return;
-        for (Control c : activeOwnedSnapshot()) c.readySubtree();
-        if (ready || !enteredDelivered || !lifecycleReady()) return;
+        long preparingEpoch = treeEpoch;
+        for (Control c : activeOwnedSnapshot()) {
+            if (!insideTree || !isAlive() || treeEpoch != preparingEpoch) return;
+            if (c.parent == this || parts.containsValue(c)) c.readySubtree();
+        }
+        // A child's READY callback may detach, free or reattach this subtree.
+        if (!insideTree || !isAlive() || treeEpoch != preparingEpoch
+                || ready || !enteredDelivered || !lifecycleReady()) return;
         if (activeOwnedSnapshot().stream().anyMatch(c -> c.isAlive() && c.insideTree && !c.ready)) return;
         ready = true;
         deliverNotification(notificationSnapshot(ControlNotification.Type.READY));
@@ -212,7 +228,7 @@ public class Control implements SignalOwner {
 
     private void publishLifecycle() {
         if (!DebugBridge.active()) return;
-        try { DebugBridge.backend().lifecycle(this, lifecycleInfo()); }
+        try { DebugBridge.backend().lifecycle(this, getLifecycleInfo()); }
         catch (RuntimeException error) { lifecycleError("diagnostic observer", error); }
     }
 
@@ -238,29 +254,29 @@ public class Control implements SignalOwner {
     private boolean layoutDirty = true;
     private boolean focusable;
     private Font layoutFont;
-    public Font layoutFont(){return layoutFont;}
+    public Font getLayoutFont(){return layoutFont;}
     private int focusExpansion;
     private float sizeFlagsStretchRatio = 1.0F;
 
-    public Control minimum(int width, int height) {
+    public Control setMinimum(int width, int height) {
         minimumWidth = Math.max(0, width);
         minimumHeight = Math.max(0, height);
         requestLayout();
         return this;
     }
 
-    public Control minimum(Size size) {
-        return minimum(size.width(), size.height());
+    public Control setMinimum(Size size) {
+        return setMinimum(size.width(), size.height());
     }
 
-    public Control preferred(int width, int height) {
+    public Control setPreferred(int width, int height) {
         preferredWidth = Math.max(0, width);
         preferredHeight = Math.max(0, height);
         requestLayout();
         return this;
     }
 
-    public Control sizeFlagsHorizontal(int flags) {
+    public Control setSizeFlagsHorizontal(int flags) {
         SizeFlags.validate(flags);
         if (DebugBridge.previewWrite(this, "sizeFlagsHorizontal", flags)) return this;
         if (sizeFlagsHorizontal != flags) {
@@ -270,7 +286,7 @@ public class Control implements SignalOwner {
         return this;
     }
 
-    public Control sizeFlagsVertical(int flags) {
+    public Control setSizeFlagsVertical(int flags) {
         SizeFlags.validate(flags);
         if (DebugBridge.previewWrite(this, "sizeFlagsVertical", flags)) return this;
         if (sizeFlagsVertical != flags) {
@@ -280,7 +296,7 @@ public class Control implements SignalOwner {
         return this;
     }
 
-    public Control sizeFlagsStretchRatio(float ratio) {
+    public Control setSizeFlagsStretchRatio(float ratio) {
         if (!Float.isFinite(ratio) || ratio <= 0.0F)
             throw new IllegalArgumentException("Stretch ratio must be positive");
         if (DebugBridge.previewWrite(this, "sizeFlagsStretchRatio", ratio)) return this;
@@ -292,45 +308,45 @@ public class Control implements SignalOwner {
     }
 
     @Inspectable(min = 0, max = 15)
-    public int sizeFlagsHorizontal() {
+    public int getSizeFlagsHorizontal() {
         int sizeFlagsHorizontal = DebugBridge.value(this, "sizeFlagsHorizontal", this.sizeFlagsHorizontal);
         return sizeFlagsHorizontal;
     }
     @Inspectable(min = 0, max = 15)
-    public int sizeFlagsVertical() {
+    public int getSizeFlagsVertical() {
         int sizeFlagsVertical = DebugBridge.value(this, "sizeFlagsVertical", this.sizeFlagsVertical);
         return sizeFlagsVertical;
     }
     @Inspectable(min = 0.0001, max = 100000)
-    public float sizeFlagsStretchRatio() {
+    public float getSizeFlagsStretchRatio() {
         float sizeFlagsStretchRatio = DebugBridge.value(this, "sizeFlagsStretchRatio", this.sizeFlagsStretchRatio);
         return sizeFlagsStretchRatio;
     }
 
-    public Control focusable(boolean focusable) {
+    public Control setFocusable(boolean focusable) {
         this.focusable = focusable;
         return this;
     }
 
-    public boolean focusable() { return focusable; }
+    public boolean getFocusable() { return focusable; }
 
     /** Pixels added to each side of the focused outline. */
-    public Control focusExpansion(int pixels) {
+    public Control setFocusExpansion(int pixels) {
         focusExpansion = Math.max(0, pixels);
         return this;
     }
 
-    public int focusExpansion() { return focusExpansion; }
+    public int getFocusExpansion() { return focusExpansion; }
 
     public boolean acceptsFocus() { return isAlive() && !suspended && focusable && visible; }
 
-    public boolean focusScope() { return false; }
+    public boolean getFocusScope() { return false; }
 
     /** Z translation applied by this node when it paints its subtree. */
-    public float contentDepth() { return 0.0F; }
+    public float getContentDepth() { return 0.0F; }
 
     /** Bounds in Window coordinates; virtual controls may return their active item's bounds. */
-    public Rect focusBounds() { return absoluteBounds(); }
+    public Rect getFocusBounds() { return getAbsoluteBounds(); }
 
     public boolean onFocusKey(int keyCode, int modifiers) { return false; }
 
@@ -354,24 +370,22 @@ public class Control implements SignalOwner {
     }
 
     public void onFocusChanged(boolean focused) { }
-    public io.github.luyingyilong.ore.window.WindowContext windowContext() {
-        for (Control node = this; node != null; node = node.parent())
-            if (node instanceof Window window) return window.context();
+    public io.github.luyingyilong.ore.window.WindowContext getWindowContext() {
+        for (Control node = this; node != null; node = node.getParent())
+            if (node instanceof Window window) return window.getContext();
         if (treeContext != null) return treeContext;
-        if (lifecycleOwner != null) return lifecycleOwner.windowContext();
-        return io.github.luyingyilong.ore.window.WindowContext.current();
+        if (lifecycleOwner != null) return lifecycleOwner.getWindowContext();
+        return io.github.luyingyilong.ore.window.WindowContext.getCurrent();
     }
-    public Control parent() { return parent; }
-    public List<Control> children() { return List.copyOf(children); }
+    public Control getParent() { return parent; }
+    public List<Control> getChildren() { return List.copyOf(children); }
 
     public Control addChild(Control child) {
         Objects.requireNonNull(child);
         signalScope.checkThread();
         if (!isAlive() || !child.isAlive()) throw new IllegalStateException("Cannot attach a disposed control");
         if (child.parent != null) throw new IllegalStateException("Control already has a parent");
-        if (child == this) throw new IllegalArgumentException("Control cannot parent itself");
-        for (Control ancestor = this; ancestor != null; ancestor = ancestor.parent)
-            if (ancestor == child) throw new IllegalArgumentException("Control tree cannot contain a cycle");
+        requireAcyclicChild(child);
         child.signalScope.checkThread();
         if (child.lifecycleOwner != null) {
             boolean sameOwner = false;
@@ -388,7 +402,7 @@ public class Control implements SignalOwner {
     public boolean removeChild(Control child) {
         signalScope.checkThread();
         if (child == null || child.parent != this) return false;
-        if(windowContext().owner()!=null)windowContext().owner().focusManager().forgetSubtree(child);
+        if(getWindowContext().getOwner()!=null)getWindowContext().getOwner().getFocusManager().forgetSubtree(child);
         child.exitTree();
         children.removeIf(node -> node == child);
         child.cancelInteractions();
@@ -399,14 +413,14 @@ public class Control implements SignalOwner {
     }
 
     /** Free controls can place children; a Container owns its children's rectangles. */
-    public Control position(int x, int y) {
+    public Control setPosition(int x, int y) {
         requireFreePlacement();
         requestedBounds = new Rect(x, y, requestedBounds.width(), requestedBounds.height());
         requestLayout();
         return this;
     }
 
-    public Control requestedSize(int width, int height) {
+    public Control setRequestedSize(int width, int height) {
         requireFreePlacement();
         requestedBounds = new Rect(requestedBounds.x(), requestedBounds.y(), width, height);
         requestLayout();
@@ -423,7 +437,7 @@ public class Control implements SignalOwner {
         if (parent != null) parent.requestLayout();
     }
 
-    public boolean layoutDirty() { return layoutDirty; }
+    public boolean getLayoutDirty() { return layoutDirty; }
 
     /** Resource reloads can change glyph advances without changing the text itself. */
     public void invalidateTextLayout() {
@@ -431,21 +445,21 @@ public class Control implements SignalOwner {
         for (Control child : ownedSnapshot()) if (child.isAlive()) child.invalidateTextLayout();
     }
 
-    public int minimumWidth() {
+    public int getMinimumWidth() {
         int minimumWidth = DebugBridge.value(this, "minimumWidth", this.minimumWidth);
         return minimumWidth;
     }
-    public int minimumHeight() {
+    public int getMinimumHeight() {
         int minimumHeight = DebugBridge.value(this, "minimumHeight", this.minimumHeight);
         return minimumHeight;
     }
-    public Size minimumSize() { return new Size(minimumWidth(), minimumHeight()); }
-    public boolean visible() { return visible; }
-    public void visible(boolean visible) {
+    public Size getMinimumSize() { return new Size(getMinimumWidth(), getMinimumHeight()); }
+    public boolean getVisible() { return visible; }
+    public void setVisible(boolean visible) {
         if (this.visible != visible) {
             this.visible = visible;
             if (!visible) {
-                if(windowContext().owner()!=null)windowContext().owner().cancelCaptures(this,CancelEvent.Reason.DETACHED);
+                if(getWindowContext().getOwner()!=null)getWindowContext().getOwner().cancelCaptures(this,CancelEvent.Reason.DETACHED);
                 cancelInteractions();
             }
             updateEffectiveVisibility(parent != null ? parent.effectiveVisible : lifecycleOwner != null ? lifecycleOwner.effectiveVisible : true);
@@ -454,43 +468,43 @@ public class Control implements SignalOwner {
         }
     }
     /** Layout translation shared by rendering, descendants, hit testing and focus. */
-    public Control offset(Offset offset) {
+    public Control setOffset(Offset offset) {
         Offset next = Objects.requireNonNull(offset);
         if (!this.offset.equals(next)) { this.offset = next; requestLayout(); }
         return this;
     }
-    public Control offset(int x, int y) { return offset(new Offset(x, y)); }
-    public Offset offset() { if (!DebugBridge.active()) return offset; return new Offset(debugValue("offsetX", offset.x()), debugValue("offsetY", offset.y())); }
+    public Control setOffset(int x, int y) { return setOffset(new Offset(x, y)); }
+    public Offset getOffset() { if (!DebugBridge.active()) return offset; return new Offset(debugValue("offsetX", offset.x()), debugValue("offsetY", offset.y())); }
     protected final <T> T debugValue(String key, T base) { return DebugBridge.value(this, key, base); }
     protected final int debugValue(String key, int base) { return DebugBridge.value(this, key, base); }
-    public String debugName() { return debugName; }
-    public Control debugName(String name) { debugName = java.util.Objects.requireNonNull(name); return this; }
-    public Rect debugRequestedBounds() { if (!DebugBridge.active()) return requestedBounds; return new Rect(debugValue("x", requestedBounds.x()), debugValue("y", requestedBounds.y()),
+    public String getDebugName() { return debugName; }
+    public Control setDebugName(String name) { debugName = java.util.Objects.requireNonNull(name); return this; }
+    public Rect getDebugRequestedBounds() { if (!DebugBridge.active()) return requestedBounds; return new Rect(debugValue("x", requestedBounds.x()), debugValue("y", requestedBounds.y()),
             debugValue("width", requestedBounds.width()), debugValue("height", requestedBounds.height())); }
     /** Complex/forwarded properties only; the development Inspector also discovers @Inspectable getters. */
     public void debugProperties(java.util.List<DebugProperty> out) {
         var number = (java.util.function.BiConsumer<String, java.util.function.Supplier<?>>)(key, read) -> out.add(
                 DebugProperty.number(this, key, "Layout", read,
                 key.startsWith("offset") || key.equals("x") || key.equals("y") ? -100000 : key.equals("sizeFlagsStretchRatio") ? 0.0001 : 0, 100000));
-        number.accept("minimumWidth", this::minimumWidth); number.accept("minimumHeight", this::minimumHeight);
+        number.accept("minimumWidth", this::getMinimumWidth); number.accept("minimumHeight", this::getMinimumHeight);
         number.accept("preferredWidth", () -> debugValue("preferredWidth", preferredWidth));
         number.accept("preferredHeight", () -> debugValue("preferredHeight", preferredHeight));
-        number.accept("offsetX", () -> offset().x()); number.accept("offsetY", () -> offset().y());
+        number.accept("offsetX", () -> getOffset().x()); number.accept("offsetY", () -> getOffset().y());
         if (!(parent instanceof Container) && !(this instanceof Window)) {
-            number.accept("x", () -> debugRequestedBounds().x()); number.accept("y", () -> debugRequestedBounds().y());
-            number.accept("width", () -> debugRequestedBounds().width()); number.accept("height", () -> debugRequestedBounds().height());
+            number.accept("x", () -> getDebugRequestedBounds().x()); number.accept("y", () -> getDebugRequestedBounds().y());
+            number.accept("width", () -> getDebugRequestedBounds().width()); number.accept("height", () -> getDebugRequestedBounds().height());
         }
     }
     /** The parent's assigned rectangle, before this control's Offset is applied. */
-    public Rect layoutBounds() { return bounds; }
-    public Rect bounds() { return bounds.translated(offset().x(), offset().y()); }
+    public Rect getLayoutBounds() { return bounds; }
+    public Rect getBounds() { return bounds.translated(getOffset().x(), getOffset().y()); }
     /** The size assigned by the most recent layout pass. */
-    public Size size() { return new Size(bounds.width(), bounds.height()); }
+    public Size getSize() { return new Size(bounds.width(), bounds.height()); }
 
-    public Rect absoluteBounds() {
-        Rect local = bounds();
+    public Rect getAbsoluteBounds() {
+        Rect local = getBounds();
         if (parent == null) return local;
-        Rect origin = parent.absoluteBounds();
+        Rect origin = parent.getAbsoluteBounds();
         return local.translated(origin.x(), origin.y());
     }
 
@@ -537,8 +551,8 @@ public class Control implements SignalOwner {
             bounds = localBounds;
             layoutDirty = false;
             if (!(this instanceof Container))
-                for (Control child : children())
-                    if (child.parent == this && child.isAlive() && child.visible()) child.layout(child.debugRequestedBounds(), font);
+                for (Control child : getChildren())
+                    if (child.parent == this && child.isAlive() && child.getVisible()) child.layout(child.getDebugRequestedBounds(), font);
         }
     }
 
@@ -546,10 +560,10 @@ public class Control implements SignalOwner {
         if (!isAlive()) return;
         try (var phase = DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
-            List<Control> snapshot = children();
+            List<Control> snapshot = getChildren();
             render(context, screenX, screenY);
             for (Control child : snapshot)
-                if (child.parent == this && child.isAlive() && child.visible()) child.draw(context, screenX, screenY);
+                if (child.parent == this && child.isAlive() && child.getVisible()) child.draw(context, screenX, screenY);
         }
     }
 
@@ -578,18 +592,18 @@ public class Control implements SignalOwner {
     protected boolean pointerDown(int x, int y) { return false; }
     protected boolean wheel(int x, int y, double delta, boolean horizontal) { return false; }
 
-    public Rect screenBounds(int screenX, int screenY) {
-        return absoluteBounds().translated(screenX, screenY);
+    public Rect getScreenBounds(int screenX, int screenY) {
+        return getAbsoluteBounds().translated(screenX, screenY);
     }
 
     public boolean hit(int rootX, int rootY) {
-        return isAlive() && visible && absoluteBounds().contains(rootX, rootY);
+        return isAlive() && visible && getAbsoluteBounds().contains(rootX, rootY);
     }
 
     /** Last drawn child is hit first. Children may overflow their parent's bounds. */
     public Control hitTop(int rootX, int rootY) {
         if (!isAlive() || !visible) return null;
-        List<Control> snapshot = children();
+        List<Control> snapshot = getChildren();
         for (int index = snapshot.size() - 1; index >= 0; index--) {
             Control child = snapshot.get(index);
             if (child.parent != this || !child.isAlive()) continue;

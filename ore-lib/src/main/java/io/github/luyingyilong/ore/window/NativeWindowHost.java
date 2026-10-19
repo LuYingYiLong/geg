@@ -56,12 +56,12 @@ public final class NativeWindowHost implements WindowHost {
     }
 
     @Override
-    public WindowContext context() {
+    public WindowContext getContext() {
         return context;
     }
 
     @Override
-    public boolean nativeWindow() {
+    public boolean getNativeWindow() {
         return true;
     }
 
@@ -89,7 +89,7 @@ public final class NativeWindowHost implements WindowHost {
         if (Util.getPlatform() != Util.OS.WINDOWS)
             throw new UnsupportedOperationException("Ore native windows currently support Windows only");
         this.root = root;
-        context.owner(root);
+        context.setOwner(root);
         closing = false;
         long main = GLFW.glfwGetCurrentContext();
         GLCapabilities mainCapabilities = GL.getCapabilities();
@@ -121,7 +121,7 @@ public final class NativeWindowHost implements WindowHost {
             }
             handle = GLFW.glfwCreateWindow(width, height, options.title(), 0, main);
             if (handle == 0) throw new IllegalStateException("GLFW could not create the Ore native window");
-            context.handle(handle);
+            context.setHandle(handle);
             ime = new NativeImeContext(handle);
             GLFW.glfwSetWindowPos(handle, left, top);
             GLFW.glfwSetWindowSizeLimits(handle, Math.min(width, (int)Math.round(options.minimumWidth()*initialScale)), Math.min(height, (int)Math.round(options.minimumHeight()*initialScale)), GLFW.GLFW_DONT_CARE, GLFW.GLFW_DONT_CARE);
@@ -151,8 +151,8 @@ public final class NativeWindowHost implements WindowHost {
                 }
             });
             screen.getContext().setSettings(new brachy.modularui.screen.UISettings());
-            screen.onResize(context.guiWidth(), context.guiHeight());
-            screen.useTheme(io.github.luyingyilong.ore.OreClient.options().defaultTheme());
+            screen.onResize(context.getGuiWidth(), context.getGuiHeight());
+            screen.useTheme(io.github.luyingyilong.ore.OreClient.getOptions().defaultTheme());
             context.bind(screen.getContext());
             screen.onOpen();
             prepareInputs();
@@ -180,41 +180,41 @@ public final class NativeWindowHost implements WindowHost {
             double dx = x - pointerX, dy = y - pointerY;
             pointerX = x;
             pointerY = y;
-            context.mouse(x, y);
+            context.setMouse(x, y);
             updateMouse();
-            io.github.luyingyilong.ore.event.WindowInputs.move(root,context.mouseX(),context.mouseY());
+            io.github.luyingyilong.ore.event.WindowInputs.move(root,context.getMouseX(),context.getMouseY());
             dirty = true;
         }));
         GLFW.glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> events.add(() -> pointer(button, action, mods)));
         GLFW.glfwSetKeyCallback(handle, (window, key, scan, action, mods) -> events.add(() -> key(key, scan, action, mods)));
         GLFW.glfwSetCharCallback(handle, (window, codepoint) -> events.add(() -> {
-            if (!context.focused()) return;
-            root.dispatchInput(new io.github.luyingyilong.ore.event.TextInputEvent(context,new String(Character.toChars(codepoint)),context.modifiers()));
+            if (!context.getFocused()) return;
+            root.dispatchInput(new io.github.luyingyilong.ore.event.TextInputEvent(context,new String(Character.toChars(codepoint)),context.getModifiers()));
             dirty = true;
         }));
         GLFW.glfwSetScrollCallback(handle, (window, x, y) -> events.add(() -> {
-            root.dispatchInput(new io.github.luyingyilong.ore.event.ScrollEvent(context,context.mouseX(),context.mouseY(),x,y,context.modifiers()));
+            root.dispatchInput(new io.github.luyingyilong.ore.event.ScrollEvent(context,context.getMouseX(),context.getMouseY(),x,y,context.getModifiers()));
             dirty = true;
         }));
     }
 
     private void updateMouse() {
-        if (screen != null) screen.getContext().updateState(context.mouseX(), context.mouseY(), 0);
+        if (screen != null) screen.getContext().updateState(context.getMouseX(), context.getMouseY(), 0);
     }
 
     private void pointer(int button, int action, int mods) {
-        if (!context.focused()) return;
+        if (!context.getFocused()) return;
         context.button(button, action != GLFW.GLFW_RELEASE);
         updateMouse();
         screen.getContext().updateMouseButton(button, action != GLFW.GLFW_RELEASE);
         root.dispatchInput(new io.github.luyingyilong.ore.event.PointerEvent(context,
                 action==GLFW.GLFW_PRESS?io.github.luyingyilong.ore.event.PointerEvent.Action.PRESS:io.github.luyingyilong.ore.event.PointerEvent.Action.RELEASE,
-                context.mouseX(),context.mouseY(),button,mods));
+                context.getMouseX(),context.getMouseY(),button,mods));
         dirty = true;
     }
 
     private void key(int key, int scan, int action, int mods) {
-        if (!context.focused()) return;
+        if (!context.getFocused()) return;
         var mui = screen.getContext();
         mui.updateKey(key, scan, mods, action != GLFW.GLFW_RELEASE);
         io.github.luyingyilong.ore.event.WindowInputs.key(root,
@@ -226,15 +226,15 @@ public final class NativeWindowHost implements WindowHost {
 
     private void focusChanged(boolean focused) {
         if (!focused) {
-            retainedFocus = root.focusManager().focused();
+            retainedFocus = root.getFocusManager().getFocused();
             root.cancelInteractions();
             if (screen.getContext().isFocused()) screen.getContext().removeFocus();
             OreInputMethod.releaseWindow(context);
-            context.focused(false);
+            context.setFocused(false);
         } else {
-            context.focused(true);
-            if (retainedFocus != null && retainedFocus.visible())
-                root.focusManager().requestFocus(retainedFocus, screen.getContext());
+            context.setFocused(true);
+            if (retainedFocus != null && retainedFocus.getVisible())
+                root.getFocusManager().requestFocus(retainedFocus, screen.getContext());
         }
         dirty = true;
     }
@@ -251,7 +251,7 @@ public final class NativeWindowHost implements WindowHost {
             GLFW.glfwGetFramebufferSize(handle, fw, fh);
             GLFW.glfwGetWindowContentScale(handle, sx, sy);
             if (w.get(0) < 1 || h.get(0) < 1 || fw.get(0) < 1 || fh.get(0) < 1) return;
-            context.dimensions(w.get(0), h.get(0), fw.get(0), fh.get(0), WindowContext.nativePixelScale(options.guiScale(), sx.get(0)));
+            context.setDimensions(w.get(0), h.get(0), fw.get(0), fh.get(0), WindowContext.nativePixelScale(options.guiScale(), sx.get(0)));
         }
     }
 
@@ -259,16 +259,16 @@ public final class NativeWindowHost implements WindowHost {
         List<InputControl> live = WindowCanvas.inputs(root);
         for (InputControl old : List.copyOf(inputs))
             if (!live.contains(old)) {
-                old.widget().dispose();
+                old.getWidget().dispose();
                 inputs.remove(old);
             }
         for (InputControl input : live)
             if (!inputs.contains(input)) {
-                if (input.widget().isValid()) throw new IllegalStateException("Input already belongs to a MUI host");
+                if (input.getWidget().isValid()) throw new IllegalStateException("Input already belongs to a MUI host");
                 inputs.add(input);
-                String pending = input.widget().getText();
-                if (input.widget().getStringValue() == null) input.widget().value(new brachy.modularui.value.StringValue(pending));
-                input.widget().initialise(screen.getMainPanel(), false);
+                String pending = input.getWidget().getText();
+                if (input.getWidget().getStringValue() == null) input.getWidget().value(new brachy.modularui.value.StringValue(pending));
+                input.getWidget().initialise(screen.getMainPanel(), false);
             }
     }
 
@@ -286,7 +286,7 @@ public final class NativeWindowHost implements WindowHost {
             if (closing) return;
             if (GLFW.glfwGetWindowAttrib(handle, GLFW.GLFW_ICONIFIED) != 0) return;
             long now = System.nanoTime();
-            boolean animate = root.layoutDirty() || root.focusManager().nativeInputFocused();
+            boolean animate = root.getLayoutDirty() || root.getFocusManager().getNativeInputFocused();
             if (now - lastFrame < 33_333_333L || !dirty && !animate && now - lastFrame < 100_000_000L) return;
             lastFrame = now;
             dirty = false;
@@ -299,9 +299,9 @@ public final class NativeWindowHost implements WindowHost {
         long main = GLFW.glfwGetCurrentContext();
         GLCapabilities mainCapabilities = GL.getCapabilities();
         try (WindowRenderState state = new WindowRenderState()) {
-            if (target == null || target.width != context.framebufferWidth() || target.height != context.framebufferHeight()) {
+            if (target == null || target.width != context.getFramebufferWidth() || target.height != context.getFramebufferHeight()) {
                 if (target != null) target.destroyBuffers();
-                target = new TextureTarget(context.framebufferWidth(), context.framebufferHeight(), true, Minecraft.ON_OSX);
+                target = new TextureTarget(context.getFramebufferWidth(), context.getFramebufferHeight(), true, Minecraft.ON_OSX);
                 target.enableStencil();
             }
             target.setClearColor(0.19F, 0.20F, 0.20F, 1);
@@ -313,13 +313,13 @@ public final class NativeWindowHost implements WindowHost {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.setShaderColor(1, 1, 1, 1);
-            RenderSystem.setProjectionMatrix(new Matrix4f().setOrtho(0, (float) context.projectionWidth(), (float) context.projectionHeight(), 0, 1000, 21000), VertexSorting.ORTHOGRAPHIC_Z);
+            RenderSystem.setProjectionMatrix(new Matrix4f().setOrtho(0, (float) context.getProjectionWidth(), (float) context.getProjectionHeight(), 0, 1000, 21000), VertexSorting.ORTHOGRAPHIC_Z);
             RenderSystem.getModelViewStack().translate(0, 0, -11000);
             RenderSystem.applyModelViewMatrix();
             WindowGraphics graphics = new WindowGraphics(mc, mc.renderBuffers().bufferSource(), context);
             var mui = screen.getContext();
-            screen.onResize(context.guiWidth(), context.guiHeight());
-            mui.updateState(context.mouseX(), context.mouseY(), 0);
+            screen.onResize(context.getGuiWidth(), context.getGuiHeight());
+            mui.updateState(context.getMouseX(), context.getMouseY(), 0);
             mui.setGraphics(graphics);
             mui.setOverrideFont(mc.font);
             mui.reset();
@@ -327,15 +327,15 @@ public final class NativeWindowHost implements WindowHost {
             try {
                 Stencil.reset();
                 root.prepareTree(mui);
-                root.layoutViewport(context.guiWidth(), context.guiHeight(), mc.font);
+                root.layoutViewport(context.getGuiWidth(), context.getGuiHeight(), mc.font);
                 for (InputControl input : inputs) {
-                    var area = input.widget().getArea();
-                    var b = input.widgetBounds();
+                    var area = input.getWidget().getArea();
+                    var b = input.getWidgetBounds();
                     area.x = b.x();
                     area.y = b.y();
                     area.width = b.width();
                     area.height = b.height();
-                    input.widget().onUpdate();
+                    input.getWidget().onUpdate();
                 }
                 root.draw(mui, 0, 0);
                 graphics.flush();
@@ -349,7 +349,7 @@ public final class NativeWindowHost implements WindowHost {
                 GLFW.glfwMakeContextCurrent(handle);
                 GL.setCapabilities(capabilities);
                 GL32.glWaitSync(fence, 0, GL32.GL_TIMEOUT_IGNORED);
-                presentation.draw(target.getColorTextureId(), context.framebufferWidth(), context.framebufferHeight());
+                presentation.draw(target.getColorTextureId(), context.getFramebufferWidth(), context.getFramebufferHeight());
                 GLFW.glfwSwapBuffers(handle);
                 frames++;
             } finally {
@@ -386,7 +386,7 @@ public final class NativeWindowHost implements WindowHost {
         io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
         OreInputMethod.releaseWindow(context);
         if (screen != null && screen.getContext().isFocused()) screen.getContext().removeFocus();
-        for (InputControl input : inputs) input.widget().dispose();
+        for (InputControl input : inputs) input.getWidget().dispose();
         inputs.clear();
         if (screen != null) screen.onClose();
         context.detach();
@@ -421,7 +421,7 @@ public final class NativeWindowHost implements WindowHost {
         private boolean fieldFocused;
 
         DetachedMuiScreen(ModularPanel<?> panel) {
-            super(io.github.luyingyilong.ore.OreClient.options().hostModId(), panel);
+            super(io.github.luyingyilong.ore.OreClient.getOptions().hostModId(), panel);
         }
 
         @Override

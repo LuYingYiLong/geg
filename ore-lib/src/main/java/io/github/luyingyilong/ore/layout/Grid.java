@@ -39,9 +39,9 @@ public final class Grid<T> extends Container implements ScrollContent {
     private Font layoutFont;
 
     public Grid() {
-        signalScope().own(() -> { active.clear(); recycled.clear(); fixedChildren.clear(); entries.clear(); visibleIndices.clear(); });
-        focusable(true);
-        focusExpansion(1);
+        getSignalScope().own(() -> { active.clear(); recycled.clear(); fixedChildren.clear(); entries.clear(); visibleIndices.clear(); });
+        setFocusable(true);
+        setFocusExpansion(1);
     }
 
     @Override public boolean acceptsFocus() {
@@ -60,11 +60,11 @@ public final class Grid<T> extends Container implements ScrollContent {
         return entries.get(0);
     }
 
-    @Override public Rect focusBounds() {
+    @Override public Rect getFocusBounds() {
         Entry<T> entry = focusedEntry();
-        if (entry != null && active.get(entry.index()) instanceof Control control) return control.absoluteBounds();
-        return entry == null ? absoluteBounds()
-                : entry.bounds().translated(absoluteBounds().x(), absoluteBounds().y());
+        if (entry != null && active.get(entry.index()) instanceof Control control) return control.getAbsoluteBounds();
+        return entry == null ? getAbsoluteBounds()
+                : entry.bounds().translated(getAbsoluteBounds().x(), getAbsoluteBounds().y());
     }
 
     @Override public boolean onFocusMove(FocusManager.Direction direction) {
@@ -92,7 +92,7 @@ public final class Grid<T> extends Container implements ScrollContent {
         }
         if (best == null) return false;
         focusedKey = best.key();
-        if (parent() instanceof Scroll scroll) scroll.ensureVisible(best.bounds().translated(bounds().x(), bounds().y()));
+        if (getParent() instanceof Scroll scroll) scroll.ensureVisible(best.bounds().translated(getBounds().x(), getBounds().y()));
         return true;
     }
 
@@ -110,7 +110,7 @@ public final class Grid<T> extends Container implements ScrollContent {
         return index;
     }
 
-    public Grid<T> adapter(Adapter<T> adapter) {
+    public Grid<T> setAdapter(Adapter<T> adapter) {
         if (adapter != null && !fixedChildren.isEmpty())
             throw new IllegalStateException("A Grid cannot mix fixed children and an adapter");
         if (this.adapter != adapter) {
@@ -146,9 +146,9 @@ public final class Grid<T> extends Container implements ScrollContent {
     }
 
     @Inspectable
-    public LayoutMode mode() { return DebugBridge.value(this, "mode", mode); }
+    public LayoutMode getMode() { return DebugBridge.value(this, "mode", mode); }
 
-    public Grid<T> mode(LayoutMode mode) {
+    public Grid<T> setMode(LayoutMode mode) {
         Objects.requireNonNull(mode);
         if (DebugBridge.previewWrite(this, "mode", mode)) return this;
         this.mode = mode;
@@ -156,7 +156,7 @@ public final class Grid<T> extends Container implements ScrollContent {
         return this;
     }
 
-    public Grid<T> columns(int minCardWidth, int maxColumns, int gap) {
+    public Grid<T> setColumns(int minCardWidth, int maxColumns, int gap) {
         this.minCardWidth = Math.max(1, minCardWidth);
         this.maxColumns = Math.max(1, maxColumns);
         this.gap = Math.max(0, gap);
@@ -175,19 +175,19 @@ public final class Grid<T> extends Container implements ScrollContent {
         super.invalidateTextLayout();
     }
 
-    public List<Entry<T>> entries() {
+    public List<Entry<T>> getEntries() {
         return List.copyOf(entries);
     }
 
-    public int contentHeight() {
+    public int getContentHeight() {
         return contentHeight;
     }
 
-    public int contentWidth() { return contentWidth; }
+    public int getContentWidth() { return contentWidth; }
 
-    @Override public Size contentExtent() { return new Size(contentWidth, contentHeight); }
+    @Override public Size getContentExtent() { return new Size(contentWidth, contentHeight); }
 
-    @Override public void visibleRegion(Rect region) {
+    @Override public void setVisibleRegion(Rect region) {
         Rect next = new Rect(Math.max(0, region.x()), Math.max(0, region.y()),
                 Math.max(0, region.width()), Math.max(0, region.height()));
         if (!next.equals(visibleRegion)) {
@@ -213,15 +213,15 @@ public final class Grid<T> extends Container implements ScrollContent {
         requestLayout();
     }
 
-    public int activeViews() {
+    public int getActiveViews() {
         return active.size();
     }
 
-    public int columns() {
+    public int getColumns() {
         int minCardWidth = DebugBridge.value(this, "minCardWidth", this.minCardWidth);
         int maxColumns = DebugBridge.value(this, "maxColumns", this.maxColumns);
         int gap = DebugBridge.value(this, "gap", this.gap);
-        int width = Math.max(1, bounds().width());
+        int width = Math.max(1, getBounds().width());
         return Math.max(1, Math.min(maxColumns, (width + gap) / (minCardWidth + gap)));
     }
 
@@ -229,13 +229,13 @@ public final class Grid<T> extends Container implements ScrollContent {
     public void layout(Rect localBounds, Font font) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
-            boolean childLayoutChanged = layoutDirty();
+            boolean childLayoutChanged = getLayoutDirty();
             layoutFont = font;
             super.layout(localBounds, font);
             if (dirty || lastWidth != localBounds.width() || childLayoutChanged && adapter == null) relayout(font);
             if (childLayoutChanged) visibilityDirty = true;
             if (visibleRegion.width() == 0 && visibleRegion.height() == 0)
-                visibleRegion(new Rect(0, 0, localBounds.width(), localBounds.height()));
+                setVisibleRegion(new Rect(0, 0, localBounds.width(), localBounds.height()));
             if (adapter != null) updateVisible();
         }
     }
@@ -257,7 +257,7 @@ public final class Grid<T> extends Container implements ScrollContent {
         LayoutMode mode = DebugBridge.value(this, "mode", this.mode);
         int minCardWidth = DebugBridge.value(this, "minCardWidth", this.minCardWidth);
         int gap = DebugBridge.value(this, "gap", this.gap);
-        if (!resetScrollPending && lastWidth != -1 && lastWidth != bounds().width()
+        if (!resetScrollPending && lastWidth != -1 && lastWidth != getBounds().width()
                 && !dirty) saveAnchor();
         Map<Object, ArrayDeque<View<T>>> previous = new HashMap<>();
         for (Entry<T> entry : entries) {
@@ -266,28 +266,28 @@ public final class Grid<T> extends Container implements ScrollContent {
             if (view != null) previous.computeIfAbsent(entry.key(), key -> new ArrayDeque<>()).add(view);
         }
         entries.clear();
-        lastWidth = bounds().width();
+        lastWidth = getBounds().width();
         dirty = false;
         if (adapter == null) {
             relayoutFixed(font);
             return;
         }
-        if (adapter.size() == 0) {
+        if (adapter.getSize() == 0) {
             contentHeight = 0;
             contentWidth = 0;
             recycleAll();
             restoredScrollY = 0;
             return;
         }
-        int columns = columns();
-        int cardWidth = Math.max(minCardWidth, (bounds().width() - (columns - 1) * gap) / columns);
+        int columns = getColumns();
+        int cardWidth = Math.max(minCardWidth, (getBounds().width() - (columns - 1) * gap) / columns);
         contentWidth = columns * cardWidth + (columns - 1) * gap;
         int[] heights = new int[columns];
         Arrays.fill(heights, 0);
         int rowY = 0;
         int rowHeight = 0;
-        for (int index = 0; index < adapter.size(); index++) {
-            T item = adapter.item(index);
+        for (int index = 0; index < adapter.getSize(); index++) {
+            T item = adapter.getItem(index);
             int column = mode == LayoutMode.ROWS ? index % columns : shortest(heights);
             if (mode == LayoutMode.ROWS && column == 0 && index > 0) {
                 rowY += rowHeight + gap;
@@ -295,7 +295,7 @@ public final class Grid<T> extends Container implements ScrollContent {
             }
             int cardHeight = Math.max(1, adapter.measureHeight(item, cardWidth, font));
             int cardY = mode == LayoutMode.ROWS ? rowY : heights[column];
-            entries.add(new Entry<>(index, item, adapter.key(item),
+            entries.add(new Entry<>(index, item, adapter.getKey(item),
                     new Rect(column * (cardWidth + gap), cardY, cardWidth, cardHeight)));
             if (mode == LayoutMode.ROWS) rowHeight = Math.max(rowHeight, cardHeight);
             else heights[column] += cardHeight + gap;
@@ -336,19 +336,21 @@ public final class Grid<T> extends Container implements ScrollContent {
         LayoutMode mode = DebugBridge.value(this, "mode", this.mode);
         int minCardWidth = DebugBridge.value(this, "minCardWidth", this.minCardWidth);
         int gap = DebugBridge.value(this, "gap", this.gap);
-        if (fixedChildren.isEmpty()) {
+        List<Control> visible = fixedChildren.stream()
+                .filter(child -> child.getParent() == this && child.isAlive() && child.getVisible()).toList();
+        if (visible.isEmpty()) {
             contentWidth = 0;
             contentHeight = 0;
             return;
         }
-        int columns = columns();
-        int cardWidth = Math.max(minCardWidth, (bounds().width() - (columns - 1) * gap) / columns);
+        int columns = getColumns();
+        int cardWidth = Math.max(minCardWidth, (getBounds().width() - (columns - 1) * gap) / columns);
         contentWidth = columns * cardWidth + (columns - 1) * gap;
         int[] heights = new int[columns];
         int rowY = 0;
         int rowHeight = 0;
-        for (int index = 0; index < fixedChildren.size(); index++) {
-            Control child = fixedChildren.get(index);
+        for (int index = 0; index < visible.size(); index++) {
+            Control child = visible.get(index);
             int column = mode == LayoutMode.ROWS ? index % columns : shortest(heights);
             if (mode == LayoutMode.ROWS && column == 0 && index > 0) {
                 rowY += rowHeight + gap;
@@ -420,16 +422,16 @@ public final class Grid<T> extends Container implements ScrollContent {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
-            if (bounds().width() <= 0 || bounds().height() <= 0) return;
+            if (getBounds().width() <= 0 || getBounds().height() <= 0) return;
             if (adapter != null) updateVisible();
-            Rect origin = screenBounds(screenX, screenY);
+            Rect origin = getScreenBounds(screenX, screenY);
             Rect viewport = visibleRegion.translated(origin.x(), origin.y());
             if (adapter == null) {
                 for (Control child : List.copyOf(fixedChildren)) {
-                    if (child.parent() != this || !child.isAlive() || !child.visible()) continue;
-                    Rect area = child.absoluteBounds();
-                    if (area.bottom() >= absoluteBounds().y() + visibleRegion.y() - visibleRegion.height()
-                            && area.y() <= absoluteBounds().y() + visibleRegion.bottom() + visibleRegion.height()) {
+                    if (child.getParent() != this || !child.isAlive() || !child.getVisible()) continue;
+                    Rect area = child.getAbsoluteBounds();
+                    if (area.bottom() >= getAbsoluteBounds().y() + visibleRegion.y() - visibleRegion.height()
+                            && area.y() <= getAbsoluteBounds().y() + visibleRegion.bottom() + visibleRegion.height()) {
                         child.draw(context, screenX, screenY);
                     }
                 }
@@ -450,7 +452,7 @@ public final class Grid<T> extends Container implements ScrollContent {
     }
 
     public Entry<T> hitItem(int rootX, int rootY) {
-        Rect origin = absoluteBounds();
+        Rect origin = getAbsoluteBounds();
         int localX = rootX - origin.x();
         int localY = rootY - origin.y();
         if (!visibleRegion.contains(localX, localY)) return null;
@@ -462,7 +464,7 @@ public final class Grid<T> extends Container implements ScrollContent {
     }
 
     @Override public Control hitTop(int rootX, int rootY) {
-        if (!isAlive() || !visible()) return null;
+        if (!isAlive() || !getVisible()) return null;
         if (adapter == null) return super.hitTop(rootX, rootY);
         Entry<T> entry = hitItem(rootX, rootY);
         if (entry != null) {
@@ -472,8 +474,8 @@ public final class Grid<T> extends Container implements ScrollContent {
                 if (hit != null) return hit;
             }
         }
-        return hit(rootX, rootY) && visibleRegion.contains(rootX - absoluteBounds().x(),
-                rootY - absoluteBounds().y()) ? this : null;
+        return hit(rootX, rootY) && visibleRegion.contains(rootX - getAbsoluteBounds().x(),
+                rootY - getAbsoluteBounds().y()) ? this : null;
     }
 
     @Override protected boolean pointerDown(int rootX, int rootY) {
@@ -489,19 +491,19 @@ public final class Grid<T> extends Container implements ScrollContent {
     public Control hitFixed(int rootX, int rootY) {
         if (adapter != null) return null;
         for (Control child : List.copyOf(fixedChildren))
-            if ((child.isAlive() && child.visible())
-                    && child.absoluteBounds().contains(rootX, rootY)) return child;
+            if ((child.isAlive() && child.getVisible())
+                    && child.getAbsoluteBounds().contains(rootX, rootY)) return child;
         return null;
     }
 
     public enum LayoutMode {ROWS, MASONRY}
 
     public interface Adapter<T> {
-        int size();
+        int getSize();
 
-        T item(int index);
+        T getItem(int index);
 
-        Object key(T item);
+        Object getKey(T item);
 
         int measureHeight(T item, int cardWidth, Font font);
 

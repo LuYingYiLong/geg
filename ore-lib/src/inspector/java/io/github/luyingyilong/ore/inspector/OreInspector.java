@@ -45,7 +45,7 @@ public final class OreInspector {
     public static void open() {
         if (FMLEnvironment.production) return;
         try {
-            if (view != null && view.window().host().isOpen()) {
+            if (view != null && view.window().getHost().isOpen()) {
                 view.window().requestFocus();
                 return;
             }

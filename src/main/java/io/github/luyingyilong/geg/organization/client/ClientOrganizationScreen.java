@@ -24,33 +24,33 @@ public final class ClientOrganizationScreen {
 
     public static void open() {
         if (canvas != null && ModularScreen.isActive("geg", "organizations")) return;
-        Input name = new Input(250.0F).placeholder(Component.translatable("organization.geg.name_hint"));
+        Input name = new Input(250.0F).setPlaceholder(Component.translatable("organization.geg.name_hint"));
         name.setMaxLength(48);
-        TextArea description = new TextArea(250.0F).rows(4);
-        description.placeholder(Component.translatable("organization.geg.description_hint"));
+        TextArea description = new TextArea(250.0F).setRows(4);
+        description.setPlaceholder(Component.translatable("organization.geg.description_hint"));
         description.setMaxLength(120);
         Checkbox unrestricted = new Checkbox(Component.translatable("organization.geg.join_unrestricted"))
                 .setCheckedNoSignal(true);
         Checkbox approval = new Checkbox(Component.translatable("organization.geg.join_approval"));
         unrestricted.toggled().connect(unrestricted, checked -> {
             if (checked) approval.setCheckedNoSignal(false);
-            else if (!approval.checked()) unrestricted.setCheckedNoSignal(true);
+            else if (!approval.getChecked()) unrestricted.setCheckedNoSignal(true);
         });
         approval.toggled().connect(approval, checked -> {
             if (checked) unrestricted.setCheckedNoSignal(false);
-            else if (!unrestricted.checked()) approval.setCheckedNoSignal(true);
+            else if (!unrestricted.getChecked()) approval.setCheckedNoSignal(true);
         });
-        Box joinChoices = new Box().gap(2).add(unrestricted).add(approval);
-        joinChoices.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        unrestricted.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        approval.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        Box joinChoices = new Box().setGap(2).add(unrestricted).add(approval);
+        joinChoices.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        unrestricted.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        approval.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Form form = new Form().add(new FormItem("name",
                 Component.translatable("organization.geg.name"), name))
                 .add(new FormItem("description",
                         Component.translatable("organization.geg.description"), description))
                 .add(new FormItem("join_policy",
                         Component.translatable("organization.geg.join_policy"), joinChoices,
-                        () -> approval.checked() ? "approval" : "unrestricted"));
+                        () -> approval.getChecked() ? "approval" : "unrestricted"));
         OrganizationEditForm editor = new OrganizationEditForm();
         canvas = new OrganizationCanvasWidget(form, name, description, editor);
         canvas.showInitialState();

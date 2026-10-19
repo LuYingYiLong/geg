@@ -89,21 +89,21 @@ public final class InventoryEntries {
     }
 
     private static final class Entries {
-        private final Badge unread = new Badge().type(Tag.Type.PRIMARY);
+        private final Badge unread = new Badge().setType(Tag.Type.PRIMARY);
         private final OreButtonWidget organization = new OreButtonWidget(
                 Signals.configure(new Button(Component.translatable("organization.geg.entry")), connected -> connected.pressed().connect(connected, ClientOrganizationScreen::open)),
                 Component.translatable("organization.geg.entry"));
         private final OreButtonWidget mail = new OreButtonWidget(
-                Signals.configure(new Button(Component.translatable("mail.geg.entry")).badge(unread), connected -> connected.pressed().connect(connected, ClientMailScreen::open)),
+                Signals.configure(new Button(Component.translatable("mail.geg.entry")).setBadge(unread), connected -> connected.pressed().connect(connected, ClientMailScreen::open)),
                 Component.translatable("mail.geg.entry"));
 
         private java.util.List<OreButtonWidget> widgets() { return java.util.List.of(organization, mail); }
         private void cancel() { widgets().forEach(OreButtonWidget::cancelInput); }
         private void layout(Screen screen) {
             int count = ClientMailScreen.unread();
-            unread.count(count).visible(count > 0);
+            unread.setCount(count).setVisible(count > 0);
             mail.setMessage(count == 0 ? Component.translatable("mail.geg.entry")
-                    : Component.translatable("mail.geg.entry_badge", unread.displayText()));
+                    : Component.translatable("mail.geg.entry_badge", unread.getDisplayText()));
             var font = Minecraft.getInstance().font;
             int y = Math.max(0, screen.height - Button.HEIGHT - 4);
             organization.place(font, 4, y, ENTRY_WIDTH);

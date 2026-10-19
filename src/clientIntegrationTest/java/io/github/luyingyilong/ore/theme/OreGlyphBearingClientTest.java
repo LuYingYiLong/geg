@@ -47,16 +47,16 @@ public final class OreGlyphBearingClientTest {
                         return null;
                     });
                 }
-                Box content = new Box().gap(6);
-                content.add(new Label(Component.literal("Ore punctuation / 全角与半角符号")).hero(true));
+                Box content = new Box().setGap(6);
+                content.add(new Label(Component.literal("Ore punctuation / 全角与半角符号")).setHero(true));
                 content.add(new Label(Component.literal(SAMPLE)));
                 content.add(new Label(Component.literal("【中文】「中文」，。；：！？ABC + 123")));
-                content.add(new Label(Component.literal(SAMPLE)).fontSize(12));
+                content.add(new Label(Component.literal(SAMPLE)).setFontSize(12));
                 content.add(new Button(Component.literal("组织（2） / Group (2)")));
                 input = new Input(); input.setTextNoSignal("中文（English）中文");
-                area = new TextArea(0).rows(3); area.setTextNoSignal(SAMPLE + "\n【多行文本】（括号）");
+                area = new TextArea(0).setRows(3); area.setTextNoSignal(SAMPLE + "\n【多行文本】（括号）");
                 content.add(new InputControl(input)).add(new InputControl(area));
-                root = Window.embedded().content(new Padding(Padding.Insets.all(8)).child(content)).open();
+                root = Window.embedded().setContent(new Padding(Padding.Insets.all(8)).setChild(content)).open();
             } else if (ticks >= 25) {
                 check(input.getText().equals("中文（English）中文") && area.getText().contains("（括号）"),
                         "Fullwidth characters are retained in the editor document");

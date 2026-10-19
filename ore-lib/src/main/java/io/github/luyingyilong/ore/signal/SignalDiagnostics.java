@@ -60,8 +60,8 @@ public final class SignalDiagnostics {
     static long nextId() { return IDENTITIES.incrementAndGet(); }
 
     public static long ownerId(SignalOwner owner) {
-        owner.signalScope().checkThread();
-        return owner.signalScope().diagnosticOwner().id();
+        owner.getSignalScope().checkThread();
+        return owner.getSignalScope().diagnosticOwner().id();
     }
 
     public static Snapshot inspect(SignalOwner... owners) {
@@ -70,7 +70,7 @@ public final class SignalDiagnostics {
         java.util.HashSet<Long> ids = new java.util.HashSet<>();
         java.util.HashSet<Long> visited = new java.util.HashSet<>();
         for (SignalOwner owner : owners) {
-            SignalScope scope = owner.signalScope();
+            SignalScope scope = owner.getSignalScope();
             scope.checkThread();
             ids.add(scope.diagnosticOwner().id());
             collect(scope, signals, incoming, visited);

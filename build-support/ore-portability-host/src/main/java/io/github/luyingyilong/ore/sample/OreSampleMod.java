@@ -41,20 +41,20 @@ public final class OreSampleMod {
             try {
                 if (++ticks > 600) throw new AssertionError("Portability smoke timeout at phase " + phase);
                 if (phase == 0) {
-                    var input = new Input().placeholder(Component.literal("Portable input / 中文"));
+                    var input = new Input().setPlaceholder(Component.literal("Portable input / 中文"));
                     toggle = new Switch();
-                    var switches = new Box().orientation(Box.Orientation.HORIZONTAL).gap(6)
-                            .add(toggle).add(new Switch(true)).add(new Switch(true).disabled(true))
-                            .add(new Switch().loading(true));
-                    var content = new Box().gap(4).add(new Label(Component.literal("Portable Ore")).hero(true))
+                    var switches = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(6)
+                            .add(toggle).add(new Switch(true)).add(new Switch(true).setDisabled(true))
+                            .add(new Switch().setLoading(true));
+                    var content = new Box().setGap(4).add(new Label(Component.literal("Portable Ore")).setHero(true))
                             .add(new InputControl(input)).add(new Button(Component.literal("Consumer button"))).add(switches);
-                    root = Window.embedded().content(content); root.open(); phase = 1;
+                    root = Window.embedded().setContent(content); root.open(); phase = 1;
                 } else if (phase == 1 && ticks > 15) {
-                    if (!OreClient.options().hostModId().equals(ID)) throw new AssertionError("Wrong host identity");
+                    if (!OreClient.getOptions().hostModId().equals(ID)) throw new AssertionError("Wrong host identity");
                     var key = new ScreenEvent.KeyPressed.Pre(mc.screen, GLFW.GLFW_KEY_F8, 0, 0);
                     MinecraftForge.EVENT_BUS.post(key);
                     if (!key.isCanceled() || WindowManager.nativeWindows() != 1) throw new AssertionError("Inspector F8 was not installed");
-                    if (!toggle.activate() || !toggle.checked()) throw new AssertionError("Switch did not activate");
+                    if (!toggle.activate() || !toggle.getChecked()) throw new AssertionError("Switch did not activate");
                     phase = 2;
                 } else if (phase == 2 && ticks > 40) {
                     if (WindowManager.nativeWindows() != 1) throw new AssertionError("Inspector failed to render");

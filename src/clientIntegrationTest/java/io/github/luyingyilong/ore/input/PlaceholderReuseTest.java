@@ -17,32 +17,32 @@ public final class PlaceholderReuseTest {
 
     private static void exercise(Input input, boolean multiline) {
         Component hint = Component.literal("输入名称 / Placeholder");
-        input.placeholder(hint);
+        input.setPlaceholder(hint);
         Label label = input.placeholderLabel(hint);
         var ids = SignalDiagnostics.inspect(label).signals().stream().map(SignalDiagnostics.SignalInfo::id).toList();
         for (int i = 0; i < 1000; i++) {
             check(input.placeholderLabel(hint) == label, "Drawing must reuse the same Label");
             check(SignalDiagnostics.inspect(label).signals().stream().map(SignalDiagnostics.SignalInfo::id).toList().equals(ids), "Signal identities remain stable");
         }
-        check(label.wrap() == (multiline ? Label.Wrap.WORD : Label.Wrap.NONE), "Multiline hints retain word wrapping");
+        check(label.getWrap() == (multiline ? Label.Wrap.WORD : Label.Wrap.NONE), "Multiline hints retain word wrapping");
         var mutable = Component.literal("Before");
         input.placeholderLabel(mutable);
         mutable.append(" after");
-        check(input.placeholderLabel(mutable).text().getString().equals("Before after"), "Mutable hint content refreshes without replacing the Label");
+        check(input.placeholderLabel(mutable).getText().getString().equals("Before after"), "Mutable hint content refreshes without replacing the Label");
         input.hintColor(0xFF123456);
-        check(input.placeholderLabel(mutable).color() == 0xFF123456, "Hint styling remains live");
+        check(input.placeholderLabel(mutable).getColor() == 0xFF123456, "Hint styling remains live");
         input.dispose();
-        check(!label.isDisposed() && !input.signalScope().isClosed(), "Temporary MUI disposal preserves the logical input and its hint");
+        check(!label.isDisposed() && !input.getSignalScope().isClosed(), "Temporary MUI disposal preserves the logical input and its hint");
         check(input.placeholderLabel(hint) == label, "Reattaching reuses the existing hint");
         var receiver = new Control();
         label.visibilityChanged().connect(receiver, ignored -> { });
         try (SignalScope session = new SignalScope()) {
-            session.own(input.signalScope());
+            session.own(input.getSignalScope());
         }
         io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
-        check(label.isDisposed() && label.signalScope().isClosed(), "Permanent session close disposes the hint");
+        check(label.isDisposed() && label.getSignalScope().isClosed(), "Permanent session close disposes the hint");
         check(SignalDiagnostics.inspect(receiver).incoming().isEmpty(), "Hint subscriptions are released");
-        input.signalScope().close();
+        input.getSignalScope().close();
         receiver.queueFree();
         io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
     }

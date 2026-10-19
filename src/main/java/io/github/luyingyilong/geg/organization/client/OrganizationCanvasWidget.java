@@ -48,12 +48,12 @@ import java.util.List;
 import java.util.UUID;
 
 final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> implements Interactable {
-    private final Window window = (Window) new Window(true).debugName("Organization Window");
+    private final Window window = (Window) new Window(true).setDebugName("Organization Window");
     private final Overlay overlay = new Overlay();
-    private final Box options = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4);
-    private final Box memberships = new Box().gap(4);
-    private final Box organizationList = new Box().gap(0);
-    private final Scroll membershipsScroll = new Scroll().horizontal(Scroll.BarMode.DISABLED);
+    private final Box options = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
+    private final Box memberships = new Box().setGap(4);
+    private final Box organizationList = new Box().setGap(0);
+    private final Scroll membershipsScroll = new Scroll().setHorizontal(Scroll.BarMode.DISABLED);
     private final Label emptyText;
     private final Form createForm;
     private final Dialog emptyDialog;
@@ -77,59 +77,59 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         this.createForm = createForm;
         this.editor = editor;
 
-        memberships.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
-        membershipsScroll.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        memberships.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
+        membershipsScroll.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         initializeMemberships();
-        window.content(memberships).overlay(overlay);
+        window.setContent(memberships).setOverlay(overlay);
 
         options.add(option(OreIcons.FLAG, "organization.geg.create",
                 this::showCreate));
         options.add(option(OreIcons.ORG, "organization.geg.join",
                 this::showJoin));
         emptyText = new Label(Component.translatable("organization.geg.none"))
-                .wrap(Label.Wrap.WORD).overflow(Label.Overflow.CLIP)
-                .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
-        emptyText.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        Box emptyBody = new Box().gap(8).add(emptyText).add(options);
+                .setWrap(Label.Wrap.WORD).setOverflow(Label.Overflow.CLIP)
+                .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+        emptyText.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        Box emptyBody = new Box().setGap(8).add(emptyText).add(options);
         emptyDialog = Signals.configure(new Dialog(270, 0, 0, Component.translatable("organization.geg.title"))
-                .content(emptyBody), connected -> connected.closeRequested().connect(connected, this::closeEmptyDialog));
+                .setContent(emptyBody), connected -> connected.closeRequested().connect(connected, this::closeEmptyDialog));
 
-        createForm.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        createForm.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         createDrawer = Signals.configure(new Drawer(Component.translatable("organization.geg.create"))
-                .content(createForm), connected -> connected.closed().connect(connected, this::onCreateClosed))
-                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.back")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeCreate)))
-                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.create_action")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::submitCreate)));
-        detailDrawer = Signals.configure(new Drawer(Component.empty()).content(organizationDetails), connected -> connected.closed().connect(connected, this::onDetailsClosed));
+                .setContent(createForm), connected -> connected.closed().connect(connected, this::onCreateClosed))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.back")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeCreate)))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.create_action")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::submitCreate)));
+        detailDrawer = Signals.configure(new Drawer(Component.empty()).setContent(organizationDetails), connected -> connected.closed().connect(connected, this::onDetailsClosed));
         organizationDetails.editRequested().connect(window, this::showEdit);
         editModal = Signals.configure(new Modal(Component.translatable("organization.geg.edit_title"))
-                .size(300, 0).centered().content(editor.content()), connected -> connected.closeRequested().connect(connected, this::closeEdit))
-                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.back")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeEdit)))
-                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.save")).type(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::submitEdit)))
-                .depth(400.0F);
-        applicationTable.headerVisible(false).minimum(0, 60)
-                .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+                .setSize(300, 0).centered().setContent(editor.content()), connected -> connected.closeRequested().connect(connected, this::closeEdit))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.back")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeEdit)))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.save")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::submitEdit)))
+                .setDepth(400.0F);
+        applicationTable.setHeaderVisible(false).setMinimum(0, 60)
+                .setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         applicationsModal = Signals.configure(new Modal(Component.translatable("organization.geg.applications"))
-                .content(applicationTable), connected -> connected.closeRequested().connect(connected, this::closeApplications)).depth(300.0F);
-        joinTable.headerVisible(false).minimum(0, 60)
-                .sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+                .setContent(applicationTable), connected -> connected.closeRequested().connect(connected, this::closeApplications)).setDepth(300.0F);
+        joinTable.setHeaderVisible(false).setMinimum(0, 60)
+                .setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         joinDrawer = Signals.configure(new Drawer(Component.translatable("organization.geg.join"))
-                .content(joinTable), connected -> connected.closed().connect(connected, this::onJoinClosed));
+                .setContent(joinTable), connected -> connected.closed().connect(connected, this::onJoinClosed));
         Label warning = new Label(Component.translatable("organization.geg.confirm_disband_body"))
-                .wrap(Label.Wrap.WORD).color(OreTheme.TEXT_SECONDARY);
-        warning.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+                .setWrap(Label.Wrap.WORD).setColor(OreTheme.TEXT_SECONDARY);
+        warning.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         disbandConfirmation = Signals.configure(new Modal(Component.translatable("organization.geg.confirm_disband"))
-                .content(warning), connected -> connected.closeRequested().connect(connected, this::closeDisbandConfirmation))
-                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.back")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeDisbandConfirmation)))
-                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.disband")).type(Button.Type.DESTRUCTIVE), actionButton -> actionButton.pressed().connect(actionButton, this::confirmDisband)))
-                .depth(400.0F);
+                .setContent(warning), connected -> connected.closeRequested().connect(connected, this::closeDisbandConfirmation))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.back")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeDisbandConfirmation)))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.disband")).setType(Button.Type.DESTRUCTIVE), actionButton -> actionButton.pressed().connect(actionButton, this::confirmDisband)))
+                .setDepth(400.0F);
         overlay.add(emptyDialog).add(createDrawer).add(detailDrawer)
                 .add(joinDrawer).add(applicationsModal).add(disbandConfirmation).add(editModal);
-        createDrawer.visible(false);
-        detailDrawer.visible(false);
-        joinDrawer.visible(false);
-        applicationsModal.visible(false);
-        disbandConfirmation.visible(false);
-        editModal.visible(false);
+        createDrawer.setVisible(false);
+        detailDrawer.setVisible(false);
+        joinDrawer.setVisible(false);
+        applicationsModal.setVisible(false);
+        disbandConfirmation.setVisible(false);
+        editModal.setVisible(false);
         createForm.setVisible(false);
         name.setInputVisible(false);
         description.setInputVisible(false);
@@ -137,19 +137,19 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     private static Panel option(ResourceLocation icon, String label, Runnable action) {
         IconControl image = new IconControl(icon);
-        image.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        image.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         Button button = Signals.configure(new Button(Component.translatable(label)), connected -> connected.pressed().connect(connected, action));
-        button.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        Box column = new Box().gap(6).add(image).add(button);
-        Panel panel = new Panel(null).child(new Padding(Padding.Insets.all(4)).child(column));
-        panel.minimum(106, 130).sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        button.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        Box column = new Box().setGap(6).add(image).add(button);
+        Panel panel = new Panel(null).setChild(new Padding(Padding.Insets.all(4)).setChild(column));
+        panel.setMinimum(106, 130).setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         return panel;
     }
 
     private Table<OrganizationSyncPacket.Member> createMemberTable() {
         return new Table<OrganizationSyncPacket.Member>()
-                .rowKey(OrganizationSyncPacket.Member::id)
-                .empty(Component.translatable("organization.geg.no_members"))
+                .setRowKey(OrganizationSyncPacket.Member::id)
+                .setEmpty(Component.translatable("organization.geg.no_members"))
                 .column(new Table.Column<>("member", Component.translatable("organization.geg.member"),
                         48, 110, 2, width -> 20, new PlayerIdentityCell<>(
                                 OrganizationSyncPacket.Member::id, OrganizationSyncPacket.Member::name)))
@@ -157,7 +157,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                         42, 64, 1, width -> 20,
                         new Table.TextCell<OrganizationSyncPacket.Member>(
                                 member -> roleLabel(member.role()), OreTheme.TEXT_WHITE)
-                                .overflow(Label.Overflow.ELLIPSIS)))
+                                .setOverflow(Label.Overflow.ELLIPSIS)))
                 .column(new Table.Column<>("action", Component.translatable("organization.geg.actions"),
                         70, 82, 1, width -> 20, new Table.ControlCell<>(MemberActions::new, MemberActions::bind)));
     }
@@ -165,8 +165,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private final class MemberActions extends Container {
         private UUID memberId;
         private final Dropdown<OrganizationSavedData.Operation> menu = Signals.configure(new Dropdown<OrganizationSavedData.Operation>(null, 6)
-                .triggerLabel(Component.translatable("organization.geg.actions"))
-                .checkable(false), connected -> connected.itemActivated().connect(connected, operation -> chooseOperation(operation, memberId)));
+                .setTriggerLabel(Component.translatable("organization.geg.actions"))
+                .setCheckable(false), connected -> connected.itemActivated().connect(connected, operation -> chooseOperation(operation, memberId)));
         private MemberActions() { addChild(menu); }
         private void bind(OrganizationSyncPacket.Member member) {
             if(!java.util.Objects.equals(memberId,member.id()))menu.close();
@@ -174,7 +174,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
             var operations=actionsFor(member);
             menu.setOptions(operations.stream().map(operation -> new Dropdown.Option<>(operation,
                     Component.translatable("organization.geg.action."+operation.name().toLowerCase(java.util.Locale.ROOT)))).toList());
-            menu.visible(!operations.isEmpty());
+            menu.setVisible(!operations.isEmpty());
         }
         @Override public void layout(Rect bounds,Font font) {
             super.layout(bounds,font);fitChild(menu,new Rect(0,0,bounds.width(),bounds.height()),font);
@@ -183,9 +183,9 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     private Table<OrganizationSyncPacket.Application> createApplicationTable() {
         return new Table<OrganizationSyncPacket.Application>()
-                .headerVisible(false)
-                .rowKey(OrganizationSyncPacket.Application::id)
-                .empty(Component.translatable("organization.geg.no_applications"))
+                .setHeaderVisible(false)
+                .setRowKey(OrganizationSyncPacket.Application::id)
+                .setEmpty(Component.translatable("organization.geg.no_applications"))
                 .column(new Table.Column<>("player",
                         Component.translatable("organization.geg.player"),
                         48, 120, 1, width -> 20, new PlayerIdentityCell<>(
@@ -198,9 +198,9 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private final class ApplicationActions extends Container {
         private OrganizationSyncPacket.Application application;
         private final Button reject = Signals.configure(new Button(Component.translatable("organization.geg.reject"))
-                .size(Button.Size.SMALL).type(Button.Type.DESTRUCTIVE), connected -> connected.pressed().connect(connected, () -> review(OrganizationSavedData.Operation.REJECT)));
+                .setSize(Button.Size.SMALL).setType(Button.Type.DESTRUCTIVE), connected -> connected.pressed().connect(connected, () -> review(OrganizationSavedData.Operation.REJECT)));
         private final Button approve = Signals.configure(new Button(Component.translatable("organization.geg.approve"))
-                .size(Button.Size.SMALL).type(Button.Type.PRIMARY), connected -> connected.pressed().connect(connected, () -> review(OrganizationSavedData.Operation.APPROVE)));
+                .setSize(Button.Size.SMALL).setType(Button.Type.PRIMARY), connected -> connected.pressed().connect(connected, () -> review(OrganizationSavedData.Operation.APPROVE)));
 
         private ApplicationActions() { addChild(reject); addChild(approve); }
         private void bind(OrganizationSyncPacket.Application application) { this.application = application; }
@@ -212,28 +212,28 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         @Override public void layout(Rect bounds, Font font) {
             super.layout(bounds, font);
             int width = Math.max(1, (bounds.width() - 6) / 2);
-            int top = Math.max(0, (bounds.height() - Button.Size.SMALL.height()) / 2);
-            fitChild(reject, new Rect(2, top, width, Button.Size.SMALL.height()), font);
-            fitChild(approve, new Rect(width + 4, top, width, Button.Size.SMALL.height()), font);
+            int top = Math.max(0, (bounds.height() - Button.Size.SMALL.getHeight()) / 2);
+            fitChild(reject, new Rect(2, top, width, Button.Size.SMALL.getHeight()), font);
+            fitChild(approve, new Rect(width + 4, top, width, Button.Size.SMALL.getHeight()), font);
         }
 
         @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-            reject.disabled(selectedOrganizationId == null);
-            approve.disabled(selectedOrganizationId == null);
+            reject.setDisabled(selectedOrganizationId == null);
+            approve.setDisabled(selectedOrganizationId == null);
         }
     }
 
     private Table<OrganizationSyncPacket.Directory> createJoinTable() {
         return new Table<OrganizationSyncPacket.Directory>()
-                .headerVisible(false)
-                .rowKey(OrganizationSyncPacket.Directory::id)
-                .empty(Component.translatable("organization.geg.no_available_organizations"))
+                .setHeaderVisible(false)
+                .setRowKey(OrganizationSyncPacket.Directory::id)
+                .setEmpty(Component.translatable("organization.geg.no_available_organizations"))
                 .column(new Table.Column<>("organization",
                         Component.translatable("organization.geg.name"),
                         50, 120, 1, width -> 20,
                         new Table.TextCell<OrganizationSyncPacket.Directory>(
                                 entry -> Component.literal(entry.name()), OreTheme.TEXT_WHITE)
-                                .overflow(Label.Overflow.ELLIPSIS)))
+                                .setOverflow(Label.Overflow.ELLIPSIS)))
                 .column(new Table.Column<>("action",
                         Component.translatable("organization.geg.actions"),
                         72, 92, 0, width -> 20, new Table.ControlCell<>(JoinAction::new, JoinAction::bind)));
@@ -256,11 +256,11 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         }
 
         private void update(boolean hovered) {
-            button.label(Component.translatable(entry.pending()
+            button.setLabel(Component.translatable(entry.pending()
                             ? hovered ? "organization.geg.cancel_application" : "organization.geg.pending_application"
                             : entry.joinPolicy() == Organization.JoinPolicy.APPROVAL
                             ? "organization.geg.apply" : "organization.geg.join"))
-                    .type(entry.pending() && hovered ? Button.Type.DESTRUCTIVE : Button.Type.SECONDARY);
+                    .setType(entry.pending() && hovered ? Button.Type.DESTRUCTIVE : Button.Type.SECONDARY);
         }
 
         @Override public void layout(Rect bounds, Font font) {
@@ -269,8 +269,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         }
 
         @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-            update(button.screenBounds(screenX, screenY).contains(context.getAbsMouseX(), context.getAbsMouseY()));
-            button.disabled(!joinDrawer.isOpen() || Minecraft.getInstance().player == null);
+            update(button.getScreenBounds(screenX, screenY).contains(context.getAbsMouseX(), context.getAbsMouseY()));
+            button.setDisabled(!joinDrawer.isOpen() || Minecraft.getInstance().player == null);
         }
     }
 
@@ -321,7 +321,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         if (!detailDrawer.isOpen() || selectedOrganizationId == null) return;
         if (operation == OrganizationSavedData.Operation.DISBAND) {
             pendingDisbandId = selectedOrganizationId;
-            disbandConfirmation.visible(true);
+            disbandConfirmation.setVisible(true);
         } else {
             OrganizationNetwork.operate(operation, selectedOrganizationId, targetId);
         }
@@ -336,11 +336,11 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     private void closeDisbandConfirmation() {
-        disbandConfirmation.visible(false);
+        disbandConfirmation.setVisible(false);
         pendingDisbandId = null;
     }
 
-    private void closeMenu() { window.context().popups().cancel(); }
+    private void closeMenu() { window.getContext().getPopups().cancel(); }
 
     private void showDetails(UUID organizationId) {
         OrganizationSyncPacket.Summary summary = ClientOrganizationState.organizations().stream()
@@ -349,31 +349,31 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         // Finish a previous close callback before assigning the newly selected organization.
         detailDrawer.open();
         selectedOrganizationId = organizationId;
-        emptyDialog.visible(false);
-        createDrawer.visible(false);
+        emptyDialog.setVisible(false);
+        createDrawer.setVisible(false);
         joinDrawer.close();
         memberTable.scrollToTop();
-        detailDrawer.bodyScroll().scrollToTop();
+        detailDrawer.getBodyScroll().scrollToTop();
         refreshDetails(summary);
         requestLayout();
     }
 
     private void refreshDetails(OrganizationSyncPacket.Summary summary) {
         closeMenu();
-        detailDrawer.title(Component.literal(summary.name()));
+        detailDrawer.setTitle(Component.literal(summary.name()));
         organizationDetails.update(summary);
-        memberTable.rows(summary.members());
+        memberTable.setRows(summary.members());
         detailDrawer.clearActions();
         Organization.Role ownRole = ownRole(summary);
         boolean canEdit = ownRole == Organization.Role.LEADER || ownRole == Organization.Role.OFFICER;
         organizationDetails.editable(canEdit);
         if (!canEdit) closeEdit();
         if (ownRole == Organization.Role.LEADER || ownRole == Organization.Role.OFFICER) {
-            detailDrawer.addAction(Signals.configure(new Button(Component.translatable("organization.geg.applications")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::showApplications)));
-            detailDrawer.addAction(Signals.configure(new Button(Component.translatable("mail.geg.announce")).type(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, () -> io.github.luyingyilong.geg.mail.client.ClientMailScreen.open(summary.id()))));
-            applicationTable.rows(summary.applications());
+            detailDrawer.addAction(Signals.configure(new Button(Component.translatable("organization.geg.applications")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::showApplications)));
+            detailDrawer.addAction(Signals.configure(new Button(Component.translatable("mail.geg.announce")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, () -> io.github.luyingyilong.geg.mail.client.ClientMailScreen.open(summary.id()))));
+            applicationTable.setRows(summary.applications());
         } else {
-            applicationsModal.visible(false);
+            applicationsModal.setVisible(false);
         }
         requestLayout();
     }
@@ -391,21 +391,21 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         Organization.Role role = ownRole(summary);
         if (role != Organization.Role.LEADER && role != Organization.Role.OFFICER) return;
         closeMenu();
-        applicationsModal.visible(false);
+        applicationsModal.setVisible(false);
         editor.show(summary);
-        editModal.visible(true);
+        editModal.setVisible(true);
         requestLayout();
     }
 
     private void closeEdit() {
-        editModal.visible(false);
+        editModal.setVisible(false);
         editor.hide();
         requestLayout();
     }
 
     private void submitEdit() {
         OrganizationSyncPacket.Summary summary = selectedSummary();
-        if (!editModal.visible() || pendingEdit || summary == null || !editor.validate()) return;
+        if (!editModal.getVisible() || pendingEdit || summary == null || !editor.validate()) return;
         pendingEdit = true;
         OrganizationNetwork.update(summary.id(), editor.description(), editor.policy());
     }
@@ -417,35 +417,35 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         Organization.Role ownRole = ownRole(summary);
         if (ownRole != Organization.Role.LEADER && ownRole != Organization.Role.OFFICER) return;
         closeMenu();
-        applicationTable.rows(summary.applications());
+        applicationTable.setRows(summary.applications());
         applicationTable.scrollToTop();
-        applicationsModal.visible(true);
+        applicationsModal.setVisible(true);
         requestLayout();
     }
 
     private void closeApplications() {
-        applicationsModal.visible(false);
+        applicationsModal.setVisible(false);
         requestLayout();
     }
 
     private void showJoin() {
         closeEdit();
         joinDrawer.open();
-        emptyDialog.visible(false);
-        createDrawer.visible(false);
-        detailDrawer.visible(false);
-        applicationsModal.visible(false);
+        emptyDialog.setVisible(false);
+        createDrawer.setVisible(false);
+        detailDrawer.setVisible(false);
+        applicationsModal.setVisible(false);
         closeDisbandConfirmation();
         closeMenu();
-        joinTable.rows(ClientOrganizationState.directory());
+        joinTable.setRows(ClientOrganizationState.directory());
         joinTable.scrollToTop();
-        joinDrawer.bodyScroll().scrollToTop();
+        joinDrawer.getBodyScroll().scrollToTop();
         requestLayout();
     }
 
     private void onJoinClosed() {
-        if (createDrawer.visible() || detailDrawer.visible() || applicationsModal.visible()
-                || disbandConfirmation.visible()) return;
+        if (createDrawer.getVisible() || detailDrawer.getVisible() || applicationsModal.getVisible()
+                || disbandConfirmation.getVisible()) return;
         if (!ClientOrganizationState.loaded()) showLoading();
         else if (ClientOrganizationState.hasOrganizations()) showMemberships();
         else showEmpty();
@@ -453,7 +453,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     private void closeDetails() {
         closeEdit();
-        applicationsModal.visible(false);
+        applicationsModal.setVisible(false);
         closeDisbandConfirmation();
         closeMenu();
         detailDrawer.close();
@@ -464,16 +464,16 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         closeEdit();
         selectedOrganizationId = null;
         closeMenu();
-        if (createDrawer.visible() || joinDrawer.visible() || applicationsModal.visible()
-                || disbandConfirmation.visible()) return;
+        if (createDrawer.getVisible() || joinDrawer.getVisible() || applicationsModal.getVisible()
+                || disbandConfirmation.getVisible()) return;
         if (!ClientOrganizationState.loaded()) showLoading();
         else if (ClientOrganizationState.hasOrganizations()) showMemberships();
         else showEmpty();
     }
 
     void showInitialState() {
-        emptyDialog.visible(false);
-        createDrawer.visible(false);
+        emptyDialog.setVisible(false);
+        createDrawer.setVisible(false);
         createForm.setVisible(false);
         if (!ClientOrganizationState.loaded()) showLoading();
         else if (!ClientOrganizationState.hasOrganizations()) showEmpty();
@@ -487,7 +487,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         }
         if (!resultKey.isEmpty()) pendingCreate = false;
         if (joinDrawer.isOpen()) {
-            joinTable.rows(ClientOrganizationState.directory());
+            joinTable.setRows(ClientOrganizationState.directory());
             if ("organization.geg.result.apply".equals(resultKey)
                     || "organization.geg.result.approved_notice".equals(resultKey)) {
                 showMemberships();
@@ -513,9 +513,9 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
             showMemberships();
         } else if ("organization.geg.duplicate_name".equals(resultKey)
                 && ClientOrganizationState.organizations().stream().anyMatch(summary ->
-                summary.name().equalsIgnoreCase(createForm.value("name").strip()))) {
+                summary.name().equalsIgnoreCase(createForm.getValue("name").strip()))) {
             showMemberships();
-        } else if (resultKey.isEmpty() && !createDrawer.visible()) {
+        } else if (resultKey.isEmpty() && !createDrawer.getVisible()) {
             if (ClientOrganizationState.hasOrganizations()) showMemberships();
             else showEmpty();
         }
@@ -523,43 +523,43 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     private void showEmpty() {
         closeEdit();
-        createDrawer.visible(false);
-        detailDrawer.visible(false);
-        joinDrawer.visible(false);
-        applicationsModal.visible(false);
+        createDrawer.setVisible(false);
+        detailDrawer.setVisible(false);
+        joinDrawer.setVisible(false);
+        applicationsModal.setVisible(false);
         if (!ClientOrganizationState.loaded()) {
             showLoading();
             return;
         }
         rebuildMemberships();
-        emptyText.text(Component.translatable("organization.geg.none"));
-        options.visible(true);
-        emptyDialog.visible(!ClientOrganizationState.hasOrganizations());
+        emptyText.setText(Component.translatable("organization.geg.none"));
+        options.setVisible(true);
+        emptyDialog.setVisible(!ClientOrganizationState.hasOrganizations());
         requestLayout();
     }
 
     private void closeEmptyDialog() {
-        emptyDialog.visible(false);
+        emptyDialog.setVisible(false);
         rebuildMemberships();
         requestLayout();
     }
 
     private void showLoading() {
-        emptyText.text(Component.translatable("organization.geg.loading"));
-        options.visible(false);
-        emptyDialog.visible(true);
+        emptyText.setText(Component.translatable("organization.geg.loading"));
+        options.setVisible(false);
+        emptyDialog.setVisible(true);
         requestLayout();
     }
 
     private void showCreate() {
         closeEdit();
         createDrawer.open();
-        emptyDialog.visible(false);
-        detailDrawer.visible(false);
-        joinDrawer.visible(false);
-        applicationsModal.visible(false);
+        emptyDialog.setVisible(false);
+        detailDrawer.setVisible(false);
+        joinDrawer.setVisible(false);
+        applicationsModal.setVisible(false);
         createForm.setVisible(true);
-        createDrawer.bodyScroll().scrollToTop();
+        createDrawer.getBodyScroll().scrollToTop();
         requestLayout();
     }
 
@@ -571,8 +571,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private void onCreateClosed() {
         // Keep the form visible throughout the exit animation, then restore the current base view.
         createForm.setVisible(false);
-        if (detailDrawer.visible() || joinDrawer.visible() || applicationsModal.visible()
-                || disbandConfirmation.visible()) return;
+        if (detailDrawer.getVisible() || joinDrawer.getVisible() || applicationsModal.getVisible()
+                || disbandConfirmation.getVisible()) return;
         if (!ClientOrganizationState.loaded()) showLoading();
         else if (ClientOrganizationState.hasOrganizations()) showMemberships();
         else showEmpty();
@@ -580,57 +580,57 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     private void submitCreate() {
         if (!createDrawer.isOpen() || pendingCreate || !createForm.validate()) return;
-        String name = createForm.value("name").strip();
+        String name = createForm.getValue("name").strip();
         if (name.isBlank()) {
             OrganizationFeedback.show("organization.geg.invalid_name");
             return;
         }
-        Organization.JoinPolicy policy = "approval".equals(createForm.value("join_policy"))
+        Organization.JoinPolicy policy = "approval".equals(createForm.getValue("join_policy"))
                 ? Organization.JoinPolicy.APPROVAL : Organization.JoinPolicy.UNRESTRICTED;
         pendingCreate = true;
-        OrganizationNetwork.create(name, createForm.value("description").strip(), policy);
+        OrganizationNetwork.create(name, createForm.getValue("description").strip(), policy);
     }
 
     private void showMemberships() {
         closeEdit();
         rebuildMemberships();
-        createDrawer.visible(false);
-        detailDrawer.visible(false);
-        joinDrawer.visible(false);
-        applicationsModal.visible(false);
-        emptyDialog.visible(false);
+        createDrawer.setVisible(false);
+        detailDrawer.setVisible(false);
+        joinDrawer.setVisible(false);
+        applicationsModal.setVisible(false);
+        emptyDialog.setVisible(false);
         requestLayout();
     }
 
     private void initializeMemberships() {
         Navbar navbar = new Navbar(Component.translatable("organization.geg.your_organizations"))
-                .titleColor(OreTheme.TEXT_DARK);
+                .setTitleColor(OreTheme.TEXT_DARK);
         memberships.add(navbar);
         Button createButton = Signals.configure(new Button(Component.translatable("organization.geg.create"))
-                .type(Button.Type.PRIMARY), connected -> connected.pressed().connect(connected, this::showCreate));
-        createButton.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+                .setType(Button.Type.PRIMARY), connected -> connected.pressed().connect(connected, this::showCreate));
+        createButton.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Button joinButton = Signals.configure(new Button(Component.translatable("organization.geg.join")), connected -> connected.pressed().connect(connected, this::showJoin));
-        joinButton.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        Box actions = new Box().orientation(Box.Orientation.HORIZONTAL).gap(2)
+        joinButton.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        Box actions = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(2)
                 .add(createButton).add(joinButton);
-        actions.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        actions.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Padding createInset = new Padding(new Padding.Insets(0, 4, 0, 4));
-        createInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        createInset.child(actions);
+        createInset.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        createInset.setChild(actions);
         memberships.add(createInset);
-        organizationList.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
-        membershipsScroll.content(organizationList);
+        organizationList.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
+        membershipsScroll.setContent(organizationList);
         memberships.add(membershipsScroll);
     }
 
     private void rebuildMemberships() {
         // The shell and Scroll survive snapshots and Drawer close callbacks. Only rows are replaced.
-        for (Control child : organizationList.children()) { if (child.parent() != null) child.parent().removeChild(child); child.queueFree(); }
+        for (Control child : organizationList.getChildren()) { if (child.getParent() != null) child.getParent().removeChild(child); child.queueFree(); }
         for (OrganizationSyncPacket.Summary summary : ClientOrganizationState.organizations()) {
             OrganizationMembershipRow row = new OrganizationMembershipRow(summary);
             row.detailsRequested().connect(row, () -> showDetails(summary.id()));
-            Panel panel = new Panel(OreTheme.BAR).child(new Padding(Padding.Insets.all(4)).child(row));
-            panel.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+            Panel panel = new Panel(OreTheme.BAR).setChild(new Padding(Padding.Insets.all(4)).setChild(row));
+            panel.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
             organizationList.add(panel);
         }
     }
@@ -644,9 +644,9 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         if (!window.isAlive()) return;
         Rect area = new Rect(getArea().x, getArea().y, getArea().width, getArea().height);
         if (area.width() == 0 || area.height() == 0) return;
-        applicationsModal.size(Math.min(320, area.width()), Math.min(220, area.height())).centered();
-        disbandConfirmation.size(Math.min(240, area.width()), Math.min(120, area.height())).centered();
-        options.orientation(area.width() < 252 ? Box.Orientation.VERTICAL : Box.Orientation.HORIZONTAL);
+        applicationsModal.setSize(Math.min(320, area.width()), Math.min(220, area.height())).centered();
+        disbandConfirmation.setSize(Math.min(240, area.width()), Math.min(120, area.height())).centered();
+        options.setOrientation(area.width() < 252 ? Box.Orientation.VERTICAL : Box.Orientation.HORIZONTAL);
         window.prepareTree(context);
         window.layoutViewport(area.width(), area.height(), context.getFont());
         window.draw(context, area.x(), area.y());
@@ -698,7 +698,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
         private IconControl(ResourceLocation texture) {
             this.texture = texture;
-            minimum(16, 16);
+            setMinimum(16, 16);
         }
 
         @Override
@@ -713,7 +713,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
         @Override
         protected void render(ModularGuiContext context, int screenX, int screenY) {
-            Rect area = screenBounds(screenX, screenY);
+            Rect area = getScreenBounds(screenX, screenY);
             int x = area.x() + (area.width() - 16) / 2;
             int y = area.y() + (area.height() - 16) / 2;
             context.getGraphics().setColor(1.0F, 1.0F, 1.0F, 1.0F);

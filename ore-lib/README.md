@@ -69,6 +69,18 @@ project(':ui-lib').projectDir = file('libraries/controls')
 
 默认环境位于 `gradle/environment.properties`，无需宿主提供 Mod 名称、group 或版本。宿主可覆盖 `minecraft_version`、`forge_version`、`mapping_channel`、`mapping_version`、`java_version`、`modularui_dependency`、`modularui_dev_runtime_dependency`。当前仅验证 1.20.1，不保证跨 Minecraft 大版本兼容。
 
+## 属性命名
+
+控件属性统一使用 `getXxx()`／`setXxx(value)`，setter 继续支持原有链式调用，例如
+`new Label().setText(title).setFontSize(12)`、`control.setVisible(true)`、`control.getSize()`。
+旧的同名 getter／setter 重载已移除，所有宿主调用方需要同步更新。
+`isAlive()` 等状态判断、Java record 的访问器、第三方 API、`addChild`／`queueFree` 等动作以及
+`pressed()`／`textChanged()` 等信号订阅入口保留各自命名，不转换成属性 setter。
+
+Inspector 使用 `@Inspectable` 标记 public `getXxx()`（或布尔 `isXxx()`），默认配对
+`setXxx(value)`，属性键仍为 `xxx`，不带 `get` 前缀；也可显式指定 `key`／`setter`。
+属性重命名不改变调试覆盖、校验、撤销或恢复行为。
+
 ## 信号与生命周期
 
 通知使用类型安全的 `Signal0`／`Signal<T>`，不再提供 `onPress`、`onSelect` 等单订阅 setter。无参数槽使用 `Runnable`，有参数槽使用 `Consumer`，多个参数可以定义为 record。槽按连接顺序在所属线程同步执行；每次 `connect` 都创建独立连接。
@@ -83,9 +95,9 @@ connection.disconnect(); // close() 等价，可重复调用
 
 接收方必须是 `SignalOwner`：Control 已实现该接口，非控件对象使用 `SignalScope`。发射方或接收方结束生命周期时，连接自动断开并释放闭包。控件仅公开订阅入口；自定义控件将 `SignalSource` 保留为 private，通过 `signal()` 暴露只读入口。
 
-属性变化会通知，重复设置同一值不通知。受控刷新使用 `setCheckedNoSignal`、`setSelectedNoSignal`、`setTextNoSignal` 等静默方法。它们仍更新状态及布局。`pressed`、`itemActivated` 仅代表激活；程序设置选中状态不会点击按钮。输入框使用显式 `submitOnEnter(true)` 启用提交；TextArea 默认仍是 Enter 换行。
+属性变化会通知，重复设置同一值不通知。受控刷新使用 `setCheckedNoSignal`、`setSelectedNoSignal`、`setTextNoSignal` 等静默方法。它们仍更新状态及布局。`pressed`、`itemActivated` 仅代表激活；程序设置选中状态不会点击按钮。输入框使用显式 `setSubmitOnEnter(true)` 启用提交；TextArea 默认仍是 Enter 换行。
 
-`removeChild`、隐藏、暂存和回收不是销毁；永久废弃的节点必须调用幂等的 `queueFree()`。它立即取消交互并标记拥有的子树，在整轮渲染结束或客户端 tick 的安全收尾点永久清理，不在单个 Window.draw 返回时释放。父控件销毁会清理普通子节点、内部部件和回收池，窗口会话结束由宿主清理，返回链中的父界面继续保留。虚拟控件内部连接绑定到控件本身；捕获当前数据的连接绑定到 `bindingScope()`，每次重绑或回收时清理。
+`removeChild`、隐藏、暂存和回收不是销毁；永久废弃的节点必须调用幂等的 `queueFree()`。它立即取消交互并标记拥有的子树，在整轮渲染结束或客户端 tick 的安全收尾点永久清理，不在单个 Window.draw 返回时释放。父控件销毁会清理普通子节点、内部部件和回收池，窗口会话结束由宿主清理，返回链中的父界面继续保留。虚拟控件内部连接绑定到控件本身；捕获当前数据的连接绑定到 `getBindingScope()`，每次重绑或回收时清理。
 
 Input 的 MUI `dispose()` 可能只是临时解绑。树内输入框的信号由 InputControl 的永久销毁清理；独立输入框应通过会话 `SignalScope.own(input::releaseSession)` 托管。不要将 UI 信号用于替代 Window 的 InputEvent 分发或服务端校验。
 
@@ -125,20 +137,20 @@ OreClient.initialize(
 基于 [Ant Design Switch](https://ant.design/components/switch-cn/) 的状态与回调语义，使用固定像素纹理：
 
 ```java
-Switch toggle = new Switch(true)
-        .onChange(checked -> updateSetting(checked))
-        .onClick(checked -> { });
+Switch toggle = new Switch(true);
+toggle.toggled().connect(window, this::updateSetting);
+toggle.activated().connect(window, checked -> { });
 box.addChild(toggle);
-toggle.checked(false); // 程序化更新不触发回调或音效
-toggle.disabled(true);
-toggle.loading(true); // 显示滑块内的 Spin，阻止再次操作
+toggle.setCheckedNoSignal(false); // 受控刷新不触发变化信号或音效
+toggle.setDisabled(true);
+toggle.setLoading(true); // 显示滑块内的 Spin，阻止再次操作
 ```
 
-`new Switch()` 默认关闭，布尔构造参数设置初始状态。checked、disabled、loading 同时提供 getter 和链式 setter。用户松开鼠标或 Enter／Space 后先更新状态，再触发 onChange、onClick；拖出后松开会取消。禁用、加载、失焦、隐藏和顶层弹层会取消未完成操作。
+`new Switch()` 默认关闭，布尔构造参数设置初始状态。checked、disabled、loading 同时提供 get 前缀 getter 和 set 前缀链式 setter。用户松开鼠标或 Enter／Space 后先更新状态，再发送 toggled、activated；拖出后松开会取消。禁用、加载、失焦、隐藏和顶层弹层会取消未完成操作。
 
 底板为 27×13，滑块为 14×15，底部对齐；滑块从 x=0 移动到 x=14，整体占 28×15。全部纹理按原始像素绘制，额外分配的空间不会放大图像或点击区。默认水平始端收缩、垂直居中收缩；聚焦框为滑块外围 1px，并跟随移动。
 
-默认 240ms 的 ease-out bounce 动画支持途中反向切换，不因重复绑定相同 checked 值而重新开始。`animationDuration(ms)` 可调整时长，0 关闭动画；初始值直接定位，不播放入场动画。
+默认 240ms 的 ease-out bounce 动画支持途中反向切换，不因重复绑定相同 checked 值而重新开始。`setAnimationDuration(ms)` 可调整时长，0 关闭动画；初始值直接定位，不播放入场动画。
 
 ## 输入事件与弹出菜单
 
@@ -168,6 +180,6 @@ ModularUI 3.3.1 的开发测试注册需要 Curios 运行库，正式运行不�
 
 自定义控件可重写 `protected void notification(ControlNotification notice)`。框架保证 ENTER_TREE 父先子后、READY 子先父后且只发生一次、EXIT_TREE 子先父后、PRE_FREE 父先子后；另提供合并的 RESIZED、有效 VISIBILITY_CHANGED 及 SUSPENDED／RESUMED。通知携带当次窗口和树状态快照，不必调用 super 才能完成框架清理。READY 等待输入宿主就绪，但不保证尺寸稳定，尺寸相关代码使用 RESIZED。
 
-不参加布局的内部控件使用 `ownPart("name", control)`；虚拟视图使用 `ownPooled(control)` 保留回收期所有权。一个控件不能被不相关的所有者重复拥有。普通资源放入 `signalScope().own(resource)`，控件统一由生命周期队列清理。应用无需手工调用 LifecycleScheduler.flush；只有宿主收尾和独立回归测试使用它，输入、信号、布局、绘制及通知期间的 flush 会被拒绝。Drawer 的 closed 仍在关闭动画完成后发送。
+不参加布局的内部控件使用 `ownPart("name", control)`；虚拟视图使用 `ownPooled(control)` 保留回收期所有权。一个控件不能被不相关的所有者重复拥有。普通资源放入 `getSignalScope().own(resource)`，控件统一由生命周期队列清理。应用无需手工调用 LifecycleScheduler.flush；只有宿主收尾和独立回归测试使用它，输入、信号、布局、绘制及通知期间的 flush 会被拒绝。Drawer 的 closed 仍在关闭动画完成后发送。
 
 Inspector 的共有状态区显示生命周期、树内状态、READY、暂存状态、首次申请位置与原因。已释放选中节点只保留只读记录，禁止编辑、拾取或高亮；历史上限为 512，使用不可变元数据和弱引用，调试会话结束时清空。发布环境不采集申请堆栈。

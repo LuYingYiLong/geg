@@ -12,27 +12,27 @@ import java.util.List;
 
 /** A fixed-height attachment strip; its natural item width must not widen the detail panel. */
 final class MailAttachmentsView extends Container {
-    private final Box items = new Box().orientation(Box.Orientation.HORIZONTAL).gap(2);
-    private final Scroll scroll = new Scroll().horizontal(Scroll.BarMode.NEVER).vertical(Scroll.BarMode.DISABLED).content(items);
-    private final Button claim = new Button(Component.translatable("mail.geg.claim")).type(Button.Type.PRIMARY);
-    private final Box row = new Box().orientation(Box.Orientation.HORIZONTAL).gap(4).add(scroll).add(claim);
+    private final Box items = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(2);
+    private final Scroll scroll = new Scroll().setHorizontal(Scroll.BarMode.NEVER).setVertical(Scroll.BarMode.DISABLED).setContent(items);
+    private final Button claim = new Button(Component.translatable("mail.geg.claim")).setType(Button.Type.PRIMARY);
+    private final Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4).add(scroll).add(claim);
 
     MailAttachmentsView(Runnable action) {
-        items.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
-        scroll.minimum(0, Slot.SIZE).sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL);
-        Signals.configure(claim, connected -> connected.pressed().connect(connected, action)).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        items.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
+        scroll.setMinimum(0, Slot.SIZE).setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL);
+        Signals.configure(claim, connected -> connected.pressed().connect(connected, action)).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         addChild(row);
-        sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+        setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
     }
 
     void attachments(List<MailItem> values, boolean hasAttachments, boolean claimed) {
-        for (Control child : items.children()) { if (child.parent() != null) child.parent().removeChild(child); child.queueFree(); }
-        for (MailItem value : values) items.add(new Slot().item(value.item(), value.quantity()));
-        scroll.visible(!values.isEmpty());
-        claim.label(Component.translatable(claimed ? "mail.geg.claimed" : "mail.geg.claim"))
-                .disabled(!hasAttachments || claimed).visible(hasAttachments);
-        claim.sizeFlagsHorizontal(values.isEmpty() ? SizeFlags.SIZE_EXPAND_FILL : SizeFlags.SIZE_SHRINK_END);
-        visible(hasAttachments);
+        for (Control child : items.getChildren()) { if (child.getParent() != null) child.getParent().removeChild(child); child.queueFree(); }
+        for (MailItem value : values) items.add(new Slot().setItem(value.item(), value.quantity()));
+        scroll.setVisible(!values.isEmpty());
+        claim.setLabel(Component.translatable(claimed ? "mail.geg.claimed" : "mail.geg.claim"))
+                .setDisabled(!hasAttachments || claimed).setVisible(hasAttachments);
+        claim.setSizeFlagsHorizontal(values.isEmpty() ? SizeFlags.SIZE_EXPAND_FILL : SizeFlags.SIZE_SHRINK_END);
+        setVisible(hasAttachments);
         requestLayout();
     }
 
@@ -40,7 +40,7 @@ final class MailAttachmentsView extends Container {
     Button claimButton() { return claim; }
 
     @Override public Size measureSize(net.minecraft.client.gui.Font font, Size available) {
-        return new Size(0, visible() ? Math.max(Slot.SIZE, claim.minimumHeight()) : 0);
+        return new Size(0, getVisible() ? Math.max(Slot.SIZE, claim.getMinimumHeight()) : 0);
     }
 
     @Override public void layout(Rect bounds, net.minecraft.client.gui.Font font) {

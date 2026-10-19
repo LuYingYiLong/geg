@@ -20,7 +20,7 @@ public final class OreInputMethod {
         boolean failed;
         InputPreedit lastPreedit=InputPreedit.EMPTY;
     }
-    private static State state(Input input) { return STATES.computeIfAbsent(input.windowContext(), key -> new State()); }
+    private static State state(Input input) { return STATES.computeIfAbsent(input.getWindowContext(), key -> new State()); }
     public static void releaseWindow(io.github.luyingyilong.ore.window.WindowContext context) {
         State state = STATES.remove(context);
         if (state != null) { if (state.focused != null) state.focused.clearPreeditDisplay(); state.session.clear(); }
@@ -30,10 +30,10 @@ public final class OreInputMethod {
 
     static void focus(Input input) {
         State state = state(input);
-        if (state.failed || !input.supportsInputMethod() || !input.windowContext().focused()) return;
+        if (state.failed || !input.supportsInputMethod() || !input.getWindowContext().getFocused()) return;
         try {
             state.session.focus(input, () -> {
-                if (!input.windowContext().nativeWindow() && ModList.get().isLoaded("imblocker")) return new ImBlockerInputMethod(input);
+                if (!input.getWindowContext().getNativeWindow() && ModList.get().isLoaded("imblocker")) return new ImBlockerInputMethod(input);
                 if (Util.getPlatform() == Util.OS.WINDOWS) return new WindowsInputMethod(input);
                 return () -> { };
             });
@@ -46,7 +46,7 @@ public final class OreInputMethod {
     }
 
     static void release(Input input) {
-        State state = STATES.get(input.windowContext());
+        State state = STATES.get(input.getWindowContext());
         input.clearPreeditDisplay();
         if (state == null) return;
         if (state.focused != input) return;
@@ -94,7 +94,7 @@ public final class OreInputMethod {
     public static void screenClosing(ScreenEvent.Closing event) {
         for (var entry : java.util.List.copyOf(STATES.entrySet())) {
             State state = entry.getValue();
-            if (!entry.getKey().nativeWindow() && state.focused != null && event.getScreen() == state.screen) release(state.focused);
+            if (!entry.getKey().getNativeWindow() && state.focused != null && event.getScreen() == state.screen) release(state.focused);
         }
     }
     @SubscribeEvent public static void tick(TickEvent.ClientTickEvent event) {
@@ -102,14 +102,14 @@ public final class OreInputMethod {
         for (var entry : java.util.List.copyOf(STATES.entrySet())) {
             var context = entry.getKey(); State state = entry.getValue(); Input input = state.focused;
             if (input == null) continue;
-            if (!context.focused() || !context.nativeWindow() && Minecraft.getInstance().screen != state.screen
+            if (!context.getFocused() || !context.getNativeWindow() && Minecraft.getInstance().screen != state.screen
                     || !input.isFocused() || !input.inputVisible() || !input.inputMethodInteractive()) { release(input); continue; }
             try {
                 state.session.update(input, true);
                 InputPreedit preedit=state.session.inlinePreedit(input)?state.session.preedit(input):InputPreedit.EMPTY;
                 if(!preedit.equals(state.lastPreedit)) {
                     state.lastPreedit=preedit;
-                    if(context.owner()!=null)context.owner().dispatchInput(new io.github.luyingyilong.ore.event.CompositionEvent(
+                    if(context.getOwner()!=null)context.getOwner().dispatchInput(new io.github.luyingyilong.ore.event.CompositionEvent(
                             context,io.github.luyingyilong.ore.event.CompositionEvent.Action.UPDATE,preedit));
                 }
             } catch (RuntimeException | LinkageError error) { fail(state, error); }

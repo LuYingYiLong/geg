@@ -23,7 +23,7 @@ public final class SignalSource<T> implements AutoCloseable {
         @Override public Connection connect(SignalOwner owner, String label, Consumer<? super T> slot) {
             lifetime.requireOpen();
             if (closed) throw new IllegalStateException("Signal is closed: " + description);
-            SignalScope receiver = Objects.requireNonNull(owner).signalScope();
+            SignalScope receiver = Objects.requireNonNull(owner).getSignalScope();
             receiver.requireOpen();
             receiver.describe(owner);
             Subscription<T> subscription = new Subscription<>(SignalSource.this, receiver, Objects.requireNonNull(label), Objects.requireNonNull(slot));
@@ -45,7 +45,7 @@ public final class SignalSource<T> implements AutoCloseable {
     }
 
     SignalSource(SignalOwner owner, String name, int arity, String parameterType) {
-        lifetime = Objects.requireNonNull(owner).signalScope();
+        lifetime = Objects.requireNonNull(owner).getSignalScope();
         this.name = Objects.requireNonNull(name);
         this.arity = arity;
         this.parameterType = Objects.requireNonNull(parameterType);

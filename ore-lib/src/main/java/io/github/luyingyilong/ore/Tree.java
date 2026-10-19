@@ -34,11 +34,11 @@ public final class Tree<T> extends Container implements ScrollContent {
     private BiFunction<Item<T>, Boolean, Button.Icon> switcherIcon = (item, expanded) -> new Button.Icon(
             expanded ? OreIcons.ARROW_DOWN_LIGHT : OreIcons.ARROW_RIGHT_LIGHT, 7, 7);
     public Tree() {
-        signalScope().own(() -> { rows.clear(); recycled.clear(); });
-        focusable(true);
+        getSignalScope().own(() -> { rows.clear(); recycled.clear(); });
+        setFocusable(true);
     }
 
-    public Tree<T> items(List<Item<T>> items) {
+    public Tree<T> setItems(List<Item<T>> items) {
         Set<String> keys = new HashSet<>();
         for (Item<T> item : items)
             if (item.key().isEmpty() || !keys.add(item.key()))
@@ -70,16 +70,16 @@ public final class Tree<T> extends Container implements ScrollContent {
         return this;
     }
 
-    public List<Item<T>> items() {
+    public List<Item<T>> getItems() {
         return items;
     }
 
-    public int rowHeight() {
+    public int getRowHeight() {
         return rowHeight;
     }
 
-    public Tree<T> rowHeight(int height) {
-        if (height < Button.Size.SMALL.height())
+    public Tree<T> setRowHeight(int height) {
+        if (height < Button.Size.SMALL.getHeight())
             throw new IllegalArgumentException("Tree row height must be at least 18");
         if (rowHeight != height) {
             rowHeight = height;
@@ -88,22 +88,22 @@ public final class Tree<T> extends Container implements ScrollContent {
         return this;
     }
 
-    public int indent() {
+    public int getIndent() {
         return indent;
     }
 
-    public Tree<T> indent(int indent) {
+    public Tree<T> setIndent(int indent) {
         if (indent < 0) throw new IllegalArgumentException("Negative tree indent");
         this.indent = indent;
         rebuild();
         return this;
     }
 
-    public boolean disabled() {
+    public boolean getDisabled() {
         return disabled;
     }
 
-    public Tree<T> disabled(boolean disabled) {
+    public Tree<T> setDisabled(boolean disabled) {
         this.disabled = disabled;
         if (disabled) cancelInteraction();
         updateRows();
@@ -115,69 +115,69 @@ public final class Tree<T> extends Container implements ScrollContent {
         return !disabled && super.acceptsFocus();
     }
 
-    public boolean selectable() {
+    public boolean getSelectable() {
         return selectable;
     }
 
-    public Tree<T> selectable(boolean selectable) {
+    public Tree<T> setSelectable(boolean selectable) {
         this.selectable = selectable;
         updateRows();
         return this;
     }
 
-    public boolean blockNode() {
+    public boolean getBlockNode() {
         return blockNode;
     }
 
-    public Tree<T> blockNode(boolean block) {
+    public Tree<T> setBlockNode(boolean block) {
         blockNode = block;
         updateRows();
         return this;
     }
 
-    public boolean showIcon() {
+    public boolean getShowIcon() {
         return showIcon;
     }
 
-    public Tree<T> showIcon(boolean show) {
+    public Tree<T> setShowIcon(boolean show) {
         showIcon = show;
         rebuild();
         return this;
     }
 
-    public boolean showSwitcher() {
+    public boolean getShowSwitcher() {
         return showSwitcher;
     }
 
-    public Tree<T> showSwitcher(boolean show) {
+    public Tree<T> setShowSwitcher(boolean show) {
         showSwitcher = show;
         rebuild();
         return this;
     }
 
-    public Tree<T> switcherIcon(BiFunction<Item<T>, Boolean, Button.Icon> icon) {
+    public Tree<T> setSwitcherIcon(BiFunction<Item<T>, Boolean, Button.Icon> icon) {
         switcherIcon = Objects.requireNonNull(icon);
         updateRows();
         return this;
     }
 
-    public BiFunction<Item<T>, Boolean, Button.Icon> switcherIcon() {
+    public BiFunction<Item<T>, Boolean, Button.Icon> getSwitcherIcon() {
         return switcherIcon;
     }
 
     /**
      * Applies to subsequently added nodes; expandAll changes existing nodes.
      */
-    public Tree<T> defaultExpandAll(boolean expand) {
+    public Tree<T> setDefaultExpandAll(boolean expand) {
         defaultExpandAll = expand;
         return this;
     }
 
-    public boolean defaultExpandAll() {
+    public boolean getDefaultExpandAll() {
         return defaultExpandAll;
     }
 
-    public Set<String> expandedKeys() {
+    public Set<String> getExpandedKeys() {
         Set<String> result = new LinkedHashSet<>();
         for (String key : byKey.keySet()) if (branches.contains(key) && !collapsed.contains(key)) result.add(key);
         return Collections.unmodifiableSet(result);
@@ -186,11 +186,11 @@ public final class Tree<T> extends Container implements ScrollContent {
     /**
      * Expansion setters notify on actual state changes; NoSignal variants support controlled refresh.
      */
-    public Tree<T> expandedKeys(Collection<String> keys) {
-        Set<String> before = expandedKeys();
+    public Tree<T> setExpandedKeys(Collection<String> keys) {
+        Set<String> before = getExpandedKeys();
         setExpandedKeysNoSignal(keys);
         for (String key : branches) if (before.contains(key) != !collapsed.contains(key))
-            expansionChanged.emit(new Expansion<>(byKey.get(key), !collapsed.contains(key), expandedKeys()));
+            expansionChanged.emit(new Expansion<>(byKey.get(key), !collapsed.contains(key), getExpandedKeys()));
         return this;
     }
 
@@ -203,11 +203,11 @@ public final class Tree<T> extends Container implements ScrollContent {
         return this;
     }
 
-    public Tree<T> expandAll(boolean expand) { return expandedKeys(expand ? Set.copyOf(branches) : Set.of()); }
+    public Tree<T> expandAll(boolean expand) { return setExpandedKeys(expand ? Set.copyOf(branches) : Set.of()); }
 
     public Signal<Expansion<T>> expansionChanged() { return expansionChanged.signal(); }
 
-    public Tree<T> search(String query) {
+    public Tree<T> setSearch(String query) {
         String next = query.toLowerCase(Locale.ROOT);
         if (!this.query.equals(next)) {
             this.query = next;
@@ -218,7 +218,7 @@ public final class Tree<T> extends Container implements ScrollContent {
 
     public Signal<T> selectionChanged() { return selectionChanged.signal(); }
 
-    public Tree<T> selected(String key) {
+    public Tree<T> setSelected(String key) {
         String previous = selected;
         setSelectedNoSignal(key);
         if (!Objects.equals(previous, selected)) selectionChanged.emit(byKey.containsKey(selected) ? byKey.get(selected).value() : null);
@@ -236,35 +236,35 @@ public final class Tree<T> extends Container implements ScrollContent {
         if (changed) rebuild();
         else updateRows();
         for (int i = 0; i < visible.size(); i++)
-            if (visible.get(i).item.key().equals(key) && parent() instanceof Scroll scroll)
+            if (visible.get(i).item.key().equals(key) && getParent() instanceof Scroll scroll)
                 ensureEntryVisible(i, scroll);
         return this;
     }
 
     @Override
-    public Rect focusBounds() {
+    public Rect getFocusBounds() {
         for (int i = 0; i < visible.size(); i++)
             if (visible.get(i).item.key().equals(cursor))
-                return new Rect(absoluteBounds().x(), absoluteBounds().y() + i * rowHeight, bounds().width(), rowHeight);
-        return absoluteBounds();
+                return new Rect(getAbsoluteBounds().x(), getAbsoluteBounds().y() + i * rowHeight, getBounds().width(), rowHeight);
+        return getAbsoluteBounds();
     }
 
-    public String selected() {
+    public String getSelected() {
         return selected;
     }
 
-    public int visibleRows() {
+    public int getVisibleRows() {
         return visible.size();
     }
 
-    public int instantiatedRows() {
+    public int getInstantiatedRows() {
         return rows.size();
     }
 
-    public Tree<T> expanded(String key, boolean expanded) {
+    public Tree<T> setExpanded(String key, boolean expanded) {
         boolean before = !collapsed.contains(key);
         setExpandedNoSignal(key, expanded);
-        if (before != expanded) expansionChanged.emit(new Expansion<>(byKey.get(key), expanded, expandedKeys()));
+        if (before != expanded) expansionChanged.emit(new Expansion<>(byKey.get(key), expanded, getExpandedKeys()));
         return this;
     }
 
@@ -282,7 +282,7 @@ public final class Tree<T> extends Container implements ScrollContent {
 
     private void userExpand(Entry<T> entry, boolean expand) {
         if (disabled || entry.item.disabled() || !entry.branch || displayedExpanded(entry.item.key()) == expand) return;
-        expanded(entry.item.key(), expand);
+        setExpanded(entry.item.key(), expand);
     }
 
     private void rebuild() {
@@ -320,25 +320,25 @@ public final class Tree<T> extends Container implements ScrollContent {
         if (disabled || entry.item.disabled()) return;
         cursor = entry.item.key();
         if (selectable && entry.item.selectable()) {
-            selected(cursor);
+            setSelected(cursor);
         }
-        if (parent() instanceof Scroll scroll) for (int i = 0; i < visible.size(); i++)
+        if (getParent() instanceof Scroll scroll) for (int i = 0; i < visible.size(); i++)
             if (visible.get(i).item.key().equals(cursor)) ensureEntryVisible(i, scroll);
     }
 
     @Override
     public Size measureSize(Font font, Size available) {
         if (!isAlive()) return new Size(0, 0);
-        return new Size(minimumWidth(), minimumHeight());
+        return new Size(getMinimumWidth(), getMinimumHeight());
     }
 
     @Override
-    public Size contentExtent() {
+    public Size getContentExtent() {
         return new Size(contentWidth, visible.size() * rowHeight);
     }
 
     @Override
-    public void visibleRegion(Rect region) {
+    public void setVisibleRegion(Rect region) {
         this.region = region;
         updateRows();
     }
@@ -355,7 +355,7 @@ public final class Tree<T> extends Container implements ScrollContent {
     }
 
     private void measureContentWidth() {
-        contentWidth = bounds().width();
+        contentWidth = getBounds().width();
         for (Entry<T> entry : visible) {
             int width = labelWidth(entry.item);
             contentWidth = Math.max(contentWidth, entry.depth * indent + switcherWidth() + width);
@@ -364,7 +364,7 @@ public final class Tree<T> extends Container implements ScrollContent {
 
     private void ensureEntryVisible(int index, Scroll scroll) {
         int x = visible.get(index).depth * indent;
-        scroll.ensureVisible(new Rect(x, index * rowHeight, Math.min(scroll.viewport().width(), Math.max(0, contentWidth - x)), rowHeight));
+        scroll.ensureVisible(new Rect(x, index * rowHeight, Math.min(scroll.getViewport().width(), Math.max(0, contentWidth - x)), rowHeight));
     }
 
     private int switcherWidth() {
@@ -373,7 +373,7 @@ public final class Tree<T> extends Container implements ScrollContent {
 
     private int labelWidth(Item<T> item) {
         String text = item.text().getString();
-        int width = font == null ? text.codePointCount(0, text.length()) * 6 : widthProbe.text(item.text()).measureWidth(font, Integer.MAX_VALUE);
+        int width = font == null ? text.codePointCount(0, text.length()) * 6 : widthProbe.setText(item.text()).measureWidth(font, Integer.MAX_VALUE);
         return width + 2 * Button.PADDING_X + (showIcon && item.icon() != null ? item.icon().width() + 4 : 0);
     }
 
@@ -470,13 +470,13 @@ public final class Tree<T> extends Container implements ScrollContent {
 
 
     private final class Row extends Container {
-        private final Button twist = new Button().type(Button.Type.TEXT);
-        private final Button label = new Button().type(Button.Type.TEXT).toggleButton(true).alignment(Button.TextAlignment.LEFT);
+        private final Button twist = new Button().setType(Button.Type.TEXT);
+        private final Button label = new Button().setType(Button.Type.TEXT).setToggleButton(true).setAlignment(Button.TextAlignment.LEFT);
         private Entry<T> entry;
 
         Row() {
-            twist.focusable(false);
-            label.focusable(false);
+            twist.setFocusable(false);
+            label.setFocusable(false);
             super.addChild(twist);
             super.addChild(label);
             twist.pressed().connect(twist, () -> userExpand(entry, !displayedExpanded(entry.item.key())));
@@ -485,13 +485,13 @@ public final class Tree<T> extends Container implements ScrollContent {
 
         void bind(Entry<T> entry) {
             this.entry = entry;
-            twist.visible(showSwitcher && entry.branch);
-            twist.icon(switcherIcon.apply(entry.item, displayedExpanded(entry.item.key()))).disabled(disabled || entry.item.disabled());
-            twist.size(rowHeight < Button.Size.MEDIUM.height() ? Button.Size.SMALL : Button.Size.MEDIUM);
-            label.size(rowHeight < Button.Size.MEDIUM.height() ? Button.Size.SMALL : Button.Size.MEDIUM);
-            label.disabled(disabled || entry.item.disabled() || !selectable || !entry.item.selectable());
-            label.icon(showIcon ? entry.item.icon() : null);
-            label.label(entry.item.text().copy().withStyle(disabled || entry.item.disabled() || !selectable || !entry.item.selectable()
+            twist.setVisible(showSwitcher && entry.branch);
+            twist.setIcon(switcherIcon.apply(entry.item, displayedExpanded(entry.item.key()))).setDisabled(disabled || entry.item.disabled());
+            twist.setSize(rowHeight < Button.Size.MEDIUM.getHeight() ? Button.Size.SMALL : Button.Size.MEDIUM);
+            label.setSize(rowHeight < Button.Size.MEDIUM.getHeight() ? Button.Size.SMALL : Button.Size.MEDIUM);
+            label.setDisabled(disabled || entry.item.disabled() || !selectable || !entry.item.selectable());
+            label.setIcon(showIcon ? entry.item.icon() : null);
+            label.setLabel(entry.item.text().copy().withStyle(disabled || entry.item.disabled() || !selectable || !entry.item.selectable()
                     ? net.minecraft.ChatFormatting.GRAY : net.minecraft.ChatFormatting.WHITE));
             label.setButtonPressedNoSignal(selected.equals(entry.item.key()));
         }

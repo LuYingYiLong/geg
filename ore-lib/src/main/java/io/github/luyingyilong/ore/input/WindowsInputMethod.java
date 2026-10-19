@@ -28,7 +28,7 @@ final class WindowsInputMethod implements InputMethodSession.Connection {
     private final boolean nativeWindow;
 
     WindowsInputMethod(Input input) {
-        this(input, new WinDef.HWND(new Pointer(GLFWNativeWin32.glfwGetWin32Window(input.windowContext().handle()))));
+        this(input, new WinDef.HWND(new Pointer(GLFWNativeWin32.glfwGetWin32Window(input.getWindowContext().getHandle()))));
     }
 
     WindowsInputMethod(Input input, WinDef.HWND window) {
@@ -38,7 +38,7 @@ final class WindowsInputMethod implements InputMethodSession.Connection {
     /** Injectable IMM boundary keeps state restoration testable without a desktop input context. */
     WindowsInputMethod(Input input, WinDef.HWND window, Imm imm) {
         this.input = input;
-        nativeWindow = input != null && input.windowContext().nativeWindow();
+        nativeWindow = input != null && input.getWindowContext().getNativeWindow();
         this.window = window;
         this.imm = imm;
         previous = imm.ImmGetContext(window);
@@ -68,9 +68,9 @@ final class WindowsInputMethod implements InputMethodSession.Connection {
         if (context == null) return;
         try {
             var caret = input.inputMethodCaret();
-            var host = input.windowContext();
-            int x = (int) Math.round(host.nativeWindow() ? host.clientX(caret.x()) : caret.x() * host.guiScale());
-            int y = (int) Math.round(host.nativeWindow() ? host.clientY(caret.y()) : caret.y() * host.guiScale());
+            var host = input.getWindowContext();
+            int x = (int) Math.round(host.getNativeWindow() ? host.clientX(caret.x()) : caret.x() * host.getGuiScale());
+            int y = (int) Math.round(host.getNativeWindow() ? host.clientY(caret.y()) : caret.y() * host.getGuiScale());
             CandidateForm candidate = new CandidateForm();
             candidate.style = 0x0040; // CFS_CANDIDATEPOS
             candidate.position.x = x;

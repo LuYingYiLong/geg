@@ -7,10 +7,10 @@ import java.math.BigDecimal;
 public final class GegInputs {
     private GegInputs() { }
     public static NumberInput quantity(float depth) {
-        return new NumberInput(depth).minimumValue(1).maximumValue(Integer.MAX_VALUE);
+        return new NumberInput(depth).setMinimumValue(1).setMaximumValue(Integer.MAX_VALUE);
     }
     public static NumberInput coin(float depth, boolean allowZero) {
-        return new NumberInput(depth).decimalPlaces(2).minimumValue(allowZero ? "0" : "0.01")
-                .maximumValue(BigDecimal.valueOf(Long.MAX_VALUE, 2));
+        return new NumberInput(depth).setDecimalPlaces(2).setMinimumValue(allowZero ? "0" : "0.01")
+                .setMaximumValue(BigDecimal.valueOf(Long.MAX_VALUE, 2));
     }
 }

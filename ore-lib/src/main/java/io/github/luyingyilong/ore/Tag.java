@@ -17,30 +17,30 @@ import java.util.Objects;
 public final class Tag extends Container {
     private static final int PADDING_X = 4;
     private static final int PADDING_Y = 2;
-    private final Label label = ownPart("label", new Label().opticalCenter(true).align(Label.Horizontal.CENTER, Label.Vertical.CENTER)
-            .overflow(Label.Overflow.ELLIPSIS).color(OreTheme.TEXT_WHITE));
+    private final Label label = ownPart("label", new Label().setOpticalCenter(true).setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER)
+            .setOverflow(Label.Overflow.ELLIPSIS).setColor(OreTheme.TEXT_WHITE));
     private boolean outlined;
     private Type type = Type.NEUTRAL;
     public Tag() {
         addChild(label);
-        sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
     }
 
     public Tag(Component text) {
         this();
-        text(text);
+        setText(text);
     }
 
-    public Tag text(Component text) {
-        label.text(Objects.requireNonNull(text));
+    public Tag setText(Component text) {
+        label.setText(Objects.requireNonNull(text));
         return this;
     }
 
-    public Component text() {
-        return label.text();
+    public Component getText() {
+        return label.getText();
     }
 
-    public Tag outlined(boolean outlined) {
+    public Tag setOutlined(boolean outlined) {
         if (this.outlined != outlined) {
             this.outlined = outlined;
             requestLayout();
@@ -48,17 +48,17 @@ public final class Tag extends Container {
         return this;
     }
 
-    public boolean outlined() {
+    public boolean getOutlined() {
         return outlined;
     }
 
-    public Tag type(Type type) {
+    public Tag setType(Type type) {
         this.type = Objects.requireNonNull(type);
-        label.color(type.textColor);
+        label.setColor(type.textColor);
         return this;
     }
 
-    public Type type() {
+    public Type getType() {
         return type;
     }
 
@@ -100,7 +100,7 @@ public final class Tag extends Container {
 
     @Override
     protected void render(ModularGuiContext context, int screenX, int screenY) {
-        Rect area = screenBounds(screenX, screenY);
+        Rect area = getScreenBounds(screenX, screenY);
         if (area.width() <= 0 || area.height() <= 0) return;
         var graphics = context.getGraphics();
         if (outlined) graphics.fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.TAG_OUTLINE);
@@ -126,7 +126,7 @@ public final class Tag extends Container {
             this.textColor = textColor;
         }
 
-        public int color() {
+        public int getColor() {
             return color;
         }
 

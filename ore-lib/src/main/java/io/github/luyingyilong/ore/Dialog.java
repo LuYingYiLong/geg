@@ -45,16 +45,16 @@ public final class Dialog extends Container {
     private final int verticalOffset;
     private final Panel panel = new Panel(OreTheme.MODAL);
     private final Box column = new Box();
-    private final Box header = new Box().orientation(Box.Orientation.HORIZONTAL).gap(HEADER_GAP);
+    private final Box header = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(HEADER_GAP);
     private final Padding headerInset = new Padding(new Padding.Insets(PADDING, PADDING, SECTION_SPACING, PADDING))
-            .child(header);
-    private final Label titleLabel = new Label().hero(true).opticalCenter(true).overflow(Label.Overflow.CLIP)
-            .align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
-    private final Button close = new Button().size(Button.Size.SMALL).type(Button.Type.TEXT)
-            .icon(OreIcons.SMALL_CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);
-    private final Box footer = new Box().orientation(Box.Orientation.VERTICAL).gap(BUTTON_GAP);
+            .setChild(header);
+    private final Label titleLabel = new Label().setHero(true).setOpticalCenter(true).setOverflow(Label.Overflow.CLIP)
+            .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+    private final Button close = new Button().setSize(Button.Size.SMALL).setType(Button.Type.TEXT)
+            .setIcon(OreIcons.SMALL_CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);
+    private final Box footer = new Box().setOrientation(Box.Orientation.VERTICAL).setGap(BUTTON_GAP);
     private final Padding footerInset = new Padding(new Padding.Insets(SECTION_SPACING, PADDING, PADDING, PADDING))
-            .child(footer);
+            .setChild(footer);
     private final Padding bodyInset = new Padding(new Padding.Insets(PADDING, BODY_HORIZONTAL_INSET,
             PADDING, BODY_HORIZONTAL_INSET));
     private final List<Button> actions = new ArrayList<>();
@@ -70,46 +70,46 @@ public final class Dialog extends Container {
         preferredWidth = Math.max(0, width);
         preferredHeight = Math.max(0, height);
         this.verticalOffset = verticalOffset;
-        title(title);
-        titleLabel.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_FILL);
-        close.minimum(CLOSE_SIZE, CLOSE_SIZE);
-        close.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        setTitle(title);
+        titleLabel.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
+        close.setMinimum(CLOSE_SIZE, CLOSE_SIZE);
+        close.setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         close.pressed().connect(close, () -> closeRequested.emit());
-        header.minimum(0, CLOSE_SIZE).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        header.setMinimum(0, CLOSE_SIZE).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         header.add(titleLabel).add(close);
-        headerInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        headerInset.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         column.add(headerInset);
-        footer.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        footerInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        footerInset.visible(false);
+        footer.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        footerInset.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        footerInset.setVisible(false);
         column.add(footerInset);
-        panel.child(column);
+        panel.setChild(column);
         addChild(panel);
     }
 
-    @Override public Dialog minimum(int width, int height) {
-        super.minimum(width, height);
+    @Override public Dialog setMinimum(int width, int height) {
+        super.setMinimum(width, height);
         return this;
     }
 
-    public Dialog title(Component title) {
-        titleLabel.text(Objects.requireNonNull(title));
+    public Dialog setTitle(Component title) {
+        titleLabel.setText(Objects.requireNonNull(title));
         return this;
     }
 
-    public Dialog fontSize(float fontSize) { titleLabel.fontSize(fontSize); return this; }
-    public float fontSize() { return titleLabel.fontSize(); }
+    public Dialog setFontSize(float fontSize) { titleLabel.setFontSize(fontSize); return this; }
+    public float getFontSize() { return titleLabel.getFontSize(); }
 
     public Signal0 closeRequested() { return closeRequested.signal(); }
 
-    @Override public float contentDepth() { return depth; }
+    @Override public float getContentDepth() { return depth; }
 
-    public Dialog depth(float depth) {
+    public Dialog setDepth(float depth) {
         this.depth = depth;
         return this;
     }
 
-    @Override public boolean focusScope() { return true; }
+    @Override public boolean getFocusScope() { return true; }
 
     @Override public boolean onFocusKey(int keyCode, int modifiers) {
         if (keyCode != GLFW.GLFW_KEY_ESCAPE) return false;
@@ -117,12 +117,12 @@ public final class Dialog extends Container {
         return true;
     }
 
-    public Dialog content(Control content) {
+    public Dialog setContent(Control content) {
         this.content = Objects.requireNonNull(content);
-        content.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        bodyInset.child(content);
-        if (bodyInset.parent() == null) {
-            bodyInset.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        content.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        bodyInset.setChild(content);
+        if (bodyInset.getParent() == null) {
+            bodyInset.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
             column.removeChild(footerInset);
             column.add(bodyInset).add(footerInset);
         }
@@ -130,30 +130,30 @@ public final class Dialog extends Container {
     }
 
     public Dialog clearActions() {
-        for (Button action : List.copyOf(actions)) { if (action.parent() != null) action.parent().removeChild(action); action.queueFree(); }
+        for (Button action : List.copyOf(actions)) { if (action.getParent() != null) action.getParent().removeChild(action); action.queueFree(); }
         actions.clear();
-        footer.minimum(0, 0);
-        footerInset.visible(false);
+        footer.setMinimum(0, 0);
+        footerInset.setVisible(false);
         return this;
     }
 
     public Dialog addAction(Button button) {
         Objects.requireNonNull(button);
-        button.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        button.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         actions.add(button);
         footer.addChild(button);
-        footer.minimum(0, actionHeight(actions.size()));
-        footerInset.visible(true);
+        footer.setMinimum(0, actionHeight(actions.size()));
+        footerInset.setVisible(true);
         return this;
     }
 
-    public Rect panelBounds() {
-        return panel.absoluteBounds();
+    public Rect getPanelBounds() {
+        return panel.getAbsoluteBounds();
     }
 
-    public Rect contentBounds() {
+    public Rect getContentBounds() {
         return content == null ? new Rect(0, 0, 0, 0)
-                : content.absoluteBounds();
+                : content.getAbsoluteBounds();
     }
 
     public static Rect fittedBounds(
@@ -174,26 +174,26 @@ public final class Dialog extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             int verticalPadding = viewport.height() < 110 ? COMPACT_VERTICAL_PADDING : PADDING;
-            headerInset.insets(new Padding.Insets(verticalPadding, PADDING, SECTION_SPACING, PADDING));
-            footerInset.insets(new Padding.Insets(SECTION_SPACING, PADDING, verticalPadding, PADDING));
+            headerInset.setInsets(new Padding.Insets(verticalPadding, PADDING, SECTION_SPACING, PADDING));
+            footerInset.setInsets(new Padding.Insets(SECTION_SPACING, PADDING, verticalPadding, PADDING));
             super.layout(viewport, font);
             Size measured = panel.measureSize(font, new Size(viewport.width(), viewport.height()));
-            int width = Math.max(Math.max(preferredWidth, minimumWidth()), measured.width());
+            int width = Math.max(Math.max(preferredWidth, getMinimumWidth()), measured.width());
             int intrinsicContentHeight = content == null ? 0
                     : content.measureSize(font, new Size(viewport.width(), viewport.height())).height();
             int fallbackBodyHeight = content != null && intrinsicContentHeight == 0 ? CONTENT_MIN_HEIGHT : 0;
-            int height = Math.max(Math.max(preferredHeight, minimumHeight()), measured.height() + fallbackBodyHeight);
+            int height = Math.max(Math.max(preferredHeight, getMinimumHeight()), measured.height() + fallbackBodyHeight);
             fitChild(panel, fittedBounds(width, height, verticalOffset,
                     viewport.width(), viewport.height()), font);
         }
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-        Rect area = screenBounds(screenX, screenY);
+        Rect area = getScreenBounds(screenX, screenY);
         context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.OVERLAY_COLOR);
         WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.MODAL);
         WidgetTheme style = entry == null ? context.getTheme().getPanelTheme().theme() : entry.theme();
-        titleLabel.color(style.getTextColor()).shadow(style.isTextShadow());
+        titleLabel.setColor(style.getTextColor()).setShadow(style.isTextShadow());
     }
 
     @Override public void draw(ModularGuiContext context, int screenX, int screenY) {
@@ -201,7 +201,7 @@ public final class Dialog extends Container {
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             if (!isAlive()) return;
             DebugBridge.backend().paint(this, context, screenX, screenY);
-            if (!visible()) return;
+            if (!getVisible()) return;
             GuiGraphics graphics = context.getGraphics();
             graphics.flush();
             graphics.pose().pushPose();
@@ -217,7 +217,7 @@ public final class Dialog extends Container {
 
     /** Returns true for all clicks while open; the topmost dialog owns its entire overlay. */
     @Override protected boolean pointerDown(int rootX, int rootY) {
-        if (!visible()) return false;
+        if (!getVisible()) return false;
         if (!panel.hit(rootX, rootY)) {
             OreSounds.play(OreSounds.Cue.CLICK);
             closeRequested.emit();
@@ -229,7 +229,7 @@ public final class Dialog extends Container {
 
 
     private static int actionHeight(int count) {
-        return count == 0 ? 0 : count * Button.Size.MEDIUM.height() + (count - 1) * BUTTON_GAP;
+        return count == 0 ? 0 : count * Button.Size.MEDIUM.getHeight() + (count - 1) * BUTTON_GAP;
     }
 
 }

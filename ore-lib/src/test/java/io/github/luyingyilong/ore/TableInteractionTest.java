@@ -20,7 +20,7 @@ public final class TableInteractionTest {
 
     public static void main(String[] args) {
         List<String> actions = new ArrayList<>();
-        Table<Item> table = new Table<Item>().rowKey(Item::id)
+        Table<Item> table = new Table<Item>().setRowKey(Item::id)
                 .column(new Table.Column<>("name", Component.literal("Name"), 40, 40, 0, width -> 20,
                         (context, row, bounds) -> { }))
                 .column(new Table.Column<>("action", Component.literal("Action"), 80, 120, 1, width -> 20,
@@ -41,9 +41,9 @@ public final class TableInteractionTest {
                     }
                 }));
         List<Item> rows = List.of(new Item(0, 1), new Item(1, 1), new Item(2, 1), new Item(3, 1), new Item(4, 1));
-        table.rows(rows);
+        table.setRows(rows);
         Overlay overlay = new Overlay();
-        Window window = new Window(true).content(table).overlay(overlay);
+        Window window = new Window(true).setContent(table).setOverlay(overlay);
         window.layoutViewport(200, 100, null);
 
         check(io.github.luyingyilong.ore.event.WindowInputs.press(window,45, 25, null) && actions.isEmpty());
@@ -58,7 +58,7 @@ public final class TableInteractionTest {
         check(io.github.luyingyilong.ore.event.WindowInputs.release(window,45, 25) && actions.equals(List.of("0:0")));
         check(!io.github.luyingyilong.ore.event.WindowInputs.release(window,45, 25));
         io.github.luyingyilong.ore.event.WindowInputs.press(window,125, 25, null);
-        table.rows(List.copyOf(rows));
+        table.setRows(List.copyOf(rows));
         window.layoutViewport(200, 100, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,125, 25);
         check(actions.equals(List.of("0:0", "0:1")));
@@ -70,22 +70,22 @@ public final class TableInteractionTest {
         check(actions.size() == before);
         table.setScroll(0);
         io.github.luyingyilong.ore.event.WindowInputs.press(window,45, 25, null);
-        table.rows(List.of(new Item(0, 2), rows.get(1), rows.get(2), rows.get(3), rows.get(4)));
+        table.setRows(List.of(new Item(0, 2), rows.get(1), rows.get(2), rows.get(3), rows.get(4)));
         window.layoutViewport(200, 100, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,45, 25);
         check(actions.size() == before); // Updated data under the same stable key is stale, too.
         io.github.luyingyilong.ore.event.WindowInputs.press(window,45, 25, null);
-        table.rows(List.of(rows.get(1), rows.get(2), rows.get(3)));
+        table.setRows(List.of(rows.get(1), rows.get(2), rows.get(3)));
         window.layoutViewport(200, 100, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,45, 25);
         check(actions.size() == before);
         io.github.luyingyilong.ore.event.WindowInputs.press(window,45, 25, null);
-        table.visible(false);
-        table.visible(true);
+        table.setVisible(false);
+        table.setVisible(true);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,45, 25);
         check(actions.size() == before);
 
-        window.focusManager().requestFocus(table, null);
+        window.getFocusManager().requestFocus(table, null);
         table.onFocusMove(FocusManager.Direction.LEFT);
         table.onFocusMove(FocusManager.Direction.RIGHT);
         io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null);
@@ -99,20 +99,20 @@ public final class TableInteractionTest {
         check(actions.size() == before);
 
         io.github.luyingyilong.ore.event.WindowInputs.press(window,45, 25, null);
-        Control popup = new Control() { @Override public boolean focusScope() { return true; } };
+        Control popup = new Control() { @Override public boolean getFocusScope() { return true; } };
         overlay.add(popup);
         window.layoutViewport(200, 100, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,45, 25);
         check(actions.size() == before);
-        popup.visible(false);
+        popup.setVisible(false);
 
         for (int width : new int[]{127, 128, 129}) {
             window.layoutViewport(width - 32, 150, null);
-            check(table.compact());
-            window.focusManager().requestFocus(table, null);
+            check(table.getCompact());
+            window.getFocusManager().requestFocus(table, null);
             table.onFocusMove(FocusManager.Direction.LEFT);
             table.onFocusMove(FocusManager.Direction.RIGHT);
-            Rect target = table.focusBounds();
+            Rect target = table.getFocusBounds();
             check(io.github.luyingyilong.ore.event.WindowInputs.press(window,target.x() + 1, target.y() + 1, null));
             check(actions.size() == before);
             check(io.github.luyingyilong.ore.event.WindowInputs.release(window,target.x() + 1, target.y() + 1));
@@ -124,18 +124,18 @@ public final class TableInteractionTest {
     private static void nestedDropdownTrigger() {
         Dropdown<String> dropdown = new Dropdown<>("a", 2);
         dropdown.setOptions(List.of(new Dropdown.Option<>("a", Component.literal("A"))));
-        Table<Integer> table = new Table<Integer>().rowKey(row -> row)
+        Table<Integer> table = new Table<Integer>().setRowKey(row -> row)
                 .column(new Table.Column<>("menu", Component.literal("Menu"), 40, 80, 1, width -> 20,
                         new Table.ControlCell<>(() -> dropdown,(control,row)->{})));
-        table.rows(List.of(1));
-        Window window = new Window(true).content(table);
+        table.setRows(List.of(1));
+        Window window = new Window(true).setContent(table);
         window.layoutViewport(100, 80, null);
         io.github.luyingyilong.ore.event.WindowInputs.press(window,10, 25, null);
         check(!dropdown.isOpen());
         io.github.luyingyilong.ore.event.WindowInputs.release(window,10, 25);
         check(dropdown.isOpen());
         dropdown.close();
-        window.focusManager().requestFocus(dropdown, null);
+        window.getFocusManager().requestFocus(dropdown, null);
         io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_SPACE, 0, null);
         check(!dropdown.isOpen());
         io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_SPACE, 0, null);

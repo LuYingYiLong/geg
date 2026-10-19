@@ -52,18 +52,18 @@ final class ImBlockerInputMethod implements InputMethodSession.Connection {
                             case "isTrulyFocused", "isRenderable" -> !closed && input.isFocused()
                                     && input.inputVisible() && input.inputMethodInteractive();
                             case "getPreferredState" -> true;
-                            case "getGuiScale" -> input.windowContext().guiScale();
+                            case "getGuiScale" -> input.getWindowContext().getGuiScale();
                             case "getFontHeight" -> input.inputMethodFontHeight();
                             case "getBoundsAbs" -> {
                                 var area = input.inputMethodBounds();
                                 yield rectangle.newInstance((double) area.x(), (double) area.y(),
                                         (double) area.width(), (double) area.height(),
-                                        input.windowContext().guiScale());
+                                        input.getWindowContext().getGuiScale());
                             }
                             case "getCaretPos" -> {
                                 var caret = input.inputMethodCaret();
                                 yield point.newInstance((double) caret.x(), (double) caret.y(),
-                                        input.windowContext().guiScale());
+                                        input.getWindowContext().getGuiScale());
                             }
                             default -> {
                                 if (!method.isDefault())

@@ -16,29 +16,29 @@ public final class Slot extends Control {
     private ItemStack item = ItemStack.EMPTY;
     private int quantity;
     private boolean backgroundVisible = true;
-    private final Label count = ownPart("count", new Label().color(OreTheme.TEXT_WHITE).shadow(true)
-            .align(Label.Horizontal.RIGHT, Label.Vertical.BOTTOM).fontSize(8));
+    private final Label count = ownPart("count", new Label().setColor(OreTheme.TEXT_WHITE).setShadow(true)
+            .setAlignment(Label.Horizontal.RIGHT, Label.Vertical.BOTTOM).setFontSize(8));
 
     public Slot() {
-        minimum(SIZE, SIZE);
-        sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        setMinimum(SIZE, SIZE);
+        setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         addChild(count);
     }
 
-    public Slot item(ItemStack item, int quantity) {
+    public Slot setItem(ItemStack item, int quantity) {
         this.item = item.copyWithCount(1); this.quantity = quantity;
-        count.text(Component.literal(Integer.toString(quantity)));
-        count.visible(quantity > 1 && !item.isEmpty());
+        count.setText(Component.literal(Integer.toString(quantity)));
+        count.setVisible(quantity > 1 && !item.isEmpty());
         return this;
     }
-    public ItemStack item() { return item.copy(); }
-    public int quantity() { return quantity; }
+    public ItemStack getItem() { return item.copy(); }
+    public int getQuantity() { return quantity; }
 
-    public Slot backgroundVisible(boolean visible) {
+    public Slot setBackgroundVisible(boolean visible) {
         backgroundVisible = visible;
         return this;
     }
-    public boolean backgroundVisible() { return backgroundVisible; }
+    public boolean getBackgroundVisible() { return backgroundVisible; }
 
     @Override public boolean hasTooltip() { return !item.isEmpty(); }
 
@@ -52,7 +52,7 @@ public final class Slot extends Control {
     }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-        Rect area = screenBounds(screenX, screenY);
+        Rect area = getScreenBounds(screenX, screenY);
         if (backgroundVisible) {
             var style = context.getTheme().getItemSlotTheme().theme();
             if (style.getBackground() != null)
@@ -67,7 +67,7 @@ public final class Slot extends Control {
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
             render(context, screenX, screenY);
-            if (!count.visible()) return;
+            if (!count.getVisible()) return;
             var graphics = context.getGraphics();
             graphics.flush(); graphics.pose().pushPose();
             try {

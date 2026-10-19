@@ -31,20 +31,20 @@ public final class SignalDiagnosticsTest {
                 && SignalDiagnostics.inspect(receiver).incoming().stream().allMatch(SignalDiagnostics.ConnectionInfo::possibleDuplicate), "Reverse subscriptions also flag possible duplicates");
         pressed.emit();
         check(received[0] == 2, "Diagnostics do not suppress legitimate multiple slots");
-        receiver.signalScope().close(SignalDiagnostics.Reason.OWNER_DISPOSED);
+        receiver.getSignalScope().close(SignalDiagnostics.Reason.OWNER_DISPOSED);
         check(pressed.signal().connectionCount() == 0, "Receiver destruction still clears live slots");
         var disposed = SignalDiagnostics.inspect(receiver);
         check(disposed.history().stream().anyMatch(e -> e.kind() == SignalDiagnostics.Kind.SCOPE_CLOSED
                 && e.reason() == SignalDiagnostics.Reason.OWNER_DISPOSED && e.remainingConnections() == 0), "Retain successful cleanup evidence");
         check(disposed.history().stream().filter(e -> e.kind() == SignalDiagnostics.Kind.DISCONNECTED).count() == 2, "One disconnect record per connection");
 
-        SignalScope binding = early.signalScope().child("binding");
+        SignalScope binding = early.getSignalScope().child("binding");
         text.signal().connect(binding, "bind row", ignored -> { });
         check(SignalDiagnostics.inspect(early).incoming().size() == 1, "Binding subscriptions are attributed to their control");
         binding.close(SignalDiagnostics.Reason.BINDING_RESET);
         check(SignalDiagnostics.inspect(early).history().stream().anyMatch(e -> e.reason() == SignalDiagnostics.Reason.BINDING_RESET), "Binding cleanup has a distinct reason");
-        check(!early.signalScope().isClosed(), "Binding reset does not dispose the control");
-        early.signalScope().close(SignalDiagnostics.Reason.OWNER_DISPOSED);
+        check(!early.getSignalScope().isClosed(), "Binding reset does not dispose the control");
+        early.getSignalScope().close(SignalDiagnostics.Reason.OWNER_DISPOSED);
         var closedSource = SignalDiagnostics.inspect(early);
         check(closedSource.signals().size() == 2 && closedSource.signals().stream().allMatch(s -> s.closed() && s.connections().isEmpty()), "Closed declarations remain visible while their owner exists");
         objectFree(closedSource);
@@ -53,9 +53,9 @@ public final class SignalDiagnosticsTest {
         Owner inspector = SignalDiagnostics.withoutTracing(Owner::new);
         SignalSource0 diagnosticButton = new SignalSource0(inspector, "inspect");
         diagnosticButton.signal().connect(observing, () -> { });
-        inspector.signalScope().close();
+        inspector.getSignalScope().close();
         check(SignalDiagnostics.inspect(observing).history().isEmpty(), "Inspector subscriptions and later disposal do not pollute target history");
-        observing.signalScope().close();
+        observing.getSignalScope().close();
 
         SignalDiagnostics.clearHistory();
         Owner bounded = new Owner();
@@ -64,7 +64,7 @@ public final class SignalDiagnosticsTest {
         var history = SignalDiagnostics.inspect(bounded);
         check(history.history().size() == 512 && history.discardedEvents() == 88, "Bounded metadata history");
         check(history.history().get(0).sequence() < history.history().get(511).sequence(), "Stable history ordering");
-        bounded.signalScope().close();
+        bounded.getSignalScope().close();
         SignalDiagnostics.tracingEnabled(false);
         SignalDiagnostics.clearHistory();
         System.out.println("ORE_SIGNAL_DIAGNOSTICS_TEST_PASS");
@@ -85,7 +85,7 @@ public final class SignalDiagnosticsTest {
 
     private static final class Owner implements SignalOwner {
         private final SignalScope scope = new SignalScope();
-        @Override public SignalScope signalScope() { return scope; }
+        @Override public SignalScope getSignalScope() { return scope; }
     }
     private static void check(boolean value, String message) { if (!value) throw new AssertionError(message); }
 }

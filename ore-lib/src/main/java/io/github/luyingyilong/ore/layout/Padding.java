@@ -20,7 +20,7 @@ public final class Padding extends Container {
     private Control child;
 
     public Padding(Insets insets) { this.insets = Objects.requireNonNull(insets); }
-    public Padding insets(Insets insets) {
+    public Padding setInsets(Insets insets) {
         Insets next = Objects.requireNonNull(insets);
         if (!this.insets.equals(next)) {
             this.insets = next;
@@ -28,7 +28,7 @@ public final class Padding extends Container {
         }
         return this;
     }
-    public Padding child(Control child) {
+    public Padding setChild(Control child) {
         if (this.child != null) removeChild(this.child);
         addChild(child);
         return this;
@@ -46,32 +46,32 @@ public final class Padding extends Container {
         if (this.child == child) this.child = null;
         return true;
     }
-    public Insets insets() { if (!DebugBridge.active()) return insets; return new Insets(debugValue("top", insets.top()), debugValue("right", insets.right()),
+    public Insets getInsets() { if (!DebugBridge.active()) return insets; return new Insets(debugValue("top", insets.top()), debugValue("right", insets.right()),
                 debugValue("bottom", insets.bottom()), debugValue("left", insets.left())); }
 
     @Override public Size measureSize(Font font, Size available) {
         if (!isAlive()) return new Size(0, 0);
-        int horizontal = insets().left() + insets().right();
-        int vertical = insets().top() + insets().bottom();
+        int horizontal = getInsets().left() + getInsets().right();
+        int vertical = getInsets().top() + getInsets().bottom();
         Size inner = child == null ? new Size(0, 0) : child.desiredSize(font,
                 new Size(Math.max(0, available.width() - horizontal),
                         Math.max(0, available.height() - vertical)));
-        return new Size(Math.max(minimumWidth(), horizontal + inner.width()),
-                Math.max(minimumHeight(), vertical + inner.height()));
+        return new Size(Math.max(getMinimumWidth(), horizontal + inner.width()),
+                Math.max(getMinimumHeight(), vertical + inner.height()));
     }
 
     @Override
     public int measureWidth(Font font, int available) {
         if (!isAlive()) return 0;
-        return insets().left() + insets().right() + (child == null ? 0
-                : child.measureWidth(font, Math.max(0, available - insets().left() - insets().right())));
+        return getInsets().left() + getInsets().right() + (child == null ? 0
+                : child.measureWidth(font, Math.max(0, available - getInsets().left() - getInsets().right())));
     }
 
     @Override
     public int measureHeight(Font font, int available) {
         if (!isAlive()) return 0;
-        return insets().top() + insets().bottom() + (child == null ? 0
-                : child.measureHeight(font, Math.max(0, available - insets().top() - insets().bottom())));
+        return getInsets().top() + getInsets().bottom() + (child == null ? 0
+                : child.measureHeight(font, Math.max(0, available - getInsets().top() - getInsets().bottom())));
     }
 
     @Override
@@ -79,9 +79,9 @@ public final class Padding extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(localBounds, font);
-            if (child != null) fitChild(child, new Rect(insets().left(), insets().top(),
-                    Math.max(child.minimumWidth(), localBounds.width() - insets().left() - insets().right()),
-                    Math.max(child.minimumHeight(), localBounds.height() - insets().top() - insets().bottom())), font);
+            if (child != null) fitChild(child, new Rect(getInsets().left(), getInsets().top(),
+                    Math.max(child.getMinimumWidth(), localBounds.width() - getInsets().left() - getInsets().right()),
+                    Math.max(child.getMinimumHeight(), localBounds.height() - getInsets().top() - getInsets().bottom())), font);
         }
     }
 
@@ -90,14 +90,14 @@ public final class Padding extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
-            if (child != null && (child.isAlive() && child.visible())) child.draw(context, screenX, screenY);
+            if (child != null && (child.isAlive() && child.getVisible())) child.draw(context, screenX, screenY);
         }
     }
     @Override public void debugProperties(java.util.List<DebugProperty> out) {
         super.debugProperties(out);
-        out.add(DebugProperty.number(this,"top","Layout",()->insets().top(),0,10000));
-        out.add(DebugProperty.number(this,"right","Layout",()->insets().right(),0,10000));
-        out.add(DebugProperty.number(this,"bottom","Layout",()->insets().bottom(),0,10000));
-        out.add(DebugProperty.number(this,"left","Layout",()->insets().left(),0,10000));
+        out.add(DebugProperty.number(this,"top","Layout",()->getInsets().top(),0,10000));
+        out.add(DebugProperty.number(this,"right","Layout",()->getInsets().right(),0,10000));
+        out.add(DebugProperty.number(this,"bottom","Layout",()->getInsets().bottom(),0,10000));
+        out.add(DebugProperty.number(this,"left","Layout",()->getInsets().left(),0,10000));
     }
 }

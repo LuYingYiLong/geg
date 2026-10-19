@@ -22,7 +22,7 @@ public final class SignalScope implements SignalOwner, AutoCloseable {
     private boolean closed;
     private SignalScope parent;
 
-    @Override public SignalScope signalScope() { return this; }
+    @Override public SignalScope getSignalScope() { return this; }
     public boolean isClosed() { checkThread(); return closed; }
 
     public void checkThread() {

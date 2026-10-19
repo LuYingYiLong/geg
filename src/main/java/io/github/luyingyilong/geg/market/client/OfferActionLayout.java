@@ -5,7 +5,7 @@ import io.github.luyingyilong.ore.Button;
 
 /** Shared drawing and hit bounds for the two actions in an offer table cell. */
 final class OfferActionLayout {
-    private static final int BUTTON_HEIGHT = Button.Size.SMALL.height();
+    private static final int BUTTON_HEIGHT = Button.Size.SMALL.getHeight();
 
     private OfferActionLayout() {
     }

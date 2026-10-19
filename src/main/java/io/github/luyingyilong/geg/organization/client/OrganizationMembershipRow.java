@@ -15,23 +15,23 @@ import net.minecraft.network.chat.Component;
 
 /** Reserve the action's width before measuring the two-line introduction. */
 final class OrganizationMembershipRow extends Container {
-    private final Box row = new Box().orientation(Box.Orientation.HORIZONTAL);
+    private final Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL);
     private final Box details = new Box();
     private final Label description;
     private final Button open;
 
     OrganizationMembershipRow(OrganizationSyncPacket.Summary summary) {
-        details.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        Label name = new Label(Component.literal(summary.name())).color(OreTheme.TEXT_WHITE);
-        name.minimum(0, 16).sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        details.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        Label name = new Label(Component.literal(summary.name())).setColor(OreTheme.TEXT_WHITE);
+        name.setMinimum(0, 16).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         details.add(name);
-        description = new Label(Component.literal(summary.description())).color(OreTheme.TEXT_SECONDARY)
-                .wrap(Label.Wrap.CHARACTER).maxLines(2).overflow(Label.Overflow.ELLIPSIS);
-        description.sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        description.visible(!summary.description().isBlank());
+        description = new Label(Component.literal(summary.description())).setColor(OreTheme.TEXT_SECONDARY)
+                .setWrap(Label.Wrap.CHARACTER).setMaxLines(2).setOverflow(Label.Overflow.ELLIPSIS);
+        description.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        description.setVisible(!summary.description().isBlank());
         details.add(description);
         open = new Button(Component.translatable("organization.geg.details"));
-        open.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        open.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         row.add(details).add(open);
         addChild(row);
     }
@@ -42,8 +42,8 @@ final class OrganizationMembershipRow extends Container {
     @Override public Size measureSize(Font font, Size available) {
         Size action = open.measureSize(font, available);
         Size text = details.measureSize(font, new Size(Math.max(0, available.width() - action.width()), available.height()));
-        return new Size(Math.max(minimumWidth(), available.width()),
-                Math.max(minimumHeight(), Math.max(action.height(), text.height())));
+        return new Size(Math.max(getMinimumWidth(), available.width()),
+                Math.max(getMinimumHeight(), Math.max(action.height(), text.height())));
     }
 
     @Override public void layout(Rect bounds, Font font) {

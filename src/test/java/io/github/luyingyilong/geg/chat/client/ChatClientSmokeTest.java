@@ -53,8 +53,8 @@ public final class ChatClientSmokeTest {
                 ChatCanvasWidget canvas = canvas();
                 check(canvas.composer().input().isFocused(), "Composer did not receive native focus");
                 check(canvas.composer().input().getText().equals("/"), "Command shortcut lost its initial slash");
-                check(canvas.composer().input().cursorOffset() == 1, "Command cursor must start after the slash");
-                check(canvas.composer().input().preferredInputHeight() == 20, "Composer should occupy one row");
+                check(canvas.composer().input().getCursorOffset() == 1, "Command cursor must start after the slash");
+                check(canvas.composer().input().getPreferredInputHeight() == 20, "Composer should occupy one row");
                 canvas.composer().input().setText(MULTILINE);
                 canvas.composer().input().onKeyPressed(GLFW.GLFW_KEY_ENTER, 0, 0); next();
             } else if (phase == 3 && ClientChatState.messages(ChatChannel.WORLD).stream().anyMatch(m -> m.text().getString().equals(MULTILINE))) {
@@ -72,8 +72,8 @@ public final class ChatClientSmokeTest {
             } else if (phase == 6 && offlineVerified && waiting > 15) {
                 ChatCanvasWidget canvas = canvas(); Window window = field(canvas, "window", Window.class);
                 Drawer drawer = field(canvas, "drawer", Drawer.class);
-                check(drawer.placement() == Drawer.Placement.LEFT, "Chat Drawer must open from the left");
-                check(!drawer.closable() && !drawer.children().get(0).children().get(0).children().get(0).visible(),
+                check(drawer.getPlacement() == Drawer.Placement.LEFT, "Chat Drawer must open from the left");
+                check(!drawer.getClosable() && !drawer.getChildren().get(0).getChildren().get(0).getChildren().get(0).getVisible(),
                         "Chat Drawer header should be hidden");
                 var inputRenderer = field(canvas.composer().input(),
                         brachy.modularui.widgets.textfield.BaseTextFieldWidget.class, "renderer",
@@ -89,15 +89,15 @@ public final class ChatClientSmokeTest {
                     check(point.y == caretTop, "Editing mixed text moved the caret vertically");
                 }
                 for (int width : new int[]{127, 128, 129, 640}) for (int height : new int[]{127, 240}) {
-                    drawer.width(ChatLayout.drawerWidth(width)); window.layoutViewport(width, height, mc.font);
-                    var input = canvas.composer().editor().absoluteBounds(); var panel = drawer.panelBounds();
+                    drawer.setWidth(ChatLayout.drawerWidth(width)); window.layoutViewport(width, height, mc.font);
+                    var input = canvas.composer().editor().getAbsoluteBounds(); var panel = drawer.getPanelBounds();
                     check(panel.x() == 0, "Left Drawer is not anchored to the left edge");
                     check(input.x() >= panel.x() && input.right() <= panel.right(), "Composer horizontally overflowed " + width);
                     check(input.bottom() <= panel.bottom(), "Composer vertically overflowed " + width + "x" + height);
-                    check(input.height() == 20 && canvas.composer().bounds().height() == 20,
+                    check(input.height() == 20 && canvas.composer().getBounds().height() == 20,
                             "Composer must stay one row without an action/footer row");
                 }
-                drawer.width(ChatLayout.drawerWidth(mc.getWindow().getGuiScaledWidth()));
+                drawer.setWidth(ChatLayout.drawerWidth(mc.getWindow().getGuiScaledWidth()));
                 window.layoutViewport(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight(), mc.font);
                 canvas.composer().input().setText("keep me"); canvas.composer().store();
                 io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ESCAPE, 0, canvas.getContext());
@@ -119,7 +119,7 @@ public final class ChatClientSmokeTest {
                 check(ClientChatState.hud().stream().filter(m -> m.text().getString().contains(NATIVE_MESSAGE)).count() == 1,
                         "Native chat bridge duplicated the HUD entry");
                 Screenshot.grab(mc.gameDirectory, "chat-empty-composer.png", mc.getMainRenderTarget(), message -> { });
-                canvas().composer().input().setText("/chat w"); canvas().composer().input().cursorOffset(7); next();
+                canvas().composer().input().setText("/chat w"); canvas().composer().input().setCursorOffset(7); next();
             } else if (phase == 10 && canvas().composer().suggestionsVisible()) {
                 check(canvas().composer().suggestions().stream().anyMatch(s -> s.getText().equals("world")), "Missing server command completion");
                 canvas().composer().input().onKeyPressed(GLFW.GLFW_KEY_TAB, 0, 0);
@@ -140,11 +140,11 @@ public final class ChatClientSmokeTest {
                         "Link confirmation did not return to the actual Ore screen");
                 ChatCanvasWidget canvas = canvas(); Drawer drawer = field(canvas, "drawer", Drawer.class);
                 Window window = field(canvas, "window", Window.class);
-                window.focusManager().requestFocus(canvas.composer().editor(), canvas.getContext());
+                window.getFocusManager().requestFocus(canvas.composer().editor(), canvas.getContext());
                 canvas.composer().input().setText("");
                 canvas.composer().input().onKeyPressed(GLFW.GLFW_KEY_ENTER, 0, GLFW.GLFW_MOD_SHIFT);
                 check(drawer.isOpen(), "Shift+Enter must insert a newline, not close chat");
-                check(canvas.composer().input().getText().equals("\n") && canvas.composer().input().preferredInputHeight() == 20,
+                check(canvas.composer().input().getText().equals("\n") && canvas.composer().input().getPreferredInputHeight() == 20,
                         "Shift+Enter should preserve multiline editing inside the one-row viewport");
                 canvas.composer().input().setText(" \n ");
                 canvas.composer().input().onKeyPressed(GLFW.GLFW_KEY_ENTER, 0, 0);

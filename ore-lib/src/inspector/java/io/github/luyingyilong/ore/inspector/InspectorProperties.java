@@ -28,7 +28,8 @@ public final class InspectorProperties {
                 if (metadata == null || getter.isBridge() || getter.isSynthetic()) continue;
                 if (Modifier.isStatic(getter.getModifiers()) || getter.getParameterCount() != 0)
                     throw invalid(getter, "Expected an instance getter with no arguments");
-                String key = metadata.key().isEmpty() ? getter.getName() : metadata.key();
+                String propertyName = propertyName(getter);
+                String key = metadata.key().isEmpty() ? propertyName : metadata.key();
                 if (key.isBlank() || !keys.add(key)) throw invalid(getter, "Duplicate or empty property key: " + key);
                 if (!Double.isFinite(metadata.min()) || !Double.isFinite(metadata.max()) || metadata.min() > metadata.max())
                     throw invalid(getter, "Invalid numeric bounds");
@@ -43,7 +44,9 @@ public final class InspectorProperties {
                 else if (valueType == int.class || valueType == long.class || valueType == float.class || valueType == double.class)
                     kind = "number";
                 else throw invalid(getter, "Unsupported value type: " + valueType.getName());
-                String setterName = metadata.setter().isEmpty() ? getter.getName() : metadata.setter();
+                String setterName = metadata.setter().isEmpty()
+                        ? "set" + Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1)
+                        : metadata.setter();
                 Method setter;
                 try {
                     setter = type.getMethod(setterName, valueType);
@@ -59,6 +62,19 @@ public final class InspectorProperties {
     };
 
     private InspectorProperties() {
+    }
+
+    private static String propertyName(Method getter) {
+        String name = getter.getName();
+        String suffix;
+        if (name.startsWith("get") && name.length() > 3) suffix = name.substring(3);
+        else if (name.startsWith("is") && name.length() > 2 && getter.getReturnType() == boolean.class)
+            suffix = name.substring(2);
+        else throw invalid(getter, "Inspectable properties require a get/is accessor");
+        // Follow JavaBeans acronym handling without introducing a java.desktop dependency.
+        if (suffix.length() > 1 && Character.isUpperCase(suffix.charAt(0)) && Character.isUpperCase(suffix.charAt(1)))
+            return suffix;
+        return Character.toLowerCase(suffix.charAt(0)) + suffix.substring(1);
     }
 
     public static List<DebugProperty> properties(Control target) {

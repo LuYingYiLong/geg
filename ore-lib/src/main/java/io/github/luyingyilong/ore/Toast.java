@@ -22,8 +22,8 @@ public final class Toast extends Container {
     public static final long EXIT_DURATION = 160L;
     private static final int INSET_X = 4;
     private static final int INSET_Y = 2;
-    private final Label label = ownPart("label", new Label().wrap(Label.Wrap.WORD).maxLines(3).overflow(Label.Overflow.ELLIPSIS)
-            .opticalCenter(true).align(Label.Horizontal.CENTER, Label.Vertical.CENTER));
+    private final Label label = ownPart("label", new Label().setWrap(Label.Wrap.WORD).setMaxLines(3).setOverflow(Label.Overflow.ELLIPSIS)
+            .setOpticalCenter(true).setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER));
     private final LongSupplier clock;
     private final Consumer<OreSounds.Cue> sound;
     private Type type = Type.NEUTRAL;
@@ -39,16 +39,16 @@ public final class Toast extends Container {
 
     public Toast(Component text) {
         this();
-        text(text);
+        setText(text);
     }
 
     Toast(LongSupplier clock, Consumer<OreSounds.Cue> sound) {
         this.clock = Objects.requireNonNull(clock);
         this.sound = Objects.requireNonNull(sound);
         addChild(label);
-        type(type);
-        visible(false);
-        sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+        setType(type);
+        setVisible(false);
+        setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
     }
 
     private static double easeIn(double phase) {
@@ -59,44 +59,44 @@ public final class Toast extends Container {
         return area.translated(1, 1);
     }
 
-    public Toast text(Component text) {
-        label.text(Objects.requireNonNull(text));
+    public Toast setText(Component text) {
+        label.setText(Objects.requireNonNull(text));
         return this;
     }
 
-    public Component text() {
-        return label.text();
+    public Component getText() {
+        return label.getText();
     }
 
     /**
      * Milliseconds of fully displayed time; zero keeps the toast open until close().
      */
-    public Toast duration(long milliseconds) {
+    public Toast setDuration(long milliseconds) {
         if (milliseconds < 0) throw new IllegalArgumentException("Negative toast duration");
         duration = milliseconds;
         return this;
     }
 
-    public long duration() {
+    public long getDuration() {
         return duration;
     }
 
-    public Toast type(Type type) {
+    public Toast setType(Type type) {
         this.type = Objects.requireNonNull(type);
-        label.color(type.style.textColor());
+        label.setColor(type.style.textColor());
         return this;
     }
 
-    public Type type() {
+    public Type getType() {
         return type;
     }
 
     public Toast open() {
-        if (started && !finished()) return this;
+        if (started && !getFinished()) return this;
         started = true;
         closing = false;
         openedAt = clock.getAsLong();
-        visible(true);
+        setVisible(true);
         sound.accept(OreSounds.Cue.TOAST);
         return this;
     }
@@ -105,21 +105,21 @@ public final class Toast extends Container {
      * Keyed updates keep the existing toast and sound, and renew its displayed lifetime.
      */
     public Toast refresh() {
-        if (!started || finished()) return open();
+        if (!started || getFinished()) return open();
         openedAt = Math.max(openedAt, clock.getAsLong() - ENTER_DURATION);
         closing = false;
         return this;
     }
 
     public Toast close() {
-        if (!started || closing || finished()) return this;
-        closingFrom = progress();
+        if (!started || closing || getFinished()) return this;
+        closingFrom = getProgress();
         closingAt = clock.getAsLong();
         closing = true;
         return this;
     }
 
-    public boolean finished() {
+    public boolean getFinished() {
         if (!started) return true;
         long elapsed = Math.max(0L, clock.getAsLong() - (closing ? closingAt : openedAt));
         if (closing) return elapsed >= EXIT_DURATION;
@@ -130,7 +130,7 @@ public final class Toast extends Container {
     /**
      * Visibility fraction used by the host's slide from above the GUI viewport.
      */
-    public double progress() {
+    public double getProgress() {
         if (!started) return 0.0D;
         long elapsed = Math.max(0L, clock.getAsLong() - (closing ? closingAt : openedAt));
         if (closing) return closingFrom * (1.0D - easeIn(elapsed / (double) EXIT_DURATION));
@@ -144,7 +144,7 @@ public final class Toast extends Container {
         if (!isAlive()) return new Size(0, 0);
         int width = Math.max(0, Math.min(available.width(), label.measureWidth(font, available.width()) + INSET_X * 2));
         int height = label.measureHeight(font, Math.max(1, width - INSET_X * 2)) + INSET_Y * 2;
-        return new Size(Math.max(minimumWidth(), width), Math.max(minimumHeight(), height));
+        return new Size(Math.max(getMinimumWidth(), width), Math.max(getMinimumHeight(), height));
     }
 
     @Override
@@ -165,13 +165,13 @@ public final class Toast extends Container {
      * Global GUI adapter: the same Label painter, fonts and colors as other Ore controls.
      */
     public void drawGui(GuiGraphics graphics, Font font, Rect area) {
-        if (!visible() || finished() || area.width() < 1 || area.height() < 1) return;
+        if (!getVisible() || getFinished() || area.width() < 1 || area.height() < 1) return;
         Rect shadow = shadowBounds(area);
         // Paint the shadow behind the opaque face, leaving only its 1px right/bottom offset visible.
         graphics.fill(shadow.x(), shadow.y(), shadow.right(), shadow.bottom(), OreTheme.TOAST_SHADOW);
         graphics.fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.TEXT_DARK);
         if (area.width() > 2 && area.height() > 2)
-            graphics.fill(area.x() + 1, area.y() + 1, area.right() - 1, area.bottom() - 1, type.color());
+            graphics.fill(area.x() + 1, area.y() + 1, area.right() - 1, area.bottom() - 1, type.getColor());
         label.paint(graphics, font, textBounds(area), -1, -1);
     }
 
@@ -180,7 +180,7 @@ public final class Toast extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
-            drawGui(context.getGraphics(), context.getFont(), screenBounds(screenX, screenY));
+            drawGui(context.getGraphics(), context.getFont(), getScreenBounds(screenX, screenY));
         }
     }
 
@@ -199,8 +199,8 @@ public final class Toast extends Container {
             this.style = style;
         }
 
-        public int color() {
-            return style.color();
+        public int getColor() {
+            return style.getColor();
         }
     }
 }

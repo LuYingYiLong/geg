@@ -33,7 +33,7 @@ public final class LifecycleTest {
     private static void ordering() {
         List<String> log = new ArrayList<>(); Probe p = new Probe("p", log), c = new Probe("c", log), part = new Probe("part", log);
         p.addChild(c); p.ownPart("internal", part);
-        Window root = new Window(true).content(p); root.prepareTree();
+        Window root = new Window(true).setContent(p); root.prepareTree();
         before(log,"p:ENTER_TREE","c:ENTER_TREE"); before(log,"c:READY","p:READY"); before(log,"part:READY","p:READY");
         check(c.isInsideTree() && part.isReady(), "Parts enter with their owner");
         root.hostDetached(); LifecycleScheduler.notifications(); check(c.isInsideTree() && c.isSuspended(), "Suspend is not exit");
@@ -51,7 +51,7 @@ public final class LifecycleTest {
                 if(n.type() == ControlNotification.Type.ENTER_TREE) { addChild(added); removeChild(removed); }
             }
         };
-        p.addChild(removed); Window root = new Window(true).content(p); root.prepareTree();
+        p.addChild(removed); Window root = new Window(true).setContent(p); root.prepareTree();
         before(log,"added:ENTER_TREE","added:READY"); before(log,"added:READY","p:READY");
         check(!removed.isReady(), "Removed during preparation never receives ready");
         root.queueFree(); removed.queueFree(); LifecycleScheduler.flush();
@@ -61,7 +61,7 @@ public final class LifecycleTest {
         Probe parent = new Probe("parent", log) { @Override protected void notification(ControlNotification n) {
             super.notification(n); if (n.type() == ControlNotification.Type.ENTER_TREE) child.queueFree();
         }};
-        parent.addChild(child); Window root = new Window(true).content(parent); root.prepareTree(); LifecycleScheduler.flush();
+        parent.addChild(child); Window root = new Window(true).setContent(parent); root.prepareTree(); LifecycleScheduler.flush();
         before(log, "child:ENTER_TREE", "child:EXIT_TREE");
         check(!child.isReady() && child.isDisposed(), "Queued entry preserves transition history, without spurious READY");
         root.queueFree(); LifecycleScheduler.flush();
@@ -69,7 +69,7 @@ public final class LifecycleTest {
     private static void adapterReady() {
         boolean[] attached = {false};
         Control field = new Control() { @Override protected boolean lifecycleReady() { return attached[0]; } };
-        Window root = new Window(true).content(field);
+        Window root = new Window(true).setContent(field);
         root.prepareTree(); check(root.isInsideTree() && !field.isReady() && !root.isReady(), "Host preparation waits for input adapter");
         attached[0] = true; root.prepareTree(); check(field.isReady() && root.isReady(), "Adapter activation completes READY");
         root.queueFree(); LifecycleScheduler.flush();
@@ -85,17 +85,17 @@ public final class LifecycleTest {
     }
     private static void pointer() {
         int[] activations={0}; Button button=new Button(); button.pressed().connect(button,()->activations[0]++);
-        Window root=new Window(true).content(button);root.layoutViewport(100,40,null);
+        Window root=new Window(true).setContent(button);root.layoutViewport(100,40,null);
         WindowInputs.press(root,5,5,null);button.queueFree();WindowInputs.release(root,5,5);
-        check(activations[0]==0 && root.focusManager().focused()==null,"Queued button cancels capture and focus immediately");
+        check(activations[0]==0 && root.getFocusManager().getFocused()==null,"Queued button cancels capture and focus immediately");
         check(root.hitTop(5,5)!=button,"Pending button cannot be hit");
         root.queueFree();LifecycleScheduler.flush();
     }
     private static void visibility() {
         List<String> log=new ArrayList<>();Probe p=new Probe("p",log),c=new Probe("c",log);p.addChild(c);
-        Window root=new Window(true).content(p);root.prepareTree();log.clear();
-        p.visible(false);LifecycleScheduler.notifications();check(log.contains("c:VISIBILITY_CHANGED"),"Ancestor hiding propagates effective visibility");
-        check(c.visible(),"Inherited visibility never rewrites the local property");
+        Window root=new Window(true).setContent(p);root.prepareTree();log.clear();
+        p.setVisible(false);LifecycleScheduler.notifications();check(log.contains("c:VISIBILITY_CHANGED"),"Ancestor hiding propagates effective visibility");
+        check(c.getVisible(),"Inherited visibility never rewrites the local property");
         p.layout(new Rect(0,0,20,10),null);p.layout(new Rect(0,0,30,15),null);LifecycleScheduler.notifications();
         check(Collections.frequency(log,"p:RESIZED")==1,"Resize merged at layout commit");
         root.queueFree();LifecycleScheduler.flush();
@@ -106,7 +106,7 @@ public final class LifecycleTest {
             super.notification(n);
             if (n.type() == ControlNotification.Type.PRE_FREE) { removeChild(c); LifecycleScheduler.notifications(); }
         }};
-        p.addChild(c); Window root = new Window(true).content(p); root.prepareTree(); log.clear();
+        p.addChild(c); Window root = new Window(true).setContent(p); root.prepareTree(); log.clear();
         root.queueFree(); LifecycleScheduler.flush();
         before(log, "p:PRE_FREE", "c:PRE_FREE"); before(log, "c:PRE_FREE", "c:EXIT_TREE");
         check(root.isDisposed() && c.isDisposed(), "Reentrant notification drain cannot reorder cleanup transitions");
@@ -121,7 +121,7 @@ public final class LifecycleTest {
     }
     private static class Probe extends Control {
         final String name;final List<String> log;
-        Probe(String name,List<String> log){this.name=name;this.log=log;debugName(name);signalScope().own(()->log.add(name+":release"));}
+        Probe(String name,List<String> log){this.name=name;this.log=log;setDebugName(name);getSignalScope().own(()->log.add(name+":release"));}
         @Override protected void notification(ControlNotification n){log.add(name+":"+n.type());}
     }
     private static void before(List<String> log,String first,String next){check(log.indexOf(first)>=0&&log.indexOf(first)<log.indexOf(next),first+" before "+next+": "+log);}

@@ -23,29 +23,29 @@ public final class Divider extends Control {
     private Divider(WidgetThemeKey<WidgetTheme> theme, boolean defaultTheme) {
         this.horizontalTheme = theme;
         this.defaultTheme = defaultTheme;
-        minimum(0, 2);
-        sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        setMinimum(0, 2);
+        setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
     }
 
-    public Layout layout() { return layout; }
-    public Divider layout(Layout layout) {
+    public Layout getLayout() { return layout; }
+    public Divider setLayout(Layout layout) {
         java.util.Objects.requireNonNull(layout);
         if (this.layout == layout) return this;
         this.layout = layout;
         if (layout == Layout.HORIZONTAL) {
-            minimum(0, 2);
-            sizeFlagsHorizontal(SizeFlags.SIZE_FILL).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+            setMinimum(0, 2);
+            setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         } else {
-            minimum(1, 0);
-            sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).sizeFlagsVertical(SizeFlags.SIZE_FILL);
+            setMinimum(1, 0);
+            setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
         }
         requestLayout(); return this;
     }
 
-    public int thickness() { return layout == Layout.VERTICAL ? 1 : 2; }
+    public int getThickness() { return layout == Layout.VERTICAL ? 1 : 2; }
 
     @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-        var area = screenBounds(screenX, screenY);
+        var area = getScreenBounds(screenX, screenY);
         if (layout == Layout.VERTICAL) {
             if (verticalPainter == null) verticalPainter = ownPart("verticalPainter", new Panel(OreTheme.V_DIVIDER));
             int width = Math.min(1, area.width());

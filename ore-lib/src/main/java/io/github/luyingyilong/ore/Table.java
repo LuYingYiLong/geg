@@ -97,29 +97,29 @@ public final class Table<T> extends Container {
             this.color = color;
         }
 
-        public TextCell<T> overflow(Label.Overflow overflow) {
+        public TextCell<T> setOverflow(Label.Overflow overflow) {
             this.overflow = Objects.requireNonNull(overflow);
             return this;
         }
 
-        public TextCell<T> wrap(Label.Wrap wrap) {
+        public TextCell<T> setWrap(Label.Wrap wrap) {
             this.wrap = Objects.requireNonNull(wrap);
             return this;
         }
 
-        public TextCell<T> maxLines(int maxLines) {
+        public TextCell<T> setMaxLines(int maxLines) {
             if (maxLines < 1) throw new IllegalArgumentException("At least one line is required");
             this.maxLines = maxLines;
             return this;
         }
 
-        public TextCell<T> align(Label.Horizontal horizontal, Label.Vertical vertical) {
+        public TextCell<T> setAlignment(Label.Horizontal horizontal, Label.Vertical vertical) {
             this.horizontal = Objects.requireNonNull(horizontal);
             this.vertical = Objects.requireNonNull(vertical);
             return this;
         }
 
-        public TextCell<T> inset(int horizontal, int vertical) {
+        public TextCell<T> setInset(int horizontal, int vertical) {
             if (horizontal < 0 || vertical < 0) throw new IllegalArgumentException("Negative cell inset");
             horizontalInset = horizontal;
             verticalInset = vertical;
@@ -137,15 +137,15 @@ public final class Table<T> extends Container {
         }
 
         @Override public Control createControl() {
-            return new Padding(insets()).child(new Label().color(color).overflow(overflow)
-                    .wrap(wrap).maxLines(maxLines).align(horizontal, vertical));
+            return new Padding(insets()).setChild(new Label().setColor(color).setOverflow(overflow)
+                    .setWrap(wrap).setMaxLines(maxLines).setAlignment(horizontal, vertical));
         }
 
         @Override public void bindControl(Control control, T row) {
             Padding padding = (Padding) control;
-            padding.insets(insets());
-            ((Label) padding.children().get(0)).text(Objects.requireNonNull(text.apply(row))).color(color)
-                    .overflow(overflow).wrap(wrap).maxLines(maxLines).align(horizontal, vertical);
+            padding.setInsets(insets());
+            ((Label) padding.getChildren().get(0)).setText(Objects.requireNonNull(text.apply(row))).setColor(color)
+                    .setOverflow(overflow).setWrap(wrap).setMaxLines(maxLines).setAlignment(horizontal, vertical);
         }
 
         private Padding.Insets insets() {
@@ -173,8 +173,8 @@ public final class Table<T> extends Container {
             this.cell = Objects.requireNonNull(cell);
         }
 
-        public String key() { return key; }
-        public Component title() { return title; }
+        public String getKey() { return key; }
+        public Component getTitle() { return title; }
     }
 
     public record Row<T>(int index, T item, Object key, Rect bounds) { }
@@ -213,9 +213,9 @@ public final class Table<T> extends Container {
     private Rect drawingBody;
 
     public Table() {
-        signalScope().own(() -> { activeViews.clear(); recycledViews.clear(); headerLabels.clear(); });
-        focusable(true);
-        focusExpansion(1);
+        getSignalScope().own(() -> { activeViews.clear(); recycledViews.clear(); headerLabels.clear(); });
+        setFocusable(true);
+        setFocusExpansion(1);
     }
 
     @Override public boolean acceptsFocus() {
@@ -232,15 +232,15 @@ public final class Table<T> extends Container {
         return layoutRows.get(0);
     }
 
-    @Override public Rect focusBounds() {
+    @Override public Rect getFocusBounds() {
         Row<T> row = focusedRow();
-        if (row == null) return absoluteBounds();
-        Rect origin = absoluteBounds();
+        if (row == null) return getAbsoluteBounds();
+        Rect origin = getAbsoluteBounds();
         List<ActionTarget<T>> targets = focusTargets(row);
         Rect area = focusedAction >= 0 && focusedAction < targets.size()
                 ? targets.get(focusedAction).bounds()
-                : row.bounds().translated(origin.x(), origin.y() + headerHeight() - scroll);
-        int top = Math.max(area.y(), origin.y() + headerHeight());
+                : row.bounds().translated(origin.x(), origin.y() + getHeaderHeight() - scroll);
+        int top = Math.max(area.y(), origin.y() + getHeaderHeight());
         int bottom = Math.min(area.bottom(), origin.bottom());
         return new Rect(area.x(), top, area.width(), Math.max(0, bottom - top));
     }
@@ -287,13 +287,13 @@ public final class Table<T> extends Container {
 
     @Override public boolean onActivationPressed(int keyCode) {
         PressTarget target = keyTarget();
-        if (target == null || !visible()) return false;
+        if (target == null || !getVisible()) return false;
         gesture.keyDown(keyCode, target);
         return true;
     }
 
     @Override public boolean onActivationReleased(int keyCode) {
-        var release = gesture.keyUp(keyCode, visible() ? keyTarget() : null);
+        var release = gesture.keyUp(keyCode, getVisible() ? keyTarget() : null);
         if (release.target() != null) activate();
         return release.handled();
     }
@@ -311,7 +311,7 @@ public final class Table<T> extends Container {
 
     @Override public void cancelInteraction() {
         gesture.cancel();
-        for (Control child : children()) child.cancelInteractions();
+        for (Control child : getChildren()) child.cancelInteractions();
     }
     @Override public void onFocusChanged(boolean focused) { if (!focused) cancelInteraction(); }
 
@@ -319,8 +319,8 @@ public final class Table<T> extends Container {
 
     private List<ActionTarget<T>> focusTargets(Row<T> row) {
         List<ActionTarget<T>> targets = new ArrayList<>();
-        Rect bounds = row.bounds().translated(absoluteBounds().x(),
-                absoluteBounds().y() + headerHeight() - scroll);
+        Rect bounds = row.bounds().translated(getAbsoluteBounds().x(),
+                getAbsoluteBounds().y() + getHeaderHeight() - scroll);
         if (compact) {
             int x = bounds.x() + COMPACT_INSET;
             int width = Math.max(0, bounds.width() - 2 * COMPACT_INSET);
@@ -363,7 +363,7 @@ public final class Table<T> extends Container {
         return this;
     }
 
-    public Table<T> rowKey(Function<T, Object> rowKey) {
+    public Table<T> setRowKey(Function<T, Object> rowKey) {
         cancelInteraction();
         this.rowKey = Objects.requireNonNull(rowKey);
         dirty = true;
@@ -372,17 +372,17 @@ public final class Table<T> extends Container {
 
     public Signal<T> rowActivated() { return rowActivated.signal(); }
 
-    public Table<T> empty(Component empty) {
+    public Table<T> setEmpty(Component empty) {
         this.empty = Objects.requireNonNull(empty);
         return this;
     }
 
-    public Table<T> headerColor(int color) {
+    public Table<T> setHeaderColor(int color) {
         headerColor = color;
         return this;
     }
 
-    public Table<T> headerVisible(boolean visible) {
+    public Table<T> setHeaderVisible(boolean visible) {
         if (headerVisible != visible) {
             cancelInteraction();
             headerVisible = visible;
@@ -391,7 +391,7 @@ public final class Table<T> extends Container {
         return this;
     }
 
-    public void rows(List<T> rows) {
+    public void setRows(List<T> rows) {
         List<T> next = List.copyOf(rows);
         if (this.rows.equals(next)) return;
         cancelInteraction();
@@ -425,21 +425,21 @@ public final class Table<T> extends Container {
         if (!dirty) updateVisible(null);
     }
 
-    public int scroll() { return scroll; }
-    public int contentHeight() { return contentHeight; }
-    public int activeViews() { return activeViews.size(); }
-    public boolean compact() { return compact; }
-    public int headerHeight() { return !headerVisible || compact ? 0 : HEADER_HEIGHT; }
-    public List<Row<T>> layoutRows() { return List.copyOf(layoutRows); }
-    public int[] columnWidths() { return columnWidths.clone(); }
+    public int getScroll() { return scroll; }
+    public int getContentHeight() { return contentHeight; }
+    public int getActiveViews() { return activeViews.size(); }
+    public boolean getCompact() { return compact; }
+    public int getHeaderHeight() { return !headerVisible || compact ? 0 : HEADER_HEIGHT; }
+    public List<Row<T>> getLayoutRows() { return List.copyOf(layoutRows); }
+    public int[] getColumnWidths() { return columnWidths.clone(); }
 
-    @Override public List<Control> children() {
+    @Override public List<Control> getChildren() {
         // Recycled views may be attached in a different order; keyboard Tab still follows row order.
         return activeViews.entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .map(entry -> (Control) entry.getValue()).toList();
     }
 
-    public List<Row<T>> visibleRows() {
+    public List<Row<T>> getVisibleRows() {
         List<Row<T>> visible = new ArrayList<>();
         int bottom = scroll + bodyHeight();
         for (Row<T> row : layoutRows)
@@ -447,17 +447,17 @@ public final class Table<T> extends Container {
         return List.copyOf(visible);
     }
 
-    private int bodyHeight() { return Math.max(0, bounds().height() - headerHeight()); }
+    private int bodyHeight() { return Math.max(0, getBounds().height() - getHeaderHeight()); }
 
     /** The same viewport clips painting, pointer input and keyboard focus outlines. */
-    public Rect bodyBounds() {
-        Rect area = absoluteBounds();
-        return new Rect(area.x(), area.y() + headerHeight(), area.width(), bodyHeight());
+    public Rect getBodyBounds() {
+        Rect area = getAbsoluteBounds();
+        return new Rect(area.x(), area.y() + getHeaderHeight(), area.width(), bodyHeight());
     }
 
     public void revealControl(Control control) {
-        Rect area = control.absoluteBounds();
-        Rect body = bodyBounds();
+        Rect area = control.getAbsoluteBounds();
+        Rect body = getBodyBounds();
         if (area.y() < body.y()) setScroll(scroll + area.y() - body.y());
         else if (area.bottom() > body.bottom()) setScroll(scroll + area.bottom() - body.bottom());
     }
@@ -479,7 +479,7 @@ public final class Table<T> extends Container {
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             // Scroll may lay out this table several times while resolving scrollbar space.
             // Resizing does not invalidate a retained cell's press/release gesture.
-            if (!bounds().equals(localBounds)) gesture.cancel();
+            if (!getBounds().equals(localBounds)) gesture.cancel();
             if (rowKey == null) throw new IllegalStateException("A table requires a row key");
             if (lastWidth >= 0 && lastWidth != localBounds.width() && !dirty && !resetScroll) saveAnchor();
             super.layout(localBounds, font);
@@ -536,9 +536,9 @@ public final class Table<T> extends Container {
 
     private void recycle(RowView view) {
         // A pooled Button must not silently inherit focus when it is rebound to another record.
-        for (Control node = parent(); node != null; node = node.parent()) {
+        for (Control node = getParent(); node != null; node = node.getParent()) {
             if (node instanceof Window window) {
-                window.focusManager().forgetSubtree(view);
+                window.getFocusManager().forgetSubtree(view);
                 break;
             }
         }
@@ -569,7 +569,7 @@ public final class Table<T> extends Container {
                 super.addChild(view);
                 activeViews.put(row.index(), view);
             }
-            view.layout(new Rect(0, headerHeight() + row.bounds().y() - scroll,
+            view.layout(new Rect(0, getHeaderHeight() + row.bounds().y() - scroll,
                     row.bounds().width(), row.bounds().height()), font == null ? lastFont : font);
         }
     }
@@ -619,7 +619,7 @@ public final class Table<T> extends Container {
     }
 
     private int compactRowHeight(T item, Font font) {
-        int contentWidth = Math.max(0, bounds().width() - 2 * COMPACT_INSET);
+        int contentWidth = Math.max(0, getBounds().width() - 2 * COMPACT_INSET);
         int height = 2 * COMPACT_INSET;
         for (Column<T> column : columns)
             height += COMPACT_LABEL_HEIGHT + compactCellHeight(column, item, font, contentWidth);
@@ -631,22 +631,22 @@ public final class Table<T> extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
-            if (bounds().width() <= 0 || bounds().height() <= 0) return;
+            if (getBounds().width() <= 0 || getBounds().height() <= 0) return;
             if (rowBackground == null) rowBackground = ownPart("rowBackground", new Panel(OreTheme.BAR));
             updateVisible(context.getFont());
-            Rect area = screenBounds(screenX, screenY);
+            Rect area = getScreenBounds(screenX, screenY);
             if (headerVisible && !compact) drawHeader(context, area);
-            Rect body = new Rect(area.x(), area.y() + headerHeight(), area.width(), bodyHeight());
+            Rect body = new Rect(area.x(), area.y() + getHeaderHeight(), area.width(), bodyHeight());
             drawingBody = body;
             if (body.height() <= 0) return;
             GuiGraphics graphics = context.getGraphics();
             graphics.enableScissor(body.x(), body.y(), body.right(), body.bottom());
             DebugBridge.backend().clip(body);
             if (rows.isEmpty()) {
-                drawText(this, "empty", emptyLabel.text(empty), context, new Rect(body.x() + 2, body.y() + 8,
+                drawText(this, "empty", emptyLabel.setText(empty), context, new Rect(body.x() + 2, body.y() + 8,
                                 Math.max(0, body.width() - 4), 12));
             } else {
-                for (Row<T> row : visibleRows()) {
+                for (Row<T> row : getVisibleRows()) {
                     RowView view = activeViews.get(row.index());
                     if (view != null) view.draw(context, screenX, screenY);
                 }
@@ -666,7 +666,7 @@ public final class Table<T> extends Container {
     }
 
     private void drawText(Control owner, String name, Label label, ModularGuiContext context, Rect area) {
-        label.color(headerColor).overflow(Label.Overflow.CLIP).align(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+        label.setColor(headerColor).setOverflow(Label.Overflow.CLIP).setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
         label.layout(area, context.getFont());
         DebugBridge.backend().internal(owner, name, label);
         label.draw(context, 0, 0);
@@ -718,12 +718,12 @@ public final class Table<T> extends Container {
     }
 
     public Row<T> hitRow(int rootX, int rootY) {
-        Rect area = absoluteBounds();
-        int bodyY = area.y() + headerHeight();
+        Rect area = getAbsoluteBounds();
+        int bodyY = area.y() + getHeaderHeight();
         if (rootX < area.x() || rootX >= area.right() || rootY < bodyY || rootY >= area.bottom())
             return null;
         int contentY = rootY - bodyY + scroll;
-        for (Row<T> row : visibleRows())
+        for (Row<T> row : getVisibleRows())
             if (row.bounds().y() <= contentY && contentY < row.bounds().bottom()) return row;
         return null;
     }
@@ -739,8 +739,8 @@ public final class Table<T> extends Container {
                 focusedAction = index;
                 break;
             }
-        Rect bounds = row.bounds().translated(absoluteBounds().x(),
-                absoluteBounds().y() + headerHeight() - scroll);
+        Rect bounds = row.bounds().translated(getAbsoluteBounds().x(),
+                getAbsoluteBounds().y() + getHeaderHeight() - scroll);
         if (compact) {
             int x = bounds.x() + COMPACT_INSET;
             int width = Math.max(0, bounds.width() - 2 * COMPACT_INSET);
@@ -768,7 +768,7 @@ public final class Table<T> extends Container {
     }
 
     @Override protected boolean wheel(int x,int y,double delta,boolean horizontal) {
-        if(horizontal || !bodyBounds().contains(x,y))return false;
+        if(horizontal || !getBodyBounds().contains(x,y))return false;
         int before=scroll;scrollBy(-(int)Math.signum(delta)*(compact?36:23));return before!=scroll;
     }
 
@@ -788,7 +788,7 @@ public final class Table<T> extends Container {
     }
 
     @Override protected boolean pointerUp(int rootX, int rootY, boolean over) {
-        var release = gesture.pointerUp(pointerTarget(rootX, rootY), over && visible());
+        var release = gesture.pointerUp(pointerTarget(rootX, rootY), over && getVisible());
         if (release.target() != null) click(rootX, rootY);
         return release.handled();
     }
@@ -799,7 +799,7 @@ public final class Table<T> extends Container {
         List<ActionTarget<T>> actions = focusTargets(row);
         for (ActionTarget<T> action : actions) if (action.bounds().contains(rootX, rootY))
             return new PressTarget(row.key(), action.columnKey(), action.index(), row.item());
-        Rect bounds = row.bounds().translated(absoluteBounds().x(), absoluteBounds().y() + headerHeight() - scroll);
+        Rect bounds = row.bounds().translated(getAbsoluteBounds().x(), getAbsoluteBounds().y() + getHeaderHeight() - scroll);
         if (compact) {
             int y = bounds.y() + COMPACT_INSET;
             for (Column<T> column : columns) {
@@ -880,8 +880,8 @@ public final class Table<T> extends Container {
                 render(context, screenX, screenY);
                 for (Column<T> column : columns) {
                     Control control = controls.get(column.key);
-                    if (control == null || !(control.isAlive() && control.visible())) continue;
-                    Rect area = control.screenBounds(screenX, screenY);
+                    if (control == null || !(control.isAlive() && control.getVisible())) continue;
+                    Rect area = control.getScreenBounds(screenX, screenY);
                     context.getGraphics().enableScissor(area.x(), area.y(), area.right(), area.bottom());
                     DebugBridge.backend().clip(area);
                     try { control.draw(context, screenX, screenY); }
@@ -891,7 +891,7 @@ public final class Table<T> extends Container {
     }
 
         @Override protected void render(ModularGuiContext context, int screenX, int screenY) {
-            Rect area = screenBounds(screenX, screenY);
+            Rect area = getScreenBounds(screenX, screenY);
             rowBackground.drawAt(context, area);
             if (compact) drawCompactRow(context, row.item(), area, this);
             else drawRegularRow(context, row.item(), area);

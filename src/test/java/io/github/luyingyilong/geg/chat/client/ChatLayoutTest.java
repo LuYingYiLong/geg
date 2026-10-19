@@ -26,7 +26,7 @@ public final class ChatLayoutTest {
             int contentWidth = drawer - ChatLayout.DRAWER_PADDING.left() - ChatLayout.DRAWER_PADDING.right();
             check(ChatLayout.collapsed(contentWidth) == (contentWidth < 172));
             list.layout(new Rect(0, 0, Math.max(1, contentWidth), 150), font);
-            check(list.activeViews() < 100 && list.scroll().maxScrollY() > 0);
+            check(list.activeViews() < 100 && list.scroll().getMaxScrollY() > 0);
             list.bottom(); list.layout(new Rect(0, 0, Math.max(1, contentWidth), 150), font); check(list.atBottom());
         }
         list.scroll().setScroll(0, 50);

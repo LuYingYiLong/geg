@@ -20,31 +20,31 @@ public final class NavbarLayoutTest {
         };
         int[] returned = {0};
         Navbar navbar = new Navbar(Component.literal("Navigation")).onBack(() -> returned[0]++);
-        Button back = navbar.children().stream().filter(Button.class::isInstance).map(Button.class::cast).findFirst().orElseThrow();
-        Control title = navbar.children().get(0);
-        check(navbar.showBackButton(), "Back is visible by default");
-        check(back.type() == Button.Type.TEXT && back.icon().texture().equals(OreIcons.ARROW_LEFT), "Use the left-arrow TEXT Button");
-        check(back.actionMode() == Button.ACTION_MODE.BUTTON_RELEASE, "Back activates on release");
+        Button back = navbar.getChildren().stream().filter(Button.class::isInstance).map(Button.class::cast).findFirst().orElseThrow();
+        Control title = navbar.getChildren().get(0);
+        check(navbar.getShowBackButton(), "Back is visible by default");
+        check(back.getType() == Button.Type.TEXT && back.getIcon().texture().equals(OreIcons.ARROW_LEFT), "Use the left-arrow TEXT Button");
+        check(back.getActionMode() == Button.ACTION_MODE.BUTTON_RELEASE, "Back activates on release");
         for (int width : new int[]{25, 127, 128, 129, 640}) {
             int height = navbar.measureSize(font, new Size(width, 240)).height();
             navbar.layout(new Rect(0, 0, width, height), font);
-            check(title.bounds().x() * 2 + title.bounds().width() == width, "Title stays centered across the entire navbar");
-            check(back.bounds().x() == 0 && back.size().equals(new Size(22, 22)), "Back stays 22px square at the far left");
-            check(height == Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING && title.bounds().height() == Navbar.ROW_HEIGHT,
+            check(title.getBounds().x() * 2 + title.getBounds().width() == width, "Title stays centered across the entire navbar");
+            check(back.getBounds().x() == 0 && back.getSize().equals(new Size(22, 22)), "Back stays 22px square at the far left");
+            check(height == Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING && title.getBounds().height() == Navbar.ROW_HEIGHT,
                     "The configured content row reserves the navbar's bottom padding");
-            check(back.bounds().y() == 0, "Back shrinks to the top of the content row");
-            check(back.bounds().bottom() <= height - Navbar.BOTTOM_PADDING, "Navigation controls leave the bottom gap clear");
+            check(back.getBounds().y() == 0, "Back shrinks to the top of the content row");
+            check(back.getBounds().bottom() <= height - Navbar.BOTTOM_PADDING, "Navigation controls leave the bottom gap clear");
         }
-        Control action = new Control().minimum(40, 20);
-        navbar.extra(action);
-        navbar.extra(new Control().minimum(60, 20));
-        check(back.parent() == navbar && title.parent() == navbar && action.parent() == null, "Replacing extras keeps navigation chrome");
+        Control action = new Control().setMinimum(40, 20);
+        navbar.setExtra(action);
+        navbar.setExtra(new Control().setMinimum(60, 20));
+        check(back.getParent() == navbar && title.getParent() == navbar && action.getParent() == null, "Replacing extras keeps navigation chrome");
         check(!navbar.removeChild(back) && !navbar.removeChild(title), "Internal chrome cannot be removed as an extra");
-        navbar.extra();
-        Control body = new Control().sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Window window = new Window(true).content(new Box().add(navbar).add(body));
+        navbar.setExtra();
+        Control body = new Control().setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        Window window = new Window(true).setContent(new Box().add(navbar).add(body));
         window.layoutViewport(200, 120, font);
-        Rect area = back.absoluteBounds();
+        Rect area = back.getAbsoluteBounds();
         int x = area.x() + area.width() / 2, y = area.y() + area.height() / 2;
         check(io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null) && returned[0] == 0, "Press does not navigate immediately");
         io.github.luyingyilong.ore.event.WindowInputs.release(window,x, y);
@@ -52,24 +52,24 @@ public final class NavbarLayoutTest {
         io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,199, 100);
         check(returned[0] == 1, "Dragging outside cancels navigation");
-        window.focusManager().requestFocus(back, null);
+        window.getFocusManager().requestFocus(back, null);
         io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(returned[0] == 1, "Keyboard press also waits for release");
         io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(returned[0] == 2, "Keyboard release invokes onBack");
         io.github.luyingyilong.ore.event.WindowInputs.press(window,x, y, null);
-        navbar.showBackButton(false);
-        check(navbar.layoutDirty() && !back.acceptsFocus(), "Hiding back invalidates layout and removes focus eligibility");
+        navbar.setShowBackButton(false);
+        check(navbar.getLayoutDirty() && !back.acceptsFocus(), "Hiding back invalidates layout and removes focus eligibility");
         io.github.luyingyilong.ore.event.WindowInputs.release(window,x, y);
         check(returned[0] == 2, "Hiding while pressed cancels navigation");
         window.layoutViewport(200, 120, font);
-        check(!navbar.showBackButton() && title.bounds().x() == 0 && title.bounds().width() == 200, "Hidden back does not reserve title space");
-        navbar.showBackButton(true);
+        check(!navbar.getShowBackButton() && title.getBounds().x() == 0 && title.getBounds().width() == 200, "Hidden back does not reserve title space");
+        navbar.setShowBackButton(true);
         window.layoutViewport(200, 120, font);
-        check(back.visible() && title.bounds().x() > 0, "Showing back restores its reserved space");
-        navbar.fontSize(40.0F);
+        check(back.getVisible() && title.getBounds().x() > 0, "Showing back restores its reserved space");
+        navbar.setFontSize(40.0F);
         window.layoutViewport(200, 120, font);
-        check(title.size().height() > back.size().height() && back.bounds().y() == 0,
+        check(title.getSize().height() > back.getSize().height() && back.getBounds().y() == 0,
                 "A taller title does not vertically center the top-aligned back button");
     }
 

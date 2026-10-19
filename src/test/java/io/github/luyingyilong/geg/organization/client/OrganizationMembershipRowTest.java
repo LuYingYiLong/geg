@@ -29,17 +29,17 @@ public final class OrganizationMembershipRowTest {
                 Size measured = row.measureSize(font, new Size(width, 1000));
                 row.layout(new Rect(0, 0, width, measured.height()), font);
                 if (text.isBlank()) {
-                    check(!introduction.visible(), "Empty descriptions do not occupy a line");
+                    check(!introduction.getVisible(), "Empty descriptions do not occupy a line");
                     continue;
                 }
-                Rect area = introduction.absoluteBounds();
+                Rect area = introduction.getAbsoluteBounds();
                 var displayed = introduction.displayedLines(font, area.width(), area.height());
                 int fullLines = introduction.lines(font, area.width()).size();
                 check(displayed.size() == Math.min(2, fullLines), "The row reserves enough space for up to two lines");
                 check(area.bottom() <= measured.height(), "Wrapped text cannot overlap the next list row");
                 check(area.height() <= introduction.lineHeight(font) * 2, "List introductions never exceed two lines");
                 if (fullLines > 2) check(asString(displayed.get(1)).endsWith("…"), "Omitted lines add a trailing ellipsis");
-                check(introduction.text().getString().equals(text), "The preview never changes the full description");
+                check(introduction.getText().getString().equals(text), "The preview never changes the full description");
             }
         }
     }

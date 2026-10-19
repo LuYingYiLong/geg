@@ -33,14 +33,14 @@ public final class AvatarTest {
         AvatarSkins cache = new AvatarSkins((profile, available) -> { loaded.add(profile); callbacks.add(available); });
         Avatar avatar = new Avatar(cache::request);
         UUID alice = UUID.randomUUID(), bob = UUID.randomUUID();
-        avatar.player(alice, "alice");
+        avatar.setPlayer(alice, "alice");
         var first = avatar.skin();
         check(first.texture().equals(DefaultPlayerSkin.getDefaultSkin(alice)) && loaded.size() == 1,
                 "A known UUID displays its vanilla default during download");
         check(avatar.skin() == first && loaded.size() == 1, "No per-frame request");
-        avatar.player(alice, "alice");
+        avatar.setPlayer(alice, "alice");
         check(avatar.skin() == first && loaded.size() == 1, "Rebinding the same sender keeps its request");
-        avatar.player(bob, "bob");
+        avatar.setPlayer(bob, "bob");
         var second = avatar.skin();
         ResourceLocation a = ResourceLocation.fromNamespaceAndPath("ore", "test/alice");
         callbacks.get(0).accept(a);
@@ -50,15 +50,15 @@ public final class AvatarTest {
         ResourceLocation b = ResourceLocation.fromNamespaceAndPath("ore", "test/bob");
         callbacks.get(1).accept(b);
         check(avatar.skin().texture().equals(b), "Current sender receives its texture");
-        avatar.player(alice, "alice");
+        avatar.setPlayer(alice, "alice");
         check(avatar.skin() == first && loaded.size() == 2, "Reuse resolved skins across senders");
-        avatar.initials("组织");
-        check(avatar.skin() == null && avatar.playerId() == null && avatar.name().equals("组织"), "System sources do not query players");
-        check(((Label) avatar.children().get(0)).text().getString().equals("组"), "Label renders the source initial");
-        avatar.player(null, "OfflineLegacy");
+        avatar.setInitials("组织");
+        check(avatar.skin() == null && avatar.getPlayerId() == null && avatar.getName().equals("组织"), "System sources do not query players");
+        check(((Label) avatar.getChildren().get(0)).getText().getString().equals("组"), "Label renders the source initial");
+        avatar.setPlayer(null, "OfflineLegacy");
         check(avatar.skin().texture() == null && loaded.size() == 2, "Do not guess an offline UUID from a name");
         Avatar failed = new Avatar(new AvatarSkins((profile, available) -> { throw new IllegalStateException("offline"); })::request);
-        failed.player(alice, "alice");
+        failed.setPlayer(alice, "alice");
         check(failed.skin().texture().equals(DefaultPlayerSkin.getDefaultSkin(alice)),
                 "An unavailable authentication service keeps the bundled default for offline players");
         UUID offline = UUID.nameUUIDFromBytes("OfflinePlayer:OfflineLegacy".getBytes(java.nio.charset.StandardCharsets.UTF_8));
@@ -81,22 +81,22 @@ public final class AvatarTest {
         check(cache.request(new GameProfile(alice, "alice")) == updatedSkin,
                 "Offline identities use the latest known skin after a property change");
 
-        avatar.initials("a");
+        avatar.setInitials("a");
         Label name = new Label(Component.literal("Player name"));
         Label date = new Label(Component.literal("2026-10-17"));
-        name.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        date.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        Box info = new Box().gap(2).add(name).add(date);
-        info.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Box row = new Box().orientation(Box.Orientation.HORIZONTAL).gap(6).add(avatar).add(info);
+        name.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+        date.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+        Box info = new Box().setGap(2).add(name).add(date);
+        info.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(6).add(avatar).add(info);
         for (int width : new int[]{80, 127, 128, 129, 400}) {
             row.layout(new Rect(0, 0, width, 32), font);
-            check(avatar.size().equals(new Size(24, 24)) && avatar.bounds().y() == 4, "Avatar stays square and centered");
-            check(info.size().equals(new Size(width - 30, 32)) && info.bounds().x() == 30, "Sender info fills remaining width and height");
+            check(avatar.getSize().equals(new Size(24, 24)) && avatar.getBounds().y() == 4, "Avatar stays square and centered");
+            check(info.getSize().equals(new Size(width - 30, 32)) && info.getBounds().x() == 30, "Sender info fills remaining width and height");
         }
-        avatar.size(32).hatLayer(false);
-        check(avatar.minimumSize().equals(new Size(32, 32)) && !avatar.hatLayer(), "Reusable size and overlay configuration");
-        check(new Avatar(cache::request).hatLayer(), "Both skin layers enabled by default");
+        avatar.setSize(32).setHatLayer(false);
+        check(avatar.getMinimumSize().equals(new Size(32, 32)) && !avatar.getHatLayer(), "Reusable size and overlay configuration");
+        check(new Avatar(cache::request).getHatLayer(), "Both skin layers enabled by default");
     }
 
     private static void check(boolean value, String message) { if (!value) throw new AssertionError(message); }

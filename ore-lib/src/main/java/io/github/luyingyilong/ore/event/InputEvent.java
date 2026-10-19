@@ -34,7 +34,7 @@ public abstract class InputEvent {
     }
     public final void deliver(Control control, int x, int y) {
         currentTarget = control; treeX = x; treeY = y;
-        var bounds = control.absoluteBounds(); localX = x - bounds.x(); localY = y - bounds.y();
+        var bounds = control.getAbsoluteBounds(); localX = x - bounds.x(); localY = y - bounds.y();
         control.input(this);
     }
 }

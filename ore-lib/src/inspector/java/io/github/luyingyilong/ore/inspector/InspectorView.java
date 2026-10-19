@@ -20,12 +20,12 @@ public final class InspectorView {
     private final InspectorBackend backend;
     private final Window window;
     private final Tree<String> tree = new Tree<>();
-    private final Box properties = new Box().gap(5);
+    private final Box properties = new Box().setGap(5);
     private final InspectorSignalPanel signalPanel = new InspectorSignalPanel();
     private final Segmented views = new Segmented(List.of(tr("properties"), tr("signals")));
-    private final Label title = new Label().hero(true), crumbs = new Label().wrap(Label.Wrap.CHARACTER);
-    private final Label lifecycleStatus = new Label().wrap(Label.Wrap.CHARACTER).color(OreTheme.TEXT_SECONDARY);
-    private final Label message = new Label().wrap(Label.Wrap.CHARACTER);
+    private final Label title = new Label().setHero(true), crumbs = new Label().setWrap(Label.Wrap.CHARACTER);
+    private final Label lifecycleStatus = new Label().setWrap(Label.Wrap.CHARACTER).setColor(OreTheme.TEXT_SECONDARY);
+    private final Label message = new Label().setWrap(Label.Wrap.CHARACTER);
     private final Input search = new Input();
     private final Dropdown<String> targets = new Dropdown<>("", 6);
     private final Button undo = button("undo", () -> action(InspectorCommand.Operation.UNDO));
@@ -40,67 +40,67 @@ public final class InspectorView {
     public InspectorView(InspectorBackend backend) {
         this.backend = backend;
         tree.selectionChanged().connect(tree, id -> backend.execute(InspectorCommand.select(id)));
-        search.placeholder(tr("search"));
+        search.setPlaceholder(tr("search"));
         search.setMaxLength(128);
         targets.itemActivated().connect(targets, id -> backend.execute(new InspectorCommand(InspectorCommand.Operation.TARGET, id, -1, "", "", false)));
-        targets.minimum(110, 22);
-        targets.sizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL);
+        targets.setMinimum(110, 22);
+        targets.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL);
         Box tools = new Box()
-                .orientation(Box.Orientation.HORIZONTAL)
-                .gap(3)
+                .setOrientation(Box.Orientation.HORIZONTAL)
+                .setGap(3)
                 .add(pick)
                 .add(undo)
                 .add(redo)
                 .add(button("restore_all", () -> action(InspectorCommand.Operation.RESET_ALL)))
                 .add(targets);
-        tools.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+        tools.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         Box flags = new Box()
-                .orientation(Box.Orientation.HORIZONTAL)
-                .gap(6)
+                .setOrientation(Box.Orientation.HORIZONTAL)
+                .setGap(6)
                 .add(flag("layout", true))
                 .add(flag("text", true))
                 .add(flag("all", false));
-        flags.sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        Scroll treeScroll = new Scroll().content(tree);
-        treeScroll.sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        flags.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+        Scroll treeScroll = new Scroll().setContent(tree);
+        treeScroll.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         Box left = new Box()
-                .gap(4)
+                .setGap(4)
                 .add(new InputControl(search))
                 .add(treeScroll);
-        left.minimum(110, 0);
-        properties.minimum(0, 0);
+        left.setMinimum(110, 0);
+        properties.setMinimum(0, 0);
         Scroll propertyScroll = new Scroll()
-                .content(new PropertyViewport(properties))
-                .horizontal(Scroll.BarMode.DISABLED);
-        propertyScroll.sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        Scroll signalScroll = new Scroll().content(new PropertyViewport(signalPanel.body())).horizontal(Scroll.BarMode.DISABLED);
-        signalScroll.sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        signalScroll.visible(false);
-        views.sizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
-        views.debugName("Inspector views");
+                .setContent(new PropertyViewport(properties))
+                .setHorizontal(Scroll.BarMode.DISABLED);
+        propertyScroll.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        Scroll signalScroll = new Scroll().setContent(new PropertyViewport(signalPanel.body())).setHorizontal(Scroll.BarMode.DISABLED);
+        signalScroll.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        signalScroll.setVisible(false);
+        views.setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+        views.setDebugName("Inspector views");
         views.selectionChanged().connect(views, index -> {
-            propertyScroll.visible(index == 0);
-            signalScroll.visible(index == 1);
+            propertyScroll.setVisible(index == 0);
+            signalScroll.setVisible(index == 1);
             if (index == 1) signalPanel.update(snapshot.signals());
         });
-        Box right = new Box().gap(4).add(views).add(lifecycleStatus).add(propertyScroll).add(signalScroll);
-        right.minimum(190, 0);
-        Splitter split = new Splitter(left, right).ratio(0.34);
-        split.sizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        Box right = new Box().setGap(4).add(views).add(lifecycleStatus).add(propertyScroll).add(signalScroll);
+        right.setMinimum(190, 0);
+        Splitter split = new Splitter(left, right).setRatio(0.34);
+        split.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         Box root = new Box()
-                .gap(4)
+                .setGap(4)
                 .add(tools)
                 .add(flags)
                 .add(split)
                 .add(message);
-        message.minimum(0, 16).sizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+        message.setMinimum(0, 16).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         window = Window
                 .nativeWindow(WindowOptions.defaults("Ore Inspector"))
-                .inspectable(false)
-                .content(new Panel(OreTheme.PANEL)
-                        .child(new Padding(Padding.Insets.all(6))
-                                .child(root)));
-        window.debugName("Ore Inspector");
+                .setInspectable(false)
+                .setContent(new Panel(OreTheme.PANEL)
+                        .setChild(new Padding(Padding.Insets.all(6))
+                                .setChild(root)));
+        window.setDebugName("Ore Inspector");
         window.closed().connect(window, OreInspector::stop);
     }
 
@@ -144,26 +144,26 @@ public final class InspectorView {
     }
 
     private void updateInternal() {
-        tree.search(search.getText());
+        tree.setSearch(search.getText());
         for (Editor editor : List.copyOf(editors.values())) editor.poll();
         InspectorSnapshot next = backend.snapshot();
         if (sequence == next.sequence()) return;
         snapshot = next;
         var info = next.lifecycle();
-        lifecycleStatus.text(info == null ? Component.empty() : tr("lifecycle_status", info.state().name(),
+        lifecycleStatus.setText(info == null ? Component.empty() : tr("lifecycle_status", info.state().name(),
                 info.insideTree(), info.ready(), info.suspended(), info.reason(), info.requestSource().lines().findFirst().orElse("—")));
-        lifecycleStatus.visible(info != null);
-        if (views.selected() == 1) signalPanel.update(next.signals());
+        lifecycleStatus.setVisible(info != null);
+        if (views.getSelected() == 1) signalPanel.update(next.signals());
         sequence = next.sequence();
         targets.setOptions(next.targets().stream().map(t -> new Dropdown.Option<>(t.id(), Component.literal(t.name() + (t.active() ? "" : " [inactive]")))).toList());
-        tree.items(next.nodes().stream().map(n -> new Tree.Item<>(n.id(), n.parent(), Component.literal(n.name()
+        tree.setItems(next.nodes().stream().map(n -> new Tree.Item<>(n.id(), n.parent(), Component.literal(n.name()
                 + (n.total() == null ? "" : " [" + n.instances() + "/" + n.total() + "]")), n.id())).toList());
         tree.setSelectedNoSignal(next.selected());
-        undo.disabled(!next.canUndo());
-        redo.disabled(!next.canRedo());
-        pick.type(next.picking() ? Button.Type.PRIMARY : Button.Type.SECONDARY);
-        message.text(next.error().isEmpty() ? tr(next.waiting() ? "waiting" : "session_only") : Component.literal(next.error()))
-                .color(next.error().isEmpty() ? OreTheme.TEXT_SECONDARY : 0xFFF46D6D);
+        undo.setDisabled(!next.canUndo());
+        redo.setDisabled(!next.canRedo());
+        pick.setType(next.picking() ? Button.Type.PRIMARY : Button.Type.SECONDARY);
+        message.setText(next.error().isEmpty() ? tr(next.waiting() ? "waiting" : "session_only") : Component.literal(next.error()))
+                .setColor(next.error().isEmpty() ? OreTheme.TEXT_SECONDARY : 0xFFF46D6D);
         var node = next.nodes().stream().filter(n -> n.id().equals(next.selected())).findFirst().orElse(null);
         String schema = node == null ? "" : node.properties().stream().map(p -> p.name() + p.kind() + p.readonly()).toList().toString();
         if (!selected.equals(next.selected()) || !signature.equals(schema)) {
@@ -172,11 +172,11 @@ public final class InspectorView {
             rebuild(node);
         }
         if (node != null) {
-            title.text(Component.literal(node.name()));
-            crumbs.text(Component.literal(breadcrumbs(node) + "\n" + node.bounds() + (node.hiddenReason().isEmpty() ? "" : "\n" + node.hiddenReason())));
+            title.setText(Component.literal(node.name()));
+            crumbs.setText(Component.literal(breadcrumbs(node) + "\n" + node.bounds() + (node.hiddenReason().isEmpty() ? "" : "\n" + node.hiddenReason())));
             for (var property : node.properties()) {
                 if (property.readonly() && readonlyLabels.containsKey(property.name()))
-                    readonlyLabels.get(property.name()).text(Component.literal(property.name() + ": " + property.effective()));
+                    readonlyLabels.get(property.name()).setText(Component.literal(property.name() + ": " + property.effective()));
                 else if (editors.containsKey(property.index())) editors.get(property.index()).refresh(property);
             }
         }
@@ -192,30 +192,30 @@ public final class InspectorView {
     }
 
     private void rebuild(InspectorSnapshot.Node node) {
-        window.focusManager().forgetSubtree(properties);
+        window.getFocusManager().forgetSubtree(properties);
         // These labels are reused; only discarded editors should be destroyed.
         properties.removeChild(title);
         properties.removeChild(crumbs);
-        for (Control child : properties.children()) { if (child.parent() != null) child.parent().removeChild(child); child.queueFree(); }
+        for (Control child : properties.getChildren()) { if (child.getParent() != null) child.getParent().removeChild(child); child.queueFree(); }
         editors.clear();
         readonlyLabels.clear();
         if (node == null) {
-            properties.add(new Label(tr("select_node")).wrap(Label.Wrap.WORD));
+            properties.add(new Label(tr("select_node")).setWrap(Label.Wrap.WORD));
             return;
         }
         properties.add(title).add(crumbs);
         properties.add(button("restore_node", () -> {
             backend.execute(new InspectorCommand(InspectorCommand.Operation.RESET_NODE, selected, -1, "", "", false));
             synchronizeEditors();
-        }).disabled(node.internal()));
+        }).setDisabled(node.internal()));
         String group = "";
         for (var property : node.properties()) {
             if (!group.equals(property.group())) {
                 group = property.group();
-                properties.add(new Label(tr("group." + group)).hero(true));
+                properties.add(new Label(tr("group." + group)).setHero(true));
             }
             if (property.readonly()) {
-                Label readonly = new Label(Component.literal(property.name() + ": " + property.effective())).wrap(Label.Wrap.CHARACTER).color(OreTheme.TEXT_SECONDARY);
+                Label readonly = new Label(Component.literal(property.name() + ": " + property.effective())).setWrap(Label.Wrap.CHARACTER).setColor(OreTheme.TEXT_SECONDARY);
                 readonlyLabels.put(property.name(), readonly);
                 properties.add(readonly);
             } else {
@@ -227,9 +227,9 @@ public final class InspectorView {
     }
 
     private final class Editor {
-        private final Box body = new Box().gap(2);
-        private final Label base = new Label().wrap(Label.Wrap.CHARACTER).color(OreTheme.TEXT_SECONDARY);
-        private final Label validation = new Label().wrap(Label.Wrap.CHARACTER).color(OreTheme.TEXT_ERROR);
+        private final Box body = new Box().setGap(2);
+        private final Label base = new Label().setWrap(Label.Wrap.CHARACTER).setColor(OreTheme.TEXT_SECONDARY);
+        private final Label validation = new Label().setWrap(Label.Wrap.CHARACTER).setColor(OreTheme.TEXT_ERROR);
         private InspectorSnapshot.Property property;
         private Input input;
         private Checkbox checkbox;
@@ -242,13 +242,13 @@ public final class InspectorView {
             this.property = property;
             effectiveValue = property.effective();
             Form form = new Form();
-            validation.visible(false);
+            validation.setVisible(false);
             if (property.kind().equals("boolean")) {
                 Checkbox check = Signals.configure(new Checkbox(Component.literal(property.name())).setCheckedNoSignal(Boolean.TRUE.equals(property.effective())), connected -> connected.toggled().connect(connected, value -> {
                             if (!refreshing) apply(String.valueOf(value));
                         }));
                 checkbox = check;
-                form.add(new FormItem(property.name(), Component.empty(), check, () -> String.valueOf(check.checked())));
+                form.add(new FormItem(property.name(), Component.empty(), check, () -> String.valueOf(check.getChecked())));
             } else if (property.kind().equals("enum")) {
                 Dropdown<String> choices = new Dropdown<>(String.valueOf(property.effective()), 6);
                 choices.setOptions(property.options().stream().map(option -> new Dropdown.Option<>(option, Component.literal(option))).toList());
@@ -256,12 +256,12 @@ public final class InspectorView {
                 choices.itemActivated().connect(choices, value -> {
                     if (!refreshing) apply(value);
                 });
-                form.add(new FormItem(property.name(), Component.literal(property.name()), choices, () -> choices.selected()));
+                form.add(new FormItem(property.name(), Component.literal(property.name()), choices, () -> choices.getSelected()));
             } else {
                 boolean integer = property.kind().equals("number") && !property.name().equals("color")
                         && property.effective() instanceof Integer;
-                input = integer ? new NumberInput(0).minimumValue(Integer.MIN_VALUE).maximumValue(Integer.MAX_VALUE) : new Input();
-                Signals.configure(input, connected -> { connected.submitOnEnter(true); connected.submitted().connect(connected, submittedText48 -> {
+                input = integer ? new NumberInput(0).setMinimumValue(Integer.MIN_VALUE).setMaximumValue(Integer.MAX_VALUE) : new Input();
+                Signals.configure(input, connected -> { connected.setSubmitOnEnter(true); connected.submitted().connect(connected, submittedText48 -> {
                     poll();
                 }); });
                 input.setMaxLength(property.name().equals("text") ? 2048 : 256);
@@ -278,7 +278,7 @@ public final class InspectorView {
         }
 
         void poll() {
-            if (input == null || refreshing || input.composing() || Objects.equals(observedText, input.getText()))
+            if (input == null || refreshing || input.getComposing() || Objects.equals(observedText, input.getText()))
                 return;
             observedText = input.getText();
             apply(observedText);
@@ -287,7 +287,7 @@ public final class InspectorView {
         void apply(String value) {
             backend.execute(InspectorCommand.edit(selected, property.index(), value));
             String error = backend.lastError();
-            validation.text(Component.literal(error)).visible(!error.isEmpty());
+            validation.setText(Component.literal(error)).setVisible(!error.isEmpty());
             if (error.isEmpty()) {
                 // A successful local edit must not normalize the user's draft or move their cursor.
                 backend.snapshot().nodes().stream().filter(node -> node.id().equals(selected)).findFirst()
@@ -304,11 +304,11 @@ public final class InspectorView {
             boolean changed = !Objects.equals(effectiveValue, property.effective());
             this.property = property;
             effectiveValue = property.effective();
-            base.text(tr("base", property.base(), property.overridden() ? " *" : ""));
+            base.setText(tr("base", property.base(), property.overridden() ? " *" : ""));
             refreshing = true;
             try {
                 if (checkbox != null) checkbox.setCheckedNoSignal(Boolean.TRUE.equals(property.effective()));
-                if (dropdown != null && !Objects.equals(dropdown.selected(), String.valueOf(property.effective())))
+                if (dropdown != null && !Objects.equals(dropdown.getSelected(), String.valueOf(property.effective())))
                     dropdown.setSelectedNoSignal(String.valueOf(property.effective()));
                 if (input != null && (force || changed)) {
                     if (force && input.isValid()) input.cancelPreedit();
@@ -317,7 +317,7 @@ public final class InspectorView {
                     input.setTextNoSignal(observedText);
                     if (input instanceof NumberInput number) number.clearError();
                 }
-                if (force || changed) validation.visible(false);
+                if (force || changed) validation.setVisible(false);
             } finally {
                 refreshing = false;
             }
@@ -338,7 +338,7 @@ public final class InspectorView {
 
         @Override
         public io.github.luyingyilong.ore.layout.Size measureSize(net.minecraft.client.gui.Font font, io.github.luyingyilong.ore.layout.Size available) {
-            return minimumSize();
+            return getMinimumSize();
         }
 
         @Override
@@ -349,12 +349,12 @@ public final class InspectorView {
         }
 
         @Override
-        public io.github.luyingyilong.ore.layout.Size contentExtent() {
-            return new io.github.luyingyilong.ore.layout.Size(bounds().width(), height);
+        public io.github.luyingyilong.ore.layout.Size getContentExtent() {
+            return new io.github.luyingyilong.ore.layout.Size(getBounds().width(), height);
         }
 
         @Override
-        public void visibleRegion(Rect region) {
+        public void setVisibleRegion(Rect region) {
         }
     }
 }

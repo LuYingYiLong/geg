@@ -28,15 +28,15 @@ import java.util.function.IntPredicate;
 
 public class Input extends TextFieldWidget implements SignalOwner {
     private static final InputShortcuts.Clipboard CLIPBOARD = new InputShortcuts.Clipboard() {
-        @Override public String get() { return io.github.luyingyilong.ore.window.WindowContext.current().clipboard(); }
-        @Override public void set(String text) { io.github.luyingyilong.ore.window.WindowContext.current().clipboard(text); }
+        @Override public String get() { return io.github.luyingyilong.ore.window.WindowContext.getCurrent().getClipboard(); }
+        @Override public void set(String text) { io.github.luyingyilong.ore.window.WindowContext.getCurrent().setClipboard(text); }
     };
     private final float depth;
     private Button.Size controlSize = Button.Size.MEDIUM;
     private boolean inputVisible = true;
     private IntPredicate tabNavigation = modifiers -> false;
     private final SignalScope signalScope = new SignalScope();
-    private final Label placeholderLabel = new Label().overflow(Label.Overflow.VISIBLE);
+    private final Label placeholderLabel = new Label().setOverflow(Label.Overflow.VISIBLE);
     private final SignalSource<String> textChanged = new SignalSource<>(this, "textChanged", "String");
     private final SignalSource<String> submitted = new SignalSource<>(this, "submitted", "String");
     private final SignalSource0 pointerPressed = new SignalSource0(this, "pointerPressed");
@@ -47,14 +47,14 @@ public class Input extends TextFieldWidget implements SignalOwner {
     private int textMutationDepth;
     private boolean signalFocused;
     private String observedText = "";
-    @Override public final SignalScope signalScope() { return signalScope; }
+    @Override public final SignalScope getSignalScope() { return signalScope; }
     public final Signal<String> textChanged() { return textChanged.signal(); }
     public final Signal<String> submitted() { return submitted.signal(); }
     public final Signal0 pointerPressed() { return pointerPressed.signal(); }
     public final Signal0 focusEntered() { return focusEntered.signal(); }
     public final Signal0 focusExited() { return focusExited.signal(); }
-    public Input submitOnEnter(boolean value) { submitOnEnter = value; return this; }
-    public boolean submitOnEnter() { return submitOnEnter; }
+    public Input setSubmitOnEnter(boolean value) { submitOnEnter = value; return this; }
+    public boolean getSubmitOnEnter() { return submitOnEnter; }
     protected final void submitText() {
         if (this instanceof NumberInput number && !number.commit()) return;
         submitted.emit(getText());
@@ -114,19 +114,19 @@ public class Input extends TextFieldWidget implements SignalOwner {
 
     protected void onEditShortcut() { renderer.setCursor(true); }
 
-    public Input controlSize(Button.Size size) {
+    public Input setControlSize(Button.Size size) {
         controlSize = java.util.Objects.requireNonNull(size);
-        height(size.height());
+        height(size.getHeight());
         return this;
     }
 
-    public int preferredInputHeight() { return controlSize.height(); }
+    public int getPreferredInputHeight() { return controlSize.getHeight(); }
 
-    public Button.Size controlSize() {
+    public Button.Size getControlSize() {
         return controlSize;
     }
 
-    public Input placeholder(Component placeholder) {
+    public Input setPlaceholder(Component placeholder) {
         hintText(java.util.Objects.requireNonNull(placeholder));
         hintColor(OreTheme.TEXT_SECONDARY);
         return this;
@@ -162,25 +162,25 @@ public class Input extends TextFieldWidget implements SignalOwner {
 
     protected boolean supportsInputMethod() { return true; }
     /** Uncommitted text is separate from getText()/Form values and never sent to the server. */
-    public io.github.luyingyilong.ore.window.WindowContext windowContext() {
-        return layoutControl != null ? layoutControl.windowContext() : isValid()
+    public io.github.luyingyilong.ore.window.WindowContext getWindowContext() {
+        return layoutControl != null ? layoutControl.getWindowContext() : isValid()
                 ? io.github.luyingyilong.ore.window.WindowContext.of(getContext())
-                : io.github.luyingyilong.ore.window.WindowContext.current();
+                : io.github.luyingyilong.ore.window.WindowContext.getCurrent();
     }
-    public InputPreedit preedit() { return OreInputMethod.preedit(this); }
-    public boolean composing() { return OreInputMethod.composing(this); }
+    public InputPreedit getPreedit() { return OreInputMethod.preedit(this); }
+    public boolean getComposing() { return OreInputMethod.composing(this); }
     public void cancelPreedit() {
         OreInputMethod.cancelComposition(this);
         clearPreeditDisplay();
     }
     void clearPreeditDisplay() { ((OreTextFieldRenderer) renderer).preedit(InputPreedit.EMPTY); }
     private void refreshPreeditDisplay() {
-        ((OreTextFieldRenderer) renderer).preedit(OreInputMethod.inlinePreedit(this) ? preedit() : InputPreedit.EMPTY);
+        ((OreTextFieldRenderer) renderer).preedit(OreInputMethod.inlinePreedit(this) ? getPreedit() : InputPreedit.EMPTY);
     }
     boolean inputMethodInteractive() { return layoutInteractive(); }
     Rect inputMethodBounds() {
         return layoutControl == null ? new Rect(getArea().x, getArea().y, getArea().width, getArea().height)
-                : layoutControl.widgetBounds();
+                : layoutControl.getWidgetBounds();
     }
     int inputMethodFontHeight() { return (int) Math.ceil(renderer.getFontHeight()); }
     record Caret(int x, int y) { }
@@ -224,7 +224,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
         super.onUpdate();
     }
 
-    public Input tabNavigation(IntPredicate navigation) {
+    public Input setTabNavigation(IntPredicate navigation) {
         tabNavigation = java.util.Objects.requireNonNull(navigation);
         return this;
     }
@@ -280,7 +280,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
                 if(key.action()==io.github.luyingyilong.ore.event.KeyEvent.Action.REPEAT && submitsOnEnter()
                         && (key.keyCode()==GLFW.GLFW_KEY_ENTER || key.keyCode()==GLFW.GLFW_KEY_KP_ENTER)
                         && (key.modifiers() & GLFW.GLFW_MOD_SHIFT)==0){event.accept();return;}
-                if(key.keyCode()==GLFW.GLFW_KEY_TAB && !composing())return;
+                if(key.keyCode()==GLFW.GLFW_KEY_TAB && !getComposing())return;
                 handled=key.action()==io.github.luyingyilong.ore.event.KeyEvent.Action.RELEASE
                         ?onKeyReleased(key.keyCode(),key.scanCode(),key.modifiers())
                         :onKeyPressed(key.keyCode(),key.scanCode(),key.modifiers())!=Interactable.Result.IGNORE;
@@ -308,7 +308,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
         if (!layoutInteractive() || layoutControl != null
                 && !layoutControl.pointerInteractive(getContext().getAbsMouseX(), getContext().getAbsMouseY())) return Interactable.Result.IGNORE;
         editingHandler().endEditGroup();
-        if (isFocused() && composing()) cancelPreedit();
+        if (isFocused() && getComposing()) cancelPreedit();
         Interactable.Result result = super.onMousePressed(button);
         if (result != Interactable.Result.IGNORE) pointerPressed.emit();
         return result;
@@ -318,7 +318,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
         if (!acceptsHostInput()) return Interactable.Result.IGNORE;
         if (!layoutInteractive()) return Interactable.Result.IGNORE;
         if (isFocused() && InputShortcuts.matches(keyCode, modifiers)) {
-            if (composing()) {
+            if (getComposing()) {
                 cancelPreedit();
                 if (keyCode == GLFW.GLFW_KEY_Z) return Interactable.Result.SUCCESS;
             }
@@ -327,7 +327,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
             return Interactable.Result.SUCCESS;
         }
         if (isFocused() && keyCode == GLFW.GLFW_KEY_ESCAPE) {
-            if (composing()) { cancelPreedit(); return Interactable.Result.STOP; }
+            if (getComposing()) { cancelPreedit(); return Interactable.Result.STOP; }
             getContext().removeFocus();
             return Interactable.Result.STOP;
         }
@@ -335,7 +335,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
                 || keyCode == GLFW.GLFW_KEY_KP_ENTER)
                 && OreInputMethod.composing(this)) return Interactable.Result.STOP;
         if (submitOnEnter && isFocused() && isSubmitKey(keyCode, modifiers)) {
-            if (!composing()) submitText(); return Interactable.Result.STOP;
+            if (!getComposing()) submitText(); return Interactable.Result.STOP;
         }
         if (keyCode == GLFW.GLFW_KEY_TAB && isFocused() && tabNavigation.test(modifiers))
             return Interactable.Result.STOP;
@@ -402,7 +402,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
         Component placeholder = hintText;
         hintText = null;
         try {
-            if (placeholder != null && handler.isTextEmpty() && !composing()) {
+            if (placeholder != null && handler.isTextEmpty() && !getComposing()) {
                 drawPlaceholder(context, placeholder);
             }
             // The editor paints its caret last, above the placeholder and committed text.
@@ -415,15 +415,15 @@ public class Input extends TextFieldWidget implements SignalOwner {
     protected Label placeholderLabel(Component placeholder) {
         int color = hintTextColor == null ? OreTheme.TEXT_SECONDARY : hintTextColor;
         // Keep a snapshot so in-place edits to a MutableComponent also invalidate styled text.
-        if (!placeholderLabel.text().equals(placeholder)) placeholderLabel.text(placeholder.copy());
-        return placeholderLabel.color(color).scale(scale);
+        if (!placeholderLabel.getText().equals(placeholder)) placeholderLabel.setText(placeholder.copy());
+        return placeholderLabel.setColor(color).setScale(scale);
     }
 
     protected void drawPlaceholder(ModularGuiContext context, Component placeholder) {
         int top = firstLineTop();
         Label label = placeholderLabel(placeholder);
         label.layout(new Rect(getArea().getPadding().left(), top, getArea().paddedWidth(),
-                Math.max(0, Math.min(controlSize.height(), getArea().height - top))), context.getFont());
+                Math.max(0, Math.min(controlSize.getHeight(), getArea().height - top))), context.getFont());
         if (layoutControl != null) DebugBridge.backend().internal(layoutControl, "placeholder", label);
         label.draw(context, 0, 0);
     }

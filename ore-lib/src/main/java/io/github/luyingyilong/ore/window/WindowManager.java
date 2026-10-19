@@ -35,14 +35,14 @@ public final class WindowManager {
         var mc = Minecraft.getInstance();
         var root = embedded.get();
         boolean focused = org.lwjgl.glfw.GLFW.glfwGetWindowAttrib(mc.getWindow().getWindow(), org.lwjgl.glfw.GLFW.GLFW_FOCUSED) != 0;
-        if (!focused && root != null && (mainFocused || suspended != root) && root.context().mui() != null) {
+        if (!focused && root != null && (mainFocused || suspended != root) && root.getContext().getMui() != null) {
             suspended = root;
-            embeddedFocus = root.focusManager().focused();
+            embeddedFocus = root.getFocusManager().getFocused();
             root.cancelInteractions();
-            if (root.context().mui().isFocused()) root.context().mui().removeFocus();
-            io.github.luyingyilong.ore.input.OreInputMethod.releaseWindow(root.context());
+            if (root.getContext().getMui().isFocused()) root.getContext().getMui().removeFocus();
+            io.github.luyingyilong.ore.input.OreInputMethod.releaseWindow(root.getContext());
         } else if (focused && !mainFocused && root != null && root == suspended && mc.screen == embeddedScreen && embeddedFocus != null) {
-            root.focusManager().requestFocus(embeddedFocus, root.context().mui());
+            root.getFocusManager().requestFocus(embeddedFocus, root.getContext().getMui());
             suspended = null;
             embeddedFocus = null;
         }
@@ -67,7 +67,7 @@ public final class WindowManager {
     }
 
     public static boolean hasFocusedNativeWindow() {
-        return WINDOWS.stream().anyMatch(w -> w.context().focused());
+        return WINDOWS.stream().anyMatch(w -> w.getContext().getFocused());
     }
 
     @SubscribeEvent
@@ -79,7 +79,7 @@ public final class WindowManager {
                 host.frame();
             } catch (RuntimeException | LinkageError error) {
                 org.slf4j.LoggerFactory.getLogger(WindowManager.class).error("Ore native window failed", error);
-                host.context().owner().close();
+                host.getContext().getOwner().close();
                 host.destroy();
             }
         }
@@ -97,7 +97,7 @@ public final class WindowManager {
 
     @SubscribeEvent
     public static void shutdown(GameShuttingDownEvent event) {
-        for (NativeWindowHost host : List.copyOf(WINDOWS)) { host.context().owner().close(); host.destroy(); }
+        for (NativeWindowHost host : List.copyOf(WINDOWS)) { host.getContext().getOwner().close(); host.destroy(); }
         io.github.luyingyilong.ore.screen.OreScreen.disposeSessions();
         io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
         embedded.clear(); suspended=null; embeddedFocus=null; embeddedScreen=null;

@@ -11,6 +11,6 @@ final class MarketFeedback {
 
     static void show(MarketResult result) {
         OreToasts.show("geg:market:feedback", new Toast(Component.translatable(result.translationKey()))
-                .type(result.success() ? Toast.Type.PRIMARY : Toast.Type.WARNING));
+                .setType(result.success() ? Toast.Type.PRIMARY : Toast.Type.WARNING));
     }
 }

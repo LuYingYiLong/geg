@@ -9,15 +9,15 @@ public class Container extends Control {
     protected final void fitChild(Control child, Rect slot, Font font) {
         if (!child.isAlive()) return;
         DebugBridge.backend().slot(child, slot);
-        int horizontal = child.sizeFlagsHorizontal();
-        int vertical = child.sizeFlagsVertical();
+        int horizontal = child.getSizeFlagsHorizontal();
+        int vertical = child.getSizeFlagsVertical();
         Size natural = SizeFlags.fills(horizontal) && SizeFlags.fills(vertical)
-                ? child.minimumSize() : child.desiredSize(font, new Size(slot.width(), slot.height()));
-        int width = Math.max(child.minimumWidth(), SizeFlags.fills(horizontal)
+                ? child.getMinimumSize() : child.desiredSize(font, new Size(slot.width(), slot.height()));
+        int width = Math.max(child.getMinimumWidth(), SizeFlags.fills(horizontal)
                 ? slot.width() : Math.min(slot.width(), natural.width()));
         if (!SizeFlags.fills(vertical) && width != slot.width())
             natural = child.desiredSize(font, new Size(width, slot.height()));
-        int height = Math.max(child.minimumHeight(), SizeFlags.fills(vertical)
+        int height = Math.max(child.getMinimumHeight(), SizeFlags.fills(vertical)
                 ? slot.height() : Math.min(slot.height(), natural.height()));
         layoutChild(child, new Rect(slot.x() + SizeFlags.offset(horizontal, slot.width(), width),
                 slot.y() + SizeFlags.offset(vertical, slot.height(), height), width, height), font);

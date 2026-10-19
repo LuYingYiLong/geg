@@ -19,21 +19,21 @@ final class MarketDetailDescriptions extends Container {
         Field(String label) { this.label = "market.geg." + label; }
     }
 
-    private final Descriptions info = new Descriptions().columns(2).rowGap(4);
+    private final Descriptions info = new Descriptions().setColumns(2).setRowGap(4);
 
     MarketDetailDescriptions() {
         for (Field field : Field.values()) {
             info.add(field.name(), Component.translatable(field.label), Component.empty());
-            info.item(field.name()).visible(false);
+            info.getItem(field.name()).setVisible(false);
         }
         addChild(info);
     }
 
     void show(Map<Field, Component> values) {
         for (Field field : Field.values()) {
-            var item = info.item(field.name());
-            item.visible(values.containsKey(field));
-            if (values.containsKey(field)) item.content(values.get(field));
+            var item = info.getItem(field.name());
+            item.setVisible(values.containsKey(field));
+            if (values.containsKey(field)) item.setContent(values.get(field));
         }
     }
 
