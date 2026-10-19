@@ -37,6 +37,13 @@ public final class OreButtonWidget extends AbstractWidget {
     public Button button() { return button; }
     public boolean pointerHeld() { return pointerHeld; }
 
+    /** Disabled buttons remain visible and still reserve space in recipe-viewer overlays. */
+    public Rect getExclusionBounds() {
+        if (!visible || !root.isAlive() || root.isSuspended() || !button.isAlive() || button.isSuspended() || !button.getVisible())
+            return new Rect(0, 0, 0, 0);
+        return button.getAbsoluteBounds();
+    }
+
     /** Call on screen initialization, resize or content change; coordinates are GUI viewport pixels. */
     public void place(Font font, int x, int y, int minimumWidth) {
         this.font = Objects.requireNonNull(font);

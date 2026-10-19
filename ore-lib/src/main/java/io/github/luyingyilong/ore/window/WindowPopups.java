@@ -86,6 +86,7 @@ public final class WindowPopups {
             Dropdown selected=trigger;dismiss(true);selected.select(option.value());
         }
         @Override public boolean getFocusScope(){return true;}
+        public Rect getPanelBounds() { return panel.getAbsoluteBounds(); }
         @Override public float getContentDepth(){return 6500;}
         @Override public boolean onFocusKey(int key,int modifiers){
             if(key!=GLFW.GLFW_KEY_ESCAPE)return false;dismiss(true);return true;

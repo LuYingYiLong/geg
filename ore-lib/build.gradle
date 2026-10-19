@@ -3,6 +3,33 @@ group = 'io.github.luyingyilong.ore'
 ext.oreBuildRoot = projectDir
 apply from: file('gradle/ore-conventions.gradle')
 
+// Optional recipe viewers discover their own plugin classes. Their APIs are never shipped
+// or added to the normal client/server runtime by Ore.
+repositories {
+    maven { url = 'https://maven.blamejared.com'; content { includeGroup 'mezz.jei' } }
+    maven { url = 'https://maven.terraformersmc.com/releases'; content { includeGroup 'dev.emi' } }
+    maven { url = 'https://maven.architectury.dev'; content { includeGroup 'dev.architectury' } }
+    maven { url = 'https://maven.fabricmc.net'; content { includeGroup 'net.fabricmc' } }
+    maven { url = 'https://maven.shedaniel.me'; content {
+        includeGroup 'me.shedaniel'
+        includeGroup 'me.shedaniel.cloth'
+    } }
+}
+configurations {
+    recipeViewerApi
+    compileOnly.extendsFrom recipeViewerApi
+    testImplementation.extendsFrom recipeViewerApi
+}
+dependencies {
+    recipeViewerApi(fg.deobf('mezz.jei:jei-1.20.1-common-api:15.20.0.105')) { transitive = false }
+    recipeViewerApi(fg.deobf('dev.emi:emi-forge:1.1.24+1.20.1:api')) { transitive = false }
+    recipeViewerApi(fg.deobf('me.shedaniel:RoughlyEnoughItems-api-forge:12.1.785')) { transitive = false }
+    recipeViewerApi('me.shedaniel.cloth:basic-math:0.6.1') { transitive = false }
+    // EMI's cross-platform API carries @Environment annotations even in its Forge artifact.
+    compileOnly('net.fabricmc:fabric-loader:0.15.11') { transitive = false }
+    testCompileOnly('net.fabricmc:fabric-loader:0.15.11') { transitive = false }
+}
+
 // One module, separate production and development outputs. The standard jar only includes main.
 sourceSets {
     inspector {

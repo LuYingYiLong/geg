@@ -47,6 +47,21 @@ public final class FocusManager {
         return focused;
     }
 
+    /** Read-only input-ownership query; never reveal a wide/scrolled field while hit testing. */
+    public Control getInputScope() {
+        return topScope();
+    }
+
+    /** Logical text focus, without validation, navigation or changes to the native IME session. */
+    public boolean getTextInputFocused() {
+        if (!(focused instanceof io.github.luyingyilong.ore.input.InputControl) || !inside(focused, topScope())) return false;
+        for (Control node = focused; node != null; node = node.getParent()) {
+            if (!node.isAlive() || !node.getVisible() || node.isSuspended()) return false;
+            if (node == window) return true;
+        }
+        return false;
+    }
+
     /**
      * Does not validate focus: a native widget may ask while candidates are being collected.
      */

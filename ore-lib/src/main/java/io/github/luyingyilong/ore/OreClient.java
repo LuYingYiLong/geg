@@ -23,6 +23,7 @@ public final class OreClient {
         OreTheme.register();
         modBus.addListener(OreFontResources::registerReloadListeners);
         forgeBus.register(OreInputMethod.class);
+        forgeBus.register(io.github.luyingyilong.ore.compat.recipeviewer.RecipeViewerInputGuard.class);
         forgeBus.register(AvatarSkinEvents.class);
         forgeBus.register(WindowManager.class);
         forgeBus.register(OreToasts.class);

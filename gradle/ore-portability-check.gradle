@@ -43,7 +43,9 @@ tasks.register('verifyOrePortability', Exec) {
                 it.startsWith('io/github/luyingyilong/ore/inspector/') || it.startsWith('assets/ore_inspector/') ||
                 it == 'META-INF/services/io.github.luyingyilong.ore.OreClientExtension' ||
                 it.startsWith('net/minecraftforge/fml/relauncher/') || it.startsWith('brachy/modularui/') ||
-                it.startsWith('top/theillusivec4/curios/')
+                it.startsWith('top/theillusivec4/curios/') || it.startsWith('mezz/jei/') ||
+                it.startsWith('dev/emi/') || it.startsWith('me/shedaniel/') ||
+                it.startsWith('net/fabricmc/') || it.startsWith('dev/architectury/')
             }
             if (!forbidden.empty) throw new GradleException("Unexpected portable artifact entries: $forbidden")
             def metadata = zip.getInputStream(zip.getEntry('META-INF/mods.toml')).getText('UTF-8')

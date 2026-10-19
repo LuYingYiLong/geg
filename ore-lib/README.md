@@ -13,6 +13,24 @@ Ore 是嵌入宿主 Mod 的客户端 UI 库，依赖 Java 17、Forge 1.20.1、Mo
 
 四个源码集属于同一个 Gradle 模块。标准 `jar` 仅包含 main，不包含 Inspector。Inspector 只能引用 main；main 不引用 Inspector。运行时通过开发服务描述自动注册 F8。
 
+## JEI / EMI / REI 避让
+
+三个查看器分别通过自己的可选插件入口读取 `RecipeViewerExclusions`，不要求安装其中任何一个，也不将其 API 或 Mod 打入宿主 JAR。编译 API 固定为 JEI 15.20.0.105、EMI 1.1.24、REI 12.1.785（Forge 1.20.1）。
+
+`OreScreen` 中的可见窗口及原版 Screen 中的 `OreButtonWidget` 自动提供 GUI 像素矩形，包含按钮 Badge 改变后的实际宽度。页面正文按布局范围避让；Drawer、Modal、Dialog 和 Dropdown 弹出层使用面板范围，忽略全屏遮罩。空的基础 `Control` 不绘制，因此仅遍历其子节点。原生窗口、暂存界面、隐藏或待销毁节点不占用主窗口区域；动画、偏移、缩放和界面尺寸变化都使用当前布局结果，无需宿主业务手写固定坐标。
+
+最终物品栏如何排列由对应查看器决定。没有开启查看器的界面不会被强制开启查看器，也不修改其用户配置。
+
+布局避让和输入隔离是两条独立的兼容链：`RecipeViewerInputGuard` 在 Forge Screen 输入事件的最高优先级，将 Ore 负责的输入交给原有 MUI → Window 事件链一次，再消费该事件。Drawer、Modal、Dialog 和 Dropdown 打开期间，键盘及整个遮罩区的点击、拖动和滚轮不会进入查看器；没有弹层时，仅保护 Ore 控件区域及已聚焦的文本输入。获得保护时释放查看器搜索框的焦点，不改动 Ore 的逻辑焦点或 IME。
+
+按下归属一直保留到释放，即使期间弹层关闭或返回其他 Screen，也不会把释放传给下层或新界面。鼠标转发前同步 MUI 默认上下文和当前界面的事件坐标，避免点击输入框时使用上一帧的位置。焦点丢失、登出及没有 Screen 时的释放都会清理手势。这里的焦点查询只读，不触发滚动定位。
+
+`RecipeViewerInputGuardTest`、`InputGestureOwnersTest` 覆盖保护范围及手势归属；宿主的 `RecipeViewerInputClientTest` 通过真实 GLFW 回调分别验证 JEI、EMI、REI 及无查看器环境，包括弹层、Dropdown、输入、粘贴、撤销重做、释放触发和拖出取消。
+
+JEI 与 EMI 同装时沿用 ModularUI 的 EMI 优先选择，JEI 通过 EMI 的 JEMI 桥接继续提供兼容数据。两个 Ore 插件只登记区域，不分别转发输入；输入仍经过同一个保护层和 MUI → Window 链。桥接可能重复报告相同矩形，但不会按报告次数扩大避让空间。
+
+两种客户端夹具都支持 `jei+emi` 模式：分别将 `ore.recipe.viewer.smoke` 或 `ore.recipe.input.smoke` 设为 `jei+emi`，在隔离客户端同时提供上述 JEI／EMI 运行依赖。避让测试检查两个原生回调、背包的最终桥接区域及 20 次查询的稳定性；输入测试检查实际 JEMI 运行时、两侧搜索焦点、Ctrl+O 不误切换侧栏，以及文字、按钮和 Dropdown 选项只通知一次。测试不会强制开启原本没有侧栏的 Ore 页面。
+
 ## 复制与构建
 
 宿主使用 ForgeGradle 6，映射和 Forge 版本与库一致。配置示例：

@@ -33,6 +33,7 @@ public final class Toast extends Container {
     private double closingFrom;
     private boolean started;
     private boolean closing;
+
     public Toast() {
         this(() -> System.nanoTime() / 1_000_000L, OreSounds::play);
     }
@@ -55,12 +56,18 @@ public final class Toast extends Container {
         return Math.pow(Math.min(1.0D, Math.max(0.0D, phase)), 3.0D);
     }
 
-    @Override protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
-        if (!isUpdatingChildren()) throw new IllegalStateException("Toast has a fixed skeleton; configure its properties");
-    }
-
     public static Rect shadowBounds(Rect area) {
         return area.translated(1, 1);
+    }
+
+    @Override
+    protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
+        if (!isUpdatingChildren())
+            throw new IllegalStateException("Toast has a fixed skeleton; configure its properties");
+    }
+
+    public Component getText() {
+        return label.getText();
     }
 
     public Toast setText(Component text) {
@@ -68,8 +75,8 @@ public final class Toast extends Container {
         return this;
     }
 
-    public Component getText() {
-        return label.getText();
+    public long getDuration() {
+        return duration;
     }
 
     /**
@@ -81,18 +88,14 @@ public final class Toast extends Container {
         return this;
     }
 
-    public long getDuration() {
-        return duration;
+    public Type getType() {
+        return type;
     }
 
     public Toast setType(Type type) {
         this.type = Objects.requireNonNull(type);
         label.setColor(type.style.textColor());
         return this;
-    }
-
-    public Type getType() {
-        return type;
     }
 
     public Toast open() {

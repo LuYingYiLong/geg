@@ -11,6 +11,12 @@ tasks.register('verifyOreRelease') {
              'io/github/luyingyilong/ore/signal/Signal.class', 'io/github/luyingyilong/ore/signal/Signal0.class',
              'io/github/luyingyilong/ore/signal/SignalScope.class', 'io/github/luyingyilong/ore/signal/Connection.class',
              'io/github/luyingyilong/ore/signal/SignalDiagnostics.class',
+             'io/github/luyingyilong/ore/compat/recipeviewer/RecipeViewerExclusions.class',
+             'io/github/luyingyilong/ore/compat/recipeviewer/RecipeViewerInputGuard.class',
+             'io/github/luyingyilong/ore/compat/recipeviewer/InputGestureOwners.class',
+             'io/github/luyingyilong/ore/compat/recipeviewer/jei/OreJeiPlugin.class',
+             'io/github/luyingyilong/ore/compat/recipeviewer/emi/OreEmiPlugin.class',
+             'io/github/luyingyilong/ore/compat/recipeviewer/rei/OreReiPlugin.class',
              'io/github/luyingyilong/ore/theme/OreTrueTypeGlyphProvider.class',
              'io/github/luyingyilong/ore/mixin/TrueTypeGlyphProviderDefinitionMixin.class'].each {
                 if (!names.contains(it)) throw new GradleException("Missing release entry: $it")
@@ -22,7 +28,9 @@ tasks.register('verifyOreRelease') {
                 it == 'assets/geg/sounds.json' || it == 'io/github/luyingyilong/geg/sound/GegSounds.class' ||
                 it == 'META-INF/services/io.github.luyingyilong.ore.OreClientExtension' ||
                 it.endsWith('Test.class') || it.startsWith('net/minecraftforge/fml/relauncher/') ||
-                it.startsWith('brachy/modularui/') }
+                it.startsWith('brachy/modularui/') || it.startsWith('mezz/jei/') ||
+                it.startsWith('dev/emi/') || it.startsWith('me/shedaniel/') ||
+                it.startsWith('net/fabricmc/') || it.startsWith('dev/architectury/') }
             if (!forbidden.empty) throw new GradleException("Development/dependency entries in release: $forbidden")
             def metadata = zip.getInputStream(zip.getEntry('META-INF/mods.toml')).getText('UTF-8')
             if ((metadata =~ /(?m)^modId\s*=/).count != 1) throw new GradleException('Release must have one Mod identity')

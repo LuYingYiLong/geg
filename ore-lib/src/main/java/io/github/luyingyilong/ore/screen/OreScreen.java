@@ -27,6 +27,11 @@ public final class OreScreen extends ScreenWrapper {
         if (Minecraft.getInstance().screen instanceof OreScreen screen) screen.roots.add(root);
     }
 
+    /** Only this screen's roots, never retained parents or native windows. */
+    public java.util.List<io.github.luyingyilong.ore.layout.Window> getWindows() {
+        return java.util.List.copyOf(roots);
+    }
+
     public static void disposeSessions() {
         for (OreScreen screen : java.util.List.copyOf(SESSIONS)) screen.endSession();
     }
