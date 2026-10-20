@@ -486,7 +486,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
                         e.getKey().getDebugName().isBlank() ? "Window" : e.getKey().getDebugName(), e.getKey().getHost().getNativeWindow(), System.nanoTime() - e.getValue() < 500_000_000L))
                 .sorted(Comparator.comparing(InspectorSnapshot.Target::id)).toList();
         snapshot = new InspectorSnapshot(++sequence, root == null || System.nanoTime() - lastFrame > 300_000_000L, selected, picking, error,
-                overrides.canUndo(), overrides.canRedo(), windows, List.copyOf(out), signalSnapshot(), lifecycleSnapshot(), lifecycleHistory.snapshot());
+                overrides.canUndo(), overrides.canRedo(), windows, List.copyOf(out), signalSnapshot(), lifecycleSnapshot(), lifecycleHistory.snapshot(), themeSnapshot());
         lastSend = System.nanoTime();
     }
 
@@ -496,6 +496,10 @@ public final class InspectorBackend implements DebugBridge.Backend {
         return selectedLifecycle;
     }
 
+    private io.github.luyingyilong.ore.debug.DebugThemes.Snapshot themeSnapshot() {
+        Node current=nodes.get(selected);
+        return DebugBridge.themes(current==null?null:current.control);
+    }
     private InspectorSnapshot.SignalPanel signalSnapshot() {
         Node current = nodes.get(selected);
         if (current != null) signalInspector.watch(current.id, current.name, current.control);

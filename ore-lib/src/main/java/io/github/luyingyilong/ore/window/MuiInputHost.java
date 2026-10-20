@@ -42,7 +42,7 @@ public final class MuiInputHost implements AutoCloseable {
             @Override public void updateGuiArea(brachy.modularui.utils.Rectangle area) { }
         });
         screen.getContext().setSettings(new UISettings());
-        screen.useTheme(OreClient.getOptions().defaultTheme());
+        // Native MUI adapter uses its own built-in editing theme.
         resize(context.getGuiWidth(), context.getGuiHeight());
         context.bind(screen.getContext());
         screen.onOpen();

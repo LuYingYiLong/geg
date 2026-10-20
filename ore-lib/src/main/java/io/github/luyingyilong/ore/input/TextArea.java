@@ -16,6 +16,7 @@ import org.lwjgl.glfw.GLFW;
  * Multiline Ore editor; the existing MUI handler still owns selection, scrolling and IME commits.
  */
 public final class TextArea extends Input {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"TextArea"); }
     private int rows = 6;
     private PointF lastCaret;
     private int lastWidth = -1, lastHeight = -1;
@@ -143,7 +144,7 @@ public final class TextArea extends Input {
     @Override
     public int getPreferredInputHeight() {
         int count = minimumRows == 0 ? rows : Math.max(minimumRows, Math.min(maximumRows, automaticRows));
-        return getControlSize().getHeight() + (count - 1) * OreTextMetrics.body().lineHeight(scale);
+        return getControlSize().getHeight() + (count - 1) * OreTextMetrics.body().lineHeight(getTextScale());
     }
 
     @Override

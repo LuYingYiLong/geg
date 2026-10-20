@@ -30,12 +30,12 @@ public final class PlayerIdentityCell<T> implements Table.Cell<T> {
     }
 
     private static Label nameLabel() {
-        return new Label().setColor(OreTheme.TEXT_WHITE).setWrap(Label.Wrap.CHARACTER).setMaxLines(2)
+        return new Label().setWrap(Label.Wrap.CHARACTER).setMaxLines(2)
                 .setOverflow(Label.Overflow.ELLIPSIS).setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
     }
 
-    @Override public int measureHeight(Font font, T row, int width) {
-        int textHeight = font == null ? 0 : Label.measureTextHeight(font, Component.literal(playerName.apply(row)),
+    @Override public int measureHeight(Control owner, Font font, T row, int width) {
+        int textHeight = font == null ? 0 : Label.measureTextHeight(owner, font, Component.literal(playerName.apply(row)),
                 Math.max(1, width - 2 * INSET_X - AVATAR_SIZE - GAP), Label.Wrap.CHARACTER, Label.Overflow.ELLIPSIS, 2);
         return Math.max(AVATAR_SIZE, textHeight) + 2 * INSET_Y;
     }

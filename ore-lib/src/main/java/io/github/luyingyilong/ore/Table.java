@@ -33,6 +33,8 @@ import java.util.function.Supplier;
 
 /** Fixed-header table whose rows use the Ore bar theme and shared draw/hit geometry. */
 public final class Table<T> extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Table"); }
+    @Override public String getThemeState() { return "layout="+(compact?"compact":"regular")+", scroll="+scroll; }
     public interface Cell<T> {
         void draw(DrawContext context, T row, Rect bounds);
 
@@ -40,7 +42,7 @@ public final class Table<T> extends Container {
             draw(context, row, bounds);
         }
 
-        default int measureHeight(Font font, T row, int width) {
+        default int measureHeight(Control owner, Font font, T row, int width) {
             return 0;
         }
 
@@ -83,7 +85,7 @@ public final class Table<T> extends Container {
     /** Text cell with configurable clipping and wrapping; its measured height feeds row layout. */
     public static final class TextCell<T> implements Cell<T> {
         private final Function<T, Component> text;
-        private final int color;
+        private final Integer color;
         private Label.Overflow overflow = Label.Overflow.ELLIPSIS;
         private Label.Wrap wrap = Label.Wrap.NONE;
         private Label.Horizontal horizontal = Label.Horizontal.LEFT;
@@ -92,6 +94,7 @@ public final class Table<T> extends Container {
         private int horizontalInset = 4;
         private int verticalInset = 2;
 
+        public TextCell(Function<T, Component> text) { this.text=Objects.requireNonNull(text); this.color=null; }
         public TextCell(Function<T, Component> text, int color) {
             this.text = Objects.requireNonNull(text);
             this.color = color;
@@ -126,9 +129,9 @@ public final class Table<T> extends Container {
             return this;
         }
 
-        @Override public int measureHeight(Font font, T row, int width) {
+        @Override public int measureHeight(Control owner, Font font, T row, int width) {
             if (font == null) return 0;
-            return Label.measureTextHeight(font, text.apply(row), Math.max(1, width - 2 * horizontalInset), wrap, overflow, maxLines)
+            return Label.measureTextHeight(owner, font, text.apply(row), Math.max(1, width - 2 * horizontalInset), wrap, overflow, maxLines)
                     + 2 * verticalInset;
         }
 
@@ -137,15 +140,17 @@ public final class Table<T> extends Container {
         }
 
         @Override public Control createControl() {
-            return new Padding(insets()).setChild(new Label().setColor(color).setOverflow(overflow)
-                    .setWrap(wrap).setMaxLines(maxLines).setAlignment(horizontal, vertical));
+            Label label=new Label().setOverflow(overflow).setWrap(wrap).setMaxLines(maxLines).setAlignment(horizontal,vertical);
+            if(color!=null) label.setColor(color);
+            return new Padding(insets()).setChild(label);
         }
 
         @Override public void bindControl(Control control, T row) {
             Padding padding = (Padding) control;
             padding.setInsets(insets());
-            ((Label) padding.getChildren().get(0)).setText(Objects.requireNonNull(text.apply(row))).setColor(color)
-                    .setOverflow(overflow).setWrap(wrap).setMaxLines(maxLines).setAlignment(horizontal, vertical);
+            Label label=(Label)padding.getChild(0);
+            label.setText(Objects.requireNonNull(text.apply(row))).setOverflow(overflow).setWrap(wrap).setMaxLines(maxLines).setAlignment(horizontal,vertical);
+            if(color!=null) label.setColor(color);
         }
 
         private Padding.Insets insets() {
@@ -195,7 +200,7 @@ public final class Table<T> extends Container {
     private Function<T, Object> rowKey;
     private final SignalSource<T> rowActivated = new SignalSource<>(this, "rowActivated", "T");
     private Component empty = Component.empty();
-    private int headerColor = OreTheme.TEXT_SECONDARY;
+    private Integer headerColor;
     private int[] columnWidths = new int[0];
     private int scroll;
     private int contentHeight;
@@ -321,6 +326,7 @@ public final class Table<T> extends Container {
         List<ActionTarget<T>> targets = new ArrayList<>();
         Rect bounds = row.bounds().translated(getAbsoluteBounds().x(),
                 getAbsoluteBounds().y() + getHeaderHeight() - scroll);
+        bounds=rowContent(bounds);
         if (compact) {
             int x = bounds.x() + COMPACT_INSET;
             int width = Math.max(0, bounds.width() - 2 * COMPACT_INSET);
@@ -495,8 +501,8 @@ public final class Table<T> extends Container {
             lastWidth = localBounds.width();
             dirty = false;
             int minimum = columns.stream().mapToInt(column -> column.minimumWidth).sum();
-            compact = localBounds.width() < minimum;
-            columnWidths = compact ? new int[0] : calculateColumnWidths(localBounds.width());
+            compact = localBounds.width()-getThemeItem(OreTheme.BAR).getContentMargin().getHorizontal() < minimum;
+            columnWidths = compact ? new int[0] : calculateColumnWidths(Math.max(0,localBounds.width()-getThemeItem(OreTheme.BAR).getContentMargin().getHorizontal()));
             layoutRows.clear();
             int top = 0;
             for (int index = 0; index < rows.size(); index++) {
@@ -612,22 +618,24 @@ public final class Table<T> extends Container {
         return result;
     }
 
+    private Rect rowContent(Rect bounds) { return getThemeItem(OreTheme.BAR).getContentRect(bounds); }
+
     private int regularRowHeight(T item, Font font) {
         int height = ROW_HEIGHT;
         for (int index = 0; index < columns.size(); index++)
-            height = Math.max(height, columns.get(index).cell.measureHeight(font, item,
+            height = Math.max(height, columns.get(index).cell.measureHeight(this, font, item,
                     columnWidths[index]));
-        return height;
+        return height+getThemeItem(OreTheme.BAR).getContentMargin().getVertical();
     }
 
     private int compactCellHeight(Column<T> column, T item, Font font, int width) {
         return Math.max(1, Math.max(column.compactHeight.applyAsInt(width),
-                column.cell.measureHeight(font, item, width)));
+                column.cell.measureHeight(this, font, item, width)));
     }
 
     private int compactRowHeight(T item, Font font) {
-        int contentWidth = Math.max(0, getBounds().width() - 2 * COMPACT_INSET);
-        int height = 2 * COMPACT_INSET;
+        int contentWidth = Math.max(0, getBounds().width() - 2 * COMPACT_INSET-getThemeItem(OreTheme.BAR).getContentMargin().getHorizontal());
+        int height = 2 * COMPACT_INSET+getThemeItem(OreTheme.BAR).getContentMargin().getVertical();
         for (Column<T> column : columns)
             height += COMPACT_LABEL_HEIGHT + compactCellHeight(column, item, font, contentWidth);
         return height;
@@ -663,7 +671,7 @@ public final class Table<T> extends Container {
     }
 
     private void drawHeader(DrawContext context, Rect area) {
-        int x = area.x();
+        int x = area.x()+getThemeItem(OreTheme.BAR).getContentMargin().left();
         for (int index = 0; index < columns.size(); index++) {
             Column<T> column = columns.get(index);
             drawText(this, "header_" + column.key, headerLabels.get(column.key), context,
@@ -673,13 +681,15 @@ public final class Table<T> extends Container {
     }
 
     private void drawText(Control owner, String name, Label label, DrawContext context, Rect area) {
-        label.setColor(headerColor).setOverflow(Label.Overflow.CLIP).setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+        if(headerColor!=null) label.setColor(headerColor); else label.setThemeTypeVariation("LabelSecondary");
+        label.setOverflow(Label.Overflow.CLIP).setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
         label.layout(area, context.getFont());
         DebugBridge.backend().internal(owner, name, label);
         label.draw(context, 0, 0);
     }
 
     private void drawRegularRow(DrawContext context, T item, Rect row) {
+        row=rowContent(row);
         int x = row.x();
         for (int index = 0; index < columns.size(); index++) {
             int width = columnWidths[index];
@@ -711,6 +721,7 @@ public final class Table<T> extends Container {
     }
 
     private void drawCompactRow(DrawContext context, T item, Rect row, RowView view) {
+        row=rowContent(row);
         int x = row.x() + COMPACT_INSET;
         int width = Math.max(0, row.width() - 2 * COMPACT_INSET);
         int y = row.y() + COMPACT_INSET;
@@ -748,6 +759,7 @@ public final class Table<T> extends Container {
             }
         Rect bounds = row.bounds().translated(getAbsoluteBounds().x(),
                 getAbsoluteBounds().y() + getHeaderHeight() - scroll);
+        bounds=rowContent(bounds);
         if (compact) {
             int x = bounds.x() + COMPACT_INSET;
             int width = Math.max(0, bounds.width() - 2 * COMPACT_INSET);
@@ -807,6 +819,7 @@ public final class Table<T> extends Container {
         for (ActionTarget<T> action : actions) if (action.bounds().contains(rootX, rootY))
             return new PressTarget(row.key(), action.columnKey(), action.index(), row.item());
         Rect bounds = row.bounds().translated(getAbsoluteBounds().x(), getAbsoluteBounds().y() + getHeaderHeight() - scroll);
+        bounds=rowContent(bounds);
         if (compact) {
             int y = bounds.y() + COMPACT_INSET;
             for (Column<T> column : columns) {
@@ -879,13 +892,14 @@ public final class Table<T> extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(bounds, font);
-            int x = compact ? COMPACT_INSET : 0;
-            int y = compact ? COMPACT_INSET : 0;
+            Rect inner=rowContent(new Rect(0,0,bounds.width(),bounds.height()));
+            int x = inner.x()+(compact ? COMPACT_INSET : 0);
+            int y = inner.y()+(compact ? COMPACT_INSET : 0);
             for (int index = 0; index < columns.size(); index++) {
                 Column<T> column = columns.get(index);
-                int width = compact ? Math.max(0, bounds.width() - 2 * COMPACT_INSET) : columnWidths[index];
+                int width = compact ? Math.max(0, inner.width() - 2 * COMPACT_INSET) : columnWidths[index];
                 if (compact) y += COMPACT_LABEL_HEIGHT;
-                int height = compact ? compactCellHeight(column, row.item(), font, width) : bounds.height();
+                int height = compact ? compactCellHeight(column, row.item(), font, width) : inner.height();
                 Control control = controls.get(column.key);
                 if (control != null) fitChild(control, new Rect(x, y, width, height), font);
                 if (compact) y += height;

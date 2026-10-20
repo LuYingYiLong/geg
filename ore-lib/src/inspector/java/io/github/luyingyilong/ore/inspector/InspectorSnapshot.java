@@ -10,9 +10,9 @@ import io.github.luyingyilong.ore.signal.SignalDiagnostics;
  * Immutable view data, deliberately containing no live Control references.
  */
 public record InspectorSnapshot(long sequence, boolean waiting, String selected, boolean picking, String error,
-                                boolean canUndo, boolean canRedo, List<Target> targets, List<Node> nodes, SignalPanel signals, io.github.luyingyilong.ore.layout.LifecycleInfo lifecycle, List<io.github.luyingyilong.ore.layout.LifecycleInfo> lifecycleHistory) {
+                                boolean canUndo, boolean canRedo, List<Target> targets, List<Node> nodes, SignalPanel signals, io.github.luyingyilong.ore.layout.LifecycleInfo lifecycle, List<io.github.luyingyilong.ore.layout.LifecycleInfo> lifecycleHistory, io.github.luyingyilong.ore.debug.DebugThemes.Snapshot themes) {
     public static InspectorSnapshot empty() {
-        return new InspectorSnapshot(0, true, "", false, "", false, false, List.of(), List.of(), SignalPanel.empty(), null, List.of());
+        return new InspectorSnapshot(0, true, "", false, "", false, false, List.of(), List.of(), SignalPanel.empty(), null, List.of(), io.github.luyingyilong.ore.debug.DebugThemes.Snapshot.empty());
     }
 
     public record SignalPanel(String node, String name, String state, SignalDiagnostics.Snapshot data, Map<Long, String> owners) {

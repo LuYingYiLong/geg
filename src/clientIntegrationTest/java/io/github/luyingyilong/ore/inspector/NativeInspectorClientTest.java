@@ -101,6 +101,10 @@ public final class NativeInspectorClientTest {
                 OreInspector.backend().execute(InspectorCommand.select(signalNode.id()));
                 OreInspector.view().update();
                 Segmented views = (Segmented)find(OreInspector.view().window(), c -> c instanceof Segmented && c.getDebugName().equals("Inspector views"));
+                clickViewIndex(views,2);
+                check(OreInspector.backend().snapshot().themes().items().stream().anyMatch(i->i.key().equals("Button:secondary_normal") && i.value().contains("StyleBoxTexture")),"Native theme view resolves actual button texture");
+                check(io.github.luyingyilong.ore.theme.ThemeDB.getDefault().getDiagnostics().isEmpty(),"Shipped themes loaded without MUI or resource errors");
+                System.out.println("GEG_NATIVE_INSPECTOR_THEMES_PASS");
                 clickView(views, true);
                 check(OreInspector.backend().snapshot().signals().data().signals().stream().anyMatch(s -> s.name().equals("pressed")
                         && s.connections().size() == 2 && s.connections().stream().allMatch(io.github.luyingyilong.ore.signal.SignalDiagnostics.ConnectionInfo::possibleDuplicate)),
@@ -220,10 +224,17 @@ public final class NativeInspectorClientTest {
         check(!placeholder(currentHint).isDisposed(), "Visible placeholder is still live");
     }
     private static void clickView(Segmented views, boolean signals) {
+        clickViewIndex(views,signals?1:0);
+    }
+    private static void clickViewIndex(Segmented views,int expected) {
         Window window = OreInspector.view().window();
         Rect area = io.github.luyingyilong.ore.event.EventGeometry.displayed(views);
-        int x = signals ? area.right() - 5 : area.x() + 5, y = area.y() + area.height() / 2;
-        int previous = views.getSelected(), expected = signals ? 1 : 0;
+        int y=area.y()+area.height()/2, x=area.x();
+        while(x<area.right() && views.hitIndex(area.x(),area.y(),area.width(),x,y)!=expected) x++;
+        check(x<area.right(),"Requested Inspector view is laid out");
+        int end=x; while(end<area.right() && views.hitIndex(area.x(),area.y(),area.width(),end,y)==expected) end++;
+        x=(x+end)/2;
+        int previous=views.getSelected();
         check(io.github.luyingyilong.ore.event.WindowInputs.press(window, x, y, window.getContext().getMui()), "View press is routed through Window");
         check(views.getSelected() == previous, "View changes only after release");
         check(io.github.luyingyilong.ore.event.WindowInputs.release(window, x, y) && views.getSelected() == expected,

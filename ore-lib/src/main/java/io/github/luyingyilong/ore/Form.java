@@ -14,6 +14,7 @@ import java.util.Objects;
 
 /** Named values, submit validation, and field layout share one Ore node. */
 public final class Form extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Form"); }
     public enum Layout { VERTICAL, HORIZONTAL }
 
     private final Map<String, FormItem> items = new LinkedHashMap<>();

@@ -43,12 +43,6 @@ public final class Spin extends Control {
         int frame = frameAt(System.nanoTime() / 1_000_000L);
         int x = area.x() + (area.width() - FRAME_SIZE) / 2;
         int y = area.y() + (area.height() - FRAME_SIZE) / 2;
-        GuiGraphics graphics = context.getGraphics();
-        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        graphics.blit(OreIcons.LOADING, x, y, 0.0F, (float) (frame * FRAME_SIZE),
-                FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, TEXTURE_HEIGHT);
-        RenderSystem.disableBlend();
+        getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.ICON_LOADING).drawFrame(context,new Rect(x,y,FRAME_SIZE,FRAME_SIZE),frame,FRAME_SIZE);
     }
 }

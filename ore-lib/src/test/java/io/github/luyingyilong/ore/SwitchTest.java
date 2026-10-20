@@ -45,7 +45,7 @@ public final class SwitchTest {
         for (String name : List.of("switch_base", "switch_base_disabled", "switch_button_normal",
                 "switch_button_hovered", "switch_button_pressed", "switch_button_disabled")) {
             try (var input = new DataInputStream(java.util.Objects.requireNonNull(SwitchTest.class.getResourceAsStream(
-                    "/assets/ore/textures/modularui/icons/" + name + ".png")))) {
+                    "/assets/ore/textures/icons/" + name + ".png")))) {
                 input.skipNBytes(16);
                 check(input.readInt() == (name.startsWith("switch_base") ? 27 : 14), "PNG width: " + name);
                 check(input.readInt() == (name.startsWith("switch_base") ? 13 : 15), "PNG height: " + name);

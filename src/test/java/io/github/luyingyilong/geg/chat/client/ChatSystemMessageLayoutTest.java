@@ -40,15 +40,15 @@ public final class ChatSystemMessageLayoutTest {
         ChatMessageList.MessageView view = new ChatMessageList.MessageView();
         for (int width : new int[]{127, 128, 129, 320}) {
             view.bind(system);
-            int height = ChatMessageList.messageHeight(system, width, font);
+            int height = ChatMessageList.messageHeight(view,system, width, font);
             view.layout(new Rect(0, 0, width, height), font);
             check(view.getChildren().stream().filter(child -> child.getVisible()).count() == 1, "Only the body is visible");
             check(view.text.getBounds().equals(new Rect(0, 0, width, height)), "Full-width system body without header or avatar inset");
             check(view.text.label.getWrap() == Label.Wrap.WORD && view.text.label.lines(font, width).size() > 1, "Wrap command feedback");
             check(height == view.text.label.measureHeight(font, width), "Virtual row height equals wrapped Label height");
-            check(ChatMessageList.messageHeight(player, width, font) > height, "Player rows retain author/portrait spacing");
+            check(ChatMessageList.messageHeight(view,player, width, font) > height, "Player rows retain author/portrait spacing");
             view.bind(player);
-            view.layout(new Rect(0, 0, width, ChatMessageList.messageHeight(player, width, font)), font);
+            view.layout(new Rect(0, 0, width, ChatMessageList.messageHeight(view,player, width, font)), font);
             check(view.getChildren().stream().filter(child -> child.getVisible()).count() == 3 && view.text.getBounds().x() == 28,
                     "Recycled view restores player layout");
         }
@@ -102,7 +102,7 @@ public final class ChatSystemMessageLayoutTest {
             check(view.text.getBounds().width() == width && view.text.getBounds().x() == 0, "Command feedback remains full width");
             area = view.text.getAbsoluteBounds();
             check(view.text.style(font, width / 2, 2, area) != null, "Command feedback returns to centered alignment");
-            check(ChatMessageList.messageHeight(outgoing, width, font) == ChatMessageList.messageHeight(incoming, width, font),
+            check(ChatMessageList.messageHeight(view,outgoing, width, font) == ChatMessageList.messageHeight(view,incoming, width, font),
                     "Mirroring keeps virtual row height unchanged");
         }
     }

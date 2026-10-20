@@ -5,16 +5,11 @@ import io.github.luyingyilong.ore.signal.*;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.Inspectable;
 import io.github.luyingyilong.ore.debug.DebugProperty;
-import brachy.modularui.api.ITheme;
-import brachy.modularui.api.drawable.IDrawable;
 import io.github.luyingyilong.ore.render.DrawContext;
-import brachy.modularui.theme.WidgetTheme;
-import brachy.modularui.theme.WidgetThemeEntry;
-import brachy.modularui.theme.WidgetThemeKey;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.theme.OreSounds;
-import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -24,11 +19,11 @@ import org.lwjgl.glfw.GLFW;
 import java.util.function.Consumer;
 
 public final class Button extends Control {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Button"); }
     public static final int HEIGHT = Size.MEDIUM.getHeight();
     public static final int PADDING_X = 8;
     private static final int ICON_GAP = 4;
     private static final int ICON_PADDING = 4;
-    private static final int PRESSED_OFFSET = 2;
 
     private final Label label = ownPart("label", new Label());
     private Size buttonSize = Size.MEDIUM;
@@ -72,6 +67,7 @@ public final class Button extends Control {
     public Button setHero(boolean hero) { label.setHero(hero); requestLayout(); return this; }
     public boolean getHero() { return label.getHero(); }
     public Button setFontSize(float fontSize) { label.setFontSize(fontSize); requestLayout(); return this; }
+    public Button clearFontSize() { label.clearFontSize(); requestLayout(); return this; }
     public float getFontSize() { return label.getFontSize(); }
     public Button setSize(Size size) { this.buttonSize = java.util.Objects.requireNonNull(size); setMinimum(0, size.getHeight()); return this; }
     public Button setType(Type type) { java.util.Objects.requireNonNull(type); if (DebugBridge.previewWrite(this, "type", type)) return this; this.type = type; return this; }
@@ -149,17 +145,19 @@ public final class Button extends Control {
 
     @Override public int measureWidth(Font font, int available) {
         if (!isAlive()) return 0;
+        Icon icon=this.icon==null?null:this.icon.resolve(this), trailingIcon=this.trailingIcon==null?null:this.trailingIcon.resolve(this);
         int reserved = badgeReservation(font);
         if (icon != null && !hasLabel() && trailingIcon == null)
             return Math.max(getMinimumWidth(), Math.max(buttonSize.getHeight(), icon.width
                     + 2 * (hasBadge() ? PADDING_X : ICON_PADDING)) + reserved);
-        return Math.max(getMinimumWidth(), label.measureWidth(font, available) + 2 * PADDING_X
+        return Math.max(getMinimumWidth(), label.measureWidth(font, available) + getThemeItem(getStyleKey(getType(),false,false,disabled)).getContentMargin().getHorizontal()
                 + (icon == null ? 0 : icon.width + (hasLabel() ? ICON_GAP : 0))
                 + (trailingIcon == null ? 0 : trailingIcon.width + ICON_GAP) + reserved);
     }
 
     @Override public int measureHeight(Font font, int available) {
         if (!isAlive()) return 0;
+        Icon icon=this.icon==null?null:this.icon.resolve(this), trailingIcon=this.trailingIcon==null?null:this.trailingIcon.resolve(this);
         int iconHeight = Math.max(icon == null ? 0 : icon.height, trailingIcon == null ? 0 : trailingIcon.height);
         int height = Math.max(super.measureHeight(font, available), iconHeight == 0 ? 0 : iconHeight + 2 * ICON_PADDING);
         return Math.max(height, hasBadge() ? badge.measureHeight(font, available) + 4 : 0);
@@ -177,12 +175,12 @@ public final class Button extends Control {
     }
 
     private void layoutBadge(Font font) {
-        Type type = DebugBridge.value(this, "type", this.type);
         if (!hasBadge()) return;
+        var offset = getPresentationStyle(pointerHovered, visuallyPressed()).getContentOffset();
         io.github.luyingyilong.ore.layout.Size natural = badge.measureSize(font,
                 new io.github.luyingyilong.ore.layout.Size(getSize().width(), getSize().height()));
-        badge.layout(new Rect(getSize().width() - PADDING_X - natural.width(),
-                (getSize().height() - natural.height()) / 2 + pressedOffset(type, visuallyPressed()),
+        badge.layout(new Rect(getSize().width() - PADDING_X - natural.width() + offset.x(),
+                (getSize().height() - natural.height()) / 2 + offset.y(),
                 natural.width(), natural.height()), font);
     }
 
@@ -193,8 +191,11 @@ public final class Button extends Control {
     }
 
     @Override public Rect getFocusBounds() {
-        Type type = DebugBridge.value(this, "type", this.type);
-        return backgroundBounds(getAbsoluteBounds(), type, visuallyPressed());
+        return getPresentationStyle(pointerHovered, visuallyPressed()).getBackgroundRect(getAbsoluteBounds());
+    }
+
+    StyleBox getPresentationStyle(boolean hovered, boolean pressed) {
+        return getThemeItem(getStyleKey(getType(), hovered, pressed, disabled));
     }
 
     @Override protected void render(DrawContext context, int screenX, int screenY) {
@@ -210,7 +211,7 @@ public final class Button extends Control {
         if (!isAlive()) return;
         Type type = DebugBridge.value(this, "type", this.type);
         DebugBridge.backend().internal(this, "label", label);
-        drawLabelled(context, area.x(), area.y(), area.width(), area.height(), label, icon, trailingIcon,
+        drawLabelled(this, context, area.x(), area.y(), area.width(), area.height(), label, icon, trailingIcon,
                 alignment, type, !disabled && hovered, !disabled && pressed, disabled, badgeReservation(context.getFont()));
     }
 
@@ -264,127 +265,56 @@ public final class Button extends Control {
     @Override public void cancelInteraction() { pointerPressed = false; pointerHovered = false; activationKey = -1; }
     @Override public void onFocusChanged(boolean focused) { if (!focused) cancelInteraction(); }
 
-    public static void draw(DrawContext context, int x, int y, int width,
-                            Component label) {
-        draw(context, x, y, width, Size.MEDIUM, label);
-    }
-
-    public static void draw(DrawContext context, int x, int y, int width,
-                            Size size, Component label) {
-        draw(context, x, y, width, size.getHeight(), label, (Icon) null);
-    }
-
-    public static void draw(DrawContext context, int x, int y, int width,
-                            int height, Component label, Type type) {
-        draw(context, x, y, width, height, label, null, TextAlignment.CENTER, type);
-    }
-
-    public static void draw(DrawContext context, int x, int y, int width,
-                            Size size, Component label, TextAlignment alignment) {
-        draw(context, x, y, width, size.getHeight(), label, null, alignment);
-    }
-
-    public static void draw(DrawContext context, int x, int y, int width,
-                            Size size, Component label, Icon trailingIcon,
-                            TextAlignment alignment) {
-        draw(context, x, y, width, size.getHeight(), label, trailingIcon, alignment);
-    }
-
-    static void draw(DrawContext context, int x, int y, int width,
-                     int height, Component label, Icon trailingIcon) {
-        draw(context, x, y, width, height, label, trailingIcon, TextAlignment.CENTER);
-    }
-
-    static void draw(DrawContext context, int x, int y, int width,
-                     int height, Component label, Icon trailingIcon,
-                     TextAlignment alignment) {
-        draw(context, x, y, width, height, label, trailingIcon, alignment, Type.SECONDARY);
-    }
-
-    static void draw(DrawContext context, int x, int y, int width,
-                     int height, Component label, Icon trailingIcon,
-                     TextAlignment alignment, Type type) {
-        drawLabelled(context, x, y, width, height, Label.immediate(context, label), trailingIcon, alignment, type);
-    }
-
-    static void draw(DrawContext context, int x, int y, int width, int height,
-                     Component label, Icon trailingIcon, TextAlignment alignment, boolean hovered, boolean pressed) {
-        drawLabelled(context, x, y, width, height, Label.immediate(context, label), null, trailingIcon,
-                alignment, Type.SECONDARY, hovered, pressed);
-    }
-
-    private static void drawLabelled(DrawContext context, int x, int y, int width,
-                                     int height, Label label, Icon trailingIcon,
-                                     TextAlignment alignment, Type type) {
-        boolean hovered = contains(x, y, width, height,
-                context.getAbsMouseX(), context.getAbsMouseY());
-        drawLabelled(context, x, y, width, height, label, null, trailingIcon, alignment,
-                type, hovered, hovered && leftMousePressed());
-    }
-
-    private static void drawLabelled(DrawContext context, int x, int y, int width,
-                                     int height, Label label, Icon icon, Icon trailingIcon, TextAlignment alignment,
-                                     Type type, boolean hovered, boolean pressed) {
-        drawLabelled(context, x, y, width, height, label, icon, trailingIcon, alignment,
-                type, hovered, pressed, false);
-    }
-
-    private static void drawLabelled(DrawContext context, int x, int y, int width,
-                                     int height, Label label, Icon icon, Icon trailingIcon, TextAlignment alignment,
-                                     Type type, boolean hovered, boolean pressed, boolean disabled) {
-        drawLabelled(context, x, y, width, height, label, icon, trailingIcon, alignment, type, hovered, pressed, disabled, 0);
-    }
-
-    private static void drawLabelled(DrawContext context, int x, int y, int width,
+    private static void drawLabelled(Control owner, DrawContext context, int x, int y, int width,
                                      int height, Label label, Icon icon, Icon trailingIcon, TextAlignment alignment,
                                      Type type, boolean hovered, boolean pressed, boolean disabled, int reservedRight) {
         pressed = pressed && !disabled;
-        GuiGraphics graphics = context.getGraphics();
-        WidgetThemeEntry<WidgetTheme> disabledEntry = disabled
-                ? context.getTheme().getWidgetTheme(OreTheme.BUTTON_DISABLED) : null;
-        WidgetTheme style = disabledEntry != null ? disabledEntry.theme()
-                : theme(context.getTheme(), type, hovered, pressed);
-        IDrawable background = style.getBackground();
-        Rect area = new Rect(x, y, width, height);
-        Rect backgroundArea = backgroundBounds(area, type, pressed);
-        if (type == Type.TEXT) {
-            int color = textBackgroundColor(hovered, pressed);
-            if (color != 0) graphics.fill(backgroundArea.x(), backgroundArea.y(), backgroundArea.right(), backgroundArea.bottom(), color);
-        } else if (background != null && paintsThemedBackground(type, hovered, pressed)) {
-            io.github.luyingyilong.ore.theme.OreDrawables.draw(context, background, backgroundArea, style);
+        if(icon!=null) icon=icon.resolve(owner); if(trailingIcon!=null) trailingIcon=trailingIcon.resolve(owner);
+        StyleBox background=owner.getThemeItem(getStyleKey(type,hovered,pressed,disabled));
+        Rect area=new Rect(x,y,width,height);
+        background.draw(context,area);
+        boolean hasLabel=!label.getText().getString().isEmpty();
+        Rect contentArea=new Rect(x,y,Math.max(0,width-reservedRight),height);
+        ContentLayout content=contentLayout(contentArea,background,
+                hasLabel?label.measureWidth(context.getFont(),background.getContentRect(contentArea).width()):0,
+                hasLabel,icon,trailingIcon,alignment);
+        if(hasLabel) {
+            label.setThemeOverride(OreTheme.TEXT_COLOR,owner.getThemeItem(getTextKey(type,hovered,pressed,disabled)));
+            label.setOpticalCenter(true).setOverflow(Label.Overflow.ELLIPSIS).setAlignment(switch(alignment) {
+                case LEFT -> Label.Horizontal.LEFT; case CENTER -> Label.Horizontal.CENTER; case RIGHT -> Label.Horizontal.RIGHT;
+            },Label.Vertical.CENTER);
+            label.layout(content.label(),context.getFont()); label.draw(context,0,0);
         }
-
-        boolean hasLabel = !label.getText().getString().isEmpty();
-        ContentLayout content = contentLayout(new Rect(x, y, Math.max(0, width - reservedRight), height),
-                hasLabel ? label.measureWidth(context.getFont(), width) : 0, hasLabel, icon, trailingIcon, alignment, type, pressed);
-        if (hasLabel) {
-            label.setColor(style.getTextColor()).setShadow(style.isTextShadow()).setOpticalCenter(true)
-                .setOverflow(Label.Overflow.ELLIPSIS).setAlignment(switch (alignment) {
-                    case LEFT -> Label.Horizontal.LEFT;
-                    case CENTER -> Label.Horizontal.CENTER;
-                    case RIGHT -> Label.Horizontal.RIGHT;
-                }, Label.Vertical.CENTER);
-            label.layout(content.label(), context.getFont());
-            label.draw(context, 0, 0);
-        }
-        drawIcon(graphics, icon, content.icon());
-        drawIcon(graphics, trailingIcon, content.trailingIcon());
+        drawIcon(context,icon,content.icon()); drawIcon(context,trailingIcon,content.trailingIcon());
     }
-
-    private static int pressedOffset(Type type, boolean pressed) {
-        return pressed && type != Type.TEXT && type != Type.MENU ? PRESSED_OFFSET : 0;
+    static ThemeKey<StyleBox> getStyleKey(Type type,boolean hovered,boolean pressed,boolean disabled) {
+        if(disabled) return type==Type.TEXT?OreTheme.BUTTON_TEXT_NORMAL:type==Type.MENU?OreTheme.BUTTON_MENU_NORMAL:OreTheme.BUTTON_DISABLED;
+        return switch(type) {
+            case TEXT -> pressed?OreTheme.BUTTON_TEXT_PRESSED:hovered?OreTheme.BUTTON_TEXT_HOVERED:OreTheme.BUTTON_TEXT_NORMAL;
+            case MENU -> pressed?OreTheme.BUTTON_MENU_PRESSED:hovered?OreTheme.BUTTON_MENU_HOVERED:OreTheme.BUTTON_MENU_NORMAL;
+            case SECONDARY -> pressed?OreTheme.BUTTON_SECONDARY_PRESSED:hovered?OreTheme.BUTTON_SECONDARY_HOVERED:OreTheme.BUTTON_SECONDARY_NORMAL;
+            case PRIMARY -> pressed?OreTheme.BUTTON_PRIMARY_PRESSED:hovered?OreTheme.BUTTON_PRIMARY_HOVERED:OreTheme.BUTTON_PRIMARY_NORMAL;
+            case DESTRUCTIVE -> pressed?OreTheme.BUTTON_DESTRUCTIVE_PRESSED:hovered?OreTheme.BUTTON_DESTRUCTIVE_HOVERED:OreTheme.BUTTON_DESTRUCTIVE_NORMAL;
+        };
     }
-
-    static Rect backgroundBounds(Rect area, Type type, boolean pressed) {
-        int inset = Math.min(pressedOffset(type, pressed), area.height());
-        return new Rect(area.x(), area.y() + inset, area.width(), area.height() - inset);
+    static ThemeKey<Integer> getTextKey(Type type,boolean hovered,boolean pressed,boolean disabled) {
+        if(disabled) return OreTheme.BUTTON_DISABLED_TEXT;
+        return switch(type) {
+            case TEXT -> OreTheme.TEXT_WHITE_KEY;
+            case MENU -> pressed?OreTheme.BUTTON_MENU_PRESSED_TEXT:hovered?OreTheme.BUTTON_MENU_HOVERED_TEXT:OreTheme.TEXT_WHITE_KEY;
+            case SECONDARY -> pressed?OreTheme.BUTTON_SECONDARY_PRESSED_TEXT:hovered?OreTheme.BUTTON_SECONDARY_HOVERED_TEXT:OreTheme.BUTTON_SECONDARY_NORMAL_TEXT;
+            case PRIMARY -> pressed?OreTheme.BUTTON_PRIMARY_PRESSED_TEXT:hovered?OreTheme.BUTTON_PRIMARY_HOVERED_TEXT:OreTheme.BUTTON_PRIMARY_NORMAL_TEXT;
+            case DESTRUCTIVE -> pressed?OreTheme.BUTTON_DESTRUCTIVE_PRESSED_TEXT:hovered?OreTheme.BUTTON_DESTRUCTIVE_HOVERED_TEXT:OreTheme.BUTTON_DESTRUCTIVE_NORMAL_TEXT;
+        };
     }
+    public String getThemeState() { return disabled?"disabled":getType().name().toLowerCase(java.util.Locale.ROOT)+ (visuallyPressed()?"_pressed":pointerHovered?"_hovered":"_normal"); }
 
-    static ContentLayout contentLayout(Rect area, int textWidth, boolean hasLabel,
-                                       Icon icon, Icon trailingIcon, TextAlignment alignment, Type type, boolean pressed) {
-        // Translate the original content box so centering does not halve the requested 2px movement.
-        return contentLayout(area.translated(0, pressedOffset(type, pressed)), textWidth, hasLabel,
-                icon, trailingIcon, alignment);
+    static ContentLayout contentLayout(Rect area, StyleBox style, int textWidth, boolean hasLabel,
+                                       Icon icon, Icon trailingIcon, TextAlignment alignment) {
+        // Translate the original content box, independently of the inset background.
+        Rect inner=style.getContentDrawRect(area);
+        return contentLayout(new Rect(inner.x()-PADDING_X,inner.y(),inner.width()+2*PADDING_X,inner.height()),
+                textWidth,hasLabel,icon,trailingIcon,alignment);
     }
 
     static ContentLayout contentLayout(Rect area, int textWidth, boolean hasLabel,
@@ -414,27 +344,15 @@ public final class Button extends Control {
 
     record ContentLayout(Rect label, Rect icon, Rect trailingIcon) { }
 
-    private static void drawIcon(GuiGraphics graphics, Icon icon, Rect area) {
+    private static void drawIcon(DrawContext context, Icon icon, Rect area) {
         if (icon != null) {
-            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            graphics.blit(icon.texture, area.x(), area.y(), 0.0F, 0.0F,
-                    icon.width, icon.height, icon.width, icon.height);
+            if(icon.region!=null) icon.region.draw(context,area);
+            else {
+                var graphics=context.getGraphics();
+                graphics.setColor(1.0F,1.0F,1.0F,1.0F);
+                graphics.blit(icon.texture,area.x(),area.y(),0.0F,0.0F,icon.width,icon.height,icon.width,icon.height);
+            }
         }
-    }
-
-    static WidgetTheme theme(ITheme theme, Type type, boolean hovered, boolean pressed) {
-        WidgetThemeKey<WidgetTheme> key = switch (type) {
-            case TEXT -> OreTheme.BUTTON_SECONDARY_NORMAL;
-            case MENU -> pressed ? OreTheme.BUTTON_MENU_PRESSED : OreTheme.BUTTON_MENU_HOVERED;
-            case SECONDARY -> pressed ? OreTheme.BUTTON_SECONDARY_PRESSED
-                    : hovered ? OreTheme.BUTTON_SECONDARY_HOVERED : OreTheme.BUTTON_SECONDARY_NORMAL;
-            case PRIMARY -> pressed ? OreTheme.BUTTON_PRIMARY_PRESSED
-                    : hovered ? OreTheme.BUTTON_PRIMARY_HOVERED : OreTheme.BUTTON_PRIMARY_NORMAL;
-            case DESTRUCTIVE -> pressed ? OreTheme.BUTTON_DESTRUCTIVE_PRESSED
-                    : hovered ? OreTheme.BUTTON_DESTRUCTIVE_HOVERED : OreTheme.BUTTON_DESTRUCTIVE_NORMAL;
-        };
-        WidgetThemeEntry<WidgetTheme> entry = theme.getWidgetTheme(key);
-        return entry != null ? entry.theme() : theme.getButtonTheme().getTheme(hovered);
     }
 
     static int textBackgroundColor(boolean hovered, boolean pressed) {
@@ -454,7 +372,16 @@ public final class Button extends Control {
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
     }
 
-    public record Icon(ResourceLocation texture, int width, int height) {
+    public record Icon(ResourceLocation texture, int width, int height, ThemeKey<ThemeIcon> themeKey, ThemeIcon region) {
+        public Icon(ResourceLocation texture,int width,int height) { this(texture,width,height,null,null); }
+        public static Icon themed(ThemeKey<ThemeIcon> key) {
+            var value=key.defaultValue(); return new Icon(value.getTexture().location(),value.getWidth(),value.getHeight(),key,null);
+        }
+        Icon resolve(Control owner) {
+            if(themeKey==null) return this;
+            var resolved=owner.getThemeItem(themeKey);
+            return new Icon(resolved.getTexture().location(),resolved.getWidth(),resolved.getHeight(),null,resolved);
+        }
         public Icon {
             java.util.Objects.requireNonNull(texture);
             if (width <= 0 || height <= 0) throw new IllegalArgumentException("Icon dimensions must be positive");

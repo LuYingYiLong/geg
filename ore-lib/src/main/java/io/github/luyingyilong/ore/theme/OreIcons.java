@@ -37,6 +37,6 @@ public final class OreIcons {
 
     private static ResourceLocation icon(String name) {
         return ResourceLocation.fromNamespaceAndPath("ore",
-                "textures/modularui/icons/" + name + ".png");
+                "textures/icons/" + name + ".png");
     }
 }

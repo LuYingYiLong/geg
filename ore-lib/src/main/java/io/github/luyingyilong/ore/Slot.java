@@ -12,11 +12,12 @@ import net.minecraft.world.item.ItemStack;
 
 /** Read-only item preview. It never moves items or participates in inventory clicks. */
 public final class Slot extends Control {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Slot"); }
     public static final int SIZE = 26;
     private ItemStack item = ItemStack.EMPTY;
     private int quantity;
     private boolean backgroundVisible = true;
-    private final Label count = ownPart("count", new Label().setColor(OreTheme.TEXT_WHITE).setShadow(true)
+    private final Label count = ownPart("count", new Label().setShadow(true)
             .setAlignment(Label.Horizontal.RIGHT, Label.Vertical.BOTTOM).setFontSize(8));
 
     public Slot() {
@@ -58,9 +59,7 @@ public final class Slot extends Control {
     @Override protected void render(DrawContext context, int screenX, int screenY) {
         Rect area = getScreenBounds(screenX, screenY);
         if (backgroundVisible) {
-            var style = context.getTheme().getItemSlotTheme().theme();
-            if (style.getBackground() != null)
-                io.github.luyingyilong.ore.theme.OreDrawables.draw(context, style.getBackground(), area, style);
+            getThemeItem(OreTheme.SLOT_PANEL).draw(context,area);
         }
         if (item.isEmpty()) return;
         context.getGraphics().renderItem(item, area.x() + (area.width() - 16) / 2, area.y() + 3);

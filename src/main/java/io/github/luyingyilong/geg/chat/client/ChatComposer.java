@@ -159,7 +159,7 @@ public final class ChatComposer extends Container {
             suggestionIndex = 0;
             for (Control child : suggestionButtons.getChildren()) { if (child.getParent() != null) child.getParent().removeChild(child); child.queueFree(); }
             for (Suggestion suggestion : suggestions) {
-                Button button = Signals.configure(new Button(Component.literal(suggestion.getText()).withStyle(style -> style.withColor(OreTheme.TEXT_WHITE))).setType(Button.Type.TEXT)
+                Button button = Signals.configure(new Button(Component.literal(suggestion.getText())).setType(Button.Type.TEXT)
                         .setToggleButton(true).setAlignment(Button.TextAlignment.LEFT), connected -> connected.pressed().connect(connected, () -> apply(suggestion)));
                 button.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
                 suggestionButtons.addChild(button);

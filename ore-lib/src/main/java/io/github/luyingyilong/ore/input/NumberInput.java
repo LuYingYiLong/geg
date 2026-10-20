@@ -14,6 +14,7 @@ import java.util.Objects;
  * An Input whose committed value is an exact integer or fixed-precision decimal.
  */
 public final class NumberInput extends Input {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"NumberInput"); }
     private final SignalSource<BigDecimal> valueCommitted = new SignalSource<>(this, "valueCommitted", "BigDecimal");
     private final NumberInputRules rules;
     private Component error;
@@ -160,7 +161,7 @@ public final class NumberInput extends Input {
     @Override
     protected void drawText(ModularGuiContext context, TextFieldTheme theme) {
         int color = renderer.getColor();
-        if (error != null) renderer.setColor(OreTheme.TEXT_ERROR);
+        if (error != null) renderer.setColor(resolveTheme(OreTheme.TEXT_ERROR_KEY));
         try {
             super.drawText(context, theme);
         } finally {

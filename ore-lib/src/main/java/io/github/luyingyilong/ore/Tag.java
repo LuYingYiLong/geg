@@ -15,10 +15,11 @@ import java.util.Objects;
  * Compact, non-interactive status text with a solid semantic background.
  */
 public final class Tag extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Tag"); }
     private static final int PADDING_X = 4;
     private static final int PADDING_Y = 2;
     private final Label label = ownPart("label", new Label().setOpticalCenter(true).setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER)
-            .setOverflow(Label.Overflow.ELLIPSIS).setColor(OreTheme.TEXT_WHITE));
+            .setOverflow(Label.Overflow.ELLIPSIS));
     private boolean outlined;
     private Type type = Type.NEUTRAL;
     public Tag() {
@@ -58,7 +59,7 @@ public final class Tag extends Container {
 
     public Tag setType(Type type) {
         this.type = Objects.requireNonNull(type);
-        label.setColor(type.textColor);
+        label.setThemeTypeVariation(type.textColor==OreTheme.TEXT_DARK?"LabelDark":"");
         return this;
     }
 
@@ -107,10 +108,10 @@ public final class Tag extends Container {
         Rect area = getScreenBounds(screenX, screenY);
         if (area.width() <= 0 || area.height() <= 0) return;
         var graphics = context.getGraphics();
-        if (outlined) graphics.fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.TAG_OUTLINE);
+        if (outlined) graphics.fill(area.x(), area.y(), area.right(), area.bottom(), getThemeItem(OreTheme.TAG_OUTLINE_KEY));
         int inset = border();
         if (area.width() > inset * 2 && area.height() > inset * 2)
-            graphics.fill(area.x() + inset, area.y() + inset, area.right() - inset, area.bottom() - inset, type.color);
+            graphics.fill(area.x() + inset, area.y() + inset, area.right() - inset, area.bottom() - inset, type.getColor(this));
     }
 
     public enum Type {
@@ -130,6 +131,14 @@ public final class Tag extends Container {
             this.textColor = textColor;
         }
 
+        public int getColor(io.github.luyingyilong.ore.layout.Control owner) {
+            return owner.getThemeItem(switch(this) {
+                case PRIMARY -> OreTheme.TAG_PRIMARY_KEY; case NEUTRAL -> OreTheme.TAG_NEUTRAL_KEY;
+                case SECONDARY -> OreTheme.TAG_SECONDARY_KEY; case INFORMATIVE -> OreTheme.TAG_INFORMATIVE_KEY;
+                case NOTICE -> OreTheme.TAG_NOTICE_KEY; case WARNING -> OreTheme.TAG_WARNING_KEY;
+                case REALMS_INFORMATIVE -> OreTheme.TAG_REALMS_INFORMATIVE_KEY;
+            });
+        }
         public int getColor() {
             return color;
         }

@@ -80,6 +80,8 @@ public final class DebugBridge {
         }
     }
 
+    public static DebugThemes.Snapshot themes(Control node) { return DebugThemes.snapshot(node); }
+
     public static Backend backend() {
         return backend;
     }

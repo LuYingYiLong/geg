@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class Box extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Box"); }
     private Orientation orientation = Orientation.VERTICAL;
     private int gap;
 

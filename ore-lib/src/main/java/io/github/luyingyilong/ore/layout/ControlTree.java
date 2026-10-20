@@ -94,6 +94,7 @@ final class ControlTree {
             if (child.parent != null) throw new IllegalStateException("Control already has a parent");
             if (!child.isAlive()) throw new IllegalStateException("Cannot attach a pending/freed control");
             requireAcyclic(parent, child);
+            child.validateThemeAttachment(parent);
             if (child.lifecycleOwner != null) {
                 boolean allowed = false;
                 for (Control node = parent; node != null; node = node.parent)
@@ -111,12 +112,16 @@ final class ControlTree {
         if (previous.equals(next)) return;
         List<Control> removed = previous.stream().filter(node -> !seen.contains(node)).toList();
         List<Control> added = next.stream().filter(node -> node.parent != parent).toList();
+        java.util.Map<Control,java.util.List<io.github.luyingyilong.ore.theme.Theme>> oldThemes=new java.util.IdentityHashMap<>();
+        for(Control child:removed) oldThemes.put(child,child.inheritedThemes());
+        for(Control child:added) oldThemes.put(child,child.inheritedThemes());
         try (var phase = DispatchGuard.enter()) {
             // Publish the whole structure and its indexes before callbacks can observe it.
             parent.children.clear();
             parent.children.addAll(next);
             for (Control child : removed) child.parent = null;
             for (Control child : added) child.parent = parent;
+            oldThemes.forEach(Control::refreshThemeInheritance);
             for (Control node = parent; node != null; node = node.parent) node.syncChildrenChanged();
             parent.requestLayout();
             for (Control child : removed) {

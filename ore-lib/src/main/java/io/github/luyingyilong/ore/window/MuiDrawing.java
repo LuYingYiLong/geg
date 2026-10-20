@@ -10,7 +10,7 @@ public final class MuiDrawing {
 
     public static DrawContext begin(ModularGuiContext mui, WindowContext window) {
         window.bind(mui);
-        return new DrawContext(mui.getGraphics(), mui.getFont(), window, mui.getTheme(),
+        return new DrawContext(mui.getGraphics(), mui.getFont(), window,
                 new Rect(0, 0, mui.getScreenArea().width, mui.getScreenArea().height),
                 mui.getAbsMouseX(), mui.getAbsMouseY(), mui.getRenderPartialTicks());
     }

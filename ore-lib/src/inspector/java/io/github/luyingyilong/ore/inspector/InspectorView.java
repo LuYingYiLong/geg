@@ -22,9 +22,10 @@ public final class InspectorView {
     private final Tree<String> tree = new Tree<>();
     private final Box properties = new Box().setGap(5);
     private final InspectorSignalPanel signalPanel = new InspectorSignalPanel();
-    private final Segmented views = new Segmented(List.of(tr("properties"), tr("signals")));
+    private final InspectorThemePanel themePanel = new InspectorThemePanel();
+    private final Segmented views = new Segmented(List.of(tr("properties"), tr("signals"), tr("themes")));
     private final Label title = new Label().setHero(true), crumbs = new Label().setWrap(Label.Wrap.CHARACTER);
-    private final Label lifecycleStatus = new Label().setWrap(Label.Wrap.CHARACTER).setColor(OreTheme.TEXT_SECONDARY);
+    private final Label lifecycleStatus = new Label().setWrap(Label.Wrap.CHARACTER).setThemeTypeVariation("LabelSecondary");
     private final Label message = new Label().setWrap(Label.Wrap.CHARACTER);
     private final Input search = new Input();
     private final Dropdown<String> targets = new Dropdown<>("", 6);
@@ -71,11 +72,16 @@ public final class InspectorView {
         Scroll signalScroll = new Scroll().setContent(new PropertyViewport(signalPanel.body())).setHorizontal(Scroll.BarMode.DISABLED);
         signalScroll.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         signalScroll.setVisible(false);
+        Scroll themeScroll=new Scroll().setContent(new PropertyViewport(themePanel.body())).setHorizontal(Scroll.BarMode.DISABLED);
+        themeScroll.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        themeScroll.setVisible(false);
         views.setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         views.setDebugName("Inspector views");
         views.selectionChanged().connect(views, index -> {
             propertyScroll.setVisible(index == 0);
             signalScroll.setVisible(index == 1);
+            themeScroll.setVisible(index == 2);
+            if(index == 2) themePanel.update(snapshot.themes());
             if (index == 1) signalPanel.update(snapshot.signals());
         });
         Box right = new Box().setGap(4);
@@ -83,6 +89,7 @@ public final class InspectorView {
         right.addChild(lifecycleStatus);
         right.addChild(propertyScroll);
         right.addChild(signalScroll);
+        right.addChild(themeScroll);
         right.setMinimum(190, 0);
         Splitter split = new Splitter(left, right).setRatio(0.34);
         split.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
@@ -152,6 +159,7 @@ public final class InspectorView {
                 info.insideTree(), info.ready(), info.suspended(), info.reason(), info.requestSource().lines().findFirst().orElse("—")));
         lifecycleStatus.setVisible(info != null);
         if (views.getSelected() == 1) signalPanel.update(next.signals());
+        if (views.getSelected() == 2) themePanel.update(next.themes());
         sequence = next.sequence();
         targets.setOptions(next.targets().stream().map(t -> new Dropdown.Option<>(t.id(), Component.literal(t.name() + (t.active() ? "" : " [inactive]")))).toList());
         tree.setItems(next.nodes().stream().map(n -> new Tree.Item<>(n.id(), n.parent(), Component.literal(n.name()
@@ -214,7 +222,7 @@ public final class InspectorView {
                 properties.addChild(new Label(tr("group." + group)).setHero(true));
             }
             if (property.readonly()) {
-                Label readonly = new Label(Component.literal(property.name() + ": " + property.effective())).setWrap(Label.Wrap.CHARACTER).setColor(OreTheme.TEXT_SECONDARY);
+                Label readonly = new Label(Component.literal(property.name() + ": " + property.effective())).setWrap(Label.Wrap.CHARACTER).setThemeTypeVariation("LabelSecondary");
                 readonlyLabels.put(property.name(), readonly);
                 properties.addChild(readonly);
             } else {
@@ -227,8 +235,8 @@ public final class InspectorView {
 
     private final class Editor {
         private final Box body = new Box().setGap(2);
-        private final Label base = new Label().setWrap(Label.Wrap.CHARACTER).setColor(OreTheme.TEXT_SECONDARY);
-        private final Label validation = new Label().setWrap(Label.Wrap.CHARACTER).setColor(OreTheme.TEXT_ERROR);
+        private final Label base = new Label().setWrap(Label.Wrap.CHARACTER).setThemeTypeVariation("LabelSecondary");
+        private final Label validation = new Label().setWrap(Label.Wrap.CHARACTER).setThemeTypeVariation("LabelError");
         private InspectorSnapshot.Property property;
         private Input input;
         private Checkbox checkbox;

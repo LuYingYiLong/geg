@@ -11,7 +11,8 @@ public final class OreResourceNamespaceTest {
             json("/assets/ore/font/" + font + ".json");
             absent("/assets/geg/font/" + font + ".json");
         }
-        check(json("/assets/ore/themes.json").get("ore").getAsString().equals("ore:ore"), "Default theme");
+        check(json("/assets/ore/themes/ore.json").get("parent").getAsString().equals("ore:default"), "Native default theme");
+        absent("/assets/ore/themes.json");
         absent("/assets/geg/themes.json");
         absent("/assets/geg/sounds.json");
         absent("/io/github/luyingyilong/geg/sound/GegSounds.class");

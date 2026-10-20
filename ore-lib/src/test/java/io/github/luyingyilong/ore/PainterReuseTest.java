@@ -25,7 +25,7 @@ public final class PainterReuseTest {
         for (Label.Wrap wrap : Label.Wrap.values()) for (Label.Overflow overflow : Label.Overflow.values())
             for (int width : new int[]{1, 12, 127, 128, 129}) for (int maxLines : new int[]{1, 2, Integer.MAX_VALUE}) {
                 reference.setWrap(wrap).setOverflow(overflow).setMaxLines(maxLines);
-                check(reference.measureHeight(font, width) == Label.measureTextHeight(font, text, width, wrap, overflow, maxLines),
+                check(reference.measureHeight(font, width) == Label.measureTextHeight(reference, font, text, width, wrap, overflow, maxLines),
                         "Allocation-free measurements match Label's styled wrapping and precision");
             }
 
@@ -37,14 +37,14 @@ public final class PainterReuseTest {
         table.layout(new Rect(0, 0, 240, 110), font);
         List<Label> rowLabels = labels(table);
         check(!rowLabels.isEmpty(), "Text cells have retained row controls");
-        cell.measureHeight(font, 1, 100);
-        identity.measureHeight(font, 1, 100);
+        cell.measureHeight(table, font, 1, 100);
+        identity.measureHeight(table, font, 1, 100);
         Control marker0 = new Control(), marker1 = new Control();
         long ordinaryAllocation = SignalDiagnostics.ownerId(marker1) - SignalDiagnostics.ownerId(marker0);
         for (int i = 0; i < 1000; i++) {
-            Label.measureTextHeight(font, text, 127 + i % 3, Label.Wrap.WORD, Label.Overflow.ELLIPSIS, 2);
-            cell.measureHeight(font, i, 127);
-            identity.measureHeight(font, i, 127);
+            Label.measureTextHeight(reference, font, text, 127 + i % 3, Label.Wrap.WORD, Label.Overflow.ELLIPSIS, 2);
+            cell.measureHeight(table, font, i, 127);
+            identity.measureHeight(table, font, i, 127);
             table.layout(new Rect(0, 0, 240, 110), font);
         }
         Control marker2 = new Control();

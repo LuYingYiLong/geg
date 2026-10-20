@@ -20,6 +20,7 @@ public final class FocusOverlay extends Control {
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             Rect bounds = focus.getOutlineBounds();
             if (bounds == null || bounds.width() < 2 || bounds.height() < 2) return;
+            int color=getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.TEXT_WHITE_KEY);
             int x = screenX + bounds.x();
             int y = screenY + bounds.y();
             int right = x + bounds.width();
@@ -29,10 +30,10 @@ public final class FocusOverlay extends Control {
             graphics.pose().pushPose();
             graphics.pose().translate(0.0F, 0.0F, 500.0F);
             try {
-                graphics.fill(x, y, right, y + 1, WHITE);
-                graphics.fill(x, bottom - 1, right, bottom, WHITE);
-                graphics.fill(x, y + 1, x + 1, bottom - 1, WHITE);
-                graphics.fill(right - 1, y + 1, right, bottom - 1, WHITE);
+                graphics.fill(x, y, right, y + 1, color);
+                graphics.fill(x, bottom - 1, right, bottom, color);
+                graphics.fill(x, y + 1, x + 1, bottom - 1, color);
+                graphics.fill(right - 1, y + 1, right, bottom - 1, color);
                 graphics.flush();
             } finally {
                 graphics.pose().popPose();

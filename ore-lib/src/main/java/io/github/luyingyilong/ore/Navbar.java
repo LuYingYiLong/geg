@@ -18,15 +18,16 @@ import java.util.List;
 
 /** A centered navigation title, optional back action, and right-aligned actions that wrap. */
 public final class Navbar extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Navbar"); }
     public static final int ROW_HEIGHT = 24;
     public static final int BOTTOM_PADDING = 3;
     private static final int GAP = 6;
     private static final int PADDING = 0;
     private static final int BACK_BUTTON_SIZE = 22;
     private Panel background;
-    private final Label title = new Label().setColor(OreTheme.TEXT_DARK).setHero(true).setOpticalCenter(true).setOverflow(Label.Overflow.ELLIPSIS)
+    private final Label title = new Label().setThemeTypeVariation("NavbarTitle").setOpticalCenter(true).setOverflow(Label.Overflow.ELLIPSIS)
             .setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER);
-    private final Button back = new Button().setType(Button.Type.TEXT).setIcon(OreIcons.ARROW_LEFT, 7, 7)
+    private final Button back = new Button().setType(Button.Type.TEXT).setIcon(io.github.luyingyilong.ore.Button.Icon.themed(io.github.luyingyilong.ore.theme.OreTheme.ICON_ARROW_LEFT))
             ;
     private Runnable backAction = OreScreen::back;
     private final List<Control> extra = new ArrayList<>();
@@ -44,6 +45,7 @@ public final class Navbar extends Container {
     public Component getTitle() { return title.getText(); }
     public Navbar setTitleColor(int color) { title.setColor(color); return this; }
     public Navbar setFontSize(float fontSize) { title.setFontSize(fontSize); return this; }
+    public Navbar clearFontSize() { title.clearFontSize(); requestLayout(); return this; }
     public float getFontSize() { return title.getFontSize(); }
 
     public Navbar setShowBackButton(boolean show) {
@@ -126,7 +128,7 @@ public final class Navbar extends Container {
         if (!isAlive()) return 0; return Math.max(getMinimumWidth(), available); }
     @Override public int measureHeight(Font font, int available) {
         if (!isAlive()) return 0;
-        return Math.max(getMinimumHeight(), arrange(font, available).height() + BOTTOM_PADDING);
+        return Math.max(getMinimumHeight(), arrange(font, Math.max(0,available-getThemeItem(OreTheme.HEADER_PANEL).getContentMargin().getHorizontal())).height() + BOTTOM_PADDING + getThemeItem(OreTheme.HEADER_PANEL).getContentMargin().getVertical());
     }
     @Override public Size measureSize(Font font, Size available) {
         if (!isAlive()) return new Size(0, 0);
@@ -137,8 +139,9 @@ public final class Navbar extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(bounds, font);
-            int width = Math.max(0, bounds.width() - PADDING * 2);
-            Arrangement arrangement = arrange(font, bounds.width());
+            var margin=getThemeItem(OreTheme.HEADER_PANEL).getContentMargin();
+            int width = Math.max(0, bounds.width() - PADDING * 2-margin.getHorizontal());
+            Arrangement arrangement = arrange(font, Math.max(0,bounds.width()-margin.getHorizontal()));
             int reserve = Math.min(backReserve(), width / 2);
             int y = arrangement.inline() ? 0 : titleRowHeight(font);
             for (Row row : arrangement.rows()) {
@@ -147,13 +150,13 @@ public final class Navbar extends Container {
                     int titleWidth = font == null ? title.getMinimumWidth() : title.measureWidth(font, width);
                     limit = Math.max(0, (width - titleWidth) / 2 - GAP);
                 }
-                int used = layoutRow(row, font, width, limit, y);
+                int used = layoutRow(row, font, width, limit, y+margin.top());
                 if (arrangement.inline() && !row.controls().isEmpty()) reserve = Math.max(reserve, used + GAP);
                 y += row.height();
             }
             int titleHeight = arrangement.inline() ? arrangement.height() : titleRowHeight(font);
-            fitChild(title, new Rect(PADDING + reserve, 0, Math.max(0, width - 2 * reserve), titleHeight), font);
-            if (getShowBackButton()) fitChild(back, new Rect(PADDING, 0, BACK_BUTTON_SIZE, titleHeight), font);
+            fitChild(title, new Rect(PADDING + margin.left()+ reserve, margin.top(), Math.max(0, width - 2 * reserve), titleHeight), font);
+            if (getShowBackButton()) fitChild(back, new Rect(PADDING + margin.left(), margin.top(), BACK_BUTTON_SIZE, titleHeight), font);
         }
     }
 

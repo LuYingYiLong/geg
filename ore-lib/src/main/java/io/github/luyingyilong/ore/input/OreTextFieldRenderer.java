@@ -29,6 +29,7 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
     private List<String> wrappedSource = List.of();
     private float wrappedWidth = -1, wrappedScale = -1;
     private int fontRevision = -1;
+    private net.minecraft.resources.ResourceLocation wrappedFont;
     private WrappedText wrapped;
     private WrappedText affinityLayout;
     private Point affinityCursor;
@@ -196,18 +197,19 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
     @Override
     public List<Line> measureLines(List<Component> lines) {
         if (multiline) return wrap(lines.stream().map(Component::getString).toList()).rows().stream()
-                .map(row -> new Line(OreFonts.text(Component.literal(row.text())).getVisualOrderText(), row.width())).toList();
-        return super.measureLines(lines.stream().map(OreFonts::text).toList());
+                .map(row -> new Line(OreFonts.text(Component.literal(row.text()),owner.getThemeFont()).getVisualOrderText(), row.width())).toList();
+        return super.measureLines(lines.stream().map(line -> OreFonts.text(line,owner.getThemeFont())).toList());
     }
 
     private WrappedText wrap(List<String> source) {
         if (wrapped == null || !wrappedSource.equals(source) || wrappedWidth != maxWidth
-                || wrappedScale != scale || fontRevision != OreFonts.revision()) {
+                || wrappedScale != scale || fontRevision != OreFonts.revision() || !owner.getThemeFont().equals(wrappedFont)) {
             wrappedSource = List.copyOf(source);
             wrappedWidth = maxWidth;
             wrappedScale = scale;
             fontRevision = OreFonts.revision();
-            Style style = Style.EMPTY.withFont(io.github.luyingyilong.ore.OreClient.getOptions().bodyFont());
+            wrappedFont=owner.getThemeFont();
+            Style style = Style.EMPTY.withFont(owner.getThemeFont());
             wrapped = new WrappedText(source, textWidth(),
                     cp -> getFont().getSplitter().stringWidth(FormattedCharSequence.codepoint(cp, style)) * scale);
         }
@@ -292,7 +294,7 @@ final class OreTextFieldRenderer extends TextFieldRenderer {
             }
             for (int index = 0; index < layout.rows().size(); index++) {
                 var row = layout.rows().get(index);
-                draw(graphics, OreFonts.text(Component.literal(row.text())).getVisualOrderText(),
+                draw(graphics, OreFonts.text(Component.literal(row.text()),owner.getThemeFont()).getVisualOrderText(),
                         getStartX(row.width()), top + index * getFontHeight());
             }
             if (display != null || renderCursor) {

@@ -53,5 +53,8 @@
   "inspector.ore.signals.reason.SCOPE_CLOSED": "Scope closed",
   "inspector.ore.signals.remaining_scope": "Remaining scope connections: %s",
   "inspector.ore.signals.remaining_signal": "Remaining signal connections: %s",
-  "inspector.ore.lifecycle_status": "Lifecycle: %s | in tree: %s | ready: %s | suspended: %s\nFree reason: %s\nFirst request: %s"
+  "inspector.ore.lifecycle_status": "Lifecycle: %s | in tree: %s | ready: %s | suspended: %s\nFree reason: %s\nFirst request: %s",
+  "inspector.ore.themes": "Theme",
+  "inspector.ore.theme.context": "Type: %s; variation: %s; state: %s",
+  "inspector.ore.theme.source": "Source: %s"
 }

@@ -95,7 +95,7 @@ public final class ClientMarketScreen {
             ClientMarketState.clearDetails();
             canvas = null;
         });
-        OreScreen.open(new ModularScreen("geg", panel).useTheme(OreTheme.NAME).pausesGame(false));
+        OreScreen.open(new ModularScreen("geg", panel).pausesGame(false));
     }
 
     public static void openFromTerminal(BlockPos pos) {

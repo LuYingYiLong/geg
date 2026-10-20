@@ -19,8 +19,10 @@ import java.util.Objects;
  * Retained trigger. The owning Window creates and routes its Overlay menu.
  */
 public final class Dropdown<T> extends Control {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Dropdown"); }
+    @Override public String getThemeState() { return "selected="+String.valueOf(selected)+", open="+open; }
     public static final int ITEM_PADDING = 4, PANEL_PADDING = 1, ITEM_OVERLAP = 1;
-    private static final Button.Icon ARROW = new Button.Icon(OreIcons.ARROW_DOWN, 8, 8);
+    private static final Button.Icon ARROW = Button.Icon.themed(io.github.luyingyilong.ore.theme.OreTheme.ICON_ARROW_DOWN);
     private final Button triggerButton;
     private final Button.Size size;
     private final int maxVisibleItems;

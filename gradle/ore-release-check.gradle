@@ -7,6 +7,10 @@ tasks.register('verifyOreRelease') {
             def names = zip.entries().collect { it.name }
             ['META-INF/mods.toml', 'pack.mcmeta', 'geg.mixins.json', 'ore.mixins.json',
              'io/github/luyingyilong/ore/OreClient.class', 'assets/ore/themes/ore.json',
+             'io/github/luyingyilong/ore/theme/Theme.class',
+             'io/github/luyingyilong/ore/theme/ThemeDB.class',
+             'io/github/luyingyilong/ore/theme/StyleBox.class',
+             'assets/ore/textures/gui/panel.png',
              'io/github/luyingyilong/ore/render/Canvas.class',
              'io/github/luyingyilong/ore/render/DrawContext.class',
              'io/github/luyingyilong/ore/window/ScreenWindowHost.class',
@@ -30,6 +34,7 @@ tasks.register('verifyOreRelease') {
             def forbidden = names.findAll { it.startsWith('io/github/luyingyilong/ore/inspector/') ||
                 it.startsWith('io/github/luyingyilong/ore/compat/recipeviewer/canvas/') ||
                 it.startsWith('io/github/luyingyilong/geg/client/ui/') ||
+                it == 'assets/ore/themes.json' || it.startsWith('assets/ore/textures/modularui/') ||
                 it.startsWith('assets/ore_inspector/') || it.contains('InspectorBootstrap') ||
                 it.startsWith('assets/geg/font/') || it == 'assets/geg/themes.json' ||
                 it == 'assets/geg/sounds.json' || it == 'io/github/luyingyilong/geg/sound/GegSounds.class' ||

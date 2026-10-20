@@ -1,10 +1,8 @@
 package io.github.luyingyilong.ore.input;
 
-import brachy.modularui.api.drawable.IDrawable;
 import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.TextFieldTheme;
-import brachy.modularui.theme.WidgetTheme;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.WidgetTree;
 import brachy.modularui.widgets.textfield.TextFieldWidget;
@@ -25,6 +23,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.function.IntPredicate;
 
 public class Input extends TextFieldWidget implements SignalOwner {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Input"); }
     private static final InputShortcuts.Clipboard CLIPBOARD = new InputShortcuts.Clipboard() {
         @Override
         public String get() {
@@ -38,6 +37,9 @@ public class Input extends TextFieldWidget implements SignalOwner {
     };
     private final float depth;
     private final SignalScope signalScope = new SignalScope();
+    private final io.github.luyingyilong.ore.layout.Control standaloneTheme = new io.github.luyingyilong.ore.layout.Control() {
+        @Override public String getThemeType() { return Input.this instanceof TextArea?"TextArea":Input.this instanceof NumberInput?"NumberInput":"Input"; }
+    };
     private final Label placeholderLabel = new Label().setOverflow(Label.Overflow.VISIBLE);
     private final SignalSource<String> textChanged = new SignalSource<>(this, "textChanged", "String");
     private final SignalSource<String> submitted = new SignalSource<>(this, "submitted", "String");
@@ -64,7 +66,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
         this.depth = depth;
         // MUI dispose() can be a temporary detach; the signal scope is the permanent lifetime.
         signalScope.own(() -> {
-            if (layoutControl == null) placeholderLabel.queueFree();
+            if (layoutControl == null) { placeholderLabel.queueFree(); standaloneTheme.queueFree(); }
         });
         handler = new OreTextFieldHandler(this);
         renderer = new OreTextFieldRenderer(handler, this);
@@ -165,7 +167,8 @@ public class Input extends TextFieldWidget implements SignalOwner {
     }
 
     public int getPreferredInputHeight() {
-        return controlSize.getHeight();
+        var margin=resolveTheme(OreTheme.INPUT_BOX).getContentMargin();
+        return Math.max(controlSize.getHeight(),io.github.luyingyilong.ore.theme.OreTextMetrics.body().lineHeight(getTextScale())+margin.getVertical());
     }
 
     public Button.Size getControlSize() {
@@ -180,7 +183,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
 
     public Input setPlaceholder(Component placeholder) {
         hintText(java.util.Objects.requireNonNull(placeholder));
-        hintColor(OreTheme.TEXT_SECONDARY);
+
         return this;
     }
 
@@ -197,6 +200,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
     void layoutControl(InputControl control) {
         layoutControl = control;
         control.ownPart("placeholder", placeholderLabel);
+        control.ownPart("input_style",standaloneTheme);
     }
 
     public final void releaseSession() {
@@ -542,6 +546,17 @@ public class Input extends TextFieldWidget implements SignalOwner {
     /**
      * A single-line field centers its hint within its actual, possibly expanded, height.
      */
+    public io.github.luyingyilong.ore.layout.Control getThemeControl() { return layoutControl==null?standaloneTheme:layoutControl; }
+    final <T> T resolveTheme(io.github.luyingyilong.ore.theme.ThemeKey<T> key) {
+        return getThemeControl().getThemeItem(key);
+    }
+    protected final float getTextScale() { return scale*resolveTheme(OreTheme.INPUT_FONT_SIZE)/Label.DEFAULT_FONT_SIZE; }
+    final net.minecraft.resources.ResourceLocation getThemeFont() { return resolveTheme(OreTheme.INPUT_FONT); }
+    private void syncTheme() {
+        var margin=resolveTheme(OreTheme.INPUT_BOX).getContentMargin();
+        var padding=getArea().getPadding();
+        padding.left(margin.left()).top(margin.top()).right(margin.right()).bottom(margin.bottom());
+    }
     protected int firstLineTop() {
         return io.github.luyingyilong.ore.input.InputGeometry.centeredLineTop(
                 getArea().getPadding().top(), getArea().paddedHeight(), renderer.getFontHeight());
@@ -549,7 +564,12 @@ public class Input extends TextFieldWidget implements SignalOwner {
 
     @Override
     protected void setupDrawText(ModularGuiContext context, TextFieldTheme theme) {
+        syncTheme();
         super.setupDrawText(context, theme);
+        renderer.setScale(getTextScale());
+        int color=textColor==null?resolveTheme(OreTheme.INPUT_TEXT):textColor;
+        renderer.setColor(color); renderer.setCursorColor(color);
+        renderer.setMarkedColor(markedColor==null?resolveTheme(OreTheme.INPUT_MARKED):markedColor);
         renderer.setPos(getArea().getPadding().left(), firstLineTop());
     }
 
@@ -573,10 +593,10 @@ public class Input extends TextFieldWidget implements SignalOwner {
     }
 
     protected Label placeholderLabel(Component placeholder) {
-        int color = hintTextColor == null ? OreTheme.TEXT_SECONDARY : hintTextColor;
+        int color = hintTextColor == null ? resolveTheme(OreTheme.INPUT_HINT) : hintTextColor;
         // Keep a snapshot so in-place edits to a MutableComponent also invalidate styled text.
         if (!placeholderLabel.getText().equals(placeholder)) placeholderLabel.setText(placeholder.copy());
-        return placeholderLabel.setColor(color).setScale(scale);
+        return placeholderLabel.setColor(color).setFont(resolveTheme(OreTheme.INPUT_FONT)).setFontSize(resolveTheme(OreTheme.INPUT_FONT_SIZE)).setScale(scale);
     }
 
     protected void drawPlaceholder(ModularGuiContext context, Component placeholder) {
@@ -600,14 +620,9 @@ public class Input extends TextFieldWidget implements SignalOwner {
         if (inputVisible() && paintPass.accepts(layoutControl != null)) {
             refreshPreeditDisplay();
             withDepth(context, () -> {
-                WidgetThemeEntry<WidgetTheme> inputEntry = context.getTheme()
-                        .getWidgetTheme(OreTheme.INPUT_BOX);
-                if (inputEntry != null) {
-                    WidgetTheme inputTheme = inputEntry.theme();
-                    IDrawable background = inputTheme.getBackground();
-                    if (background != null) {
-                        background.drawAtZero(context, getArea(), inputTheme);
-                    }
+                syncTheme();
+                try(var frame=io.github.luyingyilong.ore.window.MuiDrawing.begin(context,getWindowContext())) {
+                    resolveTheme(OreTheme.INPUT_BOX).draw(frame,new Rect(0,0,getArea().width,getArea().height));
                 }
                 super.draw(context, theme);
             });

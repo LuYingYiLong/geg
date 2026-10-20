@@ -5,8 +5,6 @@ import io.github.luyingyilong.ore.signal.*;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
 import io.github.luyingyilong.ore.render.DrawContext;
-import brachy.modularui.theme.WidgetTheme;
-import brachy.modularui.theme.WidgetThemeEntry;
 import io.github.luyingyilong.ore.layout.Box;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Control;
@@ -29,6 +27,7 @@ import java.util.Objects;
 
 /** A tree-owned overlay measured and laid out as header, content, and footer. */
 public final class Dialog extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Dialog"); }
     public static final int PADDING = 8;
     private static final int BODY_HORIZONTAL_INSET = PADDING;
     private static final int BODY_BOTTOM_INSET = 5;
@@ -43,15 +42,15 @@ public final class Dialog extends Container {
     private final int preferredWidth;
     private final int preferredHeight;
     private final int verticalOffset;
-    private final Panel panel = new Panel(OreTheme.MODAL);
+    private final Panel panel = new Panel(OreTheme.DIALOG_PANEL);
     private final Box column = new Box();
     private final Box header = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(HEADER_GAP);
     private final Padding headerInset = new Padding(new Padding.Insets(PADDING, PADDING, SECTION_SPACING, PADDING))
             .setChild(header);
-    private final Label titleLabel = new Label().setHero(true).setOpticalCenter(true).setOverflow(Label.Overflow.CLIP)
+    private final Label titleLabel = new Label().setThemeTypeVariation("LabelHero").setOpticalCenter(true).setOverflow(Label.Overflow.CLIP)
             .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
     private final Button close = new Button().setSize(Button.Size.SMALL).setType(Button.Type.TEXT)
-            .setIcon(OreIcons.SMALL_CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);
+            .setIcon(io.github.luyingyilong.ore.Button.Icon.themed(io.github.luyingyilong.ore.theme.OreTheme.ICON_SMALL_CLOSE));
     private final Box footer = new Box().setOrientation(Box.Orientation.VERTICAL).setGap(BUTTON_GAP);
     private final Padding footerInset = new Padding(new Padding.Insets(SECTION_SPACING, PADDING, PADDING, PADDING))
             .setChild(footer);
@@ -111,6 +110,7 @@ public final class Dialog extends Container {
     }
 
     public Dialog setFontSize(float fontSize) { titleLabel.setFontSize(fontSize); return this; }
+    public Dialog clearFontSize() { titleLabel.clearFontSize(); requestLayout(); return this; }
     public float getFontSize() { return titleLabel.getFontSize(); }
 
     public Signal0 closeRequested() { return closeRequested.signal(); }
@@ -204,10 +204,8 @@ public final class Dialog extends Container {
 
     @Override protected void render(DrawContext context, int screenX, int screenY) {
         Rect area = getScreenBounds(screenX, screenY);
-        context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.OVERLAY_COLOR);
-        WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.MODAL);
-        WidgetTheme style = entry == null ? context.getTheme().getPanelTheme().theme() : entry.theme();
-        titleLabel.setColor(style.getTextColor()).setShadow(style.isTextShadow());
+        context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), getThemeItem(OreTheme.OVERLAY));
+
     }
 
     @Override public void draw(DrawContext context, int screenX, int screenY) {

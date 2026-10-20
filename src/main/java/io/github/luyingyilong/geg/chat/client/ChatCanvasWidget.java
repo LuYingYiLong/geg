@@ -33,13 +33,13 @@ final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interac
     private final Scroll compactScroll = new Scroll().setHorizontal(Scroll.BarMode.DISABLED).setContent(compactMenu);
     private final Scroll contactsScroll = new Scroll().setHorizontal(Scroll.BarMode.DISABLED).setContent(contacts);
     private final Label title = new Label().setOverflow(Label.Overflow.ELLIPSIS);
-    private final Label contactError = new Label().setColor(OreTheme.TEXT_ERROR).setWrap(Label.Wrap.WORD);
-    private final Label loading = new Label(Component.translatable("chat.geg.loading")).setColor(OreTheme.TEXT_SECONDARY);
+    private final Label contactError = new Label().setThemeTypeVariation("LabelError").setWrap(Label.Wrap.WORD);
+    private final Label loading = new Label(Component.translatable("chat.geg.loading")).setThemeTypeVariation("LabelSecondary");
     private final ChatMessageList messages = new ChatMessageList();
     private final ChatComposer composer = new ChatComposer().afterSend(() -> focusComposer = true);
     private final Button newMessages = Signals.configure(new Button().setSize(Button.Size.SMALL).setType(Button.Type.TEXT), connected -> connected.pressed().connect(connected, messages::bottom));
     private final Button chooseChannel = Signals.configure(new Button(Component.translatable("chat.geg.channels")).setSize(Button.Size.SMALL), connected -> connected.pressed().connect(connected, this::showChannels));
-    private final Button direct = Signals.configure(new Button(Component.translatable("chat.geg.new_direct").withStyle(style -> style.withColor(OreTheme.TEXT_WHITE)))
+    private final Button direct = Signals.configure(new Button(Component.translatable("chat.geg.new_direct"))
             .setType(Button.Type.TEXT), connected -> connected.pressed().connect(connected, this::showContacts));
     private final Box header = new Box();
     {
@@ -253,11 +253,11 @@ final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interac
     @Override
     public void draw(brachy.modularui.screen.viewport.ModularGuiContext mui, WidgetThemeEntry<?> theme) {
         try (DrawContext frame = io.github.luyingyilong.ore.window.MuiDrawing.begin(mui, window.getContext())) {
-            drawFrame(frame, theme);
+            drawFrame(frame);
         }
     }
 
-    private void drawFrame(DrawContext context, WidgetThemeEntry<?> theme) {
+    private void drawFrame(DrawContext context) {
         if (!window.isAlive()) return;
         int width = getArea().width, height = getArea().height;
         drawer.setWidth(ChatLayout.drawerWidth(width));
@@ -272,7 +272,7 @@ final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interac
         }
         if (revision != ClientChatState.revision()) refresh();
         newMessages.setVisible(messages.newMessages() > 0);
-        newMessages.setLabel(tr("chat.geg.new_messages", messages.newMessages()).copy().withStyle(style -> style.withColor(OreTheme.TEXT_WHITE)));
+        newMessages.setLabel(tr("chat.geg.new_messages", messages.newMessages()).copy());
         if (targetModal.getVisible()) {
             String error = ClientChatState.view(ClientChatState.selected()).status;
             contactError.setText(error.isEmpty() ? Component.empty() : tr(error)).setVisible(!error.isEmpty());

@@ -52,7 +52,7 @@ final class InspectorSignalPanel {
             add(Component.literal((multipleOwners ? owner(panel, signal.sender()) + "." : "")
                             + signal.name() + "(" + signal.parameterType() + ")  #" + signal.id() + " - ")
                     .append(tr(signal.closed() ? "signals.closed_count" : "signals.active_count", signal.connections().size())), false)
-                    .setColor(OreTheme.TEXT_WHITE);
+                    ;
             for (var connection : signal.connections()) connection(panel, connection, false);
         }
         add(tr("signals.incoming", data.incoming().size()), true);
@@ -79,7 +79,7 @@ final class InspectorSignalPanel {
                         ? "signals.remaining_scope" : "signals.remaining_signal", event.remainingConnections()));
             Label historyLine = add(line, false);
             if (event.kind() == SignalDiagnostics.Kind.SCOPE_CLOSED && event.remainingConnections() > 0)
-                historyLine.setColor(OreTheme.TEXT_ERROR);
+                historyLine.setThemeTypeVariation("LabelError");
         }
         if (data.discardedEvents() > 0) add(tr("signals.discarded", data.discardedEvents()), false);
     }
@@ -91,7 +91,7 @@ final class InspectorSignalPanel {
         if (!connection.label().isEmpty()) add(tr("signals.slot_label", connection.label()), false);
         add(connection.source().isEmpty() ? tr("signals.source_unavailable") : tr("signals.source", connection.source()), false);
         if (connection.possibleDuplicate())
-            add(tr("signals.duplicate"), false).setColor(OreTheme.TEXT_ERROR);
+            add(tr("signals.duplicate"), false).setThemeTypeVariation("LabelError");
     }
 
     private String owner(InspectorSnapshot.SignalPanel panel, SignalDiagnostics.Owner owner) {

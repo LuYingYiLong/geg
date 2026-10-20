@@ -19,7 +19,7 @@ public record OreClientOptions(String hostModId, String defaultTheme, ResourceLo
         return defaults("ore", cacheDirectory);
     }
     public static OreClientOptions defaults(String hostModId, Path cacheDirectory) {
-        return new OreClientOptions(hostModId, "ore", font("ore"), font("ore_hero"), font("ore_fallback"),
+        return new OreClientOptions(hostModId, "ore:ore", font("ore"), font("ore_hero"), font("ore_fallback"),
                 OreSounds::playDefault, cacheDirectory);
     }
     private static ResourceLocation font(String path) { return ResourceLocation.fromNamespaceAndPath("ore", path); }

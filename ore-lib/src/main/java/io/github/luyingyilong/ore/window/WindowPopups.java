@@ -72,13 +72,14 @@ public final class WindowPopups {
         private final Items items=new Items();
         Popup(Dropdown<?> trigger) {
             this.trigger=trigger;options=trigger.getOptions();
+            setThemeParent(trigger);
             panel.addChild(scroll);scroll.setContent(items);this.addChild(panel);
             scroll.setVertical(Scroll.BarMode.NEVER).setHorizontal(Scroll.BarMode.DISABLED);
             for(var option:options) {
                 Button button=Signals.configure(new Button(option.label()).setType(Button.Type.MENU).setAlignment(Button.TextAlignment.LEFT)
                         .setSize(trigger.getControlSize()), connected -> connected.pressed().connect(connected, ()->select(option)));
                 if(trigger.getCheckable()&&Objects.equals(option.value(),trigger.getSelected()))
-                    button.setTrailingIcon(new Button.Icon(OreIcons.CHECKED,8,8));
+                    button.setTrailingIcon(Button.Icon.themed(io.github.luyingyilong.ore.theme.OreTheme.ICON_CHECKED));
                 items.addChild(button);
             }
         }

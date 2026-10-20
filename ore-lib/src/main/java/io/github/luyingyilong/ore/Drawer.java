@@ -1,8 +1,6 @@
 package io.github.luyingyilong.ore;
 
 import io.github.luyingyilong.ore.render.DrawContext;
-import brachy.modularui.theme.WidgetTheme;
-import brachy.modularui.theme.WidgetThemeEntry;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.DebugProperty;
 import io.github.luyingyilong.ore.debug.Inspectable;
@@ -33,13 +31,15 @@ import java.util.function.LongSupplier;
  * }</pre>
  */
 public final class Drawer extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Drawer"); }
+    @Override public String getThemeState() { return placement.name().toLowerCase(java.util.Locale.ROOT)+", "+(targetOpen?"open":animating?"closing":"closed"); }
     public static final int PADDING = 4;
     private static final int CLOSE_SIZE = 20;
     private static final int CLOSE_ICON_SIZE = 7;
     private final LongSupplier clock;
     private final Consumer<OreSounds.Cue> soundPlayer;
-    private final Label title = new Label().setHero(true).setOpticalCenter(true).setOverflow(Label.Overflow.ELLIPSIS)
-            .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER).setColor(OreTheme.TEXT_WHITE);
+    private final Label title = new Label().setThemeTypeVariation("LabelHero").setOpticalCenter(true).setOverflow(Label.Overflow.ELLIPSIS)
+            .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
     private final Box header = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
     private final Button closeButton;
     private final Box footer = new Box().setGap(2);
@@ -48,7 +48,8 @@ public final class Drawer extends Container {
     private final Padding frame = new Padding(Padding.Insets.all(PADDING)).setChild(column);
     private final SignalSource0 closed = new SignalSource0(this, "closed");
     private Panel background;
-    private int titleColor = OreTheme.TEXT_WHITE;
+    private Rect panelBounds=new Rect(0,0,0,0);
+    private Integer titleColor;
     private int requestedWidth;
     private Placement placement = Placement.RIGHT;
     private boolean closable = true;
@@ -75,7 +76,7 @@ public final class Drawer extends Container {
         this.soundPlayer = Objects.requireNonNull(soundPlayer);
         this.title.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
         closeButton = Signals.configure(new Button().setType(Button.Type.TEXT)
-                .setIcon(OreIcons.CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE), connected -> connected.pressed().connect(connected, this::close));
+                .setIcon(io.github.luyingyilong.ore.Button.Icon.themed(io.github.luyingyilong.ore.theme.OreTheme.ICON_CLOSE)), connected -> connected.pressed().connect(connected, this::close));
         closeButton.setMinimum(CLOSE_SIZE, CLOSE_SIZE);
         closeButton.setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         header.addChild(this.title);
@@ -131,7 +132,7 @@ public final class Drawer extends Container {
     }
 
     public int getTitleColor() {
-        return titleColor;
+        return titleColor==null?title.getColor():titleColor;
     }
 
     public Drawer setTitleColor(int color) {
@@ -140,6 +141,7 @@ public final class Drawer extends Container {
         return this;
     }
 
+    public Drawer clearFontSize() { title.clearFontSize(); requestLayout(); return this; }
     public float getFontSize() {
         return title.getFontSize();
     }
@@ -291,7 +293,8 @@ public final class Drawer extends Container {
     }
 
     public Rect getPanelBounds() {
-        return frame.getAbsoluteBounds();
+        Rect origin=getAbsoluteBounds();
+        return panelBounds.translated(origin.x(),origin.y());
     }
 
     @Override
@@ -318,8 +321,8 @@ public final class Drawer extends Container {
     }
 
     int maskColor() {
-        int alpha = (int) Math.round((OreTheme.OVERLAY_COLOR >>> 24) * progress);
-        return (alpha << 24) | (OreTheme.OVERLAY_COLOR & 0x00FFFFFF);
+        int alpha = (int) Math.round((getThemeItem(OreTheme.OVERLAY) >>> 24) * progress);
+        return (alpha << 24) | (getThemeItem(OreTheme.OVERLAY) & 0x00FFFFFF);
     }
 
     @Override
@@ -341,7 +344,8 @@ public final class Drawer extends Container {
         int visibleWidth = (int) Math.round(width * progress);
         int x = placement == Placement.LEFT ? visibleWidth - width : viewportWidth - visibleWidth;
         // Move the actual layout rectangle, so hit tests, focus and native inputs follow the slide.
-        fitChild(frame, new Rect(x, 0, width, getBounds().height()), font);
+        panelBounds=new Rect(x,0,width,getBounds().height());
+        fitChild(frame,getThemeItem(OreTheme.FLOATING_BACKGROUND).getContentRect(panelBounds),font);
     }
 
     @Override
@@ -363,10 +367,8 @@ public final class Drawer extends Container {
             try {
                 graphics.fill(viewport.x(), viewport.y(), viewport.right(), viewport.bottom(), maskColor());
                 if (background == null) background = ownPart("background", new Panel(OreTheme.FLOATING_BACKGROUND));
-                WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.FLOATING_BACKGROUND);
-                WidgetTheme style = entry == null ? context.getTheme().getPanelTheme().theme() : entry.theme();
-                title.setColor(titleColor).setShadow(style.isTextShadow());
-                background.drawAt(context, frame.getScreenBounds(screenX, screenY));
+
+                background.drawAt(context,getPanelBounds().translated(screenX,screenY));
                 frame.draw(context, screenX, screenY);
                 graphics.flush();
             } finally {
@@ -387,7 +389,7 @@ public final class Drawer extends Container {
     @Override
     protected boolean pointerDown(int x, int y) {
         if (!hit(x, y)) return false;
-        if (targetOpen && !frame.hit(x, y)) close();
+        if (targetOpen && !getPanelBounds().contains(x,y)) close();
         return true;
     }
 

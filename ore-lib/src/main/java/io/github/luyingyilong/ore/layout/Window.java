@@ -24,6 +24,7 @@ import java.util.Map;
  * Control-tree root shared by embedded and native WindowHost implementations.
  */
 public final class Window extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Window"); }
     private final boolean fullscreen;
     private final FocusManager focusManager = new FocusManager(this);
     private final FocusOverlay focusOverlay = ownPart("focusOverlay", new FocusOverlay(focusManager));
@@ -510,7 +511,7 @@ public final class Window extends Container {
             DebugBridge.backend().begin(this, context, screenX, screenY);
             DebugBridge.backend().paint(this, context, screenX, screenY);
             Rect area = getScreenBounds(screenX, screenY);
-            context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.OVERLAY_COLOR);
+            context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), getThemeItem(OreTheme.OVERLAY));
             if (body != null && body.getParent() == this && body.isAlive()) body.draw(context, screenX, screenY);
             if (layers != null && layers.getParent() == this && layers.isAlive())
                 layers.draw(context, screenX, screenY);

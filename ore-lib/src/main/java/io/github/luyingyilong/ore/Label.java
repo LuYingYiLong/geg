@@ -23,6 +23,7 @@ import java.util.Objects;
  * Shared Ore text measurement and rendering, including styled Minecraft Components.
  */
 public final class Label extends Control {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Label"); }
     /**
      * GUI pixels: 8 preserves Minecraft's usual unscaled text size.
      */
@@ -55,10 +56,11 @@ public final class Label extends Control {
     /**
      * Body-font measurement without allocating a Control, SignalScope or diagnostic identity.
      */
-    public static int measureTextHeight(Font font, Component text, int width, Wrap wrap, Overflow overflow, int maxLines) {
+    public static int measureTextHeight(Control owner, Font font, Component text, int width, Wrap wrap, Overflow overflow, int maxLines) {
         if (maxLines < 1) throw new IllegalArgumentException("At least one line is required");
-        return Math.min(maxLines, wrappedLines(font, OreFonts.text(Objects.requireNonNull(text)), Math.max(1, width),
-                Objects.requireNonNull(wrap), Objects.requireNonNull(overflow)).size()) * OreTextMetrics.body().lineHeight(1.0F);
+        float scale=owner.getThemeItem(OreTheme.FONT_SIZE)/DEFAULT_FONT_SIZE;
+        return Math.min(maxLines, wrappedLines(font, OreFonts.text(Objects.requireNonNull(text),owner.getThemeItem(OreTheme.TEXT_FONT)), Math.max(1,(int)Math.floor(width/scale)),
+                Objects.requireNonNull(wrap), Objects.requireNonNull(overflow)).size()) * OreTextMetrics.body().lineHeight(scale);
     }
 
     private static List<FormattedCharSequence> wrappedLines(Font font, Component display, int logicalWidth, Wrap wrap, Overflow overflow) {
@@ -91,19 +93,10 @@ public final class Label extends Control {
 
     public static void draw(Control owner, DrawContext context, Component text, Rect area, int color,
                             Overflow overflow, Horizontal horizontal, Vertical vertical) {
-        immediate(context, text).setColor(color).setOverflow(overflow).setAlignment(horizontal, vertical)
+        Label painter=immediate(context,text);
+        painter.setThemeParent(owner);
+        painter.setColor(color).setOverflow(overflow).setAlignment(horizontal, vertical)
                 .paint(context.getGraphics(), context.getFont(), area, context.getAbsMouseX(), context.getAbsMouseY(), owner);
-    }
-
-    public static void draw(DrawContext context, Component text, Rect area, int color,
-                            Overflow overflow, Horizontal horizontal, Vertical vertical) {
-        draw(context, text, area, color, false, overflow, horizontal, vertical);
-    }
-
-    public static void draw(DrawContext context, Component text, Rect area, int color,
-                            boolean shadow, Overflow overflow, Horizontal horizontal, Vertical vertical) {
-        immediate(context, text).setColor(color).setShadow(shadow).setOverflow(overflow).setAlignment(horizontal, vertical)
-                .paint(context.getGraphics(), context.getFont(), area, context.getAbsMouseX(), context.getAbsMouseY(), null);
     }
 
     /**
@@ -117,12 +110,13 @@ public final class Label extends Control {
 
     @Inspectable(group = "Text")
     public boolean getHero() {
-        boolean hero = DebugBridge.value(this, "hero", this.hero);
+        boolean hero = DebugBridge.value(this, "hero", getThemeItem(OreTheme.HERO));
         return hero;
     }
 
     public Label setHero(boolean hero) {
         if (DebugBridge.previewWrite(this, "hero", hero)) return this;
+        setThemeProperty(OreTheme.HERO,hero);
         if (this.hero != hero) {
             this.hero = hero;
             styledText = null;
@@ -148,13 +142,14 @@ public final class Label extends Control {
     }
 
     public Component getStyledText() {
-        if (DebugBridge.active()) return OreFonts.text(getText(), getHero());
-        if (styledText == null) styledText = OreFonts.text(text, hero);
+        if (DebugBridge.active()) return OreFonts.text(getText(),getThemeItem(getHero()?OreTheme.HERO_FONT:OreTheme.TEXT_FONT));
+        if (styledText == null) styledText = OreFonts.text(text,getThemeItem(getHero()?OreTheme.HERO_FONT:OreTheme.TEXT_FONT));
         return styledText;
     }
 
     @Override
     public void invalidateTextLayout() {
+        styledText = null;
         scrollStartMs = Long.MIN_VALUE;
         super.invalidateTextLayout();
     }
@@ -167,24 +162,39 @@ public final class Label extends Control {
 
     @Inspectable(group = "Text", min = -2147483648.0, max = 4294967295.0)
     public int getColor() {
-        int color = DebugBridge.value(this, "color", this.color);
+        int color = DebugBridge.value(this, "color", getThemeItem(OreTheme.TEXT_COLOR));
         return color;
     }
 
+    @Override public Label setThemeTypeVariation(String variation) { super.setThemeTypeVariation(variation); return this; }
+    public Label clearHero() { clearThemeProperty(OreTheme.HERO); return this; }
+    public Label clearColor() { clearThemeProperty(OreTheme.TEXT_COLOR); return this; }
+    public Label clearFontSize() { clearThemeProperty(OreTheme.FONT_SIZE); return this; }
+    public Label clearShadow() { clearThemeProperty(OreTheme.TEXT_SHADOW); return this; }
+    public Label setFont(net.minecraft.resources.ResourceLocation font) {
+        setThemeProperty(OreTheme.TEXT_FONT,font);
+        setThemeProperty(OreTheme.HERO_FONT,font);
+        return this;
+    }
+    public net.minecraft.resources.ResourceLocation getFont() { return getThemeItem(getHero()?OreTheme.HERO_FONT:OreTheme.TEXT_FONT); }
+    public Label clearFont() { clearThemeProperty(OreTheme.TEXT_FONT); clearThemeProperty(OreTheme.HERO_FONT); return this; }
     public Label setColor(int color) {
         if (DebugBridge.previewWrite(this, "color", color)) return this;
         this.color = color;
+        setThemeProperty(OreTheme.TEXT_COLOR,color);
         return this;
     }
 
+    public boolean getShadow() { return getThemeItem(OreTheme.TEXT_SHADOW); }
     public Label setShadow(boolean shadow) {
         this.shadow = shadow;
+        setThemeProperty(OreTheme.TEXT_SHADOW,shadow);
         return this;
     }
 
     @Inspectable(group = "Text", min = 0.0001, max = 256)
     public float getFontSize() {
-        float fontSize = DebugBridge.value(this, "fontSize", this.fontSize);
+        float fontSize = DebugBridge.value(this, "fontSize", getThemeItem(OreTheme.FONT_SIZE));
         return fontSize;
     }
 
@@ -195,6 +205,7 @@ public final class Label extends Control {
         if (!(fontSize > 0.0F) || !Float.isFinite(fontSize))
             throw new IllegalArgumentException("Font size must be positive and finite");
         if (DebugBridge.previewWrite(this, "fontSize", fontSize)) return this;
+        setThemeProperty(OreTheme.FONT_SIZE,fontSize);
         if (this.fontSize != fontSize) {
             this.fontSize = fontSize;
             scrollStartMs = Long.MIN_VALUE;
@@ -282,7 +293,7 @@ public final class Label extends Control {
 
     private float textScale() {
         float scale = DebugBridge.value(this, "scale", this.scale);
-        float fontSize = DebugBridge.value(this, "fontSize", this.fontSize);
+        float fontSize = DebugBridge.value(this, "fontSize", getThemeItem(OreTheme.FONT_SIZE));
         return scale * (fontSize / DEFAULT_FONT_SIZE);
     }
 
@@ -365,12 +376,12 @@ public final class Label extends Control {
     }
 
     public int lineHeight(Font font) {
-        boolean hero = DebugBridge.value(this, "hero", this.hero);
+        boolean hero = DebugBridge.value(this, "hero", getThemeItem(OreTheme.HERO));
         return OreTextMetrics.family(hero).lineHeight(textScale());
     }
 
     float firstLineOrigin(int height, int lines) {
-        boolean hero = DebugBridge.value(this, "hero", this.hero);
+        boolean hero = DebugBridge.value(this, "hero", getThemeItem(OreTheme.HERO));
         boolean opticalCenter = DebugBridge.value(this, "opticalCenter", this.opticalCenter);
         Vertical vertical = DebugBridge.value(this, "vertical", this.vertical);
         var metrics = OreTextMetrics.family(hero);
@@ -469,7 +480,7 @@ public final class Label extends Control {
     private void paint(GuiGraphics graphics, Font font, Rect area, int mouseX, int mouseY, Control debugOwner) {
         Overflow overflow = DebugBridge.value(this, "overflow", this.overflow);
         Horizontal horizontal = DebugBridge.value(this, "horizontal", this.horizontal);
-        int color = DebugBridge.value(this, "color", this.color);
+        int color = DebugBridge.value(this, "color", getThemeItem(OreTheme.TEXT_COLOR));
         if (!getVisible() || area.width() <= 0 || area.height() <= 0) return;
         float textScale = textScale();
         List<FormattedCharSequence> lines = displayedLines(font, area.width(), area.height());
@@ -512,7 +523,7 @@ public final class Label extends Control {
             graphics.pose().pushPose();
             graphics.pose().translate(lineX, startY + index * lineHeight, 0.0F);
             graphics.pose().scale(textScale, textScale, 1.0F);
-            OreFonts.draw(graphics, font, line, 0, 0, color, shadow);
+            OreFonts.draw(graphics, font, line, 0, 0, color, getThemeItem(OreTheme.TEXT_SHADOW));
             graphics.pose().popPose();
         }
         if (overflow != Overflow.VISIBLE) {

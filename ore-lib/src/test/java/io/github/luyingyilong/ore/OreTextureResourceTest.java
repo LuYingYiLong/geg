@@ -6,13 +6,13 @@ import javax.imageio.ImageIO;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/** MUI needs nonOpaque for partial-alpha pixels, including nine-slice edges. */
+/** Native textures preserve source alpha without a separate opt-in. */
 public final class OreTextureResourceTest {
     public static void main(String[] args) throws Exception {
         Path root = Path.of(System.getProperty("ore.resourceRoot"), "assets/ore");
         var theme = JsonParser.parseString(Files.readString(root.resolve("themes/ore.json"))).getAsJsonObject();
-        for (String key : new String[]{"panel:headerPanel", "panel:VGrabber", "panel:HGrabber"}) {
-            var texture = theme.getAsJsonObject(key).getAsJsonObject("background");
+        for (String key : new String[]{"Navbar:panel", "Scroll:vertical_grabber", "Scroll:horizontal_grabber"}) {
+            var texture = theme.getAsJsonObject(key);
             Path path = root.resolve("textures/" + texture.get("location").getAsString().substring("ore:".length()) + ".png");
             var image = ImageIO.read(path.toFile());
             if (image.getWidth() != texture.get("imageWidth").getAsInt()
@@ -23,8 +23,8 @@ public final class OreTextureResourceTest {
                 int alpha = image.getRGB(x, y) >>> 24;
                 partialAlpha |= alpha > 0 && alpha < 255;
             }
-            if (partialAlpha && (!texture.has("nonOpaque") || !texture.get("nonOpaque").getAsBoolean()))
-                throw new AssertionError("Translucent texture must enable nonOpaque: " + key);
+            if (!texture.get("style").getAsString().equals("texture")) throw new AssertionError("Expected native texture style");
+            if(texture.has("nonOpaque")) throw new AssertionError("Legacy MUI alpha flag must not return");
         }
     }
 }

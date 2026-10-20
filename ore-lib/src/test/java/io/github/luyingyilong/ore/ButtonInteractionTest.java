@@ -135,22 +135,25 @@ public final class ButtonInteractionTest {
         Button.Icon icon = new Button.Icon(OreIcons.SMALL_CLOSE, 7, 7);
         for (int height : new int[]{18, 20, 22, 32}) {
             Rect area = new Rect(10, 30, 120, height);
-            check(Button.backgroundBounds(area, Button.Type.SECONDARY, false).equals(area));
-            Rect pressedBackground = Button.backgroundBounds(area, Button.Type.SECONDARY, true);
+            Button button=new Button(cue -> { });
+            var normalStyle=button.getPresentationStyle(false,false);
+            var pressedStyle=button.getPresentationStyle(false,true);
+            check(normalStyle.getBackgroundRect(area).equals(area));
+            Rect pressedBackground=pressedStyle.getBackgroundRect(area);
             check(pressedBackground.y() == area.y() + 2 && pressedBackground.height() == height - 2);
             check(pressedBackground.bottom() == area.bottom());
             for (Button.TextAlignment alignment : Button.TextAlignment.values()) {
-                Button.ContentLayout normal = Button.contentLayout(area, 24, true, icon, icon, alignment, Button.Type.SECONDARY, false);
-                Button.ContentLayout pressed = Button.contentLayout(area, 24, true, icon, icon, alignment, Button.Type.SECONDARY, true);
+                Button.ContentLayout normal = Button.contentLayout(area, normalStyle, 24, true, icon, icon, alignment);
+                Button.ContentLayout pressed = Button.contentLayout(area, pressedStyle, 24, true, icon, icon, alignment);
                 check(pressed.label().equals(normal.label().translated(0, 2)));
                 check(pressed.icon().equals(normal.icon().translated(0, 2)));
                 check(pressed.trailingIcon().equals(normal.trailingIcon().translated(0, 2)));
             }
-            Button.ContentLayout iconOnly = Button.contentLayout(area, 0, false, icon, null, Button.TextAlignment.CENTER, Button.Type.SECONDARY, true);
-            Button.ContentLayout normalIcon = Button.contentLayout(area, 0, false, icon, null, Button.TextAlignment.CENTER);
+            Button.ContentLayout iconOnly = Button.contentLayout(area, pressedStyle, 0, false, icon, null, Button.TextAlignment.CENTER);
+            Button.ContentLayout normalIcon = Button.contentLayout(area, normalStyle, 0, false, icon, null, Button.TextAlignment.CENTER);
             check(iconOnly.icon().equals(normalIcon.icon().translated(0, 2)));
         }
-        check(Button.backgroundBounds(new Rect(0, 0, 10, 1), Button.Type.SECONDARY, true).height() == 0);
+        check(new Button(cue -> { }).getPresentationStyle(false,true).getBackgroundRect(new Rect(0,0,10,1)).height()==0);
     }
 
     private static void pressedFocus() {
@@ -188,12 +191,12 @@ public final class ButtonInteractionTest {
             check(button.getFocusBounds().equals(button.getAbsoluteBounds()));
 
             Rect area = button.getAbsoluteBounds();
-            Button.ContentLayout before = Button.contentLayout(area, 24, true, icon, icon, Button.TextAlignment.CENTER);
-            Button.ContentLayout pressed = Button.contentLayout(area, 24, true, icon, icon, Button.TextAlignment.CENTER, type, true);
+            Button.ContentLayout before = Button.contentLayout(area, button.getPresentationStyle(false,false), 24, true, icon, icon, Button.TextAlignment.CENTER);
+            Button.ContentLayout pressed = Button.contentLayout(area, button.getPresentationStyle(false,true), 24, true, icon, icon, Button.TextAlignment.CENTER);
             check(pressed.label().equals(before.label().translated(0, offset)));
             check(pressed.icon().equals(before.icon().translated(0, offset)));
             check(pressed.trailingIcon().equals(before.trailingIcon().translated(0, offset)));
-            if (offset == 0) check(Button.backgroundBounds(area, type, true).equals(area));
+            if (offset == 0) check(button.getPresentationStyle(false,true).getBackgroundRect(area).equals(area));
             button.setToggleButton(true).setButtonPressedNoSignal(true).setDisabled(true);
             check(button.getFocusBounds().equals(area));
         }

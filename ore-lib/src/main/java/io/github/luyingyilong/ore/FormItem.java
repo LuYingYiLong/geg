@@ -16,6 +16,7 @@ import java.util.function.Supplier;
 
 /** A named field; the label and control occupy the same Ore layout tree. */
 public final class FormItem extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"FormItem"); }
     private static final int LABEL_HEIGHT = 10;
     private static final int GAP = 3;
     private static final int ERROR_HEIGHT = 10;
@@ -48,8 +49,8 @@ public final class FormItem extends Container {
         this.input = input;
         this.field = Objects.requireNonNull(field);
         this.value = Objects.requireNonNull(value);
-        labelNode = new Label(label).setColor(OreTheme.TEXT_WHITE).setOverflow(Label.Overflow.CLIP);
-        errorNode = new Label().setColor(OreTheme.TEXT_ERROR).setOverflow(Label.Overflow.CLIP);
+        labelNode = new Label(label).setOverflow(Label.Overflow.CLIP);
+        errorNode = new Label().setThemeTypeVariation("LabelError").setOverflow(Label.Overflow.CLIP);
         inputNode = field instanceof InputControl node ? node : null;
         updateChildren(java.util.List.of(labelNode, field, errorNode));
     }

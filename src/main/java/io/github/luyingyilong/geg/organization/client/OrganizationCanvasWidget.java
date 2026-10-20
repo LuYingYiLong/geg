@@ -115,7 +115,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         joinDrawer = Signals.configure(new Drawer(Component.translatable("organization.geg.join"))
                 .setContent(joinTable), connected -> connected.closed().connect(connected, this::onJoinClosed));
         Label warning = new Label(Component.translatable("organization.geg.confirm_disband_body"))
-                .setWrap(Label.Wrap.WORD).setColor(OreTheme.TEXT_SECONDARY);
+                .setWrap(Label.Wrap.WORD).setThemeTypeVariation("LabelSecondary");
         warning.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         disbandConfirmation = Signals.configure(new Modal(Component.translatable("organization.geg.confirm_disband"))
                 .setContent(warning), connected -> connected.closeRequested().connect(connected, this::closeDisbandConfirmation))
@@ -163,7 +163,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                 .addColumn(new Table.Column<>("role", Component.translatable("organization.geg.role"),
                         42, 64, 1, width -> 20,
                         new Table.TextCell<OrganizationSyncPacket.Member>(
-                                member -> roleLabel(member.role()), OreTheme.TEXT_WHITE)
+                                member -> roleLabel(member.role()))
                                 .setOverflow(Label.Overflow.ELLIPSIS)))
                 .addColumn(new Table.Column<>("action", Component.translatable("organization.geg.actions"),
                         70, 82, 1, width -> 20, new Table.ControlCell<>(MemberActions::new, MemberActions::bind)));
@@ -239,7 +239,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                         Component.translatable("organization.geg.name"),
                         50, 120, 1, width -> 20,
                         new Table.TextCell<OrganizationSyncPacket.Directory>(
-                                entry -> Component.literal(entry.name()), OreTheme.TEXT_WHITE)
+                                entry -> Component.literal(entry.name()))
                                 .setOverflow(Label.Overflow.ELLIPSIS)))
                 .addColumn(new Table.Column<>("action",
                         Component.translatable("organization.geg.actions"),
@@ -611,7 +611,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
 
     private void initializeMemberships() {
         Navbar navbar = new Navbar(Component.translatable("organization.geg.your_organizations"))
-                .setTitleColor(OreTheme.TEXT_DARK);
+                ;
         memberships.addChild(navbar);
         Button createButton = Signals.configure(new Button(Component.translatable("organization.geg.create"))
                 .setType(Button.Type.PRIMARY), connected -> connected.pressed().connect(connected, this::showCreate));
@@ -650,11 +650,11 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     @Override
     public void draw(brachy.modularui.screen.viewport.ModularGuiContext mui, WidgetThemeEntry<?> theme) {
         try (DrawContext frame = io.github.luyingyilong.ore.window.MuiDrawing.begin(mui, window.getContext())) {
-            drawFrame(frame, theme);
+            drawFrame(frame);
         }
     }
 
-    private void drawFrame(DrawContext context, WidgetThemeEntry<?> theme) {
+    private void drawFrame(DrawContext context) {
         if (!window.isAlive()) return;
         Rect area = new Rect(getArea().x, getArea().y, getArea().width, getArea().height);
         if (area.width() == 0 || area.height() == 0) return;

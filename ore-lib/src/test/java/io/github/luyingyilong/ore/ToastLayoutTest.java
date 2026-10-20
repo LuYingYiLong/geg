@@ -72,6 +72,8 @@ public final class ToastLayoutTest {
                 check(frame.toast().hitTop(frame.area().x() + 1, frame.area().y() + 1) == null);
             }
         }
+        // The queue permanently released the earlier toast. Check appearance on a live instance.
+        first = new Toast();
         for (Toast.Type type : Toast.Type.values()) {
             first.setType(type);
             check(type.getColor() == Tag.Type.valueOf(type.name()).getColor());

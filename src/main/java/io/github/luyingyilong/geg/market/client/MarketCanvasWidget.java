@@ -63,10 +63,6 @@ import java.util.*;
 import java.util.function.IntConsumer;
 
 final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Interactable {
-    private static final int ACCENT = OreTheme.TEXT_ACCENT;
-    private static final int TEXT = OreTheme.TEXT_WHITE;
-    private static final int HEADER_TEXT = OreTheme.TEXT_DARK;
-    private static final int SECONDARY_TEXT = OreTheme.TEXT_SECONDARY;
     private static final int CARD_GAP = 4;
     private static final int MIN_CARD_WIDTH = 96;
     private static final int FOOTER_HEIGHT = Button.Size.MEDIUM.getHeight();
@@ -78,7 +74,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             Component.translatable("market.geg.buying")), Button.Size.SMALL);
     private final List<Card> cards = new ArrayList<>();
     private final Dropdown<String> filterDropdown = new Dropdown<>("all", 8)
-            .setTriggerLabel(Component.empty()).setIcon(OreIcons.FILTER, 16, 16)
+            .setTriggerLabel(Component.empty()).setIcon(io.github.luyingyilong.ore.Button.Icon.themed(io.github.luyingyilong.ore.theme.OreTheme.ICON_FILTER))
             .setShowArrow(false).setType(Button.Type.TEXT);
     private final Window window = (Window) new Window(true).setDebugName("Market Window");
     private final Grid<Card> grid = new Grid<>();
@@ -92,13 +88,13 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private final Modal quantityModal = Signals.configure(new Modal(Component.empty()).setSize(224, 0).centered()
             .setContent(quantityContent), connected -> connected.closeRequested().connect(connected, this::closeQuantityMenu)).setDepth(300.0F);
     private final Navbar navbar = new Navbar(Component.translatable("market.geg.title"))
-            .setTitleColor(HEADER_TEXT);
+            ;
     private final InputControl searchSlot;
-    private final Label coinBalance = new Label().setColor(HEADER_TEXT)
+    private final Label coinBalance = new Label().setThemeTypeVariation("LabelDark")
             .setOverflow(Label.Overflow.ELLIPSIS).setMaximumWidth(128)
             .setAlignment(Label.Horizontal.RIGHT, Label.Vertical.CENTER);
     private final Padding footerSlot = new Padding(new Padding.Insets(4, 0, 0, 0)).setChild(footerOptions);
-    private final Label publishFee = new Label().setColor(SECONDARY_TEXT)
+    private final Label publishFee = new Label().setThemeTypeVariation("LabelSecondary")
             .setOverflow(Label.Overflow.CLIP).setAlignment(Label.Horizontal.RIGHT, Label.Vertical.CENTER);
     private final Padding publishSlot;
     {
@@ -200,8 +196,8 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         quantityModal.setVisible(false);
     }
 
-    private static Label scrollingCardLabel(int color) {
-        return new Label(Component.empty()).setColor(color).setOverflow(Label.Overflow.MARQUEE)
+    private static Label scrollingCardLabel(String variation) {
+        return new Label(Component.empty()).setThemeTypeVariation(variation).setOverflow(Label.Overflow.MARQUEE)
                 .setScrollTrigger(Label.ScrollTrigger.HOVER).setScrollSpeed(20.0F)
                 .setScrollEndPauseMs(700L);
     }
@@ -333,11 +329,11 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     @Override
     public void draw(brachy.modularui.screen.viewport.ModularGuiContext mui, WidgetThemeEntry<?> theme) {
         try (DrawContext frame = io.github.luyingyilong.ore.window.MuiDrawing.begin(mui, window.getContext())) {
-            drawFrame(frame, theme);
+            drawFrame(frame);
         }
     }
 
-    private void drawFrame(DrawContext context, WidgetThemeEntry<?> theme) {
+    private void drawFrame(DrawContext context) {
         if (!window.isAlive()) return;
         Font font = context.getFont();
         int x = getArea().x;
@@ -468,14 +464,14 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         return result;
     }
 
-    private void drawText(DrawContext context, Component text, int x, int y, int width, int height, int color) {
-        Label.draw(context, text, new Rect(x, y, Math.max(0, width), Math.max(0, height)),
-                color, Label.Overflow.CLIP, Label.Horizontal.LEFT, Label.Vertical.TOP);
+    private void drawText(io.github.luyingyilong.ore.layout.Control owner, DrawContext context, Component text, int x, int y, int width, int height, io.github.luyingyilong.ore.theme.ThemeKey<Integer> color) {
+        Label.draw(owner, context, text, new Rect(x, y, Math.max(0, width), Math.max(0, height)),
+                owner.getThemeItem(color), Label.Overflow.CLIP, Label.Horizontal.LEFT, Label.Vertical.TOP);
     }
 
     private Table<MarketDetail> createOfferTable() {
         Table<MarketDetail> table = new Table<>();
-        Signals.configure(table.setRowKey(offer -> offer.id()).setHeaderColor(SECONDARY_TEXT), connected -> connected.rowActivated().connect(connected, offer -> selectedDetailId = offer.id()));
+        Signals.configure(table.setRowKey(offer -> offer.id()), connected -> connected.rowActivated().connect(connected, offer -> selectedDetailId = offer.id()));
         table.addColumn(new Table.Column<>("status", Component.translatable("market.geg.status"),
                 110, 110, 1, width -> 20, new Table.Cell<>() {
             @Override
@@ -484,19 +480,19 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 Component status = Component.translatable(offer.buyOrder()
                                 ? "market.geg.buying" : "market.geg.selling")
                         .copy().append(Component.literal(" x" + offer.quantity()));
-                drawText(context, status, area.x() + 4, top, area.width() - 8, 10,
-                        offer.buyOrder() ? ACCENT : TEXT);
-                drawText(context, Component.literal(offer.ownerName()), area.x() + 4, top + 10,
-                        area.width() - 8, 10, SECONDARY_TEXT);
+                drawText(table, context, status, area.x() + 4, top, area.width() - 8, 10,
+                        offer.buyOrder() ? OreTheme.TEXT_ACCENT_KEY : OreTheme.TEXT_WHITE_KEY);
+                drawText(table, context, Component.literal(offer.ownerName()), area.x() + 4, top + 10,
+                        area.width() - 8, 10, OreTheme.TEXT_SECONDARY_KEY);
             }
         }));
         table.addColumn(new Table.Column<>("price", Component.translatable("market.geg.unit_price"),
                 96, 96, 0, width -> 10, new Table.Cell<>() {
             @Override
             public void draw(DrawContext context, MarketDetail offer, Rect area) {
-                drawText(context, Component.literal(MoneyCurrency.COIN.format(offer.unitPrice())),
+                drawText(table, context, Component.literal(MoneyCurrency.COIN.format(offer.unitPrice())),
                         area.x() + 4, area.y() + Math.max(0, (area.height() - 10) / 2),
-                        area.width() - 8, 10, TEXT);
+                        area.width() - 8, 10, OreTheme.TEXT_WHITE_KEY);
             }
         }));
         table.addColumn(new Table.Column<>("action", Component.translatable("market.geg.operation"),
@@ -801,7 +797,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private final class BodyContent extends Container {
         private final Padding inset = new Padding(new Padding.Insets(4, 4, 0, 4)).setChild(gridScroll);
         private final Spin loadingSpin = new Spin();
-        private final Label empty = new Label().setColor(SECONDARY_TEXT)
+        private final Label empty = new Label().setThemeTypeVariation("LabelSecondary")
                 .setOverflow(Label.Overflow.CLIP)
                 .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
         private final Box status = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
@@ -859,7 +855,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         private final MarketDetailDescriptions info = new MarketDetailDescriptions();
         private final Spin loadingSpin = new Spin();
         private final Label loadingLabel = new Label(Component.translatable("market.geg.loading"))
-                .setColor(SECONDARY_TEXT).setOverflow(Label.Overflow.CLIP)
+                .setThemeTypeVariation("LabelSecondary").setOverflow(Label.Overflow.CLIP)
                 .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
         private final Box loadingRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
         {
@@ -1075,9 +1071,9 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     private final class CardView extends Container implements Grid.View<Card> {
         private final Panel background = new Panel(null);
-        private final Label name = scrollingCardLabel(TEXT);
-        private final Label count = scrollingCardLabel(SECONDARY_TEXT);
-        private final Label price = scrollingCardLabel(ACCENT);
+        private final Label name = scrollingCardLabel("");
+        private final Label count = scrollingCardLabel("LabelSecondary");
+        private final Label price = scrollingCardLabel("LabelAccent");
         private final Slot icon = new Slot().setBackgroundVisible(false);
         private final Box textColumn = new Box().setGap(1);
         private final Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(5);
@@ -1118,7 +1114,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                         : Component.translatable("market.geg.price", MoneyCurrency.COIN.format(card.price));
                 default -> Component.empty();
             };
-            price.setText(priceText).setColor(ended ? SECONDARY_TEXT : ACCENT);
+            price.setText(priceText).setThemeTypeVariation(ended ? "LabelSecondary" : "LabelAccent");
             price.setVisible(!priceText.getString().isEmpty());
         }
 

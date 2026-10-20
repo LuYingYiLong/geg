@@ -67,7 +67,7 @@ public final class ClientMailScreen {
             next.close();
             if (canvas == next) canvas = null;
         });
-        OreScreen.open(new ModularScreen("geg", panel).useTheme(OreTheme.NAME).pausesGame(false));
+        OreScreen.open(new ModularScreen("geg", panel).pausesGame(false));
         next.initialize();
     }
 

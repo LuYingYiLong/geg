@@ -18,10 +18,11 @@ import java.util.Objects;
 
 /** Responsive read-only descriptions, composed entirely of retained Boxes and Labels without a background. */
 public final class Descriptions extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Descriptions"); }
     public enum Layout { HORIZONTAL, VERTICAL }
 
     private final Box box = new Box().setGap(6);
-    private final Label title = new Label().setWrap(Label.Wrap.CHARACTER).setColor(OreTheme.TEXT_WHITE);
+    private final Label title = new Label().setWrap(Label.Wrap.CHARACTER);
     private final Map<String, DescriptionItem> items = new LinkedHashMap<>();
     private final List<Box> rows = new ArrayList<>();
     private Layout layout = Layout.HORIZONTAL;
@@ -31,9 +32,9 @@ public final class Descriptions extends Container {
     private int columnGap = 8;
     private int itemGap = 4;
     private boolean colon = true;
-    private int labelColor = OreTheme.TEXT_SECONDARY;
-    private int contentColor = OreTheme.TEXT_WHITE;
-    private float fontSize = Label.DEFAULT_FONT_SIZE;
+    private Integer labelColor;
+    private Integer contentColor;
+    private Float fontSize;
     private List<DescriptionItem> arranged = List.of();
     private int arrangedColumns;
     private boolean arranging;
@@ -59,11 +60,11 @@ public final class Descriptions extends Container {
     public Descriptions setLabelColor(int color) {
         labelColor = color; for (DescriptionItem item : items.values()) item.getLabelNode().setColor(color); return this;
     }
-    public int getLabelColor() { return labelColor; }
+    public int getLabelColor() { return labelColor==null?getThemeItem(OreTheme.TEXT_SECONDARY_KEY):labelColor; }
     public Descriptions setContentColor(int color) {
         contentColor = color; for (DescriptionItem item : items.values()) item.getContentNode().setColor(color); return this;
     }
-    public int getContentColor() { return contentColor; }
+    public int getContentColor() { return contentColor==null?getThemeItem(OreTheme.TEXT_WHITE_KEY):contentColor; }
     public Descriptions setFontSize(float pixels) {
         if (!(pixels > 0.0F) || !Float.isFinite(pixels)) throw new IllegalArgumentException("Font size must be positive and finite");
         fontSize = pixels;
@@ -71,7 +72,7 @@ public final class Descriptions extends Container {
         requestLayout();
         return this;
     }
-    public float getFontSize() { return fontSize; }
+    public float getFontSize() { return fontSize==null?getThemeItem(OreTheme.FONT_SIZE):fontSize; }
     public Descriptions setLayout(Layout layout) { this.layout = Objects.requireNonNull(layout); configureItems(); return this; }
     public Layout getLayout() { return layout; }
     public Descriptions setColon(boolean colon) { this.colon = colon; configureItems(); return this; }
@@ -111,8 +112,9 @@ public final class Descriptions extends Container {
         if (items.containsKey(item.getKey())) throw new IllegalArgumentException("Duplicate description: " + item.getKey());
         if (item.getParent() != null) throw new IllegalStateException("Description already has a parent");
         item.configure(layout, colon, itemGap);
-        item.getLabelNode().setColor(labelColor).setFontSize(fontSize);
-        item.getContentNode().setColor(contentColor).setFontSize(fontSize);
+        if(labelColor!=null) item.getLabelNode().setColor(labelColor);
+        if(contentColor!=null) item.getContentNode().setColor(contentColor);
+        if(fontSize!=null) { item.getLabelNode().setFontSize(fontSize); item.getContentNode().setFontSize(fontSize); }
         box.addChild(item);
         requestLayout();
         return this;

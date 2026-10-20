@@ -49,7 +49,7 @@ public final class ChatMessageList extends Container {
             }
 
             public int measureHeight(ChatMessage item, int width, Font font) {
-                return messageHeight(item, width, font);
+                return messageHeight(ChatMessageList.this,item, width, font);
             }
 
             public Grid.View<ChatMessage> createView() {
@@ -69,8 +69,8 @@ public final class ChatMessageList extends Container {
         return minecraft == null || minecraft.player == null ? ChatChannel.NONE : minecraft.player.getUUID();
     }
 
-    static int messageHeight(ChatMessage item, int width, Font font) {
-        int textHeight = Label.measureTextHeight(font, item.text(), Math.max(1, system(item) ? width : width - 28),
+    static int messageHeight(Control owner, ChatMessage item, int width, Font font) {
+        int textHeight = Label.measureTextHeight(owner, font, item.text(), Math.max(1, system(item) ? width : width - 28),
                 Label.Wrap.WORD, Label.Overflow.VISIBLE, Integer.MAX_VALUE);
         return system(item) ? textHeight : Math.max(24, textHeight + 14);
     }
@@ -141,7 +141,7 @@ public final class ChatMessageList extends Container {
     static final class MessageView extends Container implements Grid.View<ChatMessage> {
         final RichText text = new RichText();
         private final Avatar avatar = new Avatar().setSize(20);
-        private final Label author = new Label().setColor(OreTheme.TEXT_SECONDARY).setOverflow(Label.Overflow.ELLIPSIS);
+        private final Label author = new Label().setThemeTypeVariation("LabelSecondary").setOverflow(Label.Overflow.ELLIPSIS);
         private final Supplier<UUID> viewer;
         private ChatMessage message;
         private boolean outgoing;

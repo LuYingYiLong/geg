@@ -1,8 +1,6 @@
 package io.github.luyingyilong.ore;
 
 import io.github.luyingyilong.ore.render.DrawContext;
-import brachy.modularui.theme.WidgetTheme;
-import brachy.modularui.theme.WidgetThemeKey;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Panel;
 import io.github.luyingyilong.ore.layout.SizeFlags;
@@ -12,7 +10,8 @@ import io.github.luyingyilong.ore.theme.OreTheme;
  * A themed line: horizontal is 2px high, vertical is exactly 1px wide.
  */
 public final class Divider extends Control {
-    private final WidgetThemeKey<WidgetTheme> horizontalTheme;
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Divider"); }
+    private final io.github.luyingyilong.ore.theme.ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> horizontalTheme;
     private final boolean defaultTheme;
     private Panel horizontalPainter, verticalPainter;
     private Layout layout = Layout.HORIZONTAL;
@@ -20,11 +19,11 @@ public final class Divider extends Control {
         this(null, true);
     }
 
-    Divider(WidgetThemeKey<WidgetTheme> theme) {
+    Divider(io.github.luyingyilong.ore.theme.ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> theme) {
         this(theme, false);
     }
 
-    private Divider(WidgetThemeKey<WidgetTheme> theme, boolean defaultTheme) {
+    private Divider(io.github.luyingyilong.ore.theme.ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> theme, boolean defaultTheme) {
         this.horizontalTheme = theme;
         this.defaultTheme = defaultTheme;
         setMinimum(0, 2);

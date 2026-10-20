@@ -4,28 +4,23 @@ import io.github.luyingyilong.ore.signal.*;
 
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
-import brachy.modularui.api.drawable.IDrawable;
 import io.github.luyingyilong.ore.render.DrawContext;
-import brachy.modularui.theme.WidgetTheme;
-import brachy.modularui.theme.WidgetThemeEntry;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.FocusManager;
 import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.theme.OreFonts;
 import io.github.luyingyilong.ore.theme.OreSounds;
 import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.StyleBox;
 import io.github.luyingyilong.ore.util.ReleaseGesture;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
 /** Content-sized single-choice options; FILL/EXPAND distributes any additional width. */
 public final class Segmented extends Control {
-    private static final int SELECTED_TOP_INSET = 2;
-    private static final int INDICATOR_MAX_WIDTH = 16;
-    private static final int TEXT_PADDING = 4;
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Segmented"); }
+    @Override public String getThemeState() { return "selected="+selectedIndex+", focused="+focused; }
 
     private final List<Component> options;
     private final List<Label> optionLabels;
@@ -39,6 +34,7 @@ public final class Segmented extends Control {
     private final SignalSource<Integer> selectionChanged = new SignalSource<>(this, "selectionChanged", "Integer");
     private Font layoutFont;
     private final ReleaseGesture<Integer> gesture = new ReleaseGesture<>();
+    private int hoveredIndex=-1;
 
     public Segmented(List<Component> options) {
         this(options, Button.Size.MEDIUM);
@@ -93,9 +89,8 @@ public final class Segmented extends Control {
         int index = focused ? focusedIndex : selectedIndex;
         int left = optionStart(index, width, layoutFont);
         int right = optionStart(index + 1, width, layoutFont);
-        int inset = topInset(index, true);
-        return new Rect(area.x() + left - scrollX, area.y() + inset,
-                right - left + 1, Math.max(0, size.getHeight() - inset));
+        return getOptionStyle(index,isOptionHovered(index)).getBackgroundRect(new Rect(
+                area.x() + left - scrollX, area.y(), right - left + 1, size.getHeight()));
     }
 
     @Override public void onFocusChanged(boolean focused) {
@@ -136,8 +131,7 @@ public final class Segmented extends Control {
 
     public int minimumRowWidth(Font font) {
         int width = 0;
-        for (Component label : options)
-            width += optionWidth(label, font);
+        for (int index=0;index<options.size();index++) width += optionWidth(index,font);
         return width;
     }
 
@@ -146,14 +140,15 @@ public final class Segmented extends Control {
         return Math.max(super.measureWidth(font, available), minimumRowWidth(font));
     }
 
-    private static int optionWidth(Component option, Font font) {
-        return Math.max(24, (font == null ? 0 : font.width(OreFonts.text(option))) + 2 * TEXT_PADDING + 8);
+    private int optionWidth(int index, Font font) {
+        int textWidth=font==null?0:optionLabels.get(index).measureWidth(font,Integer.MAX_VALUE);
+        return Math.max(getThemeItem(OreTheme.SEGMENTED_MIN_WIDTH),textWidth+getThemeItem(OreTheme.BUTTON_SECONDARY_NORMAL).getContentMargin().getHorizontal());
     }
 
     /** Shared by painting, pointer hits, focus outlines and scroll-to-selection. */
     private int optionStart(int index, int rowWidth, Font font) {
         int start = 0;
-        for (int preceding = 0; preceding < index; preceding++) start += optionWidth(options.get(preceding), font);
+        for (int preceding = 0; preceding < index; preceding++) start += optionWidth(preceding, font);
         return start + Math.max(0, rowWidth - minimumRowWidth(font)) * index / options.size();
     }
 
@@ -205,6 +200,19 @@ public final class Segmented extends Control {
 
     @Override public void cancelInteraction() { gesture.cancel(); }
 
+    @Override protected boolean pointerMove(int rootX, int rootY) {
+        hoveredIndex=layoutFont==null?-1:indexAt(0,0,rootX,rootY,layoutFont);
+        return gesture.pointerPending();
+    }
+
+    private boolean isOptionHovered(int index) { return index==hoveredIndex; }
+
+    StyleBox getOptionStyle(int index, boolean hovered) {
+        return getThemeItem(index==selectedIndex?OreTheme.SEGMENTED_BUTTON_SELECTED
+                :Button.getStyleKey(Button.Type.SECONDARY,hovered,
+                gesture.keyPressed(index) || hovered && gesture.pointerPressed(index),false));
+    }
+
     @Override protected void render(DrawContext context, int screenX, int screenY) {
         Rect viewport = getScreenBounds(screenX, screenY);
         if (viewport.width() <= 0 || viewport.height() <= 0) return;
@@ -214,7 +222,6 @@ public final class Segmented extends Control {
             ensureSelectedVisible(contentWidth, viewport.width());
             revealSelected = false;
         }
-        GuiGraphics graphics = context.getGraphics();
         context.enableScissor(viewport.x(), viewport.y(), viewport.right(), viewport.bottom());
         DebugBridge.backend().clip(context.toScreenRect(viewport));
         drawOptions(context, viewport.x() - scrollX, viewport.y(), contentWidth, selectedIndex);
@@ -234,6 +241,7 @@ public final class Segmented extends Control {
     /** Arms the option under the pointer; selection is deferred until a matching release. */
     private int beginAt(int screenX, int screenY, int mouseX, int mouseY, Font font) {
         int index = indexAt(screenX, screenY, mouseX, mouseY, font);
+        hoveredIndex=index;
         if (index >= 0) gesture.pointerDown(index);
         return index;
     }
@@ -256,10 +264,8 @@ public final class Segmented extends Control {
     private void drawOptions(DrawContext context, int x, int y,
                      int width, int selectedIndex) {
         int height = size.getHeight();
-        GuiGraphics graphics = context.getGraphics();
-        WidgetThemeEntry<WidgetTheme> selectedEntry = context.getTheme()
-                .getWidgetTheme(OreTheme.SEGMENTED_BUTTON_SELECTED);
-        int hoveredIndex = hitIndex(x, y, width,
+
+        hoveredIndex = hitIndex(x, y, width,
                 context.getAbsMouseX(), context.getAbsMouseY(), context.getFont());
 
         for (int index = 0; index < options.size(); index++) {
@@ -269,31 +275,31 @@ public final class Segmented extends Control {
             int optionWidth = optionEnd - optionX + (index < options.size() - 1 ? 1 : 0);
             boolean selected = index == selectedIndex;
             boolean hovered = index == hoveredIndex;
-            int topInset = topInset(index, hovered);
-            WidgetTheme style = selected && selectedEntry != null ? selectedEntry.theme()
-                    : Button.theme(context.getTheme(), Button.Type.SECONDARY,
-                    hovered, gesture.keyPressed(index) || hovered && gesture.pointerPressed(index));
-            IDrawable background = style.getBackground();
-            if (background != null) {
-                int inset = Math.min(topInset, height);
-                io.github.luyingyilong.ore.theme.OreDrawables.draw(context, background,
-                        new Rect(optionX, y + inset, optionWidth, height - inset), style);
-            }
-
-            Label text = optionLabels.get(index).setColor(style.getTextColor()).setShadow(style.isTextShadow());
-            text.layout(new Rect(
-                            optionX + TEXT_PADDING, y + topInset,
-                            Math.max(0, optionWidth - 2 * TEXT_PADDING), height), context.getFont());
+            var style=getOptionStyle(index,hovered);
+            Rect area=new Rect(optionX,y,optionWidth,height);
+            style.draw(context,area);
+            Label text=optionLabels.get(index);
+            text.setThemeOverride(OreTheme.TEXT_COLOR,getThemeItem(selected?OreTheme.SEGMENTED_BUTTON_SELECTED_TEXT:OreTheme.BUTTON_SECONDARY_NORMAL_TEXT));
+            text.layout(style.getContentDrawRect(area),context.getFont());
             DebugBridge.backend().internal(this, "option_" + index, text);
             text.draw(context, 0, 0);
 
-            if (selected && optionWidth > 0 && height > 0) {
-                int lineWidth = Math.min(INDICATOR_MAX_WIDTH, Math.max(1, optionWidth / 3));
-                int lineX = optionX + (optionWidth - lineWidth) / 2;
-                graphics.fill(lineX, y + height - 2,
-                        lineX + lineWidth, y + height - 1, OreTheme.TEXT_WHITE);
+            if (selected) {
+                Rect indicator=getSelectedIndicatorRect(area);
+                if(indicator.width()>0 && indicator.height()>0)
+                    getThemeItem(OreTheme.SEGMENTED_INDICATOR).draw(context,indicator);
             }
         }
+    }
+
+    /** Decoration uses the original option rectangle, independently of background/content offsets. */
+    Rect getSelectedIndicatorRect(Rect option) {
+        float ratio=getThemeItem(OreTheme.SEGMENTED_INDICATOR_WIDTH_RATIO);
+        int width=ratio==0 || option.width()==0?0:Math.min(option.width(),Math.min(
+                getThemeItem(OreTheme.SEGMENTED_INDICATOR_MAX_WIDTH),Math.max(1,(int)(option.width()*ratio))));
+        int gap=Math.min(option.height(),getThemeItem(OreTheme.SEGMENTED_INDICATOR_BOTTOM_GAP));
+        int height=Math.min(option.height()-gap,getThemeItem(OreTheme.SEGMENTED_INDICATOR_HEIGHT));
+        return new Rect(option.x()+(option.width()-width)/2,option.bottom()-gap-height,width,height);
     }
 
     public int hitIndex(int x, int y, int width, int mouseX, int mouseY) {
@@ -309,15 +315,10 @@ public final class Segmented extends Control {
             int left = x + optionStart(index, width, font);
             int right = x + optionStart(index + 1, width, font);
             if (mouseX >= left && mouseX < right) {
-                if (index == selectedIndex && mouseY < y + SELECTED_TOP_INSET) return -1;
                 return index;
             }
         }
         return -1;
     }
 
-    int topInset(int index, boolean hovered) {
-        return index == selectedIndex || gesture.keyPressed(index)
-                || hovered && gesture.pointerPressed(index) ? SELECTED_TOP_INSET : 0;
-    }
 }

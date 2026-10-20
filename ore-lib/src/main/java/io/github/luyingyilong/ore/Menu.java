@@ -2,8 +2,6 @@ package io.github.luyingyilong.ore;
 
 import io.github.luyingyilong.ore.signal.*;
 
-import brachy.modularui.theme.WidgetTheme;
-import brachy.modularui.theme.WidgetThemeKey;
 import io.github.luyingyilong.ore.layout.Box;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Control;
@@ -21,9 +19,10 @@ import java.util.function.Supplier;
 
 /** Box-based, single-selection menu without an outer background or inset. Wrap in Scroll for overflow. */
 public final class Menu extends Container implements ScrollContent {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Menu"); }
     private final Box sections = new Box().setGap(8);
-    private final Label empty = new Label().setColor(OreTheme.TEXT_WHITE).setWrap(Label.Wrap.WORD);
-    private final WidgetThemeKey<WidgetTheme> dividerTheme;
+    private final Label empty = new Label().setWrap(Label.Wrap.WORD);
+    private final io.github.luyingyilong.ore.theme.ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> dividerTheme;
     private final Supplier<Button> buttonFactory;
     private final Map<String, Button> buttons = new LinkedHashMap<>();
     private final List<Label> emptyLabels = new ArrayList<>();
@@ -40,7 +39,7 @@ public final class Menu extends Container implements ScrollContent {
 
     public Menu() { this(OreTheme.H_DIVIDER, Button::new); }
 
-    Menu(WidgetThemeKey<WidgetTheme> dividerTheme, Supplier<Button> buttonFactory) {
+    Menu(io.github.luyingyilong.ore.theme.ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> dividerTheme, Supplier<Button> buttonFactory) {
         this.dividerTheme = dividerTheme;
         ownPooled(empty);
         getSignalScope().own(this::releaseBindings);
@@ -139,7 +138,7 @@ public final class Menu extends Container implements ScrollContent {
             if (item.type() == MenuItem.Type.GROUP) {
                 run = null;
                 Box group = verticalBox();
-                Label title = new Label(item.label()).setColor(OreTheme.TEXT_SECONDARY)
+                Label title = new Label(item.label()).setThemeTypeVariation("LabelSecondary")
                         .setOverflow(Label.Overflow.ELLIPSIS).setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
                 title.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
                 Padding heading = new Padding(new Padding.Insets(0, Button.PADDING_X, 0, Button.PADDING_X)).setChild(title);

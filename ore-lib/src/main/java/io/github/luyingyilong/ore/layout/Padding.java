@@ -8,6 +8,7 @@ import net.minecraft.client.gui.Font;
 import java.util.Objects;
 
 public final class Padding extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Padding"); }
     public record Insets(int top, int right, int bottom, int left) {
         public Insets {
             if (top < 0 || right < 0 || bottom < 0 || left < 0)

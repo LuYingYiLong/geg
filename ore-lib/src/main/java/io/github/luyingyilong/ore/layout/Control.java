@@ -1,6 +1,7 @@
 package io.github.luyingyilong.ore.layout;
 
 import io.github.luyingyilong.ore.render.DrawContext;
+import io.github.luyingyilong.ore.theme.*;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.DebugProperty;
 import io.github.luyingyilong.ore.debug.Inspectable;
@@ -20,6 +21,135 @@ import java.util.Objects;
  */
 public class Control implements SignalOwner {
     private final SignalScope signalScope = new SignalScope();
+    private Theme theme;
+    private String themeTypeVariation = "";
+    private java.lang.ref.WeakReference<Control> themeParent;
+    private final java.util.List<java.lang.ref.WeakReference<Control>> themeDependents = new java.util.ArrayList<>();
+    private final java.util.Map<ThemeKey<?>,Object> themeOverrides = new java.util.LinkedHashMap<>();
+    private final java.util.Map<ThemeKey<?>,Object> themeProperties = new java.util.LinkedHashMap<>();
+    private final java.util.Map<ThemeKey<?>,ThemeDB.Resolution<?>> themeCache = new java.util.HashMap<>();
+    private boolean observingThemes;
+
+    public static void registerTheme(ThemeDB db) { db.registerType("Control",null); }
+    public Control setTheme(Theme theme) {
+        signalScope.checkThread(); requireThemeAlive();
+        if(theme!=null && theme.getThemeDB()!=ThemeDB.getDefault()) throw new IllegalArgumentException("Control themes must use the client ThemeDB");
+        if (this.theme != theme) { this.theme=theme; invalidateTheme(true); }
+        return this;
+    }
+    /** Only the explicitly assigned Theme, never the inherited result. */
+    public Theme getTheme() { return theme; }
+    public Control setThemeTypeVariation(String variation) {
+        signalScope.checkThread(); requireThemeAlive(); Objects.requireNonNull(variation);
+        if (!variation.isEmpty() && !ThemeDB.getDefault().hasType(variation)) throw new IllegalArgumentException("Unregistered theme variation: " + variation);
+        if (!themeTypeVariation.equals(variation)) { themeTypeVariation=variation; invalidateTheme(true); }
+        return this;
+    }
+    public String getThemeTypeVariation() { return themeTypeVariation; }
+    public String getThemeType() {
+        for(Class<?> type=getClass();type!=null;type=type.getSuperclass())
+            if(ThemeDB.getDefault().hasType(type.getSimpleName())) return type.getSimpleName();
+        return "Control";
+    }
+    /** Style inheritance can differ from the drawing tree (popup menus and owned parts). */
+    public Control setThemeParent(Control source) {
+        signalScope.checkThread(); requireThemeAlive();
+        if(source!=null && !source.isAlive()) throw new IllegalArgumentException("Theme source is not alive");
+        for(Control c=source;c!=null;c=c.getThemeParent()) if(c==this) throw new IllegalArgumentException("Theme inheritance cycle");
+        Control previous=themeParent==null?null:themeParent.get();
+        if(previous==source) return this;
+        if(previous!=null) previous.themeDependents.removeIf(ref -> ref.get()==null || ref.get()==this);
+        themeParent=source==null?null:new java.lang.ref.WeakReference<>(source);
+        if(source!=null) source.themeDependents.add(new java.lang.ref.WeakReference<>(this));
+        invalidateTheme(true); return this;
+    }
+    public Control getThemeParent() {
+        Control explicit=themeParent==null?null:themeParent.get();
+        return explicit!=null && explicit.isAlive()?explicit:parent!=null?parent:lifecycleOwner;
+    }
+    public <T> Control setThemeOverride(ThemeKey<T> key,T value) {
+        signalScope.checkThread(); requireThemeAlive(); ThemeDB.getDefault().validateValue(key,value);
+        Object previous=themeOverrides.entrySet().stream().filter(e -> e.getKey().getId().equals(key.getId())).map(java.util.Map.Entry::getValue).findFirst().orElse(null);
+        themeOverrides.keySet().removeIf(k -> k.getId().equals(key.getId())); themeOverrides.put(key,value);
+        if(!Objects.equals(previous,value)) invalidateTheme(key.affectsLayout());
+        return this;
+    }
+    public Control removeThemeOverride(ThemeKey<?> key) {
+        signalScope.checkThread(); if(themeOverrides.keySet().removeIf(k -> k.getId().equals(key.getId()))) invalidateTheme(key.affectsLayout()); return this;
+    }
+    /** Property setters use the same resolver, but remain distinguishable in diagnostics. */
+    protected final <T> void setThemeProperty(ThemeKey<T> key,T value) {
+        signalScope.checkThread(); requireThemeAlive(); ThemeDB.getDefault().validateValue(key,value);
+        if(!Objects.equals(themeProperties.put(key,value),value)) invalidateTheme(key.affectsLayout());
+    }
+    protected final void clearThemeProperty(ThemeKey<?> key) {
+        signalScope.checkThread(); if(themeProperties.remove(key)!=null) invalidateTheme(key.affectsLayout());
+    }
+    final void validateThemeAttachment(Control proposedParent) {
+        if(themeParent!=null && themeParent.get()!=null) return;
+        for(Control c=proposedParent;c!=null;c=c.getThemeParent()) if(c==this) throw new IllegalArgumentException("Mixed tree/theme cycle");
+    }
+    private void requireThemeAlive() { if(!isAlive()) throw new IllegalStateException("Cannot style a pending/freed control"); }
+    @SuppressWarnings("unchecked")
+    public final <T> ThemeDB.Resolution<T> getThemeResolution(ThemeKey<T> key) {
+        signalScope.checkThread();
+        if(!observingThemes && isAlive()) {
+            observingThemes=true;
+            ThemeDB.getDefault().changed().connect(this, layout -> { if(isAlive()) invalidateThemeSelf(layout); });
+        }
+        ThemeDB.Resolution<?> cached=themeCache.get(key);
+        if(cached!=null) return (ThemeDB.Resolution<T>)cached;
+        java.util.LinkedHashSet<String> types=new java.util.LinkedHashSet<>();
+        if(!themeTypeVariation.isEmpty()) types.addAll(ThemeDB.getDefault().getTypeChain(themeTypeVariation));
+        var actualTypes=ThemeDB.getDefault().getTypeChain(getThemeType());
+        if(!actualTypes.contains(key.type())) types.addAll(ThemeDB.getDefault().getTypeChain(key.type()));
+        types.addAll(actualTypes);
+        types.addAll(ThemeDB.getDefault().getTypeChain(key.type()));
+        types.remove("Control"); types.add("Control");
+        var candidates=List.copyOf(types);
+        var property=ThemeDB.getLocalValue(themeProperties,key,candidates);
+        var override=ThemeDB.getLocalValue(themeOverrides,key,candidates);
+        ThemeDB.Resolution<T> result;
+        if(property!=null || override!=null) {
+            var local=property!=null?property:override;
+            result=new ThemeDB.Resolution<>(key.validate(local.value()),List.of(new ThemeDB.Trace(
+                    property!=null?"explicit property":"local override","","",themeSourceName(),local.item(),"resolved")));
+        } else {
+            List<ThemeDB.Layer> layers=new ArrayList<>();
+            java.util.Set<Control> seen=java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+            Control previous=null;
+            for(Control c=this;c!=null && seen.add(c);c=c.getThemeParent()) {
+                boolean inheritOverrides=previous!=null && (previous.themeParent!=null && previous.themeParent.get()==c
+                        || previous.lifecycleOwner==c && c.parts.containsValue(previous));
+                if(c.theme!=null || inheritOverrides) layers.add(new ThemeDB.Layer(c.theme,c==this?"own theme":"ancestor theme",c.themeSourceName(),
+                        inheritOverrides?c.themeOverrides:java.util.Map.of()));
+                previous=c;
+            }
+            layers.add(new ThemeDB.Layer(ThemeDB.getDefault().getDefaultTheme(),"host default","",java.util.Map.of()));
+            result=ThemeDB.getDefault().resolve(key,List.copyOf(types),layers);
+        }
+        themeCache.put(key,result); return result;
+    }
+    private String themeSourceName() { return (debugName.isEmpty()?getThemeType():debugName)+"#"+SignalDiagnostics.ownerId(this); }
+    public String getThemeState() { return getVisible()?"visible":"hidden"; }
+    public final java.util.List<ThemeKey<?>> getThemeKeys() {
+        var types=new java.util.LinkedHashSet<>(ThemeDB.getDefault().getTypeChain(getThemeType()));
+        if(!themeTypeVariation.isEmpty()) types.addAll(ThemeDB.getDefault().getTypeChain(themeTypeVariation));
+        return ThemeDB.getDefault().getKeys().stream().filter(key -> types.contains(key.type()) || themeCache.containsKey(key)).toList();
+    }
+    public final <T> T getThemeItem(ThemeKey<T> key) { return getThemeResolution(key).value(); }
+    final void invalidateTheme(boolean layout) {
+        invalidateThemeSelf(layout);
+        for(Control c:ownedSnapshot()) if(c.isAlive()) c.invalidateTheme(layout);
+        themeDependents.removeIf(ref -> ref.get()==null || !ref.get().isAlive());
+        for(var ref:List.copyOf(themeDependents)) { Control c=ref.get(); if(c!=null && c.isAlive()) c.invalidateTheme(layout); }
+    }
+    private void invalidateThemeSelf(boolean layout) {
+        themeCache.clear();
+        if(layout) invalidateTextLayout();
+        LifecycleScheduler.themeChanged(this);
+    }
+
     private final SignalSource0 focusEntered = new SignalSource0(this, "focusEntered");
     private final SignalSource0 focusExited = new SignalSource0(this, "focusExited");
     private final SignalSource<Boolean> visibilityChanged = new SignalSource<>(this, "visibilityChanged", "Boolean");
@@ -162,6 +292,7 @@ public class Control implements SignalOwner {
         freeReason = reason;
         freeSource = source;
         freeOwned = ownedSnapshot();
+        for(var ref:List.copyOf(themeDependents)) { Control dependent=ref.get(); if(dependent!=null && dependent.isAlive()) dependent.setThemeParent(null); }
         publishLifecycle();
         for (Control child : freeOwned)
             child.markForFree(child.parent == this ? "parent cleanup: " + getDebugName()
@@ -176,9 +307,11 @@ public class Control implements SignalOwner {
         Objects.requireNonNull(part);
         requireOwnership(part);
         Control previous = parts.get(name);
+        if(previous==part) return part;
         if (previous != null && previous != part) throw new IllegalStateException("Part name already in use: " + name);
         parts.put(name, part);
         ((Control) part).lifecycleOwner = this;
+        ((Control) part).invalidateTheme(true);
         if (insideTree) {
             part.enterTree(treeContext, suspended, effectiveVisible);
             LifecycleScheduler.prepare(part);
@@ -191,8 +324,9 @@ public class Control implements SignalOwner {
      */
     public final <T extends Control> T ownPooled(T part) {
         requireOwnership(part);
-        pooled.add(part);
+        if(!pooled.add(part)) return part;
         ((Control) part).lifecycleOwner = this;
+        ((Control) part).invalidateTheme(true);
         return part;
     }
 
@@ -203,6 +337,7 @@ public class Control implements SignalOwner {
         if (part.lifecycleOwner != null && part.lifecycleOwner != this || part.parent != null && part.parent != this)
             throw new IllegalStateException("Control already has a lifecycle owner");
         requireAcyclicChild(part);
+        part.validateThemeAttachment(this);
     }
 
     /**
@@ -365,6 +500,12 @@ public class Control implements SignalOwner {
                 pooled.clear();
                 freeOwned = List.of();
                 bindingScope = null;
+                if(themeParent!=null && themeParent.get()!=null)
+                    themeParent.get().themeDependents.removeIf(ref -> ref.get()==null || ref.get()==this);
+                for(var ref:List.copyOf(themeDependents)) {
+                    Control dependent=ref.get(); if(dependent!=null && dependent.isAlive()) dependent.setThemeParent(null);
+                }
+                themeParent=null; themeDependents.clear(); themeCache.clear(); themeProperties.clear(); themeOverrides.clear(); theme=null;
                 lifecycleState = LifecycleState.FREED;
                 publishLifecycle();
                 treeContext = null;
@@ -596,6 +737,15 @@ public class Control implements SignalOwner {
         ControlTree.replace(this, previous, next);
     }
 
+    final java.util.List<Theme> inheritedThemes() {
+        java.util.List<Theme> result=new java.util.ArrayList<>();
+        java.util.Set<Control> seen=java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        for(Control node=this;node!=null && seen.add(node);node=node.getThemeParent()) if(node.theme!=null) result.add(node.theme);
+        return java.util.List.copyOf(result);
+    }
+    final void refreshThemeInheritance(java.util.List<Theme> previous) {
+        if(isAlive()) invalidateTheme(!previous.equals(inheritedThemes()));
+    }
     final void childAttached(Control child) {
         if (insideTree) {
             child.enterTree(treeContext, suspended, effectiveVisible);

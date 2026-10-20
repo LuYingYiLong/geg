@@ -28,6 +28,14 @@ public final class LifecycleScheduler {
         LOCAL.get().notices.add(() -> node.deliverNotification(snapshot));
     }
 
+    static void themeChanged(Control node) {
+        Queues q=LOCAL.get();
+        if(q.themes.add(node)) q.notices.add(() -> {
+            q.themes.remove(node);
+            if(node.isAlive()) node.deliverNotification(node.notificationSnapshot(ControlNotification.Type.THEME_CHANGED));
+        });
+    }
+
     static void resized(Control node) {
         Queues q = LOCAL.get();
         if (q.resized.add(node)) q.notices.add(() -> {
@@ -80,6 +88,7 @@ public final class LifecycleScheduler {
         final ArrayDeque<Control> frees = new ArrayDeque<>();
         final ArrayDeque<Runnable> notices = new ArrayDeque<>();
         final Set<Control> resized = Collections.newSetFromMap(new IdentityHashMap<>());
+        final Set<Control> themes = Collections.newSetFromMap(new IdentityHashMap<>());
         boolean delivering, freeing;
     }
 }

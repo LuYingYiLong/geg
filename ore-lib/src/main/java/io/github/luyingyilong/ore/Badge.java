@@ -14,6 +14,7 @@ import java.util.Objects;
 
 /** Non-interactive right-side indicator: null count is a dot, including zero displays a number. */
 public final class Badge extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Badge"); }
     public static final int DOT_SIZE = 3;
     public static final int MIN_COUNT_SIZE = 12;
     public static final int SHADOW_HEIGHT = 1;
@@ -62,7 +63,7 @@ public final class Badge extends Container {
     public long getOverflowCount() { return overflowCount; }
     public Badge setType(Tag.Type type) {
         this.type = Objects.requireNonNull(type);
-        label.setColor(type.textColor());
+        label.setThemeTypeVariation(type.textColor()==OreTheme.TEXT_DARK?"LabelDark":"");
         return this;
     }
     public Tag.Type getType() { return type; }
@@ -110,8 +111,8 @@ public final class Badge extends Container {
         if (area.width() <= 0 || area.height() <= 0) return;
         Rect face = faceBounds(area), shadow = shadowBounds(area);
         var graphics = context.getGraphics();
-        graphics.fill(shadow.x(), shadow.y(), shadow.right(), shadow.bottom(), OreTheme.TEXT_DARK);
-        graphics.fill(face.x(), face.y(), face.right(), face.bottom(), type.getColor());
+        graphics.fill(shadow.x(), shadow.y(), shadow.right(), shadow.bottom(), getThemeItem(OreTheme.TEXT_DARK_KEY));
+        graphics.fill(face.x(), face.y(), face.right(), face.bottom(), type.getColor(this));
     }
 
     /** Decoration never steals pointer or keyboard input from the owning button. */

@@ -22,10 +22,10 @@ final class OrganizationMembershipRow extends Container {
 
     OrganizationMembershipRow(OrganizationSyncPacket.Summary summary) {
         details.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        Label name = new Label(Component.literal(summary.name())).setColor(OreTheme.TEXT_WHITE);
+        Label name = new Label(Component.literal(summary.name()));
         name.setMinimum(0, 16).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         details.addChild(name);
-        description = new Label(Component.literal(summary.description())).setColor(OreTheme.TEXT_SECONDARY)
+        description = new Label(Component.literal(summary.description())).setThemeTypeVariation("LabelSecondary")
                 .setWrap(Label.Wrap.CHARACTER).setMaxLines(2).setOverflow(Label.Overflow.ELLIPSIS);
         description.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         description.setVisible(!summary.description().isBlank());

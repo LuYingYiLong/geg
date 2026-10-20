@@ -12,6 +12,7 @@ import net.minecraft.client.gui.Font;
  * Ore layout proxy for a ModularUI text field. ModularUI retains focus and editing.
  */
 public final class InputControl extends Control {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"InputControl"); }
     private final Input widget;
     private Rect lastArea = new Rect(0, 0, 0, 0);
 
@@ -52,6 +53,11 @@ public final class InputControl extends Control {
     @Override
     protected boolean lifecycleReady() {
         return widget.isValid();
+    }
+
+    @Override public String getThemeState() { return widget.isValid() && widget.isFocused()?"focused":"idle"; }
+    @Override public String getThemeType() {
+        return widget instanceof TextArea?"TextArea":widget instanceof NumberInput?"NumberInput":"Input";
     }
 
     public Input getWidget() {

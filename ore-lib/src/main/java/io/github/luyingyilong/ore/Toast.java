@@ -17,6 +17,7 @@ import java.util.function.LongSupplier;
  * A non-interactive transient message, usable in Ore trees or through OreToasts.show.
  */
 public final class Toast extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Toast"); }
     public static final long DEFAULT_DURATION = 3000L;
     public static final long ENTER_DURATION = 180L;
     public static final long EXIT_DURATION = 160L;
@@ -94,7 +95,7 @@ public final class Toast extends Container {
 
     public Toast setType(Type type) {
         this.type = Objects.requireNonNull(type);
-        label.setColor(type.style.textColor());
+        label.setThemeTypeVariation(type.style.textColor()==OreTheme.TEXT_DARK?"LabelDark":"");
         return this;
     }
 
@@ -175,10 +176,10 @@ public final class Toast extends Container {
         if (!getVisible() || getFinished() || area.width() < 1 || area.height() < 1) return;
         Rect shadow = shadowBounds(area);
         // Paint the shadow behind the opaque face, leaving only its 1px right/bottom offset visible.
-        graphics.fill(shadow.x(), shadow.y(), shadow.right(), shadow.bottom(), OreTheme.TOAST_SHADOW);
-        graphics.fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.TEXT_DARK);
+        graphics.fill(shadow.x(), shadow.y(), shadow.right(), shadow.bottom(), getThemeItem(OreTheme.TOAST_SHADOW_KEY));
+        graphics.fill(area.x(), area.y(), area.right(), area.bottom(), getThemeItem(OreTheme.TEXT_DARK_KEY));
         if (area.width() > 2 && area.height() > 2)
-            graphics.fill(area.x() + 1, area.y() + 1, area.right() - 1, area.bottom() - 1, type.getColor());
+            graphics.fill(area.x() + 1, area.y() + 1, area.right() - 1, area.bottom() - 1, type.style.getColor(this));
         label.paint(graphics, font, textBounds(area), -1, -1);
     }
 

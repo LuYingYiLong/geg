@@ -1,6 +1,5 @@
 package io.github.luyingyilong.ore.render;
 
-import brachy.modularui.api.ITheme;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.window.WindowContext;
 import net.minecraft.client.gui.Font;
@@ -15,7 +14,6 @@ public final class DrawContext implements AutoCloseable {
     private final GuiGraphics graphics;
     private final Font font;
     private final WindowContext window;
-    private final ITheme theme;
     private final Rect viewport;
     private final int mouseX, mouseY;
     private final float partialTick;
@@ -25,12 +23,11 @@ public final class DrawContext implements AutoCloseable {
     private int clips;
     private final java.util.ArrayDeque<TransformScope> transforms = new java.util.ArrayDeque<>();
 
-    public DrawContext(GuiGraphics graphics, Font font, WindowContext window, ITheme theme,
+    public DrawContext(GuiGraphics graphics, Font font, WindowContext window,
                        Rect viewport, int mouseX, int mouseY, float partialTick) {
         this.graphics = Objects.requireNonNull(graphics);
         this.font = Objects.requireNonNull(font);
         this.window = Objects.requireNonNull(window);
-        this.theme = Objects.requireNonNull(theme);
         this.viewport = Objects.requireNonNull(viewport);
         this.mouseX = mouseX;
         this.mouseY = mouseY;
@@ -46,7 +43,6 @@ public final class DrawContext implements AutoCloseable {
     public GuiGraphics getGraphics() { checkOpen(); return graphics; }
     public Font getFont() { checkOpen(); return font; }
     public WindowContext getWindowContext() { checkOpen(); return window; }
-    public ITheme getTheme() { checkOpen(); return theme; }
     public Rect getViewport() { checkOpen(); return viewport; }
     public int getAbsMouseX() { checkOpen(); return mouseX; }
     public int getAbsMouseY() { checkOpen(); return mouseY; }

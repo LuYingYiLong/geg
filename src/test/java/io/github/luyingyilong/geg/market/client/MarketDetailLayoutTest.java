@@ -2,7 +2,7 @@ package io.github.luyingyilong.geg.market.client;
 
 import io.github.luyingyilong.ore.signal.Signals;
 
-import brachy.modularui.theme.WidgetThemeKey;
+import io.github.luyingyilong.ore.theme.ThemeKey;
 import io.github.luyingyilong.ore.Button;
 import io.github.luyingyilong.ore.DescriptionItem;
 import io.github.luyingyilong.ore.Form;
@@ -53,8 +53,8 @@ public final class MarketDetailLayoutTest {
         check(details.descriptions().getItem("SELLER") == seller, "Refresh keeps stable keyed field controls");
 
         // Inject empty themes just like ModalLayoutTest; this test does not bootstrap Forge/MUI textures.
-        var constructor = Modal.class.getDeclaredConstructor(Component.class, WidgetThemeKey.class,
-                WidgetThemeKey.class, WidgetThemeKey.class);
+        var constructor = Modal.class.getDeclaredConstructor(Component.class, ThemeKey.class,
+                ThemeKey.class, ThemeKey.class);
         constructor.setAccessible(true);
         Modal modal = constructor.newInstance(Component.literal("Item"), null, null, null).setSize(340, 224).setContent(details)
                 .addAction(Signals.configure(new Button(Component.literal("撤单")).setType(Button.Type.DESTRUCTIVE), actionButton -> actionButton.pressed().connect(actionButton, () -> { })))

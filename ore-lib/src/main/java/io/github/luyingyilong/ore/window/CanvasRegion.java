@@ -76,7 +76,7 @@ public final class CanvasRegion extends Container {
         context.enableScissor(clip.x(), clip.y(), clip.right(), clip.bottom());
         io.github.luyingyilong.ore.debug.DebugBridge.backend().clip(clip);
         try (var transformScope = context.pushTransform(transform.x(), transform.y(), transform.scale());
-             var local = new DrawContext(graphics, context.getFont(), context.getWindowContext(), context.getTheme(),
+             var local = new DrawContext(graphics, context.getFont(), context.getWindowContext(),
                      viewport, (int) Math.floor(transform.toLocalX(context.getAbsMouseX())),
                      (int) Math.floor(transform.toLocalY(context.getAbsMouseY())), context.getRenderPartialTicks())) {
             var mui = context.getWindowContext().getMui();

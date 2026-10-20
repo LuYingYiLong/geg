@@ -63,10 +63,10 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     private final Avatar detailAvatar = new Avatar();
     private final Box detailAuthor = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(6);
     private final Label detailSender = new Label().setOverflow(Label.Overflow.ELLIPSIS);
-    private final Label detailDate = new Label().setColor(OreTheme.TEXT_SECONDARY).setOverflow(Label.Overflow.ELLIPSIS);
+    private final Label detailDate = new Label().setThemeTypeVariation("LabelSecondary").setOverflow(Label.Overflow.ELLIPSIS);
     private boolean revealPreview;
-    private final Label detailText = new Label().setColor(OreTheme.TEXT_WHITE).setWrap(Label.Wrap.WORD);
-    private final Label attachment = new Label().setColor(OreTheme.TEXT_SECONDARY).setWrap(Label.Wrap.WORD);
+    private final Label detailText = new Label().setWrap(Label.Wrap.WORD);
+    private final Label attachment = new Label().setThemeTypeVariation("LabelSecondary").setWrap(Label.Wrap.WORD);
     private final Divider attachmentDivider = new Divider();
     private final MailAttachmentsView rewards = new MailAttachmentsView(() -> query(MailActionPacket.Action.CLAIM, this.selected));
     private final Box detailActions = new Box().setGap(2);
@@ -82,7 +82,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     private final FormItem scopeItem;
     private final FormItem coinItem;
     private final Segmented scopes = new Segmented(List.of(tr("mail.geg.player"), tr("mail.geg.organization"), tr("mail.geg.everyone")), Button.Size.SMALL);
-    private final Label previewText = new Label().setColor(OreTheme.TEXT_WHITE).setWrap(Label.Wrap.WORD);
+    private final Label previewText = new Label().setWrap(Label.Wrap.WORD);
     private final UUID initialOrganization;
     private UUID organization;
     private UUID selected;
@@ -314,11 +314,11 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         window.hostDetached(); close(); super.dispose(); }
     @Override public void draw(brachy.modularui.screen.viewport.ModularGuiContext mui, WidgetThemeEntry<?> theme) {
         try (DrawContext frame = io.github.luyingyilong.ore.window.MuiDrawing.begin(mui, window.getContext())) {
-            drawFrame(frame, theme);
+            drawFrame(frame);
         }
     }
 
-    private void drawFrame(DrawContext context, WidgetThemeEntry<?> theme) {
+    private void drawFrame(DrawContext context) {
         if (!window.isAlive()) return;
         int width = getArea().width, height = getArea().height;
         int drawerWidth = width < 320 ? width : width / 2;

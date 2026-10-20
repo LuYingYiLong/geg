@@ -14,6 +14,7 @@ import java.util.*;
  * A regular or masonry grid with optional view recycling
  */
 public final class Grid<T> extends Container implements ScrollContent {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Grid"); }
     private final List<Entry<T>> entries = new ArrayList<>();
     private final Map<Integer, View<T>> active = new HashMap<>();
     private final ArrayDeque<View<T>> recycled = new ArrayDeque<>();

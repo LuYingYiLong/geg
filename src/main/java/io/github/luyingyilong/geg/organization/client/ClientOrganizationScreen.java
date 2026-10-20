@@ -69,7 +69,7 @@ public final class ClientOrganizationScreen {
             editor.hide();
             canvas = null;
         });
-        OreScreen.open(new ModularScreen("geg", panel).useTheme(OreTheme.NAME).pausesGame(false));
+        OreScreen.open(new ModularScreen("geg", panel).pausesGame(false));
         OrganizationNetwork.request();
     }
 

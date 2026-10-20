@@ -13,6 +13,12 @@ Ore 是嵌入宿主 Mod 的客户端 UI 库，依赖 Java 17、Forge 1.20.1、Mo
 
 四个源码集属于同一个 Gradle 模块。标准 `jar` 仅包含 main，不包含 Inspector。Inspector 只能引用 main；main 不引用 Inspector。运行时通过开发服务描述自动注册 F8。
 
+## 原生主题
+
+主题使用独立的 `Theme`、`ThemeDB` 与 `StyleBox`，支持类型化登记、继承、局部覆盖及资源重载。
+默认主题 ID 为 `ore:ore`；纹理路径已改为 `textures/gui` 和 `textures/icons`。
+配置格式、扩展接线、解析顺序与 Inspector 来源查看见 [主题文档](docs/themes.md)。
+
 ## JEI / EMI / REI 避让
 
 ### 在配方区域嵌入 Ore

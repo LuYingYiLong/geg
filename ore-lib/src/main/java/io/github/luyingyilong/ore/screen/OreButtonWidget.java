@@ -161,6 +161,6 @@ public final class OreButtonWidget extends AbstractWidget {
     /** Only drawable context services are needed; no ModularScreen or parent replacement is created. */
     private static final class ButtonContext extends ModularGuiContext {
         private ButtonContext() { super(UIType.NONE, null); }
-        @Override public ITheme getTheme() { return ITheme.get(io.github.luyingyilong.ore.OreClient.getOptions().defaultTheme()); }
+        @Override public ITheme getTheme() { return ITheme.getDefault(); }
     }
 }

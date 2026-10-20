@@ -11,6 +11,7 @@ import java.util.Objects;
  * Two resizable panes. The themed line and the pointer hit area are independent.
  */
 public final class Splitter extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Splitter"); }
     private final Control first, second;
     private final Divider divider = new Divider().setLayout(Divider.Layout.VERTICAL);
     private final SignalSource<Sizes> resizeStarted = new SignalSource<>(this, "resizeStarted", "Sizes");

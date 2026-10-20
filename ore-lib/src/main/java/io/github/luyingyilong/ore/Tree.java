@@ -14,6 +14,7 @@ import java.util.function.BiFunction;
  * Stable-key tree with virtual rows. Wrap in Scroll; this control owns no scroll offset.
  */
 public final class Tree<T> extends Container implements ScrollContent {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Tree"); }
     private static final int SWITCHER_WIDTH = 16;
     private final Set<String> collapsed = new HashSet<>();
     private final List<Entry<T>> visible = new ArrayList<>();
@@ -31,8 +32,7 @@ public final class Tree<T> extends Container implements ScrollContent {
     private int contentWidth;
     private int rowHeight = 22, indent = 10;
     private boolean disabled, selectable = true, blockNode = true, showIcon, showSwitcher = true, defaultExpandAll = true;
-    private BiFunction<Item<T>, Boolean, Button.Icon> switcherIcon = (item, expanded) -> new Button.Icon(
-            expanded ? OreIcons.ARROW_DOWN_LIGHT : OreIcons.ARROW_RIGHT_LIGHT, 7, 7);
+    private BiFunction<Item<T>, Boolean, Button.Icon> switcherIcon = (item, expanded) -> Button.Icon.themed(expanded ? io.github.luyingyilong.ore.theme.OreTheme.ICON_ARROW_DOWN_LIGHT : io.github.luyingyilong.ore.theme.OreTheme.ICON_ARROW_RIGHT_LIGHT);
 
     public Tree() {
         getSignalScope().own(() -> {

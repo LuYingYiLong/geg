@@ -37,7 +37,7 @@ public final class PlayerIdentityCellTest {
         Label name = name(identity);
         check(avatar.getPlayerId().equals(alice.id()) && name.getText().getString().equals(alice.name()), "Identity bound from member UUID/name");
         for (int width : new int[]{48, 80, 127, 128, 129, 180}) {
-            int height = Math.max(23, cell.measureHeight(font, alice, width));
+            int height = Math.max(23, cell.measureHeight(identity, font, alice, width));
             identity.layout(new Rect(0, 0, width, height), font);
             Rect face = avatar.getAbsoluteBounds(), text = name.getAbsoluteBounds();
             check(avatar.getSize().equals(new Size(16, 16)), "Compact square avatar");
@@ -58,7 +58,7 @@ public final class PlayerIdentityCellTest {
                 .addColumn(new Table.Column<>("role", Component.literal("Role"), 42, 64, 1, width -> 20,
                         new Table.TextCell<>(member -> Component.literal("Member"), OreTheme.TEXT_WHITE)))
                 .addColumn(new Table.Column<>("action", Component.literal("Action"), 70, 82, 1, width -> 20, new Table.Cell<>() {
-                    @Override public void draw(brachy.modularui.screen.viewport.ModularGuiContext context,
+                    @Override public void draw(io.github.luyingyilong.ore.render.DrawContext context,
                                                OrganizationSyncPacket.Member row, Rect area) { }
                     @Override public List<Rect> focusTargets(OrganizationSyncPacket.Member row, Rect area) { return List.of(area); }
                     @Override public boolean click(OrganizationSyncPacket.Member row, Rect area, int x, int y) { actions[0]++; return true; }
@@ -98,7 +98,7 @@ public final class PlayerIdentityCellTest {
         Label name = name(identity);
         check(avatar.getPlayerId().equals(applicant.id()) && name.getText().getString().equals(applicant.name()), "Application accessors bind UUID and name");
         for (int width : new int[]{48, 127, 128, 129, 240}) {
-            int height = Math.max(23, cell.measureHeight(font, applicant, width));
+            int height = Math.max(23, cell.measureHeight(identity, font, applicant, width));
             identity.layout(new Rect(0, 0, width, height), font);
             Rect face = avatar.getAbsoluteBounds(), text = name.getAbsoluteBounds();
             int textHeight = name.measureHeight(font, text.width());

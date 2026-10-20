@@ -1,13 +1,10 @@
 package io.github.luyingyilong.ore.layout;
 
-import brachy.modularui.api.drawable.IDrawable;
 import io.github.luyingyilong.ore.render.DrawContext;
-import brachy.modularui.theme.WidgetTheme;
-import brachy.modularui.theme.WidgetThemeEntry;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.DebugProperty;
 import io.github.luyingyilong.ore.debug.Inspectable;
-import io.github.luyingyilong.ore.theme.OreDrawables;
+
 import io.github.luyingyilong.ore.theme.OreTheme;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,6 +15,7 @@ import java.util.Objects;
  * Clips and scrolls one child; layout containers do not own scroll offsets.
  */
 public final class Scroll extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Scroll"); }
     private static final int BAR_SIZE = 6;
     private static final int TRACK_INSET = 2;
     private static final int TRACK_COLOR = 0xFF58585A;
@@ -489,15 +487,10 @@ public final class Scroll extends Container {
             graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
             Rect track = trackBounds().translated(screenX, screenY);
             if (track.width() > 0 && track.height() > 0)
-                graphics.fill(track.x(), track.y(), track.right(), track.bottom(), TRACK_COLOR);
+                graphics.fill(track.x(), track.y(), track.right(), track.bottom(), owner.getThemeItem(OreTheme.TRACK));
             Rect thumb = grabberBounds().translated(screenX, screenY);
             if (thumb.width() <= 0 || thumb.height() <= 0) return;
-            WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(
-                    vertical ? OreTheme.V_GRABBER : OreTheme.H_GRABBER);
-            if (entry == null) return;
-            WidgetTheme style = entry.theme();
-            IDrawable background = style.getBackground();
-            OreDrawables.draw(context, background, thumb, style);
+            owner.getThemeItem(vertical?OreTheme.V_GRABBER:OreTheme.H_GRABBER).draw(context,thumb);
         }
     }
 

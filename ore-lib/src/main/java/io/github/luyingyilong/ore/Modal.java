@@ -5,9 +5,6 @@ import io.github.luyingyilong.ore.signal.*;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
 import io.github.luyingyilong.ore.render.DrawContext;
-import brachy.modularui.theme.WidgetTheme;
-import brachy.modularui.theme.WidgetThemeEntry;
-import brachy.modularui.theme.WidgetThemeKey;
 import io.github.luyingyilong.ore.layout.Box;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Control;
@@ -30,6 +27,7 @@ import java.util.Objects;
 
 /** A positioned overlay with a one-pixel frame and themed header and footer. */
 public final class Modal extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Modal"); }
     public static final int HEADER_HEIGHT = 22;
     private static final int FRAME_INSET = 1;
     private static final int CLOSE_HIT_WIDTH = 20;
@@ -43,10 +41,10 @@ public final class Modal extends Container {
     private final Panel header;
     private final Box headerRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
     private final Control headerSpacer = new Control();
-    private final Label titleLabel = new Label().setOpticalCenter(true).setOverflow(Label.Overflow.ELLIPSIS)
+    private final Label titleLabel = new Label().setThemeTypeVariation("LabelHero").setOpticalCenter(true).setOverflow(Label.Overflow.ELLIPSIS)
             .setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER);
     private final Button close = new Button().setType(Button.Type.TEXT)
-            .setIcon(OreIcons.CLOSE, CLOSE_ICON_SIZE, CLOSE_ICON_SIZE);
+            .setIcon(io.github.luyingyilong.ore.Button.Icon.themed(io.github.luyingyilong.ore.theme.OreTheme.ICON_CLOSE));
     private final Padding bodyInset = new Padding(Padding.Insets.all(BODY_INSET));
     private final Panel footer;
     private final Box footerButtons = new Box().setGap(BUTTON_GAP);
@@ -61,11 +59,11 @@ public final class Modal extends Container {
     private float depth = 200.0F;
 
     public Modal(Component title) {
-        this(title, OreTheme.FLOATING_BACKGROUND, OreTheme.FLOATING_HEADER, OreTheme.BAR);
+        this(title, OreTheme.MODAL_PANEL, OreTheme.FLOATING_HEADER, OreTheme.MODAL_FOOTER);
     }
 
-    Modal(Component title, WidgetThemeKey<WidgetTheme> backgroundTheme,
-          WidgetThemeKey<WidgetTheme> headerTheme, WidgetThemeKey<WidgetTheme> footerTheme) {
+    Modal(Component title, io.github.luyingyilong.ore.theme.ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> backgroundTheme,
+          io.github.luyingyilong.ore.theme.ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> headerTheme, io.github.luyingyilong.ore.theme.ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> footerTheme) {
         background = new Panel(backgroundTheme);
         header = new Panel(headerTheme);
         footer = new Panel(footerTheme);
@@ -142,6 +140,7 @@ public final class Modal extends Container {
     }
 
     public Modal setFontSize(float fontSize) { titleLabel.setFontSize(fontSize); return this; }
+    public Modal clearFontSize() { titleLabel.clearFontSize(); requestLayout(); return this; }
     public float getFontSize() { return titleLabel.getFontSize(); }
 
     public Signal0 closeRequested() { return closeRequested.signal(); }
@@ -233,10 +232,8 @@ public final class Modal extends Container {
 
     @Override protected void render(DrawContext context, int screenX, int screenY) {
         Rect area = getScreenBounds(screenX, screenY);
-        context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), OreTheme.OVERLAY_COLOR);
-        WidgetThemeEntry<WidgetTheme> entry = context.getTheme().getWidgetTheme(OreTheme.FLOATING_HEADER);
-        WidgetTheme style = entry == null ? context.getTheme().getPanelTheme().theme() : entry.theme();
-        titleLabel.setColor(style.getTextColor()).setShadow(style.isTextShadow());
+        context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), getThemeItem(OreTheme.OVERLAY));
+
     }
 
     @Override public void draw(DrawContext context, int screenX, int screenY) {

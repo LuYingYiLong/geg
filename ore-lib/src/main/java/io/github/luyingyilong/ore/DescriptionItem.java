@@ -13,10 +13,11 @@ import java.util.Objects;
 
 /** A retained, read-only label/value pair. Descriptions owns its layout and shared text defaults. */
 public final class DescriptionItem extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"DescriptionItem"); }
     private final String key;
     private final Box box = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
-    private final Label label = new Label().setWrap(Label.Wrap.CHARACTER).setColor(OreTheme.TEXT_SECONDARY);
-    private final Label content = new Label().setWrap(Label.Wrap.CHARACTER).setColor(OreTheme.TEXT_WHITE);
+    private final Label label = new Label().setWrap(Label.Wrap.CHARACTER).setThemeTypeVariation("LabelSecondary");
+    private final Label content = new Label().setWrap(Label.Wrap.CHARACTER);
     private Component labelText;
     private Descriptions.Layout layout = Descriptions.Layout.HORIZONTAL;
     private boolean colon = true;

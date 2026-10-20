@@ -11,6 +11,8 @@ public final class OreFontResources {
     @SubscribeEvent
     public static void registerReloadListeners(RegisterClientReloadListenersEvent event) {
         event.registerReloadListener((ResourceManagerReloadListener) resources -> {
+            io.github.luyingyilong.ore.OreClient.initializeThemes();
+            ThemeDB.getDefault().reload(resources);
             OreTextMetrics.reload(resources);
             OreFonts.resourcesReloaded();
         });

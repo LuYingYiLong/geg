@@ -17,6 +17,8 @@ import java.util.Objects;
 
 /** Transparent icon-and-label toggle. Its whole assigned rectangle is clickable. */
 public final class Checkbox extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Checkbox"); }
+    @Override public String getThemeState() { return !enabled?"disabled":checked?"checked":"unchecked"; }
     private static final int ICON_SIZE = 12;
     private static final int ICON_GAP = 4;
     private static final int HEIGHT = 18;
@@ -28,7 +30,7 @@ public final class Checkbox extends Container {
     private final ReleaseGesture<Boolean> gesture = new ReleaseGesture<>();
 
     public Checkbox(Component text) {
-        label = ownPart("label", new Label(Objects.requireNonNull(text)).setOpticalCenter(true).setColor(OreTheme.TEXT_WHITE)
+        label = ownPart("label", new Label(Objects.requireNonNull(text)).setOpticalCenter(true)
                 .setOverflow(Label.Overflow.ELLIPSIS)
                 .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER));
         updateChildren(java.util.List.of(label));
@@ -61,7 +63,7 @@ public final class Checkbox extends Container {
     public Checkbox setEnabled(boolean enabled) {
         this.enabled = enabled;
         if (!enabled) cancelInteraction();
-        label.setColor(enabled ? OreTheme.TEXT_WHITE : OreTheme.TEXT_DISABLED);
+        label.setThemeTypeVariation(enabled ? "" : "LabelDisabled");
         return this;
     }
 
@@ -93,9 +95,7 @@ public final class Checkbox extends Container {
         ResourceLocation texture = texture(hovered, gesture.keyPressed(true)
                 || hovered && gesture.pointerPending());
         int y = area.y() + (area.height() - ICON_SIZE) / 2;
-        context.getGraphics().setColor(1.0F, 1.0F, 1.0F, 1.0F);
-        context.getGraphics().blit(texture, area.x(), y, 0.0F, 0.0F,
-                ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE);
+        getThemeItem(OreTheme.getIconKey(texture)).draw(context,new Rect(area.x(),y,ICON_SIZE,ICON_SIZE));
     }
 
     @Override protected boolean pointerDown(int rootX, int rootY) {

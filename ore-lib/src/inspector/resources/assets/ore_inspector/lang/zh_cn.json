@@ -53,5 +53,8 @@
   "inspector.ore.signals.reason.SCOPE_CLOSED": "作用域结束",
   "inspector.ore.signals.remaining_scope": "作用域剩余连接：%s",
   "inspector.ore.signals.remaining_signal": "信号剩余连接：%s",
-  "inspector.ore.lifecycle_status": "生命周期：%s | 树内：%s | READY：%s | 暂存：%s\n销毁原因：%s\n首次申请：%s"
+  "inspector.ore.lifecycle_status": "生命周期：%s | 树内：%s | READY：%s | 暂存：%s\n销毁原因：%s\n首次申请：%s",
+  "inspector.ore.themes": "主题",
+  "inspector.ore.theme.context": "类型：%s；变体：%s；状态：%s",
+  "inspector.ore.theme.source": "来源：%s"
 }

@@ -72,10 +72,10 @@ public final class ReleaseControlsTest {
         window.layoutViewport(120, 20, font);
         check(io.github.luyingyilong.ore.event.WindowInputs.press(window,80, 10, null));
         check(segmented.getSelected() == 0 && changes[0] == 0);
-        check(segmented.topInset(0, false) == 2 && segmented.topInset(1, true) == 2);
-        check(segmented.topInset(1, false) == 0); // Dragging away restores the normal head.
+        check(segmented.getOptionStyle(0, false).getDrawInset().top() == 2 && segmented.getOptionStyle(1, true).getDrawInset().top() == 2);
+        check(segmented.getOptionStyle(1, false).getDrawInset().top() == 0); // Dragging away restores the normal head.
         check(io.github.luyingyilong.ore.event.WindowInputs.release(window,10, 10) && changes[0] == 0); // Another option is not the original target.
-        check(segmented.topInset(1, true) == 0);
+        check(segmented.getOptionStyle(1, true).getDrawInset().top() == 0);
         io.github.luyingyilong.ore.event.WindowInputs.press(window,80, 10, null);
         check(io.github.luyingyilong.ore.event.WindowInputs.release(window,80, 35) && changes[0] == 0);
         io.github.luyingyilong.ore.event.WindowInputs.press(window,80, 10, null);
@@ -84,14 +84,14 @@ public final class ReleaseControlsTest {
         io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_LEFT, 0, null);
         io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(segmented.getSelected() == 1 && changes[0] == 1);
-        check(segmented.topInset(0, false) == 2 && segmented.getFocusBounds().y() == 2);
+        check(segmented.getOptionStyle(0, false).getDrawInset().top() == 2 && segmented.getFocusBounds().y() == 2);
         io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(segmented.getSelected() == 0 && changes[0] == 2);
         io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null);
         io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null);
         io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null);
         check(segmented.getSelected() == 0 && changes[0] == 2);
-        check(!io.github.luyingyilong.ore.event.WindowInputs.press(window,10, 0, null)); // Selected texture's 2px top inset.
+        check(io.github.luyingyilong.ore.event.WindowInputs.press(window,10, 0, null)); // Visual inset leaves the full option interactive.
         io.github.luyingyilong.ore.event.WindowInputs.release(window,10, 10);
         check(changes[0] == 2);
         io.github.luyingyilong.ore.event.WindowInputs.press(window,10, 10, null);

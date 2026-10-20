@@ -26,6 +26,11 @@ public final class OreFonts {
         return text(text, false);
     }
 
+    public static Component text(Component text, ResourceLocation font) {
+        if (!text.getStyle().getFont().equals(Style.DEFAULT_FONT)) return text;
+        return text.copy().withStyle(style -> style.withFont(font));
+    }
+
     public static Component text(Component text, boolean hero) {
         // A child with its own font keeps that font through Component style inheritance.
         if (!text.getStyle().getFont().equals(Style.DEFAULT_FONT)) return text;

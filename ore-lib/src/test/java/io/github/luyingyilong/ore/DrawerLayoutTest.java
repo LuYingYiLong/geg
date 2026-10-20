@@ -241,7 +241,7 @@ public final class DrawerLayoutTest {
             Button close = findIconButton(drawer);
             check(close != null && close.getType() == Button.Type.TEXT);
             check(close.getActionMode() == Button.ACTION_MODE.BUTTON_RELEASE && close.getFocusExpansion() == 1);
-            check(close.getIcon().equals(new Button.Icon(OreIcons.CLOSE, 7, 7)));
+            check(close.getIcon().texture().equals(OreIcons.CLOSE) && close.getIcon().width()==7 && close.getIcon().height()==7);
             Rect bounds = close.getAbsoluteBounds();
             check(bounds.width() == 20 && bounds.height() == 20);
             check(bounds.width() == 20 && bounds.height() == 20);

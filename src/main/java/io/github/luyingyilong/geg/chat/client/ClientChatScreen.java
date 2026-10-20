@@ -45,7 +45,7 @@ public final class ClientChatScreen {
                 canvas = null;
         });
         OreScreen.open(new ModularScreen("geg", panel)
-                .useTheme(OreTheme.NAME)
+
                 .pausesGame(false));
     }
 

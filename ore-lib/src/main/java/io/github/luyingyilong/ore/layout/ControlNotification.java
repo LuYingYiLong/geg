@@ -7,5 +7,5 @@ import io.github.luyingyilong.ore.window.WindowContext;
  */
 public record ControlNotification(Type type, WindowContext window, boolean insideTree,
                                   boolean ready, boolean effectiveVisible, long treeEpoch) {
-    public enum Type {ENTER_TREE, READY, EXIT_TREE, PRE_FREE, RESIZED, VISIBILITY_CHANGED, SUSPENDED, RESUMED}
+    public enum Type {ENTER_TREE, READY, EXIT_TREE, PRE_FREE, RESIZED, VISIBILITY_CHANGED, SUSPENDED, RESUMED, THEME_CHANGED}
 }

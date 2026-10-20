@@ -90,7 +90,7 @@ public final class TableLayoutTest {
         Table.Cell<Integer> variableHeight = new Table.Cell<>() {
             @Override public void draw(DrawContext context, Integer row, Rect bounds) { }
 
-            @Override public int measureHeight(net.minecraft.client.gui.Font font,
+            @Override public int measureHeight(io.github.luyingyilong.ore.layout.Control owner, net.minecraft.client.gui.Font font,
                                                Integer row, int width) {
                 return row == 1 ? 36 : 0;
             }

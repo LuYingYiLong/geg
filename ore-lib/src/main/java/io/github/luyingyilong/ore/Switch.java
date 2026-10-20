@@ -23,6 +23,8 @@ import java.util.function.LongSupplier;
  * Pixel-sized toggle. State changes on release; only the thumb moves and receives the focus outline.
  */
 public final class Switch extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Switch"); }
+    @Override public String getThemeState() { return disabled?"disabled":loading?"loading":checked?"checked":"unchecked"; }
     public static final int WIDTH = 28;
     public static final int HEIGHT = 15;
     private static final int BASE_WIDTH = 27;
@@ -234,13 +236,8 @@ public final class Switch extends Container {
         thumb = thumb.translated(screenX, screenY);
         boolean hovered = artworkBounds().translated(screenX, screenY)
                 .contains(context.getAbsMouseX(), context.getAbsMouseY());
-        GuiGraphics graphics = context.getGraphics();
-        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        blit(graphics, disabled ? OreIcons.SWITCH_BASE_DISABLED : OreIcons.SWITCH_BASE, base);
-        blit(graphics, buttonTexture(hovered), thumb);
-        RenderSystem.disableBlend();
+        getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.getIconKey(disabled?OreIcons.SWITCH_BASE_DISABLED:OreIcons.SWITCH_BASE)).draw(context,base);
+        getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.getIconKey(buttonTexture(hovered))).draw(context,thumb);
     }
 
     private void layoutSpinner(Rect thumb, Font font) {

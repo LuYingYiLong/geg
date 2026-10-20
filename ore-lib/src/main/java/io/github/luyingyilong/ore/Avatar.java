@@ -17,6 +17,7 @@ import java.util.function.Function;
 
 /** A square player face with the hat layer and vanilla default; unidentified sources use initials. */
 public final class Avatar extends Container {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Avatar"); }
     public static final int DEFAULT_SIZE = 24;
     private final Label initial = ownPart("initial", new Label().setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER));
     private final Function<GameProfile, AvatarSkins.Skin> skins;
@@ -80,8 +81,8 @@ public final class Avatar extends Container {
     public UUID getPlayerId() { return profile == null ? null : profile.getId(); }
     public Avatar setHatLayer(boolean hatLayer) { this.hatLayer = hatLayer; return this; }
     public boolean getHatLayer() { return hatLayer; }
-    public Avatar setBackgroundColor(int color) { backgroundColor = color; return this; }
-    public int getBackgroundColor() { return backgroundColor; }
+    public Avatar setBackgroundColor(int color) { backgroundColor = color; setThemeProperty(io.github.luyingyilong.ore.theme.OreTheme.AVATAR_COLOR,color); return this; }
+    public int getBackgroundColor() { return getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.AVATAR_COLOR); }
 
     static String initial(String name) {
         String text = name.strip();
@@ -114,7 +115,7 @@ public final class Avatar extends Container {
         int side = Math.min(area.width(), area.height());
         int x = area.x() + (area.width() - side) / 2, y = area.y() + (area.height() - side) / 2;
         if (texture == null) {
-            graphics.fill(x, y, x + side, y + side, backgroundColor);
+            graphics.fill(x, y, x + side, y + side, getBackgroundColor());
         } else {
             graphics.flush();
             graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);

@@ -57,7 +57,7 @@ public final class TreeTest {
         tree.setSelected("removed-node");
         check(tree.getSelected().equals("removed-node"),"Controlled selection tolerates a stale key during data refresh");
         for(String name:List.of("arrow_right_light","arrow_down_light"))
-            try(var resource=TreeTest.class.getResourceAsStream("/assets/ore/textures/modularui/icons/"+name+".png")) {
+            try(var resource=TreeTest.class.getResourceAsStream("/assets/ore/textures/icons/"+name+".png")) {
                 check(resource!=null,"Switcher resource exists");
                 byte[] bytes=resource.readNBytes(24);
                 check(java.nio.ByteBuffer.wrap(bytes).getInt(16)==7 && java.nio.ByteBuffer.wrap(bytes).getInt(20)==7,"7px switcher sprites");

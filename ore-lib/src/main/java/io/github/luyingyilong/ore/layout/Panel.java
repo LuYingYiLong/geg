@@ -2,20 +2,19 @@ package io.github.luyingyilong.ore.layout;
 
 import io.github.luyingyilong.ore.debug.DebugBridge;
 
-import brachy.modularui.api.drawable.IDrawable;
 import io.github.luyingyilong.ore.render.DrawContext;
-import brachy.modularui.theme.WidgetTheme;
-import brachy.modularui.theme.WidgetThemeEntry;
-import brachy.modularui.theme.WidgetThemeKey;
-import io.github.luyingyilong.ore.theme.OreDrawables;
+import io.github.luyingyilong.ore.theme.*;
 import net.minecraft.client.gui.Font;
 
 /** Themed background; space allocation is inherited from Control. */
 public final class Panel extends Container {
-    private final WidgetThemeKey<WidgetTheme> themeKey;
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Panel"); }
+    private final ThemeKey<StyleBox> themeKey;
     private Control child;
 
-    public Panel(WidgetThemeKey<WidgetTheme> themeKey) { this.themeKey = themeKey; }
+    public Panel() { this(OreTheme.PANEL); }
+    public Panel(ThemeKey<StyleBox> themeKey) { this.themeKey = themeKey == null ? OreTheme.PANEL : themeKey; }
+    public StyleBox getStyleBox() { return getThemeItem(themeKey); }
     public Panel setChild(Control child) {
         replaceChild(this.child, child);
         return this;
@@ -31,9 +30,10 @@ public final class Panel extends Container {
 
     @Override public Size measureSize(Font font, Size available) {
         if (!isAlive()) return new Size(0, 0);
-        Size childSize = child == null ? new Size(0, 0) : child.desiredSize(font, available);
-        return new Size(Math.max(getMinimumWidth(), childSize.width()),
-                Math.max(getMinimumHeight(), childSize.height()));
+        ThemeInsets margin=getStyleBox().getContentMargin();
+        Size childSize = child == null ? new Size(0, 0) : child.desiredSize(font, new Size(Math.max(0,available.width()-margin.getHorizontal()),Math.max(0,available.height()-margin.getVertical())));
+        return new Size(Math.max(getMinimumWidth(), childSize.width()+margin.getHorizontal()),
+                Math.max(getMinimumHeight(), childSize.height()+margin.getVertical()));
     }
 
     @Override
@@ -41,9 +41,7 @@ public final class Panel extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(localBounds, font);
-            if (child != null) fitChild(child, new Rect(0, 0,
-                    Math.max(child.getMinimumWidth(), localBounds.width()),
-                    Math.max(child.getMinimumHeight(), localBounds.height())), font);
+            if (child != null) fitChild(child, getStyleBox().getContentRect(new Rect(0,0,localBounds.width(),localBounds.height())), font);
         }
     }
 
@@ -59,10 +57,6 @@ public final class Panel extends Container {
 
     public void drawAt(DrawContext context, Rect area) {
         if (!isAlive()) return;
-        WidgetThemeEntry<WidgetTheme> entry = themeKey == null ? null
-                : context.getTheme().getWidgetTheme(themeKey);
-        WidgetTheme style = entry == null ? context.getTheme().getPanelTheme().theme() : entry.theme();
-        IDrawable background = style.getBackground();
-        OreDrawables.draw(context, background, area, style);
+        getStyleBox().draw(context, area);
     }
 }
