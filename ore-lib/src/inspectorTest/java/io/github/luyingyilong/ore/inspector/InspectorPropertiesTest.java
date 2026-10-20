@@ -54,6 +54,10 @@ public final class InspectorPropertiesTest {
         rejects(() -> property(label, "scrollTrigger").parse("INVALID"));
         property(new Button(), "type").parse("TEXT");
         property(new Grid<>(), "mode").parse("MASONRY");
+        Box wrapping = new Box().setGap(4);
+        check(property(wrapping, "wrap").parse("true").equals(true) && !wrapping.getWrap(), "Wrap preview preserves base");
+        check(property(wrapping, "lineGap").parse("8").equals(8) && wrapping.getLineGap() == 4, "Line gap preview preserves inherited gap");
+        rejects(() -> property(wrapping, "lineGap").parse("-1"));
         property(new Scroll(), "embedded").parse("true");
 
         DebugProperty explicit = property(new Explicit(), "count");

@@ -42,6 +42,8 @@ tasks.register('verifyOrePortability', Exec) {
             def forbidden = names.findAll {
                 it.startsWith('io/github/luyingyilong/geg/') || it.startsWith('assets/geg/') ||
                 it.startsWith('io/github/luyingyilong/ore/inspector/') || it.startsWith('assets/ore_inspector/') ||
+                it.startsWith('io/github/luyingyilong/ore/gallery/') || it.startsWith('assets/ore_gallery/') ||
+                it.startsWith('io/github/luyingyilong/ore/development/') ||
                 it == 'META-INF/services/io.github.luyingyilong.ore.OreClientExtension' ||
                 it.startsWith('net/minecraftforge/fml/relauncher/') || it.startsWith('brachy/modularui/') ||
                 it.startsWith('top/theillusivec4/curios/') || it.startsWith('mezz/jei/') ||

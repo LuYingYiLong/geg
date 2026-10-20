@@ -1,4 +1,5 @@
 package io.github.luyingyilong.ore.inspector;
+import io.github.luyingyilong.ore.development.DevelopmentOpenRequest;
 
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.event.*;
@@ -28,7 +29,7 @@ public final class InspectorOpenRequestTest {
         }.setFocusable(true);
         root.setContent(input); root.layoutViewport(80, 30, null);
         root.getFocusManager().requestFocus(input, null);
-        InspectorOpenRequest request = new InspectorOpenRequest(tasks::add, () -> {
+        DevelopmentOpenRequest request = new DevelopmentOpenRequest(tasks::add, () -> {
             calls.add("open");
             WindowInputs.keyUp(root, GLFW.GLFW_KEY_F8, 0, null);
         });
@@ -63,7 +64,7 @@ public final class InspectorOpenRequestTest {
 
     private static void canceledRequests() {
         var tasks = new ArrayDeque<Runnable>(); int[] opens = {0};
-        var request = new InspectorOpenRequest(tasks::add, () -> opens[0]++);
+        var request = new DevelopmentOpenRequest(tasks::add, () -> opens[0]++);
         request.request(); request.cancel(); request.request();
         tasks.remove().run(); check(opens[0] == 0, "A canceled task cannot consume or replace a newer request");
         tasks.remove().run(); check(opens[0] == 1, "The newer request still opens");
@@ -73,7 +74,7 @@ public final class InspectorOpenRequestTest {
 
     private static void failedRequests() {
         var tasks = new ArrayDeque<Runnable>(); int[] attempts = {0};
-        var request = new InspectorOpenRequest(task -> {
+        var request = new DevelopmentOpenRequest(task -> {
             if(attempts[0]++ == 0) throw new IllegalStateException("Scheduler unavailable");
             tasks.add(task);
         }, () -> { });
@@ -81,7 +82,7 @@ public final class InspectorOpenRequestTest {
         catch(IllegalStateException expected) { }
         request.request(); check(tasks.size() == 1, "A failed enqueue does not latch the pending flag"); tasks.remove().run();
         int[] opens = {0};
-        var failing = new InspectorOpenRequest(tasks::add, () -> { opens[0]++; throw new IllegalStateException("Open failed"); });
+        var failing = new DevelopmentOpenRequest(tasks::add, () -> { opens[0]++; throw new IllegalStateException("Open failed"); });
         for(int attempt = 0; attempt < 2; attempt++) {
             failing.request();
             try { tasks.remove().run(); throw new AssertionError("Expected opening failure"); }

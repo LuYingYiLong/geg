@@ -1,0 +1,122 @@
+package io.github.luyingyilong.ore.gallery;
+
+import io.github.luyingyilong.ore.*;
+import io.github.luyingyilong.ore.form.*;
+import io.github.luyingyilong.ore.input.*;
+import io.github.luyingyilong.ore.layout.*;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import org.lwjgl.glfw.GLFW;
+import java.math.BigDecimal;
+import java.util.*;
+
+/** Opt-in isolated client: real GLFW callbacks, every sample, typed values and repeated reopening. */
+@Mod.EventBusSubscriber(modid="geg",value=Dist.CLIENT)
+public final class GalleryClientTest {
+    private static int ticks,phase,index,at;
+    private static GalleryView view;
+    private static Control previous;
+    private static Input input;
+    private static Form form;
+    private static final FieldKey<String> NAME=new FieldKey<>("name",String.class);
+    private static final FieldKey<BigDecimal> AMOUNT=new FieldKey<>("amount",BigDecimal.class);
+    @SubscribeEvent public static void tick(TickEvent.ClientTickEvent event){
+        if(!Boolean.getBoolean("ore.gallery.smoke")||event.phase!=TickEvent.Phase.END||phase==99)return;
+        var mc=Minecraft.getInstance();if(mc.player==null)return;
+        try{
+            if(++ticks>1500)throw new AssertionError("Timeout phase="+phase+" sample="+index);
+            if(phase==0){key(GLFW.GLFW_KEY_F9,0);phase=1;}
+            else if(phase==1&&OreGallery.getView()!=null&&OreGallery.getView().getWindow().getContext().getMui()!=null){
+                view=OreGallery.getView();phase=2;at=ticks;
+            }else if(phase==2&&ticks-at>4){
+                if(previous!=null && previous!=view.getSample())check(previous.isDisposed(),"Replaced sample freed at render safe point");
+                if(index==1)capture();
+                if(index<GalleryCatalog.getEntries().size()){
+                    previous=view.getSample();String id=GalleryCatalog.getEntries().get(index++).id();
+                    view.select(id);view.setPreviewWidth(127+(index%3));at=ticks;
+                    System.out.println("ORE_GALLERY_SAMPLE "+id);
+                }else{view.select("input");phase=3;at=ticks;}
+            }else if(phase==3&&ticks-at>5){
+                input=inputs(view.getSample()).get(0).getWidget();click(inputs(view.getSample()).get(0));
+                Control owner=input.getThemeControl();
+                int connections=input.textChanged().connectionCount();
+                try { FormFields.text(input); throw new AssertionError("Double wrapping accepted"); }
+                catch (IllegalArgumentException expected) { }
+                check(input.getThemeControl()==owner && input.textChanged().connectionCount()==connections,"Rejected adapter preserves existing input ownership and subscriptions");
+                text("中文Abc");check(input.getText().equals("中文Abc"),"Input accepts Unicode exactly once");
+                key(GLFW.GLFW_KEY_A,GLFW.GLFW_MOD_CONTROL);key(GLFW.GLFW_KEY_C,GLFW.GLFW_MOD_CONTROL);
+                key(GLFW.GLFW_KEY_X,GLFW.GLFW_MOD_CONTROL);check(input.getText().isEmpty(),"Cut");
+                key(GLFW.GLFW_KEY_Z,GLFW.GLFW_MOD_CONTROL);check(input.getText().equals("中文Abc"),"Undo cut");
+                key(GLFW.GLFW_KEY_Y,GLFW.GLFW_MOD_CONTROL);check(input.getText().isEmpty(),"Redo cut");
+                key(GLFW.GLFW_KEY_V,GLFW.GLFW_MOD_CONTROL);check(input.getText().equals("中文Abc"),"Paste");
+                key(GLFW.GLFW_KEY_ESCAPE,0);check(!input.isFocused()&&view.getWindow().isAlive(),"Esc first blurs");
+                view.select("textarea");phase=4;at=ticks;
+            }else if(phase==4&&ticks-at>5){
+                input=inputs(view.getSample()).get(0).getWidget();click(inputs(view.getSample()).get(0));
+                mc.keyboardHandler.setClipboard("中文第一行\nSecond line\n".repeat(4));key(GLFW.GLFW_KEY_V,GLFW.GLFW_MOD_CONTROL);
+                check(input.getText().contains("\nSecond line"),"Multiline paste");
+                key(GLFW.GLFW_KEY_A,GLFW.GLFW_MOD_CONTROL);key(GLFW.GLFW_KEY_X,GLFW.GLFW_MOD_CONTROL);
+                key(GLFW.GLFW_KEY_Z,GLFW.GLFW_MOD_CONTROL);check(input.getText().contains("\nSecond line"),"Multiline undo");
+                view.select("form");phase=5;at=ticks;
+            }else if(phase==5&&ticks-at>5){
+                capture();
+                form=find(view.getSample(),Form.class);
+                InputControl number=inputs(view.getSample()).stream().filter(node->node.getWidget() instanceof NumberInput).findFirst().orElseThrow();
+                input=number.getWidget();click(number);key(GLFW.GLFW_KEY_A,GLFW.GLFW_MOD_CONTROL);text("2+3");
+                check(input.getText().equals("2+3"),"Numeric draft preserved during live validation");
+                var result=form.validate();
+                check(!result.getValid()&&input.getText().equals("5.00"),"All fields prepare even when earlier text fails");
+                form.setValuesNoSignal(FormValues.builder().setValue(NAME,"Ore").build());
+                result=form.validate();
+                check(result.getValid()&&result.getValues().getValue(AMOUNT).compareTo(new BigDecimal("5"))==0,"Typed successful submit");
+                check(form.getDirty(),"Form tracks edit");
+                form.reset();check(!form.getDirty()&&!form.getTouched(),"Form resets baseline");
+                form.setValuesNoSignal(FormValues.builder().setValue(NAME,"Ore").build());
+                Control validate = named(view.getSample(), "Gallery action validate");
+                check(view.getContentScroll().getMaxScrollY()>0,"Long samples have their own vertical scrolling");
+                view.getWindow().getFocusManager().requestFocus(validate,view.getWindow().getContext().getMui());
+                clickControl(validate);
+                check(form.validate().getValid(),"Scrolled submit button and form remain interactive");
+                key(GLFW.GLFW_KEY_F8,0);phase=6;at=ticks;
+            }else if(phase==6&&ticks-at>30){
+                check(io.github.luyingyilong.ore.debug.DebugBridge.active(),"F8 Inspector checks gallery");
+                io.github.luyingyilong.ore.inspector.OreInspector.stop();
+                view.getWindow().close();phase=7;at=ticks;
+            }else if(phase==7&&ticks-at>4){
+                key(GLFW.GLFW_KEY_F9,0);phase=8;at=ticks;
+            }else if(phase==8&&ticks-at>8){
+                check(OreGallery.getView()!=null&&OreGallery.getView()!=view,"F9 reopens after closing");
+                OreGallery.stop();phase=99;
+                System.out.println("ORE_GALLERY_CLIENT_PASS");mc.stop();
+            }
+        }catch(Throwable error){phase=99;error.printStackTrace();System.out.println("ORE_GALLERY_CLIENT_FAIL");mc.stop();}
+    }
+    private static Control named(Control root,String name){if(root.getDebugName().equals(name))return root;for(Control child:root.getChildren()){Control result=named(child,name);if(result!=null)return result;}return null;}
+    private static void clickControl(Control control){
+        var area=io.github.luyingyilong.ore.event.EventGeometry.displayed(control);var mc=Minecraft.getInstance();
+        double x=(double)(area.x()+area.width()/2)*mc.getWindow().getScreenWidth()/mc.screen.width;
+        double y=(double)(area.y()+area.height()/2)*mc.getWindow().getScreenHeight()/mc.screen.height;
+        var move=GLFW.glfwSetCursorPosCallback(handle(),null);GLFW.glfwSetCursorPosCallback(handle(),move);move.invoke(handle(),x,y);
+        var mouse=GLFW.glfwSetMouseButtonCallback(handle(),null);GLFW.glfwSetMouseButtonCallback(handle(),mouse);mouse.invoke(handle(),0,GLFW.GLFW_PRESS,0);mouse.invoke(handle(),0,GLFW.GLFW_RELEASE,0);
+    }
+    private static List<InputControl> inputs(Control root){List<InputControl> out=new ArrayList<>();if(root instanceof InputControl input)out.add(input);for(Control child:root.getChildren())out.addAll(inputs(child));return out;}
+    private static <T> T find(Control root,Class<T> type){if(type.isInstance(root))return type.cast(root);for(Control child:root.getChildren()){T result=find(child,type);if(result!=null)return result;}return null;}
+    private static void click(InputControl control){
+        var area=control.getWidgetBounds();var mc=Minecraft.getInstance();
+        double x=(double)(area.x()+4)*mc.getWindow().getScreenWidth()/mc.screen.width;
+        double y=(double)(area.y()+area.height()/2)*mc.getWindow().getScreenHeight()/mc.screen.height;
+        var move=GLFW.glfwSetCursorPosCallback(handle(),null);GLFW.glfwSetCursorPosCallback(handle(),move);GLFW.glfwSetCursorPos(handle(),x,y);move.invoke(handle(),x,y);
+        var mouse=GLFW.glfwSetMouseButtonCallback(handle(),null);GLFW.glfwSetMouseButtonCallback(handle(),mouse);
+        mouse.invoke(handle(),0,GLFW.GLFW_PRESS,0);mouse.invoke(handle(),0,GLFW.GLFW_RELEASE,0);
+        check(control.getWidget().isFocused(),"Actual pointer focuses editor");
+    }
+    private static long handle(){return Minecraft.getInstance().getWindow().getWindow();}
+    private static void capture(){java.io.File directory=new java.io.File("build/tmp/gallery-captures");directory.mkdirs();net.minecraft.client.Screenshot.grab(directory,Minecraft.getInstance().getMainRenderTarget(),message->System.out.println("ORE_GALLERY_CAPTURE "+message.getString()));}
+    private static void key(int code,int modifiers){var cb=GLFW.glfwSetKeyCallback(handle(),null);GLFW.glfwSetKeyCallback(handle(),cb);cb.invoke(handle(),code,0,GLFW.GLFW_PRESS,modifiers);cb.invoke(handle(),code,0,GLFW.GLFW_RELEASE,modifiers);}
+    private static void text(String value){var cb=GLFW.glfwSetCharModsCallback(handle(),null);GLFW.glfwSetCharModsCallback(handle(),cb);value.codePoints().forEach(cp->cb.invoke(handle(),cp,0));}
+    private static void check(boolean value,String message){if(!value)throw new AssertionError(message);}
+}
+

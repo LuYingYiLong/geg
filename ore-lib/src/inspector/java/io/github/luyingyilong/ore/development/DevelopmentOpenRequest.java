@@ -1,21 +1,21 @@
-package io.github.luyingyilong.ore.inspector;
+package io.github.luyingyilong.ore.development;
 
 import java.util.Objects;
 import java.util.function.Consumer;
 
 /** Coalesces shortcut requests without opening/focusing a native window on the input callback stack. */
-final class InspectorOpenRequest {
+public final class DevelopmentOpenRequest {
     private final Consumer<Runnable> enqueue;
     private final Runnable open;
     private long generation;
     private boolean pending;
 
-    InspectorOpenRequest(Consumer<Runnable> enqueue, Runnable open) {
+    public DevelopmentOpenRequest(Consumer<Runnable> enqueue, Runnable open) {
         this.enqueue = Objects.requireNonNull(enqueue);
         this.open = Objects.requireNonNull(open);
     }
 
-    void request() {
+    public void request() {
         if (pending) return;
         pending = true;
         long requested = ++generation;
@@ -31,7 +31,7 @@ final class InspectorOpenRequest {
         }
     }
 
-    void cancel() {
+    public void cancel() {
         pending = false;
         generation++;
     }

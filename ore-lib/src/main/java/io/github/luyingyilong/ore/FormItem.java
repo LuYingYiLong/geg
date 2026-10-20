@@ -1,149 +1,161 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.input.Input;
-import io.github.luyingyilong.ore.input.InputControl;
-import io.github.luyingyilong.ore.input.NumberInput;
-import io.github.luyingyilong.ore.layout.Container;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.layout.Size;
+import io.github.luyingyilong.ore.form.*;
+import io.github.luyingyilong.ore.input.*;
+import io.github.luyingyilong.ore.layout.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
+import java.util.*;
 
-import java.util.Objects;
-import java.util.function.Supplier;
-
-/**
- * A named field; the label and control occupy the same Ore layout tree.
- */
-public final class FormItem extends Container {
-    private static final int LABEL_HEIGHT = 10;
-    private static final int GAP = 3;
-    private static final int ERROR_HEIGHT = 10;
-    private static final int ROW_GAP = 6;
-    private final String name;
+/** A typed field, its validation lifetime, and its label/error geometry. */
+public final class FormItem<T> extends Container {
+    private static final int GAP = 3, ROW_GAP = 6;
+    private final FieldKey<T> key;
     private final Component label;
-    private final Input input;
-    private final Control field;
-    private final Supplier<String> value;
+    private final FormField<T> field;
     private final Label labelNode;
     private final Label errorNode;
-    private final InputControl inputNode;
-    private boolean active = true;
-    private boolean horizontal;
-    public FormItem(String name, Component label, Input input) {
-        this(name, label, new InputControl(Objects.requireNonNull(input)), input::getText, input);
-    }
+    private final List<Validator<? super T>> validators = new ArrayList<>();
+    private boolean active = true, horizontal, touched, validating, filling;
+    private Object initialEdit;
+    private T initialValue;
+    private Component error;
 
-    /**
-     * Accepts an Ore control such as a Checkbox group in place of a text input.
-     */
-    public FormItem(String name, Component label, Control field, Supplier<String> value) {
-        this(name, label, field, value, null);
-    }
-
-    private FormItem(String name, Component label, Control field, Supplier<String> value, Input input) {
-        if (name == null || name.isBlank()) throw new IllegalArgumentException("Field name is required");
-        this.name = name;
+    public FormItem(FieldKey<T> key, Component label, FormField<T> field) {
+        this.key = Objects.requireNonNull(key);
         this.label = Objects.requireNonNull(label);
-        this.input = input;
         this.field = Objects.requireNonNull(field);
-        this.value = Objects.requireNonNull(value);
-        labelNode = new Label(label).setOverflow(Label.Overflow.CLIP);
-        errorNode = new Label().setThemeTypeVariation("LabelError").setOverflow(Label.Overflow.CLIP);
-        inputNode = field instanceof InputControl node ? node : null;
-        updateChildren(java.util.List.of(labelNode, field, errorNode));
+        if (!key.type().equals(field.getType())) throw new IllegalArgumentException("Field adapter type differs from key");
+        labelNode = new Label(label).setWrap(Label.Wrap.WORD).setOverflow(Label.Overflow.CLIP);
+        errorNode = new Label().setThemeTypeVariation("LabelError").setWrap(Label.Wrap.WORD);
+        errorNode.setVisible(false);
+        updateChildren(List.of(labelNode, field.getControl(), errorNode));
+        captureInitialValue();
+        field.connect(this, this::changed, this::blurred);
     }
 
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
         io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "FormItem");
     }
-
-    @Override
-    protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
+    @Override protected void validateChildren(List<Control> proposed) {
         if (!isUpdatingChildren()) throw new IllegalStateException("FormItem has a fixed field skeleton");
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public Component getLabel() {
-        return label;
-    }
-
-    public Input getInput() {
-        return input;
-    }
-
-    public InputControl getInputNode() {
-        return inputNode;
-    }
-
-    public boolean getActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-        setVisible(active);
-        setInputVisible(active && getParent() instanceof Form form && form.getVisible());
-    }
-
-    public void setInputVisible(boolean visible) {
-        if (input != null) input.setInputVisible(visible);
-    }
-
-    public String getValue() {
-        return value.get();
-    }
-
-    public Component getError() {
-        return input instanceof NumberInput number ? number.getError() : null;
-    }
-
-    public void setHorizontal(boolean horizontal) {
-        if (this.horizontal == horizontal) return;
-        this.horizontal = horizontal;
+    public FieldKey<T> getKey() { return key; }
+    public String getName() { return key.name(); }
+    public Component getLabel() { return label; }
+    public FormField<T> getField() { return field; }
+    public InputControl getInputNode() { return field.getControl() instanceof InputControl node ? node : null; }
+    public Input getInput() { return getInputNode() == null ? null : getInputNode().getWidget(); }
+    public boolean getActive() { return active; }
+    public void setActive(boolean value) {
+        active = value;
+        setVisible(value);
+        setInputVisible(value && getParent() instanceof Form form && form.getVisible());
         requestLayout();
     }
-
+    public void setInputVisible(boolean value) { if (getInput() != null) getInput().setInputVisible(value); }
+    public boolean getTouched() { return touched; }
+    public boolean getDirty() { return !Objects.equals(initialEdit, field.getEditSnapshot()); }
+    public FormItem<T> addValidator(Validator<? super T> rule) { validators.add(Objects.requireNonNull(rule)); return this; }
+    public Component getError() {
+        return error != null ? error : getInput() instanceof NumberInput number ? number.getError() : null;
+    }
+    public T getValue() {
+        FieldValue<T> read = field.read();
+        if (!read.getValid()) throw new IllegalStateException("Invalid field: " + getName());
+        return key.type().cast(read.value());
+    }
+    private void changed() { if (!filling && touched && !validating && isAlive()) validate(false); }
+    private void blurred() { if (!filling && isAlive() && active) { touched = true; validate(false); } }
+    public FieldValue<T> validate(boolean prepare) {
+        if (validating) return field.read();
+        validating = true;
+        try {
+            touched = true;
+            boolean prepared = !prepare || field.prepare();
+            FieldValue<T> value = field.read();
+            Component next = value.error();
+            if (!prepared && next == null) next = Component.translatable("ore.form.invalid");
+            if (next == null) {
+                T typed = key.type().cast(value.value());
+                for (Validator<? super T> rule : List.copyOf(validators)) {
+                    Optional<Component> failed = rule.validate(typed);
+                    if (failed.isPresent()) { next = failed.get(); break; }
+                }
+            }
+            setError(next);
+            return next == null ? value : FieldValue.invalid(next);
+        } finally { validating = false; }
+    }
+    private void setError(Component value) {
+        if (Objects.equals(error, value)) return;
+        error = value;
+        errorNode.setText(value == null ? Component.empty() : value);
+        errorNode.setVisible(value != null);
+        requestLayout();
+    }
+    public void captureInitialValue() {
+        FieldValue<T> value = field.read();
+        initialValue = value.getValid() ? value.value() : null;
+        initialEdit = field.getEditSnapshot();
+        touched = false;
+        setError(null);
+    }
+    public void setValueNoSignal(T value) {
+        filling = true;
+        try { field.setValueNoSignal(value); }
+        finally { filling = false; }
+        if (touched) validate(false);
+        requestLayout();
+    }
+    public void reset() {
+        filling = true;
+        try {
+            if (getInput() != null && initialEdit instanceof String text) getInput().setTextNoSignal(text);
+            else field.setValueNoSignal(initialValue);
+            if (getInput() instanceof NumberInput number) number.clearError();
+        } finally { filling = false; }
+        touched = false;
+        setError(null);
+        requestLayout();
+    }
+    public void setHorizontal(boolean value) { if (horizontal != value) { horizontal = value; requestLayout(); } }
+    private int labelWidth(int width) { return horizontal ? Math.min(90, Math.max(36, width / 3)) : width; }
+    private int textHeight(Label node, Font font, int width) {
+        return font == null ? 10 : node.measureHeight(font, Math.max(1, width));
+    }
+    private Geometry geometry(Font font, int width) {
+        int labelWidth = labelWidth(width);
+        int controlX = horizontal ? labelWidth + GAP : 0;
+        int controlWidth = Math.max(1, width - controlX);
+        int labelHeight = textHeight(labelNode, font, labelWidth);
+        int controlY = horizontal ? 0 : labelHeight + GAP;
+        int controlHeight = field.getControl().desiredSize(font, new Size(controlWidth, Integer.MAX_VALUE)).height();
+        int row = horizontal ? Math.max(labelHeight, controlHeight) : controlY + controlHeight;
+        Component shown = getError();
+        errorNode.setText(shown == null ? Component.empty() : shown);
+        errorNode.setVisible(shown != null);
+        int errorHeight = shown == null ? 0 : textHeight(errorNode, font, width);
+        return new Geometry(labelWidth, labelHeight, controlX, controlY, controlWidth, controlHeight, row, errorHeight);
+    }
     public int rowHeight(Font font, int width) {
-        return (horizontal ? 0 : LABEL_HEIGHT + GAP) + fieldHeight(font, width) + 1
-                + (getError() == null ? 0 : ERROR_HEIGHT) + ROW_GAP;
+        Geometry g = geometry(font, width);
+        return Math.max(getMinimumHeight(), g.row + (g.errorHeight == 0 ? 0 : 1 + g.errorHeight) + ROW_GAP);
     }
-
-    private int fieldHeight(Font font, int width) {
-        int labelWidth = horizontal ? Math.min(90, Math.max(36, width / 3)) : 0;
-        int controlWidth = Math.max(1, width - (horizontal ? labelWidth + GAP : 0));
-        return field.measureSize(font, new Size(controlWidth, Integer.MAX_VALUE)).height();
+    @Override public Size measureSize(Font font, Size available) {
+        return new Size(Math.max(getMinimumWidth(), available.width()), rowHeight(font, available.width()));
     }
-
-    @Override
-    public Size measureSize(Font font, Size available) {
-        if (!isAlive()) return new Size(0, 0);
-        return new Size(Math.max(getMinimumWidth(), available.width()),
-                Math.max(getMinimumHeight(), rowHeight(font, available.width())));
-    }
-
-    @Override
-    public void layout(Rect bounds, Font font) {
+    @Override public void layout(Rect bounds, Font font) {
         if (!isAlive()) return;
-        try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+        try (var phase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(bounds, font);
-            int width = bounds.width();
-            int labelWidth = horizontal ? Math.min(90, Math.max(36, width / 3)) : width;
-            int controlX = horizontal ? labelWidth + GAP : 0;
-            int controlY = horizontal ? 0 : LABEL_HEIGHT + GAP;
-            int controlWidth = Math.max(1, width - controlX);
-            int controlHeight = fieldHeight(font, width);
-            fitChild(labelNode, new Rect(0, horizontal ? 5 : 0, labelWidth, LABEL_HEIGHT), font);
-            fitChild(field, new Rect(controlX, controlY, controlWidth, controlHeight), font);
-            Component error = getError();
-            errorNode.setText(error == null ? Component.empty() : error);
-            errorNode.setVisible(error != null);
-            fitChild(errorNode, new Rect(0, controlY + controlHeight + 1,
-                    width, error == null ? 0 : ERROR_HEIGHT), font);
+            Geometry g = geometry(font, bounds.width());
+            fitChild(labelNode, new Rect(0, horizontal ? Math.max(0, (g.controlHeight - g.labelHeight) / 2) : 0,
+                    g.labelWidth, g.labelHeight), font);
+            fitChild(field.getControl(), new Rect(g.controlX, g.controlY, g.controlWidth, g.controlHeight), font);
+            fitChild(errorNode, new Rect(0, g.row + 1, bounds.width(), g.errorHeight), font);
         }
     }
+    private record Geometry(int labelWidth, int labelHeight, int controlX, int controlY,
+                            int controlWidth, int controlHeight, int row, int errorHeight) { }
 }

@@ -1,5 +1,6 @@
 package io.github.luyingyilong.ore.layout;
 
+import io.github.luyingyilong.ore.form.*;
 import io.github.luyingyilong.ore.Descriptions;
 import io.github.luyingyilong.ore.Form;
 import io.github.luyingyilong.ore.FormItem;
@@ -145,16 +146,16 @@ public final class ReviewedDefectsTest {
 
     private static void formVisibility() {
         Form form = new Form();
-        form.addItem(new FormItem("example", Component.literal("Example"), new Control().setMinimum(10, 10), () -> "value"));
+        form.addItem(new FormItem<>(new FieldKey<>("example", String.class), Component.literal("Example"), FormFields.readOnly(String.class, new Control().setMinimum(10, 10), () -> "value")));
         Control generic = form;
         List<Boolean> changes = new ArrayList<>();
         form.visibilityChanged().connect(form, changes::add);
-        check(!generic.getVisible() && !form.validate(), "A new form starts hidden");
+        check(!generic.getVisible() && !form.validate().getValid(), "A new form starts hidden");
         generic.setVisible(true);
-        check(form.getVisible() && form.validate(), "Generic Control visibility must show and enable a form");
+        check(form.getVisible() && form.validate().getValid(), "Generic Control visibility must show and enable a form");
         generic.setVisible(true);
         generic.setVisible(false);
-        check(!form.getVisible() && !form.validate(), "Generic Control visibility must hide and disable a form");
+        check(!form.getVisible() && !form.validate().getValid(), "Generic Control visibility must hide and disable a form");
         check(changes.equals(List.of(true, false)), "Visibility has one state and only emits actual changes");
         form.queueFree();
         LifecycleScheduler.flush();

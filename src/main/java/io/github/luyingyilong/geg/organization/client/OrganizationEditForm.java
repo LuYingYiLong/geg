@@ -4,13 +4,13 @@ package io.github.luyingyilong.geg.organization.client;
 import io.github.luyingyilong.ore.Checkbox;
 import io.github.luyingyilong.ore.Form;
 import io.github.luyingyilong.ore.FormItem;
+import io.github.luyingyilong.ore.form.*;
 import io.github.luyingyilong.ore.Label;
 import io.github.luyingyilong.ore.input.TextArea;
 import io.github.luyingyilong.ore.layout.Box;
 import io.github.luyingyilong.ore.layout.Scroll;
 import io.github.luyingyilong.ore.layout.SizeFlags;
 import io.github.luyingyilong.geg.organization.Organization;
-import io.github.luyingyilong.geg.organization.OrganizationSavedData;
 import io.github.luyingyilong.geg.organization.OrganizationSyncPacket;
 import net.minecraft.network.chat.Component;
 
@@ -22,6 +22,7 @@ final class OrganizationEditForm {
     private final Checkbox approval = new Checkbox(Component.translatable("organization.geg.join_approval"));
     private final Form form;
     private final Scroll scroll;
+    private FormValues validated;
 
     OrganizationEditForm() {
         description.setPlaceholder(Component.translatable("organization.geg.description_hint"));
@@ -41,24 +42,25 @@ final class OrganizationEditForm {
         choices.addChild(approval);
         choices.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         form = new Form()
-                .addItem(new FormItem("name", Component.translatable("organization.geg.name"), name, () -> name.getText().getString()))
-                .addItem(new FormItem("description", Component.translatable("organization.geg.description"), description))
-                .addItem(new FormItem("join_policy", Component.translatable("organization.geg.join_policy"), choices,
-                        () -> policy().name()));
+                .addItem(new FormItem<>(OrganizationFields.NAME, Component.translatable("organization.geg.name"), FormFields.readOnly(String.class, name, () -> name.getText().getString())))
+                .addItem(new FormItem<>(OrganizationFields.DESCRIPTION, Component.translatable("organization.geg.description"), FormFields.text(description)).addValidator(OrganizationFields.VALID_DESCRIPTION))
+                .addItem(new FormItem<>(OrganizationFields.POLICY, Component.translatable("organization.geg.join_policy"), OrganizationFields.policy(choices, unrestricted, approval)));
         form.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         scroll = new Scroll().setHorizontal(Scroll.BarMode.DISABLED).setContent(form);
     }
 
     TextArea descriptionInput() { return description; }
     Scroll content() { return scroll; }
-    Organization.JoinPolicy policy() { return approval.getChecked() ? Organization.JoinPolicy.APPROVAL : Organization.JoinPolicy.UNRESTRICTED; }
-    String description() { return form.getValue("description").strip(); }
+    Organization.JoinPolicy policy() { return validated.getValue(OrganizationFields.POLICY); }
+    String description() { return validated.getValue(OrganizationFields.DESCRIPTION).strip(); }
 
     void show(OrganizationSyncPacket.Summary summary) {
         name.setText(Component.literal(summary.name()));
         description.setTextNoSignal(summary.description());
         approval.setCheckedNoSignal(summary.joinPolicy() == Organization.JoinPolicy.APPROVAL);
         unrestricted.setCheckedNoSignal(summary.joinPolicy() == Organization.JoinPolicy.UNRESTRICTED);
+        form.captureInitialValues();
+        validated = null;
         form.setVisible(true);
         scroll.scrollToTop();
     }
@@ -66,11 +68,8 @@ final class OrganizationEditForm {
     void hide() { form.setVisible(false); }
 
     boolean validate() {
-        if (!form.validate()) return false;
-        if (!OrganizationSavedData.validDescription(form.getValue("description"))) {
-            OrganizationFeedback.show("organization.geg.invalid_description");
-            return false;
-        }
-        return true;
+        FormValidation result = form.validate();
+        validated = result.getValid() ? result.getValues() : null;
+        return result.getValid();
     }
 }

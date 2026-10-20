@@ -9,6 +9,8 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 public final class InspectorClientExtension implements OreClientExtension {
     @Override public void initialize(OreClientOptions options, IEventBus modBus, IEventBus forgeBus) {
         if (FMLEnvironment.production) return;
+        io.github.luyingyilong.ore.gallery.OreGallery.initialize(forgeBus);
+        modBus.addListener(io.github.luyingyilong.ore.gallery.OreGallery::registerKeys);
         OreInspector.initialize(forgeBus);
         modBus.addListener(OreInspector.Registration::keys);
     }

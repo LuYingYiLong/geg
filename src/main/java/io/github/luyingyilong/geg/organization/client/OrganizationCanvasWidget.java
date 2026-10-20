@@ -522,7 +522,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
             showMemberships();
         } else if ("organization.geg.duplicate_name".equals(resultKey)
                 && ClientOrganizationState.organizations().stream().anyMatch(summary ->
-                summary.name().equalsIgnoreCase(createForm.getValue("name").strip()))) {
+                summary.name().equalsIgnoreCase(createForm.getValue(OrganizationFields.NAME).strip()))) {
             showMemberships();
         } else if (resultKey.isEmpty() && !createDrawer.getVisible()) {
             if (ClientOrganizationState.hasOrganizations()) showMemberships();
@@ -588,16 +588,13 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     private void submitCreate() {
-        if (!createDrawer.isOpen() || pendingCreate || !createForm.validate()) return;
-        String name = createForm.getValue("name").strip();
-        if (name.isBlank()) {
-            OrganizationFeedback.show("organization.geg.invalid_name");
-            return;
-        }
-        Organization.JoinPolicy policy = "approval".equals(createForm.getValue("join_policy"))
-                ? Organization.JoinPolicy.APPROVAL : Organization.JoinPolicy.UNRESTRICTED;
+        if (!createDrawer.isOpen() || pendingCreate) return;
+        var result = createForm.validate();
+        if (!result.getValid()) return;
+        var values = result.getValues();
         pendingCreate = true;
-        OrganizationNetwork.create(name, createForm.getValue("description").strip(), policy);
+        OrganizationNetwork.create(values.getValue(OrganizationFields.NAME).strip(),
+                values.getValue(OrganizationFields.DESCRIPTION).strip(), values.getValue(OrganizationFields.POLICY));
     }
 
     private void showMemberships() {

@@ -1,4 +1,6 @@
 package io.github.luyingyilong.ore.inspector;
+import io.github.luyingyilong.ore.development.DevelopmentOpenRequest;
+import io.github.luyingyilong.ore.gallery.OreGallery;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.luyingyilong.ore.debug.DebugBridge;
@@ -23,7 +25,7 @@ public final class OreInspector {
     private static InspectorBackend backend;
     private static InspectorView view;
     // execute() can run inline on the client thread; tell() always queues the task.
-    private static final InspectorOpenRequest OPEN_REQUEST = new InspectorOpenRequest(
+    private static final DevelopmentOpenRequest OPEN_REQUEST = new DevelopmentOpenRequest(
             task -> Minecraft.getInstance().tell(task), OreInspector::open);
 
     private static boolean initialized;
@@ -32,6 +34,7 @@ public final class OreInspector {
         io.github.luyingyilong.ore.signal.SignalDiagnostics.tracingEnabled(true);
         forgeBus.register(OreInspector.class);
         DebugBridge.setHostShortcut((key, scan) -> {
+            if (OreGallery.handleShortcut(key, scan)) return true;
             if (!OPEN.matches(key, scan)) return false;
             OPEN_REQUEST.request();
             return true;

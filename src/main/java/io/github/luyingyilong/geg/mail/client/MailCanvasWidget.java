@@ -14,6 +14,7 @@ import io.github.luyingyilong.ore.Button;
 import io.github.luyingyilong.ore.Drawer;
 import io.github.luyingyilong.ore.Form;
 import io.github.luyingyilong.ore.FormItem;
+import io.github.luyingyilong.ore.form.*;
 import io.github.luyingyilong.ore.Navbar;
 import io.github.luyingyilong.ore.Label;
 import io.github.luyingyilong.ore.Menu;
@@ -78,9 +79,14 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     private final Input target;
     private final NumberInput coin;
     private final Form form = new Form();
-    private final FormItem targetItem;
-    private final FormItem scopeItem;
-    private final FormItem coinItem;
+    private static final FieldKey<String> TARGET = new FieldKey<>("target", String.class);
+    private static final FieldKey<String> TITLE = new FieldKey<>("title", String.class);
+    private static final FieldKey<String> BODY = new FieldKey<>("body", String.class);
+    private static final FieldKey<BigDecimal> COIN = new FieldKey<>("coin", BigDecimal.class);
+    private static final FieldKey<MailActionPacket.Scope> SCOPE = new FieldKey<>("scope", MailActionPacket.Scope.class);
+    private final FormItem<String> targetItem;
+    private final FormItem<MailActionPacket.Scope> scopeItem;
+    private final FormItem<BigDecimal> coinItem;
     private final Segmented scopes = new Segmented(List.of(tr("mail.geg.player"), tr("mail.geg.organization"), tr("mail.geg.everyone")), Button.Size.SMALL);
     private final Label previewText = new Label().setWrap(Label.Wrap.WORD);
     private final UUID initialOrganization;
@@ -151,11 +157,16 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         window.setContent(pageColumn).setOverlay(overlay);
         clearDetail();
         renderInbox();
-        scopeItem = new FormItem("scope", tr("mail.geg.scope"), scopes, () -> scope().name());
-        targetItem = new FormItem("target", tr("mail.geg.target"), target);
-        coinItem = new FormItem("coin", tr("mail.geg.coin_per_player"), coin);
-        form.addItem(scopeItem).addItem(targetItem).addItem(new FormItem("title", tr("mail.geg.subject"), title))
-                .addItem(new FormItem("body", tr("mail.geg.body"), body)).addItem(coinItem);
+        scopeItem = new FormItem<>(SCOPE, tr("mail.geg.scope"), FormFields.segmented(MailActionPacket.Scope.class,
+                scopes, List.of(MailActionPacket.Scope.values())));
+        targetItem = new FormItem<>(TARGET, tr("mail.geg.target"), FormFields.text(target)).addValidator(Validators.required());
+        coinItem = new FormItem<>(COIN, tr("mail.geg.coin_per_player"), FormFields.number(coin));
+        form.addItem(scopeItem).addItem(targetItem)
+                .addItem(new FormItem<>(TITLE, tr("mail.geg.subject"), FormFields.text(title))
+                        .addValidator(Validators.predicate(text -> MailPolicy.validText(text, 64, false), tr("mail.geg.invalid_text"))))
+                .addItem(new FormItem<>(BODY, tr("mail.geg.body"), FormFields.text(body))
+                        .addValidator(Validators.predicate(text -> MailPolicy.validText(text, 2048, true), tr("mail.geg.invalid_text"))))
+                .addItem(coinItem);
         form.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         previewText.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         var editorContent = new Box().setGap(6);
@@ -243,7 +254,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         this.organization = organization; busy = false; token = null; previewSignature = null;
         editor.setTitle(tr(organization == null ? "mail.geg.compose" : "mail.geg.announce"));
         scopeItem.setActive(organization == null); targetItem.setActive(organization == null && scope() != MailActionPacket.Scope.ALL);
-        coinItem.setActive(organization == null); editor.open(); form.setVisible(true); editAgain();
+        coinItem.setActive(organization == null); form.captureInitialValues(); editor.open(); form.setVisible(true); editAgain();
     }
     private String signature() {
         return scope() + "\0" + organization + "\0" + title.getText() + "\0" + body.getText() + "\0" + target.getText() + "\0" + coin.getText();
@@ -254,21 +265,15 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     }
     private void preview() {
         if (busy) return;
-        if (!form.validate()) {
-            Component error = coin.getError();
-            OreToasts.show("geg:mail:feedback", new Toast(error == null ? tr("mail.geg.invalid_coin") : error).setType(Toast.Type.WARNING));
-            return;
-        }
-        if (!MailPolicy.validText(title.getText(), 64, false) || !MailPolicy.validText(body.getText(), 2048, true)) {
-            feedback("mail.geg.invalid_text"); return;
-        }
-        long amount;
-        try { amount = organization == null ? new BigDecimal(coin.getText()).movePointRight(2).longValueExact() : 0; }
-        catch (ArithmeticException | NumberFormatException exception) { feedback("mail.geg.invalid_coin"); return; }
-        if (amount < 0) { feedback("mail.geg.invalid_coin"); return; }
+        FormValidation result = form.validate();
+        if (!result.getValid()) return;
+        FormValues values = result.getValues();
+        long amount = organization == null ? values.getValue(COIN).movePointRight(2).longValueExact() : 0;
+        MailActionPacket.Scope selectedScope = organization == null ? values.getValue(SCOPE) : MailActionPacket.Scope.ORGANIZATION;
+        String selectedTarget = organization == null && selectedScope != MailActionPacket.Scope.ALL ? values.getValue(TARGET) : "";
         token = UUID.randomUUID(); previewSignature = signature(); busy = true; previewText.setText(Component.empty());
-        MailNetwork.send(new MailActionPacket(MailActionPacket.Action.PREVIEW, token, inbox.filter(), 0, scope(), organization != null,
-                organization == null ? MailActionPacket.EMPTY : organization, target.getText(), title.getText(), body.getText(), amount));
+        MailNetwork.send(new MailActionPacket(MailActionPacket.Action.PREVIEW, token, inbox.filter(), 0, selectedScope, organization != null,
+                organization == null ? MailActionPacket.EMPTY : organization, selectedTarget, values.getValue(TITLE), values.getValue(BODY), amount));
     }
     private void confirm() {
         if (busy || token == null) return;

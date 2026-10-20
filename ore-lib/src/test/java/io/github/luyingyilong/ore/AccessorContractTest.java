@@ -26,7 +26,7 @@ public final class AccessorContractTest {
         Form form = new Form();
         Control polymorphic = form;
         polymorphic.setVisible(true);
-        check(form.getVisible() && form.validate(), "Setter dispatch is polymorphic without a second visibility state");
+        check(form.getVisible() && form.validate().getValid(), "Setter dispatch is polymorphic without a second visibility state");
 
         absent(Control.class, "visible", boolean.class);
         absent(Control.class, "visible");

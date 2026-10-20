@@ -1,5 +1,10 @@
 {
   "ore.number.out_of_bounds": "Enter a number from %s to %s",
   "ore.number.invalid": "Enter an exact number with at most %s decimal places.",
-  "ore.number.empty_range": "No value is currently available."
+  "ore.number.empty_range": "No value is currently available.",
+  "ore.form.required": "This field is required",
+  "ore.form.length": "Use between %s and %s characters",
+  "ore.form.range": "Use a value between %s and %s",
+  "ore.form.invalid": "Invalid field value",
+  "ore.form.inactive": "Form is not active"
 }

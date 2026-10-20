@@ -7,11 +7,13 @@ Ore 是嵌入宿主 Mod 的客户端 UI 库，依赖 Java 17、Forge 1.20.1、Mo
 | 源码集 | 内容 | 用途 |
 | --- | --- | --- |
 | `src/main` | 控件、布局、字体、窗口、IME、头像缓存、调试桥接 | 开发和发布 |
-| `src/inspector` | 原生 Inspector、属性适配、覆盖、历史、开发服务描述与翻译 | 仅开发客户端 |
+| `src/inspector` | 原生 Inspector、F9 组件展示、属性适配、覆盖、历史、开发服务描述与翻译 | 仅开发客户端 |
 | `src/test` | 通用控件回归 | 测试 |
 | `src/inspectorTest` | Inspector 回归 | 测试 |
 
-四个源码集属于同一个 Gradle 模块。标准 `jar` 仅包含 main，不包含 Inspector。Inspector 只能引用 main；main 不引用 Inspector。运行时通过开发服务描述自动注册 F8。
+四个源码集属于同一个 Gradle 模块。标准 `jar` 仅包含 main，不包含 Inspector。Inspector 只能引用 main；main 不引用 Inspector。运行时通过开发服务描述自动注册 F8 Inspector 与 F9 组件展示。
+
+Box 换行见 [布局说明](docs/layout.md)，类型化字段与校验见 [表单说明](docs/forms.md)，开发验证入口见 [组件展示](docs/gallery.md)。
 
 ## 原生主题
 

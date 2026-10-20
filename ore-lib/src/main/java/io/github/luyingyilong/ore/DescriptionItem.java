@@ -18,6 +18,7 @@ public final class DescriptionItem extends Container {
     private Descriptions.Layout layout = Descriptions.Layout.HORIZONTAL;
     private boolean colon = true;
     private int gap = 4;
+
     public DescriptionItem(String key, Component label, Component content) {
         if (Objects.requireNonNull(key).isBlank()) throw new IllegalArgumentException("Description key is blank");
         this.key = key;

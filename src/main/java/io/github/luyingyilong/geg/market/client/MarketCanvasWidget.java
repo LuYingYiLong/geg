@@ -20,7 +20,6 @@ import io.github.luyingyilong.ore.Modal;
 import io.github.luyingyilong.ore.Segmented;
 import io.github.luyingyilong.ore.Spin;
 import io.github.luyingyilong.ore.Table;
-import io.github.luyingyilong.ore.input.DecimalExpression;
 import io.github.luyingyilong.ore.input.Input;
 import io.github.luyingyilong.ore.input.InputControl;
 import io.github.luyingyilong.ore.layout.*;
@@ -247,7 +246,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     private static int parseQuantity(int max) {
-        int quantity = Integer.parseInt(ClientMarketScreen.quantityText());
+        int quantity = ClientMarketScreen.quantityAmount().intValueExact();
         if (quantity <= 0 || quantity > max) {
             throw new IllegalArgumentException("Invalid quantity");
         }
@@ -627,8 +626,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         }
         int current;
         try {
-            String raw = ClientMarketScreen.tradeQuantityText();
-            current = DecimalExpression.evaluate(raw).intValueExact();
+            current = ClientMarketScreen.tradePreview().intValueExact();
         } catch (IllegalArgumentException | ArithmeticException exception) {
             current = 1;
         }
@@ -648,13 +646,13 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         ClientMarketScreen.setTradeQuantityMaximum(maxTradeQuantity(offer));
         if (!ClientMarketScreen.validateTradeForm()) return;
         try {
-            int amount = Integer.parseInt(ClientMarketScreen.tradeQuantityText());
+            int amount = ClientMarketScreen.tradeAmount().intValueExact();
             if (amount <= 0 || amount > maxTradeQuantity(offer)) throw new IllegalArgumentException();
             send(offer.buyOrder() ? MarketActionPacket.Action.FULFILL_REQUEST : MarketActionPacket.Action.BUY,
                     offer.id(), offer.version(), offer.unitPrice(), amount, 0);
             closeQuantityMenu();
             ClientMarketState.requestDetails(modal.detailId, modal.item);
-        } catch (IllegalArgumentException exception) {
+        } catch (IllegalArgumentException | ArithmeticException exception) {
             MarketFeedback.show(MarketResult.INVALID);
         }
     }
@@ -736,30 +734,30 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 }
                 case INVENTORY -> {
                     int quantity = parseQuantity(requestMode ? Integer.MAX_VALUE : (int) modal.quantity);
-                    long price = MoneyCurrency.COIN.parseAmount(ClientMarketScreen.priceText(), false);
+                    long price = ClientMarketScreen.priceAmount().movePointRight(2).longValueExact();
                     MarketNetwork.sendAction(new MarketActionPacket(requestMode
                             ? MarketActionPacket.Action.CREATE_REQUEST : MarketActionPacket.Action.LIST,
                             0L, 0L, price, quantity, modal.slot, modal.item));
                 }
                 case SAMPLE -> {
                     int quantity = parseQuantity(Integer.MAX_VALUE);
-                    long price = MoneyCurrency.COIN.parseAmount(ClientMarketScreen.priceText(), false);
+                    long price = ClientMarketScreen.priceAmount().movePointRight(2).longValueExact();
                     MarketNetwork.sendAction(new MarketActionPacket(MarketActionPacket.Action.CREATE_REQUEST,
                             modal.detailId, 0L, price, quantity, modal.slot, modal.item));
                 }
                 case OWN -> {
-                    long price = MoneyCurrency.COIN.parseAmount(ClientMarketScreen.priceText(), false);
+                    long price = ClientMarketScreen.priceAmount().movePointRight(2).longValueExact();
                     send(MarketActionPacket.Action.REPRICE, modal.listing.id(), modal.listing.version(), price, 0, 0);
                 }
                 case OWN_REQUEST -> {
-                    long price = MoneyCurrency.COIN.parseAmount(ClientMarketScreen.priceText(), false);
+                    long price = ClientMarketScreen.priceAmount().movePointRight(2).longValueExact();
                     send(MarketActionPacket.Action.REPRICE_REQUEST, modal.order.id(), modal.order.version(), price, 0, 0);
                 }
                 default -> {
                 }
             }
             closeModal();
-        } catch (IllegalArgumentException exception) {
+        } catch (IllegalArgumentException | ArithmeticException exception) {
             MarketFeedback.show(MarketResult.INVALID);
         }
     }
@@ -947,8 +945,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     static final class QuantityContent extends ScrollableContent {
         private static final int QUICK_BUTTON_GAP = 2;
         private static final int QUICK_BUTTON_MIN_WIDTH = 30;
-        private static final int QUICK_BUTTON_ROW_HEIGHT = Button.Size.MEDIUM.getHeight() + QUICK_BUTTON_GAP;
-        private final List<Button> quickButtons = new ArrayList<>();
+        private final Box quickRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setWrap(true).setGap(QUICK_BUTTON_GAP);
         private Form form;
 
         QuantityContent(IntConsumer adjustQuantity) {
@@ -957,30 +954,23 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                 final int buttonIndex = index;
                 Button button = Signals.configure(new Button(index == 4
                         ? Component.translatable("market.geg.max") : Component.literal(labels[index])), connected -> connected.pressed().connect(connected, () -> adjustQuantity.accept(buttonIndex)));
-                quickButtons.add(button);
-                this.addChild(button);
+                button.setMinimum(QUICK_BUTTON_MIN_WIDTH, Button.Size.MEDIUM.getHeight());
+                button.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+                quickRow.addChild(button);
             }
+            this.addChild(quickRow);
         }
 
         void bindForm(Form form) {
             this.form = form;
             this.addChild(form);
-        }
-
-        private int columns(int width) {
-            return Math.min(quickButtons.size(), Math.max(1,
-                    (Math.max(1, width) + QUICK_BUTTON_GAP) / (QUICK_BUTTON_MIN_WIDTH + QUICK_BUTTON_GAP)));
-        }
-
-        private int contentHeight(int formHeight, int columns) {
-            int rows = (quickButtons.size() + columns - 1) / columns;
-            return formHeight + 4 + rows * QUICK_BUTTON_ROW_HEIGHT - QUICK_BUTTON_GAP;
+            moveChild(form, 0);
         }
 
         @Override public Size measureSize(Font font, Size available) {
             int width = Math.max(getMinimumWidth(), available.width());
             int formHeight = form == null ? 0 : form.measureSize(font, new Size(width, available.height())).height();
-            return new Size(width, Math.max(getMinimumHeight(), contentHeight(formHeight, columns(width))));
+            return new Size(width, Math.max(getMinimumHeight(), formHeight + 4 + quickRow.measureSize(font, new Size(width, available.height())).height()));
         }
 
         @Override public void layout(Rect bounds, Font font) {
@@ -989,24 +979,12 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             int height = bounds.height();
             int formHeight = form == null ? 0
                     : form.measureSize(font, new Size(width, height)).height();
-            int available = Math.max(1, width);
-            int columns = columns(width);
-            int buttonTop = formHeight + 4;
-            contentHeight = contentHeight(formHeight, columns);
+            int quickHeight = quickRow.measureSize(font, new Size(width, height)).height();
+            contentHeight = formHeight + 4 + quickHeight;
             scroll = Math.min(scroll, Math.max(0, contentHeight - height));
             if (form != null) fitChild(form, new Rect(0, -scroll, width, formHeight), font);
             if (form != null) form.clipInputs(getAbsoluteBounds());
-            for (int index = 0; index < quickButtons.size(); index++) {
-                int row = index / columns;
-                int column = index % columns;
-                int buttonsInRow = Math.min(columns, quickButtons.size() - row * columns);
-                int rowWidth = Math.max(buttonsInRow, available - (buttonsInRow - 1) * QUICK_BUTTON_GAP);
-                int left = column * rowWidth / buttonsInRow + column * QUICK_BUTTON_GAP;
-                int right = (column + 1) * rowWidth / buttonsInRow + column * QUICK_BUTTON_GAP;
-                fitChild(quickButtons.get(index), new Rect(left,
-                        buttonTop + row * QUICK_BUTTON_ROW_HEIGHT - scroll,
-                        right - left, Button.Size.MEDIUM.getHeight()), font);
-            }
+            fitChild(quickRow, new Rect(0, formHeight + 4 - scroll, width, quickHeight), font);
         }
 
     }

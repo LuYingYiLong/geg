@@ -1,11 +1,11 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.input.NumberInput;
+import io.github.luyingyilong.ore.form.*;
+import net.minecraft.network.chat.Component;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.Size;
-import io.github.luyingyilong.ore.render.DrawContext;
 import net.minecraft.client.gui.Font;
 
 import java.util.LinkedHashMap;
@@ -16,9 +16,8 @@ import java.util.Objects;
  * Named values, submit validation, and field layout share one Ore node.
  */
 public final class Form extends Container {
-    private final Map<String, FormItem> items = new LinkedHashMap<>();
+    private final Map<String, FormItem<?>> items = new LinkedHashMap<>();
     private Layout layout = Layout.VERTICAL;
-    private int lastBottom;
     public Form() {
         setVisible(false);
     }
@@ -31,13 +30,15 @@ public final class Form extends Container {
         return chosen == Layout.HORIZONTAL && viewportWidth <= 128 ? Layout.VERTICAL : chosen;
     }
 
+    public Layout getLayout() { return layout; }
+
     public Form setLayout(Layout layout) {
         this.layout = Objects.requireNonNull(layout);
         requestLayout();
         return this;
     }
 
-    public Form addItem(FormItem item) {
+    public Form addItem(FormItem<?> item) {
         addChild(item);
         return this;
     }
@@ -46,7 +47,7 @@ public final class Form extends Container {
     protected void validateChildren(java.util.List<Control> proposed) {
         java.util.Set<String> names = new java.util.HashSet<>();
         for (Control child : proposed) {
-            if (!(child instanceof FormItem item))
+            if (!(child instanceof FormItem<?> item))
                 throw new IllegalArgumentException("Form accepts FormItem; use addItem");
             if (!names.add(item.getName())) throw new IllegalArgumentException("Duplicate field: " + item.getName());
         }
@@ -56,7 +57,7 @@ public final class Form extends Container {
     protected void childrenChanged() {
         items.clear();
         for (Control child : getChildren())
-            if (child instanceof FormItem item && item.isAlive()) {
+            if (child instanceof FormItem<?> item && item.isAlive()) {
                 items.put(item.getName(), item);
                 item.setInputVisible(getVisible() && item.getActive());
             }
@@ -65,24 +66,32 @@ public final class Form extends Container {
     @Override
     public void setVisible(boolean visible) {
         super.setVisible(visible);
-        for (FormItem item : items.values()) item.setInputVisible(visible && item.getActive());
+        for (FormItem<?> item : java.util.List.copyOf(items.values())) item.setInputVisible(visible && item.getActive());
     }
 
-    public int getBottom() {
-        return lastBottom;
+    public <T> FormItem<T> getItem(FieldKey<T> key) {
+        FormItem<?> item = items.get(key.name());
+        if (item == null || !item.getKey().equals(key)) throw new IllegalArgumentException("Unknown field or mismatched type: " + key.name());
+        @SuppressWarnings("unchecked") FormItem<T> typed = (FormItem<T>) item;
+        return typed;
     }
-
-    public String getValue(String name) {
-        FormItem item = items.get(name);
-        if (item == null) throw new IllegalArgumentException("Unknown field: " + name);
-        return item.getValue();
+    public <T> T getValue(FieldKey<T> key) { return getItem(key).getValue(); }
+    public boolean getDirty() { return items.values().stream().anyMatch(FormItem::getDirty); }
+    public boolean getTouched() { return items.values().stream().anyMatch(FormItem::getTouched); }
+    public void captureInitialValues() { for (FormItem<?> item : java.util.List.copyOf(items.values())) item.captureInitialValue(); }
+    public void reset() { for (FormItem<?> item : java.util.List.copyOf(items.values())) item.reset(); }
+    public void setInitialValues(FormValues values) { setValuesNoSignal(values); captureInitialValues(); }
+    public void setValuesNoSignal(FormValues values) {
+        for (FieldKey<?> key : values.getKeys()) getItem(key);
+        for (FieldKey<?> key : values.getKeys()) fill(values, key);
     }
+    private <T> void fill(FormValues values, FieldKey<T> key) { getItem(key).setValueNoSignal(values.getValue(key)); }
 
     /**
      * MUI widgets are siblings of the Ore canvas, so hide fields outside a scrolled viewport.
      */
     public void clipInputs(Rect viewport) {
-        for (FormItem item : items.values()) {
+        for (FormItem<?> item : java.util.List.copyOf(items.values())) {
             if (item.getInputNode() == null) continue;
             Rect area = item.getInputNode().getAbsoluteBounds();
             boolean fullyVisible = area.x() >= viewport.x() && area.right() <= viewport.right()
@@ -91,15 +100,29 @@ public final class Form extends Container {
         }
     }
 
-    public boolean validate() {
-        if (!getVisible()) return false;
-        for (FormItem item : items.values()) {
-            if (item.getActive() && item.getInput() instanceof NumberInput number && !number.commit()) {
-                requestLayout();
-                return false;
-            }
+    public FormValidation validate() {
+        Map<String, Component> errors = new LinkedHashMap<>();
+        FormValues.Builder values = FormValues.builder();
+        if (!isAlive() || !getVisible()) {
+            errors.put("_form", Component.translatable("ore.form.inactive"));
+            return new FormValidation(null, errors);
+        }
+        FormItem<?> first = null;
+        for (FormItem<?> item : java.util.List.copyOf(items.values())) {
+            if (!eligible(item)) continue;
+            if (!validateItem(item, values, errors) && first == null) first = item;
         }
         requestLayout();
+        if (first != null) first.getField().focus();
+        return new FormValidation(errors.isEmpty() ? values.build() : null, errors);
+    }
+    private boolean eligible(FormItem<?> item) {
+        return item.getParent() == this && item.isAlive() && item.getActive() && item.getVisible();
+    }
+    private <T> boolean validateItem(FormItem<T> item, FormValues.Builder values, Map<String, Component> errors) {
+        FieldValue<T> value = item.validate(true);
+        if (!value.getValid()) { errors.put(item.getName(), value.error()); return false; }
+        values.setValue(item.getKey(), value.value());
         return true;
     }
 
@@ -108,8 +131,8 @@ public final class Form extends Container {
         if (!isAlive()) return new Size(0, 0);
         boolean horizontal = effectiveLayout(layout, available.width()) == Layout.HORIZONTAL;
         int height = 0;
-        for (FormItem item : items.values())
-            if (item.getActive()) {
+        for (FormItem<?> item : java.util.List.copyOf(items.values()))
+            if (eligible(item)) {
                 item.setHorizontal(horizontal);
                 height += item.rowHeight(font, available.width());
             }
@@ -124,28 +147,14 @@ public final class Form extends Container {
             super.layout(bounds, font);
             boolean horizontal = effectiveLayout(layout, bounds.width()) == Layout.HORIZONTAL;
             int top = 0;
-            for (FormItem item : items.values()) {
+            for (FormItem<?> item : java.util.List.copyOf(items.values())) {
                 item.setHorizontal(horizontal);
-                item.setVisible(item.getActive());
-                if (!item.getActive()) continue;
+                if (!eligible(item)) continue;
                 int height = item.rowHeight(font, bounds.width());
                 fitChild(item, new Rect(0, top, bounds.width(), height), font);
                 top += height;
             }
-            lastBottom = bounds.y() + top;
         }
-    }
-
-    /**
-     * Compatibility entry point until a modal directly owns the Form node.
-     */
-    public int draw(DrawContext context, int x, int y, int width, int viewportWidth) {
-        if (!getVisible()) return y;
-        Font font = context.getFont();
-        int height = measureSize(font, new Size(width, viewportWidth)).height();
-        layout(new Rect(x, y, width, height), font);
-        super.draw(context, 0, 0);
-        return lastBottom;
     }
 
     public enum Layout {VERTICAL, HORIZONTAL}

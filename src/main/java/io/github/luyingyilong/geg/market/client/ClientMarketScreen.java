@@ -8,6 +8,8 @@ import brachy.modularui.value.StringValue;
 import io.github.luyingyilong.ore.Button;
 import io.github.luyingyilong.ore.Form;
 import io.github.luyingyilong.ore.FormItem;
+import io.github.luyingyilong.ore.form.*;
+import java.math.BigDecimal;
 import io.github.luyingyilong.ore.input.Input;
 import io.github.luyingyilong.ore.input.NumberInput;
 import io.github.luyingyilong.ore.screen.OreScreen;
@@ -28,8 +30,11 @@ public final class ClientMarketScreen {
     private static NumberInput tradeQuantity;
     private static Form detailForm;
     private static Form tradeForm;
-    private static FormItem quantityItem;
-    private static FormItem priceItem;
+    private static final FieldKey<BigDecimal> QUANTITY = new FieldKey<>("quantity", BigDecimal.class);
+    private static final FieldKey<BigDecimal> PRICE = new FieldKey<>("price", BigDecimal.class);
+    private static FormValues detailValues, tradeValues;
+    private static FormItem<BigDecimal> quantityItem;
+    private static FormItem<BigDecimal> priceItem;
     private static StringValue quantityValue;
     private static StringValue priceValue;
     private static StringValue tradeQuantityValue;
@@ -73,11 +78,11 @@ public final class ClientMarketScreen {
         tradeQuantity.setControlSize(Button.Size.MEDIUM);
         tradeQuantity.setInputVisible(false);
 
-        quantityItem = new FormItem("quantity", Component.translatable("market.geg.quantity"), quantity);
-        priceItem = new FormItem("price", Component.translatable("market.geg.unit_price"), price);
+        quantityItem = new FormItem<>(QUANTITY, Component.translatable("market.geg.quantity"), FormFields.number(quantity));
+        priceItem = new FormItem<>(PRICE, Component.translatable("market.geg.unit_price"), FormFields.number(price));
         detailForm = new Form().addItem(quantityItem).addItem(priceItem);
-        tradeForm = new Form().addItem(new FormItem("quantity",
-                Component.translatable("market.geg.quantity"), tradeQuantity));
+        tradeForm = new Form().addItem(new FormItem<>(QUANTITY,
+                Component.translatable("market.geg.quantity"), FormFields.number(tradeQuantity)));
         canvas.bindForms(detailForm, tradeForm);
         canvas.prepareLayout(Minecraft.getInstance().getWindow().getGuiScaledWidth(),
                 Minecraft.getInstance().getWindow().getGuiScaledHeight(), Minecraft.getInstance().font);
@@ -117,20 +122,20 @@ public final class ClientMarketScreen {
         return search == null ? "" : search.getText();
     }
 
-    static String quantityText() {
-        return detailForm == null ? "" : detailForm.getValue("quantity");
+    static BigDecimal quantityAmount() { return detailValues.getValue(QUANTITY); }
+    static BigDecimal priceAmount() { return detailValues.getValue(PRICE); }
+    static BigDecimal tradeAmount() { return tradeValues.getValue(QUANTITY); }
+    static BigDecimal tradePreview() { return tradeQuantity.getPreviewValue(); }
+    static boolean validateDetailForm() {
+        var result = detailForm.validate();
+        detailValues = result.getValid() ? result.getValues() : null;
+        return result.getValid();
     }
-
-    static String priceText() {
-        return detailForm == null ? "" : detailForm.getValue("price");
+    static boolean validateTradeForm() {
+        var result = tradeForm.validate();
+        tradeValues = result.getValid() ? result.getValues() : null;
+        return result.getValid();
     }
-
-    static String tradeQuantityText() {
-        return tradeForm == null ? "" : tradeForm.getValue("quantity");
-    }
-
-    static boolean validateDetailForm() { return detailForm != null && detailForm.validate(); }
-    static boolean validateTradeForm() { return tradeForm != null && tradeForm.validate(); }
     static void setDetailQuantityMaximum(int maximum) { quantity.setAvailableMaximum(java.math.BigDecimal.valueOf(maximum)); }
     static void setTradeQuantityMaximum(int maximum) { tradeQuantity.setAvailableMaximum(java.math.BigDecimal.valueOf(maximum)); }
 
@@ -139,6 +144,8 @@ public final class ClientMarketScreen {
         if (show) {
             tradeQuantity.setAvailableMaximum(java.math.BigDecimal.valueOf(Integer.MAX_VALUE));
             setTradeQuantity(1);
+            tradeForm.captureInitialValues();
+            tradeValues = null;
         }
     }
 
@@ -166,6 +173,8 @@ public final class ClientMarketScreen {
             price.setTextNoSignal(text);
             price.clearError();
         }
+        detailForm.captureInitialValues();
+        detailValues = null;
     }
 
     private static final class InstantMarketPanel extends ModularPanel<InstantMarketPanel> {

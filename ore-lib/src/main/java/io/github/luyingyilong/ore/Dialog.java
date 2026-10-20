@@ -54,6 +54,7 @@ public final class Dialog extends Container {
     private final SignalSource0 closeRequested = new SignalSource0(this, "closeRequested");
     private Control content;
     private float depth = 200.0F;
+
     public Dialog(Component title) {
         this(0, 0, 0, title);
     }

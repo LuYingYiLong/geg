@@ -22,6 +22,7 @@ public final class Badge extends Container {
     private Long count;
     private long overflowCount = 99L;
     private Tag.Type type = Tag.Type.PRIMARY;
+
     public Badge() {
         setMinimum(DOT_SIZE, DOT_SIZE + SHADOW_HEIGHT);
         updateChildren(java.util.List.of(label));

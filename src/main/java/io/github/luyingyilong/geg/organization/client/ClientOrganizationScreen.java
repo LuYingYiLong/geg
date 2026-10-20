@@ -6,6 +6,7 @@ import brachy.modularui.screen.ModularScreen;
 import io.github.luyingyilong.ore.Checkbox;
 import io.github.luyingyilong.ore.Form;
 import io.github.luyingyilong.ore.FormItem;
+import io.github.luyingyilong.ore.form.*;
 import io.github.luyingyilong.ore.input.Input;
 import io.github.luyingyilong.ore.input.TextArea;
 import io.github.luyingyilong.ore.layout.Box;
@@ -46,13 +47,12 @@ public final class ClientOrganizationScreen {
         joinChoices.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         unrestricted.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         approval.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-        Form form = new Form().addItem(new FormItem("name",
-                Component.translatable("organization.geg.name"), name))
-                .addItem(new FormItem("description",
-                        Component.translatable("organization.geg.description"), description))
-                .addItem(new FormItem("join_policy",
-                        Component.translatable("organization.geg.join_policy"), joinChoices,
-                        () -> approval.getChecked() ? "approval" : "unrestricted"));
+        Form form = new Form().addItem(new FormItem<>(OrganizationFields.NAME,
+                Component.translatable("organization.geg.name"), FormFields.text(name)).addValidator(OrganizationFields.VALID_NAME))
+                .addItem(new FormItem<>(OrganizationFields.DESCRIPTION,
+                        Component.translatable("organization.geg.description"), FormFields.text(description)).addValidator(OrganizationFields.VALID_DESCRIPTION))
+                .addItem(new FormItem<>(OrganizationFields.POLICY,
+                        Component.translatable("organization.geg.join_policy"), OrganizationFields.policy(joinChoices, unrestricted, approval)));
         OrganizationEditForm editor = new OrganizationEditForm();
         canvas = new OrganizationCanvasWidget(form, name, description, editor);
         canvas.showInitialState();

@@ -137,6 +137,7 @@ public final class NumberInput extends Input {
     }
 
     public boolean commit() {
+        // Normalization remains an explicit edit; live form validation only reads the preview.
         try {
             String formatted = rules.resolve(getText());
             if (!editingHandler().replaceAll(formatted)) throw new IllegalArgumentException("Invalid formatted value");
@@ -151,6 +152,8 @@ public final class NumberInput extends Input {
             return false;
         }
     }
+
+    public BigDecimal getPreviewValue() { return new BigDecimal(rules.resolve(getText())); }
 
     @Override
     protected void onTextChanged() {

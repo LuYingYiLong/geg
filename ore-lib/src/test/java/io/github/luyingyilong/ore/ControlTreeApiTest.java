@@ -1,5 +1,6 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.form.*;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.event.WindowInputs;
 import net.minecraft.network.chat.Component;
@@ -112,14 +113,14 @@ public final class ControlTreeApiTest {
 
     private static void indexes() {
         Form form = new Form();
-        FormItem item = new FormItem("value", Component.empty(), new Control(), () -> "one");
+        FormItem item = new FormItem<>(new FieldKey<>("value", String.class), Component.empty(), FormFields.readOnly(String.class, new Control(), () -> "one"));
         form.addItem(item);
-        rejects(IllegalArgumentException.class, () -> form.addItem(new FormItem("value", Component.empty(), new Control(), () -> "two")));
-        check(form.getValue("value").equals("one") && form.getChildCount() == 1, "Form validates before indexing");
+        rejects(IllegalArgumentException.class, () -> form.addItem(new FormItem<>(new FieldKey<>("value", String.class), Component.empty(), FormFields.readOnly(String.class, new Control(), () -> "two"))));
+        check(form.getValue(new FieldKey<>("value", String.class)).equals("one") && form.getChildCount() == 1, "Form validates before indexing");
         form.removeChild(item);
-        rejects(IllegalArgumentException.class, () -> form.getValue("value"));
+        rejects(IllegalArgumentException.class, () -> form.getValue(new FieldKey<>("value", String.class)));
         form.addItem(item); item.queueFree(); LifecycleScheduler.flush();
-        rejects(IllegalArgumentException.class, () -> form.getValue("value"));
+        rejects(IllegalArgumentException.class, () -> form.getValue(new FieldKey<>("value", String.class)));
 
         Descriptions descriptions = new Descriptions().setColumns(1)
                 .addItem("one", Component.empty(), Component.literal("one"))

@@ -1,5 +1,6 @@
 package io.github.luyingyilong.geg.market.client;
 
+import io.github.luyingyilong.ore.form.*;
 import io.github.luyingyilong.ore.signal.Signals;
 
 import io.github.luyingyilong.ore.theme.ThemeKey;
@@ -24,6 +25,14 @@ import java.util.Map;
 public final class MarketDetailLayoutTest {
     public static void main(String[] args) throws ReflectiveOperationException {
         Font font = new Font(id -> null, false) {
+            @Override public java.util.List<FormattedCharSequence> split(FormattedText text, int width) {
+                java.util.List<FormattedCharSequence> lines = new java.util.ArrayList<>();
+                int[] points = text.getString().codePoints().toArray();
+                int count = Math.max(1, width / 6);
+                for (int from = 0; from < points.length; from += count)
+                    lines.add(Component.literal(new String(points, from, Math.min(count, points.length - from))).getVisualOrderText());
+                return lines.isEmpty() ? java.util.List.of(FormattedCharSequence.EMPTY) : lines;
+            }
             @Override public int width(FormattedText text) { return text.getString().codePointCount(0, text.getString().length()) * 6; }
             @Override public int width(FormattedCharSequence text) {
                 int[] count = {0}; text.accept((index, style, codepoint) -> { count[0]++; return true; }); return count[0] * 6;
@@ -75,7 +84,7 @@ public final class MarketDetailLayoutTest {
         childContainer100.addChild(search);
         window.setContent(childContainer100);
         Control quantityField = new Control().setPreferred(100, 20).setFocusable(true);
-        Form quantityForm = new Form().addItem(new FormItem("quantity", Component.literal("Quantity"), quantityField, () -> "1"));
+        Form quantityForm = new Form().addItem(new FormItem<>(new FieldKey<>("quantity", String.class), Component.literal("Quantity"), FormFields.readOnly(String.class, quantityField, () -> "1")));
         quantityForm.setVisible(true);
         MarketCanvasWidget.QuantityContent quantityContent = new MarketCanvasWidget.QuantityContent(index -> { });
         quantityContent.bindForm(quantityForm);

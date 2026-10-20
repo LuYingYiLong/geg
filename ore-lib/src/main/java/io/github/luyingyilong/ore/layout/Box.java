@@ -12,6 +12,31 @@ public final class Box extends Container {
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Box"); }
     private Orientation orientation = Orientation.VERTICAL;
     private int gap;
+    private boolean wrap;
+    private Integer lineGap;
+
+    @Inspectable
+    public boolean getWrap() { return DebugBridge.value(this, "wrap", wrap); }
+
+    public Box setWrap(boolean value) {
+        if (DebugBridge.previewWrite(this, "wrap", value)) return this;
+        wrap = value;
+        requestLayout();
+        return this;
+    }
+
+    @Inspectable(min = 0, max = 10000)
+    public int getLineGap() { return DebugBridge.value(this, "lineGap", lineGap == null ? getGap() : lineGap); }
+
+    public Box setLineGap(int value) {
+        value = Math.max(0, value);
+        if (DebugBridge.previewWrite(this, "lineGap", value)) return this;
+        lineGap = value;
+        requestLayout();
+        return this;
+    }
+
+    public Box clearLineGap() { lineGap = null; requestLayout(); return this; }
 
     @Inspectable
     public Orientation getOrientation() {
@@ -42,6 +67,11 @@ public final class Box extends Container {
     @Override
     public Size measureSize(Font font, Size available) {
         if (!isAlive()) return new Size(0, 0);
+        if (getWrap()) {
+            Flow flow = flow(font, available);
+            return new Size(Math.max(super.measureWidth(font, available.width()), flow.size.width()),
+                    Math.max(super.measureHeight(font, available.height()), flow.size.height()));
+        }
         Orientation orientation = DebugBridge.value(this, "orientation", this.orientation);
         int gap = DebugBridge.value(this, "gap", this.gap);
         int totalWidth = 0;
@@ -95,6 +125,13 @@ public final class Box extends Container {
             Orientation orientation = DebugBridge.value(this, "orientation", this.orientation);
             int gap = DebugBridge.value(this, "gap", this.gap);
             super.layout(localBounds, font);
+            if (getWrap()) {
+                Flow flow = flow(font, new Size(localBounds.width(), localBounds.height()));
+                for (Placement placement : flow.placements)
+                    if (placement.child.getParent() == this && placement.child.isAlive() && placement.child.getVisible())
+                        fitChild(placement.child, placement.slot, font);
+                return;
+            }
             List<Control> active = activeChildren();
             int axis = orientation == Orientation.VERTICAL ? localBounds.height() : localBounds.width();
             int cross = orientation == Orientation.VERTICAL ? localBounds.width() : localBounds.height();
@@ -113,6 +150,70 @@ public final class Box extends Container {
     private List<Control> activeChildren() {
         return getChildren().stream().filter(child -> child.getParent() == this && child.isAlive() && child.getVisible()).toList();
     }
+
+    /** Shared by measurement and arrangement: grouping never consumes EXPAND space. */
+    private Flow flow(Font font, Size available) {
+        boolean horizontal = getOrientation() == Orientation.HORIZONTAL;
+        int limit = horizontal ? available.width() : available.height();
+        int crossLimit = horizontal ? available.height() : available.width();
+        List<List<Control>> lines = new ArrayList<>();
+        List<Control> line = new ArrayList<>();
+        long used = 0;
+        for (Control child : activeChildren()) {
+            Size natural = child.desiredSize(font, available);
+            int basis = horizontal ? natural.width() : natural.height();
+            basis = Math.max(mainMinimum(child), Math.min(basis, limit));
+            if (!line.isEmpty() && limit != Integer.MAX_VALUE && used + getGap() + basis > limit) {
+                lines.add(line);
+                line = new ArrayList<>();
+                used = 0;
+            }
+            if (!line.isEmpty()) used += getGap();
+            line.add(child);
+            used += basis;
+        }
+        if (!line.isEmpty()) lines.add(line);
+        List<Placement> placements = new ArrayList<>();
+        int crossCursor = 0, mainExtent = 0;
+        for (List<Control> row : lines) {
+            int rowLimit = limit;
+            if (limit == Integer.MAX_VALUE) {
+                long naturalExtent = (long) Math.max(0, row.size() - 1) * getGap();
+                for (Control child : row) {
+                    Size natural = child.desiredSize(font, available);
+                    naturalExtent += horizontal ? natural.width() : natural.height();
+                }
+                rowLimit = saturated(naturalExtent);
+            }
+            int[] sizes = allocateSizes(row, font, rowLimit, crossLimit);
+            int rowCross = 0;
+            for (int index = 0; index < row.size(); index++) {
+                Control child = row.get(index);
+                Size measured = child.desiredSize(font, horizontal ? new Size(sizes[index], crossLimit)
+                        : new Size(crossLimit, sizes[index]));
+                int flags = horizontal ? child.getSizeFlagsHorizontal() : child.getSizeFlagsVertical();
+                if (!SizeFlags.fills(flags)) {
+                    int actual = Math.max(mainMinimum(child), Math.min(sizes[index], horizontal ? measured.width() : measured.height()));
+                    measured = child.desiredSize(font, horizontal ? new Size(actual, crossLimit) : new Size(crossLimit, actual));
+                }
+                rowCross = Math.max(rowCross, horizontal ? measured.height() : measured.width());
+            }
+            int cursor = 0;
+            for (int index = 0; index < row.size(); index++) {
+                placements.add(new Placement(row.get(index), horizontal
+                        ? new Rect(cursor, crossCursor, sizes[index], rowCross)
+                        : new Rect(crossCursor, cursor, rowCross, sizes[index])));
+                cursor = saturated((long) cursor + sizes[index] + (index + 1 < row.size() ? getGap() : 0));
+            }
+            mainExtent = Math.max(mainExtent, cursor);
+            crossCursor = saturated((long) crossCursor + rowCross + (row != lines.get(lines.size() - 1) ? getLineGap() : 0));
+        }
+        return new Flow(horizontal ? new Size(mainExtent, crossCursor) : new Size(crossCursor, mainExtent), placements);
+    }
+
+    private static int saturated(long value) { return (int) Math.min(Integer.MAX_VALUE, Math.max(0, value)); }
+    private record Placement(Control child, Rect slot) { }
+    private record Flow(Size size, List<Placement> placements) { }
 
     private int[] allocateSizes(List<Control> active, Font font, int axis, int cross) {
         Orientation orientation = getOrientation();

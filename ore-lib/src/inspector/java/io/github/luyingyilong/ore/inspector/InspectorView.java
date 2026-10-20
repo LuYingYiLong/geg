@@ -1,4 +1,5 @@
 package io.github.luyingyilong.ore.inspector;
+import io.github.luyingyilong.ore.form.*;
 
 import io.github.luyingyilong.ore.signal.Signals;
 
@@ -255,7 +256,7 @@ public final class InspectorView {
                             if (!refreshing) apply(String.valueOf(value));
                         }));
                 checkbox = check;
-                form.addItem(new FormItem(property.name(), Component.empty(), check, () -> String.valueOf(check.getChecked())));
+                form.addItem(new FormItem<>(new FieldKey<>(property.name(), Boolean.class), Component.empty(), FormFields.checkbox(check)));
             } else if (property.kind().equals("enum")) {
                 Dropdown<String> choices = new Dropdown<>(String.valueOf(property.effective()), 6);
                 choices.setOptions(property.options().stream().map(option -> new Dropdown.Option<>(option, Component.literal(option))).toList());
@@ -263,7 +264,7 @@ public final class InspectorView {
                 choices.itemActivated().connect(choices, value -> {
                     if (!refreshing) apply(value);
                 });
-                form.addItem(new FormItem(property.name(), Component.literal(property.name()), choices, () -> choices.getSelected()));
+                form.addItem(new FormItem<>(new FieldKey<>(property.name(), String.class), Component.literal(property.name()), FormFields.dropdown(String.class, choices)));
             } else {
                 boolean integer = property.kind().equals("number") && !property.name().equals("color") && !property.name().equals("modulate")
                         && property.effective() instanceof Integer;
@@ -276,7 +277,9 @@ public final class InspectorView {
                 input.autoUpdateOnChange(true);
                 input.setTextNoSignal(String.valueOf(property.effective()));
                 observedText = input.getText();
-                form.addItem(new FormItem(property.name(), Component.literal(property.name()), input));
+                if (input instanceof NumberInput number)
+                    form.addItem(new FormItem<>(new FieldKey<>(property.name(), java.math.BigDecimal.class), Component.literal(property.name()), FormFields.number(number)));
+                else form.addItem(new FormItem<>(new FieldKey<>(property.name(), String.class), Component.literal(property.name()), FormFields.text(input)));
             }
             form.setVisible(true);
             body.addChild(form);
