@@ -85,6 +85,22 @@ public class Control implements SignalOwner {
         if(!Objects.equals(previous,value)) invalidateTheme(key.affectsLayout());
         return this;
     }
+    /**
+     * Returns this control's override for the exact item ID, or null if none is set.
+     * Does not resolve variations, inherited themes, explicit properties or fallback items.
+     * Use getThemeItem for the final effective value. Reading does not create theme subscriptions.
+     */
+    @org.jetbrains.annotations.Nullable
+    public final <T> T getThemeOverride(ThemeKey<T> key) {
+        signalScope.checkThread();
+        Objects.requireNonNull(key);
+        ThemeKey<T> declared = ThemeDB.getDefault().getKey(key.type(), key.name(), key.valueType());
+        if (declared.kind() != key.kind())
+            throw new IllegalArgumentException("Wrong theme item kind: " + key.getId());
+        for (var entry : themeOverrides.entrySet())
+            if (entry.getKey().getId().equals(key.getId())) return key.valueType().cast(entry.getValue());
+        return null;
+    }
     public Control removeThemeOverride(ThemeKey<?> key) {
         signalScope.checkThread(); if(themeOverrides.keySet().removeIf(k -> k.getId().equals(key.getId()))) invalidateTheme(key.affectsLayout()); return this;
     }

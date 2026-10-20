@@ -63,10 +63,14 @@ Theme theme = ThemeDB.getDefault().getTheme(ResourceLocation.parse("example:dark
 panel.setTheme(theme);
 label.setThemeTypeVariation("LabelSecondary");
 label.setThemeOverride(OreTheme.TEXT_COLOR, 0xFF8CB3FF);
+Integer localColor = label.getThemeOverride(OreTheme.TEXT_COLOR);
+int effectiveColor = label.getThemeItem(OreTheme.TEXT_COLOR);
 label.removeThemeOverride(OreTheme.TEXT_COLOR);
 ```
 
 `getTheme()` 只返回控件自身设置的主题，未设置时为 null。解析顺序为显式属性、局部覆盖、自身主题、最近到最远祖先主题、宿主默认主题、登记的安全默认值。每个主题资源优先尝试类型变体、控件类型和基础类型，再查资源父主题；缺失项继续回退。
+
+`getThemeOverride(ThemeKey<T>)` 类型安全地返回当前控件对该项的局部覆盖，未设置时返回 null（0、false 等已设置值照常返回）。它只按完整主题项 ID 查询，不解析类型变体、继承、显式属性或回退项，也不会建立主题订阅或使布局失效。要取得绘制实际使用的最终值，使用 `getThemeItem`；查询来源使用 `getThemeResolution`。所有查询和修改均在控件所属线程执行。
 
 内部部件继承其所有者。弹出菜单通过 `setThemeParent(trigger)` 继承触发控件，独立于 Overlay 的绘制父级；关系检查循环，销毁时解除。普通应用代码不需要为 Dropdown 手动设置该关系。
 

@@ -128,43 +128,6 @@ public final class Collapse extends Container {
         return this;
     }
 
-    public Padding.Insets getPadding() {
-        syncPadding();
-        return contentPadding.getInsets();
-    }
-
-    /**
-     * Explicit body padding overrides the theme until clearPadding is called.
-     */
-    public Collapse setPadding(Padding.Insets insets) {
-        requireAlive();
-        Objects.requireNonNull(insets);
-        PADDING_TOP.validate(insets.top());
-        PADDING_RIGHT.validate(insets.right());
-        PADDING_BOTTOM.validate(insets.bottom());
-        PADDING_LEFT.validate(insets.left());
-        setThemeProperty(PADDING_TOP, insets.top());
-        setThemeProperty(PADDING_RIGHT, insets.right());
-        setThemeProperty(PADDING_BOTTOM, insets.bottom());
-        setThemeProperty(PADDING_LEFT, insets.left());
-        syncPadding();
-        return this;
-    }
-
-    public Collapse setPadding(int top, int right, int bottom, int left) {
-        return setPadding(new Padding.Insets(top, right, bottom, left));
-    }
-
-    public Collapse clearPadding() {
-        requireAlive();
-        clearThemeProperty(PADDING_TOP);
-        clearThemeProperty(PADDING_RIGHT);
-        clearThemeProperty(PADDING_BOTTOM);
-        clearThemeProperty(PADDING_LEFT);
-        syncPadding();
-        return this;
-    }
-
     private void syncPadding() {
         contentPadding.setInsets(new Padding.Insets(getThemeItem(PADDING_TOP), getThemeItem(PADDING_RIGHT),
                 getThemeItem(PADDING_BOTTOM), getThemeItem(PADDING_LEFT)));

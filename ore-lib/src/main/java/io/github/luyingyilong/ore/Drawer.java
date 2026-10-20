@@ -179,12 +179,6 @@ public final class Drawer extends Container {
         return this;
     }
 
-    /** Effective theme spacing around the header, body and footer. */
-    public Padding.Insets getPadding() {
-        syncPadding();
-        return frame.getInsets();
-    }
-
     private void syncPadding() {
         frame.setInsets(new Padding.Insets(getThemeItem(PADDING_TOP), getThemeItem(PADDING_RIGHT),
                 getThemeItem(PADDING_BOTTOM), getThemeItem(PADDING_LEFT)));

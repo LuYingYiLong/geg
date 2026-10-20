@@ -41,9 +41,11 @@ public final class ContainerThemePaddingTest {
         drawerWindow.setTheme(theme);
         drawer.open();
         try {
-            check(collapse.getPadding().equals(new Padding.Insets(4, 8, 4, 8)), "Collapse defaults are wide horizontally");
+            check(padding(collapse).equals(new Padding.Insets(4, 8, 4, 8)), "Collapse defaults are wide horizontally");
             check(collapse.getThemeItem(Collapse.PANEL).getContentMargin().equals(ThemeInsets.ZERO), "no duplicate style padding");
-            check(drawer.getPadding().equals(Padding.Insets.all(4)), "Drawer default stays unchanged");
+            check(padding(drawer).equals(Padding.Insets.all(4)), "Drawer default stays unchanged");
+            check(collapse.getThemeOverride(Collapse.PADDING_LEFT) == null && drawer.getThemeOverride(Drawer.PADDING_LEFT) == null,
+                    "defaults are effective values, not local overrides");
             for (int width : new int[]{127, 128, 129, 640}) {
                 window.layoutViewport(width, 160, FONT);
                 check(content.getBounds().width() == width - 16, "default horizontal padding applied once");
@@ -70,34 +72,39 @@ public final class ContainerThemePaddingTest {
 
             collapse.setThemeOverride(Collapse.PADDING_LEFT, 13);
             drawer.setThemeOverride(Drawer.PADDING_LEFT, 13);
-            check(collapse.getPadding().left() == 13 && drawer.getPadding().left() == 13, "local overrides apply");
-            collapse.setPadding(1, 2, 3, 4);
+            check(collapse.getThemeOverride(Collapse.PADDING_LEFT) == 13 && drawer.getThemeOverride(Drawer.PADDING_LEFT) == 13, "local overrides can be queried");
+            collapse.setThemeOverride(Collapse.PADDING_TOP, 1);
+            collapse.setThemeOverride(Collapse.PADDING_RIGHT, 2);
+            collapse.setThemeOverride(Collapse.PADDING_BOTTOM, 3);
+            collapse.setThemeOverride(Collapse.PADDING_LEFT, 4);
             drawer.setThemeOverride(Drawer.PADDING_TOP, 1);
             drawer.setThemeOverride(Drawer.PADDING_RIGHT, 4);
             drawer.setThemeOverride(Drawer.PADDING_BOTTOM, 4);
             drawer.setThemeOverride(Drawer.PADDING_LEFT, 1);
             theme.set(Collapse.PADDING_LEFT, 20).set(Drawer.PADDING_LEFT, 20);
-            check(collapse.getPadding().equals(new Padding.Insets(1, 2, 3, 4)), "explicit Collapse spacing wins");
-            check(drawer.getPadding().equals(new Padding.Insets(1, 4, 4, 1)), "chat spacing uses local theme overrides");
+            check(padding(collapse).equals(new Padding.Insets(1, 2, 3, 4)), "Collapse spacing uses local theme overrides");
+            check(padding(drawer).equals(new Padding.Insets(1, 4, 4, 1)), "chat spacing uses local theme overrides");
+            window.layoutViewport(160, 160, FONT);
+            check(content.getBounds().width() == 154 && content.getAbsoluteBounds().x() == 4 && collapse.getVisibleBodyHeight() == 44,
+                    "four local overrides reach actual Collapse layout");
             drawerWindow.layoutViewport(160, 160, FONT);
             check(drawer.getBodyScroll().getAbsoluteBounds().equals(new Rect(81, 1, 75, 155)), "four local overrides reach actual Drawer layout");
             check(drawer.getThemeResolution(Drawer.PADDING_LEFT).sources().get(0).kind().equals("local override"), "Inspector identifies local override source");
-            collapse.clearPadding();
-            check(collapse.getPadding().left() == 13, "clear restores local override");
             collapse.removeThemeOverride(Collapse.PADDING_LEFT);
             drawer.removeThemeOverride(Drawer.PADDING_LEFT);
-            check(collapse.getPadding().left() == 20 && drawer.getPadding().left() == 20, "removing override restores latest inherited value");
+            check(collapse.getThemeOverride(Collapse.PADDING_LEFT) == null && drawer.getThemeOverride(Drawer.PADDING_LEFT) == null,
+                    "removing override clears its query result");
+            check(padding(collapse).left() == 20 && padding(drawer).left() == 20, "removing override restores latest inherited value");
 
-            Padding.Insets before = collapse.getPadding(), drawerBefore = drawer.getPadding();
-            rejects(() -> collapse.setPadding(1, 2, 3, -1));
-            rejects(() -> collapse.setPadding(1, 2, 3, Integer.MAX_VALUE));
+            Padding.Insets before = padding(collapse), drawerBefore = padding(drawer);
+            rejects(() -> collapse.setThemeOverride(Collapse.PADDING_LEFT, Integer.MAX_VALUE));
             rejects(() -> drawer.setThemeOverride(Drawer.PADDING_LEFT, Integer.MAX_VALUE));
             rejects(() -> collapse.setThemeOverride(Collapse.PADDING_TOP, -1));
             rejects(() -> drawer.setThemeOverride(Drawer.PADDING_BOTTOM, -1));
-            check(before.equals(collapse.getPadding()) && drawerBefore.equals(drawer.getPadding()), "invalid spacing leaves all sides unchanged");
+            check(before.equals(padding(collapse)) && drawerBefore.equals(padding(drawer)), "invalid spacing leaves all sides unchanged");
             check(collapse.getContent() == content && content.isAlive(), "spacing never replaces content");
-            for (var method : Drawer.class.getMethods())
-                check(!method.getName().equals("setPadding") && !method.getName().equals("clearPadding"), "Drawer padding is configured only through theme APIs");
+            for (Class<?> type : new Class<?>[]{Collapse.class, Drawer.class}) for (var method : type.getMethods())
+                check(!java.util.Set.of("setPadding", "clearPadding", "getPadding").contains(method.getName()), "container padding is configured and queried only through theme APIs");
         } finally {
             window.queueFree();drawerWindow.queueFree();LifecycleScheduler.flush();
         }
@@ -116,9 +123,9 @@ public final class ContainerThemePaddingTest {
                     "Drawer:padding_top", 7, "Drawer:padding_right", 10)));
             check(db.getDiagnostics().isEmpty(), "reloaded padding validates");
             window.layoutViewport(160, 100, FONT);drawerWindow.layoutViewport(160, 100, FONT);
-            check(collapse.getPadding().equals(new Padding.Insets(9, 8, 4, 12)), "Collapse resource reload");
+            check(padding(collapse).equals(new Padding.Insets(9, 8, 4, 12)), "Collapse resource reload");
             check(collapse.getVisibleBodyHeight() == 33, "reloaded spacing changes body height");
-            check(drawer.getPadding().equals(new Padding.Insets(7, 10, 4, 4)), "Drawer resource reload");
+            check(padding(drawer).equals(new Padding.Insets(7, 10, 4, 4)), "Drawer resource reload");
             check(drawer.getBodyScroll().getAbsoluteBounds().equals(new Rect(84, 7, 66, 89)), "Drawer reflows after reload");
             drawer.setThemeOverride(Drawer.PADDING_TOP, 1);
             drawer.setThemeOverride(Drawer.PADDING_RIGHT, 4);
@@ -126,12 +133,22 @@ public final class ContainerThemePaddingTest {
             drawer.setThemeOverride(Drawer.PADDING_LEFT, 1);
             db.reload(resources(Map.of("Drawer:padding_top", 20, "Drawer:padding_left", 15)));
             drawerWindow.layoutViewport(160, 100, FONT);
-            check(drawer.getPadding().equals(new Padding.Insets(1, 4, 4, 1)), "local spacing survives resource reload");
+            check(padding(drawer).equals(new Padding.Insets(1, 4, 4, 1)), "local spacing survives resource reload");
+            check(drawer.getThemeOverride(Drawer.PADDING_TOP) == 1 && drawer.getThemeOverride(Drawer.PADDING_LEFT) == 1,
+                    "override queries survive resource reload");
             check(drawer.getBodyScroll().getAbsoluteBounds().equals(new Rect(81, 1, 75, 95)), "reloaded Drawer keeps its local spacing geometry");
         } finally {
             window.queueFree();drawerWindow.queueFree();LifecycleScheduler.flush();
             db.reload(resources(Map.of()));
         }
+    }
+
+    private static Padding.Insets padding(Control control) {
+        ThemeDB db = ThemeDB.getDefault();String type = control.getThemeType();
+        return new Padding.Insets(control.getThemeItem(db.getKey(type, "padding_top", Integer.class)),
+                control.getThemeItem(db.getKey(type, "padding_right", Integer.class)),
+                control.getThemeItem(db.getKey(type, "padding_bottom", Integer.class)),
+                control.getThemeItem(db.getKey(type, "padding_left", Integer.class)));
     }
 
     private static ThemeDB.Resources resources(Map<String, Integer> overrides) {

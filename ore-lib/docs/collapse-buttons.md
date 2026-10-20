@@ -38,9 +38,13 @@ Collapse 和 Drawer 均注册 `padding_top`、`padding_right`、`padding_bottom`
 "Drawer:padding_left": 4
 ```
 
-Collapse 的 `setPadding(top, right, bottom, left)` 显式设置优先于主题，`clearPadding()` 恢复主题继承。Drawer 仅通过主题项配置内距，例如聊天抽屉：
+Collapse 和 Drawer 均只通过主题项配置内距，例如：
 
 ```java
+collapse.setThemeOverride(Collapse.PADDING_LEFT, 8);
+Integer localLeft = collapse.getThemeOverride(Collapse.PADDING_LEFT); // 当前控件覆盖值，未设置时为 null
+int effectiveLeft = collapse.getThemeItem(Collapse.PADDING_LEFT); // 包含继承和默认值回退
+
 drawer.setThemeOverride(Drawer.PADDING_TOP, 1);
 drawer.setThemeOverride(Drawer.PADDING_RIGHT, 4);
 drawer.setThemeOverride(Drawer.PADDING_BOTTOM, 4);
