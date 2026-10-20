@@ -26,7 +26,7 @@ public final class BadgeLayoutTest {
         check(badge.faceBounds(badge.getAbsoluteBounds()).equals(new Rect(8, 10, 12, 12)));
         check(badge.shadowBounds(badge.getAbsoluteBounds()).equals(new Rect(8, 22, 12, 1)));
         Label digits = (Label) badge.getChildren().get(0);
-        check(digits.getBounds().equals(new Rect(4, 0, 6, 12)) && digits.getOpticalCenter());
+        check(digits.getBounds().equals(new Rect(4, 1, 6, 10)) && digits.getOpticalCenter());
         for (long value : new long[]{0L, 7L, 42L, 99L, 100L}) {
             badge.setCount(value);
             Size natural = badge.measureSize(font, new Size(100, 30));
@@ -65,7 +65,7 @@ public final class BadgeLayoutTest {
         childContainer6.addChild(button);
         Window window = new Window(true).setContent(childContainer6);
         window.layoutViewport(200, 80, font);
-        check(badge.getBounds().right() == button.getSize().width() - Button.PADDING_X);
+        check(badge.getBounds().right() == button.getSize().width() - Button.NORMAL.defaultValue().getContentMargin().left());
         Rect normal = badge.getBounds();
         check(Math.abs(normal.y() * 2 + normal.height() - button.getSize().height()) <= 1);
         Rect click = badge.getAbsoluteBounds();

@@ -18,6 +18,7 @@ import java.util.*;
 public final class GalleryClientTest {
     private static int ticks,phase,index,at;
     private static boolean radioChecked;
+    private static boolean slotChecked;
     private static int collapsePhase;
     private static GalleryView view;
     private static Control previous;
@@ -36,6 +37,9 @@ public final class GalleryClientTest {
             }else if(phase==2&&ticks-at>4){
                 if(previous!=null && previous!=view.getSample())check(previous.isDisposed(),"Replaced sample freed at render safe point");
                 if(index==1)capture();
+                if(view.getSelected().equals("slot")&&!slotChecked) {
+                    slotThemePadding();slotChecked=true;
+                }
                 if(view.getSelected().equals("radio")&&!radioChecked) {
                     List<Radio> radios=radios(view.getSample());
                     System.out.println("ORE_RADIO_GEOMETRY "+io.github.luyingyilong.ore.event.EventGeometry.displayed(radios.get(0))+" clip="+io.github.luyingyilong.ore.event.EventGeometry.clip(radios.get(0)));
@@ -140,6 +144,23 @@ public final class GalleryClientTest {
                 System.out.println("ORE_GALLERY_CLIENT_PASS");mc.stop();
             }
         }catch(Throwable error){capture();phase=99;error.printStackTrace();System.out.println("ORE_GALLERY_CLIENT_FAIL");mc.stop();}
+    }
+    private static void slotThemePadding() {
+        // Slot needs the real item registry; this belongs in the client fixture, not the headless suite.
+        Slot slot=new Slot();var font=Minecraft.getInstance().font;
+        Button small=new Button(net.minecraft.network.chat.Component.literal("Small")).setSize(Button.Size.SMALL);
+        try {
+            check(small.measureHeight(font,200)==Button.Size.SMALL.getHeight(),"Real font leading preserves small Button height");
+            check(slot.measureSize(font,new Size(200,100)).equals(new Size(26,26)),"Slot keeps its default footprint");
+            slot.setThemeOverride(Slot.PADDING_LEFT,10).setThemeOverride(Slot.PADDING_RIGHT,8)
+                    .setThemeOverride(Slot.PADDING_TOP,6).setThemeOverride(Slot.PADDING_BOTTOM,9);
+            check(slot.measureSize(font,new Size(200,100)).equals(new Size(34,31)),"Slot measures themed item padding");
+            slot.setThemeOverride(Slot.COUNT_PADDING_LEFT,3).setThemeOverride(Slot.COUNT_PADDING_RIGHT,4)
+                    .setThemeOverride(Slot.COUNT_PADDING_TOP,8).setThemeOverride(Slot.COUNT_PADDING_BOTTOM,2);
+            slot.layout(new Rect(0,0,40,40),font);
+            check(slot.getChild(0).getBounds().equals(new Rect(3,8,33,30)),"Slot count uses its own theme area");
+            System.out.println("ORE_SLOT_THEME_PADDING_CLIENT_PASS");
+        } finally {slot.queueFree();small.queueFree();}
     }
     private static Control named(Control root,String name){if(root.getDebugName().equals(name))return root;for(Control child:root.getChildren()){Control result=named(child,name);if(result!=null)return result;}return null;}
     private static void clickControl(Control control){

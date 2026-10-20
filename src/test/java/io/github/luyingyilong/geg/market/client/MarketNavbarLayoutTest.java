@@ -38,12 +38,12 @@ public final class MarketNavbarLayoutTest {
                 check(action.getBounds().bottom() <= height);
                 check(navbar.hitTop(action.getBounds().x(), action.getBounds().y()) == action);
             }
-            if (height == Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING) check(title.getBounds().right() + 6 <= balance.getBounds().x());
+            if (height == Navbar.ROW_HEIGHT + Navbar.PADDING_BOTTOM.defaultValue()) check(title.getBounds().right() + 6 <= balance.getBounds().x());
             else check(balance.getBounds().y() >= Navbar.ROW_HEIGHT);
             int rows = width <= 129 ? 4 : width == 200 ? 3 : width < 640 ? 2 : 1;
-            check(height == rows * Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING);
+            check(height == rows * Navbar.ROW_HEIGHT + Navbar.PADDING_BOTTOM.defaultValue());
             for (Control action : new Control[]{balance, search, filter})
-                check(action.getBounds().bottom() <= height - Navbar.BOTTOM_PADDING);
+                check(action.getBounds().bottom() <= height - Navbar.PADDING_BOTTOM.defaultValue());
             if (balance.getBounds().y() == filter.getBounds().y())
                 check(search.getBounds().right() + 6 <= filter.getBounds().x());
             filter.setVisible(false);
@@ -56,7 +56,7 @@ public final class MarketNavbarLayoutTest {
         compact.addChild(search);
         compact.addChild(filter);
         Navbar navbar = new Navbar(Component.literal("Market")).setExtra(compact);
-        navbar.layout(new Rect(0, 0, 640, Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING), font);
+        navbar.layout(new Rect(0, 0, 640, Navbar.ROW_HEIGHT + Navbar.PADDING_BOTTOM.defaultValue()), font);
         check(search.getSize().height() == 18 && filter.getSize().height() == 20);
         check(search.getAbsoluteBounds().y() == filter.getAbsoluteBounds().y() + 1);
     }

@@ -190,7 +190,7 @@ public final class LabelLayoutTest {
             return true;
         });
         Button button = new Button(Component.literal("AB")).setHero(true);
-        check(button.getHero() && button.measureWidth(font, 100) == 8 + 2 * Button.PADDING_X);
+        check(button.getHero() && button.measureWidth(font, 100) == 8 + 2 * Button.NORMAL.defaultValue().getContentMargin().left());
     }
 
     private static String asString(FormattedCharSequence sequence) {

@@ -37,7 +37,7 @@ public final class Collapse extends Container {
     public static final ThemeKey<Integer> ANIMATION_DURATION = new ThemeKey<>("Collapse", "animation_duration", Integer.class, ThemeKey.Kind.INTEGER, 100, false, v -> v >= 0);
     private final Button header = new Button().setThemeTypeVariation("DarkButton").setAlignment(Button.TextAlignment.LEFT);
     private final Panel panel = new Panel(PANEL);
-    private final Padding contentPadding = new Padding(new Padding.Insets(4, 8, 4, 8));
+    private final Padding contentPadding = new Padding(Padding.Insets.all(0));
     private final BodyViewport body = new BodyViewport();
     private final SignalSource<Boolean> expandedChanged = new SignalSource<>(this, "expandedChanged", "Boolean");
     private final LongSupplier clock;

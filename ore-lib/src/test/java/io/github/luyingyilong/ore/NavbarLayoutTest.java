@@ -30,10 +30,10 @@ public final class NavbarLayoutTest {
             navbar.layout(new Rect(0, 0, width, height), font);
             check(title.getBounds().x() * 2 + title.getBounds().width() == width, "Title stays centered across the entire navbar");
             check(back.getBounds().x() == 0 && back.getSize().equals(new Size(22, 22)), "Back stays 22px square at the far left");
-            check(height == Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING && title.getBounds().height() == Navbar.ROW_HEIGHT,
+            check(height == Navbar.ROW_HEIGHT + Navbar.PADDING_BOTTOM.defaultValue() && title.getBounds().height() == Navbar.ROW_HEIGHT,
                     "The configured content row reserves the navbar's bottom padding");
             check(back.getBounds().y() == 0, "Back shrinks to the top of the content row");
-            check(back.getBounds().bottom() <= height - Navbar.BOTTOM_PADDING, "Navigation controls leave the bottom gap clear");
+            check(back.getBounds().bottom() <= height - Navbar.PADDING_BOTTOM.defaultValue(), "Navigation controls leave the bottom gap clear");
         }
         Control action = new Control().setMinimum(40, 20);
         navbar.setExtra(action);

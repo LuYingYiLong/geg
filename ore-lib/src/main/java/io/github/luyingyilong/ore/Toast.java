@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.theme.ThemeKey;
+import io.github.luyingyilong.ore.theme.ThemePadding;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.render.DrawContext;
@@ -17,11 +19,15 @@ import java.util.function.LongSupplier;
  * A non-interactive transient message, usable in Ore trees or through OreToasts.show.
  */
 public final class Toast extends Container {
+    private static final ThemePadding PADDING = ThemePadding.of("Toast", "", 2, 4, 2, 4);
+    public static final ThemeKey<Integer> PADDING_TOP = PADDING.top();
+    public static final ThemeKey<Integer> PADDING_RIGHT = PADDING.right();
+    public static final ThemeKey<Integer> PADDING_BOTTOM = PADDING.bottom();
+    public static final ThemeKey<Integer> PADDING_LEFT = PADDING.left();
+
     public static final long DEFAULT_DURATION = 3000L;
     public static final long ENTER_DURATION = 180L;
     public static final long EXIT_DURATION = 160L;
-    private static final int INSET_X = 4;
-    private static final int INSET_Y = 2;
     private final Label label = ownPart("label", new Label().setWrap(Label.Wrap.WORD).setMaxLines(3).setOverflow(Label.Overflow.ELLIPSIS)
             .setOpticalCenter(true).setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER));
     private final LongSupplier clock;
@@ -53,6 +59,7 @@ public final class Toast extends Container {
 
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
         io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Toast");
+        PADDING.register(db);
     }
 
     private static double easeIn(double phase) {
@@ -152,8 +159,10 @@ public final class Toast extends Container {
     @Override
     public Size measureSize(Font font, Size available) {
         if (!isAlive()) return new Size(0, 0);
-        int width = Math.max(0, Math.min(available.width(), label.measureWidth(font, available.width()) + INSET_X * 2));
-        int height = label.measureHeight(font, Math.max(1, width - INSET_X * 2)) + INSET_Y * 2;
+        var padding = PADDING.getInsets(this);
+        int width = Math.max(0, Math.min(available.width(), label.measureWidth(font,
+                Math.max(0, available.width() - padding.getHorizontal())) + padding.getHorizontal()));
+        int height = label.measureHeight(font, Math.max(1, width - padding.getHorizontal())) + padding.getVertical();
         return new Size(Math.max(getMinimumWidth(), width), Math.max(getMinimumHeight(), height));
     }
 
@@ -167,8 +176,7 @@ public final class Toast extends Container {
     }
 
     Rect textBounds(Rect area) {
-        return new Rect(area.x() + INSET_X, area.y() + INSET_Y,
-                Math.max(0, area.width() - INSET_X * 2), Math.max(0, area.height() - INSET_Y * 2));
+        return PADDING.getInsets(this).inset(area);
     }
 
     /**

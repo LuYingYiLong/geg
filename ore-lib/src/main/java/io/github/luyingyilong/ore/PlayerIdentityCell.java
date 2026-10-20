@@ -1,5 +1,6 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.theme.ThemeInsets;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.render.DrawContext;
 import net.minecraft.client.gui.Font;
@@ -15,14 +16,17 @@ import java.util.function.Function;
 public final class PlayerIdentityCell<T> implements Table.Cell<T> {
     private static final int AVATAR_SIZE = 16;
     private static final int GAP = 4;
-    private static final int INSET_X = 4;
-    private static final int INSET_Y = 2;
     private final Function<T, UUID> playerId;
     private final Function<T, String> playerName;
 
     public PlayerIdentityCell(Function<T, UUID> playerId, Function<T, String> playerName) {
         this.playerId = Objects.requireNonNull(playerId);
         this.playerName = Objects.requireNonNull(playerName);
+    }
+
+    private static ThemeInsets padding(Control owner) {
+        return new ThemeInsets(owner.getThemeItem(Table.CELL_PADDING_LEFT), owner.getThemeItem(Table.CELL_PADDING_TOP),
+                owner.getThemeItem(Table.CELL_PADDING_RIGHT), owner.getThemeItem(Table.CELL_PADDING_BOTTOM));
     }
 
     private static Label nameLabel() {
@@ -33,8 +37,8 @@ public final class PlayerIdentityCell<T> implements Table.Cell<T> {
     @Override
     public int measureHeight(Control owner, Font font, T row, int width) {
         int textHeight = font == null ? 0 : Label.measureTextHeight(owner, font, Component.literal(playerName.apply(row)),
-                Math.max(1, width - 2 * INSET_X - AVATAR_SIZE - GAP), Label.Wrap.CHARACTER, Label.Overflow.ELLIPSIS, 2);
-        return Math.max(AVATAR_SIZE, textHeight) + 2 * INSET_Y;
+                Math.max(1, width - padding(owner).getHorizontal() - AVATAR_SIZE - GAP), Label.Wrap.CHARACTER, Label.Overflow.ELLIPSIS, 2);
+        return Math.max(AVATAR_SIZE, textHeight) + padding(owner).getVertical();
     }
 
     @Override
@@ -65,7 +69,7 @@ public final class PlayerIdentityCell<T> implements Table.Cell<T> {
             var identityRow = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(GAP);
             identityRow.addChild(avatar);
             identityRow.addChild(name);
-            content = new Padding(new Padding.Insets(INSET_Y, INSET_X, INSET_Y, INSET_X)).setChild(identityRow);
+            content = new Padding(Padding.Insets.all(0)).setChild(identityRow);
             this.addChild(content);
         }
 
@@ -73,6 +77,8 @@ public final class PlayerIdentityCell<T> implements Table.Cell<T> {
         public void layout(Rect bounds, Font font) {
             if (!isAlive()) return;
             try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+                var insets = padding(this);
+                content.setInsets(new Padding.Insets(insets.top(), insets.right(), insets.bottom(), insets.left()));
                 super.layout(bounds, font);
                 fitChild(content, new Rect(0, 0, bounds.width(), bounds.height()), font);
 

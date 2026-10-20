@@ -6,6 +6,7 @@ import io.github.luyingyilong.ore.debug.DebugProperty;
 import io.github.luyingyilong.ore.debug.Inspectable;
 
 import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.ThemeKey;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -17,10 +18,10 @@ import java.util.Objects;
 public final class Scroll extends Container {
     @Override protected boolean requiresAxisAlignedClip() { return true; }
 
-    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Scroll"); }
+    public static final ThemeKey<Integer> TRACK_INSET = new ThemeKey<>(
+            "Scroll", "track_inset", Integer.class, ThemeKey.Kind.INTEGER, 2, false, value -> value >= 0 && value <= Integer.MAX_VALUE / 2);
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Scroll"); db.register(TRACK_INSET); }
     private static final int BAR_SIZE = 6;
-    private static final int TRACK_INSET = 2;
-    private static final int TRACK_COLOR = 0xFF58585A;
     private static final int MIN_GRABBER_LENGTH = 12;
     private VScrollBar verticalBar = new VScrollBar(this);
     private HScrollBar horizontalBar = new HScrollBar(this);
@@ -447,15 +448,16 @@ public final class Scroll extends Container {
         }
 
         /**
-         * The 2px end inset is visual only; the grabber still travels over the whole bar.
+         * The themed end inset is visual only; the grabber still travels over the whole bar.
          */
         Rect trackBounds() {
             Rect bar = getAbsoluteBounds();
-            if (owner.getEmbedded() || trackLength() <= 2 * TRACK_INSET)
+            int inset = owner.getThemeItem(TRACK_INSET);
+            if (owner.getEmbedded() || trackLength() <= 2 * inset)
                 return new Rect(bar.x(), bar.y(), 0, 0);
             return vertical
-                    ? new Rect(bar.x() + (BAR_SIZE - 2) / 2, bar.y() + TRACK_INSET, 2, bar.height() - 2 * TRACK_INSET)
-                    : new Rect(bar.x() + TRACK_INSET, bar.y() + (BAR_SIZE - 2) / 2, bar.width() - 2 * TRACK_INSET, 2);
+                    ? new Rect(bar.x() + (BAR_SIZE - 2) / 2, bar.y() + inset, 2, bar.height() - 2 * inset)
+                    : new Rect(bar.x() + inset, bar.y() + (BAR_SIZE - 2) / 2, bar.width() - 2 * inset, 2);
         }
 
         @Override

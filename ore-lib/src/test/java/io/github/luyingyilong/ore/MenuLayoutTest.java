@@ -47,7 +47,7 @@ public final class MenuLayoutTest {
         Box group = (Box) sections.getChildren().get(1);
         check(group.getAbsoluteBounds().y() == b.bottom() + 8, "Section gap");
         Padding heading = (Padding) group.getChildren().get(0);
-        check(heading.getInsets().equals(new Padding.Insets(0, Button.PADDING_X, 0, Button.PADDING_X)), "Heading inset");
+        check(heading.getInsets().equals(new Padding.Insets(0, Button.NORMAL.defaultValue().getContentMargin().left(), 0, Button.NORMAL.defaultValue().getContentMargin().left())), "Heading inset");
         check(group.getChildren().get(1) instanceof Divider && group.getChildren().get(1).getSize().height() == 2, "Themed divider");
         check(menu.getButton("third").getAbsoluteBounds().y() == group.getChildren().get(1).getAbsoluteBounds().bottom(), "Group children");
         check(menu.getButton("third").getThemeTypeVariation().equals("MenuButton"), "Real MENU buttons");

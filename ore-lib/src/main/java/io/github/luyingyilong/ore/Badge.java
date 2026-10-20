@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.theme.ThemeKey;
+import io.github.luyingyilong.ore.theme.ThemePadding;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.theme.OreTheme;
@@ -12,10 +14,15 @@ import java.util.Objects;
  * Non-interactive right-side indicator: null count is a dot, including zero displays a number.
  */
 public final class Badge extends Container {
+    private static final ThemePadding PADDING = ThemePadding.of("Badge", "", 1, 2, 1, 2);
+    public static final ThemeKey<Integer> PADDING_TOP = PADDING.top();
+    public static final ThemeKey<Integer> PADDING_RIGHT = PADDING.right();
+    public static final ThemeKey<Integer> PADDING_BOTTOM = PADDING.bottom();
+    public static final ThemeKey<Integer> PADDING_LEFT = PADDING.left();
+
     public static final int DOT_SIZE = 3;
     public static final int MIN_COUNT_SIZE = 12;
     public static final int SHADOW_HEIGHT = 1;
-    private static final int PADDING_X = 2;
     // Mojangles digits are seven pixels high; their advance includes one trailing spacing pixel.
     private static final int TRAILING_SPACING = 1;
     private final Label label = ownPart("label", new Label().setOpticalCenter(true).setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER));
@@ -38,6 +45,7 @@ public final class Badge extends Container {
 
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
         io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Badge");
+        PADDING.register(db);
     }
 
     @Override
@@ -107,8 +115,9 @@ public final class Badge extends Container {
         if (!isAlive()) return new Size(0, 0);
         int width = DOT_SIZE, height = DOT_SIZE;
         if (count != null) {
-            width = Math.max(MIN_COUNT_SIZE, label.measureWidth(font, Integer.MAX_VALUE) + 2 * PADDING_X);
-            height = Math.max(MIN_COUNT_SIZE, label.lineHeight(font) + 2);
+            var padding = PADDING.getInsets(this);
+            width = Math.max(MIN_COUNT_SIZE, label.measureWidth(font, Integer.MAX_VALUE) + padding.getHorizontal());
+            height = Math.max(MIN_COUNT_SIZE, label.lineHeight(font) + padding.getVertical());
         }
         return new Size(Math.max(super.measureWidth(font, available.width()), width),
                 Math.max(super.measureHeight(font, available.height()), height + SHADOW_HEIGHT));
@@ -132,11 +141,12 @@ public final class Badge extends Container {
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(bounds, font);
             Rect face = faceBounds(new Rect(0, 0, bounds.width(), bounds.height()));
+            Rect content = PADDING.getInsets(this).inset(face);
             int advance = label.measureWidth(font, Integer.MAX_VALUE);
             int inkWidth = Math.max(0, advance - TRAILING_SPACING);
             // Center the visible number, excluding both the line's leading and the badge's shadow.
-            layoutChild(label, new Rect(Math.round((face.width() - inkWidth) / 2.0F),
-                    0, advance, face.height()), font);
+            layoutChild(label, new Rect(content.x() + Math.round((content.width() - inkWidth) / 2.0F),
+                    content.y(), advance, content.height()), font);
         }
     }
 

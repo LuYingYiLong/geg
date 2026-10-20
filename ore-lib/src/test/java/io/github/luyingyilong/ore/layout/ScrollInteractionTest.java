@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore.layout;
 
+import io.github.luyingyilong.ore.event.WindowInputs;
+
 /** Exercise pointer capture through the same Window entrypoints used by all three screens. */
 public final class ScrollInteractionTest {
     public static void main(String[] args) {
@@ -55,6 +57,30 @@ public final class ScrollInteractionTest {
             }
         }
         nestedScroll();
+        themedTrackInset();
+    }
+
+    private static void themedTrackInset() {
+        Scroll scroll = new Scroll().setEmbedded(false).setContent(new Control().setMinimum(300, 400));
+        Window window = Window.embedded().setContent(scroll);
+        try {
+            window.layoutViewport(100, 80, null);
+            Rect vertical = scroll.getVerticalBar().grabberBounds(), horizontal = scroll.getHorizontalBar().grabberBounds();
+            scroll.setThemeOverride(Scroll.TRACK_INSET, 9);
+            Rect vbar = scroll.getVerticalBar().getAbsoluteBounds(), hbar = scroll.getHorizontalBar().getAbsoluteBounds();
+            check(scroll.getVerticalBar().trackBounds().y() == vbar.y() + 9
+                    && scroll.getVerticalBar().trackBounds().height() == vbar.height() - 18, "Themed vertical track inset");
+            check(scroll.getHorizontalBar().trackBounds().x() == hbar.x() + 9
+                    && scroll.getHorizontalBar().trackBounds().width() == hbar.width() - 18, "Themed horizontal track inset");
+            check(scroll.getVerticalBar().grabberBounds().equals(vertical) && scroll.getHorizontalBar().grabberBounds().equals(horizontal),
+                    "Visual track inset does not shrink grabber travel or hit bounds");
+            WindowInputs.press(window, vertical.x() + 1, vertical.y() + 1, null);
+            WindowInputs.move(window, vertical.x() + 1, 500);
+            WindowInputs.release(window, vertical.x() + 1, 500);
+            check(scroll.getScrollY() == scroll.getMaxScrollY(), "Themed track still permits full drag travel");
+            scroll.setEmbedded(true);
+            check(scroll.getVerticalBar().trackBounds().height() == 0, "Embedded bars still omit the visual track");
+        } finally { window.queueFree();LifecycleScheduler.flush(); }
     }
 
     private static int positionAfterDrag(Scroll scroll, Scroll.ScrollBar bar, int delta, boolean vertical) {

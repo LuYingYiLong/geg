@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.theme.ThemeInsets;
+import io.github.luyingyilong.ore.theme.ThemePadding;
 import io.github.luyingyilong.ore.theme.IconTheme;
 import io.github.luyingyilong.ore.theme.ThemeDB;
 import io.github.luyingyilong.ore.theme.ThemeKey;
@@ -20,20 +22,25 @@ import java.util.List;
  * A centered navigation title, optional back action, and right-aligned actions that wrap.
  */
 public final class Navbar extends Container {
+    private static final ThemePadding PADDING = ThemePadding.of("Navbar", "", 0, 0, 3, 0);
+    public static final ThemeKey<Integer> PADDING_TOP = PADDING.top();
+    public static final ThemeKey<Integer> PADDING_RIGHT = PADDING.right();
+    public static final ThemeKey<Integer> PADDING_BOTTOM = PADDING.bottom();
+    public static final ThemeKey<Integer> PADDING_LEFT = PADDING.left();
+
 
     public static final ThemeKey<TextureRegion> BACK_ICON = IconTheme.item("Navbar", "back_icon", IconTheme.ARROW_LEFT);
 
     public static void registerTheme(ThemeDB db) {
         OreTheme.registerType(db, "Navbar");
+        PADDING.register(db);
         IconTheme.registerTheme(db);
         db.register(BACK_ICON);
         db.registerFallback(BACK_ICON, IconTheme.ARROW_LEFT);
     }
 
     public static final int ROW_HEIGHT = 24;
-    public static final int BOTTOM_PADDING = 3;
     private static final int GAP = 6;
-    private static final int PADDING = 0;
     private static final int BACK_BUTTON_SIZE = 22;
     private final Label title = new Label().setThemeTypeVariation("NavbarTitle").setOpticalCenter(true).setOverflow(Label.Overflow.ELLIPSIS)
             .setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER);
@@ -134,7 +141,7 @@ public final class Navbar extends Container {
     }
 
     private Arrangement arrange(Font font, int outerWidth) {
-        int width = Math.max(0, outerWidth - PADDING * 2);
+        int width = Math.max(0, outerWidth);
         List<Control> active = extra.stream().filter(c -> c.isAlive() && c.getVisible()).toList();
         int minimum = active.stream().mapToInt(Control::getMinimumWidth).sum()
                 + Math.max(0, active.size() - 1) * GAP;
@@ -174,7 +181,8 @@ public final class Navbar extends Container {
     @Override
     public int measureHeight(Font font, int available) {
         if (!isAlive()) return 0;
-        return Math.max(getMinimumHeight(), arrange(font, Math.max(0, available - getThemeItem(OreTheme.HEADER_PANEL).getContentMargin().getHorizontal())).height() + BOTTOM_PADDING + getThemeItem(OreTheme.HEADER_PANEL).getContentMargin().getVertical());
+        var insets = contentInsets();
+        return Math.max(getMinimumHeight(), arrange(font, Math.max(0, available - insets.getHorizontal())).height() + insets.getVertical());
     }
 
     @Override
@@ -188,9 +196,9 @@ public final class Navbar extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(bounds, font);
-            var margin = getThemeItem(OreTheme.HEADER_PANEL).getContentMargin();
-            int width = Math.max(0, bounds.width() - PADDING * 2 - margin.getHorizontal());
-            Arrangement arrangement = arrange(font, Math.max(0, bounds.width() - margin.getHorizontal()));
+            var margin = contentInsets();
+            int width = Math.max(0, bounds.width() - margin.getHorizontal());
+            Arrangement arrangement = arrange(font, width);
             int reserve = Math.min(backReserve(), width / 2);
             int y = arrangement.inline() ? 0 : titleRowHeight(font);
             for (Row row : arrangement.rows()) {
@@ -199,18 +207,18 @@ public final class Navbar extends Container {
                     int titleWidth = font == null ? title.getMinimumWidth() : title.measureWidth(font, width);
                     limit = Math.max(0, (width - titleWidth) / 2 - GAP);
                 }
-                int used = layoutRow(row, font, width, limit, y + margin.top());
+                int used = layoutRow(row, font, width, limit, margin.left(), y + margin.top());
                 if (arrangement.inline() && !row.controls().isEmpty()) reserve = Math.max(reserve, used + GAP);
                 y += row.height();
             }
             int titleHeight = arrangement.inline() ? arrangement.height() : titleRowHeight(font);
-            fitChild(title, new Rect(PADDING + margin.left() + reserve, margin.top(), Math.max(0, width - 2 * reserve), titleHeight), font);
+            fitChild(title, new Rect(margin.left() + reserve, margin.top(), Math.max(0, width - 2 * reserve), titleHeight), font);
             if (getShowBackButton())
-                fitChild(back, new Rect(PADDING + margin.left(), margin.top(), BACK_BUTTON_SIZE, titleHeight), font);
+                fitChild(back, new Rect(margin.left(), margin.top(), BACK_BUTTON_SIZE, titleHeight), font);
         }
     }
 
-    private int layoutRow(Row row, Font font, int width, int limit, int y) {
+    private int layoutRow(Row row, Font font, int width, int limit, int left, int y) {
         int[] widths = row.controls().stream().mapToInt(Control::getMinimumWidth).toArray();
         int used = Math.max(0, widths.length - 1) * GAP;
         for (int value : widths) used += value;
@@ -222,7 +230,7 @@ public final class Navbar extends Container {
             remaining -= growth;
             used += growth;
         }
-        int x = PADDING + Math.max(0, width - used);
+        int x = left + Math.max(0, width - used);
         for (int index = 0; index < widths.length; index++) {
             Control control = row.controls().get(index);
             int height = Math.max(control.getMinimumHeight(), control.measureSize(font,
@@ -237,7 +245,14 @@ public final class Navbar extends Container {
     protected void render(DrawContext context, int screenX, int screenY) {
         if (background == null) background = ownPart("background", new Panel(OreTheme.HEADER_PANEL));
         Rect area = getScreenBounds(screenX, screenY);
-        background.drawAt(context, new Rect(area.x(), area.y(), area.width(), Math.max(0, area.height() - BOTTOM_PADDING)));
+        background.drawAt(context, new Rect(area.x(), area.y(), area.width(), Math.max(0, area.height() - getThemeItem(PADDING_BOTTOM))));
+    }
+
+    private ThemeInsets contentInsets() {
+        var padding = PADDING.getInsets(this);
+        var margin = getThemeItem(OreTheme.HEADER_PANEL).getContentMargin();
+        return new ThemeInsets(padding.left() + margin.left(), padding.top() + margin.top(),
+                padding.right() + margin.right(), padding.bottom() + margin.bottom());
     }
 
     private record Row(List<Control> controls, int height) {

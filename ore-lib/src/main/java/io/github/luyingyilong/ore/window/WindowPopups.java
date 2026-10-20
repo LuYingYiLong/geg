@@ -109,16 +109,19 @@ public final class WindowPopups {
                 if(node instanceof Drawer drawer){available=EventGeometry.intersect(available,drawer.getPanelBounds());break;}
                 else if(node instanceof Modal modal){available=EventGeometry.intersect(available,modal.getPanelBounds());break;}
                 else if(node instanceof Dialog dialog){available=EventGeometry.intersect(available,dialog.getPanelBounds());break;}
+            var margin = getThemeItem(OreTheme.DROPDOWN_PANEL).getContentMargin();
+            int left = getThemeItem(Dropdown.PADDING_LEFT) + margin.left(), right = getThemeItem(Dropdown.PADDING_RIGHT) + margin.right();
+            int top = getThemeItem(Dropdown.PADDING_TOP) + margin.top(), bottom = getThemeItem(Dropdown.PADDING_BOTTOM) + margin.bottom();
             int width=anchor.width();
-            if(font!=null)for(Control child:items.getChildren())width=Math.max(width,child.measureWidth(font,Integer.MAX_VALUE)+2);
+            if(font!=null)for(Control child:items.getChildren())width=Math.max(width,child.measureWidth(font,Integer.MAX_VALUE)+left+right);
             width=Math.min(width,available.width());
-            int wanted=2+Math.min(options.size(),trigger.getMaxVisibleItems())*(trigger.getControlSize().getHeight()-1)+1;
+            int wanted=top+bottom+Math.max(0,Math.min(options.size(),trigger.getMaxVisibleItems())*(items.itemHeight(font)-Dropdown.ITEM_OVERLAP)+Dropdown.ITEM_OVERLAP);
             int below=available.bottom()-anchor.bottom(),above=anchor.y()-available.y();
             int height=Math.min(wanted,Math.max(0,Math.max(below,above)));
             int y=below>=wanted||below>=above?anchor.bottom():anchor.y()-height;
             int x=Math.max(available.x(),Math.min(anchor.right()-width,available.right()-width));
             layoutChild(panel,new Rect(x,y,width,height),font);
-            scroll.layout(new Rect(1,1,Math.max(0,width-2),Math.max(0,height-2)),font);
+            scroll.layout(new Rect(left,top,Math.max(0,width-left-right),Math.max(0,height-top-bottom)),font);
         }
         @Override protected void drawContent(DrawContext mui, int x, int y){
             layout(context.getOwner().getBounds(),mui.getFont());
@@ -126,10 +129,15 @@ public final class WindowPopups {
             try{g.pose().translate(0,0,6500);super.drawContent(mui,x,y);g.flush();}finally{g.pose().popPose();}
         }
         private final class Items extends Container {
-            @Override public int measureHeight(Font font,int available){return Math.max(0,options.size()*(trigger.getControlSize().getHeight()-1)+1);}
+            int itemHeight(Font font) {
+                int height = trigger.getControlSize().getHeight();
+                for (Control child : getChildren()) height = Math.max(height, child.measureHeight(font, Integer.MAX_VALUE));
+                return height;
+            }
+            @Override public int measureHeight(Font font,int available){return Math.max(0,options.size()*(itemHeight(font)-Dropdown.ITEM_OVERLAP)+Dropdown.ITEM_OVERLAP);}
             @Override public void layout(Rect bounds,Font font){
-                super.layout(bounds,font);int y=0;
-                for(Control child:getChildren()){layoutChild(child,new Rect(0,y,bounds.width(),trigger.getControlSize().getHeight()),font);y+=trigger.getControlSize().getHeight()-1;}
+                super.layout(bounds,font);int y=0, height=itemHeight(font);
+                for(Control child:getChildren()){layoutChild(child,new Rect(0,y,bounds.width(),height),font);y+=height-Dropdown.ITEM_OVERLAP;}
             }
         }
     }

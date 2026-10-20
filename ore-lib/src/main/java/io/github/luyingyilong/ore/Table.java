@@ -1,5 +1,8 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.theme.ThemeInsets;
+import io.github.luyingyilong.ore.theme.ThemeKey;
+import io.github.luyingyilong.ore.theme.ThemePadding;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.render.DrawContext;
@@ -21,11 +24,31 @@ import java.util.function.Supplier;
  * Fixed-header table whose rows use the Ore bar theme and shared draw/hit geometry.
  */
 public final class Table<T> extends Container {
+    private static final ThemePadding COMPACT_PADDING = ThemePadding.of("Table", "compact_", 4, 4, 4, 4);
+    public static final ThemeKey<Integer> COMPACT_PADDING_TOP = COMPACT_PADDING.top();
+    public static final ThemeKey<Integer> COMPACT_PADDING_RIGHT = COMPACT_PADDING.right();
+    public static final ThemeKey<Integer> COMPACT_PADDING_BOTTOM = COMPACT_PADDING.bottom();
+    public static final ThemeKey<Integer> COMPACT_PADDING_LEFT = COMPACT_PADDING.left();
+    private static final ThemePadding CELL_PADDING = ThemePadding.of("Table", "cell_", 2, 4, 2, 4);
+    public static final ThemeKey<Integer> CELL_PADDING_TOP = CELL_PADDING.top();
+    public static final ThemeKey<Integer> CELL_PADDING_RIGHT = CELL_PADDING.right();
+    public static final ThemeKey<Integer> CELL_PADDING_BOTTOM = CELL_PADDING.bottom();
+    public static final ThemeKey<Integer> CELL_PADDING_LEFT = CELL_PADDING.left();
+    private static final ThemePadding HEADER_PADDING = ThemePadding.of("Table", "header_", 0, 4, 0, 4);
+    public static final ThemeKey<Integer> HEADER_PADDING_TOP = HEADER_PADDING.top();
+    public static final ThemeKey<Integer> HEADER_PADDING_RIGHT = HEADER_PADDING.right();
+    public static final ThemeKey<Integer> HEADER_PADDING_BOTTOM = HEADER_PADDING.bottom();
+    public static final ThemeKey<Integer> HEADER_PADDING_LEFT = HEADER_PADDING.left();
+    private static final ThemePadding EMPTY_PADDING = ThemePadding.of("Table", "empty_", 8, 2, 0, 2);
+    public static final ThemeKey<Integer> EMPTY_PADDING_TOP = EMPTY_PADDING.top();
+    public static final ThemeKey<Integer> EMPTY_PADDING_RIGHT = EMPTY_PADDING.right();
+    public static final ThemeKey<Integer> EMPTY_PADDING_BOTTOM = EMPTY_PADDING.bottom();
+    public static final ThemeKey<Integer> EMPTY_PADDING_LEFT = EMPTY_PADDING.left();
+
     @Override protected boolean requiresAxisAlignedClip() { return true; }
 
     private static final int HEADER_HEIGHT = 19;
     private static final int ROW_HEIGHT = 23;
-    private static final int COMPACT_INSET = 4;
     private static final int COMPACT_LABEL_HEIGHT = 10;
     private final List<Column<T>> columns = new ArrayList<>();
     private final Map<String, Label> headerLabels = new HashMap<>();
@@ -48,6 +71,7 @@ public final class Table<T> extends Container {
     private boolean compact;
     private boolean headerVisible = true;
     private boolean dirty = true;
+    private List<ThemeInsets> layoutPadding = List.of();
     private boolean resetScroll;
     private Object anchorKey;
     private int anchorOffset;
@@ -65,7 +89,7 @@ public final class Table<T> extends Container {
     }
 
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
-        io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Table");
+        io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Table"); COMPACT_PADDING.register(db); CELL_PADDING.register(db); HEADER_PADDING.register(db); EMPTY_PADDING.register(db);
     }
 
     @Override
@@ -187,9 +211,9 @@ public final class Table<T> extends Container {
                 getAbsoluteBounds().y() + getHeaderHeight() - scroll);
         bounds = rowContent(bounds);
         if (compact) {
-            int x = bounds.x() + COMPACT_INSET;
-            int width = Math.max(0, bounds.width() - 2 * COMPACT_INSET);
-            int y = bounds.y() + COMPACT_INSET;
+            int x = bounds.x() + getThemeItem(COMPACT_PADDING_LEFT);
+            int width = Math.max(0, bounds.width() - COMPACT_PADDING.getInsets(Table.this).getHorizontal());
+            int y = bounds.y() + getThemeItem(COMPACT_PADDING_TOP);
             for (Column<T> column : columns) {
                 y += COMPACT_LABEL_HEIGHT;
                 int height = compactCellHeight(column, row.item(), lastFont, width);
@@ -308,7 +332,9 @@ public final class Table<T> extends Container {
     }
 
     public int getHeaderHeight() {
-        return !headerVisible || compact ? 0 : HEADER_HEIGHT;
+        if (!headerVisible || compact) return 0;
+        int lineHeight = lastFont == null ? 0 : headerLabels.values().stream().mapToInt(label -> label.lineHeight(lastFont)).max().orElse(0);
+        return Math.max(HEADER_HEIGHT, lineHeight + HEADER_PADDING.getInsets(this).getVertical());
     }
 
     public List<Row<T>> getLayoutRows() {
@@ -372,6 +398,13 @@ public final class Table<T> extends Container {
     public void layout(Rect localBounds, Font font) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            var padding = List.of(COMPACT_PADDING.getInsets(this), CELL_PADDING.getInsets(this), HEADER_PADDING.getInsets(this),
+                    getThemeItem(OreTheme.BAR).getContentMargin());
+            if (!padding.equals(layoutPadding)) {
+                if (!dirty && !resetScroll) saveAnchor();
+                layoutPadding = padding;
+                dirty = true;
+            }
             // Scroll may lay out this table several times while resolving scrollbar space.
             // Resizing does not invalidate a retained cell's press/release gesture.
             if (!getBounds().equals(localBounds)) gesture.cancel();
@@ -534,8 +567,8 @@ public final class Table<T> extends Container {
     }
 
     private int compactRowHeight(T item, Font font) {
-        int contentWidth = Math.max(0, getBounds().width() - 2 * COMPACT_INSET - getThemeItem(OreTheme.BAR).getContentMargin().getHorizontal());
-        int height = 2 * COMPACT_INSET + getThemeItem(OreTheme.BAR).getContentMargin().getVertical();
+        int contentWidth = Math.max(0, getBounds().width() - COMPACT_PADDING.getInsets(Table.this).getHorizontal() - getThemeItem(OreTheme.BAR).getContentMargin().getHorizontal());
+        int height = COMPACT_PADDING.getInsets(Table.this).getVertical() + getThemeItem(OreTheme.BAR).getContentMargin().getVertical();
         for (Column<T> column : columns)
             height += COMPACT_LABEL_HEIGHT + compactCellHeight(column, item, font, contentWidth);
         return height;
@@ -558,8 +591,8 @@ public final class Table<T> extends Container {
             context.enableScissor(body.x(), body.y(), body.right(), body.bottom());
             DebugBridge.backend().clip(context.toScreenRect(body));
             if (rows.isEmpty()) {
-                drawText(this, "empty", emptyLabel.setText(empty), context, new Rect(body.x() + 2, body.y() + 8,
-                        Math.max(0, body.width() - 4), 12));
+                Rect inner = EMPTY_PADDING.getInsets(this).inset(body);
+                drawText(this, "empty", emptyLabel.setText(empty), context, new Rect(inner.x(), inner.y(), inner.width(), Math.min(12, inner.height())));
             } else {
                 for (Row<T> row : getVisibleRows()) {
                     RowView view = activeViews.get(row.index());
@@ -576,7 +609,7 @@ public final class Table<T> extends Container {
         for (int index = 0; index < columns.size(); index++) {
             Column<T> column = columns.get(index);
             drawText(this, "header_" + column.key, headerLabels.get(column.key), context,
-                    new Rect(x + 4, area.y(), Math.max(0, columnWidths[index] - 8), HEADER_HEIGHT));
+                    HEADER_PADDING.getInsets(this).inset(new Rect(x, area.y(), columnWidths[index], getHeaderHeight())));
             x += columnWidths[index];
         }
     }
@@ -626,9 +659,9 @@ public final class Table<T> extends Container {
 
     private void drawCompactRow(DrawContext context, T item, Rect row, RowView view) {
         row = rowContent(row);
-        int x = row.x() + COMPACT_INSET;
-        int width = Math.max(0, row.width() - 2 * COMPACT_INSET);
-        int y = row.y() + COMPACT_INSET;
+        int x = row.x() + getThemeItem(COMPACT_PADDING_LEFT);
+        int width = Math.max(0, row.width() - COMPACT_PADDING.getInsets(Table.this).getHorizontal());
+        int y = row.y() + getThemeItem(COMPACT_PADDING_TOP);
         for (Column<T> column : columns) {
             drawText(view, "caption_" + column.key, view.captions.get(column.key), context,
                     new Rect(x, y, width, COMPACT_LABEL_HEIGHT));
@@ -665,9 +698,9 @@ public final class Table<T> extends Container {
                 getAbsoluteBounds().y() + getHeaderHeight() - scroll);
         bounds = rowContent(bounds);
         if (compact) {
-            int x = bounds.x() + COMPACT_INSET;
-            int width = Math.max(0, bounds.width() - 2 * COMPACT_INSET);
-            int y = bounds.y() + COMPACT_INSET;
+            int x = bounds.x() + getThemeItem(COMPACT_PADDING_LEFT);
+            int width = Math.max(0, bounds.width() - COMPACT_PADDING.getInsets(Table.this).getHorizontal());
+            int y = bounds.y() + getThemeItem(COMPACT_PADDING_TOP);
             for (Column<T> column : columns) {
                 y += COMPACT_LABEL_HEIGHT;
                 int height = compactCellHeight(column, row.item(), lastFont, width);
@@ -734,11 +767,11 @@ public final class Table<T> extends Container {
         Rect bounds = row.bounds().translated(getAbsoluteBounds().x(), getAbsoluteBounds().y() + getHeaderHeight() - scroll);
         bounds = rowContent(bounds);
         if (compact) {
-            int y = bounds.y() + COMPACT_INSET;
+            int y = bounds.y() + getThemeItem(COMPACT_PADDING_TOP);
             for (Column<T> column : columns) {
                 y += COMPACT_LABEL_HEIGHT;
-                int height = compactCellHeight(column, row.item(), lastFont, Math.max(0, bounds.width() - 2 * COMPACT_INSET));
-                if (new Rect(bounds.x() + COMPACT_INSET, y, Math.max(0, bounds.width() - 2 * COMPACT_INSET), height)
+                int height = compactCellHeight(column, row.item(), lastFont, Math.max(0, bounds.width() - COMPACT_PADDING.getInsets(Table.this).getHorizontal()));
+                if (new Rect(bounds.x() + getThemeItem(COMPACT_PADDING_LEFT), y, Math.max(0, bounds.width() - COMPACT_PADDING.getInsets(Table.this).getHorizontal()), height)
                         .contains(rootX, rootY)) return new PressTarget(row.key(), column.key, -1, row.item());
                 y += height;
             }
@@ -844,8 +877,6 @@ public final class Table<T> extends Container {
         private Label.Horizontal horizontal = Label.Horizontal.LEFT;
         private Label.Vertical vertical = Label.Vertical.CENTER;
         private int maxLines = Integer.MAX_VALUE;
-        private int horizontalInset = 4;
-        private int verticalInset = 2;
 
         public TextCell(Function<T, Component> text) {
             this.text = Objects.requireNonNull(text);
@@ -879,18 +910,11 @@ public final class Table<T> extends Container {
             return this;
         }
 
-        public TextCell<T> setInset(int horizontal, int vertical) {
-            if (horizontal < 0 || vertical < 0) throw new IllegalArgumentException("Negative cell inset");
-            horizontalInset = horizontal;
-            verticalInset = vertical;
-            return this;
-        }
-
         @Override
         public int measureHeight(Control owner, Font font, T row, int width) {
-            if (font == null) return 0;
-            return Label.measureTextHeight(owner, font, text.apply(row), Math.max(1, width - 2 * horizontalInset), wrap, overflow, maxLines)
-                    + 2 * verticalInset;
+            if (font == null) return CELL_PADDING.getInsets(owner).getVertical();
+            return Label.measureTextHeight(owner, font, text.apply(row), Math.max(1, width - CELL_PADDING.getInsets(owner).getHorizontal()), wrap, overflow, maxLines)
+                    + CELL_PADDING.getInsets(owner).getVertical();
         }
 
         @Override
@@ -902,21 +926,19 @@ public final class Table<T> extends Container {
         public Control createControl() {
             Label label = new Label().setOverflow(overflow).setWrap(wrap).setMaxLines(maxLines).setAlignment(horizontal, vertical);
             if (color != null) label.setColor(color);
-            return new Padding(insets()).setChild(label);
+            return new Padding(Padding.Insets.all(0)).setChild(label);
         }
 
         @Override
         public void bindControl(Control control, T row) {
             Padding padding = (Padding) control;
-            padding.setInsets(insets());
+            padding.setInsets(CELL_PADDING.getLayoutInsets(control));
             Label label = (Label) padding.getChild(0);
             label.setText(Objects.requireNonNull(text.apply(row))).setOverflow(overflow).setWrap(wrap).setMaxLines(maxLines).setAlignment(horizontal, vertical);
             if (color != null) label.setColor(color);
         }
 
-        private Padding.Insets insets() {
-            return new Padding.Insets(verticalInset, horizontalInset, verticalInset, horizontalInset);
-        }
+
     }
 
     public static final class Column<T> {
@@ -1001,7 +1023,7 @@ public final class Table<T> extends Container {
                         this.addChild(control);
                     }
                 }
-                if (control != null) column.cell.bindControl(control, row.item());
+                if (control != null) { control.setThemeParent(Table.this); column.cell.bindControl(control, row.item()); }
             }
             int childIndex = 0;
             for (Column<T> column : columns) {
@@ -1016,11 +1038,11 @@ public final class Table<T> extends Container {
             try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
                 super.layout(bounds, font);
                 Rect inner = rowContent(new Rect(0, 0, bounds.width(), bounds.height()));
-                int x = inner.x() + (compact ? COMPACT_INSET : 0);
-                int y = inner.y() + (compact ? COMPACT_INSET : 0);
+                int x = inner.x() + (compact ? Table.this.getThemeItem(COMPACT_PADDING_LEFT) : 0);
+                int y = inner.y() + (compact ? Table.this.getThemeItem(COMPACT_PADDING_TOP) : 0);
                 for (int index = 0; index < columns.size(); index++) {
                     Column<T> column = columns.get(index);
-                    int width = compact ? Math.max(0, inner.width() - 2 * COMPACT_INSET) : columnWidths[index];
+                    int width = compact ? Math.max(0, inner.width() - COMPACT_PADDING.getInsets(Table.this).getHorizontal()) : columnWidths[index];
                     if (compact) y += COMPACT_LABEL_HEIGHT;
                     int height = compact ? compactCellHeight(column, row.item(), font, width) : inner.height();
                     Control control = controls.get(column.key);

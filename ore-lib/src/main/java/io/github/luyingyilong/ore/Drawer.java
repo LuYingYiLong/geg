@@ -72,7 +72,7 @@ public final class Drawer extends Container {
     private final Box footer = new Box().setGap(2);
     private final Scroll body = new Scroll();
     private final Box column = new Box().setGap(4);
-    private final Padding frame = new Padding(Padding.Insets.all(PADDING)).setChild(column);
+    private final Padding frame = new Padding(Padding.Insets.all(0)).setChild(column);
     private final SignalSource0 closed = new SignalSource0(this, "closed");
     private Panel background;
     private Rect panelBounds=new Rect(0,0,0,0);

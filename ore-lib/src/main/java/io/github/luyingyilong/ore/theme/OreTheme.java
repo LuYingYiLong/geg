@@ -181,6 +181,8 @@ public final class OreTheme {
         io.github.luyingyilong.ore.Tag.registerTheme(db);
         io.github.luyingyilong.ore.Toast.registerTheme(db);
         io.github.luyingyilong.ore.Badge.registerTheme(db);
+        io.github.luyingyilong.ore.FormItem.registerTheme(db);
+        io.github.luyingyilong.ore.Slot.registerTheme(db);
         io.github.luyingyilong.ore.Descriptions.registerTheme(db);
         io.github.luyingyilong.ore.Divider.registerTheme(db);
         io.github.luyingyilong.ore.Tree.registerTheme(db);

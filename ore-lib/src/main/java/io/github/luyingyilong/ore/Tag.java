@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.theme.ThemeKey;
+import io.github.luyingyilong.ore.theme.ThemePadding;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.Size;
@@ -15,8 +17,12 @@ import java.util.Objects;
  * Compact, non-interactive status text with a solid semantic background.
  */
 public final class Tag extends Container {
-    private static final int PADDING_X = 4;
-    private static final int PADDING_Y = 2;
+    private static final ThemePadding PADDING = ThemePadding.of("Tag", "", 2, 4, 2, 4);
+    public static final ThemeKey<Integer> PADDING_TOP = PADDING.top();
+    public static final ThemeKey<Integer> PADDING_RIGHT = PADDING.right();
+    public static final ThemeKey<Integer> PADDING_BOTTOM = PADDING.bottom();
+    public static final ThemeKey<Integer> PADDING_LEFT = PADDING.left();
+
     private final Label label = ownPart("label", new Label().setOpticalCenter(true).setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER)
             .setOverflow(Label.Overflow.ELLIPSIS));
     private boolean outlined;
@@ -33,6 +39,7 @@ public final class Tag extends Container {
 
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
         io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Tag");
+        PADDING.register(db);
     }
 
     @Override
@@ -79,7 +86,8 @@ public final class Tag extends Container {
     @Override
     public Size measureSize(Font font, Size available) {
         if (!isAlive()) return new Size(0, 0);
-        int horizontal = 2 * (PADDING_X + border()), vertical = 2 * (PADDING_Y + border());
+        var padding = PADDING.getInsets(this);
+        int horizontal = padding.getHorizontal() + 2 * border(), vertical = padding.getVertical() + 2 * border();
         Size text = label.measureSize(font, new Size(Math.max(0, available.width() - horizontal),
                 Math.max(0, available.height() - vertical)));
         return new Size(Math.max(super.measureWidth(font, available.width()), text.width() + horizontal),
@@ -103,8 +111,10 @@ public final class Tag extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(bounds, font);
-            int x = PADDING_X + border(), y = PADDING_Y + border();
-            fitChild(label, new Rect(x, y, Math.max(0, bounds.width() - 2 * x), Math.max(0, bounds.height() - 2 * y)), font);
+            var padding = PADDING.getInsets(this);
+            int x = padding.left() + border(), y = padding.top() + border();
+            fitChild(label, new Rect(x, y, Math.max(0, bounds.width() - padding.getHorizontal() - 2 * border()),
+                    Math.max(0, bounds.height() - padding.getVertical() - 2 * border())), font);
         }
     }
 

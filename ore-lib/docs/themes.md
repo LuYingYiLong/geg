@@ -78,6 +78,63 @@ label.removeThemeOverride(OreTheme.TEXT_COLOR);
 
 `Label.setColor/setFontSize/setFont/setHero/setShadow` 表示显式属性。使用 `clearColor/clearFontSize/clearFont/clearHero/clearShadow` 恢复继承。按钮与弹层的字体 setter 转发到内部 Label；它们也提供 `clearFontSize()`。Theme 和局部覆盖不会被资源重载或 Inspector 属性预览覆盖写回。
 
+### 弹层内距
+
+Dialog 和 Modal 的各区内距统一由 `header_padding_top/right/bottom/left`、`body_padding_top/right/bottom/left`、`footer_padding_top/right/bottom/left` 控制，均为非负整数 GUI 像素，参与测量和布局。Modal 的外框另用 `padding_top/right/bottom/left`。
+
+| 类型 | 标题（上、右、下、左） | 正文 | 操作区 | 外框 |
+| --- | --- | --- | --- | --- |
+| Dialog | 8、8、4、8 | 四边 8 | 4、8、8、8 | 无额外内距 |
+| Modal | 0、1、0、1 | 四边 8 | 四边 8 | 四边 1 |
+
+```java
+modal.setThemeOverride(Modal.BODY_PADDING_LEFT, 12);
+modal.setThemeOverride(Modal.FOOTER_PADDING_TOP, 4);
+Integer local = modal.getThemeOverride(Modal.BODY_PADDING_LEFT);
+int effective = modal.getThemeItem(Modal.BODY_PADDING_LEFT);
+modal.removeThemeOverride(Modal.BODY_PADDING_LEFT);
+
+dialog.setThemeOverride(Dialog.HEADER_PADDING_TOP, 6);
+```
+
+两种弹层不提供重复的内距 setter/getter。局部覆盖优先于继承主题，移除后恢复最新主题值；资源重载保留局部覆盖。StyleBox 的 contentMargin 与这些内距独立计算，各消费一次。
+
+Dialog 在视口高度小于 110px 时使用 `compact_header_padding_top` 和 `compact_footer_padding_bottom`，默认均为 2px；每项显式回退到对应的普通标题／操作区内距。因此对普通 `HEADER_PADDING_TOP`、`FOOTER_PADDING_BOTTOM` 的局部覆盖在紧凑布局也有效；专门设置 compact 项则只影响紧凑布局。
+
+### 其他控件的内距
+
+控件自身的外观内距也通过主题配置，不再提供第二套 padding/inset setter/getter。下表数值依次为上、右、下、左；每组均展开为四个整数项，例如 `Tag:padding_left`、`Table:cell_padding_top`。
+
+| 类型 | 项目前缀 | 默认值 | 作用 |
+| --- | --- | --- | --- |
+| Collapse | `padding_` | 4、8、4、8 | 正文 Panel |
+| Drawer | `padding_` | 四边 4 | 整体内容 |
+| Navbar | `padding_` | 0、0、3、0 | 顶部内容与底部留白 |
+| Tag／Toast | `padding_` | 2、4、2、4 | 文本区域 |
+| Badge | `padding_` | 1、2、1、2 | 数字区域；圆点模式不使用 |
+| Button | `icon_padding_` | 四边 4 | 纯图标按钮 |
+| Button | `badge_padding_` | 2、8、2、8 | Badge 在按钮中的区域 |
+| Menu | `padding_` | 0、8、0、8 | 分组标题与非交互空提示项 |
+| Dropdown | `padding_` | 四边 1 | Overlay 菜单外框内距 |
+| FormItem | `padding_` | 0、0、6、0 | 字段整行，含标签与错误 |
+| Table | `cell_padding_` | 2、4、2、4 | 内置文本及头像姓名单元格 |
+| Table | `compact_padding_` | 四边 4 | 紧凑布局整行 |
+| Table | `header_padding_` | 0、4、0、4 | 表头文字 |
+| Table | `empty_padding_` | 8、2、0、2 | 空状态 |
+| Slot | `padding_` | 3、5、7、5 | 16px 物品预览 |
+| Slot | `count_padding_` | 12、1、2、1 | 数量文字 |
+
+```java
+tag.setThemeOverride(Tag.PADDING_LEFT, 8);
+table.setThemeOverride(Table.CELL_PADDING_TOP, 5);
+dropdown.setThemeOverride(Dropdown.PADDING_RIGHT, 6);
+button.setThemeOverride(Button.ICON_PADDING_LEFT, 6);
+```
+
+普通 Button 文字、Segmented、Panel 和输入框继续使用对应 StyleBox 的 `contentMargin`，可将新的 StyleBox 传给 `setThemeOverride`；不叠加另一套通用 padding。Input、NumberInput、TextArea 的正文、光标、选区、placeholder 和 IME 位置使用同一份解析后的内距。Table 的自定义 ControlCell 保留控件自身布局；表格的单元格内距默认作用于内置文本和头像姓名内容。
+
+`Scroll:track_inset` 默认 2，仅改变外置滚动条轨道两端的视觉缩进，不改变 grabber 行程、拖拽或内容尺寸。Box/Grid 的 gap、Tree 的层级缩进、Descriptions 的行列间距属于布局参数；Padding 容器的 `setInsets/getInsets` 也保留，用于显式布局。它们不与控件外观内距重复。
+
 ## JSON
 
 ```json

@@ -64,7 +64,23 @@ public final class TreeTest {
                 byte[] bytes=resource.readNBytes(24);
                 check(java.nio.ByteBuffer.wrap(bytes).getInt(16)==7 && java.nio.ByteBuffer.wrap(bytes).getInt(20)==7,"7px switcher sprites");
             }
+        themedPadding();
         System.out.println("ORE_TREE_TEST_PASS");
+    }
+    private static void themedPadding() {
+        Tree<String> tree=new Tree<String>().setShowSwitcher(false).setShowIcon(false).setBlockNode(false);
+        tree.setItems(List.of(new Tree.Item<>("node","",Component.literal("Long"),"node")));
+        var key=io.github.luyingyilong.ore.theme.ThemeDB.getDefault().getKey("TextButton","normal",io.github.luyingyilong.ore.theme.StyleBox.class);
+        tree.setThemeOverride(key,new io.github.luyingyilong.ore.theme.StyleBoxEmpty(
+                new io.github.luyingyilong.ore.theme.ThemeInsets(13,0,7,0),io.github.luyingyilong.ore.theme.ThemeInsets.ZERO));
+        tree.setVisibleRegion(new Rect(0,0,20,40));
+        tree.layout(new Rect(0,0,20,40),null);
+        Button label=(Button)tree.getChild(0).getChild(1);
+        check(tree.getContentExtent().width()==44 && label.getBounds().width()==44,"Tree horizontal range uses themed text-button padding");
+        check(label.getThemeItem(Button.NORMAL).getContentMargin().left()==13,"Retained Tree row inherits the same padding used by measurement");
+        tree.removeThemeOverride(key);tree.layout(new Rect(0,0,20,40),null);
+        check(tree.getContentExtent().width()==40,"Removing padding override restores Tree content range");
+        tree.queueFree();LifecycleScheduler.flush();
     }
     private static void check(boolean ok,String message) { if(!ok)throw new AssertionError(message); }
     private static void rejects(Runnable action) { try { action.run();throw new AssertionError("Expected invalid value"); } catch(IllegalArgumentException expected) { } }

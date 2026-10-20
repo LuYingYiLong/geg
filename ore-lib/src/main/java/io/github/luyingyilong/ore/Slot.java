@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.theme.ThemeKey;
+import io.github.luyingyilong.ore.theme.ThemePadding;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
@@ -13,6 +15,17 @@ import net.minecraft.world.item.ItemStack;
  * Read-only item preview. It never moves items or participates in inventory clicks.
  */
 public final class Slot extends Control {
+    private static final ThemePadding PADDING = ThemePadding.of("Slot", "", 3, 5, 7, 5);
+    public static final ThemeKey<Integer> PADDING_TOP = PADDING.top();
+    public static final ThemeKey<Integer> PADDING_RIGHT = PADDING.right();
+    public static final ThemeKey<Integer> PADDING_BOTTOM = PADDING.bottom();
+    public static final ThemeKey<Integer> PADDING_LEFT = PADDING.left();
+    private static final ThemePadding COUNT_PADDING = ThemePadding.of("Slot", "count_", 12, 1, 2, 1);
+    public static final ThemeKey<Integer> COUNT_PADDING_TOP = COUNT_PADDING.top();
+    public static final ThemeKey<Integer> COUNT_PADDING_RIGHT = COUNT_PADDING.right();
+    public static final ThemeKey<Integer> COUNT_PADDING_BOTTOM = COUNT_PADDING.bottom();
+    public static final ThemeKey<Integer> COUNT_PADDING_LEFT = COUNT_PADDING.left();
+
     public static final int SIZE = 26;
     private final Label count = ownPart("count", new Label().setShadow(true)
             .setAlignment(Label.Horizontal.RIGHT, Label.Vertical.BOTTOM).setFontSize(8));
@@ -28,6 +41,7 @@ public final class Slot extends Control {
 
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
         io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Slot");
+        PADDING.register(db); COUNT_PADDING.register(db);
     }
 
     @Override
@@ -74,7 +88,15 @@ public final class Slot extends Control {
     @Override
     public void layout(Rect bounds, net.minecraft.client.gui.Font font) {
         super.layout(bounds, font);
-        count.layout(new Rect(1, 12, Math.max(0, bounds.width() - 2), 12), font);
+        count.layout(COUNT_PADDING.getInsets(this).inset(getThemeItem(OreTheme.SLOT_PANEL).getContentRect(new Rect(0, 0, bounds.width(), bounds.height()))), font);
+    }
+
+    @Override public int measureWidth(net.minecraft.client.gui.Font font, int available) {
+        return Math.max(super.measureWidth(font, available), 16 + PADDING.getInsets(this).getHorizontal() + getThemeItem(OreTheme.SLOT_PANEL).getContentMargin().getHorizontal());
+    }
+
+    @Override public int measureHeight(net.minecraft.client.gui.Font font, int available) {
+        return Math.max(super.measureHeight(font, available), 16 + PADDING.getInsets(this).getVertical() + getThemeItem(OreTheme.SLOT_PANEL).getContentMargin().getVertical());
     }
 
     @Override
@@ -84,7 +106,8 @@ public final class Slot extends Control {
             getThemeItem(OreTheme.SLOT_PANEL).draw(context, area);
         }
         if (item.isEmpty()) return;
-        context.getGraphics().renderItem(item, area.x() + (area.width() - 16) / 2, area.y() + 3);
+        Rect inner = PADDING.getInsets(this).inset(getThemeItem(OreTheme.SLOT_PANEL).getContentRect(area));
+        context.getGraphics().renderItem(item, inner.x() + (inner.width() - 16) / 2, inner.y());
     }
 
     @Override

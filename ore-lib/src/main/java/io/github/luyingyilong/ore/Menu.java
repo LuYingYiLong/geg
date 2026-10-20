@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.theme.ThemeKey;
+import io.github.luyingyilong.ore.theme.ThemePadding;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.signal.Signal;
 import io.github.luyingyilong.ore.signal.SignalScope;
@@ -15,12 +17,19 @@ import java.util.function.Supplier;
  * Box-based, single-selection menu without an outer background or inset. Wrap in Scroll for overflow.
  */
 public final class Menu extends Container implements ScrollContent {
+    private static final ThemePadding PADDING = ThemePadding.of("Menu", "", 0, 8, 0, 8);
+    public static final ThemeKey<Integer> PADDING_TOP = PADDING.top();
+    public static final ThemeKey<Integer> PADDING_RIGHT = PADDING.right();
+    public static final ThemeKey<Integer> PADDING_BOTTOM = PADDING.bottom();
+    public static final ThemeKey<Integer> PADDING_LEFT = PADDING.left();
+
     private final Box sections = new Box().setGap(8);
     private final Label empty = new Label().setWrap(Label.Wrap.WORD);
-    private final io.github.luyingyilong.ore.theme.ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> dividerTheme;
+    private final ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> dividerTheme;
     private final Supplier<Button> buttonFactory;
     private final Map<String, Button> buttons = new LinkedHashMap<>();
     private final List<Label> emptyLabels = new ArrayList<>();
+    private final List<Padding> itemInsets = new ArrayList<>();
     private final SignalSource<MenuItem> itemActivated = new SignalSource<>(this, "itemActivated", "MenuItem");
     private final SignalSource<String> selectionChanged = new SignalSource<>(this, "selectionChanged", "String");
     private final Map<String, SignalScope> bindings = new HashMap<>();
@@ -35,7 +44,7 @@ public final class Menu extends Container implements ScrollContent {
         this(OreTheme.H_DIVIDER, Button::new);
     }
 
-    Menu(io.github.luyingyilong.ore.theme.ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> dividerTheme, Supplier<Button> buttonFactory) {
+    Menu(ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> dividerTheme, Supplier<Button> buttonFactory) {
         this.dividerTheme = dividerTheme;
         ownPooled(empty);
         getSignalScope().own(this::releaseBindings);
@@ -48,6 +57,7 @@ public final class Menu extends Container implements ScrollContent {
 
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
         io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Menu");
+        PADDING.register(db);
     }
 
     private static void validateKeys(List<MenuItem> items, Set<String> keys) {
@@ -157,6 +167,7 @@ public final class Menu extends Container implements ScrollContent {
         }
         buttons.clear();
         emptyLabels.clear();
+        itemInsets.clear();
         append(sections, items, previous, false);
         if (buttons.isEmpty() && items.isEmpty()) {
             if (empty.getParent() != null) empty.getParent().removeChild(empty);
@@ -177,7 +188,8 @@ public final class Menu extends Container implements ScrollContent {
                 Label title = new Label(item.label()).setThemeTypeVariation("LabelSecondary")
                         .setOverflow(Label.Overflow.ELLIPSIS).setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
                 title.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
-                Padding heading = new Padding(new Padding.Insets(0, Button.PADDING_X, 0, Button.PADDING_X)).setChild(title);
+                Padding heading = new Padding(PADDING.getLayoutInsets(this)).setChild(title);
+                itemInsets.add(heading);
                 heading.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
                 group.addChild(heading);
                 group.addChild(new Divider(dividerTheme));
@@ -194,7 +206,8 @@ public final class Menu extends Container implements ScrollContent {
                         .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
                 label.setMinimum(0, Button.HEIGHT);
                 emptyLabels.add(label);
-                Padding inset = new Padding(new Padding.Insets(0, Button.PADDING_X, 0, Button.PADDING_X)).setChild(label);
+                Padding inset = new Padding(PADDING.getLayoutInsets(this)).setChild(label);
+                itemInsets.add(inset);
                 inset.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
                 run.addChild(inset);
             } else {
@@ -229,6 +242,7 @@ public final class Menu extends Container implements ScrollContent {
     @Override
     public Size measureSize(Font font, Size available) {
         if (!isAlive()) return new Size(0, 0);
+        syncPadding();
         Size desired = sections.measureSize(font, available);
         return new Size(Math.max(getMinimumWidth(), Math.min(available.width(), desired.width())),
                 Math.max(getMinimumHeight(), desired.height()));
@@ -250,6 +264,7 @@ public final class Menu extends Container implements ScrollContent {
     public void layout(Rect bounds, Font font) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
+            syncPadding();
             if (bounds.width() != getBounds().width()) rememberAnchor();
             super.layout(bounds, font);
             int height = Math.max(bounds.height(), sections.measureSize(font, new Size(bounds.width(), bounds.height())).height());
@@ -277,6 +292,11 @@ public final class Menu extends Container implements ScrollContent {
             }
             index++;
         }
+    }
+
+    private void syncPadding() {
+        var insets = PADDING.getLayoutInsets(this);
+        for (Padding node : List.copyOf(itemInsets)) if (node.isAlive()) node.setInsets(insets);
     }
 
     @Override

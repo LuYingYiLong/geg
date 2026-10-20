@@ -1,5 +1,6 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.theme.ThemePadding;
 import io.github.luyingyilong.ore.theme.IconTheme;
 import io.github.luyingyilong.ore.theme.ThemeDB;
 import io.github.luyingyilong.ore.theme.ThemeKey;
@@ -25,12 +26,19 @@ import java.util.Objects;
  * Retained trigger. The owning Window creates and routes its Overlay menu.
  */
 public final class Dropdown<T> extends Control {
+    private static final ThemePadding PADDING = ThemePadding.of("Dropdown", "", 1, 1, 1, 1);
+    public static final ThemeKey<Integer> PADDING_TOP = PADDING.top();
+    public static final ThemeKey<Integer> PADDING_RIGHT = PADDING.right();
+    public static final ThemeKey<Integer> PADDING_BOTTOM = PADDING.bottom();
+    public static final ThemeKey<Integer> PADDING_LEFT = PADDING.left();
+
 
     public static final ThemeKey<TextureRegion> ARROW_ICON = IconTheme.item("Dropdown", "arrow", IconTheme.ARROW_DOWN);
     public static final ThemeKey<TextureRegion> CHECKED_ICON = IconTheme.item("Dropdown", "checked", IconTheme.CHECKED);
 
     public static void registerTheme(ThemeDB db) {
         OreTheme.registerType(db, "Dropdown");
+        PADDING.register(db);
         IconTheme.registerTheme(db);
         db.register(ARROW_ICON);
         db.registerFallback(ARROW_ICON, IconTheme.ARROW_DOWN);
@@ -40,7 +48,7 @@ public final class Dropdown<T> extends Control {
 
 
     @Override public String getThemeState() { return "selected="+String.valueOf(selected)+", open="+open; }
-    public static final int ITEM_PADDING = 4, PANEL_PADDING = 1, ITEM_OVERLAP = 1;
+    public static final int ITEM_OVERLAP = 1;
     private static final TextureSource ARROW = TextureSource.themed(ARROW_ICON);
     private final Button triggerButton;
     private final Button.Size size;

@@ -412,7 +412,7 @@ public final class Tree<T> extends Container implements ScrollContent {
     private int labelWidth(Item<T> item) {
         String text = item.text().getString();
         int width = font == null ? text.codePointCount(0, text.length()) * 6 : widthProbe.setText(item.text()).measureWidth(font, Integer.MAX_VALUE);
-        return width + 2 * Button.PADDING_X + (showIcon && item.icon() != null ? item.icon().resolve(this).getWidth() + 4 : 0);
+        return width + getThemeItem(io.github.luyingyilong.ore.theme.ThemeDB.getDefault().getKey("TextButton", "normal", io.github.luyingyilong.ore.theme.StyleBox.class)).getContentMargin().getHorizontal() + (showIcon && item.icon() != null ? item.icon().resolve(this).getWidth() + 4 : 0);
     }
 
     private void updateRows() {
@@ -527,6 +527,7 @@ public final class Tree<T> extends Container implements ScrollContent {
 
         Row() {
             twist.setThemeParent(Tree.this);
+            label.setThemeParent(Tree.this);
             twist.setFocusable(false);
             label.setFocusable(false);
             addChild(twist);

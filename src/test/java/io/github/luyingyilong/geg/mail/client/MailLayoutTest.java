@@ -81,7 +81,7 @@ public final class MailLayoutTest {
             header.setMinimum(0, header.measureHeight(font, width));
             window.layoutViewport(width, height, font);
             check(header.getBounds().y() == 0 && header.getSize().height() >= Navbar.ROW_HEIGHT);
-            check(header.getSize().height() == Navbar.ROW_HEIGHT + Navbar.BOTTOM_PADDING);
+            check(header.getSize().height() == Navbar.ROW_HEIGHT + Navbar.PADDING_BOTTOM.defaultValue());
             check(audiences.getAbsoluteBounds().x() == 4);
             check(audiences.getSize().width() == Math.min(width - 12 - send.getSize().width(), audiences.minimumRowWidth(font)));
             check(send.getAbsoluteBounds().right() == width - 4 && send.getParent() == audiences.getParent());

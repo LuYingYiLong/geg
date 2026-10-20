@@ -262,21 +262,21 @@ public final class ButtonInteractionTest {
         check(button.getIcon().equals(icon));
         check(button.measureWidth(font, 100) == 18 && button.measureHeight(font, 100) == 18);
         Button.ContentLayout centered = Button.contentLayout(new Rect(0, 0, 18, 18),
-                0, false, iconSize, null, Button.TextAlignment.LEFT);
+                Button.NORMAL.defaultValue(), 0, false, iconSize, null, Button.TextAlignment.LEFT);
         check(centered.icon().equals(new Rect(5, 5, 8, 8)) && centered.label().width() == 0);
         button.setLabel(Component.literal("AB"));
         check(button.measureWidth(font, 100) == 40);
         Button.ContentLayout mixed = Button.contentLayout(new Rect(0, 0, 60, 20),
-                12, true, iconSize, null, Button.TextAlignment.CENTER);
+                Button.NORMAL.defaultValue(), 12, true, iconSize, null, Button.TextAlignment.CENTER);
         check(mixed.icon().equals(new Rect(18, 6, 8, 8)));
-        check(mixed.label().equals(new Rect(30, 0, 12, 20)));
+        check(mixed.label().equals(new Rect(30, 4, 12, 12)));
         Button.ContentLayout narrow = Button.contentLayout(new Rect(0, 0, 40, 20),
-                100, true, iconSize, null, Button.TextAlignment.RIGHT);
+                Button.NORMAL.defaultValue(), 100, true, iconSize, null, Button.TextAlignment.RIGHT);
         check(narrow.label().right() == 32 && narrow.label().width() == 12);
         button.setTrailingIcon(icon);
         check(button.measureWidth(font, 100) == 52);
         Button.ContentLayout trailing = Button.contentLayout(new Rect(0, 0, 60, 20),
-                12, true, iconSize, iconSize, Button.TextAlignment.CENTER);
+                Button.NORMAL.defaultValue(), 12, true, iconSize, iconSize, Button.TextAlignment.CENTER);
         check(trailing.trailingIcon().equals(new Rect(44, 6, 8, 8)));
         check(trailing.label().right() + 4 <= trailing.trailingIcon().x());
         Control parent = new Control();

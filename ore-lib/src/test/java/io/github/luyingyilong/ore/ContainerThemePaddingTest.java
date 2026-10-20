@@ -151,7 +151,7 @@ public final class ContainerThemePaddingTest {
                 control.getThemeItem(db.getKey(type, "padding_left", Integer.class)));
     }
 
-    private static ThemeDB.Resources resources(Map<String, Integer> overrides) {
+    static ThemeDB.Resources resources(Map<String, Integer> overrides) {
         return new ThemeDB.Resources() {
             @Override public Reader open(ResourceLocation location) throws IOException {
                 var stream = ContainerThemePaddingTest.class.getResourceAsStream("/assets/" + location.getNamespace() + "/" + location.getPath());

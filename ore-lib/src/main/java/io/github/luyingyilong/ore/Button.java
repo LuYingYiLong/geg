@@ -22,6 +22,17 @@ import org.lwjgl.glfw.GLFW;
 import java.util.function.Consumer;
 
 public final class Button extends Control {
+    private static final ThemePadding ICON_PADDING = ThemePadding.of("Button", "icon_", 4, 4, 4, 4);
+    public static final ThemeKey<Integer> ICON_PADDING_TOP = ICON_PADDING.top();
+    public static final ThemeKey<Integer> ICON_PADDING_RIGHT = ICON_PADDING.right();
+    public static final ThemeKey<Integer> ICON_PADDING_BOTTOM = ICON_PADDING.bottom();
+    public static final ThemeKey<Integer> ICON_PADDING_LEFT = ICON_PADDING.left();
+    private static final ThemePadding BADGE_PADDING = ThemePadding.of("Button", "badge_", 2, 8, 2, 8);
+    public static final ThemeKey<Integer> BADGE_PADDING_TOP = BADGE_PADDING.top();
+    public static final ThemeKey<Integer> BADGE_PADDING_RIGHT = BADGE_PADDING.right();
+    public static final ThemeKey<Integer> BADGE_PADDING_BOTTOM = BADGE_PADDING.bottom();
+    public static final ThemeKey<Integer> BADGE_PADDING_LEFT = BADGE_PADDING.left();
+
     public static final java.util.List<String> BUILTIN_VARIATIONS = java.util.List.of("SecondaryButton","PrimaryButton","DestructiveButton","TextButton","MenuButton","DarkButton");
     public static final ThemeKey<StyleBox> NORMAL = ThemeKey.of("Button","normal",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_secondary_normal.png"),16,16,0,0,16,16),new ThemeInsets(2,4,2,4),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true);
     public static final ThemeKey<Integer> NORMAL_COLOR = ThemeKey.of("Button","normal_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false);
@@ -32,9 +43,7 @@ public final class Button extends Control {
     public static final ThemeKey<StyleBox> DISABLED = ThemeKey.of("Button","disabled",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_disabled.png"),16,16,0,0,16,16),new ThemeInsets(2,4,2,4),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true);
     public static final ThemeKey<Integer> DISABLED_COLOR = ThemeKey.of("Button","disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false);
     public static final int HEIGHT = Size.MEDIUM.getHeight();
-    public static final int PADDING_X = 8;
     private static final int ICON_GAP = 4;
-    private static final int ICON_PADDING = 4;
     private final Label label = ownPart("label", new Label().setOverflow(Label.Overflow.ELLIPSIS));
     private final TextureRect iconControl = ownPart("icon", new TextureRect().setStretchMode(TextureRect.StretchMode.KEEP_CENTERED));
     private final TextureRect trailingIconControl = ownPart("trailing_icon", new TextureRect().setStretchMode(TextureRect.StretchMode.KEEP_CENTERED));
@@ -70,6 +79,7 @@ public final class Button extends Control {
 
     public static void registerTheme(ThemeDB db) {
         OreTheme.registerType(db,"Button");
+        ICON_PADDING.register(db); BADGE_PADDING.register(db);
         for(var key:java.util.List.of(NORMAL,HOVER,PRESSED,DISABLED,NORMAL_COLOR,HOVER_COLOR,PRESSED_COLOR,DISABLED_COLOR))db.register(key);
         db.registerVariation("SecondaryButton","Button");
         db.register(ThemeKey.of("SecondaryButton","normal",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_secondary_normal.png"),16,16,0,0,16,16),new ThemeInsets(2,4,2,4),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
@@ -148,7 +158,10 @@ public final class Button extends Control {
         background.draw(context, area);
         boolean hasLabel = !label.getText().getString().isEmpty();
         Rect contentArea = new Rect(x, y, Math.max(0, width - reservedRight), height);
-        ContentLayout content = contentLayout(contentArea, background,
+        ContentLayout content = icon != null && !hasLabel && trailingIcon == null
+                ? layoutContent(ICON_PADDING.getInsets(owner).inset(contentArea).translated(background.getContentOffset().x(), background.getContentOffset().y()),
+                        0, false, icon, null, alignment)
+                : contentLayout(contentArea, background,
                 hasLabel ? label.measureWidth(context.getFont(), background.getContentRect(contentArea).width()) : 0,
                 hasLabel, icon, trailingIcon, alignment);
         if (hasLabel) {
@@ -176,27 +189,27 @@ public final class Button extends Control {
                                        io.github.luyingyilong.ore.layout.Size icon, io.github.luyingyilong.ore.layout.Size trailingIcon, TextAlignment alignment) {
         // Translate the original content box, independently of the inset background.
         Rect inner = style.getContentDrawRect(area);
-        return contentLayout(new Rect(inner.x() - PADDING_X, inner.y(), inner.width() + 2 * PADDING_X, inner.height()),
+        return layoutContent(inner,
                 textWidth, hasLabel, icon, trailingIcon, alignment);
     }
 
-    static ContentLayout contentLayout(Rect area, int textWidth, boolean hasLabel,
+    private static ContentLayout layoutContent(Rect area, int textWidth, boolean hasLabel,
                                        io.github.luyingyilong.ore.layout.Size icon, io.github.luyingyilong.ore.layout.Size trailingIcon, TextAlignment alignment) {
         Rect trailing = trailingIcon == null ? null : new Rect(
-                area.right() - PADDING_X - trailingIcon.width(),
+                area.right() - trailingIcon.width(),
                 area.y() + (area.height() - trailingIcon.height()) / 2, trailingIcon.width(), trailingIcon.height());
         if (icon != null && !hasLabel && trailingIcon == null)
             return new ContentLayout(new Rect(area.x(), area.y(), 0, area.height()),
                     new Rect(area.x() + (area.width() - icon.width()) / 2,
                             area.y() + (area.height() - icon.height()) / 2, icon.width(), icon.height()), null);
-        int available = Math.max(0, area.width() - 2 * PADDING_X
+        int available = Math.max(0, area.width()
                 - (trailingIcon == null ? 0 : trailingIcon.width() + ICON_GAP));
         if (icon == null)
-            return new ContentLayout(new Rect(area.x() + PADDING_X, area.y(), available, area.height()), null, trailing);
+            return new ContentLayout(new Rect(area.x(), area.y(), available, area.height()), null, trailing);
         int gap = hasLabel ? ICON_GAP : 0;
         int labelWidth = hasLabel ? Math.min(textWidth, Math.max(0, available - icon.width() - gap)) : 0;
         int freeSpace = Math.max(0, available - icon.width() - gap - labelWidth);
-        int left = area.x() + PADDING_X + switch (alignment) {
+        int left = area.x() + switch (alignment) {
             case LEFT -> 0;
             case CENTER -> freeSpace / 2;
             case RIGHT -> freeSpace;
@@ -399,10 +412,12 @@ public final class Button extends Control {
         var icon = imageSize(iconControl, font);
         var trailingIcon = imageSize(trailingIconControl, font);
         int reserved = badgeReservation(font);
+        int badgeMinimum = hasBadge() ? badge.measureWidth(font, available) + BADGE_PADDING.getInsets(this).getHorizontal() : 0;
         if (icon != null && !hasLabel() && trailingIcon == null)
-            return Math.max(getMinimumWidth(), Math.max(buttonSize.getHeight(), icon.width()
-                    + 2 * (hasBadge() ? PADDING_X : ICON_PADDING)) + reserved);
-        return Math.max(getMinimumWidth(), label.measureWidth(font, available) + getThemeItem(getStyleKey(false, false, disabled)).getContentMargin().getHorizontal()
+            return Math.max(Math.max(getMinimumWidth(), badgeMinimum), Math.max(buttonSize.getHeight(), icon.width()
+                    + (hasBadge() ? getThemeItem(getStyleKey(false, false, disabled)).getContentMargin().getHorizontal()
+                    : ICON_PADDING.getInsets(this).getHorizontal())) + reserved);
+        return Math.max(Math.max(getMinimumWidth(), badgeMinimum), label.measureWidth(font, available) + getThemeItem(getStyleKey(false, false, disabled)).getContentMargin().getHorizontal()
                 + (icon == null ? 0 : icon.width() + (hasLabel() ? ICON_GAP : 0))
                 + (trailingIcon == null ? 0 : trailingIcon.width() + ICON_GAP) + reserved);
     }
@@ -413,8 +428,14 @@ public final class Button extends Control {
         var icon = imageSize(iconControl, font);
         var trailingIcon = imageSize(trailingIconControl, font);
         int iconHeight = Math.max(icon == null ? 0 : icon.height(), trailingIcon == null ? 0 : trailingIcon.height());
-        int height = Math.max(super.measureHeight(font, available), iconHeight == 0 ? 0 : iconHeight + 2 * ICON_PADDING);
-        return Math.max(height, hasBadge() ? badge.measureHeight(font, available) + 4 : 0);
+        var margin = getThemeItem(getStyleKey(false, false, disabled)).getContentMargin();
+        // Single-line button text is optically centered; line leading must not enlarge SMALL buttons after a font reload.
+        float textScale = label.getScale() * label.getFontSize() / Label.DEFAULT_FONT_SIZE;
+        int textHeight = hasLabel() && font != null ? (int) Math.ceil(OreTextMetrics.family(label.getHero()).opticalHeight(1, textScale))
+                + margin.getVertical() : 0;
+        int iconPadding = icon != null && !hasLabel() && trailingIcon == null ? ICON_PADDING.getInsets(this).getVertical() : margin.getVertical();
+        int height = Math.max(Math.max(super.measureHeight(font, available), textHeight), iconHeight == 0 ? 0 : iconHeight + iconPadding);
+        return Math.max(height, hasBadge() ? badge.measureHeight(font, available) + BADGE_PADDING.getInsets(this).getVertical() : 0);
     }
 
     private boolean hasBadge() {
@@ -422,7 +443,8 @@ public final class Button extends Control {
     }
 
     private int badgeReservation(Font font) {
-        return hasBadge() ? badge.measureWidth(font, Integer.MAX_VALUE) + ICON_GAP : 0;
+        return hasBadge() ? badge.measureWidth(font, Integer.MAX_VALUE) + ICON_GAP
+                + Math.max(0, getThemeItem(BADGE_PADDING_RIGHT) - getThemeItem(NORMAL).getContentMargin().right()) : 0;
     }
 
     @Override
@@ -439,8 +461,9 @@ public final class Button extends Control {
         var offset = getPresentationStyle(pointerHovered, visuallyPressed()).getContentOffset();
         io.github.luyingyilong.ore.layout.Size natural = badge.measureSize(font,
                 new io.github.luyingyilong.ore.layout.Size(getSize().width(), getSize().height()));
-        badge.layout(new Rect(getSize().width() - PADDING_X - natural.width() + offset.x(),
-                (getSize().height() - natural.height()) / 2 + offset.y(),
+        Rect inner = BADGE_PADDING.getInsets(this).inset(new Rect(0, 0, getSize().width(), getSize().height()));
+        badge.layout(new Rect(inner.right() - natural.width() + offset.x(),
+                inner.y() + (inner.height() - natural.height()) / 2 + offset.y(),
                 natural.width(), natural.height()), font);
     }
 

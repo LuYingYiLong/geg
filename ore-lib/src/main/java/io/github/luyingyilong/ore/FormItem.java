@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.theme.ThemeKey;
+import io.github.luyingyilong.ore.theme.ThemePadding;
 import io.github.luyingyilong.ore.form.*;
 import io.github.luyingyilong.ore.input.*;
 import io.github.luyingyilong.ore.layout.*;
@@ -9,7 +11,13 @@ import java.util.*;
 
 /** A typed field, its validation lifetime, and its label/error geometry. */
 public final class FormItem<T> extends Container {
-    private static final int GAP = 3, ROW_GAP = 6;
+    private static final ThemePadding PADDING = ThemePadding.of("FormItem", "", 0, 0, 6, 0);
+    public static final ThemeKey<Integer> PADDING_TOP = PADDING.top();
+    public static final ThemeKey<Integer> PADDING_RIGHT = PADDING.right();
+    public static final ThemeKey<Integer> PADDING_BOTTOM = PADDING.bottom();
+    public static final ThemeKey<Integer> PADDING_LEFT = PADDING.left();
+
+    private static final int GAP = 3;
     private final FieldKey<T> key;
     private final Component label;
     private final FormField<T> field;
@@ -36,6 +44,7 @@ public final class FormItem<T> extends Container {
 
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
         io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "FormItem");
+        PADDING.register(db);
     }
     @Override protected void validateChildren(List<Control> proposed) {
         if (!isUpdatingChildren()) throw new IllegalStateException("FormItem has a fixed field skeleton");
@@ -139,8 +148,9 @@ public final class FormItem<T> extends Container {
         return new Geometry(labelWidth, labelHeight, controlX, controlY, controlWidth, controlHeight, row, errorHeight);
     }
     public int rowHeight(Font font, int width) {
-        Geometry g = geometry(font, width);
-        return Math.max(getMinimumHeight(), g.row + (g.errorHeight == 0 ? 0 : 1 + g.errorHeight) + ROW_GAP);
+        var padding = PADDING.getInsets(this);
+        Geometry g = geometry(font, Math.max(0, width - padding.getHorizontal()));
+        return Math.max(getMinimumHeight(), padding.getVertical() + g.row + (g.errorHeight == 0 ? 0 : 1 + g.errorHeight));
     }
     @Override public Size measureSize(Font font, Size available) {
         return new Size(Math.max(getMinimumWidth(), available.width()), rowHeight(font, available.width()));
@@ -149,11 +159,13 @@ public final class FormItem<T> extends Container {
         if (!isAlive()) return;
         try (var phase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(bounds, font);
-            Geometry g = geometry(font, bounds.width());
-            fitChild(labelNode, new Rect(0, horizontal ? Math.max(0, (g.controlHeight - g.labelHeight) / 2) : 0,
+            var padding = PADDING.getInsets(this);
+            int width = Math.max(0, bounds.width() - padding.getHorizontal());
+            Geometry g = geometry(font, width);
+            fitChild(labelNode, new Rect(padding.left(), padding.top() + (horizontal ? Math.max(0, (g.controlHeight - g.labelHeight) / 2) : 0),
                     g.labelWidth, g.labelHeight), font);
-            fitChild(field.getControl(), new Rect(g.controlX, g.controlY, g.controlWidth, g.controlHeight), font);
-            fitChild(errorNode, new Rect(0, g.row + 1, bounds.width(), g.errorHeight), font);
+            fitChild(field.getControl(), new Rect(padding.left() + g.controlX, padding.top() + g.controlY, g.controlWidth, g.controlHeight), font);
+            fitChild(errorNode, new Rect(padding.left(), padding.top() + g.row + 1, width, g.errorHeight), font);
         }
     }
     private record Geometry(int labelWidth, int labelHeight, int controlX, int controlY,
