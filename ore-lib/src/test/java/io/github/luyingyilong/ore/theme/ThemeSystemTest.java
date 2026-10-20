@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore.theme;
 
+import io.github.luyingyilong.ore.render.*;
+
 import io.github.luyingyilong.ore.Label;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.debug.DebugBridge;
@@ -65,7 +67,7 @@ public final class ThemeSystemTest {
         isolated.reload(source); check(!isolated.getDiagnostics().isEmpty() && child.get(style)==null,"Invalid item falls through, never installs bad UVs");
         files.put("child","{\"Test:panel\":{\"style\":\"texture\",\"location\":\"test:x\"}}");
         isolated.reload(source); var texture=(StyleBoxTexture)child.get(style);
-        check(texture.imageWidth()==16 && texture.height()==12 && texture.getContentMargin().equals(ThemeInsets.ZERO),"Actual image dimensions and full region defaults");
+        check(texture.getTextureRegion().getImageWidth()==16 && texture.getTextureRegion().getHeight()==12 && texture.getContentMargin().equals(ThemeInsets.ZERO),"Actual image dimensions and full region defaults");
         check(texture.getDrawInset().equals(ThemeInsets.ZERO) && texture.getContentOffset().equals(Offset.ZERO),"Presentation defaults do not imply a pressed offset");
         for(String kind:List.of("empty","flat","texture")) {
             String location=kind.equals("texture")?",\"location\":\"test:x\"":"";
@@ -121,18 +123,18 @@ public final class ThemeSystemTest {
     }
     private static void geometry() {
         var margin=new ThemeInsets(1,2,3,4); var expand=new ThemeInsets(2,3,4,5);
-        StyleBoxTexture texture=new StyleBoxTexture(id("image"),20,16,2,1,14,12,new ThemeInsets(2,3,5,4),margin,expand,StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,0.5F);
+        StyleBoxTexture texture=new StyleBoxTexture(new TextureRegion(id("image"), 20, 16, 2, 1, 14, 12), new ThemeInsets(2,3,5,4), margin, expand, StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 0.5F);
         Rect original=new Rect(10,20,30,40); check(texture.getContentRect(original).equals(new Rect(11,22,26,34)),"Content insets");
         check(texture.getDrawRect(original).equals(new Rect(8,17,36,48)) && original.width()==30,"Expand is paint only");
         for(int w=0;w<12;w++) for(int h=0;h<12;h++) {
-            var tiny=new StyleBoxTexture(id("x"),20,16,2,1,14,12,new ThemeInsets(2,3,5,4),ThemeInsets.ZERO,ThemeInsets.ZERO,StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1);
+            var tiny=new StyleBoxTexture(new TextureRegion(id("x"), 20, 16, 2, 1, 14, 12), new ThemeInsets(2,3,5,4), ThemeInsets.ZERO, ThemeInsets.ZERO, StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1);
             for(var patch:tiny.getPatches(new Rect(0,0,w,h))) {
                 check(patch.target().x()>=0 && patch.target().right()<=w && patch.target().bottom()<=h,"Small target stays inside allocated paint rect");
                 check(patch.source().x()>=2 && patch.source().right()<=16 && patch.source().bottom()<=13,"Source UV never inverted/out of region");
             }
         }
-        rejects(()->new StyleBoxTexture(id("x"),8,8,0,0,9,8,ThemeInsets.ZERO,ThemeInsets.ZERO,ThemeInsets.ZERO,StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1));
-        var tiled=new StyleBoxTexture(id("x"),4,4,0,0,4,4,ThemeInsets.ZERO,ThemeInsets.ZERO,ThemeInsets.ZERO,StyleBoxTexture.AxisMode.TILE,StyleBoxTexture.AxisMode.TILE,true,1);
+        rejects(()->new StyleBoxTexture(new TextureRegion(id("x"), 8, 8, 0, 0, 9, 8), ThemeInsets.ZERO, ThemeInsets.ZERO, ThemeInsets.ZERO, StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1));
+        var tiled=new StyleBoxTexture(new TextureRegion(id("x"), 4, 4, 0, 0, 4, 4), ThemeInsets.ZERO, ThemeInsets.ZERO, ThemeInsets.ZERO, StyleBoxTexture.AxisMode.TILE, StyleBoxTexture.AxisMode.TILE, true, 1);
         check(tiled.getPatches(new Rect(0,0,9,6)).size()==6,"Tiles include partial final tile");
         Panel panel=new Panel(OreTheme.PANEL); panel.setThemeOverride(OreTheme.PANEL,new StyleBoxEmpty(margin,expand));
         Control content=new Control().setPreferred(10,5); panel.setChild(content);

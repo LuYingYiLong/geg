@@ -19,9 +19,40 @@ public static void registerTheme(ThemeDB db) {
 }
 ```
 
-宿主可通过 `OreClientExtension.registerThemes(ThemeDB)` 在资源加载前登记扩展类型、类型变体和主题。把实现类放入宿主的 ServiceLoader 服务描述中；初始化幂等，注册不会创建原生窗口。Forge 并行构造 Mod 时不创建主题信号，主题初始化在客户端资源加载的 apply 阶段完成。
+宿主通过 `OreClient.initialize(options, modBus, forgeBus, extension...)` 显式传入 `OreClientExtension`，在 `registerThemes(ThemeDB)` 中登记扩展类型、类型变体和主题。可选的开发集成仍可使用 ServiceLoader；宿主主题采用显式传入，避免 Forge 合并输出目录时同名服务文件被遮蔽。扩展按实现类去重，初始化幂等，注册不会创建原生窗口。Forge 并行构造 Mod 时不创建主题信号，主题初始化在客户端资源加载的 apply 阶段完成。
 
-`ThemeKey.Kind` 支持 STYLE、COLOR、FONT、FLOAT、INTEGER、BOOLEAN、ICON。相同声明可重复登记，冲突报错。字号及配置可在声明中提供值校验器。类型变体通过 `registerVariation(name, base)` 登记，继承基础类型项的定义，不必复制所有声明；`getKey(type, name, valueType)` 可取得类型安全的变体项。
+`ThemeKey.Kind` 支持 STYLE、COLOR、FONT、FLOAT、INTEGER、BOOLEAN、TEXTURE。图片项值为不可变 TextureRegion，由 TextureRect 显示，见 [图片接口](textures.md)。相同声明可重复登记，冲突报错。字号及配置可在声明中提供值校验器。类型变体通过 `registerVariation(name, base)` 登记，继承基础类型项的定义，不必复制所有声明；`getKey(type, name, valueType)` 可取得类型安全的变体项。
+
+### 图片主题归属
+
+`Icons` 是独立的共享资源类型，通过 `IconTheme.registerTheme(db)` 注册，不继承 `Control`，也不需要对应控件类。关闭、箭头、勾选和筛选图标放在此处；普通 Control 的 Inspector 面板不会列出整份图标目录。
+
+控件专用图片由控件自己的 `registerTheme` 声明：
+
+| 控件 | 图片项 |
+| --- | --- |
+| Checkbox | `unchecked_normal`、`unchecked_hovered`、`unchecked_disabled`、`checked_normal`、`checked_hovered`、`checked_pressed`、`checked_disabled` |
+| Switch | `base`、`base_disabled`、`button_normal`、`button_hovered`、`button_pressed`、`button_disabled` |
+| Spin | `texture` |
+| Dropdown | `arrow`、`checked` |
+| Tree | `expanded_icon`、`collapsed_icon` |
+| Navbar | `back_icon` |
+| Dialog／Modal／Drawer | `close_icon` |
+
+共享符号只配置一次。Dropdown 的 `arrow` 缺失时回退到 `Icons:arrow_down`；Tree、Navbar 和弹层也使用显式登记的共享符号回退。每一层先检查控件项（包括类型变体），再检查共享项，然后才检查资源父主题及更远的控件主题。局部覆盖仍优先于资源值。Inspector 显示最终的共享项及 `fallback for ...` 来源原因。
+
+```json
+{
+  "parent": "ore:ore",
+  "Icons:close": { "location": "example:icons/close" },
+  "Drawer:close_icon": { "location": "example:icons/drawer_close" },
+  "Checkbox:checked_normal": { "location": "example:icons/checked" }
+}
+```
+
+整张图片仅需要 `location`，其尺寸在资源重载时读取并缓存；图集局部区域才填写 `x/y/width/height`。控件内的 TextureRect 保留自己的显示属性，同时使用所属控件的主题变体及局部覆盖。不得重新把状态图片集中登记到 `Control` 或 `TextureRect`。
+
+业务图标由宿主注册独立主题类型并放在宿主资源包。GEG 的 `geg:ui` 继承 `ore:ore`，在 `assets/geg/themes/ui.json` 中提供 `geg:MailIcons` 和 `geg:OrganizationIcons`；这些声明及图片不进入独立 Ore 模块。
 
 `registerTheme(ResourceLocation)` 登记资源入口，加载器只读取这些主题及其父主题，不扫描其他 Mod 的 MUI 主题文件。
 

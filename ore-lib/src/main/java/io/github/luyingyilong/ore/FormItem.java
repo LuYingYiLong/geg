@@ -7,21 +7,20 @@ import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.Size;
-import io.github.luyingyilong.ore.theme.OreTheme;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 
 import java.util.Objects;
 import java.util.function.Supplier;
 
-/** A named field; the label and control occupy the same Ore layout tree. */
+/**
+ * A named field; the label and control occupy the same Ore layout tree.
+ */
 public final class FormItem extends Container {
-    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"FormItem"); }
     private static final int LABEL_HEIGHT = 10;
     private static final int GAP = 3;
     private static final int ERROR_HEIGHT = 10;
     private static final int ROW_GAP = 6;
-
     private final String name;
     private final Component label;
     private final Input input;
@@ -32,12 +31,13 @@ public final class FormItem extends Container {
     private final InputControl inputNode;
     private boolean active = true;
     private boolean horizontal;
-
     public FormItem(String name, Component label, Input input) {
         this(name, label, new InputControl(Objects.requireNonNull(input)), input::getText, input);
     }
 
-    /** Accepts an Ore control such as a Checkbox group in place of a text input. */
+    /**
+     * Accepts an Ore control such as a Checkbox group in place of a text input.
+     */
     public FormItem(String name, Component label, Control field, Supplier<String> value) {
         this(name, label, field, value, null);
     }
@@ -55,25 +55,52 @@ public final class FormItem extends Container {
         updateChildren(java.util.List.of(labelNode, field, errorNode));
     }
 
-    @Override protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
+        io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "FormItem");
+    }
+
+    @Override
+    protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
         if (!isUpdatingChildren()) throw new IllegalStateException("FormItem has a fixed field skeleton");
     }
 
-    public String getName() { return name; }
-    public Component getLabel() { return label; }
-    public Input getInput() { return input; }
-    public InputControl getInputNode() { return inputNode; }
-    public boolean getActive() { return active; }
+    public String getName() {
+        return name;
+    }
+
+    public Component getLabel() {
+        return label;
+    }
+
+    public Input getInput() {
+        return input;
+    }
+
+    public InputControl getInputNode() {
+        return inputNode;
+    }
+
+    public boolean getActive() {
+        return active;
+    }
+
     public void setActive(boolean active) {
         this.active = active;
         setVisible(active);
         setInputVisible(active && getParent() instanceof Form form && form.getVisible());
     }
+
     public void setInputVisible(boolean visible) {
         if (input != null) input.setInputVisible(visible);
     }
-    public String getValue() { return value.get(); }
-    public Component getError() { return input instanceof NumberInput number ? number.getError() : null; }
+
+    public String getValue() {
+        return value.get();
+    }
+
+    public Component getError() {
+        return input instanceof NumberInput number ? number.getError() : null;
+    }
 
     public void setHorizontal(boolean horizontal) {
         if (this.horizontal == horizontal) return;
@@ -92,13 +119,15 @@ public final class FormItem extends Container {
         return field.measureSize(font, new Size(controlWidth, Integer.MAX_VALUE)).height();
     }
 
-    @Override public Size measureSize(Font font, Size available) {
+    @Override
+    public Size measureSize(Font font, Size available) {
         if (!isAlive()) return new Size(0, 0);
         return new Size(Math.max(getMinimumWidth(), available.width()),
                 Math.max(getMinimumHeight(), rowHeight(font, available.width())));
     }
 
-    @Override public void layout(Rect bounds, Font font) {
+    @Override
+    public void layout(Rect bounds, Font font) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(bounds, font);

@@ -1,9 +1,11 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.render.*;
+
 import io.github.luyingyilong.ore.signal.Signals;
 
 import io.github.luyingyilong.ore.layout.*;
-import io.github.luyingyilong.ore.theme.OreIcons;
+import io.github.luyingyilong.ore.theme.OreTheme;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -85,7 +87,7 @@ public final class BadgeLayoutTest {
         badge.setOffset(2, -1);
         window.layoutViewport(200, 80, font);
         check(badge.getBounds().equals(badge.getLayoutBounds().translated(2, -1)));
-        button.setTrailingIcon(new Button.Icon(OreIcons.ARROW_DOWN, 8, 8));
+        button.setTrailingIcon(TextureSource.region(TextureRegion.full(io.github.luyingyilong.ore.theme.IconTheme.ARROW_DOWN.defaultValue().getTexture(), 8, 8)));
         check(button.measureWidth(font, 200) >= withoutBadge + badge.measureWidth(font, 200) + 16);
         Badge other = new Badge();
         button.setBadge(other);

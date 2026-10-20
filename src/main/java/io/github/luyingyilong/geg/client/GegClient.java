@@ -12,8 +12,9 @@ import net.minecraftforge.eventbus.api.IEventBus;
 public final class GegClient {
     private GegClient() { }
     public static void initialize(IEventBus modBus) {
-        OreClient.initialize(new OreClientOptions("geg", "ore:ore", OreFonts.BODY, OreFonts.HERO,
+        OreClient.initialize(new OreClientOptions("geg", "geg:ui", OreFonts.BODY, OreFonts.HERO,
                 ResourceLocation.fromNamespaceAndPath("ore", "ore_fallback"), OreSounds::playDefault,
-                Minecraft.getInstance().gameDirectory.toPath().resolve("geg/avatars")), modBus, MinecraftForge.EVENT_BUS);
+                Minecraft.getInstance().gameDirectory.toPath().resolve("geg/avatars")), modBus, MinecraftForge.EVENT_BUS,
+                new io.github.luyingyilong.geg.client.theme.GegThemeExtension());
     }
 }

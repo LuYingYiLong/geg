@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore.window;
 
+import io.github.luyingyilong.ore.render.*;
+
 import io.github.luyingyilong.ore.signal.Signals;
 
 import io.github.luyingyilong.ore.render.DrawContext;
@@ -7,7 +9,6 @@ import io.github.luyingyilong.ore.*;
 import io.github.luyingyilong.ore.event.EventGeometry;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.theme.OreTheme;
-import io.github.luyingyilong.ore.theme.OreIcons;
 import net.minecraft.client.gui.Font;
 import org.lwjgl.glfw.GLFW;
 import java.util.*;
@@ -79,7 +80,7 @@ public final class WindowPopups {
                 Button button=Signals.configure(new Button(option.label()).setType(Button.Type.MENU).setAlignment(Button.TextAlignment.LEFT)
                         .setSize(trigger.getControlSize()), connected -> connected.pressed().connect(connected, ()->select(option)));
                 if(trigger.getCheckable()&&Objects.equals(option.value(),trigger.getSelected()))
-                    button.setTrailingIcon(Button.Icon.themed(io.github.luyingyilong.ore.theme.OreTheme.ICON_CHECKED));
+                    button.setTrailingIcon(TextureSource.themed(Dropdown.CHECKED_ICON));
                 items.addChild(button);
             }
         }

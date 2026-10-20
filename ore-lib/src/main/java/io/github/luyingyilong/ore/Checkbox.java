@@ -1,29 +1,53 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.theme.IconTheme;
+import io.github.luyingyilong.ore.theme.ThemeDB;
+
 import io.github.luyingyilong.ore.signal.*;
 
 import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.theme.OreIcons;
-import io.github.luyingyilong.ore.theme.OreSounds;
 import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.OreSounds;
 import io.github.luyingyilong.ore.util.ReleaseGesture;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import io.github.luyingyilong.ore.render.*;
+import io.github.luyingyilong.ore.theme.ThemeKey;
 
 import java.util.Objects;
 
 /** Transparent icon-and-label toggle. Its whole assigned rectangle is clickable. */
 public final class Checkbox extends Container {
-    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Checkbox"); }
+
+    public static final ThemeKey<TextureRegion> UNCHECKED_NORMAL = IconTheme.texture("Checkbox", "unchecked_normal", "checkbox_normal", 12, 12);
+    public static final ThemeKey<TextureRegion> UNCHECKED_HOVERED = IconTheme.texture("Checkbox", "unchecked_hovered", "checkbox_hovered", 12, 12);
+    public static final ThemeKey<TextureRegion> UNCHECKED_DISABLED = IconTheme.texture("Checkbox", "unchecked_disabled", "checkbox_disabled", 12, 12);
+    public static final ThemeKey<TextureRegion> CHECKED_NORMAL = IconTheme.texture("Checkbox", "checked_normal", "checkbox_checked_normal", 12, 12);
+    public static final ThemeKey<TextureRegion> CHECKED_HOVERED = IconTheme.texture("Checkbox", "checked_hovered", "checkbox_checked_hovered", 12, 12);
+    public static final ThemeKey<TextureRegion> CHECKED_PRESSED = IconTheme.texture("Checkbox", "checked_pressed", "checkbox_checked_pressed", 12, 12);
+    public static final ThemeKey<TextureRegion> CHECKED_DISABLED = IconTheme.texture("Checkbox", "checked_disabled", "checkbox_checked_disabled", 12, 12);
+
+    public static void registerTheme(ThemeDB db) {
+        OreTheme.registerType(db, "Checkbox");
+        db.register(UNCHECKED_NORMAL);
+        db.register(UNCHECKED_HOVERED);
+        db.register(UNCHECKED_DISABLED);
+        db.register(CHECKED_NORMAL);
+        db.register(CHECKED_HOVERED);
+        db.register(CHECKED_PRESSED);
+        db.register(CHECKED_DISABLED);
+    }
+
+
     @Override public String getThemeState() { return !enabled?"disabled":checked?"checked":"unchecked"; }
     private static final int ICON_SIZE = 12;
     private static final int ICON_GAP = 4;
     private static final int HEIGHT = 18;
 
     private final Label label;
+    private final TextureRect image=ownPart("icon",new TextureRect().setStretchMode(TextureRect.StretchMode.SCALE).setExpandMode(TextureRect.ExpandMode.IGNORE_SIZE));
     private boolean checked;
     private boolean enabled = true;
     private final SignalSource<Boolean> toggled = new SignalSource<>(this, "toggled", "Boolean");
@@ -92,10 +116,11 @@ public final class Checkbox extends Container {
     @Override protected void render(DrawContext context, int screenX, int screenY) {
         Rect area = getScreenBounds(screenX, screenY);
         boolean hovered = area.contains(context.getAbsMouseX(), context.getAbsMouseY());
-        ResourceLocation texture = texture(hovered, gesture.keyPressed(true)
+        var texture = getTextureKey(hovered, gesture.keyPressed(true)
                 || hovered && gesture.pointerPending());
         int y = area.y() + (area.height() - ICON_SIZE) / 2;
-        getThemeItem(OreTheme.getIconKey(texture)).draw(context,new Rect(area.x(),y,ICON_SIZE,ICON_SIZE));
+        image.setTexture(TextureSource.themed(texture));
+        image.layout(new Rect(area.x(),y,ICON_SIZE,ICON_SIZE),context.getFont()); image.draw(context,0,0);
     }
 
     @Override protected boolean pointerDown(int rootX, int rootY) {
@@ -135,10 +160,10 @@ public final class Checkbox extends Container {
         return true;
     }
 
-    private ResourceLocation texture(boolean hovered, boolean pressed) {
-        if (!enabled) return checked ? OreIcons.CHECKBOX_CHECKED_DISABLED : OreIcons.CHECKBOX_DISABLED;
-        if (checked) return pressed ? OreIcons.CHECKBOX_CHECKED_PRESSED
-                : hovered ? OreIcons.CHECKBOX_CHECKED_HOVERED : OreIcons.CHECKBOX_CHECKED_NORMAL;
-        return hovered ? OreIcons.CHECKBOX_HOVERED : OreIcons.CHECKBOX_NORMAL;
+    private ThemeKey<TextureRegion> getTextureKey(boolean hovered, boolean pressed) {
+        if (!enabled) return checked ? CHECKED_DISABLED : UNCHECKED_DISABLED;
+        if (checked) return pressed ? CHECKED_PRESSED
+                : hovered ? CHECKED_HOVERED : CHECKED_NORMAL;
+        return hovered ? UNCHECKED_HOVERED : UNCHECKED_NORMAL;
     }
 }

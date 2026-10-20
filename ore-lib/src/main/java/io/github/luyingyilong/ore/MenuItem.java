@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.render.*;
+
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.Objects;
  * Stable keys identify actions; groups are always expanded, non-interactive headings.
  */
 public record MenuItem(String key, Type type, Component label, List<MenuItem> children,
-                       Button.Icon icon, boolean disabled) {
+                       TextureSource icon, boolean disabled) {
     public MenuItem {
         if (Objects.requireNonNull(key).isBlank()) throw new IllegalArgumentException("Menu key is blank");
         Objects.requireNonNull(type);
@@ -34,7 +36,7 @@ public record MenuItem(String key, Type type, Component label, List<MenuItem> ch
         return new MenuItem(key, Type.EMPTY, label, List.of(), null, false);
     }
 
-    public MenuItem icon(Button.Icon icon) {
+    public MenuItem icon(TextureSource icon) {
         return new MenuItem(key, type, label, children, icon, disabled);
     }
 

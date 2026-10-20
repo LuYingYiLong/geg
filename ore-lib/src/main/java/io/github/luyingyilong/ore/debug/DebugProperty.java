@@ -61,7 +61,7 @@ public record DebugProperty(Control target, String key, String group, String kin
         }
         java.math.BigDecimal value;
         if (input.startsWith("#")) {
-            if (!key.equals("color") || (input.length() != 7 && input.length() != 9))
+            if (!(key.equals("color") || key.equals("modulate")) || (input.length() != 7 && input.length() != 9))
                 throw new IllegalArgumentException("Expected #RRGGBB or #AARRGGBB");
             long argb = Long.parseUnsignedLong(input.substring(1), 16);
             if (input.length() == 7) argb |= 0xFF000000L;
@@ -82,7 +82,7 @@ public record DebugProperty(Control target, String key, String group, String kin
         try {
             if (base instanceof Long) return value.longValueExact();
             int result;
-            if (key.equals("color") && value.signum() >= 0 && value.compareTo(java.math.BigDecimal.valueOf(0xFFFFFFFFL)) <= 0)
+            if ((key.equals("color") || key.equals("modulate")) && value.signum() >= 0 && value.compareTo(java.math.BigDecimal.valueOf(0xFFFFFFFFL)) <= 0)
                 result = (int) value.longValueExact();
             else result = value.intValueExact();
             if (key.startsWith("sizeFlags") && !key.equals("sizeFlagsStretchRatio")) SizeFlags.validate(result);

@@ -1,16 +1,15 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Panel;
 import io.github.luyingyilong.ore.layout.SizeFlags;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.theme.OreTheme;
 
 /**
  * A themed line: horizontal is 2px high, vertical is exactly 1px wide.
  */
 public final class Divider extends Control {
-    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Divider"); }
     private final io.github.luyingyilong.ore.theme.ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> horizontalTheme;
     private final boolean defaultTheme;
     private Panel horizontalPainter, verticalPainter;
@@ -28,6 +27,10 @@ public final class Divider extends Control {
         this.defaultTheme = defaultTheme;
         setMinimum(0, 2);
         setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+    }
+
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
+        io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Divider");
     }
 
     public Layout getLayout() {

@@ -1,5 +1,7 @@
 package io.github.luyingyilong.geg.market.client;
 
+import io.github.luyingyilong.ore.render.*;
+
 import io.github.luyingyilong.ore.signal.Signals;
 
 import io.github.luyingyilong.ore.debug.DebugBridge;
@@ -34,9 +36,8 @@ import io.github.luyingyilong.ore.layout.Scroll;
 import io.github.luyingyilong.ore.layout.Size;
 import io.github.luyingyilong.ore.layout.SizeFlags;
 import io.github.luyingyilong.ore.layout.Window;
-import io.github.luyingyilong.ore.theme.OreIcons;
-import io.github.luyingyilong.ore.theme.OreTextMetrics;
 import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.OreTextMetrics;
 import io.github.luyingyilong.geg.market.*;
 import io.github.luyingyilong.geg.market.MarketActionPacket;
 import io.github.luyingyilong.geg.market.MarketBuyOrder;
@@ -74,7 +75,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
             Component.translatable("market.geg.buying")), Button.Size.SMALL);
     private final List<Card> cards = new ArrayList<>();
     private final Dropdown<String> filterDropdown = new Dropdown<>("all", 8)
-            .setTriggerLabel(Component.empty()).setIcon(io.github.luyingyilong.ore.Button.Icon.themed(io.github.luyingyilong.ore.theme.OreTheme.ICON_FILTER))
+            .setTriggerLabel(Component.empty()).setIcon(TextureSource.themed(io.github.luyingyilong.ore.theme.IconTheme.FILTER))
             .setShowArrow(false).setType(Button.Type.TEXT);
     private final Window window = (Window) new Window(true).setDebugName("Market Window");
     private final Grid<Card> grid = new Grid<>();

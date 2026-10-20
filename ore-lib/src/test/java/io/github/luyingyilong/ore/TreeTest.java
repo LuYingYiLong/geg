@@ -1,8 +1,10 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.render.*;
+
 
 import io.github.luyingyilong.ore.layout.*;
-import io.github.luyingyilong.ore.theme.OreIcons;
+import io.github.luyingyilong.ore.theme.OreTheme;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class TreeTest {
     public static void main(String[] args) throws Exception {
         Tree<String> tree = new Tree<String>().setDefaultExpandAll(false).setRowHeight(26).setIndent(12);
-        var icon = new Button.Icon(OreIcons.ORG, 7, 7);
+        var icon = TextureSource.region(TextureRegion.full(io.github.luyingyilong.ore.theme.IconTheme.FILTER.defaultValue().getTexture(), 7, 7));
         tree.setItems(List.of(
                 new Tree.Item<>("root", "", Component.literal("Root"), "root"),
                 new Tree.Item<>("disabled", "root", Component.literal("Disabled"), "disabled", true, true, null),
@@ -22,13 +24,13 @@ public final class TreeTest {
         tree.layout(new Rect(0,0,140,156), null); tree.setVisibleRegion(new Rect(0,0,140,156));
         check(tree.getVisibleRows()==1 && tree.getExpandedKeys().isEmpty(), "Default collapsed state");
         Button switcher = (Button)tree.getChildren().get(0).getChildren().get(0);
-        check(switcher.getIcon().texture().equals(OreIcons.ARROW_RIGHT_LIGHT), "Collapsed sprite");
+        check(switcher.getIconControl().getResolvedTextureRegion().getTexture().equals(io.github.luyingyilong.ore.theme.IconTheme.ARROW_RIGHT_LIGHT.defaultValue().getTexture()), "Collapsed sprite");
         AtomicInteger expanded = new AtomicInteger(), selected = new AtomicInteger();
         tree.expansionChanged().connect(tree, event -> { check(event.expandedKeys().equals(tree.getExpandedKeys()), "Expansion event snapshot"); expanded.incrementAndGet(); });
         tree.selectionChanged().connect(tree, value -> selected.incrementAndGet());
         tree.setSelectedNoSignal("root"); tree.onFocusMove(FocusManager.Direction.RIGHT);
         check(tree.getVisibleRows()==3 && expanded.get()==1, "Keyboard expansion reports change");
-        check(switcher.getIcon().texture().equals(OreIcons.ARROW_DOWN_LIGHT), "Expanded sprite");
+        check(switcher.getIconControl().getResolvedTextureRegion().getTexture().equals(io.github.luyingyilong.ore.theme.IconTheme.ARROW_DOWN_LIGHT.defaultValue().getTexture()), "Expanded sprite");
         tree.onFocusMove(FocusManager.Direction.RIGHT);
         check(tree.getSelected().equals("root") && selected.get()==0, "Skip disabled node and navigate nonselectable folder without selecting");
         tree.onFocusMove(FocusManager.Direction.RIGHT); tree.onFocusMove(FocusManager.Direction.RIGHT);

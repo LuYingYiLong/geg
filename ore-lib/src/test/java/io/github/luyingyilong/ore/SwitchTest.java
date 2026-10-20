@@ -3,7 +3,7 @@ package io.github.luyingyilong.ore;
 import io.github.luyingyilong.ore.signal.Signals;
 
 import io.github.luyingyilong.ore.layout.*;
-import io.github.luyingyilong.ore.theme.OreIcons;
+import io.github.luyingyilong.ore.theme.OreTheme;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.FormattedText;
 import org.lwjgl.glfw.GLFW;
@@ -90,12 +90,12 @@ public final class SwitchTest {
         Overlay overlay = new Overlay();
         Window window = new Window(true).setContent(body).setOverlay(overlay);
         window.layoutViewport(100, 100, null);
-        check(toggle.buttonTexture(false).equals(OreIcons.SWITCH_BUTTON_NORMAL), "Normal texture");
-        check(toggle.buttonTexture(true).equals(OreIcons.SWITCH_BUTTON_HOVERED), "Hovered texture");
+        check(toggle.getButtonTextureKey(false).equals(io.github.luyingyilong.ore.Switch.BUTTON_NORMAL), "Normal texture");
+        check(toggle.getButtonTextureKey(true).equals(io.github.luyingyilong.ore.Switch.BUTTON_HOVERED), "Hovered texture");
         check(io.github.luyingyilong.ore.event.WindowInputs.press(window,11, 11, null) && events.isEmpty() && !toggle.getChecked(), "Press arms only");
-        check(toggle.buttonTexture(true).equals(OreIcons.SWITCH_BUTTON_PRESSED), "Pressed texture");
+        check(toggle.getButtonTextureKey(true).equals(io.github.luyingyilong.ore.Switch.BUTTON_PRESSED), "Pressed texture");
         io.github.luyingyilong.ore.event.WindowInputs.move(window,80, 80);
-        check(toggle.buttonTexture(false).equals(OreIcons.SWITCH_BUTTON_NORMAL), "Drag out clears pressed visual");
+        check(toggle.getButtonTextureKey(false).equals(io.github.luyingyilong.ore.Switch.BUTTON_NORMAL), "Drag out clears pressed visual");
         check(io.github.luyingyilong.ore.event.WindowInputs.release(window,80, 80) && events.isEmpty(), "Drag-out cancels");
         io.github.luyingyilong.ore.event.WindowInputs.press(window,11, 11, null);
         io.github.luyingyilong.ore.event.WindowInputs.release(window,11, 11);
@@ -125,7 +125,7 @@ public final class SwitchTest {
         check(events.isEmpty(), "Disable cancels armed press");
         toggle.setDisabled(true);
         check(!toggle.acceptsFocus() && !toggle.activate(), "Disabled blocks keyboard and activation");
-        check(toggle.buttonTexture(true).equals(OreIcons.SWITCH_BUTTON_DISABLED), "Disabled texture");
+        check(toggle.getButtonTextureKey(true).equals(io.github.luyingyilong.ore.Switch.BUTTON_DISABLED), "Disabled texture");
         toggle.setDisabled(false);
         io.github.luyingyilong.ore.event.WindowInputs.press(window,11, 11, null);
         toggle.setLoading(true).setLoading(false);

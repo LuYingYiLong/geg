@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.render.*;
+
 import io.github.luyingyilong.ore.event.WindowInputs;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.theme.*;
@@ -26,9 +28,7 @@ public final class StateStyleTest {
         StyleBoxTexture texture=(StyleBoxTexture)OreTheme.BUTTON_SECONDARY_NORMAL.defaultValue();
         var variants=List.<StyleBox>of(new StyleBoxEmpty(margin,expand,inset,offset),
                 new StyleBoxFlat(0xFF123456,ThemeInsets.ZERO,0,margin,expand,inset,offset),
-                new StyleBoxTexture(texture.location(),texture.imageWidth(),texture.imageHeight(),texture.x(),texture.y(),
-                        texture.width(),texture.height(),texture.textureBorders(),margin,expand,texture.horizontalMode(),
-                        texture.verticalMode(),true,1F,inset,offset));
+                new StyleBoxTexture(texture.getTextureRegion(), texture.textureBorders(), margin, expand, texture.horizontalMode(), texture.verticalMode(), true, 1F, inset, offset));
         Rect area=new Rect(10,20,100,20);
         for(StyleBox style:variants) {
             check(style.getBackgroundRect(area).equals(new Rect(11,25,96,15)),"Background insets are independent per side");
@@ -58,7 +58,7 @@ public final class StateStyleTest {
             button.layout(button.getBounds(),FONT);
             check(badge.getBounds().equals(before.translated(-2,4)),"Badge follows the same content offset");
             check(button.measureSize(FONT,new Size(100,20)).equals(natural),"Pressing does not change the button's measured size");
-            Button.Icon icon=new Button.Icon(OreIcons.SMALL_CLOSE,7,7);
+            io.github.luyingyilong.ore.layout.Size icon=new io.github.luyingyilong.ore.layout.Size(7,7);
             var normal=new StyleBoxEmpty(style.getContentMargin(),ThemeInsets.ZERO);
             var resting=Button.contentLayout(button.getBounds(),normal,6,true,icon,icon,Button.TextAlignment.CENTER);
             var held=Button.contentLayout(button.getBounds(),style,6,true,icon,icon,Button.TextAlignment.CENTER);

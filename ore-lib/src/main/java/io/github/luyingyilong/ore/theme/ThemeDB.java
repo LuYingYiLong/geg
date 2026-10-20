@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore.theme;
 
+import io.github.luyingyilong.ore.render.*;
+
 import com.google.gson.*;
 import io.github.luyingyilong.ore.signal.*;
 import net.minecraft.resources.ResourceLocation;
@@ -13,12 +15,14 @@ public final class ThemeDB implements SignalOwner {
     private final SignalSource<Boolean> changed=new SignalSource<>(this,"themesChanged","Boolean");
     private final Map<String,ThemeKey<?>> keys=new LinkedHashMap<>();
     private final Map<String,String> types=new LinkedHashMap<>();
+    private final Map<String,ThemeKey<?>> fallbacks=new LinkedHashMap<>();
     private final Map<ResourceLocation,Theme> themes=new LinkedHashMap<>();
     private final Set<ResourceLocation> registered=new LinkedHashSet<>();
     private List<Diagnostic> diagnostics=List.of();
     private ResourceLocation defaultTheme=ResourceLocation.fromNamespaceAndPath("ore","ore");
     private long revision;
     private Set<Theme> reloadNotifications=Set.of();
+    private final Map<ResourceLocation,int[]> imageSizes=new HashMap<>();
     boolean isReloadNotification(Theme theme) { return reloadNotifications.contains(theme); }
     private static final class Builtin { static final ThemeDB INSTANCE=create(); private static ThemeDB create() {
         ThemeDB db=new ThemeDB(); OreTheme.register(db); return db;
@@ -43,6 +47,40 @@ public final class ThemeDB implements SignalOwner {
         if(old!=null && !(old.valueType()==key.valueType() && old.kind()==key.kind()
                 && old.affectsLayout()==key.affectsLayout() && old.defaultValue().equals(key.defaultValue())
                 && old.validator()==key.validator())) throw new IllegalArgumentException("Conflicting theme declaration: "+key.getId());
+    }
+    /** Explicit item fallback, evaluated within each theme layer before its resource parent. */
+    public <T> void registerFallback(ThemeKey<T> key,ThemeKey<T> fallback) {
+        scope.checkThread(); requireKey(key); requireKey(fallback);
+        if(key.valueType()!=fallback.valueType() || key.kind()!=fallback.kind())
+            throw new IllegalArgumentException("Theme fallback types must match");
+        ThemeKey<?> previous=fallbacks.get(key.getId());
+        if(previous!=null) {
+            if(!previous.getId().equals(fallback.getId())) throw new IllegalArgumentException("Conflicting theme fallback: "+key.getId());
+            return;
+        }
+        Set<String> visited=new HashSet<>(); visited.add(declaration(key.getId()).getId());
+        for(ThemeKey<?> next=fallback;next!=null;next=fallbackFor(next))
+            if(!visited.add(declaration(next.getId()).getId())) throw new IllegalArgumentException("Theme item fallback cycle");
+        fallbacks.put(key.getId(),fallback);
+    }
+    private ThemeKey<?> fallbackFor(ThemeKey<?> key) {
+        ThemeKey<?> fallback=fallbacks.get(key.getId());
+        if(fallback==null) { ThemeKey<?> declared=declaration(key.getId()); if(declared!=null) fallback=fallbacks.get(declared.getId()); }
+        return fallback;
+    }
+    private record ItemRequest(ThemeKey<?> key,List<String> candidates) { }
+    private List<ItemRequest> requests(ThemeKey<?> key,List<String> candidates) {
+        List<ItemRequest> result=new ArrayList<>(); result.add(new ItemRequest(key,candidates));
+        for(ThemeKey<?> fallback=fallbackFor(key);fallback!=null;fallback=fallbackFor(fallback))
+            result.add(new ItemRequest(fallback,getTypeChain(fallback.type())));
+        return result;
+    }
+    public LocalValue getLocalThemeValue(Map<ThemeKey<?>,Object> values,ThemeKey<?> key,List<String> candidates) {
+        for(ItemRequest request:requests(key,candidates)) {
+            LocalValue value=getLocalValue(values,request.key(),request.candidates());
+            if(value!=null) return value;
+        }
+        return null;
     }
     private ThemeKey<?> declaration(String id) {
         ThemeKey<?> exact=keys.get(id); if(exact!=null) return exact;
@@ -87,17 +125,19 @@ public final class ThemeDB implements SignalOwner {
     public record Resolution<T>(T value,List<Trace> sources) { public Resolution { sources=List.copyOf(sources); } }
     public <T> Resolution<T> resolve(ThemeKey<T> key,List<String> candidates,List<Layer> layers) {
         requireKey(key); List<Trace> trace=new ArrayList<>();
+        List<ItemRequest> requests=requests(key,candidates);
         for(Layer layer:layers) {
-            LocalValue inherited=getLocalValue(layer.overrides(),key,candidates);
+            LocalValue inherited=getLocalThemeValue(layer.overrides(),key,candidates);
             if(inherited!=null) {
                 trace.add(new Trace("style owner override","","",layer.node(),inherited.item(),"internal part / popup style source"));
                 return new Resolution<>(key.validate(inherited.value()),trace);
             }
             for(Theme theme=layer.theme();theme!=null;theme=theme.getParent()) {
-                for(String type:candidates) {
-                    String id=type+":"+key.name(); Object value=theme.getValue(id);
+                for(ItemRequest request:requests) for(String type:request.candidates()) {
+                    String id=type+":"+request.key().name(); Object value=theme.getValue(id);
                     if(value!=null && key.valueType().isInstance(value)) {
-                        trace.add(new Trace(theme==layer.theme()?layer.kind():"resource parent",theme.getId().toString(),theme.getValueResource(id),layer.node(),id,"resolved"));
+                        trace.add(new Trace(theme==layer.theme()?layer.kind():"resource parent",theme.getId().toString(),theme.getValueResource(id),layer.node(),id,
+                                request.key()==key?"resolved":"fallback for "+key.getId()));
                         return new Resolution<>(key.validate(value),trace);
                     }
                     trace.add(new Trace(theme==layer.theme()?layer.kind():"resource parent",theme.getId().toString(),theme.getResource(),layer.node(),id,"missing; continue fallback"));
@@ -137,7 +177,7 @@ public final class ThemeDB implements SignalOwner {
         });
     }
     public void reload(Resources resources) {
-        scope.checkThread(); Map<ResourceLocation,Staged> staged=new LinkedHashMap<>(); List<Diagnostic> errors=new ArrayList<>();
+        scope.checkThread(); imageSizes.clear(); Map<ResourceLocation,Staged> staged=new LinkedHashMap<>(); List<Diagnostic> errors=new ArrayList<>();
         try {
             for(ResourceLocation id:registered) if(!id.equals(OreTheme.DEFAULT_ID)) load(id,resources,staged,new LinkedHashSet<>(),errors);
             // Graph and values are valid now. No observer runs until every resource has been swapped.
@@ -188,7 +228,7 @@ public final class ThemeDB implements SignalOwner {
             case BOOLEAN -> { if(!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isBoolean()) throw new IllegalArgumentException("Expected boolean"); yield value.getAsBoolean(); }
             case INTEGER -> integer(value);
             case FLOAT -> { if(!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isNumber()) throw new IllegalArgumentException("Expected number"); float f=value.getAsFloat(); if(!Float.isFinite(f)) throw new IllegalArgumentException("Non-finite number"); yield f; }
-            case ICON -> new ThemeIcon(readTexture(value.getAsJsonObject(),resources));
+            case TEXTURE -> readImageItem(value.getAsJsonObject(),resources);
         };
     }
     private static String string(JsonElement e) { if(!e.isJsonPrimitive() || !e.getAsJsonPrimitive().isString()) throw new IllegalArgumentException("Expected string"); return e.getAsString(); }
@@ -230,15 +270,24 @@ public final class ThemeDB implements SignalOwner {
         if(o.has("borderX") || o.has("borderY") || o.has("textureMargin") || o.has("type")) throw new IllegalArgumentException("Unsupported legacy texture property");
         if(o.has("drawCenter") && (!o.get("drawCenter").isJsonPrimitive() || !o.getAsJsonPrimitive("drawCenter").isBoolean()))
             throw new IllegalArgumentException("drawCenter: expected boolean");
+        TextureRegion region=readImage(o,resources);
+        float alpha=o.has("opacity")?o.get("opacity").getAsFloat():1;
+        return new StyleBoxTexture(region, insets(o,"textureBorders",true), insets(o,"contentMargin",false), insets(o,"expandMargin",false), o.has("horizontalMode")?StyleBoxTexture.AxisMode.valueOf(string(o.get("horizontalMode")).toUpperCase(Locale.ROOT)):StyleBoxTexture.AxisMode.STRETCH, o.has("verticalMode")?StyleBoxTexture.AxisMode.valueOf(string(o.get("verticalMode")).toUpperCase(Locale.ROOT)):StyleBoxTexture.AxisMode.STRETCH, !o.has("drawCenter") || o.get("drawCenter").getAsBoolean(), alpha, insets(o,"drawInset",false), contentOffset(o));
+    }
+    private TextureRegion readImage(JsonObject o,Resources resources) throws IOException {
         ResourceLocation location=ResourceLocation.parse(string(o.get("location")));
         if(!location.getPath().startsWith("textures/")) location=ResourceLocation.fromNamespaceAndPath(location.getNamespace(),"textures/"+location.getPath()+(location.getPath().endsWith(".png")?"":".png"));
-        int[] actual=resources.imageSize(location);
+        int[] actual=imageSizes.get(location);
+        if(actual==null) { actual=resources.imageSize(location); imageSizes.put(location,actual); }
         int iw=number(o,"imageWidth",actual[0]), ih=number(o,"imageHeight",actual[1]);
         if(iw!=actual[0] || ih!=actual[1]) throw new IllegalArgumentException("imageWidth/imageHeight differ from PNG dimensions");
-        float alpha=o.has("opacity")?o.get("opacity").getAsFloat():1;
-        return new StyleBoxTexture(location,iw,ih,number(o,"x",0),number(o,"y",0),number(o,"width",iw),number(o,"height",ih),insets(o,"textureBorders",true),insets(o,"contentMargin",false),insets(o,"expandMargin",false),
-                o.has("horizontalMode")?StyleBoxTexture.AxisMode.valueOf(string(o.get("horizontalMode")).toUpperCase(Locale.ROOT)):StyleBoxTexture.AxisMode.STRETCH,
-                o.has("verticalMode")?StyleBoxTexture.AxisMode.valueOf(string(o.get("verticalMode")).toUpperCase(Locale.ROOT)):StyleBoxTexture.AxisMode.STRETCH,
-                !o.has("drawCenter") || o.get("drawCenter").getAsBoolean(),alpha,insets(o,"drawInset",false),contentOffset(o));
+        return new TextureRegion(location,iw,ih,number(o,"x",0),number(o,"y",0),number(o,"width",iw),number(o,"height",ih));
     }
+    private TextureRegion readImageItem(JsonObject o,Resources resources) throws IOException {
+        Set<String> fields=Set.of("location","imageWidth","imageHeight","x","y","width","height");
+        for(String field:o.keySet()) if(!fields.contains(field))
+            throw new IllegalArgumentException("Unknown image-region property: "+field);
+        return readImage(o,resources);
+    }
+
 }

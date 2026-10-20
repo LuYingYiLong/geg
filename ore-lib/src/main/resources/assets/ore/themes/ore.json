@@ -593,258 +593,6 @@
   "Tag:tag_realms_informative": "#FFAC90F3",
   "Tag:tag_outline": "#FF1E1E1F",
   "Toast:toast_shadow": "#4D000000",
-  "Control:small_close": {
-    "location": "ore:icons/small_close",
-    "imageWidth": 8,
-    "imageHeight": 8,
-    "x": 0,
-    "y": 0,
-    "width": 8,
-    "height": 8
-  },
-  "Control:close": {
-    "location": "ore:icons/close",
-    "imageWidth": 7,
-    "imageHeight": 7,
-    "x": 0,
-    "y": 0,
-    "width": 7,
-    "height": 7
-  },
-  "Control:checked": {
-    "location": "ore:icons/checked",
-    "imageWidth": 8,
-    "imageHeight": 8,
-    "x": 0,
-    "y": 0,
-    "width": 8,
-    "height": 8
-  },
-  "Control:arrow_down": {
-    "location": "ore:icons/arrow_down",
-    "imageWidth": 7,
-    "imageHeight": 7,
-    "x": 0,
-    "y": 0,
-    "width": 7,
-    "height": 7
-  },
-  "Control:arrow_down_light": {
-    "location": "ore:icons/arrow_down_light",
-    "imageWidth": 7,
-    "imageHeight": 7,
-    "x": 0,
-    "y": 0,
-    "width": 7,
-    "height": 7
-  },
-  "Control:arrow_right_light": {
-    "location": "ore:icons/arrow_right_light",
-    "imageWidth": 7,
-    "imageHeight": 7,
-    "x": 0,
-    "y": 0,
-    "width": 7,
-    "height": 7
-  },
-  "Control:arrow_left": {
-    "location": "ore:icons/arrow_left",
-    "imageWidth": 7,
-    "imageHeight": 7,
-    "x": 0,
-    "y": 0,
-    "width": 7,
-    "height": 7
-  },
-  "Control:flag": {
-    "location": "ore:icons/flag",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16
-  },
-  "Control:org": {
-    "location": "ore:icons/org",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16
-  },
-  "Control:loading": {
-    "location": "ore:icons/loading",
-    "imageWidth": 7,
-    "imageHeight": 112,
-    "x": 0,
-    "y": 0,
-    "width": 7,
-    "height": 112
-  },
-  "Control:checkbox_normal": {
-    "location": "ore:icons/checkbox_normal",
-    "imageWidth": 12,
-    "imageHeight": 12,
-    "x": 0,
-    "y": 0,
-    "width": 12,
-    "height": 12
-  },
-  "Control:checkbox_hovered": {
-    "location": "ore:icons/checkbox_hovered",
-    "imageWidth": 12,
-    "imageHeight": 12,
-    "x": 0,
-    "y": 0,
-    "width": 12,
-    "height": 12
-  },
-  "Control:checkbox_disabled": {
-    "location": "ore:icons/checkbox_disabled",
-    "imageWidth": 12,
-    "imageHeight": 12,
-    "x": 0,
-    "y": 0,
-    "width": 12,
-    "height": 12
-  },
-  "Control:checkbox_checked_normal": {
-    "location": "ore:icons/checkbox_checked_normal",
-    "imageWidth": 12,
-    "imageHeight": 12,
-    "x": 0,
-    "y": 0,
-    "width": 12,
-    "height": 12
-  },
-  "Control:checkbox_checked_hovered": {
-    "location": "ore:icons/checkbox_checked_hovered",
-    "imageWidth": 12,
-    "imageHeight": 12,
-    "x": 0,
-    "y": 0,
-    "width": 12,
-    "height": 12
-  },
-  "Control:checkbox_checked_pressed": {
-    "location": "ore:icons/checkbox_checked_pressed",
-    "imageWidth": 12,
-    "imageHeight": 12,
-    "x": 0,
-    "y": 0,
-    "width": 12,
-    "height": 12
-  },
-  "Control:checkbox_checked_disabled": {
-    "location": "ore:icons/checkbox_checked_disabled",
-    "imageWidth": 12,
-    "imageHeight": 12,
-    "x": 0,
-    "y": 0,
-    "width": 12,
-    "height": 12
-  },
-  "Control:filter": {
-    "location": "ore:icons/filter",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16
-  },
-  "Control:email": {
-    "location": "ore:icons/email",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16
-  },
-  "Control:email_readed": {
-    "location": "ore:icons/email_readed",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16
-  },
-  "Control:gift": {
-    "location": "ore:icons/gift",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16
-  },
-  "Control:gift_opened": {
-    "location": "ore:icons/gift_opened",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16
-  },
-  "Control:switch_base": {
-    "location": "ore:icons/switch_base",
-    "imageWidth": 27,
-    "imageHeight": 13,
-    "x": 0,
-    "y": 0,
-    "width": 27,
-    "height": 13
-  },
-  "Control:switch_base_disabled": {
-    "location": "ore:icons/switch_base_disabled",
-    "imageWidth": 27,
-    "imageHeight": 13,
-    "x": 0,
-    "y": 0,
-    "width": 27,
-    "height": 13
-  },
-  "Control:switch_button_normal": {
-    "location": "ore:icons/switch_button_normal",
-    "imageWidth": 14,
-    "imageHeight": 15,
-    "x": 0,
-    "y": 0,
-    "width": 14,
-    "height": 15
-  },
-  "Control:switch_button_hovered": {
-    "location": "ore:icons/switch_button_hovered",
-    "imageWidth": 14,
-    "imageHeight": 15,
-    "x": 0,
-    "y": 0,
-    "width": 14,
-    "height": 15
-  },
-  "Control:switch_button_pressed": {
-    "location": "ore:icons/switch_button_pressed",
-    "imageWidth": 14,
-    "imageHeight": 15,
-    "x": 0,
-    "y": 0,
-    "width": 14,
-    "height": 15
-  },
-  "Control:switch_button_disabled": {
-    "location": "ore:icons/switch_button_disabled",
-    "imageWidth": 14,
-    "imageHeight": 15,
-    "x": 0,
-    "y": 0,
-    "width": 14,
-    "height": 15
-  },
   "Button:text_normal": {
     "style": "flat",
     "color": "#00000000",
@@ -921,5 +669,71 @@
       "borderRight": 0,
       "borderBottom": 1
     }
+  },
+  "Icons:small_close": {
+    "location": "ore:icons/small_close"
+  },
+  "Icons:close": {
+    "location": "ore:icons/close"
+  },
+  "Icons:checked": {
+    "location": "ore:icons/checked"
+  },
+  "Icons:arrow_down": {
+    "location": "ore:icons/arrow_down"
+  },
+  "Icons:arrow_down_light": {
+    "location": "ore:icons/arrow_down_light"
+  },
+  "Icons:arrow_right_light": {
+    "location": "ore:icons/arrow_right_light"
+  },
+  "Icons:arrow_left": {
+    "location": "ore:icons/arrow_left"
+  },
+  "Icons:filter": {
+    "location": "ore:icons/filter"
+  },
+  "Checkbox:unchecked_normal": {
+    "location": "ore:icons/checkbox_normal"
+  },
+  "Checkbox:unchecked_hovered": {
+    "location": "ore:icons/checkbox_hovered"
+  },
+  "Checkbox:unchecked_disabled": {
+    "location": "ore:icons/checkbox_disabled"
+  },
+  "Checkbox:checked_normal": {
+    "location": "ore:icons/checkbox_checked_normal"
+  },
+  "Checkbox:checked_hovered": {
+    "location": "ore:icons/checkbox_checked_hovered"
+  },
+  "Checkbox:checked_pressed": {
+    "location": "ore:icons/checkbox_checked_pressed"
+  },
+  "Checkbox:checked_disabled": {
+    "location": "ore:icons/checkbox_checked_disabled"
+  },
+  "Switch:base": {
+    "location": "ore:icons/switch_base"
+  },
+  "Switch:base_disabled": {
+    "location": "ore:icons/switch_base_disabled"
+  },
+  "Switch:button_normal": {
+    "location": "ore:icons/switch_button_normal"
+  },
+  "Switch:button_hovered": {
+    "location": "ore:icons/switch_button_hovered"
+  },
+  "Switch:button_pressed": {
+    "location": "ore:icons/switch_button_pressed"
+  },
+  "Switch:button_disabled": {
+    "location": "ore:icons/switch_button_disabled"
+  },
+  "Spin:texture": {
+    "location": "ore:icons/loading"
   }
 }

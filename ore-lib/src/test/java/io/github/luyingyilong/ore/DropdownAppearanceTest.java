@@ -1,7 +1,9 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.render.*;
+
 import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.theme.OreIcons;
+import io.github.luyingyilong.ore.theme.OreTheme;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -18,9 +20,9 @@ public final class DropdownAppearanceTest {
         check(dropdown.getIcon() == null && dropdown.getShowArrow() && dropdown.getType() == Button.Type.SECONDARY);
         dropdown.setOptions(List.of(new Dropdown.Option<>("all", Component.literal("All mods")),
                 new Dropdown.Option<>("minecraft", Component.literal("minecraft"))));
-        dropdown.setTriggerLabel(Component.empty()).setIcon(OreIcons.FILTER, 16, 16)
+        dropdown.setTriggerLabel(Component.empty()).setIcon(TextureSource.themed(io.github.luyingyilong.ore.theme.IconTheme.FILTER))
                 .setShowArrow(false).setType(Button.Type.TEXT);
-        Button reference = new Button(Component.empty()).setIcon(OreIcons.FILTER, 16, 16).setType(Button.Type.TEXT);
+        Button reference = new Button(Component.empty()).setIcon(TextureSource.themed(io.github.luyingyilong.ore.theme.IconTheme.FILTER)).setType(Button.Type.TEXT);
         int width = dropdown.measureWidth(font, 300);
         int height = dropdown.measureHeight(font, 300);
         check(width == 24 && height == 24);
@@ -39,7 +41,7 @@ public final class DropdownAppearanceTest {
         check(dropdown.getSelected().equals("minecraft") && !dropdown.isOpen());
         dropdown.setShowArrow(true);
         check(dropdown.measureWidth(font, 300) > width);
-        dropdown.setShowArrow(false).setIcon((Button.Icon) null).setTriggerLabel(Component.literal("Filter"));
+        dropdown.setShowArrow(false).setIcon((TextureSource) null).setTriggerLabel(Component.literal("Filter"));
         check(dropdown.measureWidth(font, 300) > 24 && dropdown.getIcon() == null);
     }
 

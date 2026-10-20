@@ -1,18 +1,21 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.render.DrawContext;
-import com.mojang.blaze3d.systems.RenderSystem;
+import io.github.luyingyilong.ore.theme.IconTheme;
+import io.github.luyingyilong.ore.theme.ThemeDB;
+
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.SizeFlags;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.signal.Signal;
 import io.github.luyingyilong.ore.signal.SignalSource;
-import io.github.luyingyilong.ore.theme.OreIcons;
+import io.github.luyingyilong.ore.theme.OreTheme;
 import io.github.luyingyilong.ore.theme.OreSounds;
 import io.github.luyingyilong.ore.util.ReleaseGesture;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import io.github.luyingyilong.ore.render.*;
+import io.github.luyingyilong.ore.theme.ThemeKey;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
@@ -23,18 +26,35 @@ import java.util.function.LongSupplier;
  * Pixel-sized toggle. State changes on release; only the thumb moves and receives the focus outline.
  */
 public final class Switch extends Container {
-    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Switch"); }
-    @Override public String getThemeState() { return disabled?"disabled":loading?"loading":checked?"checked":"unchecked"; }
+
+    public static final ThemeKey<TextureRegion> BASE = IconTheme.texture("Switch", "base", "switch_base", 27, 13);
+    public static final ThemeKey<TextureRegion> BASE_DISABLED = IconTheme.texture("Switch", "base_disabled", "switch_base_disabled", 27, 13);
+    public static final ThemeKey<TextureRegion> BUTTON_NORMAL = IconTheme.texture("Switch", "button_normal", "switch_button_normal", 14, 15);
+    public static final ThemeKey<TextureRegion> BUTTON_HOVERED = IconTheme.texture("Switch", "button_hovered", "switch_button_hovered", 14, 15);
+    public static final ThemeKey<TextureRegion> BUTTON_PRESSED = IconTheme.texture("Switch", "button_pressed", "switch_button_pressed", 14, 15);
+    public static final ThemeKey<TextureRegion> BUTTON_DISABLED = IconTheme.texture("Switch", "button_disabled", "switch_button_disabled", 14, 15);
+
+    public static void registerTheme(ThemeDB db) {
+        OreTheme.registerType(db, "Switch");
+        db.register(BASE);
+        db.register(BASE_DISABLED);
+        db.register(BUTTON_NORMAL);
+        db.register(BUTTON_HOVERED);
+        db.register(BUTTON_PRESSED);
+        db.register(BUTTON_DISABLED);
+    }
+
     public static final int WIDTH = 28;
     public static final int HEIGHT = 15;
     private static final int BASE_WIDTH = 27;
     private static final int BASE_HEIGHT = 13;
     private static final int THUMB_WIDTH = 14;
     private static final int TRAVEL = 14;
-
     private final ReleaseGesture<Boolean> gesture = new ReleaseGesture<>();
     private final LongSupplier clock;
     private final Consumer<OreSounds.Cue> soundPlayer;
+    private final TextureRect baseImage=ownPart("base",new TextureRect().setStretchMode(TextureRect.StretchMode.SCALE).setExpandMode(TextureRect.ExpandMode.IGNORE_SIZE));
+    private final TextureRect thumbImage=ownPart("thumb",new TextureRect().setStretchMode(TextureRect.StretchMode.SCALE).setExpandMode(TextureRect.ExpandMode.IGNORE_SIZE));
     private final Spin spinner = ownPart("spinner", new Spin());
     private final SignalSource<Boolean> toggled = new SignalSource<>(this, "toggled", "Boolean");
     private final SignalSource<Boolean> activated = new SignalSource<>(this, "activated", "Boolean");
@@ -44,11 +64,9 @@ public final class Switch extends Container {
     private long animationDuration = 240L;
     private long animationStart;
     private double animationFrom;
-
     public Switch() {
         this(false);
     }
-
     /**
      * Initial checked state is placed immediately, without an entrance animation.
      */
@@ -72,11 +90,6 @@ public final class Switch extends Container {
         updateChildren(java.util.List.of(spinner));
     }
 
-    private static void blit(GuiGraphics graphics, ResourceLocation texture, Rect area) {
-        graphics.blit(texture, area.x(), area.y(), 0.0F, 0.0F,
-                area.width(), area.height(), area.width(), area.height());
-    }
-
     /**
      * Ease-out bounce stays inside the two endpoints, preserving the fixed pixel footprint.
      */
@@ -92,6 +105,11 @@ public final class Switch extends Container {
         }
         progress -= 2.625 / 2.75;
         return 7.5625 * progress * progress + 0.984375;
+    }
+
+    @Override
+    public String getThemeState() {
+        return disabled ? "disabled" : loading ? "loading" : checked ? "checked" : "unchecked";
     }
 
     @Override
@@ -236,8 +254,10 @@ public final class Switch extends Container {
         thumb = thumb.translated(screenX, screenY);
         boolean hovered = artworkBounds().translated(screenX, screenY)
                 .contains(context.getAbsMouseX(), context.getAbsMouseY());
-        getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.getIconKey(disabled?OreIcons.SWITCH_BASE_DISABLED:OreIcons.SWITCH_BASE)).draw(context,base);
-        getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.getIconKey(buttonTexture(hovered))).draw(context,thumb);
+        baseImage.setTexture(TextureSource.themed(disabled?BASE_DISABLED:BASE));
+        baseImage.layout(base,context.getFont()); baseImage.draw(context,0,0);
+        thumbImage.setTexture(TextureSource.themed(getButtonTextureKey(hovered)));
+        thumbImage.layout(thumb,context.getFont()); thumbImage.draw(context,0,0);
     }
 
     private void layoutSpinner(Rect thumb, Font font) {
@@ -246,11 +266,11 @@ public final class Switch extends Container {
                 thumb.y() - origin.y() + (HEIGHT - 7) / 2, 7, 7), font);
     }
 
-    ResourceLocation buttonTexture(boolean hovered) {
-        if (disabled) return OreIcons.SWITCH_BUTTON_DISABLED;
-        if (loading) return OreIcons.SWITCH_BUTTON_NORMAL;
-        if (gesture.keyPressed(true) || hovered && gesture.pointerPending()) return OreIcons.SWITCH_BUTTON_PRESSED;
-        return hovered ? OreIcons.SWITCH_BUTTON_HOVERED : OreIcons.SWITCH_BUTTON_NORMAL;
+    ThemeKey<TextureRegion> getButtonTextureKey(boolean hovered) {
+        if (disabled) return BUTTON_DISABLED;
+        if (loading) return BUTTON_NORMAL;
+        if (gesture.keyPressed(true) || hovered && gesture.pointerPending()) return BUTTON_PRESSED;
+        return hovered ? BUTTON_HOVERED : BUTTON_NORMAL;
     }
 
     private boolean available() {

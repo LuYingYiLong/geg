@@ -44,7 +44,7 @@ public final class NativeInspectorClientTest {
                 check(java.util.Arrays.asList(mc.options.keyMappings).contains(OreInspector.OPEN),
                         "Inspector service registers F8 without a GEG development bootstrap");
                 preview=new Label(Component.literal("Inspector preview / 中文基线")); preview.setDebugName("Native Inspector preview");
-                signalButton = new Button(Component.literal("Business button"));
+                signalButton = new Button(Component.literal("Business button")).setIcon(io.github.luyingyilong.ore.render.TextureSource.themed(io.github.luyingyilong.ore.theme.IconTheme.ARROW_DOWN));
                 signalButton.setDebugName("Signal diagnostics button");
                 for (int i = 0; i < 2; i++) subscribeSignalButton();
                 var childContainer104 = new Box().setGap(2);
@@ -61,10 +61,28 @@ public final class NativeInspectorClientTest {
                 content.addChild(new Segmented(java.util.List.of(Component.literal("One"), Component.literal("Two"))));
                 Box rows=new Box();for(int i=0;i<350;i++){ rows.addChild(new Label(Component.literal("Node "+i))); }
                 Scroll scroll=new Scroll().setContent(rows);scroll.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);content.addChild(scroll);
-                originalRoot = Window.embedded().setContent(content); originalRoot.setDebugName("Original Window"); originalRoot.open();var screen=mc.screen;OreInspector.open();
+                originalRoot = Window.embedded().setContent(content); originalRoot.setDebugName("Original Window"); originalRoot.open();var screen=mc.screen;
+                check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(originalRoot, org.lwjgl.glfw.GLFW.GLFW_KEY_F8, 0, originalRoot.getContext().getMui()),
+                        "F8 is consumed through the actual Window dispatcher");
+                check(OreInspector.view()==null,"F8 queues native creation until the input dispatch has finished");
                 check(mc.screen==screen,"Inspector never replaces main screen"); phase=1;
-            } else if(phase==1&&OreInspector.backend().snapshot().nodes().size()>350) {
+            } else if(phase==1&&OreInspector.backend()!=null&&OreInspector.backend().snapshot().nodes().size()>350) {
+                System.out.println("GEG_NATIVE_INSPECTOR_DEFERRED_OPEN_PASS");
                 var backend=OreInspector.backend();var node=backend.snapshot().nodes().stream().filter(n->n.name().equals("Native Inspector preview")).findFirst().orElseThrow();
+                var imageNode=backend.snapshot().nodes().stream().filter(n->n.className().equals("TextureRect")
+                        && n.parent().equals(backend.snapshot().nodes().stream().filter(owner->owner.name().equals("Signal diagnostics button")).findFirst().orElseThrow().id())
+                        && n.name().equals("[internal] icon")).findFirst().orElseThrow();
+                var opacity=imageNode.properties().stream().filter(p->p.name().equals("opacity")).findFirst().orElseThrow();
+                check(!opacity.readonly(),"Internal image properties are editable");
+                check(imageNode.properties().stream().anyMatch(p->p.name().equals("textureRegion") && p.readonly()),"Image source geometry stays read-only");
+                backend.execute(InspectorCommand.edit(imageNode.id(),opacity.index(),"0.5"));
+                check(signalButton.getIconControl().getOpacity()==0.5F && backend.lastError().isEmpty(),"Internal image opacity is applied live");
+                backend.execute(InspectorCommand.action(InspectorCommand.Operation.UNDO));
+                check(signalButton.getIconControl().getOpacity()==1F,"Undo restores internal image opacity");
+                backend.binding(signalButton,"rebound-image-probe");
+                backend.execute(InspectorCommand.edit(imageNode.id(),opacity.index(),"0.25"));
+                check(!backend.lastError().isEmpty() && signalButton.getIconControl().getOpacity()==1F,"Rebinding invalidates stale internal image edit requests");
+                System.out.println("GEG_NATIVE_INSPECTOR_IMAGE_PASS");
                 nodeId=node.id();property=node.properties().stream().filter(p->p.name().equals("fontSize")).findFirst().orElseThrow().index();
                 backend.execute(InspectorCommand.select(nodeId));backend.execute(InspectorCommand.edit(nodeId,property,"17"));
                 check(preview.getFontSize()==17,"Real reflective edit: " + backend.snapshot().error() + " / " + originalRoot.getLifecycleInfo());preview.setFontSize(13);check(preview.getFontSize()==17,"Application refresh preserves override");
@@ -104,6 +122,15 @@ public final class NativeInspectorClientTest {
                 clickViewIndex(views,2);
                 check(OreInspector.backend().snapshot().themes().items().stream().anyMatch(i->i.key().equals("Button:secondary_normal") && i.value().contains("StyleBoxTexture")),"Native theme view resolves actual button texture");
                 check(io.github.luyingyilong.ore.theme.ThemeDB.getDefault().getDiagnostics().isEmpty(),"Shipped themes loaded without MUI or resource errors");
+                var hostThemes = io.github.luyingyilong.ore.theme.ThemeDB.getDefault();
+                check(hostThemes.getDefaultTheme().getId().equals(io.github.luyingyilong.geg.client.theme.GegThemes.ID),
+                        "GEG uses its own theme resource without replacing the library theme");
+                var mailImage = new io.github.luyingyilong.ore.TextureRect().setTexture(
+                        io.github.luyingyilong.ore.render.TextureSource.themed(io.github.luyingyilong.geg.client.theme.GegThemes.MAIL_UNREAD));
+                check(mailImage.getResolvedTextureRegion().getTexture().getNamespace().equals("geg")
+                                && mailImage.getMinimumWidth() == 16, "Business image is loaded from the host pack with inferred dimensions");
+                mailImage.queueFree();
+                System.out.println("GEG_THEME_IMAGE_CLASSIFICATION_CLIENT_PASS");
                 System.out.println("GEG_NATIVE_INSPECTOR_THEMES_PASS");
                 clickView(views, true);
                 check(OreInspector.backend().snapshot().signals().data().signals().stream().anyMatch(s -> s.name().equals("pressed")
@@ -183,7 +210,9 @@ public final class NativeInspectorClientTest {
                 check(OreInspector.view()==null&&OreInspector.backend()==null,"Native close clears Inspector references");
                 var key=new ScreenEvent.KeyPressed.Pre(mc.screen,org.lwjgl.glfw.GLFW.GLFW_KEY_F8,0,0);
                 MinecraftForge.EVENT_BUS.post(key);
-                check(key.isCanceled()&&OreInspector.view()!=null&&OreInspector.view().window().getHost().isOpen(),"F8 reopens closed native Inspector");
+                check(key.isCanceled()&&OreInspector.view()==null,"Screen shortcut consumes F8 without native creation on its callback stack");
+                phase=70;
+            } else if(phase==70&&OreInspector.view()!=null&&OreInspector.view().window().getHost().isOpen()) {
                 check(OreInspector.view().window()!=previousWindow&&OreInspector.backend()!=previousBackend,"Reopen creates a fresh session");
                 check(mc.options.pauseOnLostFocus==false,"Reopened Inspector coordinates pause setting");
                 phase=8;

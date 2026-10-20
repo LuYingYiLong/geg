@@ -1,12 +1,12 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.DebugProperty;
 import io.github.luyingyilong.ore.debug.Inspectable;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.Size;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.theme.OreFonts;
 import io.github.luyingyilong.ore.theme.OreTextMetrics;
 import io.github.luyingyilong.ore.theme.OreTheme;
@@ -23,7 +23,6 @@ import java.util.Objects;
  * Shared Ore text measurement and rendering, including styled Minecraft Components.
  */
 public final class Label extends Control {
-    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Label"); }
     /**
      * GUI pixels: 8 preserves Minecraft's usual unscaled text size.
      */
@@ -36,8 +35,6 @@ public final class Label extends Control {
     private Wrap wrap = Wrap.NONE;
     private Horizontal horizontal = Horizontal.LEFT;
     private Vertical vertical = Vertical.TOP;
-    private int color = OreTheme.TEXT_WHITE;
-    private boolean shadow;
     private float scale = 1.0F;
     private float fontSize = DEFAULT_FONT_SIZE;
     private int maximumWidth = Integer.MAX_VALUE;
@@ -49,8 +46,13 @@ public final class Label extends Control {
     public Label() {
         this(Component.empty());
     }
+
     public Label(Component text) {
         this.text = Objects.requireNonNull(text);
+    }
+
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
+        io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Label");
     }
 
     /**
@@ -58,8 +60,8 @@ public final class Label extends Control {
      */
     public static int measureTextHeight(Control owner, Font font, Component text, int width, Wrap wrap, Overflow overflow, int maxLines) {
         if (maxLines < 1) throw new IllegalArgumentException("At least one line is required");
-        float scale=owner.getThemeItem(OreTheme.FONT_SIZE)/DEFAULT_FONT_SIZE;
-        return Math.min(maxLines, wrappedLines(font, OreFonts.text(Objects.requireNonNull(text),owner.getThemeItem(OreTheme.TEXT_FONT)), Math.max(1,(int)Math.floor(width/scale)),
+        float scale = owner.getThemeItem(OreTheme.FONT_SIZE) / DEFAULT_FONT_SIZE;
+        return Math.min(maxLines, wrappedLines(font, OreFonts.text(Objects.requireNonNull(text), owner.getThemeItem(OreTheme.TEXT_FONT)), Math.max(1, (int) Math.floor(width / scale)),
                 Objects.requireNonNull(wrap), Objects.requireNonNull(overflow)).size()) * OreTextMetrics.body().lineHeight(scale);
     }
 
@@ -93,7 +95,7 @@ public final class Label extends Control {
 
     public static void draw(Control owner, DrawContext context, Component text, Rect area, int color,
                             Overflow overflow, Horizontal horizontal, Vertical vertical) {
-        Label painter=immediate(context,text);
+        Label painter = immediate(context, text);
         painter.setThemeParent(owner);
         painter.setColor(color).setOverflow(overflow).setAlignment(horizontal, vertical)
                 .paint(context.getGraphics(), context.getFont(), area, context.getAbsMouseX(), context.getAbsMouseY(), owner);
@@ -116,7 +118,7 @@ public final class Label extends Control {
 
     public Label setHero(boolean hero) {
         if (DebugBridge.previewWrite(this, "hero", hero)) return this;
-        setThemeProperty(OreTheme.HERO,hero);
+        setThemeProperty(OreTheme.HERO, hero);
         if (this.hero != hero) {
             this.hero = hero;
             styledText = null;
@@ -142,8 +144,10 @@ public final class Label extends Control {
     }
 
     public Component getStyledText() {
-        if (DebugBridge.active()) return OreFonts.text(getText(),getThemeItem(getHero()?OreTheme.HERO_FONT:OreTheme.TEXT_FONT));
-        if (styledText == null) styledText = OreFonts.text(text,getThemeItem(getHero()?OreTheme.HERO_FONT:OreTheme.TEXT_FONT));
+        if (DebugBridge.active())
+            return OreFonts.text(getText(), getThemeItem(getHero() ? OreTheme.HERO_FONT : OreTheme.TEXT_FONT));
+        if (styledText == null)
+            styledText = OreFonts.text(text, getThemeItem(getHero() ? OreTheme.HERO_FONT : OreTheme.TEXT_FONT));
         return styledText;
     }
 
@@ -166,29 +170,60 @@ public final class Label extends Control {
         return color;
     }
 
-    @Override public Label setThemeTypeVariation(String variation) { super.setThemeTypeVariation(variation); return this; }
-    public Label clearHero() { clearThemeProperty(OreTheme.HERO); return this; }
-    public Label clearColor() { clearThemeProperty(OreTheme.TEXT_COLOR); return this; }
-    public Label clearFontSize() { clearThemeProperty(OreTheme.FONT_SIZE); return this; }
-    public Label clearShadow() { clearThemeProperty(OreTheme.TEXT_SHADOW); return this; }
-    public Label setFont(net.minecraft.resources.ResourceLocation font) {
-        setThemeProperty(OreTheme.TEXT_FONT,font);
-        setThemeProperty(OreTheme.HERO_FONT,font);
-        return this;
-    }
-    public net.minecraft.resources.ResourceLocation getFont() { return getThemeItem(getHero()?OreTheme.HERO_FONT:OreTheme.TEXT_FONT); }
-    public Label clearFont() { clearThemeProperty(OreTheme.TEXT_FONT); clearThemeProperty(OreTheme.HERO_FONT); return this; }
     public Label setColor(int color) {
         if (DebugBridge.previewWrite(this, "color", color)) return this;
-        this.color = color;
-        setThemeProperty(OreTheme.TEXT_COLOR,color);
+        setThemeProperty(OreTheme.TEXT_COLOR, color);
         return this;
     }
 
-    public boolean getShadow() { return getThemeItem(OreTheme.TEXT_SHADOW); }
+    @Override
+    public Label setThemeTypeVariation(String variation) {
+        super.setThemeTypeVariation(variation);
+        return this;
+    }
+
+    public Label clearHero() {
+        clearThemeProperty(OreTheme.HERO);
+        return this;
+    }
+
+    public Label clearColor() {
+        clearThemeProperty(OreTheme.TEXT_COLOR);
+        return this;
+    }
+
+    public Label clearFontSize() {
+        clearThemeProperty(OreTheme.FONT_SIZE);
+        return this;
+    }
+
+    public Label clearShadow() {
+        clearThemeProperty(OreTheme.TEXT_SHADOW);
+        return this;
+    }
+
+    public net.minecraft.resources.ResourceLocation getFont() {
+        return getThemeItem(getHero() ? OreTheme.HERO_FONT : OreTheme.TEXT_FONT);
+    }
+
+    public Label setFont(net.minecraft.resources.ResourceLocation font) {
+        setThemeProperty(OreTheme.TEXT_FONT, font);
+        setThemeProperty(OreTheme.HERO_FONT, font);
+        return this;
+    }
+
+    public Label clearFont() {
+        clearThemeProperty(OreTheme.TEXT_FONT);
+        clearThemeProperty(OreTheme.HERO_FONT);
+        return this;
+    }
+
+    public boolean getShadow() {
+        return getThemeItem(OreTheme.TEXT_SHADOW);
+    }
+
     public Label setShadow(boolean shadow) {
-        this.shadow = shadow;
-        setThemeProperty(OreTheme.TEXT_SHADOW,shadow);
+        setThemeProperty(OreTheme.TEXT_SHADOW, shadow);
         return this;
     }
 
@@ -205,7 +240,7 @@ public final class Label extends Control {
         if (!(fontSize > 0.0F) || !Float.isFinite(fontSize))
             throw new IllegalArgumentException("Font size must be positive and finite");
         if (DebugBridge.previewWrite(this, "fontSize", fontSize)) return this;
-        setThemeProperty(OreTheme.FONT_SIZE,fontSize);
+        setThemeProperty(OreTheme.FONT_SIZE, fontSize);
         if (this.fontSize != fontSize) {
             this.fontSize = fontSize;
             scrollStartMs = Long.MIN_VALUE;

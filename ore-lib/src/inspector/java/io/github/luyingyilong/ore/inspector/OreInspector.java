@@ -22,6 +22,9 @@ public final class OreInspector {
     static final KeyMapping OPEN = new KeyMapping("key.ore.inspector", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F8, "key.categories.ore.development");
     private static InspectorBackend backend;
     private static InspectorView view;
+    // execute() can run inline on the client thread; tell() always queues the task.
+    private static final InspectorOpenRequest OPEN_REQUEST = new InspectorOpenRequest(
+            task -> Minecraft.getInstance().tell(task), OreInspector::open);
 
     private static boolean initialized;
     public static synchronized void initialize(net.minecraftforge.eventbus.api.IEventBus forgeBus) {
@@ -30,7 +33,7 @@ public final class OreInspector {
         forgeBus.register(OreInspector.class);
         DebugBridge.setHostShortcut((key, scan) -> {
             if (!OPEN.matches(key, scan)) return false;
-            open();
+            OPEN_REQUEST.request();
             return true;
         });
         initialized = true;
@@ -49,6 +52,10 @@ public final class OreInspector {
 
     public static void open() {
         if (FMLEnvironment.production) return;
+        if (io.github.luyingyilong.ore.signal.DispatchGuard.active()) {
+            OPEN_REQUEST.request();
+            return;
+        }
         try {
             if (view != null && view.window().getHost().isOpen()) {
                 view.window().requestFocus();
@@ -69,6 +76,7 @@ public final class OreInspector {
     }
 
     public static void stop() {
+        OPEN_REQUEST.cancel();
         if (backend == null && view == null) return;
         InspectorView previous = view;
         view = null;
@@ -81,7 +89,7 @@ public final class OreInspector {
     @SubscribeEvent
     public static void tick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
-        while (OPEN.consumeClick()) open();
+        while (OPEN.consumeClick()) OPEN_REQUEST.request();
         try {
             if (backend != null) backend.tick();
             if (view != null) view.update();
@@ -94,7 +102,7 @@ public final class OreInspector {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void key(ScreenEvent.KeyPressed.Pre event) {
         if (OPEN.matches(event.getKeyCode(), event.getScanCode())) {
-            open();
+            OPEN_REQUEST.request();
             event.setCanceled(true);
             return;
         }

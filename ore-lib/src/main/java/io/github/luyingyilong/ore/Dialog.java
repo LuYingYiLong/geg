@@ -1,21 +1,13 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.signal.*;
-
 import io.github.luyingyilong.ore.debug.DebugBridge;
-
+import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.render.DrawContext;
-import io.github.luyingyilong.ore.layout.Box;
-import io.github.luyingyilong.ore.layout.Container;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Padding;
-import io.github.luyingyilong.ore.layout.Panel;
-import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.layout.Size;
-import io.github.luyingyilong.ore.layout.SizeFlags;
-import io.github.luyingyilong.ore.theme.OreIcons;
-import io.github.luyingyilong.ore.theme.OreSounds;
-import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.render.TextureRegion;
+import io.github.luyingyilong.ore.render.TextureSource;
+import io.github.luyingyilong.ore.signal.Signal0;
+import io.github.luyingyilong.ore.signal.SignalSource0;
+import io.github.luyingyilong.ore.theme.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -25,9 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/** A tree-owned overlay measured and laid out as header, content, and footer. */
+/**
+ * A tree-owned overlay measured and laid out as header, content, and footer.
+ */
 public final class Dialog extends Container {
-    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Dialog"); }
+
+    public static final ThemeKey<TextureRegion> CLOSE_ICON = IconTheme.item("Dialog", "close_icon", IconTheme.SMALL_CLOSE);
     public static final int PADDING = 8;
     private static final int BODY_HORIZONTAL_INSET = PADDING;
     private static final int BODY_BOTTOM_INSET = 5;
@@ -38,7 +33,6 @@ public final class Dialog extends Container {
     private static final int CONTENT_MIN_HEIGHT = 24;
     private static final int CLOSE_SIZE = 18;
     private static final int CLOSE_ICON_SIZE = 8;
-
     private final int preferredWidth;
     private final int preferredHeight;
     private final int verticalOffset;
@@ -50,17 +44,16 @@ public final class Dialog extends Container {
     private final Label titleLabel = new Label().setThemeTypeVariation("LabelHero").setOpticalCenter(true).setOverflow(Label.Overflow.CLIP)
             .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
     private final Button close = new Button().setSize(Button.Size.SMALL).setType(Button.Type.TEXT)
-            .setIcon(io.github.luyingyilong.ore.Button.Icon.themed(io.github.luyingyilong.ore.theme.OreTheme.ICON_SMALL_CLOSE));
+            .setIcon(TextureSource.themed(CLOSE_ICON));
     private final Box footer = new Box().setOrientation(Box.Orientation.VERTICAL).setGap(BUTTON_GAP);
     private final Padding footerInset = new Padding(new Padding.Insets(SECTION_SPACING, PADDING, PADDING, PADDING))
             .setChild(footer);
     private final Padding bodyInset = new Padding(new Padding.Insets(PADDING, BODY_HORIZONTAL_INSET,
             PADDING, BODY_HORIZONTAL_INSET));
     private final List<Button> actions = new ArrayList<>();
-    private Control content;
     private final SignalSource0 closeRequested = new SignalSource0(this, "closeRequested");
+    private Control content;
     private float depth = 200.0F;
-
     public Dialog(Component title) {
         this(0, 0, 0, title);
     }
@@ -72,6 +65,7 @@ public final class Dialog extends Container {
         setTitle(title);
         titleLabel.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
         close.setMinimum(CLOSE_SIZE, CLOSE_SIZE);
+        close.setThemeParent(this);
         close.setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         close.pressed().connect(close, () -> closeRequested.emit());
         header.setMinimum(0, CLOSE_SIZE).setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
@@ -87,19 +81,49 @@ public final class Dialog extends Container {
         updateChildren(List.of(panel));
     }
 
-    @Override public Dialog setMinimum(int width, int height) {
+    public static void registerTheme(ThemeDB db) {
+        OreTheme.registerType(db, "Dialog");
+        IconTheme.registerTheme(db);
+        db.register(CLOSE_ICON);
+        db.registerFallback(CLOSE_ICON, IconTheme.SMALL_CLOSE);
+    }
+
+    public static Rect fittedBounds(
+            int preferredWidth, int preferredHeight, int verticalOffset, int viewportWidth, int viewportHeight) {
+        int horizontalMargin = Math.min(6, Math.max(1, viewportWidth / 32));
+        int verticalMargin = viewportHeight < 110 ? 1 : 2;
+        int width = Math.max(1, Math.min(preferredWidth,
+                Math.max(1, viewportWidth - 2 * horizontalMargin)));
+        int height = Math.max(1, Math.min(preferredHeight,
+                Math.max(1, viewportHeight - 2 * verticalMargin)));
+        int x = (viewportWidth - width) / 2;
+        int y = (viewportHeight - height) / 2 + verticalOffset;
+        y = Math.max(0, Math.min(Math.max(0, viewportHeight - height), y));
+        return new Rect(x, y, width, height);
+    }
+
+    private static int actionHeight(int count) {
+        return count == 0 ? 0 : count * Button.Size.MEDIUM.getHeight() + (count - 1) * BUTTON_GAP;
+    }
+
+    @Override
+    public Dialog setMinimum(int width, int height) {
         super.setMinimum(width, height);
         return this;
     }
 
-    @Override protected void validateChildren(List<Control> proposed) {
-        if (!isUpdatingChildren()) throw new IllegalStateException("Dialog has a fixed skeleton; use setContent/addAction");
+    @Override
+    protected void validateChildren(List<Control> proposed) {
+        if (!isUpdatingChildren())
+            throw new IllegalStateException("Dialog has a fixed skeleton; use setContent/addAction");
     }
 
-    @Override protected void childrenChanged() {
+    @Override
+    protected void childrenChanged() {
         content = bodyInset.getChildCount() == 0 ? null : bodyInset.getChild(0);
         actions.clear();
-        for (Control child : footer.getChildren()) if (child instanceof Button button && button.isAlive()) actions.add(button);
+        for (Control child : footer.getChildren())
+            if (child instanceof Button button && button.isAlive()) actions.add(button);
         footer.setMinimum(0, actionHeight(actions.size()));
         footerInset.setVisible(!actions.isEmpty());
     }
@@ -109,22 +133,42 @@ public final class Dialog extends Container {
         return this;
     }
 
-    public Dialog setFontSize(float fontSize) { titleLabel.setFontSize(fontSize); return this; }
-    public Dialog clearFontSize() { titleLabel.clearFontSize(); requestLayout(); return this; }
-    public float getFontSize() { return titleLabel.getFontSize(); }
+    public Dialog clearFontSize() {
+        titleLabel.clearFontSize();
+        requestLayout();
+        return this;
+    }
 
-    public Signal0 closeRequested() { return closeRequested.signal(); }
+    public float getFontSize() {
+        return titleLabel.getFontSize();
+    }
 
-    @Override public float getContentDepth() { return depth; }
+    public Dialog setFontSize(float fontSize) {
+        titleLabel.setFontSize(fontSize);
+        return this;
+    }
+
+    public Signal0 closeRequested() {
+        return closeRequested.signal();
+    }
+
+    @Override
+    public float getContentDepth() {
+        return depth;
+    }
 
     public Dialog setDepth(float depth) {
         this.depth = depth;
         return this;
     }
 
-    @Override public boolean getFocusScope() { return true; }
+    @Override
+    public boolean getFocusScope() {
+        return true;
+    }
 
-    @Override public boolean onFocusKey(int keyCode, int modifiers) {
+    @Override
+    public boolean onFocusKey(int keyCode, int modifiers) {
         if (keyCode != GLFW.GLFW_KEY_ESCAPE) return false;
         closeRequested.emit();
         return true;
@@ -145,7 +189,10 @@ public final class Dialog extends Container {
     }
 
     public Dialog clearActions() {
-        for (Button action : List.copyOf(actions)) { if (action.getParent() != null) action.getParent().removeChild(action); action.queueFree(); }
+        for (Button action : List.copyOf(actions)) {
+            if (action.getParent() != null) action.getParent().removeChild(action);
+            action.queueFree();
+        }
         actions.clear();
         footer.setMinimum(0, 0);
         footerInset.setVisible(false);
@@ -170,21 +217,8 @@ public final class Dialog extends Container {
                 : content.getAbsoluteBounds();
     }
 
-    public static Rect fittedBounds(
-            int preferredWidth, int preferredHeight, int verticalOffset, int viewportWidth, int viewportHeight) {
-        int horizontalMargin = Math.min(6, Math.max(1, viewportWidth / 32));
-        int verticalMargin = viewportHeight < 110 ? 1 : 2;
-        int width = Math.max(1, Math.min(preferredWidth,
-                Math.max(1, viewportWidth - 2 * horizontalMargin)));
-        int height = Math.max(1, Math.min(preferredHeight,
-                Math.max(1, viewportHeight - 2 * verticalMargin)));
-        int x = (viewportWidth - width) / 2;
-        int y = (viewportHeight - height) / 2 + verticalOffset;
-        y = Math.max(0, Math.min(Math.max(0, viewportHeight - height), y));
-        return new Rect(x, y, width, height);
-    }
-
-    @Override public void layout(Rect viewport, Font font) {
+    @Override
+    public void layout(Rect viewport, Font font) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             int verticalPadding = viewport.height() < 110 ? COMPACT_VERTICAL_PADDING : PADDING;
@@ -202,13 +236,15 @@ public final class Dialog extends Container {
         }
     }
 
-    @Override protected void render(DrawContext context, int screenX, int screenY) {
+    @Override
+    protected void render(DrawContext context, int screenX, int screenY) {
         Rect area = getScreenBounds(screenX, screenY);
         context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), getThemeItem(OreTheme.OVERLAY));
 
     }
 
-    @Override public void draw(DrawContext context, int screenX, int screenY) {
+    @Override
+    public void draw(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             if (!isAlive()) return;
@@ -227,8 +263,11 @@ public final class Dialog extends Container {
         }
     }
 
-    /** Returns true for all clicks while open; the topmost dialog owns its entire overlay. */
-    @Override protected boolean pointerDown(int rootX, int rootY) {
+    /**
+     * Returns true for all clicks while open; the topmost dialog owns its entire overlay.
+     */
+    @Override
+    protected boolean pointerDown(int rootX, int rootY) {
         if (!getVisible()) return false;
         if (!panel.hit(rootX, rootY)) {
             OreSounds.play(OreSounds.Cue.CLICK);
@@ -236,12 +275,6 @@ public final class Dialog extends Container {
             return true;
         }
         return true;
-    }
-
-
-
-    private static int actionHeight(int count) {
-        return count == 0 ? 0 : count * Button.Size.MEDIUM.getHeight() + (count - 1) * BUTTON_GAP;
     }
 
 }

@@ -1,5 +1,8 @@
 package io.github.luyingyilong.geg.mail.client;
 
+import io.github.luyingyilong.geg.client.theme.GegThemes;
+import io.github.luyingyilong.ore.render.TextureSource;
+
 import io.github.luyingyilong.ore.Avatar;
 import io.github.luyingyilong.ore.Button;
 import io.github.luyingyilong.ore.Navbar;
@@ -14,7 +17,7 @@ import io.github.luyingyilong.ore.layout.Scroll;
 import io.github.luyingyilong.ore.layout.Size;
 import io.github.luyingyilong.ore.layout.SizeFlags;
 import io.github.luyingyilong.ore.layout.Window;
-import io.github.luyingyilong.ore.theme.OreIcons;
+import io.github.luyingyilong.ore.theme.OreTheme;
 import io.github.luyingyilong.geg.mail.*;
 import io.github.luyingyilong.geg.mail.MailActionPacket;
 import io.github.luyingyilong.geg.mail.MailMessage;
@@ -114,8 +117,8 @@ public final class MailLayoutTest {
                     MailMessage.Kind.ADMIN, 123, coin, read, false, MailActionPacket.Scope.PLAYER, hasItems);
             MenuItem item = MailListItem.create(row);
             check(item.label().getString().equals("Only title") && item.key().equals(row.id().toString()));
-            check(item.icon().texture().equals(coin > 0 || hasItems ? read ? OreIcons.GIFT_OPENED : OreIcons.GIFT
-                    : read ? OreIcons.EMAIL_READED : OreIcons.EMAIL));
+            check(item.icon().equals(TextureSource.themed(coin > 0 || hasItems ? read ? GegThemes.MAIL_REWARD_READ : GegThemes.MAIL_REWARD_UNREAD
+                    : read ? GegThemes.MAIL_READ : GegThemes.MAIL_UNREAD)));
         }
         for (MailActionPacket.Scope scope : MailActionPacket.Scope.values()) {
             MailMessage mail = new MailMessage(UUID.randomUUID(), 123, MailMessage.Kind.ADMIN, "OP", "Title", "Body", List.of(), 100, scope);

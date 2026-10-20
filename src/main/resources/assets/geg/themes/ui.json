@@ -1,0 +1,9 @@
+{
+  "parent": "ore:ore",
+  "geg:MailIcons:unread": {"location": "geg:icons/email"},
+  "geg:MailIcons:read": {"location": "geg:icons/email_readed"},
+  "geg:MailIcons:reward_unread": {"location": "geg:icons/gift"},
+  "geg:MailIcons:reward_read": {"location": "geg:icons/gift_opened"},
+  "geg:OrganizationIcons:create": {"location": "geg:icons/flag"},
+  "geg:OrganizationIcons:join": {"location": "geg:icons/org"}
+}

@@ -2,6 +2,8 @@
 
 重新加载 Gradle，运行开发客户端 `runClient`，按 **F8** 打开独立的 Ore 调试窗口；再次按 F8 聚焦已有窗口。快捷键可以重新绑定。仅开发客户端启用，第一版原生窗口支持 Windows。
 
+快捷键先消费当前输入，再通过客户端任务队列创建或聚焦窗口；同一轮重复请求合并，停止调试或断线时取消待执行请求。这样 Windows 显示窗口时同步产生的按键释放事件不会嵌套进入原来的输入分发。
+
 ## 使用
 
 - 保持市场、组织、邮件或聊天在 Minecraft 主窗口打开；Inspector 不替换主窗口的 Screen。目标下拉框可以切换已发现的窗口，未绘制的目标标为 inactive。
@@ -9,7 +11,7 @@
 - 右侧按布局、外观、文字和状态分组。字段显示基础值、有效值及覆盖标记；所有编辑在有效时实时应用，无须提交。无效输入保留原文和上一次有效状态，在字段下显示错误；中文预编辑确认后才应用。
 - “拾取”在目标窗口中高亮，左键选定、Esc 取消；业务按下和释放都被拦截。Inspector 自身不参与检查或拾取。
 - 保留节点／全部恢复按钮及最近 100 步撤销／重做，移除各字段的应用／恢复按钮；后端仍支持单项恢复。应用代码更新基础值后，恢复采用最新基础值。节点移除、换绑或根会话关闭后旧编辑失效。
-- Label 文本是临时预览，原始翻译 Component 保留。颜色支持有符号 ARGB 整数、`#RRGGBB`、`#AARRGGBB`。输入值、业务状态和内部诊断节点只读。
+- Label 文本是临时预览，原始翻译 Component 保留。颜色支持有符号 ARGB 整数、`#RRGGBB`、`#AARRGGBB`。输入值、业务状态和普通内部诊断节点只读；内部 TextureRect 可编辑显示属性，图片来源及源区域仍只读。
 - 布局辅助线：青色实际矩形、金色分配空间、绿色最小尺寸、紫色裁剪、橙色 Padding。文字辅助线显示真实行框、基线、绘制原点、字体族光学范围、光标和选区。
 - 辅助线绘制在目标窗口中；默认仅显示选中节点。字体回退链不是每个字符实际字形来源的断言。
 - 关闭 Inspector 或断开世界时停止本次调试并清理覆盖。原生窗口关闭后恢复原先的失焦暂停设置。调试修改不写入源码、主题或世界存档。
@@ -23,7 +25,7 @@ Tree 的展开按钮使用 `arrow_right_light`／`arrow_down_light` 的 7×7 图
 | `setRowHeight(int)`／`setIndent(int)` | 行高 22px（最小 18px），每层缩进 10px |
 | `setBlockNode(boolean)` | 默认 true，节点按钮占满行；false 时只占名称和图标所需宽度 |
 | `setShowSwitcher(boolean)` | 默认 true；false 时同时移除箭头列的占位 |
-| `setSwitcherIcon((item, expanded) -> Icon)` | 自定义展开／折叠图标 |
+| `setSwitcherIcon((item, expanded) -> TextureSource)` | 自定义展开／折叠图标 |
 | `setShowIcon(boolean)` | 默认 false；显示 Item 的可选图标 |
 | `setDisabled(boolean)`／`setSelectable(boolean)` | 默认 false／true；禁用整树交互，或仅禁止用户选中节点 |
 | `setDefaultExpandAll(boolean)` | 默认 true，保持旧行为；决定后续新节点的初始展开状态 |
@@ -32,7 +34,7 @@ Tree 的展开按钮使用 `arrow_right_light`／`arrow_down_light` 的 7×7 图
 | `expansionChanged()` | 展开状态变化时返回 Item、展开状态和不可变展开键快照 |
 | `setSelected(key)`／`selectionChanged()` | 选中值变化时回传节点值；受控刷新使用 `setSelectedNoSignal` |
 
-四参数 `Item(key, parent, text, value)` 保持兼容；完整构造支持 `disabled`、`selectable`、`Button.Icon`。禁用节点不响应选择／展开；不可选择的分支仍可展开和通过键盘遍历。方向键跳过禁用节点：右键展开或进入子节点，左键折叠或返回父节点，上下键遍历。搜索临时展开匹配路径，清除搜索后恢复先前展开状态。数据拒绝重复键、缺失父节点和环。
+四参数 `Item(key, parent, text, value)` 创建无图标节点；完整构造支持 `disabled`、`selectable`、`TextureSource`。每个复用行分别持有 TextureRect，数据项只共享图片来源。禁用节点不响应选择／展开；不可选择的分支仍可展开和通过键盘遍历。方向键跳过禁用节点：右键展开或进入子节点，左键折叠或返回父节点，上下键遍历。搜索临时展开匹配路径，清除搜索后恢复先前展开状态。数据拒绝重复键、缺失父节点和环。
 
 ```java
 Tree<String> tree = new Tree<String>()

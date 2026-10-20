@@ -1,9 +1,14 @@
 package io.github.luyingyilong.ore;
 
 import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.render.TextureRegion;
+import io.github.luyingyilong.ore.render.TextureSource;
 import io.github.luyingyilong.ore.signal.Signal;
 import io.github.luyingyilong.ore.signal.SignalSource;
-import io.github.luyingyilong.ore.theme.OreIcons;
+import io.github.luyingyilong.ore.theme.IconTheme;
+import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.ThemeDB;
+import io.github.luyingyilong.ore.theme.ThemeKey;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 
@@ -14,7 +19,9 @@ import java.util.function.BiFunction;
  * Stable-key tree with virtual rows. Wrap in Scroll; this control owns no scroll offset.
  */
 public final class Tree<T> extends Container implements ScrollContent {
-    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Tree"); }
+
+    public static final ThemeKey<TextureRegion> EXPANDED_ICON = IconTheme.item("Tree", "expanded_icon", IconTheme.ARROW_DOWN_LIGHT);
+    public static final ThemeKey<TextureRegion> COLLAPSED_ICON = IconTheme.item("Tree", "collapsed_icon", IconTheme.ARROW_RIGHT_LIGHT);
     private static final int SWITCHER_WIDTH = 16;
     private final Set<String> collapsed = new HashSet<>();
     private final List<Entry<T>> visible = new ArrayList<>();
@@ -32,14 +39,22 @@ public final class Tree<T> extends Container implements ScrollContent {
     private int contentWidth;
     private int rowHeight = 22, indent = 10;
     private boolean disabled, selectable = true, blockNode = true, showIcon, showSwitcher = true, defaultExpandAll = true;
-    private BiFunction<Item<T>, Boolean, Button.Icon> switcherIcon = (item, expanded) -> Button.Icon.themed(expanded ? io.github.luyingyilong.ore.theme.OreTheme.ICON_ARROW_DOWN_LIGHT : io.github.luyingyilong.ore.theme.OreTheme.ICON_ARROW_RIGHT_LIGHT);
-
+    private BiFunction<Item<T>, Boolean, TextureSource> switcherIcon = (item, expanded) -> TextureSource.themed(expanded ? EXPANDED_ICON : COLLAPSED_ICON);
     public Tree() {
         getSignalScope().own(() -> {
             rows.clear();
             recycled.clear();
         });
         setFocusable(true);
+    }
+
+    public static void registerTheme(ThemeDB db) {
+        OreTheme.registerType(db, "Tree");
+        IconTheme.registerTheme(db);
+        db.register(EXPANDED_ICON);
+        db.registerFallback(EXPANDED_ICON, IconTheme.ARROW_DOWN_LIGHT);
+        db.register(COLLAPSED_ICON);
+        db.registerFallback(COLLAPSED_ICON, IconTheme.ARROW_RIGHT_LIGHT);
     }
 
     @Override
@@ -170,11 +185,11 @@ public final class Tree<T> extends Container implements ScrollContent {
         return this;
     }
 
-    public BiFunction<Item<T>, Boolean, Button.Icon> getSwitcherIcon() {
+    public BiFunction<Item<T>, Boolean, TextureSource> getSwitcherIcon() {
         return switcherIcon;
     }
 
-    public Tree<T> setSwitcherIcon(BiFunction<Item<T>, Boolean, Button.Icon> icon) {
+    public Tree<T> setSwitcherIcon(BiFunction<Item<T>, Boolean, TextureSource> icon) {
         switcherIcon = Objects.requireNonNull(icon);
         updateRows();
         return this;
@@ -397,7 +412,7 @@ public final class Tree<T> extends Container implements ScrollContent {
     private int labelWidth(Item<T> item) {
         String text = item.text().getString();
         int width = font == null ? text.codePointCount(0, text.length()) * 6 : widthProbe.setText(item.text()).measureWidth(font, Integer.MAX_VALUE);
-        return width + 2 * Button.PADDING_X + (showIcon && item.icon() != null ? item.icon().width() + 4 : 0);
+        return width + 2 * Button.PADDING_X + (showIcon && item.icon() != null ? item.icon().resolve(this).getWidth() + 4 : 0);
     }
 
     private void updateRows() {
@@ -486,7 +501,7 @@ public final class Tree<T> extends Container implements ScrollContent {
     }
 
     public record Item<T>(String key, String parent, Component text, T value,
-                          boolean disabled, boolean selectable, Button.Icon icon) {
+                          boolean disabled, boolean selectable, TextureSource icon) {
         public Item(String key, String parent, Component text, T value) {
             this(key, parent, text, value, false, true, null);
         }
@@ -511,6 +526,7 @@ public final class Tree<T> extends Container implements ScrollContent {
         private Entry<T> entry;
 
         Row() {
+            twist.setThemeParent(Tree.this);
             twist.setFocusable(false);
             label.setFocusable(false);
             addChild(twist);

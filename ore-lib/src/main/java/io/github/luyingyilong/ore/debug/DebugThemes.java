@@ -30,11 +30,10 @@ public final class DebugThemes {
     }
     private static String format(ThemeKey<?> key,Object value) {
         if(key.kind()==ThemeKey.Kind.COLOR && value instanceof Integer color) return String.format("#%08X",color);
-        if(value instanceof StyleBoxTexture box) return "StyleBoxTexture["+box.location()+", image="+box.imageWidth()+"x"+box.imageHeight()
-                +", region="+box.x()+","+box.y()+","+box.width()+"x"+box.height()+", borders="+box.textureBorders()
-                +", content="+box.getContentMargin()+", expand="+box.getExpandMargin()+", axes="+box.horizontalMode()+"/"+box.verticalMode()
-                +", center="+box.drawCenter()+", opacity="+box.opacity()+", drawInset="+box.getDrawInset()
-                +", contentOffset="+box.getContentOffset()+"]";
+        if(value instanceof StyleBoxTexture box) return "StyleBoxTexture["+box.getTextureRegion()
+                +", borders="+box.textureBorders()+", content="+box.getContentMargin()+", expand="+box.getExpandMargin()
+                +", axes="+box.horizontalMode()+"/"+box.verticalMode()+", center="+box.drawCenter()+", opacity="+box.opacity()
+                +", drawInset="+box.getDrawInset()+", contentOffset="+box.getContentOffset()+"]";
         return String.valueOf(value);
     }
 }

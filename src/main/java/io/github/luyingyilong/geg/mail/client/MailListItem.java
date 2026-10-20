@@ -1,8 +1,10 @@
 package io.github.luyingyilong.geg.mail.client;
 
+import io.github.luyingyilong.geg.client.theme.GegThemes;
+import io.github.luyingyilong.ore.render.*;
+
 import io.github.luyingyilong.ore.Button;
 import io.github.luyingyilong.ore.MenuItem;
-import io.github.luyingyilong.ore.theme.OreIcons;
 import io.github.luyingyilong.geg.mail.MailState;
 import io.github.luyingyilong.geg.mail.MailSyncPacket;
 import net.minecraft.network.chat.Component;
@@ -17,9 +19,9 @@ final class MailListItem {
     private MailListItem() { }
 
     static MenuItem create(MailSyncPacket.Row row) {
-        var icon = row.hasAttachments() ? row.read() ? OreIcons.GIFT_OPENED : OreIcons.GIFT
-                : row.read() ? OreIcons.EMAIL_READED : OreIcons.EMAIL;
-        return MenuItem.item(row.id().toString(), row.title()).icon(new Button.Icon(icon, 16, 16));
+        var icon = row.hasAttachments() ? row.read() ? GegThemes.MAIL_REWARD_READ : GegThemes.MAIL_REWARD_UNREAD
+                : row.read() ? GegThemes.MAIL_READ : GegThemes.MAIL_UNREAD;
+        return MenuItem.item(row.id().toString(), row.title()).icon(TextureSource.themed(icon));
     }
 
     static String key(MailState.Filter group, UUID id) { return group.name() + ":" + id; }

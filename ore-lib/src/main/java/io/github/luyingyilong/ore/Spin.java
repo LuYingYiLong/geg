@@ -1,19 +1,33 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.render.DrawContext;
-import com.mojang.blaze3d.systems.RenderSystem;
+import io.github.luyingyilong.ore.theme.IconTheme;
+import io.github.luyingyilong.ore.theme.ThemeDB;
+import io.github.luyingyilong.ore.theme.ThemeKey;
+
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.theme.OreIcons;
-import net.minecraft.client.gui.GuiGraphics;
+import io.github.luyingyilong.ore.render.*;
+import io.github.luyingyilong.ore.theme.OreTheme;
+import java.util.*;
 
 /**
  * A 16-frame loading indicator from a vertical 7x7 sprite strip.
  */
 public final class Spin extends Control {
+
+    public static final ThemeKey<TextureRegion> TEXTURE = IconTheme.texture("Spin", "texture", "loading", 7, 112);
+
+    public static void registerTheme(ThemeDB db) {
+        OreTheme.registerType(db, "Spin");
+        db.register(TEXTURE);
+    }
+
     private static final int FRAME_SIZE = 7;
     private static final int FRAME_COUNT = 16;
-    private static final int TEXTURE_HEIGHT = FRAME_SIZE * FRAME_COUNT;
+
+    private final TextureRect image=ownPart("image",new TextureRect().setStretchMode(TextureRect.StretchMode.SCALE).setExpandMode(TextureRect.ExpandMode.IGNORE_SIZE));
+    private TextureRegion cachedStrip;
+    private List<TextureSource> frames=List.of();
 
     private long frameDurationMs = 75L;
 
@@ -43,6 +57,14 @@ public final class Spin extends Control {
         int frame = frameAt(System.nanoTime() / 1_000_000L);
         int x = area.x() + (area.width() - FRAME_SIZE) / 2;
         int y = area.y() + (area.height() - FRAME_SIZE) / 2;
-        getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.ICON_LOADING).drawFrame(context,new Rect(x,y,FRAME_SIZE,FRAME_SIZE),frame,FRAME_SIZE);
+        TextureRegion strip=getThemeItem(TEXTURE);
+        if(!strip.equals(cachedStrip)) {
+            var next=new ArrayList<TextureSource>();
+            for(int offset=0;offset<strip.getHeight();offset+=FRAME_SIZE)
+                next.add(TextureSource.region(strip.getSubRegion(0,offset,strip.getWidth(),Math.min(FRAME_SIZE,strip.getHeight()-offset))));
+            cachedStrip=strip; frames=List.copyOf(next);
+        }
+        image.setTexture(frames.get(Math.floorMod(frame,frames.size())));
+        image.layout(new Rect(x,y,FRAME_SIZE,FRAME_SIZE),context.getFont()); image.draw(context,0,0);
     }
 }

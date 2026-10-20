@@ -99,16 +99,33 @@ public class Control implements SignalOwner {
         }
         ThemeDB.Resolution<?> cached=themeCache.get(key);
         if(cached!=null) return (ThemeDB.Resolution<T>)cached;
+        ThemeDB database=ThemeDB.getDefault();
         java.util.LinkedHashSet<String> types=new java.util.LinkedHashSet<>();
-        if(!themeTypeVariation.isEmpty()) types.addAll(ThemeDB.getDefault().getTypeChain(themeTypeVariation));
-        var actualTypes=ThemeDB.getDefault().getTypeChain(getThemeType());
-        if(!actualTypes.contains(key.type())) types.addAll(ThemeDB.getDefault().getTypeChain(key.type()));
-        types.addAll(actualTypes);
-        types.addAll(ThemeDB.getDefault().getTypeChain(key.type()));
-        types.remove("Control"); types.add("Control");
+        var keyTypes=database.getTypeChain(key.type());
+        // Resource namespaces such as Icons do not inherit unrelated Control items or variations.
+        if(!keyTypes.contains("Control")) types.addAll(keyTypes);
+        else {
+            if(!themeTypeVariation.isEmpty()) types.addAll(database.getTypeChain(themeTypeVariation));
+            var actualTypes=database.getTypeChain(getThemeType());
+            if(!actualTypes.contains(key.type())) {
+                // Internal images keep their own presentation type, but use their semantic owner's variation.
+                java.util.Set<Control> seen=java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+                for(Control source=key.kind()==ThemeKey.Kind.TEXTURE?getThemeParent():null;
+                        source!=null && seen.add(source);source=source.getThemeParent()) {
+                    var sourceTypes=database.getTypeChain(source.getThemeType());
+                    if(sourceTypes.contains(key.type())) {
+                        if(!source.themeTypeVariation.isEmpty()) types.addAll(database.getTypeChain(source.themeTypeVariation));
+                        types.addAll(sourceTypes); break;
+                    }
+                }
+                types.addAll(keyTypes);
+            }
+            types.addAll(actualTypes); types.addAll(keyTypes);
+            types.remove("Control"); types.add("Control");
+        }
         var candidates=List.copyOf(types);
-        var property=ThemeDB.getLocalValue(themeProperties,key,candidates);
-        var override=ThemeDB.getLocalValue(themeOverrides,key,candidates);
+        var property=database.getLocalThemeValue(themeProperties,key,candidates);
+        var override=database.getLocalThemeValue(themeOverrides,key,candidates);
         ThemeDB.Resolution<T> result;
         if(property!=null || override!=null) {
             var local=property!=null?property:override;
@@ -788,6 +805,7 @@ public class Control implements SignalOwner {
     public void requestLayout() {
         layoutDirty = true;
         if (parent != null) parent.requestLayout();
+        else if (lifecycleOwner != null && lifecycleOwner.parts.containsValue(this)) lifecycleOwner.requestLayout();
     }
 
     public boolean getLayoutDirty() {
@@ -891,7 +909,7 @@ public class Control implements SignalOwner {
         number.accept("preferredHeight", () -> debugValue("preferredHeight", preferredHeight));
         number.accept("offsetX", () -> getOffset().x());
         number.accept("offsetY", () -> getOffset().y());
-        if (!(parent instanceof Container) && !(this instanceof Window)) {
+        if (!(parent instanceof Container) && lifecycleOwner == null && !(this instanceof Window)) {
             number.accept("x", () -> getDebugRequestedBounds().x());
             number.accept("y", () -> getDebugRequestedBounds().y());
             number.accept("width", () -> getDebugRequestedBounds().width());

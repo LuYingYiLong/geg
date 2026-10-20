@@ -265,7 +265,7 @@ public final class InspectorView {
                 });
                 form.addItem(new FormItem(property.name(), Component.literal(property.name()), choices, () -> choices.getSelected()));
             } else {
-                boolean integer = property.kind().equals("number") && !property.name().equals("color")
+                boolean integer = property.kind().equals("number") && !property.name().equals("color") && !property.name().equals("modulate")
                         && property.effective() instanceof Integer;
                 input = integer ? new NumberInput(0).setMinimumValue(Integer.MIN_VALUE).setMaximumValue(Integer.MAX_VALUE) : new Input();
                 Signals.configure(input, connected -> { connected.setSubmitOnEnter(true); connected.submitted().connect(connected, submittedText48 -> {

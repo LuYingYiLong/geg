@@ -10,7 +10,13 @@ tasks.register('verifyOreRelease') {
              'io/github/luyingyilong/ore/theme/Theme.class',
              'io/github/luyingyilong/ore/theme/ThemeDB.class',
              'io/github/luyingyilong/ore/theme/StyleBox.class',
+             'io/github/luyingyilong/ore/TextureRect.class',
+             'io/github/luyingyilong/ore/render/TextureRegion.class',
+             'io/github/luyingyilong/ore/render/TextureSource.class',
+             'io/github/luyingyilong/ore/render/TexturePainter.class',
              'assets/ore/textures/gui/panel.png',
+             'io/github/luyingyilong/ore/theme/IconTheme.class',
+             'assets/geg/themes/ui.json', 'assets/geg/textures/icons/email.png',
              'io/github/luyingyilong/ore/render/Canvas.class',
              'io/github/luyingyilong/ore/render/DrawContext.class',
              'io/github/luyingyilong/ore/window/ScreenWindowHost.class',
@@ -35,6 +41,10 @@ tasks.register('verifyOreRelease') {
                 it.startsWith('io/github/luyingyilong/ore/compat/recipeviewer/canvas/') ||
                 it.startsWith('io/github/luyingyilong/geg/client/ui/') ||
                 it == 'assets/ore/themes.json' || it.startsWith('assets/ore/textures/modularui/') ||
+                it == 'io/github/luyingyilong/ore/Button$Icon.class' ||
+                it == 'io/github/luyingyilong/ore/theme/ThemeIcon.class' ||
+                it == 'io/github/luyingyilong/ore/theme/OreIcons.class' ||
+                it ==~ /assets\/ore\/textures\/icons\/(email|email_readed|gift|gift_opened|flag|org)\.(png|aseprite)/ ||
                 it.startsWith('assets/ore_inspector/') || it.contains('InspectorBootstrap') ||
                 it.startsWith('assets/geg/font/') || it == 'assets/geg/themes.json' ||
                 it == 'assets/geg/sounds.json' || it == 'io/github/luyingyilong/geg/sound/GegSounds.class' ||

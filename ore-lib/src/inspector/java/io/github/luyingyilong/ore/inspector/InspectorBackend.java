@@ -4,6 +4,7 @@ import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.Button;
 import io.github.luyingyilong.ore.Drawer;
 import io.github.luyingyilong.ore.Table;
+import io.github.luyingyilong.ore.TextureRect;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.DebugProperty;
 import io.github.luyingyilong.ore.layout.*;
@@ -253,7 +254,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
         nodes.clear();
         collectOwnedParts(window, java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>()));
         walk(window, "", true, "");
-        // Internal presentation nodes have no parent in the business tree and cannot be edited directly.
+        // Internal images expose presentation properties; other diagnostic parts remain read-only.
         for (var e : parts.entrySet().stream().sorted(java.util.Comparator.comparing(e -> internalId(e.getKey(), new HashSet<>()))).toList()) {
             Part p = e.getValue();
             Node owner = nodes.get(internalId(p.owner, new HashSet<>()));
@@ -377,7 +378,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
                 case RESET_ALL -> overrides.resetAll();
                 case EDIT, RESET, RESET_NODE -> {
                     Node n = valid(command.node());
-                    if (n.internal)
+                    if (n.internal && !(n.control instanceof TextureRect))
                         throw new IllegalArgumentException("Internal diagnostic nodes are read-only; edit the owning control");
                     if (command.operation() == InspectorCommand.Operation.RESET_NODE) {
                         Set<Control> controls = Collections.newSetFromMap(new IdentityHashMap<>());
@@ -419,7 +420,8 @@ public final class InspectorBackend implements DebugBridge.Backend {
 
     private Node valid(String key) {
         Node node = nodes.get(key);
-        if (root == null || !root.isAlive() || node == null || (!node.internal && !key.equals(id(node.control))) || !node.control.isAlive() || !attached(node.control))
+        if (root == null || !root.isAlive() || node == null || !node.control.isAlive() || !attached(node.control)
+                || !key.equals(node.internal?internalId(node.control,new HashSet<>()):id(node.control)))
             throw new IllegalArgumentException("Stale node; refresh the tree");
         return node;
     }
@@ -446,7 +448,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
                 }
                 Object effective = p.read().get();
                 props.add(new InspectorSnapshot.Property(index++, p.key(), p.group(), p.kind(), p.options(), display(base), display(effective),
-                        overrides.contains(p.target(), p.key()), n.internal, base instanceof Component component ? Component.Serializer.toJson(component) : ""));
+                        overrides.contains(p.target(), p.key()), n.internal && !(n.control instanceof TextureRect), base instanceof Component component ? Component.Serializer.toJson(component) : ""));
             }
             readonly(props, "visible", n.visible);
             readonly(props, "focusable", n.control.getFocusable());
@@ -455,6 +457,12 @@ public final class InspectorBackend implements DebugBridge.Backend {
             readonly(props, "actualBounds", n.control.getLayoutBounds());
             if (n.control instanceof Drawer drawer) readonly(props, "panelBounds", drawer.getPanelBounds());
             if (n.control instanceof Scroll scroll) readonly(props, "viewport", scroll.getViewport());
+            if (n.control instanceof TextureRect image) {
+                var source=image.getTexture();
+                readonly(props,"textureSource",source instanceof io.github.luyingyilong.ore.render.TextureSource.Themed themed
+                        ?"Theme: "+themed.getKey().getId():source==null?"none":"Direct");
+                readonly(props,"textureRegion",image.getResolvedTextureRegion());
+            }
             if (n.control instanceof Button button) {
                 readonly(props, "disabled", button.getDisabled());
                 readonly(props, "buttonPressed", button.getButtonPressed());

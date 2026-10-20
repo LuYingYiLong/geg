@@ -101,6 +101,8 @@ project(':ui-lib').projectDir = file('libraries/controls')
 
 ## 属性命名
 
+普通图片与按钮图标的接入方式见 [TextureRect 与图片资源](docs/textures.md)。
+
 控件属性统一使用 `getXxx()`／`setXxx(value)`，setter 继续支持原有链式调用，例如
 `new Label().setText(title).setFontSize(12)`、`control.setVisible(true)`、`control.getSize()`。
 旧的同名 getter／setter 重载已移除，所有宿主调用方需要同步更新。

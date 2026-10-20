@@ -1,5 +1,8 @@
 package io.github.luyingyilong.geg.organization.client;
 
+import io.github.luyingyilong.geg.client.theme.GegThemes;
+import io.github.luyingyilong.ore.render.*;
+
 import io.github.luyingyilong.ore.signal.Signals;
 
 import io.github.luyingyilong.ore.debug.DebugBridge;
@@ -32,7 +35,6 @@ import io.github.luyingyilong.ore.layout.Scroll;
 import io.github.luyingyilong.ore.layout.Size;
 import io.github.luyingyilong.ore.layout.SizeFlags;
 import io.github.luyingyilong.ore.layout.Window;
-import io.github.luyingyilong.ore.theme.OreIcons;
 import io.github.luyingyilong.ore.theme.OreTheme;
 import io.github.luyingyilong.geg.organization.Organization;
 import io.github.luyingyilong.geg.organization.OrganizationNetwork;
@@ -82,8 +84,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         initializeMemberships();
         window.setContent(memberships).setOverlay(overlay);
 
-        options.addChild(option(OreIcons.FLAG, "organization.geg.create", this::showCreate));
-        options.addChild(option(OreIcons.ORG, "organization.geg.join", this::showJoin));
+        options.addChild(option(TextureSource.themed(GegThemes.ORGANIZATION_CREATE), "organization.geg.create", this::showCreate));
+        options.addChild(option(TextureSource.themed(GegThemes.ORGANIZATION_JOIN), "organization.geg.join", this::showJoin));
         emptyText = new Label(Component.translatable("organization.geg.none"))
                 .setWrap(Label.Wrap.WORD).setOverflow(Label.Overflow.CLIP)
                 .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
@@ -140,8 +142,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         description.setInputVisible(false);
     }
 
-    private static Panel option(ResourceLocation icon, String label, Runnable action) {
-        IconControl image = new IconControl(icon);
+    private static Panel option(TextureSource icon, String label, Runnable action) {
+        io.github.luyingyilong.ore.TextureRect image=new io.github.luyingyilong.ore.TextureRect().setTexture(icon).setStretchMode(io.github.luyingyilong.ore.TextureRect.StretchMode.KEEP_CENTERED);
         image.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         Button button = Signals.configure(new Button(Component.translatable(label)), connected -> connected.pressed().connect(connected, action));
         button.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
@@ -707,31 +709,4 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                 ?Interactable.Result.SUCCESS:Interactable.Result.IGNORE;
     }
 
-    private static final class IconControl extends Control {
-        private final ResourceLocation texture;
-
-        private IconControl(ResourceLocation texture) {
-            this.texture = texture;
-            setMinimum(16, 16);
-        }
-
-        @Override
-        public int measureWidth(Font font, int available) {
-            return 16;
-        }
-
-        @Override
-        public int measureHeight(Font font, int available) {
-            return 16;
-        }
-
-        @Override
-        protected void render(DrawContext context, int screenX, int screenY) {
-            Rect area = getScreenBounds(screenX, screenY);
-            int x = area.x() + (area.width() - 16) / 2;
-            int y = area.y() + (area.height() - 16) / 2;
-            context.getGraphics().setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            context.getGraphics().blit(texture, x, y, 0.0F, 0.0F, 16, 16, 16, 16);
-        }
-    }
 }

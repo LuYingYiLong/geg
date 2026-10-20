@@ -1,5 +1,11 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.theme.IconTheme;
+import io.github.luyingyilong.ore.theme.ThemeDB;
+import io.github.luyingyilong.ore.theme.ThemeKey;
+
+import io.github.luyingyilong.ore.render.*;
+
 import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.DebugProperty;
@@ -8,9 +14,8 @@ import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.signal.Signal0;
 import io.github.luyingyilong.ore.signal.SignalSource0;
 import io.github.luyingyilong.ore.signal.Signals;
-import io.github.luyingyilong.ore.theme.OreIcons;
-import io.github.luyingyilong.ore.theme.OreSounds;
 import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.OreSounds;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -31,7 +36,17 @@ import java.util.function.LongSupplier;
  * }</pre>
  */
 public final class Drawer extends Container {
-    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Drawer"); }
+
+    public static final ThemeKey<TextureRegion> CLOSE_ICON = IconTheme.item("Drawer", "close_icon", IconTheme.CLOSE);
+
+    public static void registerTheme(ThemeDB db) {
+        OreTheme.registerType(db, "Drawer");
+        IconTheme.registerTheme(db);
+        db.register(CLOSE_ICON);
+        db.registerFallback(CLOSE_ICON, IconTheme.CLOSE);
+    }
+
+
     @Override public String getThemeState() { return placement.name().toLowerCase(java.util.Locale.ROOT)+", "+(targetOpen?"open":animating?"closing":"closed"); }
     public static final int PADDING = 4;
     private static final int CLOSE_SIZE = 20;
@@ -76,8 +91,9 @@ public final class Drawer extends Container {
         this.soundPlayer = Objects.requireNonNull(soundPlayer);
         this.title.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
         closeButton = Signals.configure(new Button().setType(Button.Type.TEXT)
-                .setIcon(io.github.luyingyilong.ore.Button.Icon.themed(io.github.luyingyilong.ore.theme.OreTheme.ICON_CLOSE)), connected -> connected.pressed().connect(connected, this::close));
+                .setIcon(TextureSource.themed(CLOSE_ICON)), connected -> connected.pressed().connect(connected, this::close));
         closeButton.setMinimum(CLOSE_SIZE, CLOSE_SIZE);
+        closeButton.setThemeParent(this);
         closeButton.setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_CENTER).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         header.addChild(this.title);
         header.addChild(closeButton);

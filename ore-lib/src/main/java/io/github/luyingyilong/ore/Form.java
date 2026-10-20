@@ -1,28 +1,34 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.input.NumberInput;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.Size;
+import io.github.luyingyilong.ore.render.DrawContext;
 import net.minecraft.client.gui.Font;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/** Named values, submit validation, and field layout share one Ore node. */
+/**
+ * Named values, submit validation, and field layout share one Ore node.
+ */
 public final class Form extends Container {
-    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Form"); }
-    public enum Layout { VERTICAL, HORIZONTAL }
-
     private final Map<String, FormItem> items = new LinkedHashMap<>();
     private Layout layout = Layout.VERTICAL;
     private int lastBottom;
-
     public Form() {
         setVisible(false);
+    }
+
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
+        io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Form");
+    }
+
+    public static Layout effectiveLayout(Layout chosen, int viewportWidth) {
+        return chosen == Layout.HORIZONTAL && viewportWidth <= 128 ? Layout.VERTICAL : chosen;
     }
 
     public Form setLayout(Layout layout) {
@@ -31,37 +37,40 @@ public final class Form extends Container {
         return this;
     }
 
-    public static Layout effectiveLayout(Layout chosen, int viewportWidth) {
-        return chosen == Layout.HORIZONTAL && viewportWidth <= 128 ? Layout.VERTICAL : chosen;
-    }
-
     public Form addItem(FormItem item) {
         addChild(item);
         return this;
     }
 
-    @Override protected void validateChildren(java.util.List<Control> proposed) {
+    @Override
+    protected void validateChildren(java.util.List<Control> proposed) {
         java.util.Set<String> names = new java.util.HashSet<>();
         for (Control child : proposed) {
-            if (!(child instanceof FormItem item)) throw new IllegalArgumentException("Form accepts FormItem; use addItem");
+            if (!(child instanceof FormItem item))
+                throw new IllegalArgumentException("Form accepts FormItem; use addItem");
             if (!names.add(item.getName())) throw new IllegalArgumentException("Duplicate field: " + item.getName());
         }
     }
 
-    @Override protected void childrenChanged() {
+    @Override
+    protected void childrenChanged() {
         items.clear();
-        for (Control child : getChildren()) if (child instanceof FormItem item && item.isAlive()) {
-            items.put(item.getName(), item);
-            item.setInputVisible(getVisible() && item.getActive());
-        }
+        for (Control child : getChildren())
+            if (child instanceof FormItem item && item.isAlive()) {
+                items.put(item.getName(), item);
+                item.setInputVisible(getVisible() && item.getActive());
+            }
     }
 
-    @Override public void setVisible(boolean visible) {
+    @Override
+    public void setVisible(boolean visible) {
         super.setVisible(visible);
         for (FormItem item : items.values()) item.setInputVisible(visible && item.getActive());
     }
 
-    public int getBottom() { return lastBottom; }
+    public int getBottom() {
+        return lastBottom;
+    }
 
     public String getValue(String name) {
         FormItem item = items.get(name);
@@ -69,7 +78,9 @@ public final class Form extends Container {
         return item.getValue();
     }
 
-    /** MUI widgets are siblings of the Ore canvas, so hide fields outside a scrolled viewport. */
+    /**
+     * MUI widgets are siblings of the Ore canvas, so hide fields outside a scrolled viewport.
+     */
     public void clipInputs(Rect viewport) {
         for (FormItem item : items.values()) {
             if (item.getInputNode() == null) continue;
@@ -92,19 +103,22 @@ public final class Form extends Container {
         return true;
     }
 
-    @Override public Size measureSize(Font font, Size available) {
+    @Override
+    public Size measureSize(Font font, Size available) {
         if (!isAlive()) return new Size(0, 0);
         boolean horizontal = effectiveLayout(layout, available.width()) == Layout.HORIZONTAL;
         int height = 0;
-        for (FormItem item : items.values()) if (item.getActive()) {
-            item.setHorizontal(horizontal);
-            height += item.rowHeight(font, available.width());
-        }
+        for (FormItem item : items.values())
+            if (item.getActive()) {
+                item.setHorizontal(horizontal);
+                height += item.rowHeight(font, available.width());
+            }
         return new Size(Math.max(getMinimumWidth(), available.width()),
                 Math.max(getMinimumHeight(), height));
     }
 
-    @Override public void layout(Rect bounds, Font font) {
+    @Override
+    public void layout(Rect bounds, Font font) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(bounds, font);
@@ -122,7 +136,9 @@ public final class Form extends Container {
         }
     }
 
-    /** Compatibility entry point until a modal directly owns the Form node. */
+    /**
+     * Compatibility entry point until a modal directly owns the Form node.
+     */
     public int draw(DrawContext context, int x, int y, int width, int viewportWidth) {
         if (!getVisible()) return y;
         Font font = context.getFont();
@@ -131,4 +147,6 @@ public final class Form extends Container {
         super.draw(context, 0, 0);
         return lastBottom;
     }
+
+    public enum Layout {VERTICAL, HORIZONTAL}
 }

@@ -1,11 +1,11 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.render.DrawContext;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.SizeFlags;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.skin.AvatarSkins;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
@@ -15,9 +15,10 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 
-/** A square player face with the hat layer and vanilla default; unidentified sources use initials. */
+/**
+ * A square player face with the hat layer and vanilla default; unidentified sources use initials.
+ */
 public final class Avatar extends Container {
-    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Avatar"); }
     public static final int DEFAULT_SIZE = 24;
     private final Label initial = ownPart("initial", new Label().setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER));
     private final Function<GameProfile, AvatarSkins.Skin> skins;
@@ -27,8 +28,9 @@ public final class Avatar extends Container {
     private String name = "";
     private boolean hatLayer = true;
     private int backgroundColor = 0xFF58585A;
-
-    public Avatar() { this(AvatarSkins::forPlayer); }
+    public Avatar() {
+        this(AvatarSkins::forPlayer);
+    }
 
     Avatar(Function<GameProfile, AvatarSkins.Skin> skins) {
         this.skins = Objects.requireNonNull(skins);
@@ -38,8 +40,19 @@ public final class Avatar extends Container {
         setInitials("");
     }
 
-    @Override protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
-        if (!isUpdatingChildren()) throw new IllegalStateException("Avatar has a fixed skeleton; configure its properties");
+    public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
+        io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Avatar");
+    }
+
+    static String initial(String name) {
+        String text = name.strip();
+        return text.isEmpty() ? "?" : new String(Character.toChars(Character.toUpperCase(text.codePointAt(0))));
+    }
+
+    @Override
+    protected void validateChildren(java.util.List<io.github.luyingyilong.ore.layout.Control> proposed) {
+        if (!isUpdatingChildren())
+            throw new IllegalStateException("Avatar has a fixed skeleton; configure its properties");
     }
 
     public Avatar setSize(int pixels) {
@@ -56,14 +69,17 @@ public final class Avatar extends Container {
 
     public Avatar setPlayer(GameProfile player) {
         Objects.requireNonNull(player);
-        if (profile != null && profile.equals(player) && profile.getProperties().equals(player.getProperties())) return this;
+        if (profile != null && profile.equals(player) && profile.getProperties().equals(player.getProperties()))
+            return this;
         profile = new GameProfile(player.getId(), player.getName());
         profile.getProperties().putAll(player.getProperties());
         reset(Objects.requireNonNullElse(player.getName(), ""));
         return this;
     }
 
-    /** Source-only/system identities deliberately do not issue a player-skin lookup. */
+    /**
+     * Source-only/system identities deliberately do not issue a player-skin lookup.
+     */
     public Avatar setInitials(String name) {
         profile = null;
         reset(Objects.requireNonNullElse(name, ""));
@@ -77,28 +93,45 @@ public final class Avatar extends Container {
         initial.setText(Component.literal(initial(name))).setVisible(true);
     }
 
-    public String getName() { return name; }
-    public UUID getPlayerId() { return profile == null ? null : profile.getId(); }
-    public Avatar setHatLayer(boolean hatLayer) { this.hatLayer = hatLayer; return this; }
-    public boolean getHatLayer() { return hatLayer; }
-    public Avatar setBackgroundColor(int color) { backgroundColor = color; setThemeProperty(io.github.luyingyilong.ore.theme.OreTheme.AVATAR_COLOR,color); return this; }
-    public int getBackgroundColor() { return getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.AVATAR_COLOR); }
+    public String getName() {
+        return name;
+    }
 
-    static String initial(String name) {
-        String text = name.strip();
-        return text.isEmpty() ? "?" : new String(Character.toChars(Character.toUpperCase(text.codePointAt(0))));
+    public UUID getPlayerId() {
+        return profile == null ? null : profile.getId();
+    }
+
+    public boolean getHatLayer() {
+        return hatLayer;
+    }
+
+    public Avatar setHatLayer(boolean hatLayer) {
+        this.hatLayer = hatLayer;
+        return this;
+    }
+
+    public int getBackgroundColor() {
+        return getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.AVATAR_COLOR);
+    }
+
+    public Avatar setBackgroundColor(int color) {
+        backgroundColor = color;
+        setThemeProperty(io.github.luyingyilong.ore.theme.OreTheme.AVATAR_COLOR, color);
+        return this;
     }
 
     AvatarSkins.Skin skin() {
         if (!requested && profile != null) {
             requested = true;
-            try { skin = skins.apply(profile); }
-            catch (RuntimeException ignored) { /* A failed provider never blocks rendering initials. */ }
+            try {
+                skin = skins.apply(profile);
+            } catch (RuntimeException ignored) { /* A failed provider never blocks rendering initials. */ }
         }
         return skin;
     }
 
-    @Override public void layout(Rect bounds, Font font) {
+    @Override
+    public void layout(Rect bounds, Font font) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             super.layout(bounds, font);
@@ -106,7 +139,8 @@ public final class Avatar extends Container {
         }
     }
 
-    @Override protected void render(DrawContext context, int screenX, int screenY) {
+    @Override
+    protected void render(DrawContext context, int screenX, int screenY) {
         var current = skin();
         var texture = current == null ? null : current.texture();
         initial.setVisible(texture == null);

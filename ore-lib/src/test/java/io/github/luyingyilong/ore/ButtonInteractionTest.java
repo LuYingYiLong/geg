@@ -1,5 +1,7 @@
 package io.github.luyingyilong.ore;
 
+import io.github.luyingyilong.ore.render.*;
+
 import io.github.luyingyilong.ore.signal.Signals;
 
 import io.github.luyingyilong.ore.layout.Control;
@@ -7,7 +9,7 @@ import io.github.luyingyilong.ore.layout.Overlay;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.Scroll;
 import io.github.luyingyilong.ore.layout.Window;
-import io.github.luyingyilong.ore.theme.OreIcons;
+import io.github.luyingyilong.ore.theme.OreTheme;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -132,7 +134,7 @@ public final class ButtonInteractionTest {
     }
 
     private static void pressedLayout() {
-        Button.Icon icon = new Button.Icon(OreIcons.SMALL_CLOSE, 7, 7);
+        io.github.luyingyilong.ore.layout.Size icon=new io.github.luyingyilong.ore.layout.Size(7,7);
         for (int height : new int[]{18, 20, 22, 32}) {
             Rect area = new Rect(10, 30, 120, height);
             Button button=new Button(cue -> { });
@@ -157,7 +159,7 @@ public final class ButtonInteractionTest {
     }
 
     private static void pressedFocus() {
-        Button.Icon icon = new Button.Icon(OreIcons.SMALL_CLOSE, 7, 7);
+        io.github.luyingyilong.ore.layout.Size icon=new io.github.luyingyilong.ore.layout.Size(7,7);
         for (Button.Type type : Button.Type.values()) {
             int offset = type == Button.Type.TEXT || type == Button.Type.MENU ? 0 : 2;
             Button button = new Button(cue -> { }).setType(type);
@@ -254,26 +256,27 @@ public final class ButtonInteractionTest {
         Font font = new Font(id -> null, false) {
             @Override public int width(FormattedText value) { return value.getString().length() * 6; }
         };
-        Button.Icon icon = new Button.Icon(OreIcons.SMALL_CLOSE, 8, 8);
+        io.github.luyingyilong.ore.layout.Size iconSize=new io.github.luyingyilong.ore.layout.Size(8,8);
+        TextureSource icon = TextureSource.region(TextureRegion.full(io.github.luyingyilong.ore.theme.IconTheme.SMALL_CLOSE.defaultValue().getTexture(), 8, 8));
         Button button = new Button(cue -> { }).setSize(Button.Size.SMALL).setIcon(icon);
         check(button.getIcon().equals(icon));
         check(button.measureWidth(font, 100) == 18 && button.measureHeight(font, 100) == 18);
         Button.ContentLayout centered = Button.contentLayout(new Rect(0, 0, 18, 18),
-                0, false, icon, null, Button.TextAlignment.LEFT);
+                0, false, iconSize, null, Button.TextAlignment.LEFT);
         check(centered.icon().equals(new Rect(5, 5, 8, 8)) && centered.label().width() == 0);
         button.setLabel(Component.literal("AB"));
         check(button.measureWidth(font, 100) == 40);
         Button.ContentLayout mixed = Button.contentLayout(new Rect(0, 0, 60, 20),
-                12, true, icon, null, Button.TextAlignment.CENTER);
+                12, true, iconSize, null, Button.TextAlignment.CENTER);
         check(mixed.icon().equals(new Rect(18, 6, 8, 8)));
         check(mixed.label().equals(new Rect(30, 0, 12, 20)));
         Button.ContentLayout narrow = Button.contentLayout(new Rect(0, 0, 40, 20),
-                100, true, icon, null, Button.TextAlignment.RIGHT);
+                100, true, iconSize, null, Button.TextAlignment.RIGHT);
         check(narrow.label().right() == 32 && narrow.label().width() == 12);
         button.setTrailingIcon(icon);
         check(button.measureWidth(font, 100) == 52);
         Button.ContentLayout trailing = Button.contentLayout(new Rect(0, 0, 60, 20),
-                12, true, icon, icon, Button.TextAlignment.CENTER);
+                12, true, iconSize, iconSize, Button.TextAlignment.CENTER);
         check(trailing.trailingIcon().equals(new Rect(44, 6, 8, 8)));
         check(trailing.label().right() + 4 <= trailing.trailingIcon().x());
         Control parent = new Control();
@@ -282,7 +285,7 @@ public final class ButtonInteractionTest {
         button.setIcon(null);
         check(button.getIcon() == null && parent.getLayoutDirty());
         try {
-            new Button.Icon(OreIcons.CLOSE, 0, 7);
+            TextureSource.region(TextureRegion.full(io.github.luyingyilong.ore.theme.IconTheme.CLOSE.defaultValue().getTexture(), 0, 7));
             throw new AssertionError("Invalid icon dimensions accepted");
         } catch (IllegalArgumentException expected) { }
     }
