@@ -17,17 +17,18 @@ public final class DropdownAppearanceTest {
             @Override public int width(FormattedText text) { return text.getString().length() * 6; }
         };
         Dropdown<String> dropdown = new Dropdown<>("all", 8);
-        check(dropdown.getIcon() == null && dropdown.getShowArrow() && dropdown.getType() == Button.Type.SECONDARY);
+        check(dropdown.getIcon() == null && dropdown.getShowArrow() && dropdown.getTriggerButton().getThemeTypeVariation().isEmpty());
         dropdown.setOptions(List.of(new Dropdown.Option<>("all", Component.literal("All mods")),
                 new Dropdown.Option<>("minecraft", Component.literal("minecraft"))));
         dropdown.setTriggerLabel(Component.empty()).setIcon(TextureSource.themed(io.github.luyingyilong.ore.theme.IconTheme.FILTER))
-                .setShowArrow(false).setType(Button.Type.TEXT);
-        Button reference = new Button(Component.empty()).setIcon(TextureSource.themed(io.github.luyingyilong.ore.theme.IconTheme.FILTER)).setType(Button.Type.TEXT);
+                .setShowArrow(false);
+        dropdown.getTriggerButton().setThemeTypeVariation("TextButton");
+        Button reference = new Button(Component.empty()).setIcon(TextureSource.themed(io.github.luyingyilong.ore.theme.IconTheme.FILTER)).setThemeTypeVariation("TextButton");
         int width = dropdown.measureWidth(font, 300);
         int height = dropdown.measureHeight(font, 300);
         check(width == 24 && height == 24);
         check(width == reference.measureWidth(font, 300) && height == reference.measureHeight(font, 300));
-        check(dropdown.getIcon().equals(reference.getIcon()) && !dropdown.getShowArrow() && dropdown.getType() == Button.Type.TEXT);
+        check(dropdown.getIcon().equals(reference.getIcon()) && !dropdown.getShowArrow() && dropdown.getTriggerButton().getThemeTypeVariation().equals("TextButton"));
         dropdown.layout(new Rect(200, 5, width, height), font);
         check(EventFixture.press(dropdown,210,15) && !dropdown.isOpen());
         check(EventFixture.release(dropdown,210,15,true) && dropdown.isOpen());

@@ -20,10 +20,10 @@ import java.util.Objects;
 public final class Checkbox extends Container {
 
     public static final ThemeKey<TextureRegion> UNCHECKED_NORMAL = IconTheme.texture("Checkbox", "unchecked_normal", "checkbox_normal", 12, 12);
-    public static final ThemeKey<TextureRegion> UNCHECKED_HOVERED = IconTheme.texture("Checkbox", "unchecked_hovered", "checkbox_hovered", 12, 12);
+    public static final ThemeKey<TextureRegion> UNCHECKED_HOVERED = IconTheme.texture("Checkbox", "unchecked_hovered", "checkbox_hover", 12, 12);
     public static final ThemeKey<TextureRegion> UNCHECKED_DISABLED = IconTheme.texture("Checkbox", "unchecked_disabled", "checkbox_disabled", 12, 12);
     public static final ThemeKey<TextureRegion> CHECKED_NORMAL = IconTheme.texture("Checkbox", "checked_normal", "checkbox_checked_normal", 12, 12);
-    public static final ThemeKey<TextureRegion> CHECKED_HOVERED = IconTheme.texture("Checkbox", "checked_hovered", "checkbox_checked_hovered", 12, 12);
+    public static final ThemeKey<TextureRegion> CHECKED_HOVERED = IconTheme.texture("Checkbox", "checked_hovered", "checkbox_checked_hover", 12, 12);
     public static final ThemeKey<TextureRegion> CHECKED_PRESSED = IconTheme.texture("Checkbox", "checked_pressed", "checkbox_checked_pressed", 12, 12);
     public static final ThemeKey<TextureRegion> CHECKED_DISABLED = IconTheme.texture("Checkbox", "checked_disabled", "checkbox_checked_disabled", 12, 12);
     private static final int ICON_SIZE = 12;
@@ -42,7 +42,7 @@ public final class Checkbox extends Container {
         updateChildren(java.util.List.of(label));
         setMinimum(ICON_SIZE, HEIGHT);
         setFocusable(true);
-        setFocusExpansion(1);
+
     }
 
     public static void registerTheme(ThemeDB db) {

@@ -41,7 +41,7 @@ public final class Grid<T> extends Container implements ScrollContent {
     public Grid() {
         getSignalScope().own(() -> { active.clear(); recycled.clear(); entries.clear(); visibleIndices.clear(); });
         setFocusable(true);
-        setFocusExpansion(1);
+
     }
 
     @Override public boolean acceptsFocus() {
@@ -416,7 +416,7 @@ public final class Grid<T> extends Container implements ScrollContent {
     }
 
     @Override
-    public void draw(DrawContext context, int screenX, int screenY) {
+    protected void drawContent(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
@@ -461,14 +461,14 @@ public final class Grid<T> extends Container implements ScrollContent {
         return null;
     }
 
-    @Override public Control hitTop(int rootX, int rootY) {
+    @Override protected Control hitTestTree(int rootX,int rootY,int windowX,int windowY) {
         if (!isAlive() || !getVisible()) return null;
-        if (adapter == null) return super.hitTop(rootX, rootY);
+        if (adapter == null) return super.hitTestTree(rootX,rootY,windowX,windowY);
         Entry<T> entry = hitItem(rootX, rootY);
         if (entry != null) {
             View<T> view = active.get(entry.index());
             if (view instanceof Control control) {
-                Control hit = control.hitTop(rootX, rootY);
+                Control hit = control.hitTop(windowX,windowY);
                 if (hit != null) return hit;
             }
         }

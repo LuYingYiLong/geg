@@ -204,7 +204,7 @@ public final class Menu extends Container implements ScrollContent {
                 }
                 Button button = previous.get(item.key());
                 if (button == null) button = Objects.requireNonNull(buttonFactory.get());
-                button.setLabel(item.label()).setIcon(item.icon()).setType(Button.Type.MENU)
+                button.setLabel(item.label()).setIcon(item.icon()).setThemeTypeVariation("MenuButton")
                         .setAlignment(Button.TextAlignment.LEFT).setToggleButton(true).setDisabled(disabled || item.disabled())
                 ;
                 SignalScope binding = new SignalScope();

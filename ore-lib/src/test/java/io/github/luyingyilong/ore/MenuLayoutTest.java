@@ -50,10 +50,8 @@ public final class MenuLayoutTest {
         check(heading.getInsets().equals(new Padding.Insets(0, Button.PADDING_X, 0, Button.PADDING_X)), "Heading inset");
         check(group.getChildren().get(1) instanceof Divider && group.getChildren().get(1).getSize().height() == 2, "Themed divider");
         check(menu.getButton("third").getAbsoluteBounds().y() == group.getChildren().get(1).getAbsoluteBounds().bottom(), "Group children");
-        check(menu.getButton("third").getType() == Button.Type.MENU, "Real MENU buttons");
-        check(!Button.paintsThemedBackground(Button.Type.MENU, false, false)
-                && Button.paintsThemedBackground(Button.Type.MENU, true, false)
-                && Button.paintsThemedBackground(Button.Type.MENU, false, true), "Menu states");
+        check(menu.getButton("third").getThemeTypeVariation().equals("MenuButton"), "Real MENU buttons");
+        check(menu.getButton("third").getPresentationStyle(false,false) instanceof io.github.luyingyilong.ore.theme.StyleBoxFlat flat && flat.color()==0, "Menu resting background is transparent");
 
         Scroll scroll = new Scroll().setContent(menu).setHorizontal(Scroll.BarMode.DISABLED);
         Window window = new Window(true).setContent(scroll);

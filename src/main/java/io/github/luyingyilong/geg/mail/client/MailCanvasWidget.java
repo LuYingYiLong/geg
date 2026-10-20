@@ -245,7 +245,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
         rewards.attachments(mail.items(), mail.hasAttachments(), selectedClaimed);
         attachmentDivider.setVisible(mail.hasAttachments());
         if (claimable) return;
-        Button action = Signals.configure(new Button(tr("mail.geg.delete")).setType(Button.Type.DESTRUCTIVE), connected -> connected.pressed().connect(connected, () -> { deleting = selected; query(MailActionPacket.Action.DELETE, selected); }));
+        Button action = Signals.configure(new Button(tr("mail.geg.delete")).setThemeTypeVariation("DestructiveButton"), connected -> connected.pressed().connect(connected, () -> { deleting = selected; query(MailActionPacket.Action.DELETE, selected); }));
         action.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         detailActions.addChild(action); detailActions.setMinimum(0, action.getMinimumHeight()); detailActions.setVisible(true);
     }
@@ -261,7 +261,7 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
     }
     private void editAgain() {
         busy = false; token = null; previewSignature = null; previewText.setText(Component.empty());
-        editor.clearActions().addAction(Signals.configure(new Button(tr("mail.geg.preview")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::preview)));
+        editor.clearActions().addAction(Signals.configure(new Button(tr("mail.geg.preview")).setThemeTypeVariation("PrimaryButton"), actionButton -> actionButton.pressed().connect(actionButton, this::preview)));
     }
     private void preview() {
         if (busy) return;
@@ -294,8 +294,8 @@ final class MailCanvasWidget extends Widget<MailCanvasWidget> implements Interac
             if (!Objects.equals(previewSignature, signature())) { editAgain(); feedback("mail.geg.preview_again"); return; }
             previewText.setText(tr("mail.geg.preview_summary", packet.recipients(), MoneyCurrency.COIN.format(packet.coin()), packet.total()));
             feedback(packet.result());
-            editor.clearActions().addAction(Signals.configure(new Button(tr("mail.geg.confirm_send")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::confirm)))
-                    .addAction(Signals.configure(new Button(tr("mail.geg.edit")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::editAgain)));
+            editor.clearActions().addAction(Signals.configure(new Button(tr("mail.geg.confirm_send")).setThemeTypeVariation("PrimaryButton"), actionButton -> actionButton.pressed().connect(actionButton, this::confirm)))
+                    .addAction(Signals.configure(new Button(tr("mail.geg.edit")).setThemeTypeVariation("SecondaryButton"), actionButton -> actionButton.pressed().connect(actionButton, this::editAgain)));
         } else if (packet.kind() == MailSyncPacket.Kind.RESULT) {
             feedback(packet.result());
             if (editor.isOpen() && Objects.equals(token, packet.token())) {

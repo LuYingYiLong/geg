@@ -16,7 +16,7 @@ public final class GalleryLayoutTest {
         GalleryCatalog.getEntries().forEach(entry->entry.types().forEach(type->covered.add(type.getSimpleName())));
         Path sources=Path.of(System.getProperty("ore.resourceRoot")).getParent().resolve("java/io/github/luyingyilong/ore");
         Pattern controls=Pattern.compile("public (?:final )?class (\\w+)(?:<[^\\n]*?>)? extends (?:Control|Container|Input)\\b");
-        Map<String,String> exclusions=Map.of("FocusOverlay","Framework-owned focus decoration", "CanvasRegion","External Canvas geometry bridge; covered by CanvasClientTest");
+        Map<String,String> exclusions=Map.of("CanvasRegion","External Canvas geometry bridge; covered by CanvasClientTest");
         try(var files=Files.walk(sources)){
             for(Path path:files.filter(p->p.toString().endsWith(".java")).toList()){
                 var match=controls.matcher(Files.readString(path));

@@ -79,7 +79,7 @@ public final class BadgeLayoutTest {
         button.setToggleButton(true).setButtonPressedNoSignal(true);
         window.layoutViewport(200, 80, font);
         check(badge.getBounds().equals(normal.translated(0, 2)));
-        button.setType(Button.Type.TEXT);
+        button.setThemeTypeVariation("TextButton");
         window.layoutViewport(200, 80, font);
         check(badge.getBounds().equals(normal));
         badge.setCount(1000);

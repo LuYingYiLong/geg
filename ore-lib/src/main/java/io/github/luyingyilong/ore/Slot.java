@@ -88,7 +88,7 @@ public final class Slot extends Control {
     }
 
     @Override
-    public void draw(DrawContext context, int screenX, int screenY) {
+    protected void drawContent(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);

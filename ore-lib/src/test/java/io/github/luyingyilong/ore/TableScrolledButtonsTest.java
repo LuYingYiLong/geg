@@ -13,7 +13,7 @@ import java.util.*;
 
 /** All retained table actions survive Scroll's intermediate layout passes. */
 public final class TableScrolledButtonsTest {
-    private record Action(String id, Button.Type type, boolean toggle) { }
+    private record Action(String id, String variation, boolean toggle) { }
     private static final class Cell extends Container {
         private Action action;
         private final Button button;
@@ -23,7 +23,7 @@ public final class TableScrolledButtonsTest {
         }
         void bind(Action action) {
             this.action = action;
-            button.setLabel(Component.literal(action.id())).setType(action.type()).setToggleButton(action.toggle());
+            button.setLabel(Component.literal(action.id())).setThemeTypeVariation(action.variation()).setToggleButton(action.toggle());
         }
         @Override public void layout(Rect area, Font font) {
             super.layout(area, font);
@@ -35,10 +35,10 @@ public final class TableScrolledButtonsTest {
             @Override public int width(FormattedText text) { return text.getString().length() * 6; }
         };
         List<String> events = new ArrayList<>();
-        List<Action> data = List.of(new Action("Buy", Button.Type.PRIMARY, false),
-                new Action("Favorite", Button.Type.SECONDARY, true),
-                new Action("Approve", Button.Type.PRIMARY, false),
-                new Action("Reject", Button.Type.DESTRUCTIVE, false));
+        List<Action> data = List.of(new Action("Buy", "PrimaryButton", false),
+                new Action("Favorite", "SecondaryButton", true),
+                new Action("Approve", "PrimaryButton", false),
+                new Action("Reject", "DestructiveButton", false));
         Table<Action> table = new Table<Action>().setRowKey(Action::id)
                 .addColumn(new Table.Column<>("name", Component.empty(), 230, 230, 0,
                         width -> 23, (context, row, bounds) -> { }))

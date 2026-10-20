@@ -20,7 +20,8 @@ public final class DebugThemes {
         for(ThemeKey<?> key:control.getThemeKeys()) {
             var result=control.getThemeResolution(key);
             Object effective=result.value();
-            String property=switch(key.name()) { case "color" -> "color"; case "font_size" -> "fontSize"; default -> "theme:"+key.getId(); };
+            String property=switch(key.name()) { case "color" -> "color"; case "font_size" -> "fontSize";
+                case "icon_rotation_degrees" -> "iconRotationDegrees"; default -> "theme:"+key.getId(); };
             Object preview=DebugBridge.backend().value(control,property,effective);
             String source=result.sources().get(result.sources().size()-1).kind();
             if(!Objects.equals(preview,effective)) source="Inspector override (base: "+format(key,effective)+")";

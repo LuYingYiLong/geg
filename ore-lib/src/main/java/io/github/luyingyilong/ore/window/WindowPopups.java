@@ -21,7 +21,7 @@ public final class WindowPopups {
     private boolean updating;
     WindowPopups(WindowContext context) { this.context=context; }
     private Dropdown<?> find(Control node) {
-        if(node==null||!(node.isAlive() && node.getVisible())||node instanceof Popup||node instanceof Drawer drawer&&!drawer.isOpen())return null;
+        if(node==null||!node.isInputAccessible()||node instanceof Popup||node instanceof Drawer drawer&&!drawer.isOpen())return null;
         var children=node.getChildren();
         for(int i=children.size()-1;i>=0;i--){var result=find(children.get(i));if(result!=null)return result;}
         return node instanceof Dropdown<?> dropdown&&dropdown.isOpen()
@@ -57,6 +57,10 @@ public final class WindowPopups {
     }
     public boolean open(){return owner!=null;}
     public void cancel(){dismiss(false);}
+    public boolean cancelFrom(Control subtree) {
+        for(Control node=owner;node!=null;node=node.getParent())if(node==subtree){dismiss(false);return true;}
+        return false;
+    }
 
     public final class Popup extends Container {
         private final Dropdown<?> trigger;
@@ -77,7 +81,7 @@ public final class WindowPopups {
             panel.addChild(scroll);scroll.setContent(items);this.addChild(panel);
             scroll.setVertical(Scroll.BarMode.NEVER).setHorizontal(Scroll.BarMode.DISABLED);
             for(var option:options) {
-                Button button=Signals.configure(new Button(option.label()).setType(Button.Type.MENU).setAlignment(Button.TextAlignment.LEFT)
+                Button button=Signals.configure(new Button(option.label()).setThemeTypeVariation("MenuButton").setAlignment(Button.TextAlignment.LEFT)
                         .setSize(trigger.getControlSize()), connected -> connected.pressed().connect(connected, ()->select(option)));
                 if(trigger.getCheckable()&&Objects.equals(option.value(),trigger.getSelected()))
                     button.setTrailingIcon(TextureSource.themed(Dropdown.CHECKED_ICON));
@@ -116,10 +120,10 @@ public final class WindowPopups {
             layoutChild(panel,new Rect(x,y,width,height),font);
             scroll.layout(new Rect(1,1,Math.max(0,width-2),Math.max(0,height-2)),font);
         }
-        @Override public void draw(DrawContext mui,int x,int y){
+        @Override protected void drawContent(DrawContext mui, int x, int y){
             layout(context.getOwner().getBounds(),mui.getFont());
             var g=mui.getGraphics();g.flush();g.pose().pushPose();
-            try{g.pose().translate(0,0,6500);super.draw(mui,x,y);g.flush();}finally{g.pose().popPose();}
+            try{g.pose().translate(0,0,6500);super.drawContent(mui,x,y);g.flush();}finally{g.pose().popPose();}
         }
         private final class Items extends Container {
             @Override public int measureHeight(Font font,int available){return Math.max(0,options.size()*(trigger.getControlSize().getHeight()-1)+1);}

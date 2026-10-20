@@ -1,4 +1,5 @@
 package io.github.luyingyilong.ore.theme;
+import io.github.luyingyilong.ore.Button;
 
 import io.github.luyingyilong.ore.render.*;
 
@@ -81,8 +82,8 @@ public final class ThemeSystemTest {
             files.put("child","{\"Test:panel\":{\"style\":\"empty\","+invalid+"}}"); isolated.reload(source);
             check(!isolated.getDiagnostics().isEmpty() && child.get(style)==null,"Invalid presentation geometry falls through");
         }
-        for(var key:List.of(OreTheme.BUTTON_SECONDARY_PRESSED,OreTheme.BUTTON_PRIMARY_PRESSED,
-                OreTheme.BUTTON_DESTRUCTIVE_PRESSED,OreTheme.SEGMENTED_BUTTON_SELECTED)) {
+        for(var key:List.of(Button.PRESSED,ThemeDB.getDefault().getKey("PrimaryButton","pressed",StyleBox.class),
+                ThemeDB.getDefault().getKey("DestructiveButton","pressed",StyleBox.class),OreTheme.SEGMENTED_BUTTON_SELECTED)) {
             StyleBox configured=db.getDefaultTheme().get(key);
             check(configured.getDrawInset().top()==2 && configured.getContentOffset().equals(new Offset(0,2)),"Shipped state styles preserve the 2px effect");
         }

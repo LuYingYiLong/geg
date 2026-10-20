@@ -121,11 +121,11 @@ public final class ButtonInteractionTest {
         io.github.luyingyilong.ore.event.WindowInputs.release(window,15, 15);
         check(events.isEmpty());
 
-        button.setType(Button.Type.TEXT);
-        check(button.getType() == Button.Type.TEXT);
-        check(Button.textBackgroundColor(false, false) == 0);
-        check(Button.textBackgroundColor(true, false) == 0x16FFFFFF);
-        check(Button.textBackgroundColor(true, true) == 0x1A000000);
+        button.setThemeTypeVariation("TextButton");
+        check(button.getThemeTypeVariation().equals("TextButton"));
+        check(((io.github.luyingyilong.ore.theme.StyleBoxFlat)button.getPresentationStyle(false,false)).color() == 0);
+        check(((io.github.luyingyilong.ore.theme.StyleBoxFlat)button.getPresentationStyle(true,false)).color() == 0x16FFFFFF);
+        check(((io.github.luyingyilong.ore.theme.StyleBoxFlat)button.getPresentationStyle(true,true)).color() == 0x1A000000);
         scrolledCapture();
         iconLayout();
         pressedLayout();
@@ -160,9 +160,9 @@ public final class ButtonInteractionTest {
 
     private static void pressedFocus() {
         io.github.luyingyilong.ore.layout.Size icon=new io.github.luyingyilong.ore.layout.Size(7,7);
-        for (Button.Type type : Button.Type.values()) {
-            int offset = type == Button.Type.TEXT || type == Button.Type.MENU ? 0 : 2;
-            Button button = new Button(cue -> { }).setType(type);
+        for (String type : Button.BUILTIN_VARIATIONS) {
+            int offset = type.equals("TextButton") || type.equals("MenuButton") || type.equals("DarkButton") ? 0 : 2;
+            Button button = new Button(cue -> { }).setThemeTypeVariation(type);
             button.setPosition(20, 20).setRequestedSize(100, 20);
             var childContainer8 = new Control();
             childContainer8.addChild(button);

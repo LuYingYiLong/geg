@@ -13,6 +13,13 @@ import java.util.Objects;
 
 /** The real tree node behind a Canvas. Geometry stays in local GUI units until this boundary. */
 public final class CanvasRegion extends Container {
+    @Override protected void validateOwnRenderTransform(io.github.luyingyilong.ore.render.Transform2D value) {
+        if(!value.equals(io.github.luyingyilong.ore.render.Transform2D.IDENTITY))
+            throw new IllegalArgumentException("Apply RenderTransform to viewport content, not the host viewport");
+    }
+
+    @Override protected boolean requiresAxisAlignedClip() { return true; }
+
     private Control content;
     private Rect viewport = new Rect(0, 0, 1, 1);
     private Rect hostClip;
@@ -44,7 +51,7 @@ public final class CanvasRegion extends Container {
     }
     public void setHostClip(Rect clip) { hostClip = clip; }
     public Rect getHostBounds() {
-        Rect area = transform.toScreen(viewport);
+        Rect area = EventGeometry.displayed(this,viewport);
         if (hostClip != null) area = EventGeometry.intersect(area, hostClip);
         var owner = getWindowContext().getOwner();
         if (owner != null) area = EventGeometry.intersect(area, owner.getAbsoluteBounds());
@@ -56,10 +63,8 @@ public final class CanvasRegion extends Container {
         if (content != null) fitChild(content, new Rect(0, 0, viewport.width(), viewport.height()), font);
     }
 
-    @Override public Control hitTop(int x, int y) {
-        if (!isAlive() || !getVisible() || isSuspended() || !getHostBounds().contains(x, y)) return null;
-        int localX = (int) Math.floor(transform.toLocalX(x)), localY = (int) Math.floor(transform.toLocalY(y));
-        return content == null ? null : content.hitTop(localX, localY);
+    @Override protected Control hitTestTree(int x,int y,int windowX,int windowY) {
+        return getHostBounds().contains(windowX,windowY)&&content!=null?content.hitTop(windowX,windowY):null;
     }
 
     /** Do not apply host coordinates twice when walking the captured event path. */
@@ -68,12 +73,12 @@ public final class CanvasRegion extends Container {
         return null;
     }
 
-    @Override public void draw(DrawContext context, int x, int y) {
+    @Override protected void drawContent(DrawContext context, int x, int y) {
         if (!isAlive() || !getVisible()) return;
         var graphics = context.getGraphics();
         Rect clip = getHostBounds();
         if (clip.width() == 0 || clip.height() == 0) return;
-        context.enableScissor(clip.x(), clip.y(), clip.right(), clip.bottom());
+        context.enableScreenScissor(clip);
         io.github.luyingyilong.ore.debug.DebugBridge.backend().clip(clip);
         try (var transformScope = context.pushTransform(transform.x(), transform.y(), transform.scale());
              var local = new DrawContext(graphics, context.getFont(), context.getWindowContext(),
@@ -82,7 +87,7 @@ public final class CanvasRegion extends Container {
             var mui = context.getWindowContext().getMui();
             int oldX = mui.getAbsMouseX(), oldY = mui.getAbsMouseY();
             mui.updateState(local.getAbsMouseX(), local.getAbsMouseY(), local.getRenderPartialTicks());
-            try { super.draw(local, 0, 0); }
+            try { super.drawContent(local, 0, 0); }
             finally { mui.updateState(oldX, oldY, context.getRenderPartialTicks()); }
         } finally {
             io.github.luyingyilong.ore.debug.DebugBridge.backend().unclip();

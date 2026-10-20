@@ -38,19 +38,7 @@ public final class OreTheme {
     public static final ThemeKey<StyleBox> V_DIVIDER = ThemeKey.of("Divider","vertical",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/v_divider.png"), 1, 1, 0, 0, 1, 1), new ThemeInsets(0,0,0,0), new ThemeInsets(0,0,0,0), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F),true);
     public static final ThemeKey<StyleBox> V_GRABBER = ThemeKey.of("Scroll","vertical_grabber",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/v_grabber.png"), 6, 12, 0, 0, 6, 12), new ThemeInsets(2,5,2,5), new ThemeInsets(0,0,0,0), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F),true);
     public static final ThemeKey<StyleBox> H_GRABBER = ThemeKey.of("Scroll","horizontal_grabber",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/h_grabber.png"), 6, 6, 0, 0, 6, 6), new ThemeInsets(2,2,2,2), new ThemeInsets(0,0,0,0), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F),true);
-    public static final ThemeKey<StyleBox> BUTTON_DISABLED = ThemeKey.of("Button","disabled",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/button_disabled.png"), 16, 16, 0, 0, 16, 16), new ThemeInsets(2,4,2,4), new ThemeInsets(8,4,8,4), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F),true);
     public static final ThemeKey<StyleBox> SEGMENTED_BUTTON_SELECTED = ThemeKey.of("Segmented","selected",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/tab_selected.png"), 16, 16, 0, 0, 16, 16), new ThemeInsets(2,2,2,2), new ThemeInsets(8,4,8,4), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F, new ThemeInsets(0,2,0,0), new io.github.luyingyilong.ore.layout.Offset(0,2)),true);
-    public static final ThemeKey<StyleBox> BUTTON_SECONDARY_NORMAL = ThemeKey.of("Button","secondary_normal",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/button_secondary_normal.png"), 16, 16, 0, 0, 16, 16), new ThemeInsets(2,4,2,4), new ThemeInsets(8,4,8,4), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F),true);
-    public static final ThemeKey<StyleBox> BUTTON_SECONDARY_HOVERED = ThemeKey.of("Button","secondary_hovered",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/button_secondary_hovered.png"), 16, 16, 0, 0, 16, 16), new ThemeInsets(2,4,2,4), new ThemeInsets(8,4,8,4), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F),true);
-    public static final ThemeKey<StyleBox> BUTTON_SECONDARY_PRESSED = ThemeKey.of("Button","secondary_pressed",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/button_secondary_pressed.png"), 16, 16, 0, 0, 16, 16), new ThemeInsets(2,2,2,2), new ThemeInsets(8,4,8,4), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F, new ThemeInsets(0,2,0,0), new io.github.luyingyilong.ore.layout.Offset(0,2)),true);
-    public static final ThemeKey<StyleBox> BUTTON_PRIMARY_NORMAL = ThemeKey.of("Button","primary_normal",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/button_primary_normal.png"), 16, 16, 0, 0, 16, 16), new ThemeInsets(2,4,2,4), new ThemeInsets(8,4,8,4), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F),true);
-    public static final ThemeKey<StyleBox> BUTTON_PRIMARY_HOVERED = ThemeKey.of("Button","primary_hovered",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/button_primary_hovered.png"), 16, 16, 0, 0, 16, 16), new ThemeInsets(2,4,2,4), new ThemeInsets(8,4,8,4), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F),true);
-    public static final ThemeKey<StyleBox> BUTTON_PRIMARY_PRESSED = ThemeKey.of("Button","primary_pressed",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/button_primary_pressed.png"), 16, 16, 0, 0, 16, 16), new ThemeInsets(2,2,2,2), new ThemeInsets(8,4,8,4), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F, new ThemeInsets(0,2,0,0), new io.github.luyingyilong.ore.layout.Offset(0,2)),true);
-    public static final ThemeKey<StyleBox> BUTTON_DESTRUCTIVE_NORMAL = ThemeKey.of("Button","destructive_normal",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/button_destructive_normal.png"), 16, 16, 0, 0, 16, 16), new ThemeInsets(2,4,2,4), new ThemeInsets(8,4,8,4), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F),true);
-    public static final ThemeKey<StyleBox> BUTTON_DESTRUCTIVE_HOVERED = ThemeKey.of("Button","destructive_hovered",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/button_destructive_hovered.png"), 16, 16, 0, 0, 16, 16), new ThemeInsets(2,4,2,4), new ThemeInsets(8,4,8,4), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F),true);
-    public static final ThemeKey<StyleBox> BUTTON_DESTRUCTIVE_PRESSED = ThemeKey.of("Button","destructive_pressed",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/button_destructive_pressed.png"), 16, 16, 0, 0, 16, 16), new ThemeInsets(2,2,2,2), new ThemeInsets(8,4,8,4), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F, new ThemeInsets(0,2,0,0), new io.github.luyingyilong.ore.layout.Offset(0,2)),true);
-    public static final ThemeKey<StyleBox> BUTTON_MENU_HOVERED = ThemeKey.of("Button","menu_hovered",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/menu_item_hovered.png"), 1, 3, 0, 0, 1, 3), new ThemeInsets(0,1,0,1), new ThemeInsets(8,4,8,4), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F),true);
-    public static final ThemeKey<StyleBox> BUTTON_MENU_PRESSED = ThemeKey.of("Button","menu_pressed",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new TextureRegion(id("textures/gui/menu_item_pressed.png"), 1, 3, 0, 0, 1, 3), new ThemeInsets(0,1,0,1), new ThemeInsets(8,4,8,4), new ThemeInsets(0,0,0,0), StyleBoxTexture.AxisMode.STRETCH, StyleBoxTexture.AxisMode.STRETCH, true, 1.0F),true);
     public static final ThemeKey<Integer> TEXT_COLOR = ThemeKey.of("Label","color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false);
     public static final ThemeKey<ResourceLocation> TEXT_FONT = ThemeKey.of("Label","font",ResourceLocation.class,ThemeKey.Kind.FONT,id("ore"),true);
     public static final ThemeKey<ResourceLocation> HERO_FONT = ThemeKey.of("Label","hero_font",ResourceLocation.class,ThemeKey.Kind.FONT,id("ore_hero"),true);
@@ -69,19 +57,7 @@ public final class OreTheme {
     public static final ThemeKey<Integer> LABEL_ERROR_COLOR = ThemeKey.of("LabelError","color",Integer.class,ThemeKey.Kind.COLOR,0xFFFF7777,false);
     public static final ThemeKey<Integer> LABEL_ACCENT_COLOR = ThemeKey.of("LabelAccent","color",Integer.class,ThemeKey.Kind.COLOR,0xFF52BEA8,false);
     public static final ThemeKey<Integer> LABEL_DISABLED_COLOR = ThemeKey.of("LabelDisabled","color",Integer.class,ThemeKey.Kind.COLOR,0x80D0D1D4,false);
-    public static final ThemeKey<Integer> BUTTON_DISABLED_TEXT = ThemeKey.of("Button","disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false);
     public static final ThemeKey<Integer> SEGMENTED_BUTTON_SELECTED_TEXT = ThemeKey.of("Segmented","selected_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false);
-    public static final ThemeKey<Integer> BUTTON_SECONDARY_NORMAL_TEXT = ThemeKey.of("Button","secondary_normal_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false);
-    public static final ThemeKey<Integer> BUTTON_SECONDARY_HOVERED_TEXT = ThemeKey.of("Button","secondary_hovered_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false);
-    public static final ThemeKey<Integer> BUTTON_SECONDARY_PRESSED_TEXT = ThemeKey.of("Button","secondary_pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false);
-    public static final ThemeKey<Integer> BUTTON_PRIMARY_NORMAL_TEXT = ThemeKey.of("Button","primary_normal_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false);
-    public static final ThemeKey<Integer> BUTTON_PRIMARY_HOVERED_TEXT = ThemeKey.of("Button","primary_hovered_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false);
-    public static final ThemeKey<Integer> BUTTON_PRIMARY_PRESSED_TEXT = ThemeKey.of("Button","primary_pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false);
-    public static final ThemeKey<Integer> BUTTON_DESTRUCTIVE_NORMAL_TEXT = ThemeKey.of("Button","destructive_normal_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false);
-    public static final ThemeKey<Integer> BUTTON_DESTRUCTIVE_HOVERED_TEXT = ThemeKey.of("Button","destructive_hovered_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false);
-    public static final ThemeKey<Integer> BUTTON_DESTRUCTIVE_PRESSED_TEXT = ThemeKey.of("Button","destructive_pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false);
-    public static final ThemeKey<Integer> BUTTON_MENU_HOVERED_TEXT = ThemeKey.of("Button","menu_hovered_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false);
-    public static final ThemeKey<Integer> BUTTON_MENU_PRESSED_TEXT = ThemeKey.of("Button","menu_pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false);
     public static final ThemeKey<Integer> TEXT_DARK_KEY = ThemeKey.of("Control","text_dark",Integer.class,ThemeKey.Kind.COLOR,TEXT_DARK,false);
     public static final ThemeKey<Integer> TEXT_WHITE_KEY = ThemeKey.of("Control","text_white",Integer.class,ThemeKey.Kind.COLOR,TEXT_WHITE,false);
     public static final ThemeKey<Integer> TEXT_SECONDARY_KEY = ThemeKey.of("Control","text_secondary",Integer.class,ThemeKey.Kind.COLOR,TEXT_SECONDARY,false);
@@ -97,10 +73,6 @@ public final class OreTheme {
     public static final ThemeKey<Integer> TAG_REALMS_INFORMATIVE_KEY = ThemeKey.of("Tag","tag_realms_informative",Integer.class,ThemeKey.Kind.COLOR,TAG_REALMS_INFORMATIVE,false);
     public static final ThemeKey<Integer> TAG_OUTLINE_KEY = ThemeKey.of("Tag","tag_outline",Integer.class,ThemeKey.Kind.COLOR,TAG_OUTLINE,false);
     public static final ThemeKey<Integer> TOAST_SHADOW_KEY = ThemeKey.of("Toast","toast_shadow",Integer.class,ThemeKey.Kind.COLOR,TOAST_SHADOW,false);
-    public static final ThemeKey<StyleBox> BUTTON_TEXT_NORMAL = ThemeKey.of("Button","text_normal",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxFlat(0x00000000,ThemeInsets.ZERO,0,new ThemeInsets(8,4,8,4),ThemeInsets.ZERO),true);
-    public static final ThemeKey<StyleBox> BUTTON_TEXT_HOVERED = ThemeKey.of("Button","text_hovered",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxFlat(0x16FFFFFF,ThemeInsets.ZERO,0,new ThemeInsets(8,4,8,4),ThemeInsets.ZERO),true);
-    public static final ThemeKey<StyleBox> BUTTON_TEXT_PRESSED = ThemeKey.of("Button","text_pressed",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxFlat(0x1A000000,ThemeInsets.ZERO,0,new ThemeInsets(8,4,8,4),ThemeInsets.ZERO),true);
-    public static final ThemeKey<StyleBox> BUTTON_MENU_NORMAL = ThemeKey.of("Button","menu_normal",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxFlat(0x00000000,ThemeInsets.ZERO,0,new ThemeInsets(8,4,8,4),ThemeInsets.ZERO),true);
     public static final ThemeKey<Boolean> HERO = ThemeKey.of("Label","hero",Boolean.class,ThemeKey.Kind.BOOLEAN,false,true);
     public static final ThemeKey<Boolean> TITLE_HERO = ThemeKey.of("LabelHero","hero",Boolean.class,ThemeKey.Kind.BOOLEAN,true,true);
     public static final ThemeKey<Integer> NAVBAR_TITLE_COLOR = ThemeKey.of("NavbarTitle","color",Integer.class,ThemeKey.Kind.COLOR,TEXT_DARK,false);
@@ -118,26 +90,26 @@ public final class OreTheme {
             Integer.class,ThemeKey.Kind.INTEGER,1,false,v -> v>=0);
     public static final ThemeKey<StyleBox> MODAL_PANEL = ThemeKey.of("Modal","panel",StyleBox.class,ThemeKey.Kind.STYLE,FLOATING_BACKGROUND.defaultValue(),true);
     public static final ThemeKey<StyleBox> MODAL_FOOTER = ThemeKey.of("Modal","footer",StyleBox.class,ThemeKey.Kind.STYLE,BAR.defaultValue(),true);
-    private static final List<ThemeKey<?>> KEYS = List.of(
+    public static final ThemeKey<StyleBox> FOCUS=ThemeKey.of("Control","focus",StyleBox.class,ThemeKey.Kind.STYLE,
+            new StyleBoxFlat(0,new ThemeInsets(1,1,1,1),0xFFFFFFFF,ThemeInsets.ZERO,new ThemeInsets(1,1,1,1)),false);
+    public static final ThemeKey<StyleBox> INPUT_FOCUS=ThemeKey.of("Input","focus",StyleBox.class,ThemeKey.Kind.STYLE,
+            new StyleBoxFlat(0,new ThemeInsets(1,1,1,1),0xFFFFFFFF,ThemeInsets.ZERO,new ThemeInsets(2,2,2,2)),false);
+    public static final ThemeKey<StyleBox> SEGMENTED_FOCUS=ThemeKey.of("Segmented","focus",StyleBox.class,ThemeKey.Kind.STYLE,
+            new StyleBoxFlat(0,new ThemeInsets(1,1,1,1),0xFFFFFFFF,ThemeInsets.ZERO,new ThemeInsets(1,1,2,1)),false);
+    private static final List<ThemeKey<?>> KEYS = List.of(FOCUS,INPUT_FOCUS,SEGMENTED_FOCUS,
             SEGMENTED_INDICATOR, SEGMENTED_INDICATOR_HEIGHT, SEGMENTED_INDICATOR_WIDTH_RATIO,
             SEGMENTED_INDICATOR_MAX_WIDTH, SEGMENTED_INDICATOR_BOTTOM_GAP,
             MODAL_PANEL, MODAL_FOOTER, SEGMENTED_MIN_WIDTH, AVATAR_COLOR, HERO, TITLE_HERO,
-            NAVBAR_TITLE_COLOR, BUTTON_TEXT_NORMAL, BUTTON_TEXT_HOVERED, BUTTON_TEXT_PRESSED,
-            BUTTON_MENU_NORMAL, PANEL, HEADER_PANEL, INPUT_BOX,
+            NAVBAR_TITLE_COLOR, PANEL, HEADER_PANEL, INPUT_BOX,
             DIALOG_PANEL, DROPDOWN_PANEL, DROPDOWN_ITEM, BAR,
             FLOATING_BACKGROUND, FLOATING_HEADER, H_DIVIDER, V_DIVIDER,
-            V_GRABBER, H_GRABBER, BUTTON_DISABLED, SEGMENTED_BUTTON_SELECTED,
-            BUTTON_SECONDARY_NORMAL, BUTTON_SECONDARY_HOVERED, BUTTON_SECONDARY_PRESSED, BUTTON_PRIMARY_NORMAL,
-            BUTTON_PRIMARY_HOVERED, BUTTON_PRIMARY_PRESSED, BUTTON_DESTRUCTIVE_NORMAL, BUTTON_DESTRUCTIVE_HOVERED,
-            BUTTON_DESTRUCTIVE_PRESSED, BUTTON_MENU_HOVERED, BUTTON_MENU_PRESSED, TEXT_COLOR,
+            V_GRABBER, H_GRABBER, SEGMENTED_BUTTON_SELECTED,
+            TEXT_COLOR,
             TEXT_FONT, HERO_FONT, FONT_SIZE, TEXT_SHADOW,
             OVERLAY, TRACK, INPUT_TEXT, INPUT_HINT,
             INPUT_MARKED, INPUT_FONT, INPUT_FONT_SIZE, SLOT_PANEL,
             LABEL_DARK_COLOR, LABEL_SECONDARY_COLOR, LABEL_ERROR_COLOR, LABEL_ACCENT_COLOR,
-            LABEL_DISABLED_COLOR, BUTTON_DISABLED_TEXT, SEGMENTED_BUTTON_SELECTED_TEXT, BUTTON_SECONDARY_NORMAL_TEXT,
-            BUTTON_SECONDARY_HOVERED_TEXT, BUTTON_SECONDARY_PRESSED_TEXT, BUTTON_PRIMARY_NORMAL_TEXT, BUTTON_PRIMARY_HOVERED_TEXT,
-            BUTTON_PRIMARY_PRESSED_TEXT, BUTTON_DESTRUCTIVE_NORMAL_TEXT, BUTTON_DESTRUCTIVE_HOVERED_TEXT, BUTTON_DESTRUCTIVE_PRESSED_TEXT,
-            BUTTON_MENU_HOVERED_TEXT, BUTTON_MENU_PRESSED_TEXT, TEXT_DARK_KEY, TEXT_WHITE_KEY,
+            LABEL_DISABLED_COLOR, SEGMENTED_BUTTON_SELECTED_TEXT, TEXT_DARK_KEY, TEXT_WHITE_KEY,
             TEXT_SECONDARY_KEY, TEXT_DISABLED_KEY, TEXT_ERROR_KEY, TEXT_ACCENT_KEY,
             TAG_PRIMARY_KEY, TAG_NEUTRAL_KEY, TAG_SECONDARY_KEY, TAG_INFORMATIVE_KEY,
             TAG_NOTICE_KEY, TAG_WARNING_KEY, TAG_REALMS_INFORMATIVE_KEY, TAG_OUTLINE_KEY,
@@ -191,10 +163,12 @@ public final class OreTheme {
         KEYS.forEach(db::register);
         IconTheme.registerTheme(db);
         io.github.luyingyilong.ore.Button.registerTheme(db);
+        io.github.luyingyilong.ore.Collapse.registerTheme(db);
         io.github.luyingyilong.ore.TextureRect.registerTheme(db);
         io.github.luyingyilong.ore.Label.registerTheme(db);
         io.github.luyingyilong.ore.Dropdown.registerTheme(db);
         io.github.luyingyilong.ore.Checkbox.registerTheme(db);
+        io.github.luyingyilong.ore.Radio.registerTheme(db);
         io.github.luyingyilong.ore.Spin.registerTheme(db);
         io.github.luyingyilong.ore.Switch.registerTheme(db);
         io.github.luyingyilong.ore.Segmented.registerTheme(db);

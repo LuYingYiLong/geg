@@ -64,7 +64,7 @@ public final class Dropdown<T> extends Control {
         triggerButton = ownPart("trigger", new Button().setSize(size).setAlignment(Button.TextAlignment.LEFT).setTrailingIcon(ARROW));
         setMinimum(0, size.getHeight());
         setFocusable(true);
-        setFocusExpansion(1);
+
     }
 
     public Signal<T> selectionChanged() {
@@ -104,14 +104,8 @@ public final class Dropdown<T> extends Control {
     public TextureRect getIconControl() { return triggerButton.getIconControl(); }
     public TextureRect getArrowControl() { return triggerButton.getTrailingIconControl(); }
 
-    public Button.Type getType() {
-        return triggerButton.getType();
-    }
-
-    public Dropdown<T> setType(Button.Type type) {
-        triggerButton.setType(type);
-        return this;
-    }
+    /** Presentation part; Dropdown retains activation and Overlay routing. */
+    public Button getTriggerButton() { return triggerButton; }
 
     public boolean getShowArrow() {
         return showArrow;

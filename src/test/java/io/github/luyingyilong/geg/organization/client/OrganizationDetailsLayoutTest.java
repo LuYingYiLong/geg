@@ -45,7 +45,7 @@ public final class OrganizationDetailsLayoutTest {
                 .equals("organization.geg.join_approval"), "Joining policy remains localized");
 
         Drawer drawer = new Drawer(Component.literal("公社")).setAnimationDuration(0).setContent(content)
-                .addAction(Signals.configure(new Button(Component.literal("加入申请")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
+                .addAction(Signals.configure(new Button(Component.literal("加入申请")).setThemeTypeVariation("SecondaryButton"), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
         var childContainer102 = new Overlay();
         childContainer102.addChild(drawer);
         Window window = new Window(true).setContent(new Control()).setOverlay(childContainer102);

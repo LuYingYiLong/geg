@@ -31,10 +31,10 @@ public final class OverlayMutationTest {
         Overlay drawing = new Overlay();
         int[] paints = {0};
         drawing.addChild(new Control() {
-            @Override public void draw(DrawContext context, int x, int y) { drawing.queueFree(); }
+            @Override protected void drawContent(DrawContext context, int x, int y) { drawing.queueFree(); }
         });
         drawing.addChild(new Control() {
-            @Override public void draw(DrawContext context, int x, int y) { paints[0]++; }
+            @Override protected void drawContent(DrawContext context, int x, int y) { paints[0]++; }
         });
         drawing.draw(null, 0, 0);
         check(drawing.isQueuedForDeletion() && paints[0] == 0, "Closing the root during draw does not paint destroyed layers");
@@ -43,7 +43,7 @@ public final class OverlayMutationTest {
         Control underneath = new Control();
         picking.addChild(underneath);
         picking.addChild(new Control() {
-            @Override public Control hitTop(int x, int y) { underneath.queueFree(); queueFree(); return null; }
+            @Override protected Control hitTestTree(int x,int y,int windowX,int windowY) { underneath.queueFree(); queueFree(); return null; }
         });
         picking.layout(viewport, null);
         check(picking.hitTop(10, 10) == null, "Hit testing also skips removed layers");

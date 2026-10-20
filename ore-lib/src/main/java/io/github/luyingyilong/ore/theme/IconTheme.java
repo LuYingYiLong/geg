@@ -12,11 +12,13 @@ public final class IconTheme {
     public static final ThemeKey<TextureRegion> CHECKED = texture(TYPE, "checked", "checked", 8, 8);
     public static final ThemeKey<TextureRegion> ARROW_DOWN = texture(TYPE, "arrow_down", "arrow_down", 7, 7);
     public static final ThemeKey<TextureRegion> ARROW_DOWN_LIGHT = texture(TYPE, "arrow_down_light", "arrow_down_light", 7, 7);
+    public static final ThemeKey<TextureRegion> ARROW_UP = texture(TYPE, "arrow_up", "arrow_up", 7, 7);
+    public static final ThemeKey<TextureRegion> ARROW_UP_LIGHT = texture(TYPE, "arrow_up_light", "arrow_up_light", 7, 7);
     public static final ThemeKey<TextureRegion> ARROW_RIGHT_LIGHT = texture(TYPE, "arrow_right_light", "arrow_right_light", 7, 7);
     public static final ThemeKey<TextureRegion> ARROW_LEFT = texture(TYPE, "arrow_left", "arrow_left", 7, 7);
     public static final ThemeKey<TextureRegion> FILTER = texture(TYPE, "filter", "filter", 16, 16);
     private static final List<ThemeKey<TextureRegion>> KEYS = List.of(SMALL_CLOSE, CLOSE, CHECKED,
-            ARROW_DOWN, ARROW_DOWN_LIGHT, ARROW_RIGHT_LIGHT, ARROW_LEFT, FILTER);
+            ARROW_DOWN, ARROW_DOWN_LIGHT, ARROW_UP, ARROW_UP_LIGHT, ARROW_RIGHT_LIGHT, ARROW_LEFT, FILTER);
 
     private IconTheme() { }
 

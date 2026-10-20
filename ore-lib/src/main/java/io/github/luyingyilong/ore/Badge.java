@@ -162,7 +162,7 @@ public final class Badge extends Container {
      * Decoration never steals pointer or keyboard input from the owning button.
      */
     @Override
-    public Control hitTop(int rootX, int rootY) {
+    protected Control hitTestTree(int rootX,int rootY,int windowX,int windowY) {
         return null;
     }
 

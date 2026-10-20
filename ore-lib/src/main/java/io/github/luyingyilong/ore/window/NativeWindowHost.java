@@ -255,7 +255,7 @@ public final class NativeWindowHost implements WindowHost {
             if (closing) return;
             if (GLFW.glfwGetWindowAttrib(handle, GLFW.GLFW_ICONIFIED) != 0) return;
             long now = System.nanoTime();
-            boolean animate = root.getLayoutDirty() || root.getFocusManager().getNativeInputFocused();
+            boolean animate = root.getLayoutDirty() || root.getAnimationsActive() || root.getFocusManager().getNativeInputFocused();
             if (now - lastFrame < 33_333_333L || !dirty && !animate && now - lastFrame < 100_000_000L) return;
             lastFrame = now;
             dirty = false;

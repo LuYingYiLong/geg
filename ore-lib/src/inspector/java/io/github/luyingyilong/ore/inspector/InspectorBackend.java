@@ -160,11 +160,10 @@ public final class InspectorBackend implements DebugBridge.Backend {
         for (Control node = c; node != null; node = node.getParent()) treeDepth += node.getContentDepth();
         Rect area = c.getScreenBounds(x, y);
         var matrix = context.getGraphics().pose().last().pose();
-        Vector4f start = matrix.transform(new Vector4f(area.x(), area.y(), 0, 1));
-        Vector4f end = matrix.transform(new Vector4f(area.right(), area.bottom(), 0, 1));
-        area = new Rect((int) Math.floor(start.x), (int) Math.floor(start.y),
-                Math.max(0, (int) Math.ceil(end.x - start.x)), Math.max(0, (int) Math.ceil(end.y - start.y)));
-        painted.put(c, new Geometry(area, clips.peek(), Math.max(depth, treeDepth), ++drawOrder));
+        Rect local=area;
+        area=DrawContext.toScreenRect(matrix,local);
+        painted.put(c,new Geometry(area,clips.peek(),Math.max(depth,treeDepth),++drawOrder,
+                new org.joml.Matrix4f(matrix),local));
     }
 
     @Override
@@ -186,12 +185,11 @@ public final class InspectorBackend implements DebugBridge.Backend {
         Vector4f base = matrix.transform(new Vector4f(x, baseline, 0, 1));
         Vector4f top = matrix.transform(new Vector4f(x, inkTop, 0, 1)), bottom = matrix.transform(new Vector4f(x, inkBottom, 0, 1));
         // GUI pose transforms include the native editor's local translation; the camera projection is separate.
-        Vector4f row = matrix.transform(new Vector4f(x, rowTop, 0, 1));
-        Vector4f end = matrix.transform(new Vector4f(x + width, rowTop + height, 0, 1));
-        Rect line = new Rect((int) Math.floor(point.x), (int) Math.floor(row.y),
-                Math.max(0, (int) Math.ceil(end.x) - (int) Math.floor(point.x)), Math.max(1, (int) Math.ceil(end.y) - (int) Math.floor(row.y)));
-        texts.computeIfAbsent(c, k -> new ArrayList<>()).add(new TextGeometry(line, base.y, point.y, top.y, bottom.y,
-                fontSize * Math.abs(matrix.m11()), fonts, scroll * Math.abs(matrix.m00()), clips.peek()));
+        Rect localLine=new Rect((int)Math.floor(x),(int)Math.floor(rowTop),(int)Math.ceil(width),Math.max(1,(int)Math.ceil(height)));
+        Rect line=DrawContext.toScreenRect(matrix,localLine);
+        float scale=(float)Math.hypot(matrix.m00(),matrix.m01());
+        texts.computeIfAbsent(c,k->new ArrayList<>()).add(new TextGeometry(line,base.y,point.y,top.y,bottom.y,
+                fontSize*scale,fonts,scroll*scale,clips.peek(),new org.joml.Matrix4f(matrix),localLine,baseline,y,inkTop,inkBottom));
         if (!painted.containsKey(c)) painted.put(c, new Geometry(line, clips.peek(), matrix.m32(), ++drawOrder));
     }
 
@@ -301,11 +299,24 @@ public final class InspectorBackend implements DebugBridge.Backend {
         for (Control child : c.getChildren()) if (child.getParent() == c) walk(child, key, visible, hidden);
     }
 
+    private static boolean insidePaint(Geometry geometry,int x,int y) {
+        var point=new org.joml.Matrix4f(geometry.pose).invert().transform(new Vector4f(x,y,0,1));
+        Rect local=geometry.local;
+        return point.x>=local.x()&&point.x<local.right()&&point.y>=local.y()&&point.y<local.bottom();
+    }
+
+    private static void transformedOutline(GuiGraphics g,Geometry geometry,int color) {
+        if(geometry.clip!=null)g.enableScissor(geometry.clip.x(),geometry.clip.y(),geometry.clip.right(),geometry.clip.bottom());
+        g.pose().pushPose();
+        try { g.pose().mulPoseMatrix(new org.joml.Matrix4f(geometry.pose).m32(0));outline(g,geometry.local,color);g.flush(); }
+        finally { g.pose().popPose();if(geometry.clip!=null)g.disableScissor(); }
+    }
+
     String pick(int x, int y) {
         Node best = null;
         for (Node n : nodes.values()) {
             Geometry g = n.geometry;
-            if (!n.control.isAlive() || n.control instanceof Overlay || n.control instanceof Window || !n.visible || g == null || !g.area.contains(x, y) || (g.clip != null && !g.clip.contains(x, y)))
+            if (!n.control.isAlive() || n.control instanceof Overlay || n.control instanceof Window || !n.visible || g == null || !g.area.contains(x, y) || (g.clip != null && !g.clip.contains(x, y)) || !insidePaint(g,x,y))
                 continue;
             if (best == null || g.depth > best.geometry.depth || (g.depth == best.geometry.depth && g.order > best.geometry.order))
                 best = n;
@@ -578,16 +589,21 @@ public final class InspectorBackend implements DebugBridge.Backend {
                     }
                     Rect min = new Rect(geo.area.x(), geo.area.y(), n.control.getMinimumWidth(), n.control.getMinimumHeight());
                     outline(g, min, 0xFF63E688);
-                    outline(g, area, 0xFF68D5FF);
+                    transformedOutline(g,geo,0xFF68D5FF);
                 }
                 if (text) for (Primitive primitive : primitives.getOrDefault(n.control, List.of()))
                     outline(g, intersect(primitive.clip, primitive.area), primitive.kind.equals("caret") ? 0xFF67F784 : 0xFFFFAB64);
-                if (text) for (TextGeometry line : texts.getOrDefault(n.control, List.of())) {
-                    outline(g, intersect(line.clip, line.line), 0xFF83FFFF);
-                    horizontal(g, line.line, line.origin, 0xFF64AAFF);
-                    horizontal(g, line.line, line.inkTop, 0xFFFFFF80);
-                    horizontal(g, line.line, line.inkBottom, 0xFFFFFF80);
-                    horizontal(g, line.line, line.baseline, 0xFFFF627B);
+                if(text)for(TextGeometry line:texts.getOrDefault(n.control,List.of())) {
+                    if(line.clip!=null)g.enableScissor(line.clip.x(),line.clip.y(),line.clip.right(),line.clip.bottom());
+                    g.pose().pushPose();
+                    try {
+                        g.pose().mulPoseMatrix(new org.joml.Matrix4f(line.pose).m32(0));
+                        outline(g,line.localLine,0xFF83FFFF);
+                        horizontal(g,line.localLine,line.localOrigin,0xFF64AAFF);
+                        horizontal(g,line.localLine,line.localInkTop,0xFFFFFF80);
+                        horizontal(g,line.localLine,line.localInkBottom,0xFFFFFF80);
+                        horizontal(g,line.localLine,line.localBaseline,0xFFFF627B);g.flush();
+                    } finally {g.pose().popPose();if(line.clip!=null)g.disableScissor();}
                 }
             }
             if (picking || selectedNode != null) g.drawString(Minecraft.getInstance().font,
@@ -655,11 +671,12 @@ public final class InspectorBackend implements DebugBridge.Backend {
     private record Binding(Object key, long generation) {
     }
 
-    private record Geometry(Rect area, Rect clip, float depth, int order) {
+    private record Geometry(Rect area, Rect clip, float depth, int order,org.joml.Matrix4f pose,Rect local) {
+        Geometry(Rect area,Rect clip,float depth,int order){this(area,clip,depth,order,new org.joml.Matrix4f(),area);}
     }
 
     private record TextGeometry(Rect line, float baseline, float origin, float inkTop, float inkBottom, float fontSize,
-                                String fonts, float scroll, Rect clip) {
+                                String fonts, float scroll, Rect clip,org.joml.Matrix4f pose,Rect localLine,float localBaseline,float localOrigin,float localInkTop,float localInkBottom) {
     }
 
     private record Part(Control owner, String name) {

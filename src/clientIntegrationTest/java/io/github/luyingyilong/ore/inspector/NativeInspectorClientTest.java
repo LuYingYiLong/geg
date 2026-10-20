@@ -120,7 +120,7 @@ public final class NativeInspectorClientTest {
                 OreInspector.view().update();
                 Segmented views = (Segmented)find(OreInspector.view().window(), c -> c instanceof Segmented && c.getDebugName().equals("Inspector views"));
                 clickViewIndex(views,2);
-                check(OreInspector.backend().snapshot().themes().items().stream().anyMatch(i->i.key().equals("Button:secondary_normal") && i.value().contains("StyleBoxTexture")),"Native theme view resolves actual button texture");
+                check(OreInspector.backend().snapshot().themes().items().stream().anyMatch(i->i.key().equals("Button:normal") && i.value().contains("StyleBoxTexture")),"Native theme view resolves actual button texture");
                 check(io.github.luyingyilong.ore.theme.ThemeDB.getDefault().getDiagnostics().isEmpty(),"Shipped themes loaded without MUI or resource errors");
                 var hostThemes = io.github.luyingyilong.ore.theme.ThemeDB.getDefault();
                 check(hostThemes.getDefaultTheme().getId().equals(io.github.luyingyilong.geg.client.theme.GegThemes.ID),

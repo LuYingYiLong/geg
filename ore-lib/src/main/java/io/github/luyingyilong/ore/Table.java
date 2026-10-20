@@ -21,6 +21,8 @@ import java.util.function.Supplier;
  * Fixed-header table whose rows use the Ore bar theme and shared draw/hit geometry.
  */
 public final class Table<T> extends Container {
+    @Override protected boolean requiresAxisAlignedClip() { return true; }
+
     private static final int HEADER_HEIGHT = 19;
     private static final int ROW_HEIGHT = 23;
     private static final int COMPACT_INSET = 4;
@@ -59,7 +61,7 @@ public final class Table<T> extends Container {
             headerLabels.clear();
         });
         setFocusable(true);
-        setFocusExpansion(1);
+
     }
 
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
@@ -540,7 +542,7 @@ public final class Table<T> extends Container {
     }
 
     @Override
-    public void draw(DrawContext context, int screenX, int screenY) {
+    protected void drawContent(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
@@ -752,8 +754,8 @@ public final class Table<T> extends Container {
     }
 
     @Override
-    public Control hitTop(int rootX, int rootY) {
-        return hitRow(rootX, rootY) == null ? null : super.hitTop(rootX, rootY);
+    protected Control hitTestTree(int rootX,int rootY,int windowX,int windowY) {
+        return hitRow(rootX, rootY) == null ? null : super.hitTestTree(rootX,rootY,windowX,windowY);
     }
 
     public interface Cell<T> {
@@ -956,6 +958,8 @@ public final class Table<T> extends Container {
     }
 
     private final class RowView extends Container {
+        @Override protected boolean requiresAxisAlignedClip(){return true;}
+
         private final Map<String, Control> controls = new HashMap<>();
         private final Map<String, Label> captions = new HashMap<>();
         private Row<T> row;
@@ -1029,7 +1033,7 @@ public final class Table<T> extends Container {
         }
 
         @Override
-        public void draw(DrawContext context, int screenX, int screenY) {
+        protected void drawContent(DrawContext context, int screenX, int screenY) {
             if (!isAlive()) return;
             try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
                 DebugBridge.backend().paint(this, context, screenX, screenY);
@@ -1038,12 +1042,12 @@ public final class Table<T> extends Container {
                     Control control = controls.get(column.key);
                     if (control == null || !(control.isAlive() && control.getVisible())) continue;
                     Rect area = control.getScreenBounds(screenX, screenY);
-                    context.getGraphics().enableScissor(area.x(), area.y(), area.right(), area.bottom());
+                    context.enableScissor(area.x(), area.y(), area.right(), area.bottom());
                     DebugBridge.backend().clip(context.toScreenRect(area));
                     try {
                         control.draw(context, screenX, screenY);
                     } finally {
-                        context.getGraphics().disableScissor();
+                        context.disableScissor();
                         DebugBridge.backend().unclip();
                     }
                 }

@@ -52,7 +52,7 @@ public final class InspectorPropertiesTest {
         property(label, "scrollEndPauseMs").parse("900");
         property(label, "scrollTrigger").parse("ALWAYS");
         rejects(() -> property(label, "scrollTrigger").parse("INVALID"));
-        property(new Button(), "type").parse("TEXT");
+        property(new Button(), "themeTypeVariation").parse("TextButton");
         property(new Grid<>(), "mode").parse("MASONRY");
         Box wrapping = new Box().setGap(4);
         check(property(wrapping, "wrap").parse("true").equals(true) && !wrapping.getWrap(), "Wrap preview preserves base");

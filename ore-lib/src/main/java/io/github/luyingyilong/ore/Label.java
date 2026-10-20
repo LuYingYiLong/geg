@@ -23,6 +23,8 @@ import java.util.Objects;
  * Shared Ore text measurement and rendering, including styled Minecraft Components.
  */
 public final class Label extends Control {
+    @Override protected boolean requiresAxisAlignedClip() { return getOverflow() != Overflow.VISIBLE; }
+
     /**
      * GUI pixels: 8 preserves Minecraft's usual unscaled text size.
      */
@@ -364,6 +366,7 @@ public final class Label extends Control {
     }
 
     public Label setOverflow(Overflow overflow) {
+        validateGeometryRequirement(overflow != Overflow.VISIBLE,false);
         Overflow next = Objects.requireNonNull(overflow);
         if (DebugBridge.previewWrite(this, "overflow", next)) return this;
         if (this.overflow != next) {

@@ -114,7 +114,7 @@ public final class DrawerLayoutTest {
             check(drawer.getPanelBounds().width() == width / 2);
             check(drawer.getPanelBounds().right() == width);
         }
-        drawer.setWidth(1000).addAction(Signals.configure(new Button(Component.literal("Apply")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
+        drawer.setWidth(1000).addAction(Signals.configure(new Button(Component.literal("Apply")).setThemeTypeVariation("SecondaryButton"), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
         for (int width : new int[]{127, 128, 129, 640}) {
             window.layoutViewport(width, 120, font);
             check(drawer.getPanelBounds().equals(new Rect(0, 0, width, 120)));
@@ -238,8 +238,8 @@ public final class DrawerLayoutTest {
             drawer.open();
             window.layoutViewport(width, 150, font);
             Button close = findIconButton(drawer);
-            check(close != null && close.getType() == Button.Type.TEXT);
-            check(close.getActionMode() == Button.ACTION_MODE.BUTTON_RELEASE && close.getFocusExpansion() == 1);
+            check(close != null && close.getThemeTypeVariation().equals("TextButton"));
+            check(close.getActionMode() == Button.ACTION_MODE.BUTTON_RELEASE && close.getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.FOCUS).getExpandMargin().left() == 1);
             check(close.getIconControl().getResolvedTextureRegion().getTexture().equals(io.github.luyingyilong.ore.theme.IconTheme.CLOSE.defaultValue().getTexture()) && close.getIconControl().getResolvedTextureRegion().getWidth()==7 && close.getIconControl().getResolvedTextureRegion().getHeight()==7);
             Rect bounds = close.getAbsoluteBounds();
             check(bounds.width() == 20 && bounds.height() == 20);
@@ -322,7 +322,7 @@ public final class DrawerLayoutTest {
         table.setMinimum(0, 60);
         table.setRows(IntStream.range(0, 300).boxed().toList());
         Drawer drawer = new Drawer(Component.literal("Organization")).setAnimationDuration(0)
-                .setContent(table).addAction(Signals.configure(new Button(Component.literal("Applications")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
+                .setContent(table).addAction(Signals.configure(new Button(Component.literal("Applications")).setThemeTypeVariation("SecondaryButton"), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
         Control popup = new Control() {
             @Override public boolean getFocusScope() { return true; }
             @Override public boolean onFocusKey(int keyCode, int modifiers) {

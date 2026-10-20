@@ -50,7 +50,7 @@ public final class Modal extends Container {
     private final Control headerSpacer = new Control();
     private final Label titleLabel = new Label().setThemeTypeVariation("LabelHero").setOpticalCenter(true).setOverflow(Label.Overflow.ELLIPSIS)
             .setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER);
-    private final Button close = new Button().setType(Button.Type.TEXT)
+    private final Button close = new Button().setThemeTypeVariation("TextButton")
             .setIcon(TextureSource.themed(CLOSE_ICON));
     private final Padding bodyInset = new Padding(Padding.Insets.all(BODY_INSET));
     private final Panel footer;
@@ -275,7 +275,7 @@ public final class Modal extends Container {
     }
 
     @Override
-    public void draw(DrawContext context, int screenX, int screenY) {
+    protected void drawContent(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
@@ -285,7 +285,7 @@ public final class Modal extends Container {
             graphics.pose().pushPose();
             graphics.pose().translate(0.0F, 0.0F, depth);
             try {
-                super.draw(context, screenX, screenY);
+                super.drawContent(context, screenX, screenY);
                 graphics.flush();
             } finally {
                 graphics.pose().popPose();

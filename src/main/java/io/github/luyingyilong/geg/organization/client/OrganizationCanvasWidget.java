@@ -99,14 +99,14 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         createForm.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         createDrawer = Signals.configure(new Drawer(Component.translatable("organization.geg.create"))
                 .setContent(createForm), connected -> connected.closed().connect(connected, this::onCreateClosed))
-                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.back")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeCreate)))
-                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.create_action")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::submitCreate)));
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.back")).setThemeTypeVariation("SecondaryButton"), actionButton -> actionButton.pressed().connect(actionButton, this::closeCreate)))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.create_action")).setThemeTypeVariation("PrimaryButton"), actionButton -> actionButton.pressed().connect(actionButton, this::submitCreate)));
         detailDrawer = Signals.configure(new Drawer(Component.empty()).setContent(organizationDetails), connected -> connected.closed().connect(connected, this::onDetailsClosed));
         organizationDetails.editRequested().connect(window, this::showEdit);
         editModal = Signals.configure(new Modal(Component.translatable("organization.geg.edit_title"))
                 .setSize(300, 0).centered().setContent(editor.content()), connected -> connected.closeRequested().connect(connected, this::closeEdit))
-                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.back")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeEdit)))
-                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.save")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::submitEdit)))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.back")).setThemeTypeVariation("SecondaryButton"), actionButton -> actionButton.pressed().connect(actionButton, this::closeEdit)))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.save")).setThemeTypeVariation("PrimaryButton"), actionButton -> actionButton.pressed().connect(actionButton, this::submitEdit)))
                 .setDepth(400.0F);
         applicationTable.setHeaderVisible(false).setMinimum(0, 60)
                 .setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
@@ -121,8 +121,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         warning.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         disbandConfirmation = Signals.configure(new Modal(Component.translatable("organization.geg.confirm_disband"))
                 .setContent(warning), connected -> connected.closeRequested().connect(connected, this::closeDisbandConfirmation))
-                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.back")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeDisbandConfirmation)))
-                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.disband")).setType(Button.Type.DESTRUCTIVE), actionButton -> actionButton.pressed().connect(actionButton, this::confirmDisband)))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.back")).setThemeTypeVariation("SecondaryButton"), actionButton -> actionButton.pressed().connect(actionButton, this::closeDisbandConfirmation)))
+                .addAction(Signals.configure(new Button(Component.translatable("organization.geg.disband")).setThemeTypeVariation("DestructiveButton"), actionButton -> actionButton.pressed().connect(actionButton, this::confirmDisband)))
                 .setDepth(400.0F);
         overlay.addChild(emptyDialog);
         overlay.addChild(createDrawer);
@@ -207,9 +207,9 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     private final class ApplicationActions extends Container {
         private OrganizationSyncPacket.Application application;
         private final Button reject = Signals.configure(new Button(Component.translatable("organization.geg.reject"))
-                .setSize(Button.Size.SMALL).setType(Button.Type.DESTRUCTIVE), connected -> connected.pressed().connect(connected, () -> review(OrganizationSavedData.Operation.REJECT)));
+                .setSize(Button.Size.SMALL).setThemeTypeVariation("DestructiveButton"), connected -> connected.pressed().connect(connected, () -> review(OrganizationSavedData.Operation.REJECT)));
         private final Button approve = Signals.configure(new Button(Component.translatable("organization.geg.approve"))
-                .setSize(Button.Size.SMALL).setType(Button.Type.PRIMARY), connected -> connected.pressed().connect(connected, () -> review(OrganizationSavedData.Operation.APPROVE)));
+                .setSize(Button.Size.SMALL).setThemeTypeVariation("PrimaryButton"), connected -> connected.pressed().connect(connected, () -> review(OrganizationSavedData.Operation.APPROVE)));
 
         private ApplicationActions() { this.addChild(reject); this.addChild(approve); }
         private void bind(OrganizationSyncPacket.Application application) { this.application = application; }
@@ -269,7 +269,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                             ? hovered ? "organization.geg.cancel_application" : "organization.geg.pending_application"
                             : entry.joinPolicy() == Organization.JoinPolicy.APPROVAL
                             ? "organization.geg.apply" : "organization.geg.join"))
-                    .setType(entry.pending() && hovered ? Button.Type.DESTRUCTIVE : Button.Type.SECONDARY);
+                    .setThemeTypeVariation(entry.pending() && hovered ? "DestructiveButton" : "SecondaryButton");
         }
 
         @Override public void layout(Rect bounds, Font font) {
@@ -378,8 +378,8 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
         organizationDetails.editable(canEdit);
         if (!canEdit) closeEdit();
         if (ownRole == Organization.Role.LEADER || ownRole == Organization.Role.OFFICER) {
-            detailDrawer.addAction(Signals.configure(new Button(Component.translatable("organization.geg.applications")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::showApplications)));
-            detailDrawer.addAction(Signals.configure(new Button(Component.translatable("mail.geg.announce")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, () -> io.github.luyingyilong.geg.mail.client.ClientMailScreen.open(summary.id()))));
+            detailDrawer.addAction(Signals.configure(new Button(Component.translatable("organization.geg.applications")).setThemeTypeVariation("SecondaryButton"), actionButton -> actionButton.pressed().connect(actionButton, this::showApplications)));
+            detailDrawer.addAction(Signals.configure(new Button(Component.translatable("mail.geg.announce")).setThemeTypeVariation("SecondaryButton"), actionButton -> actionButton.pressed().connect(actionButton, () -> io.github.luyingyilong.geg.mail.client.ClientMailScreen.open(summary.id()))));
             applicationTable.setRows(summary.applications());
         } else {
             applicationsModal.setVisible(false);
@@ -613,7 +613,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
                 ;
         memberships.addChild(navbar);
         Button createButton = Signals.configure(new Button(Component.translatable("organization.geg.create"))
-                .setType(Button.Type.PRIMARY), connected -> connected.pressed().connect(connected, this::showCreate));
+                .setThemeTypeVariation("PrimaryButton"), connected -> connected.pressed().connect(connected, this::showCreate));
         createButton.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         Button joinButton = Signals.configure(new Button(Component.translatable("organization.geg.join")), connected -> connected.pressed().connect(connected, this::showJoin));
         joinButton.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);

@@ -14,6 +14,7 @@ public abstract class InputEvent {
     private Control target, currentTarget, capture;
     private boolean accepted, dispatched;
     private int localX, localY, treeX, treeY;
+    private double preciseLocalX,preciseLocalY;
 
     protected InputEvent(WindowContext context, int modifiers) {
         this.context = Objects.requireNonNull(context);
@@ -81,13 +82,17 @@ public abstract class InputEvent {
         this.target = target;
     }
 
-    public final void deliver(Control control, int x, int y) {
+    public final double getPreciseLocalX() { return preciseLocalX; }
+    public final double getPreciseLocalY() { return preciseLocalY; }
+    public final void deliver(Control control, double x, double y) {
         currentTarget = control;
-        treeX = x;
-        treeY = y;
+        treeX = (int)Math.floor(x);
+        treeY = (int)Math.floor(y);
         var bounds = control.getAbsoluteBounds();
-        localX = x - bounds.x();
-        localY = y - bounds.y();
+        preciseLocalX=x-bounds.x();
+        localX = (int)Math.floor(preciseLocalX);
+        preciseLocalY=y-bounds.y();
+        localY = (int)Math.floor(preciseLocalY);
         control.input(this);
     }
 }

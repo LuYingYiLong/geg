@@ -36,14 +36,26 @@ import java.util.function.LongSupplier;
  * }</pre>
  */
 public final class Drawer extends Container {
+    @Override protected boolean requiresAxisAlignedClip() { return true; }
+
 
     public static final ThemeKey<TextureRegion> CLOSE_ICON = IconTheme.item("Drawer", "close_icon", IconTheme.CLOSE);
+    public static final ThemeKey<Integer> PADDING_TOP = paddingKey("padding_top");
+    public static final ThemeKey<Integer> PADDING_RIGHT = paddingKey("padding_right");
+    public static final ThemeKey<Integer> PADDING_BOTTOM = paddingKey("padding_bottom");
+    public static final ThemeKey<Integer> PADDING_LEFT = paddingKey("padding_left");
 
     public static void registerTheme(ThemeDB db) {
         OreTheme.registerType(db, "Drawer");
         IconTheme.registerTheme(db);
         db.register(CLOSE_ICON);
+        for (var key : java.util.List.of(PADDING_TOP, PADDING_RIGHT, PADDING_BOTTOM, PADDING_LEFT)) db.register(key);
         db.registerFallback(CLOSE_ICON, IconTheme.CLOSE);
+    }
+
+    private static ThemeKey<Integer> paddingKey(String name) {
+        return new ThemeKey<>("Drawer", name, Integer.class, ThemeKey.Kind.INTEGER, PADDING, true,
+                value -> value >= 0 && value <= Integer.MAX_VALUE / 2);
     }
 
 
@@ -90,7 +102,7 @@ public final class Drawer extends Container {
         this.clock = Objects.requireNonNull(clock);
         this.soundPlayer = Objects.requireNonNull(soundPlayer);
         this.title.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
-        closeButton = Signals.configure(new Button().setType(Button.Type.TEXT)
+        closeButton = Signals.configure(new Button().setThemeTypeVariation("TextButton")
                 .setIcon(TextureSource.themed(CLOSE_ICON)), connected -> connected.pressed().connect(connected, this::close));
         closeButton.setMinimum(CLOSE_SIZE, CLOSE_SIZE);
         closeButton.setThemeParent(this);
@@ -167,20 +179,15 @@ public final class Drawer extends Container {
         return this;
     }
 
-    public Drawer setPadding(int top, int right, int bottom, int left) {
-        return setPadding(new Padding.Insets(top, right, bottom, left));
-    }
-
+    /** Effective theme spacing around the header, body and footer. */
     public Padding.Insets getPadding() {
+        syncPadding();
         return frame.getInsets();
     }
 
-    /**
-     * Inner spacing around the header, body and footer; defaults to 4px on every side.
-     */
-    public Drawer setPadding(Padding.Insets insets) {
-        frame.setInsets(Objects.requireNonNull(insets));
-        return this;
+    private void syncPadding() {
+        frame.setInsets(new Padding.Insets(getThemeItem(PADDING_TOP), getThemeItem(PADDING_RIGHT),
+                getThemeItem(PADDING_BOTTOM), getThemeItem(PADDING_LEFT)));
     }
 
     @Inspectable
@@ -351,6 +358,7 @@ public final class Drawer extends Container {
     }
 
     private void layoutPanel(Font font) {
+        syncPadding();
         Placement placement = DebugBridge.value(this, "placement", this.placement);
         int requestedWidth = DebugBridge.value(this, "requestedWidth", this.requestedWidth);
         advanceAnimation();
@@ -365,7 +373,7 @@ public final class Drawer extends Container {
     }
 
     @Override
-    public void draw(DrawContext context, int screenX, int screenY) {
+    protected void drawContent(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             if (!isAlive()) return;
@@ -396,9 +404,9 @@ public final class Drawer extends Container {
     }
 
     @Override
-    public Control hitTop(int rootX, int rootY) {
+    protected Control hitTestTree(int rootX,int rootY,int windowX,int windowY) {
         if (!hit(rootX, rootY)) return null;
-        Control child = targetOpen && frame.hit(rootX, rootY) ? frame.hitTop(rootX, rootY) : null;
+        Control child = targetOpen && frame.hit(rootX, rootY) ? frame.hitTop(windowX,windowY) : null;
         return child == null ? this : child;
     }
 

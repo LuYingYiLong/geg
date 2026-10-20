@@ -12,6 +12,8 @@ import net.minecraft.client.gui.Font;
  * Ore layout proxy for a ModularUI text field. ModularUI retains focus and editing.
  */
 public final class InputControl extends Control {
+    @Override protected boolean requiresUprightInput() { return true; }
+
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"InputControl"); }
     private final Input widget;
     private Rect lastArea = new Rect(0, 0, 0, 0);
@@ -22,7 +24,7 @@ public final class InputControl extends Control {
         widget.layoutControl(this);
         setMinimum(1, widget.getPreferredInputHeight());
         setFocusable(true);
-        setFocusExpansion(2);
+
         widget.focusExited().connect(this, () -> {
             Control root = this;
             while (root.getParent() != null) root = root.getParent();
@@ -47,7 +49,13 @@ public final class InputControl extends Control {
 
     public static boolean pointerInteractive(Control target, int x, int y) {
         var context = target.getWindowContext();
-        return context.getOwner() == null || context.getOwner().pointerOver(target, x - context.getOriginX(), y - context.getOriginY());
+        if(context.getOwner()==null)return true;
+        if(target instanceof InputControl input) {
+            Rect field=input.getWidgetBounds(),tree=input.getAbsoluteBounds();
+            var point=io.github.luyingyilong.ore.event.EventGeometry.matrix(input).transform(x-field.x()+tree.x(),y-field.y()+tree.y());
+            return context.getOwner().pointerOver(target,(int)Math.floor(point.x()),(int)Math.floor(point.y()));
+        }
+        return context.getOwner().pointerOver(target,x-context.getOriginX(),y-context.getOriginY());
     }
 
     @Override
@@ -116,6 +124,7 @@ public final class InputControl extends Control {
     }
 
     boolean layoutInteractive() {
+        if(!isInputAccessible())return false;
         for (Control node = this; node != null; node = node.getParent()) {
             if (node instanceof Drawer drawer && !drawer.isOpen()) return false;
             if (node instanceof Window window) return window.getFocusManager().allowsNativeInput(this);

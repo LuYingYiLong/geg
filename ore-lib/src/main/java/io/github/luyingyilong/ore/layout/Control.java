@@ -1,6 +1,7 @@
 package io.github.luyingyilong.ore.layout;
 
 import io.github.luyingyilong.ore.render.DrawContext;
+import io.github.luyingyilong.ore.render.Transform2D;
 import io.github.luyingyilong.ore.theme.*;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.DebugProperty;
@@ -23,6 +24,7 @@ public class Control implements SignalOwner {
     private final SignalScope signalScope = new SignalScope();
     private Theme theme;
     private String themeTypeVariation = "";
+    private String resolvedThemeVariation = "";
     private java.lang.ref.WeakReference<Control> themeParent;
     private final java.util.List<java.lang.ref.WeakReference<Control>> themeDependents = new java.util.ArrayList<>();
     private final java.util.Map<ThemeKey<?>,Object> themeOverrides = new java.util.LinkedHashMap<>();
@@ -42,10 +44,19 @@ public class Control implements SignalOwner {
     public Control setThemeTypeVariation(String variation) {
         signalScope.checkThread(); requireThemeAlive(); Objects.requireNonNull(variation);
         if (!variation.isEmpty() && !ThemeDB.getDefault().hasType(variation)) throw new IllegalArgumentException("Unregistered theme variation: " + variation);
+        if (DebugBridge.previewWrite(this,"themeTypeVariation",variation)) return this;
         if (!themeTypeVariation.equals(variation)) { themeTypeVariation=variation; invalidateTheme(true); }
         return this;
     }
-    public String getThemeTypeVariation() { return themeTypeVariation; }
+    @Inspectable(group="Appearance")
+    public String getThemeTypeVariation() {
+        String effective=DebugBridge.value(this,"themeTypeVariation",themeTypeVariation);
+        if(!resolvedThemeVariation.equals(effective)) {
+            resolvedThemeVariation=effective;
+            invalidateTheme(true);
+        }
+        return effective;
+    }
     public String getThemeType() {
         for(Class<?> type=getClass();type!=null;type=type.getSuperclass())
             if(ThemeDB.getDefault().hasType(type.getSimpleName())) return type.getSimpleName();
@@ -93,6 +104,7 @@ public class Control implements SignalOwner {
     @SuppressWarnings("unchecked")
     public final <T> ThemeDB.Resolution<T> getThemeResolution(ThemeKey<T> key) {
         signalScope.checkThread();
+        String variation=getThemeTypeVariation();
         if(!observingThemes && isAlive()) {
             observingThemes=true;
             ThemeDB.getDefault().changed().connect(this, layout -> { if(isAlive()) invalidateThemeSelf(layout); });
@@ -105,7 +117,7 @@ public class Control implements SignalOwner {
         // Resource namespaces such as Icons do not inherit unrelated Control items or variations.
         if(!keyTypes.contains("Control")) types.addAll(keyTypes);
         else {
-            if(!themeTypeVariation.isEmpty()) types.addAll(database.getTypeChain(themeTypeVariation));
+            if(!variation.isEmpty()) types.addAll(database.getTypeChain(variation));
             var actualTypes=database.getTypeChain(getThemeType());
             if(!actualTypes.contains(key.type())) {
                 // Internal images keep their own presentation type, but use their semantic owner's variation.
@@ -114,7 +126,7 @@ public class Control implements SignalOwner {
                         source!=null && seen.add(source);source=source.getThemeParent()) {
                     var sourceTypes=database.getTypeChain(source.getThemeType());
                     if(sourceTypes.contains(key.type())) {
-                        if(!source.themeTypeVariation.isEmpty()) types.addAll(database.getTypeChain(source.themeTypeVariation));
+                        if(!source.getThemeTypeVariation().isEmpty()) types.addAll(database.getTypeChain(source.getThemeTypeVariation()));
                         types.addAll(sourceTypes); break;
                     }
                 }
@@ -151,7 +163,7 @@ public class Control implements SignalOwner {
     public String getThemeState() { return getVisible()?"visible":"hidden"; }
     public final java.util.List<ThemeKey<?>> getThemeKeys() {
         var types=new java.util.LinkedHashSet<>(ThemeDB.getDefault().getTypeChain(getThemeType()));
-        if(!themeTypeVariation.isEmpty()) types.addAll(ThemeDB.getDefault().getTypeChain(themeTypeVariation));
+        if(!getThemeTypeVariation().isEmpty()) types.addAll(ThemeDB.getDefault().getTypeChain(getThemeTypeVariation()));
         return ThemeDB.getDefault().getKeys().stream().filter(key -> types.contains(key.type()) || themeCache.containsKey(key)).toList();
     }
     public final <T> T getThemeItem(ThemeKey<T> key) { return getThemeResolution(key).value(); }
@@ -199,7 +211,7 @@ public class Control implements SignalOwner {
     private boolean layoutDirty = true;
     private boolean focusable;
     private Font layoutFont;
-    private int focusExpansion;
+    private Transform2D renderTransform = Transform2D.IDENTITY;
     private float sizeFlagsStretchRatio = 1.0F;
 
     @Override
@@ -355,6 +367,7 @@ public class Control implements SignalOwner {
             throw new IllegalStateException("Control already has a lifecycle owner");
         requireAcyclicChild(part);
         part.validateThemeAttachment(this);
+        part.validateTransformAttachment(this);
     }
 
     /**
@@ -627,20 +640,132 @@ public class Control implements SignalOwner {
         return this;
     }
 
-    public int getFocusExpansion() {
-        return focusExpansion;
+    public Transform2D getRenderTransform() {
+        if (!DebugBridge.active()) return renderTransform;
+        return new Transform2D(DebugBridge.value(this,"renderTranslationX",renderTransform.getTranslationX()),
+                DebugBridge.value(this,"renderTranslationY",renderTransform.getTranslationY()),
+                DebugBridge.value(this,"renderRotation",renderTransform.getRotationDegrees()),
+                DebugBridge.value(this,"renderScale",renderTransform.getScale()),
+                DebugBridge.value(this,"renderPivotX",renderTransform.getPivotX()),
+                DebugBridge.value(this,"renderPivotY",renderTransform.getPivotY()));
     }
 
-    /**
-     * Pixels added to each side of the focused outline.
-     */
-    public Control setFocusExpansion(int pixels) {
-        focusExpansion = Math.max(0, pixels);
+    public Control setRenderTransform(Transform2D value) {
+        signalScope.checkThread();
+        if (!isAlive()) throw new IllegalStateException("Cannot transform a pending/freed control");
+        Objects.requireNonNull(value);
+        if(renderTransform.equals(value))return this;
+        validateRenderTransform(value);
+        renderTransform=value;
+        requestLayout();
         return this;
     }
 
+    protected boolean requiresAxisAlignedClip() { return false; }
+    public Rect getClipBounds() { return requiresAxisAlignedClip()?getAbsoluteBounds():null; }
+    protected void validateOwnRenderTransform(Transform2D value) { }
+    protected boolean requiresUprightInput() { return false; }
+
+    public final Control getGeometryParent() { return parent != null ? parent : lifecycleOwner; }
+
+    public final void validateRenderTransform(Transform2D proposed) {
+        double angle=0;
+        for(Control node=getGeometryParent();node!=null;node=node.getGeometryParent()) angle=(angle+node.getRenderTransform().getRotationDegrees()%360)%360;
+        validateTransformTree(angle,proposed);
+    }
+
+    final void validateTransformAttachment(Control owner) {
+        double angle=0;
+        for(Control node=owner;node!=null;node=node.getGeometryParent()) angle=(angle+node.getRenderTransform().getRotationDegrees()%360)%360;
+        validateTransformTree(angle,getRenderTransform());
+    }
+
+    private void validateTransformTree(double angle,Transform2D proposed) {
+        validateOwnRenderTransform(proposed);
+        angle=(angle+proposed.getRotationDegrees()%360)%360;
+        proposed.toAffine(getAbsoluteBounds()).matrix();
+        double remainder=Math.IEEEremainder(angle,360);
+        if (requiresUprightInput() && Math.abs(remainder)>1e-8
+                || requiresAxisAlignedClip() && Math.abs(Math.IEEEremainder(angle,90))>1e-8)
+            throw new IllegalArgumentException("Rotation is not supported by this input/clip subtree: "+getClass().getSimpleName());
+        for(Control child:ownedSnapshot()) if(child.isAlive()) child.validateTransformTree(angle,child.getRenderTransform());
+    }
+
+    /** Called before changing an existing node into a clipped/upright surface. */
+    protected final void validateGeometryRequirement(boolean clipped,boolean upright) {
+        double angle=0;
+        for(Control node=this;node!=null;node=node.getGeometryParent()) angle=(angle+node.getRenderTransform().getRotationDegrees()%360)%360;
+        if (upright && Math.abs(Math.IEEEremainder(angle,360))>1e-8
+                || clipped && Math.abs(Math.IEEEremainder(angle,90))>1e-8)
+            throw new IllegalArgumentException("This transform requires polygon clipping or rotated native input");
+    }
+
+    @Inspectable(group="Transform") public double getRenderTranslationX(){return getRenderTransform().getTranslationX();}
+    @Inspectable(group="Transform") public double getRenderTranslationY(){return getRenderTransform().getTranslationY();}
+    @Inspectable(group="Transform") public double getRenderRotation(){return getRenderTransform().getRotationDegrees();}
+    @Inspectable(group="Transform",min=0.0001,max=10000) public double getRenderScale(){return getRenderTransform().getScale();}
+    @Inspectable(group="Transform",min=0,max=1) public double getRenderPivotX(){return getRenderTransform().getPivotX();}
+    @Inspectable(group="Transform",min=0,max=1) public double getRenderPivotY(){return getRenderTransform().getPivotY();}
+    public void setRenderTranslationX(double v){setRenderComponent("renderTranslationX",v);}
+    public void setRenderTranslationY(double v){setRenderComponent("renderTranslationY",v);}
+    public void setRenderRotation(double v){setRenderComponent("renderRotation",v);}
+    public void setRenderScale(double v){setRenderComponent("renderScale",v);}
+    public void setRenderPivotX(double v){setRenderComponent("renderPivotX",v);}
+    public void setRenderPivotY(double v){setRenderComponent("renderPivotY",v);}
+    private void setRenderComponent(String key,double value){
+        validateRenderTransform(withRenderComponent(getRenderTransform(),key,value));
+        if(DebugBridge.previewWrite(this,key,value)) return;
+        // An ordinary setter updates only its source property, never copying other Inspector overrides.
+        setRenderTransform(withRenderComponent(renderTransform,key,value));
+    }
+    private static Transform2D withRenderComponent(Transform2D base,String key,double value){
+        return new Transform2D(key.equals("renderTranslationX")?value:base.getTranslationX(),
+                key.equals("renderTranslationY")?value:base.getTranslationY(),
+                key.equals("renderRotation")?value:base.getRotationDegrees(),
+                key.equals("renderScale")?value:base.getScale(),
+                key.equals("renderPivotX")?value:base.getPivotX(),
+                key.equals("renderPivotY")?value:base.getPivotY());
+    }
+
+    public final io.github.luyingyilong.ore.render.Affine2D getLocalToWindowTransform() {
+        Rect origin=getAbsoluteBounds();
+        return io.github.luyingyilong.ore.event.EventGeometry.matrix(this)
+                .multiply(io.github.luyingyilong.ore.render.Affine2D.translation(origin.x(),origin.y()));
+    }
+
+    public FocusGeometry getFocusGeometry() {
+        return FocusGeometry.forControl(this,getFocusBounds());
+    }
+
+    public final void drawFocus(DrawContext context,int x,int y) {
+        getFocusGeometry().draw(this,context,x,y);
+    }
+
     public boolean acceptsFocus() {
-        return isAlive() && !suspended && focusable && visible;
+        return focusable && isInputAccessible();
+    }
+
+    /** Derived input eligibility, independent of drawing visibility during exit animations. */
+    public final boolean isInputAccessible() {
+        for(Control child=this,node=this;node!=null;child=node,node=node.getGeometryParent()) {
+            if(!node.isAlive()||!node.getVisible()||node.isSuspended())return false;
+            if(child!=node&&!node.allowsChildInput(child))return false;
+        }
+        return true;
+    }
+
+    protected boolean allowsChildInput(Control child) { return true; }
+
+    /** Framework frame phase, before measurement; implementations must not edit the tree here. */
+    protected boolean advanceAnimation(long milliseconds) { return false; }
+
+    public final boolean advanceAnimations(long milliseconds) {
+        if(!isAlive()||!getVisible()||isSuspended())return false;
+        try(var phase=DispatchGuard.enter()) {
+            boolean active=advanceAnimation(milliseconds);
+            for(Control child:activeOwnedSnapshot())if(child.isAlive())active|=child.advanceAnimations(milliseconds);
+            return active;
+        }
     }
 
     public boolean getFocusScope() {
@@ -998,7 +1123,14 @@ public class Control implements SignalOwner {
         }
     }
 
-    public void draw(DrawContext context, int screenX, int screenY) {
+    public final void draw(DrawContext context, int screenX, int screenY) {
+        if (!isAlive() || !getVisible()) return;
+        try(var phase=DispatchGuard.enter(); var transform=getRenderTransform().equals(Transform2D.IDENTITY) ? (DrawContext.Scope)() -> { } : context.pushControlTransform(this,screenX,screenY)) {
+            drawContent(context,screenX,screenY);
+        }
+    }
+
+    protected void drawContent(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var phase = DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
@@ -1062,15 +1194,23 @@ public class Control implements SignalOwner {
     /**
      * Last drawn child is hit first. Children may overflow their parent's bounds.
      */
-    public Control hitTop(int rootX, int rootY) {
-        if (!isAlive() || !visible) return null;
-        List<Control> snapshot = getChildren();
-        for (int index = snapshot.size() - 1; index >= 0; index--) {
-            Control child = snapshot.get(index);
-            if (child.parent != this || !child.isAlive()) continue;
-            Control hit = child.hitTop(rootX, rootY);
-            if (hit != null) return hit;
+    public final Control hitTop(int windowX,int windowY) {
+        return io.github.luyingyilong.ore.event.EventGeometry.hitTop(this,windowX,windowY);
+    }
+
+    /** Framework entry; tree coordinates are adapted once, while child traversal retains Window coordinates. */
+    public final Control hitTestGeometry(int treeX,int treeY,int windowX,int windowY) {
+        return hitTestTree(treeX,treeY,windowX,windowY);
+    }
+
+    protected Control hitTestTree(int rootX,int rootY,int windowX,int windowY) {
+        List<Control> snapshot=getChildren();
+        for(int i=snapshot.size()-1;i>=0;i--) {
+            Control child=snapshot.get(i);
+            if(child.parent!=this)continue;
+            Control hit=child.hitTop(windowX,windowY);
+            if(hit!=null)return hit;
         }
-        return hit(rootX, rootY) ? this : null;
+        return hit(rootX,rootY)?this:null;
     }
 }

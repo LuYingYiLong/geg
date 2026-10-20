@@ -1,13 +1,12 @@
 package io.github.luyingyilong.geg.chat.client;
 
-import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.geg.chat.ChatChannel;
 import io.github.luyingyilong.geg.chat.ChatMessage;
-import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.Avatar;
 import io.github.luyingyilong.ore.Label;
+import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.layout.*;
-import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.render.DrawContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
@@ -49,7 +48,7 @@ public final class ChatMessageList extends Container {
             }
 
             public int measureHeight(ChatMessage item, int width, Font font) {
-                return messageHeight(ChatMessageList.this,item, width, font);
+                return messageHeight(ChatMessageList.this, item, width, font);
             }
 
             public Grid.View<ChatMessage> createView() {
@@ -191,7 +190,7 @@ public final class ChatMessageList extends Container {
         }
 
         @Override
-        public void draw(DrawContext context, int screenX, int screenY) {
+        protected void drawContent(DrawContext context, int screenX, int screenY) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
             if (system(message)) drawCommandPart(context, screenX, screenY);
             else drawPlayerPart(context, screenX, screenY);

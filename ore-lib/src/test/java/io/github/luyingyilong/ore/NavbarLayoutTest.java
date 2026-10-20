@@ -23,7 +23,7 @@ public final class NavbarLayoutTest {
         Button back = navbar.getChildren().stream().filter(Button.class::isInstance).map(Button.class::cast).findFirst().orElseThrow();
         Control title = navbar.getChildren().get(0);
         check(navbar.getShowBackButton(), "Back is visible by default");
-        check(back.getType() == Button.Type.TEXT && back.getIconControl().getResolvedTextureRegion().getTexture().equals(io.github.luyingyilong.ore.theme.IconTheme.ARROW_LEFT.defaultValue().getTexture()), "Use the left-arrow TEXT Button");
+        check(back.getThemeTypeVariation().equals("TextButton") && back.getIconControl().getResolvedTextureRegion().getTexture().equals(io.github.luyingyilong.ore.theme.IconTheme.ARROW_LEFT.defaultValue().getTexture()), "Use the left-arrow TEXT Button");
         check(back.getActionMode() == Button.ACTION_MODE.BUTTON_RELEASE, "Back activates on release");
         for (int width : new int[]{25, 127, 128, 129, 640}) {
             int height = navbar.measureSize(font, new Size(width, 240)).height();

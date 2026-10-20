@@ -14,7 +14,7 @@ import java.util.List;
 final class MailAttachmentsView extends Container {
     private final Box items = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(2);
     private final Scroll scroll = new Scroll().setHorizontal(Scroll.BarMode.NEVER).setVertical(Scroll.BarMode.DISABLED).setContent(items);
-    private final Button claim = new Button(Component.translatable("mail.geg.claim")).setType(Button.Type.PRIMARY);
+    private final Button claim = new Button(Component.translatable("mail.geg.claim")).setThemeTypeVariation("PrimaryButton");
     private final Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
     {
         row.addChild(scroll);

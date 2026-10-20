@@ -331,8 +331,8 @@ public final class Splitter extends Container {
     }
 
     @Override
-    public Control hitTop(int x, int y) {
-        return atBar(x, y) ? this : super.hitTop(x, y);
+    protected Control hitTestTree(int x,int y,int windowX,int windowY) {
+        return atBar(x, y) ? this : super.hitTestTree(x,y,windowX,windowY);
     }
 
     @Override

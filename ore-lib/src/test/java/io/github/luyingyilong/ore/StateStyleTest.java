@@ -25,7 +25,7 @@ public final class StateStyleTest {
     private static void geometry() {
         ThemeInsets margin=new ThemeInsets(8,4,8,4), inset=new ThemeInsets(1,5,3,0), expand=new ThemeInsets(2,1,4,3);
         Offset offset=new Offset(-2,4);
-        StyleBoxTexture texture=(StyleBoxTexture)OreTheme.BUTTON_SECONDARY_NORMAL.defaultValue();
+        StyleBoxTexture texture=(StyleBoxTexture)Button.NORMAL.defaultValue();
         var variants=List.<StyleBox>of(new StyleBoxEmpty(margin,expand,inset,offset),
                 new StyleBoxFlat(0xFF123456,ThemeInsets.ZERO,0,margin,expand,inset,offset),
                 new StyleBoxTexture(texture.getTextureRegion(), texture.textureBorders(), margin, expand, texture.horizontalMode(), texture.verticalMode(), true, 1F, inset, offset));
@@ -41,12 +41,12 @@ public final class StateStyleTest {
     }
 
     private static void buttons() {
-        for(Button.Type type:Button.Type.values()) {
-            Button button=new Button(cue -> { }).setType(type).setLabel(Component.literal("A"));
+        for(String type:Button.BUILTIN_VARIATIONS) {
+            Button button=new Button(cue -> { }).setThemeTypeVariation(type).setLabel(Component.literal("A"));
             Badge badge=new Badge(); button.setBadge(badge);
             var style=new StyleBoxEmpty(new ThemeInsets(8,4,8,4),ThemeInsets.ZERO,
                     new ThemeInsets(1,5,3,0),new Offset(-2,4));
-            button.setThemeOverride(Button.getStyleKey(type,false,true,false),style);
+            button.setThemeOverride(Button.PRESSED,style);
             Window window=new Window(true).setContent(button); window.layoutViewport(100,20,FONT);
             Size natural=button.measureSize(FONT,new Size(100,20));
             Rect before=badge.getBounds();
@@ -68,7 +68,7 @@ public final class StateStyleTest {
             check(activations[0]==1,"Theme geometry does not change release activation");
             WindowInputs.press(window,0,0,null); // Inside the layout, outside the inset paint.
             WindowInputs.release(window,0,0); check(activations[0]==2,"Inset pixels retain the original hit area");
-            button.setThemeOverride(Button.getStyleKey(type,false,true,false),normal);
+            button.setThemeOverride(Button.PRESSED,normal);
             WindowInputs.press(window,0,0,null);
             check(button.getFocusBounds().equals(button.getAbsoluteBounds()),"An empty state style removes all hardcoded sinking");
             WindowInputs.move(window,110,25); WindowInputs.release(window,110,25);
@@ -83,17 +83,17 @@ public final class StateStyleTest {
         var pressed=new StyleBoxFlat(0xFFFFFFFF,ThemeInsets.ZERO,0,new ThemeInsets(8,4,8,4),ThemeInsets.ZERO,
                 new ThemeInsets(1,6,2,1),new Offset(-2,5));
         segmented.setThemeOverride(OreTheme.SEGMENTED_BUTTON_SELECTED,selected);
-        segmented.setThemeOverride(OreTheme.BUTTON_SECONDARY_PRESSED,pressed);
+        segmented.setThemeOverride(Segmented.PRESSED,pressed);
         Window window=new Window(true).setContent(segmented); window.layoutViewport(100,20,FONT);
         int[] changes={0}; segmented.selectionChanged().connect(segmented,index->changes[0]++);
         window.getFocusManager().requestFocus(segmented,null);
-        check(segmented.getFocusBounds().equals(selected.getBackgroundRect(new Rect(0,0,51,20))),"Selected geometry comes from its own style");
+        check(segmented.getFocusBounds().equals(selected.getBackgroundRect(new Rect(0,0,50,20))),"Selected geometry comes from its own style");
         WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT,0,null);
         WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER,0,null);
-        check(segmented.getFocusBounds().equals(pressed.getBackgroundRect(new Rect(50,0,51,20))),"Keyboard press focus uses the same pressed style");
+        check(segmented.getFocusBounds().equals(pressed.getBackgroundRect(new Rect(50,0,50,20))),"Keyboard press focus uses the same pressed style");
         check(changes[0]==0 && segmented.getOptionStyle(1,false)==pressed,"Pressing has no premature selection change");
         WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER,0,null);
-        check(changes[0]==1 && segmented.getFocusBounds().equals(selected.getBackgroundRect(new Rect(50,0,51,20))),"Release changes to the selected style");
+        check(changes[0]==1 && segmented.getFocusBounds().equals(selected.getBackgroundRect(new Rect(50,0,50,20))),"Release changes to the selected style");
         WindowInputs.press(window,0,0,null);
         check(segmented.getOptionStyle(0,true)==pressed,"Pointer uses the pressed style even in the visually inset area");
         WindowInputs.move(window,101,25);
@@ -101,7 +101,7 @@ public final class StateStyleTest {
         WindowInputs.release(window,101,25); check(changes[0]==1,"Dragging out does not select");
         var flat=new StyleBoxEmpty(selected.getContentMargin(),ThemeInsets.ZERO);
         segmented.setThemeOverride(OreTheme.SEGMENTED_BUTTON_SELECTED,flat);
-        check(segmented.getFocusBounds().equals(new Rect(50,0,51,20)),"Selected inset is configurable down to zero");
+        check(segmented.getFocusBounds().equals(new Rect(50,0,50,20)),"Selected inset is configurable down to zero");
         window.queueFree(); LifecycleScheduler.flush();
     }
 

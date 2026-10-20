@@ -37,7 +37,7 @@ public final class Navbar extends Container {
     private static final int BACK_BUTTON_SIZE = 22;
     private final Label title = new Label().setThemeTypeVariation("NavbarTitle").setOpticalCenter(true).setOverflow(Label.Overflow.ELLIPSIS)
             .setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER);
-    private final Button back = new Button().setType(Button.Type.TEXT).setIcon(TextureSource.themed(BACK_ICON));
+    private final Button back = new Button().setThemeTypeVariation("TextButton").setIcon(TextureSource.themed(BACK_ICON));
     private final List<Control> extra = new ArrayList<>();
     private Panel background;
     private Runnable backAction = OreScreen::back;

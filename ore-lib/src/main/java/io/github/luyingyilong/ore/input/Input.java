@@ -309,8 +309,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
         if (!layoutInteractive()) return false;
         if (layoutControl != null && !layoutControl.pointerInteractive(getContext().getAbsMouseX(), getContext().getAbsMouseY()))
             return false;
-        Rect clip = layoutControl == null ? null : layoutControl.drawingClip();
-        if (clip != null && !clip.contains(getContext().getAbsMouseX(), getContext().getAbsMouseY())) return false;
+        // The Window hit test already checks the transformed clip. MUI receives local editor coordinates.
         return super.isBelowMouseFor(button);
     }
 
@@ -672,12 +671,19 @@ public class Input extends TextFieldWidget implements SignalOwner {
     }
 
     private boolean hasCanvasTransform() {
-        return layoutControl != null && io.github.luyingyilong.ore.window.CanvasRegion.find(layoutControl) != null;
+        if(layoutControl==null)return false;
+        for(io.github.luyingyilong.ore.layout.Control node=layoutControl;node!=null;node=node.getGeometryParent())
+            if(!node.getRenderTransform().equals(io.github.luyingyilong.ore.render.Transform2D.IDENTITY))return true;
+        return io.github.luyingyilong.ore.window.CanvasRegion.find(layoutControl)!=null;
     }
 
     protected final Rect toHost(Rect raw) {
-        var region = layoutControl == null ? null : io.github.luyingyilong.ore.window.CanvasRegion.find(layoutControl);
-        return region == null ? raw : region.getTransform().toScreen(raw);
+        if(layoutControl==null)return raw;
+        Rect field=layoutControl.getWidgetBounds(),tree=layoutControl.getAbsoluteBounds();
+        Rect original=raw.translated(tree.x()-field.x(),tree.y()-field.y());
+        var context=layoutControl.getWindowContext();
+        return io.github.luyingyilong.ore.event.EventGeometry.displayed(layoutControl,original)
+                .translated(context.getOriginX(),context.getOriginY());
     }
 
     record Caret(int x, int y) {

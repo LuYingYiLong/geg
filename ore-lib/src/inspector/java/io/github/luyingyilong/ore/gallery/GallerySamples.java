@@ -190,8 +190,8 @@ final class GallerySamples {
                     .addItem("policy", text("policy"), text("local_demo")));
             case "button" -> {
                 Box buttons = row();
-                for (Button.Type type : Button.Type.values()) {
-                    Button button = button("button_type." + type.name().toLowerCase(Locale.ROOT)).setType(type);
+                for (String type : Button.BUILTIN_VARIATIONS) {
+                    Button button = button("button_type." + type.replace("Button", "").toLowerCase(Locale.ROOT)).setThemeTypeVariation(type);
                     buttons.addChild(button);
                 }
                 root.addChild(buttons);
@@ -203,10 +203,42 @@ final class GallerySamples {
                         .setStretchMode(TextureRect.StretchMode.KEEP_ASPECT_CENTERED).setMinimum(16, 16);
                 root.addChild(icon);
             }
+            case "collapse" -> {
+                Box contents=column();
+                contents.addChild(label("collapse_body"));
+                contents.addChild(new InputControl(new Input().setPlaceholder(GalleryView.tr("input_hint"))));
+                contents.addChild(button("button_type.secondary"));
+                Collapse normal=new Collapse(text("collapse_title")).setSecondaryText(text("collapse_secondary")).setContent(contents);
+                normal.setDebugName("Gallery Collapse");root.addChild(normal);
+                root.addChild(new Collapse(text("disabled")).setContent(label("collapse_body")).setExpandedNoSignal(true).setDisabled(true));
+                root.addChild(new Collapse(text("collapse_long_title")).setSecondaryText(text("collapse_secondary")).setContent(label("collapse_body")).setShowArrow(false));
+                root.addChild(new Collapse(text("collapse_nested")).setContent(new Collapse(text("collapse_title")).setContent(label("collapse_body"))));
+            }
             case "checkbox" -> {
                 Checkbox box = new Checkbox(text("checkbox_option"));
                 root.addChild(box);
                 root.addChild(new Checkbox(text("disabled")).setEnabled(false));
+            }
+            case "radio" -> {
+                root.addChild(new Radio(text("radio_standalone")));
+                Radio disabled=new Radio(text("disabled")).setCheckedNoSignal(true).setDisabled(true);
+                root.addChild(disabled);
+                Box options=row();
+                RadioGroup<Flavor> group=new RadioGroup<>(root,Flavor.class);
+                Radio first=new Radio(text("option_one")),second=new Radio(text("option_two"));
+                group.addRadio(Flavor.FIRST,first).addRadio(Flavor.SECOND,second);
+                options.addChild(first);options.addChild(second);
+                Form form=new Form().addItem(new FormItem<>(new FieldKey<>("radio",Flavor.class),text("radio_choice"),
+                        FormFields.radioGroup(Flavor.class,options,group)).addValidator(Validators.required()));
+                form.setVisible(true);root.addChild(form);
+                Box actions=row();actions.addChild(button("validate",form::validate));actions.addChild(button("reset",form::reset));root.addChild(actions);
+                Box angles=row();
+                for(float angle:new float[]{0,45,90}) {
+                    Box sample=column();sample.addChild(label("radio_angle",(int)angle));
+                    Radio radio=new Radio();radio.setThemeOverride(Radio.ICON_ROTATION_DEGREES,angle);
+                    sample.addChild(radio);angles.addChild(sample);
+                }
+                root.addChild(angles);
             }
             case "switch" -> {
                 Switch control = new Switch();

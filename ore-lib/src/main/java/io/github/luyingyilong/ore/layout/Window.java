@@ -24,10 +24,16 @@ import java.util.Map;
  * Control-tree root shared by embedded and native WindowHost implementations.
  */
 public final class Window extends Container {
+    @Override protected void validateOwnRenderTransform(io.github.luyingyilong.ore.render.Transform2D value) {
+        if(!value.equals(io.github.luyingyilong.ore.render.Transform2D.IDENTITY))
+            throw new IllegalArgumentException("Apply RenderTransform to viewport content, not the host viewport");
+    }
+
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Window"); }
     private final boolean fullscreen;
     private final FocusManager focusManager = new FocusManager(this);
-    private final FocusOverlay focusOverlay = ownPart("focusOverlay", new FocusOverlay(focusManager));
+    private boolean animationsActive;
+    public boolean getAnimationsActive() { return animationsActive; }
     private final SignalSource0 closed = new SignalSource0(this, "closed");
     private final Map<Integer, Control> pointerCaptures = new HashMap<>();
     private WindowHost host;
@@ -316,7 +322,7 @@ public final class Window extends Container {
                         x = scroll.windowX();
                         y = scroll.windowY();
                     }
-                    Rect point = EventGeometry.point(node, x, y);
+                    var point = EventGeometry.precisePoint(node, x, y);
                     event.deliver(node, point.x(), point.y());
                     if (event.accepted()) {
                         if (event instanceof PointerEvent pointer && pointer.action() == PointerEvent.Action.PRESS && !closedNotified && attachedAndVisible(node))
@@ -356,8 +362,8 @@ public final class Window extends Container {
     }
 
     private Control pointerTarget(int x, int y) {
-        Control hit = overlay == null ? null : overlay.hitTop(x, y);
-        return hit == null && content != null ? content.hitTop(x, y) : hit;
+        Control hit = EventGeometry.hitTop(overlay,x,y);
+        return hit == null && content != null ? EventGeometry.hitTop(content,x,y) : hit;
     }
 
     public boolean getPointerCaptured(int button) { return pointerCaptures.containsKey(button); }
@@ -400,6 +406,7 @@ public final class Window extends Container {
     }
 
     private boolean attachedAndVisible(Control target) {
+        if(!target.isInputAccessible())return false;
         for (Control node = target; node != null; node = node.getParent()) {
             if ((!node.isAlive() || !node.getVisible())) return false;
             if (node == this) return true;
@@ -450,6 +457,7 @@ public final class Window extends Container {
 
     public void layoutViewport(int width, int height, Font font) {
         if (!isAlive()) return;
+        animationsActive=advanceAnimations(net.minecraft.Util.getMillis());
         if (isInsideTree()) prepareTree();
 
         if (!isAlive()) return;
@@ -488,7 +496,7 @@ public final class Window extends Container {
     }
 
     @Override
-    public void draw(DrawContext context, int screenX, int screenY) {
+    protected void drawContent(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         if (!getVisible()) return;
 
@@ -517,10 +525,15 @@ public final class Window extends Container {
                 layers.draw(context, screenX, screenY);
 
             focusManager.synchronizeNativeFocus(getContext().getMui());
-            focusOverlay.draw(context, screenX, screenY);
+            drawFocusedControl(context, screenX, screenY);
             drawTooltip(context, screenX, screenY);
             DebugBridge.backend().end(this, context, screenX, screenY);
         }
+    }
+
+    private void drawFocusedControl(DrawContext context,int x,int y) {
+        Control target=focusManager.getOutlineTarget();
+        if(target!=null)target.drawFocus(context,x,y);
     }
 
     /** External hosts render recipe bodies in their native callback, then these layers once. */
@@ -533,7 +546,7 @@ public final class Window extends Container {
                 overlay.draw(context, 0, 0);
             }
             focusManager.synchronizeNativeFocus(getContext().getMui());
-            focusOverlay.draw(context, 0, 0);
+            drawFocusedControl(context, 0, 0);
             drawTooltip(context, 0, 0);
             DebugBridge.backend().end(this, context, 0, 0);
         }

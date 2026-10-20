@@ -1,18 +1,16 @@
 package io.github.luyingyilong.geg.chat.client;
 
 import brachy.modularui.api.widget.Interactable;
-import io.github.luyingyilong.ore.render.DrawContext;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
 import io.github.luyingyilong.geg.chat.ChatChannel;
 import io.github.luyingyilong.ore.*;
-import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.input.Input;
 import io.github.luyingyilong.ore.input.InputControl;
 import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.screen.OreScreen;
 import io.github.luyingyilong.ore.signal.Signals;
-import io.github.luyingyilong.ore.theme.OreTheme;
 import io.github.luyingyilong.ore.util.OreToasts;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -37,20 +35,37 @@ final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interac
     private final Label loading = new Label(Component.translatable("chat.geg.loading")).setThemeTypeVariation("LabelSecondary");
     private final ChatMessageList messages = new ChatMessageList();
     private final ChatComposer composer = new ChatComposer().afterSend(() -> focusComposer = true);
-    private final Button newMessages = Signals.configure(new Button().setSize(Button.Size.SMALL).setType(Button.Type.TEXT), connected -> connected.pressed().connect(connected, messages::bottom));
+    private final Button newMessages = Signals.configure(new Button().setSize(Button.Size.SMALL).setThemeTypeVariation("TextButton"), connected -> connected.pressed().connect(connected, messages::bottom));
     private final Button chooseChannel = Signals.configure(new Button(Component.translatable("chat.geg.channels")).setSize(Button.Size.SMALL), connected -> connected.pressed().connect(connected, this::showChannels));
     private final Button direct = Signals.configure(new Button(Component.translatable("chat.geg.new_direct"))
-            .setType(Button.Type.TEXT), connected -> connected.pressed().connect(connected, this::showContacts));
+            .setThemeTypeVariation("TextButton"), connected -> connected.pressed().connect(connected, this::showContacts));
     private final Box header = new Box();
+    private final Box sidebar = new Box().setGap(4);
+    private final Box conversation = new Box().setGap(4);
+    private final Content content = new Content();
+    private final Drawer drawer = Signals.configure(new Drawer(Component.empty()).setClosable(false)
+            .setPlacement(Drawer.Placement.LEFT)
+            .setContent(content), connected -> connected.closed().connect(connected, OreScreen::back));
+    private final Input target = new Input(410).setPlaceholder(Component.translatable("chat.geg.target_hint"));
+    private final InputControl targetControl = new InputControl(target);
+    private final Modal channelModal = Signals.configure(new Modal(Component.translatable("chat.geg.channels")).setSize(220, 220).setContent(compactScroll)
+            .setDepth(400), connected -> connected.closeRequested().connect(connected, this::closeChannels));
+    private final Modal targetModal;
+    private ChatChannel selected;
+    private UUID epoch = ChatChannel.NONE;
+    private long revision = -1;
+    private boolean focusComposer = true;
+    private String reportedStatus = "";
+
     {
         header.addChild(title);
     }
-    private final Box sidebar = new Box().setGap(4);
+
     {
         sidebar.addChild(direct);
         sidebar.addChild(menuScroll);
     }
-    private final Box conversation = new Box().setGap(4);
+
     {
         conversation.addChild(chooseChannel);
         conversation.addChild(header);
@@ -59,29 +74,20 @@ final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interac
         conversation.addChild(newMessages);
         conversation.addChild(composer);
     }
-    private final Content content = new Content();
-    private final Drawer drawer = Signals.configure(new Drawer(Component.empty()).setClosable(false)
-            .setPlacement(Drawer.Placement.LEFT).setPadding(ChatLayout.DRAWER_PADDING)
-            .setContent(content), connected -> connected.closed().connect(connected, OreScreen::back));
-    private final Input target = new Input(410).setPlaceholder(Component.translatable("chat.geg.target_hint"));
-    private final InputControl targetControl = new InputControl(target);
-    private final Modal channelModal = Signals.configure(new Modal(Component.translatable("chat.geg.channels")).setSize(220, 220).setContent(compactScroll)
-            .setDepth(400), connected -> connected.closeRequested().connect(connected, this::closeChannels));
-    private final Modal targetModal;
+
     {
         var contactFields = new Box().setGap(4);
         contactFields.addChild(targetControl);
         contactFields.addChild(contactError);
         contactFields.addChild(contactsScroll);
-        targetModal = Signals.configure(new Modal(Component.translatable("chat.geg.new_direct")).setSize(260, 240).setContent(contactFields).setDepth(400), connected -> connected.closeRequested().connect(connected, this::closeContacts)).addAction(Signals.configure(new Button(Component.translatable("chat.geg.open_direct")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, () -> ClientChatState.openDirect(target.getText()))));
+        targetModal = Signals.configure(new Modal(Component.translatable("chat.geg.new_direct")).setSize(260, 240).setContent(contactFields).setDepth(400), connected -> connected.closeRequested().connect(connected, this::closeContacts)).addAction(Signals.configure(new Button(Component.translatable("chat.geg.open_direct")).setThemeTypeVariation("PrimaryButton"), actionButton -> actionButton.pressed().connect(actionButton, () -> ClientChatState.openDirect(target.getText()))));
     }
-    private ChatChannel selected;
-    private UUID epoch = ChatChannel.NONE;
-    private long revision = -1;
-    private boolean focusComposer = true;
-    private String reportedStatus = "";
 
     ChatCanvasWidget(String initial) {
+        drawer.setThemeOverride(Drawer.PADDING_TOP, ChatLayout.DRAWER_PADDING.top());
+        drawer.setThemeOverride(Drawer.PADDING_RIGHT, ChatLayout.DRAWER_PADDING.right());
+        drawer.setThemeOverride(Drawer.PADDING_BOTTOM, ChatLayout.DRAWER_PADDING.bottom());
+        drawer.setThemeOverride(Drawer.PADDING_LEFT, ChatLayout.DRAWER_PADDING.left());
         composer.emptySubmitted().connect(window, drawer::close);
         menu.itemActivated().connect(menu, this::selectItem);
         compactMenu.itemActivated().connect(compactMenu, item -> {
@@ -106,7 +112,7 @@ final class ChatCanvasWidget extends Widget<ChatCanvasWidget> implements Interac
                 .setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         compactScroll.setMinimum(0, 40)
                 .setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        channelModal.addAction(Signals.configure(new Button(tr("chat.geg.new_direct")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, () -> {
+        channelModal.addAction(Signals.configure(new Button(tr("chat.geg.new_direct")).setThemeTypeVariation("SecondaryButton"), actionButton -> actionButton.pressed().connect(actionButton, () -> {
             closeChannels();
             showContacts();
         })));

@@ -29,9 +29,9 @@ public final class SegmentedLayoutTest {
         check(options.getBounds().equals(new Rect(0, 0, 76, 20)));
         check(options.hitIndex(0, 0, 76, 23, 10) == 0 && options.hitIndex(0, 0, 76, 24, 10) == 1);
         window.getFocusManager().requestFocus(options, null);
-        check(options.getFocusBounds().equals(new Rect(0, 2, 25, 18)));
+        check(options.getFocusBounds().equals(new Rect(0, 2, 24, 18)));
         io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null);
-        check(options.getFocusBounds().equals(new Rect(24, 0, 53, 20)) && options.getSelected() == 0);
+        check(options.getFocusBounds().equals(new Rect(24, 0, 52, 20)) && options.getSelected() == 0);
         options.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         row.removeChild(row.getChildren().get(1));
         window.layoutViewport(300, 20, font);

@@ -66,7 +66,7 @@ public final class SlotTooltipTest {
     }
 
     private static void renderingContract() throws Exception {
-        List<String> calls = calls("io/github/luyingyilong/ore/layout/Window", "draw");
+        List<String> calls = calls("io/github/luyingyilong/ore/layout/Window", "drawContent");
         check(calls.indexOf("drawTooltip") > calls.indexOf("draw:io/github/luyingyilong/ore/layout/Overlay"),
                 "Tooltip paints after overlay and Scroll clipping have finished");
         List<String> slot = calls("io/github/luyingyilong/ore/Slot", "renderTooltip");

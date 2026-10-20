@@ -521,8 +521,8 @@ public final class Tree<T> extends Container implements ScrollContent {
 
 
     private final class Row extends Container {
-        private final Button twist = new Button().setType(Button.Type.TEXT);
-        private final Button label = new Button().setType(Button.Type.TEXT).setToggleButton(true).setAlignment(Button.TextAlignment.LEFT);
+        private final Button twist = new Button().setThemeTypeVariation("TextButton");
+        private final Button label = new Button().setThemeTypeVariation("TextButton").setToggleButton(true).setAlignment(Button.TextAlignment.LEFT);
         private Entry<T> entry;
 
         Row() {

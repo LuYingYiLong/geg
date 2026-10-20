@@ -129,5 +129,16 @@
   "gallery.ore.group.actions": "Actions",
   "gallery.ore.group.input": "Input & forms",
   "gallery.ore.group.data": "Data",
-  "gallery.ore.group.overlays": "Overlays"
+  "gallery.ore.group.overlays": "Overlays",
+  "gallery.ore.description.radio": "Selects one option from a group, with themed icon rotation and focus styling",
+  "gallery.ore.sample.radio_standalone": "Standalone radio",
+  "gallery.ore.sample.radio_angle": "Icon rotation: %s°",
+  "gallery.ore.sample.radio_choice": "Radio choice",
+  "gallery.ore.sample.button_type.dark": "Dark",
+  "gallery.ore.sample.collapse_title": "Details",
+  "gallery.ore.sample.collapse_secondary": "Optional supporting text",
+  "gallery.ore.sample.collapse_body": "A collapsible content region that preserves its controls and editing state.",
+  "gallery.ore.sample.collapse_long_title": "A longer title demonstrating ellipsis in a narrow view",
+  "gallery.ore.sample.collapse_nested": "Nested sections",
+  "gallery.ore.description.collapse": "Shows or hides a retained content region with a height transition."
 }

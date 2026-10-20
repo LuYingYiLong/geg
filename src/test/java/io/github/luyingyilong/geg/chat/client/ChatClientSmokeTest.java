@@ -72,6 +72,9 @@ public final class ChatClientSmokeTest {
             } else if (phase == 6 && offlineVerified && waiting > 15) {
                 ChatCanvasWidget canvas = canvas(); Window window = field(canvas, "window", Window.class);
                 Drawer drawer = field(canvas, "drawer", Drawer.class);
+                check(drawer.getPadding().equals(ChatLayout.DRAWER_PADDING), "Chat Drawer lost its four local padding overrides");
+                for (var key : java.util.List.of(Drawer.PADDING_TOP, Drawer.PADDING_RIGHT, Drawer.PADDING_BOTTOM, Drawer.PADDING_LEFT))
+                    check(drawer.getThemeResolution(key).sources().get(0).kind().equals("local override"), "Chat padding is not resolved from a local theme override");
                 check(drawer.getPlacement() == Drawer.Placement.LEFT, "Chat Drawer must open from the left");
                 check(!drawer.getClosable() && !drawer.getChildren().get(0).getChildren().get(0).getChildren().get(0).getVisible(),
                         "Chat Drawer header should be hidden");

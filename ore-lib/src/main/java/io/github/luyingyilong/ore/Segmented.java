@@ -20,6 +20,9 @@ import java.util.List;
  * Content-sized single-choice options; FILL/EXPAND distributes any additional width.
  */
 public final class Segmented extends Control {
+    public static final io.github.luyingyilong.ore.theme.ThemeKey<StyleBox> NORMAL = io.github.luyingyilong.ore.theme.ThemeKey.of("Segmented","normal",StyleBox.class,io.github.luyingyilong.ore.theme.ThemeKey.Kind.STYLE,Button.NORMAL.defaultValue(),true);
+    public static final io.github.luyingyilong.ore.theme.ThemeKey<StyleBox> HOVER = io.github.luyingyilong.ore.theme.ThemeKey.of("Segmented","hover",StyleBox.class,io.github.luyingyilong.ore.theme.ThemeKey.Kind.STYLE,Button.HOVER.defaultValue(),true);
+    public static final io.github.luyingyilong.ore.theme.ThemeKey<StyleBox> PRESSED = io.github.luyingyilong.ore.theme.ThemeKey.of("Segmented","pressed",StyleBox.class,io.github.luyingyilong.ore.theme.ThemeKey.Kind.STYLE,Button.PRESSED.defaultValue(),true);
     private final List<Component> options;
     private final List<Label> optionLabels;
     private final Button.Size size;
@@ -47,11 +50,13 @@ public final class Segmented extends Control {
         this.size = java.util.Objects.requireNonNull(size);
         setMinimum(0, size.getHeight());
         setFocusable(true);
-        setFocusExpansion(1);
+
     }
 
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
         io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Segmented");
+        db.register(NORMAL);db.register(HOVER);db.register(PRESSED);
+        db.registerFallback(NORMAL,Button.NORMAL);db.registerFallback(HOVER,Button.HOVER);db.registerFallback(PRESSED,Button.PRESSED);
     }
 
     @Override
@@ -103,7 +108,7 @@ public final class Segmented extends Control {
         int left = optionStart(index, width, layoutFont);
         int right = optionStart(index + 1, width, layoutFont);
         return getOptionStyle(index, isOptionHovered(index)).getBackgroundRect(new Rect(
-                area.x() + left - scrollX, area.y(), right - left + 1, size.getHeight()));
+                area.x() + left - scrollX, area.y(), right - left, size.getHeight()));
     }
 
     @Override
@@ -159,7 +164,7 @@ public final class Segmented extends Control {
 
     private int optionWidth(int index, Font font) {
         int textWidth = font == null ? 0 : optionLabels.get(index).measureWidth(font, Integer.MAX_VALUE);
-        return Math.max(getThemeItem(OreTheme.SEGMENTED_MIN_WIDTH), textWidth + getThemeItem(OreTheme.BUTTON_SECONDARY_NORMAL).getContentMargin().getHorizontal());
+        return Math.max(getThemeItem(OreTheme.SEGMENTED_MIN_WIDTH), textWidth + getThemeItem(NORMAL).getContentMargin().getHorizontal());
     }
 
     /**
@@ -240,8 +245,7 @@ public final class Segmented extends Control {
 
     StyleBox getOptionStyle(int index, boolean hovered) {
         return getThemeItem(index == selectedIndex ? OreTheme.SEGMENTED_BUTTON_SELECTED
-                : Button.getStyleKey(Button.Type.SECONDARY, hovered,
-                gesture.keyPressed(index) || hovered && gesture.pointerPressed(index), false));
+                : (gesture.keyPressed(index) || hovered && gesture.pointerPressed(index) ? PRESSED : hovered ? HOVER : NORMAL));
     }
 
     @Override
@@ -314,7 +318,7 @@ public final class Segmented extends Control {
             Rect area = new Rect(optionX, y, optionWidth, height);
             style.draw(context, area);
             Label text = optionLabels.get(index);
-            text.setThemeOverride(OreTheme.TEXT_COLOR, getThemeItem(selected ? OreTheme.SEGMENTED_BUTTON_SELECTED_TEXT : OreTheme.BUTTON_SECONDARY_NORMAL_TEXT));
+            text.setThemeOverride(OreTheme.TEXT_COLOR, getThemeItem(selected ? OreTheme.SEGMENTED_BUTTON_SELECTED_TEXT : Button.NORMAL_COLOR));
             text.layout(style.getContentDrawRect(area), context.getFont());
             DebugBridge.backend().internal(this, "option_" + index, text);
             text.draw(context, 0, 0);

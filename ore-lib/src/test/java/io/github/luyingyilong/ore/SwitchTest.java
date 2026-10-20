@@ -39,11 +39,11 @@ public final class SwitchTest {
         now.addAndGet(240L);
         check(toggle.thumbBounds().equals(new Rect(50, 32, 14, 15)), "On thumb travels exactly fourteen pixels");
         check(toggle.thumbBounds().bottom() == toggle.baseBounds().bottom(), "Bottoms match");
-        check(toggle.getFocusBounds().equals(toggle.thumbBounds()) && toggle.getFocusExpansion() == 1, "Thumb focus");
+        check(toggle.getFocusBounds().equals(toggle.thumbBounds()) && toggle.getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.FOCUS).getExpandMargin().left() == 1, "Thumb focus");
         check(new Switch(true).getChecked(), "Initial value constructor");
 
         for (String name : List.of("switch_base", "switch_base_disabled", "switch_button_normal",
-                "switch_button_hovered", "switch_button_pressed", "switch_button_disabled")) {
+                "switch_button_hover", "switch_button_pressed", "switch_button_disabled")) {
             try (var input = new DataInputStream(java.util.Objects.requireNonNull(SwitchTest.class.getResourceAsStream(
                     "/assets/ore/textures/icons/" + name + ".png")))) {
                 input.skipNBytes(16);

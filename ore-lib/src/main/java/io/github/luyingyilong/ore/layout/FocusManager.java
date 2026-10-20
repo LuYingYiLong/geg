@@ -66,7 +66,7 @@ public final class FocusManager {
      * Does not validate focus: a native widget may ask while candidates are being collected.
      */
     public boolean allowsNativeInput(Control input) {
-        return inside(input, topScope());
+        return input.isInputAccessible() && inside(input, topScope());
     }
 
     public void requestFocus(Control target, ModularGuiContext context) {
@@ -259,16 +259,17 @@ public final class FocusManager {
         activationKeysDown.clear();
     }
 
-    public Rect getOutlineBounds() {
+    public Control getOutlineTarget() {
         validate();
-        if (focused == null || !keyboardFocusVisible
-                && !(inputPointerFocusVisible
-                && focused instanceof io.github.luyingyilong.ore.input.InputControl)) return null;
-        Rect area = visibleBounds(focused);
-        if (area == null) return null;
-        int pad = focused.getFocusExpansion();
-        return new Rect(area.x() - pad, area.y() - pad,
-                area.width() + pad * 2, area.height() + pad * 2);
+        if(focused==null || !keyboardFocusVisible && !(inputPointerFocusVisible
+                && focused instanceof io.github.luyingyilong.ore.input.InputControl))return null;
+        return focused.getFocusGeometry().getVisibleBounds(focused)==null?null:focused;
+    }
+
+    /** Diagnostic/navigation envelope; painting uses FocusGeometry instead. */
+    public Rect getOutlineBounds() {
+        Control target=getOutlineTarget();
+        return target==null?null:target.getFocusGeometry().getVisibleBounds(target);
     }
 
     private boolean moveTab(int step, ModularGuiContext context) {
@@ -327,7 +328,7 @@ public final class FocusManager {
     }
 
     private void collect(Control node, List<Control> result) {
-        if (!(node.isAlive() && node.getVisible())) return;
+        if (!node.isInputAccessible()) return;
         if (node.acceptsFocus() && navigationBounds(node) != null) result.add(node);
         for (Control child : node.getChildren()) collect(child, result);
     }
@@ -378,7 +379,7 @@ public final class FocusManager {
     }
 
     private boolean eligible(Control target) {
-        if (!target.acceptsFocus() || !inside(target, scope)) return false;
+        if (!target.isInputAccessible() || !target.acceptsFocus() || !inside(target, scope)) return false;
         for (Control node = target; node != null; node = node.getParent()) {
             if (!(node.isAlive() && node.getVisible())) return false;
             if (node == window) return true;
@@ -387,7 +388,7 @@ public final class FocusManager {
     }
 
     private Rect visibleBounds(Control target) {
-        return visibleBounds(target, target.getFocusBounds());
+        return target.getFocusGeometry().getVisibleBounds(target);
     }
 
     private Rect visibleBounds(Control target, Rect area) {
@@ -405,32 +406,24 @@ public final class FocusManager {
     private Rect navigationBounds(Control target) {
         Rect visible = visibleBounds(target);
         if (visible != null) return visible;
-        Rect area = target.getFocusBounds();
-        boolean buffered = false;
-        for (Control node = target.getParent(); node != null; node = node.getParent()) {
-            if (!(node.isAlive() && node.getVisible())) return null;
-            if (node instanceof Table<?> table) {
-                if (visibleBounds(table, table.getBodyBounds()) == null) return null;
-                buffered = true;
-            }
-            if (node instanceof Scroll scroll) area = area.translated(-scroll.getScrollX(), -scroll.getScrollY());
+        boolean buffered=false;
+        for(Control node=target.getParent();node!=null;node=node.getParent()) {
+            if(!node.isAlive()||!node.getVisible())return null;
+            if(node instanceof Table<?> table){if(visibleBounds(table,table.getBodyBounds())==null)return null;buffered=true;}
         }
-        var canvas = io.github.luyingyilong.ore.window.CanvasRegion.find(target);
-        return buffered ? canvas == null ? area : canvas.getTransform().toScreen(area) : null;
+        var geometry=target.getFocusGeometry();
+        return buffered?geometry.getLocalToWindow().bounds(geometry.getLocalBounds()):null;
     }
 
     private void reveal(Control target) {
-        Rect area = target.getFocusBounds();
-        for (Control node = target.getParent(); node != null; node = node.getParent()) {
-            if (node instanceof Table<?> table) {
-                table.revealControl(target);
-                area = target.getFocusBounds();
-            }
-            if (node instanceof Scroll scroll) {
-                Rect origin = scroll.getAbsoluteBounds();
-                scroll.ensureVisible(new Rect(area.x() - origin.x(), area.y() - origin.y(),
-                        area.width(), area.height()));
-                area = area.translated(-scroll.getScrollX(), -scroll.getScrollY());
+        for(Control node=target.getParent();node!=null;node=node.getParent()) {
+            if(node instanceof Table<?> table)table.revealControl(target);
+            if(node instanceof Scroll scroll) {
+                var geometry=target.getFocusGeometry();
+                var local=io.github.luyingyilong.ore.event.EventGeometry.matrix(scroll).inverse().multiply(geometry.getLocalToWindow());
+                Rect area=local.bounds(target.getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.FOCUS).getDrawRect(geometry.getLocalBounds()));
+                Rect origin=scroll.getAbsoluteBounds();
+                scroll.ensureVisible(area.translated(-origin.x()+scroll.getScrollX(),-origin.y()+scroll.getScrollY()));
             }
         }
     }

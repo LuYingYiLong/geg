@@ -34,6 +34,10 @@ public final class FormFields {
     public static FormField<Boolean> checkbox(Checkbox control) {
         return custom(Boolean.class, control, control::getChecked, control::setCheckedNoSignal, control.toggled());
     }
+    public static <T> FormField<T> radioGroup(Class<T> type,Control content,RadioGroup<T> group) {
+        if(type!=group.getValueType())throw new IllegalArgumentException("RadioGroup field type mismatch");
+        return custom(type,content,group::getSelected,group::setSelectedNoSignal,group.selectionChanged());
+    }
     public static FormField<Boolean> switchField(Switch control) {
         return custom(Boolean.class, control, control::getChecked, control::setCheckedNoSignal, control.toggled());
     }

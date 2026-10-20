@@ -118,6 +118,10 @@
       "borderBottom": 1
     }
   },
+  "Drawer:padding_top": 4,
+  "Drawer:padding_right": 4,
+  "Drawer:padding_bottom": 4,
+  "Drawer:padding_left": 4,
   "Drawer:panel": {
     "location": "ore:gui/floating_background",
     "imageWidth": 3,
@@ -214,28 +218,6 @@
       "borderBottom": 2
     }
   },
-  "Button:disabled": {
-    "location": "ore:gui/button_disabled",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16,
-    "style": "texture",
-    "textureBorders": {
-      "borderLeft": 2,
-      "borderTop": 4,
-      "borderRight": 2,
-      "borderBottom": 4
-    },
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    }
-  },
   "Segmented:selected": {
     "location": "ore:gui/tab_selected",
     "imageWidth": 16,
@@ -273,269 +255,6 @@
   "Segmented:selected_indicator_width_ratio": 0.33333334,
   "Segmented:selected_indicator_max_width": 16,
   "Segmented:selected_indicator_bottom_gap": 1,
-  "Button:secondary_normal": {
-    "location": "ore:gui/button_secondary_normal",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16,
-    "style": "texture",
-    "textureBorders": {
-      "borderLeft": 2,
-      "borderTop": 4,
-      "borderRight": 2,
-      "borderBottom": 4
-    },
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    }
-  },
-  "Button:secondary_hovered": {
-    "location": "ore:gui/button_secondary_hovered",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16,
-    "style": "texture",
-    "textureBorders": {
-      "borderLeft": 2,
-      "borderTop": 4,
-      "borderRight": 2,
-      "borderBottom": 4
-    },
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    }
-  },
-  "Button:secondary_pressed": {
-    "location": "ore:gui/button_secondary_pressed",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16,
-    "style": "texture",
-    "textureBorders": {
-      "borderLeft": 2,
-      "borderTop": 2,
-      "borderRight": 2,
-      "borderBottom": 2
-    },
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    },
-    "drawInset": {
-      "top": 2
-    },
-    "contentOffset": {
-      "x": 0,
-      "y": 2
-    }
-  },
-  "Button:primary_normal": {
-    "location": "ore:gui/button_primary_normal",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16,
-    "style": "texture",
-    "textureBorders": {
-      "borderLeft": 2,
-      "borderTop": 4,
-      "borderRight": 2,
-      "borderBottom": 4
-    },
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    }
-  },
-  "Button:primary_hovered": {
-    "location": "ore:gui/button_primary_hovered",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16,
-    "style": "texture",
-    "textureBorders": {
-      "borderLeft": 2,
-      "borderTop": 4,
-      "borderRight": 2,
-      "borderBottom": 4
-    },
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    }
-  },
-  "Button:primary_pressed": {
-    "location": "ore:gui/button_primary_pressed",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16,
-    "style": "texture",
-    "textureBorders": {
-      "borderLeft": 2,
-      "borderTop": 2,
-      "borderRight": 2,
-      "borderBottom": 2
-    },
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    },
-    "drawInset": {
-      "top": 2
-    },
-    "contentOffset": {
-      "x": 0,
-      "y": 2
-    }
-  },
-  "Button:destructive_normal": {
-    "location": "ore:gui/button_destructive_normal",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16,
-    "style": "texture",
-    "textureBorders": {
-      "borderLeft": 2,
-      "borderTop": 4,
-      "borderRight": 2,
-      "borderBottom": 4
-    },
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    }
-  },
-  "Button:destructive_hovered": {
-    "location": "ore:gui/button_destructive_hovered",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16,
-    "style": "texture",
-    "textureBorders": {
-      "borderLeft": 2,
-      "borderTop": 4,
-      "borderRight": 2,
-      "borderBottom": 4
-    },
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    }
-  },
-  "Button:destructive_pressed": {
-    "location": "ore:gui/button_destructive_pressed",
-    "imageWidth": 16,
-    "imageHeight": 16,
-    "x": 0,
-    "y": 0,
-    "width": 16,
-    "height": 16,
-    "style": "texture",
-    "textureBorders": {
-      "borderLeft": 2,
-      "borderTop": 2,
-      "borderRight": 2,
-      "borderBottom": 2
-    },
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    },
-    "drawInset": {
-      "top": 2
-    },
-    "contentOffset": {
-      "x": 0,
-      "y": 2
-    }
-  },
-  "Button:menu_hovered": {
-    "location": "ore:gui/menu_item_hovered",
-    "imageWidth": 1,
-    "imageHeight": 3,
-    "x": 0,
-    "y": 0,
-    "width": 1,
-    "height": 3,
-    "style": "texture",
-    "textureBorders": {
-      "borderLeft": 0,
-      "borderTop": 1,
-      "borderRight": 0,
-      "borderBottom": 1
-    },
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    }
-  },
-  "Button:menu_pressed": {
-    "location": "ore:gui/menu_item_pressed",
-    "imageWidth": 1,
-    "imageHeight": 3,
-    "x": 0,
-    "y": 0,
-    "width": 1,
-    "height": 3,
-    "style": "texture",
-    "textureBorders": {
-      "borderLeft": 0,
-      "borderTop": 1,
-      "borderRight": 0,
-      "borderBottom": 1
-    },
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    }
-  },
   "Label:color": "#FFFFFFFF",
   "Label:font": "ore:ore",
   "Label:hero_font": "ore:ore_hero",
@@ -565,19 +284,7 @@
   "LabelError:color": "#FFFF7777",
   "LabelAccent:color": "#FF52BEA8",
   "LabelDisabled:color": "#80D0D1D4",
-  "Button:disabled_color": "#801E1E1F",
   "Segmented:selected_color": "#FFFFFFFF",
-  "Button:secondary_normal_color": "#FF1E1E1F",
-  "Button:secondary_hovered_color": "#FF1E1E1F",
-  "Button:secondary_pressed_color": "#FF1E1E1F",
-  "Button:primary_normal_color": "#FFFFFFFF",
-  "Button:primary_hovered_color": "#FFFFFFFF",
-  "Button:primary_pressed_color": "#FFFFFFFF",
-  "Button:destructive_normal_color": "#FFFFFFFF",
-  "Button:destructive_hovered_color": "#FFFFFFFF",
-  "Button:destructive_pressed_color": "#FFFFFFFF",
-  "Button:menu_hovered_color": "#FFFFFFFF",
-  "Button:menu_pressed_color": "#FFFFFFFF",
   "Control:text_dark": "#FF1E1E1F",
   "Control:text_white": "#FFFFFFFF",
   "Control:text_secondary": "#FFD0D1D4",
@@ -593,46 +300,6 @@
   "Tag:tag_realms_informative": "#FFAC90F3",
   "Tag:tag_outline": "#FF1E1E1F",
   "Toast:toast_shadow": "#4D000000",
-  "Button:text_normal": {
-    "style": "flat",
-    "color": "#00000000",
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    }
-  },
-  "Button:text_hovered": {
-    "style": "flat",
-    "color": "#16FFFFFF",
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    }
-  },
-  "Button:text_pressed": {
-    "style": "flat",
-    "color": "#1A000000",
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    }
-  },
-  "Button:menu_normal": {
-    "style": "flat",
-    "color": "#00000000",
-    "contentMargin": {
-      "left": 8,
-      "top": 4,
-      "right": 8,
-      "bottom": 4
-    }
-  },
   "Label:hero": false,
   "LabelHero:hero": true,
   "NavbarTitle:color": "#FF1E1E1F",
@@ -685,6 +352,12 @@
   "Icons:arrow_down_light": {
     "location": "ore:icons/arrow_down_light"
   },
+  "Icons:arrow_up": {
+    "location": "ore:icons/arrow_up"
+  },
+  "Icons:arrow_up_light": {
+    "location": "ore:icons/arrow_up_light"
+  },
   "Icons:arrow_right_light": {
     "location": "ore:icons/arrow_right_light"
   },
@@ -698,7 +371,7 @@
     "location": "ore:icons/checkbox_normal"
   },
   "Checkbox:unchecked_hovered": {
-    "location": "ore:icons/checkbox_hovered"
+    "location": "ore:icons/checkbox_hover"
   },
   "Checkbox:unchecked_disabled": {
     "location": "ore:icons/checkbox_disabled"
@@ -707,7 +380,7 @@
     "location": "ore:icons/checkbox_checked_normal"
   },
   "Checkbox:checked_hovered": {
-    "location": "ore:icons/checkbox_checked_hovered"
+    "location": "ore:icons/checkbox_checked_hover"
   },
   "Checkbox:checked_pressed": {
     "location": "ore:icons/checkbox_checked_pressed"
@@ -725,7 +398,7 @@
     "location": "ore:icons/switch_button_normal"
   },
   "Switch:button_hovered": {
-    "location": "ore:icons/switch_button_hovered"
+    "location": "ore:icons/switch_button_hover"
   },
   "Switch:button_pressed": {
     "location": "ore:icons/switch_button_pressed"
@@ -735,5 +408,747 @@
   },
   "Spin:texture": {
     "location": "ore:icons/loading"
-  }
+  },
+  "Control:focus": {
+    "style": "flat",
+    "color": "#00000000",
+    "borders": {
+      "borderLeft": 1,
+      "borderTop": 1,
+      "borderRight": 1,
+      "borderBottom": 1
+    },
+    "borderColor": "#FFFFFF",
+    "expandMargin": {
+      "left": 1,
+      "top": 1,
+      "right": 1,
+      "bottom": 1
+    }
+  },
+  "Input:focus": {
+    "style": "flat",
+    "color": "#00000000",
+    "borders": {
+      "borderLeft": 1,
+      "borderTop": 1,
+      "borderRight": 1,
+      "borderBottom": 1
+    },
+    "borderColor": "#FFFFFF",
+    "expandMargin": {
+      "left": 2,
+      "top": 2,
+      "right": 2,
+      "bottom": 2
+    }
+  },
+  "Segmented:focus": {
+    "style": "flat",
+    "color": "#00000000",
+    "borders": {
+      "borderLeft": 1,
+      "borderTop": 1,
+      "borderRight": 1,
+      "borderBottom": 1
+    },
+    "borderColor": "#FFFFFF",
+    "expandMargin": {
+      "left": 1,
+      "top": 1,
+      "right": 2,
+      "bottom": 1
+    }
+  },
+  "Radio:icon_rotation_degrees": 45.0,
+  "Radio:unchecked_normal": {
+    "location": "ore:icons/radio_unchecked_normal",
+    "imageWidth": 8,
+    "imageHeight": 8,
+    "width": 8,
+    "height": 8
+  },
+  "Radio:unchecked_hovered": {
+    "location": "ore:icons/radio_unchecked_hover",
+    "imageWidth": 8,
+    "imageHeight": 8,
+    "width": 8,
+    "height": 8
+  },
+  "Radio:unchecked_pressed": {
+    "location": "ore:icons/radio_unchecked_pressed",
+    "imageWidth": 8,
+    "imageHeight": 8,
+    "width": 8,
+    "height": 8
+  },
+  "Radio:unchecked_disabled": {
+    "location": "ore:icons/radio_unchecked_disabled",
+    "imageWidth": 8,
+    "imageHeight": 8,
+    "width": 8,
+    "height": 8
+  },
+  "Radio:checked_normal": {
+    "location": "ore:icons/radio_checked_normal",
+    "imageWidth": 8,
+    "imageHeight": 8,
+    "width": 8,
+    "height": 8
+  },
+  "Radio:checked_hovered": {
+    "location": "ore:icons/radio_checked_hover",
+    "imageWidth": 8,
+    "imageHeight": 8,
+    "width": 8,
+    "height": 8
+  },
+  "Radio:checked_pressed": {
+    "location": "ore:icons/radio_checked_pressed",
+    "imageWidth": 8,
+    "imageHeight": 8,
+    "width": 8,
+    "height": 8
+  },
+  "Radio:checked_disabled": {
+    "location": "ore:icons/radio_checked_disabled",
+    "imageWidth": 8,
+    "imageHeight": 8,
+    "width": 8,
+    "height": 8
+  },
+  "DarkButton:normal": {
+    "style": "texture",
+    "location": "ore:gui/button_dark_normal",
+    "imageWidth": 5,
+    "imageHeight": 5,
+    "x": 0,
+    "y": 0,
+    "width": 5,
+    "height": 5,
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 2,
+      "borderRight": 2,
+      "borderBottom": 2
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "DarkButton:hover": {
+    "style": "texture",
+    "location": "ore:gui/button_dark_hover",
+    "imageWidth": 5,
+    "imageHeight": 5,
+    "x": 0,
+    "y": 0,
+    "width": 5,
+    "height": 5,
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 2,
+      "borderRight": 2,
+      "borderBottom": 2
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "DarkButton:pressed": {
+    "style": "texture",
+    "location": "ore:gui/button_dark_pressed",
+    "imageWidth": 5,
+    "imageHeight": 5,
+    "x": 0,
+    "y": 0,
+    "width": 5,
+    "height": 5,
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 2,
+      "borderRight": 2,
+      "borderBottom": 2
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "DarkButton:disabled": {
+    "style": "texture",
+    "location": "ore:gui/button_dark_disabled",
+    "imageWidth": 3,
+    "imageHeight": 3,
+    "x": 0,
+    "y": 0,
+    "width": 3,
+    "height": 3,
+    "textureBorders": {
+      "borderLeft": 1,
+      "borderTop": 1,
+      "borderRight": 1,
+      "borderBottom": 1
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "Collapse:padding_top": 4,
+  "Collapse:padding_right": 8,
+  "Collapse:padding_bottom": 4,
+  "Collapse:padding_left": 8,
+  "Collapse:panel": {
+    "location": "ore:gui/panel",
+    "imageWidth": 3,
+    "imageHeight": 3,
+    "x": 0,
+    "y": 0,
+    "width": 3,
+    "height": 3,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 1,
+      "borderTop": 1,
+      "borderRight": 1,
+      "borderBottom": 1
+    }
+  },
+  "SecondaryButton:normal": {
+    "location": "ore:gui/button_secondary_normal",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 4,
+      "borderRight": 2,
+      "borderBottom": 4
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "SecondaryButton:normal_color": "#FF1E1E1F",
+  "SecondaryButton:hover": {
+    "location": "ore:gui/button_secondary_hover",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 4,
+      "borderRight": 2,
+      "borderBottom": 4
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "SecondaryButton:hover_color": "#FF1E1E1F",
+  "SecondaryButton:pressed": {
+    "location": "ore:gui/button_secondary_pressed",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 2,
+      "borderRight": 2,
+      "borderBottom": 2
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    },
+    "drawInset": {
+      "top": 2
+    },
+    "contentOffset": {
+      "x": 0,
+      "y": 2
+    }
+  },
+  "SecondaryButton:pressed_color": "#FF1E1E1F",
+  "SecondaryButton:disabled": {
+    "location": "ore:gui/button_disabled",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 4,
+      "borderRight": 2,
+      "borderBottom": 4
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "SecondaryButton:disabled_color": "#801E1E1F",
+  "PrimaryButton:normal": {
+    "location": "ore:gui/button_primary_normal",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 4,
+      "borderRight": 2,
+      "borderBottom": 4
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "PrimaryButton:normal_color": "#FFFFFFFF",
+  "PrimaryButton:hover": {
+    "location": "ore:gui/button_primary_hover",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 4,
+      "borderRight": 2,
+      "borderBottom": 4
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "PrimaryButton:hover_color": "#FFFFFFFF",
+  "PrimaryButton:pressed": {
+    "location": "ore:gui/button_primary_pressed",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 2,
+      "borderRight": 2,
+      "borderBottom": 2
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    },
+    "drawInset": {
+      "top": 2
+    },
+    "contentOffset": {
+      "x": 0,
+      "y": 2
+    }
+  },
+  "PrimaryButton:pressed_color": "#FFFFFFFF",
+  "PrimaryButton:disabled": {
+    "location": "ore:gui/button_disabled",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 4,
+      "borderRight": 2,
+      "borderBottom": 4
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "PrimaryButton:disabled_color": "#801E1E1F",
+  "DestructiveButton:normal": {
+    "location": "ore:gui/button_destructive_normal",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 4,
+      "borderRight": 2,
+      "borderBottom": 4
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "DestructiveButton:normal_color": "#FFFFFFFF",
+  "DestructiveButton:hover": {
+    "location": "ore:gui/button_destructive_hover",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 4,
+      "borderRight": 2,
+      "borderBottom": 4
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "DestructiveButton:hover_color": "#FFFFFFFF",
+  "DestructiveButton:pressed": {
+    "location": "ore:gui/button_destructive_pressed",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 2,
+      "borderRight": 2,
+      "borderBottom": 2
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    },
+    "drawInset": {
+      "top": 2
+    },
+    "contentOffset": {
+      "x": 0,
+      "y": 2
+    }
+  },
+  "DestructiveButton:pressed_color": "#FFFFFFFF",
+  "DestructiveButton:disabled": {
+    "location": "ore:gui/button_disabled",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 4,
+      "borderRight": 2,
+      "borderBottom": 4
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "DestructiveButton:disabled_color": "#801E1E1F",
+  "TextButton:normal": {
+    "style": "flat",
+    "color": "#00000000",
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "TextButton:normal_color": "#FFFFFFFF",
+  "TextButton:hover": {
+    "style": "flat",
+    "color": "#16FFFFFF",
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "TextButton:hover_color": "#FFFFFFFF",
+  "TextButton:pressed": {
+    "style": "flat",
+    "color": "#1A000000",
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "TextButton:pressed_color": "#FFFFFFFF",
+  "TextButton:disabled": {
+    "style": "flat",
+    "color": "#00000000",
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "TextButton:disabled_color": "#801E1E1F",
+  "MenuButton:normal": {
+    "style": "flat",
+    "color": "#00000000",
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "MenuButton:normal_color": "#FFFFFFFF",
+  "MenuButton:hover": {
+    "location": "ore:gui/menu_item_hover",
+    "imageWidth": 1,
+    "imageHeight": 3,
+    "x": 0,
+    "y": 0,
+    "width": 1,
+    "height": 3,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 0,
+      "borderTop": 1,
+      "borderRight": 0,
+      "borderBottom": 1
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "MenuButton:hover_color": "#FFFFFFFF",
+  "MenuButton:pressed": {
+    "location": "ore:gui/menu_item_pressed",
+    "imageWidth": 1,
+    "imageHeight": 3,
+    "x": 0,
+    "y": 0,
+    "width": 1,
+    "height": 3,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 0,
+      "borderTop": 1,
+      "borderRight": 0,
+      "borderBottom": 1
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "MenuButton:pressed_color": "#FFFFFFFF",
+  "MenuButton:disabled": {
+    "style": "flat",
+    "color": "#00000000",
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "MenuButton:disabled_color": "#801E1E1F",
+  "DarkButton:normal_color": "#FFFFFFFF",
+  "DarkButton:hover_color": "#FFFFFFFF",
+  "DarkButton:pressed_color": "#FFFFFFFF",
+  "DarkButton:disabled_color": "#801E1E1F",
+  "Button:normal": {
+    "location": "ore:gui/button_secondary_normal",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 4,
+      "borderRight": 2,
+      "borderBottom": 4
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "Button:normal_color": "#FF1E1E1F",
+  "Button:hover": {
+    "location": "ore:gui/button_secondary_hover",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 4,
+      "borderRight": 2,
+      "borderBottom": 4
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "Button:hover_color": "#FF1E1E1F",
+  "Button:pressed": {
+    "location": "ore:gui/button_secondary_pressed",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 2,
+      "borderRight": 2,
+      "borderBottom": 2
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    },
+    "drawInset": {
+      "top": 2
+    },
+    "contentOffset": {
+      "x": 0,
+      "y": 2
+    }
+  },
+  "Button:pressed_color": "#FF1E1E1F",
+  "Button:disabled": {
+    "location": "ore:gui/button_disabled",
+    "imageWidth": 16,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 4,
+      "borderRight": 2,
+      "borderBottom": 4
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "Button:disabled_color": "#801E1E1F",
+  "Collapse:secondary_color": "#FFD0D1D4",
+  "Collapse:collapsed_arrow": {
+    "location": "ore:icons/arrow_down_light"
+  },
+  "Collapse:disabled_collapsed_arrow": {
+    "location": "ore:icons/arrow_down"
+  },
+  "Collapse:expanded_arrow": {
+    "location": "ore:icons/arrow_up_light"
+  },
+  "Collapse:disabled_expanded_arrow": {
+    "location": "ore:icons/arrow_up"
+  },
+  "Collapse:animation_duration": 100
 }

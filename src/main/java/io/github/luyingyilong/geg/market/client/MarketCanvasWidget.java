@@ -75,7 +75,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private final List<Card> cards = new ArrayList<>();
     private final Dropdown<String> filterDropdown = new Dropdown<>("all", 8)
             .setTriggerLabel(Component.empty()).setIcon(TextureSource.themed(io.github.luyingyilong.ore.theme.IconTheme.FILTER))
-            .setShowArrow(false).setType(Button.Type.TEXT);
+            .setShowArrow(false);
     private final Window window = (Window) new Window(true).setDebugName("Market Window");
     private final Grid<Card> grid = new Grid<>();
     private final Scroll gridScroll = new Scroll().setContent(grid);
@@ -117,6 +117,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     private boolean dirty = true;
 
     MarketCanvasWidget(Input search) {
+        filterDropdown.getTriggerButton().setThemeTypeVariation("TextButton");
         searchSlot = new InputControl(search);
         coinBalance.setMinimum(32, Button.Size.MEDIUM.getHeight());
         searchSlot.setMinimum(64, Button.Size.SMALL.getHeight()).setPreferred(138, Button.Size.SMALL.getHeight())
@@ -526,22 +527,22 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         detailModal.clearActions();
         if (modal.kind == Kind.GROUP || modal.kind == Kind.FAVORITE) {
             if (modal.kind == Kind.FAVORITE && modal.favorite.ended())
-                detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.unfavorite")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::secondaryModalAction)));
-            detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.request_this")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::primaryModalAction)));
+                detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.unfavorite")).setThemeTypeVariation("SecondaryButton"), actionButton -> actionButton.pressed().connect(actionButton, this::secondaryModalAction)));
+            detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.request_this")).setThemeTypeVariation("PrimaryButton"), actionButton -> actionButton.pressed().connect(actionButton, this::primaryModalAction)));
         } else if (modal.kind == Kind.OWN || modal.kind == Kind.OWN_REQUEST) {
-            detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.cancel_listing")).setType(Button.Type.DESTRUCTIVE), actionButton -> actionButton.pressed().connect(actionButton, this::secondaryModalAction)));
-            detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.reprice")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::primaryModalAction)));
+            detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.cancel_listing")).setThemeTypeVariation("DestructiveButton"), actionButton -> actionButton.pressed().connect(actionButton, this::secondaryModalAction)));
+            detailModal.addAction(Signals.configure(new Button(Component.translatable("market.geg.reprice")).setThemeTypeVariation("PrimaryButton"), actionButton -> actionButton.pressed().connect(actionButton, this::primaryModalAction)));
         } else if (modal.kind == Kind.INVENTORY || modal.kind == Kind.SAMPLE) {
             detailModal.addAction(Signals.configure(new Button(Component.translatable(requestMode
-                    ? "market.geg.confirm_request" : "market.geg.confirm_list")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::primaryModalAction)));
+                    ? "market.geg.confirm_request" : "market.geg.confirm_list")).setThemeTypeVariation("PrimaryButton"), actionButton -> actionButton.pressed().connect(actionButton, this::primaryModalAction)));
         }
     }
 
     private void configureQuantityActions() {
         MarketDetail offer = selectedDetail();
-        quantityModal.clearActions().addAction(Signals.configure(new Button(Component.translatable("market.geg.cancel")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, this::closeQuantityMenu)))
+        quantityModal.clearActions().addAction(Signals.configure(new Button(Component.translatable("market.geg.cancel")).setThemeTypeVariation("SecondaryButton"), actionButton -> actionButton.pressed().connect(actionButton, this::closeQuantityMenu)))
                 .addAction(Signals.configure(new Button(Component.translatable(offer != null && offer.buyOrder()
-                        ? "market.geg.confirm_fulfill" : "market.geg.confirm_buy")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, this::confirmQuantity)));
+                        ? "market.geg.confirm_fulfill" : "market.geg.confirm_buy")).setThemeTypeVariation("PrimaryButton"), actionButton -> actionButton.pressed().connect(actionButton, this::confirmQuantity)));
     }
 
     private void closeQuantityMenu() {
@@ -828,25 +829,26 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
     private abstract static class ScrollableContent extends Container {
         protected int scroll;
+        @Override protected boolean requiresAxisAlignedClip(){return true;}
         protected int contentHeight;
 
         public void scrollBy(int amount) {
             scroll = Math.max(0, Math.min(Math.max(0, contentHeight - getBounds().height()), scroll + amount));
         }
 
-        @Override public Control hitTop(int x,int y) {
-            return getAbsoluteBounds().contains(x,y)?super.hitTop(x,y):null;
+        @Override protected Control hitTestTree(int x,int y,int windowX,int windowY) {
+            return getAbsoluteBounds().contains(x,y)?super.hitTestTree(x,y,windowX,windowY):null;
         }
         @Override protected boolean wheel(int x,int y,double delta,boolean horizontal) {
             if(horizontal)return false;int before=scroll;scrollBy(-(int)Math.signum(delta)*24);return before!=scroll;
         }
 
-        @Override public void draw(DrawContext context, int screenX, int screenY) {
+        @Override protected void drawContent(DrawContext context, int screenX, int screenY) {
             Rect area = getScreenBounds(screenX, screenY);
             if (area.width() <= 0 || area.height() <= 0) return;
-            context.getGraphics().enableScissor(area.x(), area.y(), area.right(), area.bottom());
-            super.draw(context, screenX, screenY);
-            context.getGraphics().disableScissor();
+            context.enableScissor(area.x(), area.y(), area.right(), area.bottom());
+            super.drawContent(context, screenX, screenY);
+            context.disableScissor();
         }
     }
 

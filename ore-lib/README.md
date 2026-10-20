@@ -238,3 +238,7 @@ Panel／Padding 使用 `setChild`；Window／Scroll／Dialog／Modal／Drawer �
 Form 的 `addItem`、Descriptions 的 `addItem`／`removeItem`／`clearItems`、Table 的 `addColumn` 表示逻辑配置，不转发或重写真实树 API。固定骨架拒绝外部结构修改；Descriptions 条目的真实父节点可能是内部行 Box，不能向 Descriptions 的普通 children 添加逻辑条目。子类可通过 `validateChildren` 预检查整个拟定列表，通过 `childrenChanged` 在提交后同步直接或后代索引；预检查不得修改树。框架内部批量更新同样执行线程、生命周期、重复挂载及混合所有权环校验。
 
 Grid／Table／Tree 只把活动缓冲实例加入普通 children，并按数据顺序重排。回收和临时卸载不等于销毁；所有权、输入焦点、IME 和信号生命周期规则保持不变。
+
+变换、主题化焦点和 Radio／RadioGroup 的接口见 [说明](docs/transforms-radio-focus.md)。
+
+[Collapse 与按钮主题变体](docs/collapse-buttons.md)

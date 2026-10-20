@@ -159,7 +159,7 @@ public final class ChatComposer extends Container {
             suggestionIndex = 0;
             for (Control child : suggestionButtons.getChildren()) { if (child.getParent() != null) child.getParent().removeChild(child); child.queueFree(); }
             for (Suggestion suggestion : suggestions) {
-                Button button = Signals.configure(new Button(Component.literal(suggestion.getText())).setType(Button.Type.TEXT)
+                Button button = Signals.configure(new Button(Component.literal(suggestion.getText())).setThemeTypeVariation("TextButton")
                         .setToggleButton(true).setAlignment(Button.TextAlignment.LEFT), connected -> connected.pressed().connect(connected, () -> apply(suggestion)));
                 button.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
                 suggestionButtons.addChild(button);
@@ -259,13 +259,13 @@ public final class ChatComposer extends Container {
         }
 
         @Override
-        public void draw(io.github.luyingyilong.ore.render.DrawContext context, int x, int y) {
+        protected void drawContent(io.github.luyingyilong.ore.render.DrawContext context, int x, int y) {
             var graphics = context.getGraphics();
             graphics.flush();
             graphics.pose().pushPose();
             try {
                 graphics.pose().translate(0, 0, 50);
-                super.draw(context, x, y);
+                super.drawContent(context, x, y);
                 graphics.flush();
             } finally {
                 graphics.pose().popPose();

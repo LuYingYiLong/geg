@@ -1,8 +1,10 @@
 package io.github.luyingyilong.geg.organization.client;
 
-import io.github.luyingyilong.ore.Checkbox;
+import io.github.luyingyilong.ore.Radio;
+import io.github.luyingyilong.ore.RadioGroup;
 import io.github.luyingyilong.ore.form.*;
-import io.github.luyingyilong.ore.layout.Control;
+import io.github.luyingyilong.ore.layout.Box;
+import io.github.luyingyilong.ore.layout.SizeFlags;
 import io.github.luyingyilong.geg.organization.Organization;
 import io.github.luyingyilong.geg.organization.OrganizationSavedData;
 import net.minecraft.network.chat.Component;
@@ -16,12 +18,19 @@ final class OrganizationFields {
     static final Validator<String> VALID_DESCRIPTION = Validators.predicate(OrganizationSavedData::validDescription,
             Component.translatable("organization.geg.invalid_description"));
     private OrganizationFields() { }
-    static FormField<Organization.JoinPolicy> policy(Control root, Checkbox unrestricted, Checkbox approval) {
-        return FormFields.custom(Organization.JoinPolicy.class, root,
-                () -> approval.getChecked() ? Organization.JoinPolicy.APPROVAL : Organization.JoinPolicy.UNRESTRICTED,
-                value -> {
-                    approval.setCheckedNoSignal(value == Organization.JoinPolicy.APPROVAL);
-                    unrestricted.setCheckedNoSignal(value == Organization.JoinPolicy.UNRESTRICTED);
-                }, unrestricted.toggled(), approval.toggled());
+    static FormField<Organization.JoinPolicy> policy() {
+        Box choices = new Box().setGap(2);
+        choices.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        Radio unrestricted = new Radio(Component.translatable("organization.geg.join_unrestricted"));
+        Radio approval = new Radio(Component.translatable("organization.geg.join_approval"));
+        unrestricted.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        approval.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+        choices.addChild(unrestricted);
+        choices.addChild(approval);
+        RadioGroup<Organization.JoinPolicy> group = new RadioGroup<>(choices, Organization.JoinPolicy.class);
+        group.addRadio(Organization.JoinPolicy.UNRESTRICTED, unrestricted)
+                .addRadio(Organization.JoinPolicy.APPROVAL, approval)
+                .setSelectedNoSignal(Organization.JoinPolicy.UNRESTRICTED);
+        return FormFields.radioGroup(Organization.JoinPolicy.class, choices, group);
     }
 }

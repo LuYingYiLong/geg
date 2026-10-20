@@ -30,7 +30,7 @@ public final class Switch extends Container {
     public static final ThemeKey<TextureRegion> BASE = IconTheme.texture("Switch", "base", "switch_base", 27, 13);
     public static final ThemeKey<TextureRegion> BASE_DISABLED = IconTheme.texture("Switch", "base_disabled", "switch_base_disabled", 27, 13);
     public static final ThemeKey<TextureRegion> BUTTON_NORMAL = IconTheme.texture("Switch", "button_normal", "switch_button_normal", 14, 15);
-    public static final ThemeKey<TextureRegion> BUTTON_HOVERED = IconTheme.texture("Switch", "button_hovered", "switch_button_hovered", 14, 15);
+    public static final ThemeKey<TextureRegion> BUTTON_HOVERED = IconTheme.texture("Switch", "button_hovered", "switch_button_hover", 14, 15);
     public static final ThemeKey<TextureRegion> BUTTON_PRESSED = IconTheme.texture("Switch", "button_pressed", "switch_button_pressed", 14, 15);
     public static final ThemeKey<TextureRegion> BUTTON_DISABLED = IconTheme.texture("Switch", "button_disabled", "switch_button_disabled", 14, 15);
 
@@ -85,7 +85,7 @@ public final class Switch extends Container {
         setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN);
         setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
         setFocusable(true);
-        setFocusExpansion(1);
+
         spinner.setVisible(false);
         updateChildren(java.util.List.of(spinner));
     }

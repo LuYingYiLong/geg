@@ -66,8 +66,8 @@ public final class MarketDetailLayoutTest {
                 ThemeKey.class, ThemeKey.class);
         constructor.setAccessible(true);
         Modal modal = constructor.newInstance(Component.literal("Item"), null, null, null).setSize(340, 224).setContent(details)
-                .addAction(Signals.configure(new Button(Component.literal("撤单")).setType(Button.Type.DESTRUCTIVE), actionButton -> actionButton.pressed().connect(actionButton, () -> { })))
-                .addAction(Signals.configure(new Button(Component.literal("改价")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
+                .addAction(Signals.configure(new Button(Component.literal("撤单")).setThemeTypeVariation("DestructiveButton"), actionButton -> actionButton.pressed().connect(actionButton, () -> { })))
+                .addAction(Signals.configure(new Button(Component.literal("改价")).setThemeTypeVariation("PrimaryButton"), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
         var childContainer99 = new Overlay();
         childContainer99.addChild(modal);
         Window window = new Window(true).setContent(new Control()).setOverlay(childContainer99);
@@ -90,8 +90,8 @@ public final class MarketDetailLayoutTest {
         quantityContent.bindForm(quantityForm);
         Modal quantity = constructor.newInstance(Component.literal("Quantity"), null, null, null)
                 .setSize(224, 0).centered().setDepth(300).setContent(quantityContent)
-                .addAction(Signals.configure(new Button(Component.literal("Cancel")).setType(Button.Type.SECONDARY), actionButton -> actionButton.pressed().connect(actionButton, () -> { })))
-                .addAction(Signals.configure(new Button(Component.literal("Confirm")).setType(Button.Type.PRIMARY), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
+                .addAction(Signals.configure(new Button(Component.literal("Cancel")).setThemeTypeVariation("SecondaryButton"), actionButton -> actionButton.pressed().connect(actionButton, () -> { })))
+                .addAction(Signals.configure(new Button(Component.literal("Confirm")).setThemeTypeVariation("PrimaryButton"), actionButton -> actionButton.pressed().connect(actionButton, () -> { })));
         Overlay layers = new Overlay();
         // Move the existing secondary modal into the new two-level overlay.
         modal.getParent().removeChild(modal);

@@ -36,7 +36,7 @@ public final class FocusNavigationTest {
         check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null));
         check(focus.getFocused() == right);
         check(focus.getOutlineBounds().equals(new Rect(39, 9, 22, 22)));
-        check(new Checkbox(Component.literal("check")).getFocusExpansion() == 1);
+        check(new Checkbox(Component.literal("check")).getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.FOCUS).getExpandMargin().left() == 1);
         check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_LEFT, 0, null));
         check(focus.getFocused() == left);
         check(io.github.luyingyilong.ore.event.WindowInputs.press(window,45, 12, null));
@@ -143,23 +143,23 @@ public final class FocusNavigationTest {
         segmented.selectionChanged().connect(segmented, index -> selected[0]++);
         Window window = new Window(true).setContent(segmented);
         window.layoutViewport(100, 20, null);
-        check(segmented.getFocusBounds().equals(new Rect(0, 2, 51, 18)));
+        check(segmented.getFocusBounds().equals(new Rect(0, 2, 50, 18)));
         window.getFocusManager().requestFocus(segmented, null);
         check(selected[0] == 0);
         check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null));
         check(segmented.getSelected() == 0 && selected[0] == 0);
-        check(segmented.getFocusBounds().equals(new Rect(50, 0, 51, 20)));
+        check(segmented.getFocusBounds().equals(new Rect(50, 0, 50, 20)));
         segmented.setSelected(0); // Market synchronizes the active page on every layout pass.
         window.layoutViewport(100, 20, null);
-        check(segmented.getFocusBounds().equals(new Rect(50, 0, 51, 20)));
+        check(segmented.getFocusBounds().equals(new Rect(50, 0, 50, 20)));
         check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_LEFT, 0, null));
-        check(segmented.getFocusBounds().equals(new Rect(0, 2, 51, 18)));
+        check(segmented.getFocusBounds().equals(new Rect(0, 2, 50, 18)));
         check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_RIGHT, 0, null));
         check(io.github.luyingyilong.ore.event.WindowInputs.keyDown(window,GLFW.GLFW_KEY_ENTER, 0, null));
         check(segmented.getSelected() == 0 && selected[0] == 0);
         check(io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_ENTER, 0, null));
         check(segmented.getSelected() == 1 && selected[0] == 1);
-        check(segmented.getFocusBounds().equals(new Rect(50, 2, 51, 18)));
+        check(segmented.getFocusBounds().equals(new Rect(50, 2, 50, 18)));
     }
 
     private static void nativeFocusLossClearsOreFocus() {

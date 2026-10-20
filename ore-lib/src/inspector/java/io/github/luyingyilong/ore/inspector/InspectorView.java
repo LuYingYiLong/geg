@@ -168,7 +168,7 @@ public final class InspectorView {
         tree.setSelectedNoSignal(next.selected());
         undo.setDisabled(!next.canUndo());
         redo.setDisabled(!next.canRedo());
-        pick.setType(next.picking() ? Button.Type.PRIMARY : Button.Type.SECONDARY);
+        pick.setThemeTypeVariation(next.picking() ? "PrimaryButton" : "SecondaryButton");
         message.setText(next.error().isEmpty() ? tr(next.waiting() ? "waiting" : "session_only") : Component.literal(next.error()))
                 .setColor(next.error().isEmpty() ? OreTheme.TEXT_SECONDARY : 0xFFF46D6D);
         var node = next.nodes().stream().filter(n -> n.id().equals(next.selected())).findFirst().orElse(null);

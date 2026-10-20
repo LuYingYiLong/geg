@@ -17,8 +17,8 @@ public final class AccessorContractTest {
         check(control.getMinimumWidth() == 12 && control.getMinimumHeight() == 8 && !control.getVisible(), "Control accessors");
         Label label = new Label().setText(Component.literal("Text")).setFontSize(12).setHero(true);
         check(label.getText().getString().equals("Text") && label.getFontSize() == 12 && label.getHero(), "Label accessors");
-        Button button = new Button().setType(Button.Type.PRIMARY).setToggleButton(true).setButtonPressed(true);
-        check(button.getType() == Button.Type.PRIMARY && button.getButtonPressed(), "Button accessors");
+        Button button = new Button().setThemeTypeVariation("PrimaryButton").setToggleButton(true).setButtonPressed(true);
+        check(button.getThemeTypeVariation().equals("PrimaryButton") && button.getButtonPressed(), "Button accessors");
         Box box = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
         check(box.getOrientation() == Box.Orientation.HORIZONTAL && box.getGap() == 4, "Container accessors");
         Scroll scroll = new Scroll().setEmbedded(true).setContent(box);
@@ -33,7 +33,8 @@ public final class AccessorContractTest {
         absent(Control.class, "minimum", int.class, int.class);
         absent(Label.class, "text", Component.class);
         absent(Label.class, "text");
-        absent(Button.class, "type", Button.Type.class);
+        absent(Button.class, "getType");
+        absent(Button.class, "setType", String.class);
         absent(Box.class, "gap", int.class);
         absent(Padding.class, "insets", Padding.Insets.class);
         absent(Scroll.class, "embedded", boolean.class);

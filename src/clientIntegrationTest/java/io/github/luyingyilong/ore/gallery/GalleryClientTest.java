@@ -17,6 +17,8 @@ import java.util.*;
 @Mod.EventBusSubscriber(modid="geg",value=Dist.CLIENT)
 public final class GalleryClientTest {
     private static int ticks,phase,index,at;
+    private static boolean radioChecked;
+    private static int collapsePhase;
     private static GalleryView view;
     private static Control previous;
     private static Input input;
@@ -34,6 +36,45 @@ public final class GalleryClientTest {
             }else if(phase==2&&ticks-at>4){
                 if(previous!=null && previous!=view.getSample())check(previous.isDisposed(),"Replaced sample freed at render safe point");
                 if(index==1)capture();
+                if(view.getSelected().equals("radio")&&!radioChecked) {
+                    List<Radio> radios=radios(view.getSample());
+                    System.out.println("ORE_RADIO_GEOMETRY "+io.github.luyingyilong.ore.event.EventGeometry.displayed(radios.get(0))+" clip="+io.github.luyingyilong.ore.event.EventGeometry.clip(radios.get(0)));
+                    capture();clickControl(radios.get(0));check(radios.get(0).getChecked(),"Real GLFW radio release selects");
+                    view.getWindow().getFocusManager().requestFocus(radios.get(3),view.getWindow().getContext().getMui());
+                    key(GLFW.GLFW_KEY_SPACE,0);
+                    check(radios.get(3).getChecked()&&!radios.get(2).getChecked(),"RadioGroup keyboard activation is exclusive");
+                    view.getWindow().getFocusManager().keyboardNavigation();
+                    view.getWindow().getFocusManager().requestFocus(radios.get(2),view.getWindow().getContext().getMui());
+                    check(view.getWindow().getFocusManager().getOutlineTarget()==radios.get(2),"Radio supplies a focused diamond geometry");
+                    radioChecked=true;at=ticks;return;
+                }
+                if(view.getSelected().equals("radio"))capture();
+                if(view.getSelected().equals("collapse")&&collapsePhase<4) {
+                    Collapse collapse=find(view.getSample(),Collapse.class);
+                    if(collapsePhase==0) {
+                        view.getWindow().getFocusManager().requestFocus(collapse.getHeaderButton(),view.getWindow().getContext().getMui());
+                        clickControl(collapse.getHeaderButton());check(collapse.getExpanded(),"Actual release opens Collapse");
+                        collapsePhase=1;at=ticks;return;
+                    }
+                    if(ticks-at<9)return;
+                    if(collapsePhase==1) {
+                        check(!collapse.getAnimating(),"Collapse finishes its height animation");
+                        InputControl field=inputs(collapse.getContent()).get(0);
+                        view.getWindow().getFocusManager().requestFocus(field,view.getWindow().getContext().getMui());
+                        clickControl(field);check(field.getWidget().isFocused(),"Collapse body input receives focus");
+                        text("保留草稿");
+                        collapse.setExpanded(false);
+                        check(!field.getWidget().isFocused()&&!field.isInputAccessible(),"Closing Collapse releases native input immediately");
+                        check(view.getWindow().getFocusManager().getFocused()==collapse.getHeaderButton(),"Closing returns focus to header");
+                        collapsePhase=2;at=ticks;return;
+                    }
+                    if(collapsePhase==2) {
+                        check(!collapse.getAnimating()&&collapse.getVisibleBodyHeight()==0,"Collapse finishes closing");
+                        clickControl(collapse.getHeaderButton());collapsePhase=3;at=ticks;return;
+                    }
+                    check(inputs(collapse.getContent()).get(0).getWidget().getText().equals("保留草稿"),"Reopening retains the input document");
+                    capture();collapsePhase=4;
+                }
                 if(index<GalleryCatalog.getEntries().size()){
                     previous=view.getSample();String id=GalleryCatalog.getEntries().get(index++).id();
                     view.select(id);view.setPreviewWidth(127+(index%3));at=ticks;
@@ -42,10 +83,16 @@ public final class GalleryClientTest {
             }else if(phase==3&&ticks-at>5){
                 input=inputs(view.getSample()).get(0).getWidget();click(inputs(view.getSample()).get(0));
                 Control owner=input.getThemeControl();
+                try { owner.setRenderTransform(io.github.luyingyilong.ore.render.Transform2D.rotation(90));throw new AssertionError("Rotated MUI input accepted"); }
+                catch(IllegalArgumentException expected) { }
+                check(owner.getRenderTransform().equals(io.github.luyingyilong.ore.render.Transform2D.IDENTITY),"Rejected MUI transform preserves caret geometry");
                 int connections=input.textChanged().connectionCount();
                 try { FormFields.text(input); throw new AssertionError("Double wrapping accepted"); }
                 catch (IllegalArgumentException expected) { }
                 check(input.getThemeControl()==owner && input.textChanged().connectionCount()==connections,"Rejected adapter preserves existing input ownership and subscriptions");
+                owner.setRenderTransform(new io.github.luyingyilong.ore.render.Transform2D(5,3,0,1.25,0.5,0.5));
+                clickControl(owner);check(input.isFocused(),"Translated/scaled MUI input uses the Window hit geometry");
+                owner.setRenderTransform(io.github.luyingyilong.ore.render.Transform2D.IDENTITY);
                 text("中文Abc");check(input.getText().equals("中文Abc"),"Input accepts Unicode exactly once");
                 key(GLFW.GLFW_KEY_A,GLFW.GLFW_MOD_CONTROL);key(GLFW.GLFW_KEY_C,GLFW.GLFW_MOD_CONTROL);
                 key(GLFW.GLFW_KEY_X,GLFW.GLFW_MOD_CONTROL);check(input.getText().isEmpty(),"Cut");
@@ -92,16 +139,22 @@ public final class GalleryClientTest {
                 OreGallery.stop();phase=99;
                 System.out.println("ORE_GALLERY_CLIENT_PASS");mc.stop();
             }
-        }catch(Throwable error){phase=99;error.printStackTrace();System.out.println("ORE_GALLERY_CLIENT_FAIL");mc.stop();}
+        }catch(Throwable error){capture();phase=99;error.printStackTrace();System.out.println("ORE_GALLERY_CLIENT_FAIL");mc.stop();}
     }
     private static Control named(Control root,String name){if(root.getDebugName().equals(name))return root;for(Control child:root.getChildren()){Control result=named(child,name);if(result!=null)return result;}return null;}
     private static void clickControl(Control control){
         var area=io.github.luyingyilong.ore.event.EventGeometry.displayed(control);var mc=Minecraft.getInstance();
+        var clip=io.github.luyingyilong.ore.event.EventGeometry.clip(control);
+        if(clip!=null)area=io.github.luyingyilong.ore.event.EventGeometry.intersect(area,clip);
+        check(area.width()>0&&area.height()>0,"Pointer target must be visible");
+        var target=OreGallery.getView().getWindow().getPointerTarget(area.x()+area.width()/2,area.y()+area.height()/2);
+        System.out.println("ORE_GALLERY_POINTER "+control.getClass().getSimpleName()+" "+area+" target="+(target==null?"null":target.getClass().getSimpleName()));
         double x=(double)(area.x()+area.width()/2)*mc.getWindow().getScreenWidth()/mc.screen.width;
         double y=(double)(area.y()+area.height()/2)*mc.getWindow().getScreenHeight()/mc.screen.height;
-        var move=GLFW.glfwSetCursorPosCallback(handle(),null);GLFW.glfwSetCursorPosCallback(handle(),move);move.invoke(handle(),x,y);
+        var move=GLFW.glfwSetCursorPosCallback(handle(),null);GLFW.glfwSetCursorPosCallback(handle(),move);GLFW.glfwSetCursorPos(handle(),x,y);move.invoke(handle(),x,y);
         var mouse=GLFW.glfwSetMouseButtonCallback(handle(),null);GLFW.glfwSetMouseButtonCallback(handle(),mouse);mouse.invoke(handle(),0,GLFW.GLFW_PRESS,0);mouse.invoke(handle(),0,GLFW.GLFW_RELEASE,0);
     }
+    private static List<Radio> radios(Control root){List<Radio> out=new ArrayList<>();if(root instanceof Radio radio)out.add(radio);for(Control child:root.getChildren())out.addAll(radios(child));return out;}
     private static List<InputControl> inputs(Control root){List<InputControl> out=new ArrayList<>();if(root instanceof InputControl input)out.add(input);for(Control child:root.getChildren())out.addAll(inputs(child));return out;}
     private static <T> T find(Control root,Class<T> type){if(type.isInstance(root))return type.cast(root);for(Control child:root.getChildren()){T result=find(child,type);if(result!=null)return result;}return null;}
     private static void click(InputControl control){

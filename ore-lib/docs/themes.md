@@ -79,7 +79,7 @@ label.removeThemeOverride(OreTheme.TEXT_COLOR);
 ```json
 {
   "parent": "ore:default",
-  "Button:secondary_pressed": {
+  "Button:pressed": {
     "style": "texture",
     "location": "ore:gui/button_secondary_pressed",
     "textureBorders": {

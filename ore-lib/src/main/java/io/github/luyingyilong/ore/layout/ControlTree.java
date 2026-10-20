@@ -95,6 +95,7 @@ final class ControlTree {
             if (!child.isAlive()) throw new IllegalStateException("Cannot attach a pending/freed control");
             requireAcyclic(parent, child);
             child.validateThemeAttachment(parent);
+            child.validateTransformAttachment(parent);
             if (child.lifecycleOwner != null) {
                 boolean allowed = false;
                 for (Control node = parent; node != null; node = node.parent)

@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 public final class DrawContextContractTest {
     public static void main(String[] args) throws Exception {
         for (Class<?> control : new Class<?>[]{Control.class, Window.class}) {
-            control.getDeclaredMethod("draw", DrawContext.class, int.class, int.class);
+            control.getMethod("draw", DrawContext.class, int.class, int.class);
             for (Method method : control.getDeclaredMethods())
                 if (method.getName().equals("draw") || method.getName().equals("render") || method.getName().equals("renderTooltip"))
                     for (Class<?> parameter : method.getParameterTypes())
@@ -18,7 +18,7 @@ public final class DrawContextContractTest {
         for (Method method : DrawContext.class.getDeclaredMethods())
             for (Class<?> parameter : method.getParameterTypes())
                 check(!parameter.getName().contains("ModularGuiContext"), "Drawing surface exposes a MUI host callback");
-        check(Table.Cell.class.getDeclaredMethod("draw", DrawContext.class, Object.class,
+        check(Table.Cell.class.getMethod("draw", DrawContext.class, Object.class,
                 io.github.luyingyilong.ore.layout.Rect.class) != null, "Cell drawing shares the same context");
         int[] shortcuts = {0};
         io.github.luyingyilong.ore.debug.DebugBridge.setHostShortcut((key, scan) -> { shortcuts[0]++; return true; });

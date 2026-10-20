@@ -129,5 +129,16 @@
   "gallery.ore.group.actions": "交互",
   "gallery.ore.group.input": "输入与表单",
   "gallery.ore.group.data": "数据",
-  "gallery.ore.group.overlays": "弹层"
+  "gallery.ore.group.overlays": "弹层",
+  "gallery.ore.description.radio": "从一组选项中选择一项，图标和焦点样式支持主题配置",
+  "gallery.ore.sample.radio_standalone": "独立单选项",
+  "gallery.ore.sample.radio_angle": "图标角度：%s°",
+  "gallery.ore.sample.radio_choice": "单选项",
+  "gallery.ore.sample.button_type.dark": "深色",
+  "gallery.ore.sample.collapse_title": "详细信息",
+  "gallery.ore.sample.collapse_secondary": "可选的次要说明",
+  "gallery.ore.sample.collapse_body": "可展开和折叠的内容区域，保留其中控件和编辑状态。",
+  "gallery.ore.sample.collapse_long_title": "这是一段用于展示窄视口省略效果的较长标题",
+  "gallery.ore.sample.collapse_nested": "嵌套面板",
+  "gallery.ore.description.collapse": "折叠和展开一组内容，保留其中控件的状态。"
 }

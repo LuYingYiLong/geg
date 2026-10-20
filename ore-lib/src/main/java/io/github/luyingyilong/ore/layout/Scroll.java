@@ -15,6 +15,8 @@ import java.util.Objects;
  * Clips and scrolls one child; layout containers do not own scroll offsets.
  */
 public final class Scroll extends Container {
+    @Override protected boolean requiresAxisAlignedClip() { return true; }
+
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Scroll"); }
     private static final int BAR_SIZE = 6;
     private static final int TRACK_INSET = 2;
@@ -276,7 +278,7 @@ public final class Scroll extends Container {
     }
 
     @Override
-    public void draw(DrawContext context, int screenX, int screenY) {
+    protected void drawContent(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
@@ -321,13 +323,13 @@ public final class Scroll extends Container {
     }
 
     @Override
-    public Control hitTop(int rootX, int rootY) {
+    protected Control hitTestTree(int rootX,int rootY,int windowX,int windowY) {
         if (!hit(rootX, rootY)) return null;
         if (showVertical && verticalBar.hit(rootX, rootY)) return verticalBar;
         if (showHorizontal && horizontalBar.hit(rootX, rootY)) return horizontalBar;
         if (!viewport.translated(getAbsoluteBounds().x(), getAbsoluteBounds().y()).contains(rootX, rootY))
             return this;
-        Control hit = content == null ? null : content.hitTop(rootX + getScrollX(), rootY + getScrollY());
+        Control hit = content == null ? null : content.hitTop(windowX,windowY);
         return hit == null ? this : hit;
     }
 

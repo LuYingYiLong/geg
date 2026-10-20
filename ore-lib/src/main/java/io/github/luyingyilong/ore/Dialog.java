@@ -43,7 +43,7 @@ public final class Dialog extends Container {
             .setChild(header);
     private final Label titleLabel = new Label().setThemeTypeVariation("LabelHero").setOpticalCenter(true).setOverflow(Label.Overflow.CLIP)
             .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
-    private final Button close = new Button().setSize(Button.Size.SMALL).setType(Button.Type.TEXT)
+    private final Button close = new Button().setSize(Button.Size.SMALL).setThemeTypeVariation("TextButton")
             .setIcon(TextureSource.themed(CLOSE_ICON));
     private final Box footer = new Box().setOrientation(Box.Orientation.VERTICAL).setGap(BUTTON_GAP);
     private final Padding footerInset = new Padding(new Padding.Insets(SECTION_SPACING, PADDING, PADDING, PADDING))
@@ -245,7 +245,7 @@ public final class Dialog extends Container {
     }
 
     @Override
-    public void draw(DrawContext context, int screenX, int screenY) {
+    protected void drawContent(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             if (!isAlive()) return;
@@ -256,7 +256,7 @@ public final class Dialog extends Container {
             graphics.pose().pushPose();
             graphics.pose().translate(0.0F, 0.0F, depth);
             try {
-                super.draw(context, screenX, screenY);
+                super.drawContent(context, screenX, screenY);
                 graphics.flush();
             } finally {
                 graphics.pose().popPose();
