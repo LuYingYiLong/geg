@@ -58,9 +58,19 @@ public final class GalleryLayoutTest {
         view.select("button");
         check(previous.isQueuedForDeletion() && !view.getSample().isQueuedForDeletion(),"Only replaced sample is queued");
         for(int i=0;i<5;i++){view.select("label");view.select("box");}
+        view.select("slider");
+        for (int width : new int[]{127, 128, 129, 480}) {
+            view.setPreviewWidth(width == 480 ? 0 : width);
+            view.getWindow().layoutViewport(width, 240, font);
+            check(countSliders(view.getSample()) == 7, "Slider gallery includes every mode and typed form fields");
+        }
         view.getWindow().queueFree();LifecycleScheduler.flush();
         check(view.getWindow().isDisposed(),"Gallery lifetime ends cleanly");
         System.out.println("ORE_GALLERY_LAYOUT_PASS");
+    }
+    private static int countSliders(Control node) {
+        return (node instanceof io.github.luyingyilong.ore.Slider ? 1 : 0)
+                + node.getChildren().stream().mapToInt(GalleryLayoutTest::countSliders).sum();
     }
     private static void check(boolean value,String message){if(!value)throw new AssertionError(message);}
 }

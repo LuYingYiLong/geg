@@ -26,6 +26,7 @@ public final class GalleryCatalog {
             entry("descriptions", "display", "Descriptions", Descriptions.class, DescriptionItem.class),
             entry("button", "actions", "Button", Button.class), entry("checkbox", "actions", "Checkbox", Checkbox.class),
             entry("radio", "actions", "Radio / RadioGroup", Radio.class), entry("switch", "actions", "Switch", Switch.class), entry("segmented", "actions", "Segmented", Segmented.class),
+            entry("slider", "input", "Slider", Slider.class),
             entry("dropdown", "actions", "Dropdown", Dropdown.class), entry("menu", "actions", "Menu", Menu.class),
             entry("navbar", "actions", "Navbar", Navbar.class), entry("collapse", "actions", "Collapse", Collapse.class),
             entry("input", "input", "Input", Input.class, InputControl.class), entry("number", "input", "NumberInput", NumberInput.class),

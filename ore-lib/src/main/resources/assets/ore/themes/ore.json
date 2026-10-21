@@ -432,19 +432,85 @@
     "location": "ore:icons/switch_base_disabled"
   },
   "Switch:button_normal": {
-    "location": "ore:icons/switch_button_normal"
+    "location": "ore:icons/grabber_normal"
   },
   "Switch:button_hovered": {
-    "location": "ore:icons/switch_button_hover"
+    "location": "ore:icons/grabber_hover"
   },
   "Switch:button_pressed": {
-    "location": "ore:icons/switch_button_pressed"
+    "location": "ore:icons/grabber_pressed"
   },
   "Switch:button_disabled": {
-    "location": "ore:icons/switch_button_disabled"
+    "location": "ore:icons/grabber_disabled"
   },
   "Spin:texture": {
     "location": "ore:icons/loading"
+  },
+  "Slider:slider": {
+    "location": "ore:gui/slider",
+    "imageWidth": 6,
+    "imageHeight": 6,
+    "x": 0,
+    "y": 0,
+    "width": 6,
+    "height": 6,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 2,
+      "borderRight": 2,
+      "borderBottom": 2
+    }
+  },
+  "Slider:slider_disabled": {
+    "location": "ore:gui/slider_disabled",
+    "imageWidth": 6,
+    "imageHeight": 6,
+    "x": 0,
+    "y": 0,
+    "width": 6,
+    "height": 6,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 2,
+      "borderRight": 2,
+      "borderBottom": 2
+    }
+  },
+  "Slider:grabber_area": {
+    "location": "ore:gui/grabber_area",
+    "imageWidth": 6,
+    "imageHeight": 6,
+    "x": 0,
+    "y": 0,
+    "width": 6,
+    "height": 6,
+    "style": "texture",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 2,
+      "borderRight": 2,
+      "borderBottom": 2
+    }
+  },
+  "Slider:grabber_normal": {
+    "location": "ore:icons/grabber_normal"
+  },
+  "Slider:grabber_hovered": {
+    "location": "ore:icons/grabber_hover"
+  },
+  "Slider:grabber_pressed": {
+    "location": "ore:icons/grabber_pressed"
+  },
+  "Slider:grabber_disabled": {
+    "location": "ore:icons/grabber_disabled"
+  },
+  "Slider:tick": {
+    "location": "ore:icons/tick"
+  },
+  "Slider:tick_disabled": {
+    "location": "ore:icons/tick_disabled"
   },
   "Control:focus": {
     "style": "flat",

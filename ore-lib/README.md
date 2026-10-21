@@ -242,3 +242,5 @@ Grid／Table／Tree 只把活动缓冲实例加入普通 children，并按数据
 变换、主题化焦点和 Radio／RadioGroup 的接口见 [说明](docs/transforms-radio-focus.md)。
 
 [Collapse 与按钮主题变体](docs/collapse-buttons.md)
+
+[Slider 单值与范围输入](docs/slider.md)

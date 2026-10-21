@@ -37,13 +37,16 @@ public final class SwitchTest {
         check(!toggle.hit(10, 20) && toggle.hit(36, 32), "Extra allocation is not clickable");
         toggle.setChecked(true);
         now.addAndGet(240L);
-        check(toggle.thumbBounds().equals(new Rect(50, 32, 14, 15)), "On thumb travels exactly fourteen pixels");
+        check(toggle.thumbBounds().equals(new Rect(49, 32, 14, 15)), "On thumb travels exactly thirteen pixels");
         check(toggle.thumbBounds().bottom() == toggle.baseBounds().bottom(), "Bottoms match");
         check(toggle.getFocusBounds().equals(toggle.thumbBounds()) && toggle.getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.FOCUS).getExpandMargin().left() == 1, "Thumb focus");
         check(new Switch(true).getChecked(), "Initial value constructor");
+        for (var key : List.of(Switch.BUTTON_NORMAL, Switch.BUTTON_HOVERED, Switch.BUTTON_PRESSED, Switch.BUTTON_DISABLED))
+            check(SwitchTest.class.getResource("/assets/ore/" + key.defaultValue().getTexture().getPath()) != null,
+                    "Shared thumb fallback points to an existing texture");
 
-        for (String name : List.of("switch_base", "switch_base_disabled", "switch_button_normal",
-                "switch_button_hover", "switch_button_pressed", "switch_button_disabled")) {
+        for (String name : List.of("switch_base", "switch_base_disabled", "grabber_normal",
+                "grabber_hover", "grabber_pressed", "grabber_disabled")) {
             try (var input = new DataInputStream(java.util.Objects.requireNonNull(SwitchTest.class.getResourceAsStream(
                     "/assets/ore/textures/icons/" + name + ".png")))) {
                 input.skipNBytes(16);
@@ -59,9 +62,9 @@ public final class SwitchTest {
         toggle.setChecked(true);
         check(toggle.offsetAt(now.get()) == 0.0, "No initial jump");
         for (int i = 0; i <= 240; i++)
-            check(toggle.offsetAt(2_000L + i) >= 0.0 && toggle.offsetAt(2_000L + i) <= 14.0, "Bounce remains in bounds");
+            check(toggle.offsetAt(2_000L + i) >= 0.0 && toggle.offsetAt(2_000L + i) <= 13.0, "Bounce remains in bounds");
         check(toggle.offsetAt(2_090L) > toggle.offsetAt(2_130L), "Visible rebound");
-        check(toggle.offsetAt(2_240L) == 14.0 && toggle.offsetAt(3_000L) == 14.0, "Settles exactly");
+        check(toggle.offsetAt(2_240L) == 13.0 && toggle.offsetAt(3_000L) == 13.0, "Settles exactly");
         now.set(2_070L);
         double before = toggle.offsetAt(now.get());
         toggle.setChecked(true);
@@ -74,7 +77,7 @@ public final class SwitchTest {
         now.addAndGet(240L);
         check(toggle.offsetAt(now.get()) == 0.0, "Reverse settles exactly");
         toggle.setAnimationDuration(0L).setChecked(true);
-        check(toggle.offsetAt(now.get()) == 14.0, "Animation may be disabled");
+        check(toggle.offsetAt(now.get()) == 13.0, "Animation may be disabled");
         try { toggle.setAnimationDuration(-1L); throw new AssertionError("Negative duration accepted"); }
         catch (IllegalArgumentException expected) { }
         check(toggle.getAnimationDuration() == 0L, "Invalid duration preserves previous setting");
@@ -116,7 +119,7 @@ public final class SwitchTest {
         io.github.luyingyilong.ore.event.WindowInputs.keyUp(window,GLFW.GLFW_KEY_SPACE, 0, null);
         now.addAndGet(240L);
         check(toggle.getChecked() && events.size() == 3, "Keyboard activation once");
-        check(window.getFocusManager().getOutlineBounds().equals(new Rect(23, 9, 16, 17)), "Focus follows moving thumb");
+        check(window.getFocusManager().getOutlineBounds().equals(new Rect(22, 9, 16, 17)), "Focus follows moving thumb");
 
         events.clear();
         io.github.luyingyilong.ore.event.WindowInputs.press(window,11, 11, null);

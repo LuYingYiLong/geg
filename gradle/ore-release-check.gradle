@@ -15,6 +15,11 @@ tasks.register('verifyOreRelease') {
              'io/github/luyingyilong/ore/theme/ThemeDB.class',
              'io/github/luyingyilong/ore/theme/StyleBox.class',
              'io/github/luyingyilong/ore/TextureRect.class',
+             'io/github/luyingyilong/ore/Slider.class',
+             'io/github/luyingyilong/ore/Slider$RangeValue.class',
+             'assets/ore/textures/gui/slider.png', 'assets/ore/textures/gui/slider_disabled.png',
+             'assets/ore/textures/gui/grabber_area.png', 'assets/ore/textures/icons/grabber_normal.png',
+             'assets/ore/textures/icons/tick.png',
              'io/github/luyingyilong/ore/render/TextureRegion.class',
              'io/github/luyingyilong/ore/render/TextureSource.class',
              'io/github/luyingyilong/ore/render/TexturePainter.class',
@@ -54,6 +59,8 @@ tasks.register('verifyOreRelease') {
                 it == 'io/github/luyingyilong/ore/theme/OreTrueTypeGlyphProvider.class' ||
                 it == 'io/github/luyingyilong/ore/mixin/TrueTypeGlyphProviderDefinitionMixin.class' ||
                 it.startsWith('text-fonts/') || it.startsWith('icyllis/modernui/') ||
+                it ==~ /assets\/ore\/textures\/gui\/silder[^\/]*\.(png|aseprite)/ ||
+                it ==~ /assets\/ore\/textures\/icons\/switch_button_[^\/]*\.(png|aseprite)/ ||
                 it ==~ /assets\/ore\/textures\/icons\/(email|email_readed|gift|gift_opened|flag|org)\.(png|aseprite)/ ||
                 it.startsWith('assets/ore_inspector/') || it.startsWith('assets/ore_gallery/') ||
                 it.startsWith('io/github/luyingyilong/ore/gallery/') ||

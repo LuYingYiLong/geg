@@ -41,6 +41,14 @@ public final class FormFields {
     public static FormField<Boolean> switchField(Switch control) {
         return custom(Boolean.class, control, control::getChecked, control::setCheckedNoSignal, control.toggled());
     }
+    public static FormField<Double> slider(Slider control) {
+        if (control.getRange()) throw new IllegalArgumentException("Use sliderRange() for range mode");
+        return custom(Double.class, control, control::getValue, control::setValueNoSignal, control.valueChanged());
+    }
+    public static FormField<Slider.RangeValue> sliderRange(Slider control) {
+        if (!control.getRange()) throw new IllegalArgumentException("Use slider() for scalar mode");
+        return custom(Slider.RangeValue.class, control, control::getRangeValue, control::setRangeValueNoSignal, control.rangeChanged());
+    }
     public static <T> FormField<T> dropdown(Class<T> type, Dropdown<T> control) {
         return custom(type, control, control::getSelected, control::setSelectedNoSignal, control.selectionChanged());
     }

@@ -178,6 +178,7 @@ public final class OreTheme {
         io.github.luyingyilong.ore.Radio.registerTheme(db);
         io.github.luyingyilong.ore.Spin.registerTheme(db);
         io.github.luyingyilong.ore.Switch.registerTheme(db);
+        io.github.luyingyilong.ore.Slider.registerTheme(db);
         io.github.luyingyilong.ore.Segmented.registerTheme(db);
         io.github.luyingyilong.ore.Dialog.registerTheme(db);
         io.github.luyingyilong.ore.Modal.registerTheme(db);

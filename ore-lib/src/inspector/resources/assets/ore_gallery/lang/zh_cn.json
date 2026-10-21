@@ -143,5 +143,17 @@
   "gallery.ore.description.collapse": "折叠和展开一组内容，保留其中控件的状态。",
   "gallery.ore.sample.text_shadow": "文字阴影",
   "gallery.ore.sample.text_shaping": "Minecraft 中文（English）é / العربية / עברית / नमस्ते / ภาษาไทย / 👩🏽‍💻 🇨🇳",
-  "gallery.ore.sample.text_multilingual": "Noto Sans — 多语种"
+  "gallery.ore.sample.text_multilingual": "Noto Sans — 多语种",
+  "gallery.ore.description.slider": "在数值范围内选择单个值或一个区间",
+  "gallery.ore.sample.slider_single": "单值选择",
+  "gallery.ore.sample.slider_range": "双滑块范围选择",
+  "gallery.ore.sample.slider_reverse": "反向坐标",
+  "gallery.ore.sample.slider_decimal": "小数步长",
+  "gallery.ore.sample.slider_disabled": "禁用范围选择",
+  "gallery.ore.sample.slider_min": "最小",
+  "gallery.ore.sample.slider_middle": "中间",
+  "gallery.ore.sample.slider_max": "最大",
+  "gallery.ore.sample.slider_form_value": "音量",
+  "gallery.ore.sample.slider_form_range": "区间",
+  "gallery.ore.sample.slider_form_error": "请选择不小于 20 的值"
 }

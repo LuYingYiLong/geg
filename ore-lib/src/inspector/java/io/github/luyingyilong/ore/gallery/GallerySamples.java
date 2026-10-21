@@ -176,6 +176,31 @@ final class GallerySamples {
                 root.addChild(badges);
             }
             case "spin" -> root.addChild(new Spin());
+            case "slider" -> {
+                root.addChild(label("slider_single"));
+                Slider single = new Slider().setValueNoSignal(35).setShowTicks(true).setStepNoSignal(5);
+                root.addChild(single);
+                root.addChild(label("slider_range"));
+                root.addChild(new Slider().setRangeNoSignal(true).setRangeValueNoSignal(new Slider.RangeValue(25, 75))
+                        .setMarks(java.util.Map.of(0.0, text("slider_min"), 50.0, text("slider_middle"), 100.0, text("slider_max"))));
+                root.addChild(label("slider_reverse"));
+                root.addChild(new Slider().setValueNoSignal(65).setReverse(true));
+                root.addChild(label("slider_decimal"));
+                root.addChild(new Slider().setLimitsNoSignal(-1, 1).setStepNoSignal(0.1).setValueNoSignal(0.3).setShowTicks(true));
+                root.addChild(label("slider_disabled"));
+                root.addChild(new Slider().setRangeNoSignal(true).setRangeValueNoSignal(new Slider.RangeValue(20, 80)).setDisabled(true));
+                FieldKey<Double> volume = new FieldKey<>("volume", Double.class);
+                FieldKey<Slider.RangeValue> interval = new FieldKey<>("interval", Slider.RangeValue.class);
+                Form form = new Form();
+                form.addItem(new FormItem<>(volume, text("slider_form_value"), FormFields.slider(new Slider().setValueNoSignal(40)))
+                        .addValidator(value -> value >= 20 ? java.util.Optional.empty() : java.util.Optional.of(text("slider_form_error"))));
+                form.addItem(new FormItem<>(interval, text("slider_form_range"), FormFields.sliderRange(new Slider().setRangeNoSignal(true)
+                        .setRangeValueNoSignal(new Slider.RangeValue(20, 60)))));
+                form.setVisible(true);
+                root.addChild(form);
+                root.addChild(button("validate", () -> form.validate()));
+                root.addChild(button("reset", form::reset));
+            }
             case "divider" -> {
                 root.addChild(label("horizontal_divider"));
                 root.addChild(new Divider());

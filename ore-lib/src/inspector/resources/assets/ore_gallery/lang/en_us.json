@@ -143,5 +143,17 @@
   "gallery.ore.description.collapse": "Shows or hides a retained content region with a height transition.",
   "gallery.ore.sample.text_shadow": "Text shadow",
   "gallery.ore.sample.text_shaping": "Minecraft 中文（English）é / العربية / עברית / नमस्ते / ภาษาไทย / 👩🏽‍💻 🇨🇳",
-  "gallery.ore.sample.text_multilingual": "Noto Sans — Multilingual"
+  "gallery.ore.sample.text_multilingual": "Noto Sans — Multilingual",
+  "gallery.ore.description.slider": "Selects a value or an interval within a numeric range",
+  "gallery.ore.sample.slider_single": "Single value",
+  "gallery.ore.sample.slider_range": "Range with crossing thumbs",
+  "gallery.ore.sample.slider_reverse": "Reversed direction",
+  "gallery.ore.sample.slider_decimal": "Decimal steps",
+  "gallery.ore.sample.slider_disabled": "Disabled range",
+  "gallery.ore.sample.slider_min": "Minimum",
+  "gallery.ore.sample.slider_middle": "Middle",
+  "gallery.ore.sample.slider_max": "Maximum",
+  "gallery.ore.sample.slider_form_value": "Volume",
+  "gallery.ore.sample.slider_form_range": "Interval",
+  "gallery.ore.sample.slider_form_error": "Choose a value of at least 20"
 }
