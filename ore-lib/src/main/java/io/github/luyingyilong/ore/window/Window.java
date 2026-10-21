@@ -10,6 +10,7 @@ import io.github.luyingyilong.ore.event.CancelEvent;
 import io.github.luyingyilong.ore.event.EventGeometry;
 import io.github.luyingyilong.ore.event.InputEvent;
 import io.github.luyingyilong.ore.event.KeyEvent;
+import io.github.luyingyilong.ore.event.TextInputEvent;
 import io.github.luyingyilong.ore.event.PointerEvent;
 import io.github.luyingyilong.ore.event.ScrollEvent;
 
@@ -43,6 +44,8 @@ public final class Window extends Container {
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) { io.github.luyingyilong.ore.theme.OreTheme.registerType(db,"Window"); }
     private final boolean fullscreen;
     private final FocusManager focusManager = new FocusManager(this);
+    private final HostInputState hostInputState = new HostInputState(this);
+    private boolean discardRepeatedText;
     private boolean animationsActive;
     public boolean getAnimationsActive() { return animationsActive; }
     private final SignalSource0 closed = new SignalSource0(this, "closed");
@@ -74,6 +77,7 @@ public final class Window extends Container {
         host = new EmbeddedWindowHost();
         host.getContext().setOwner(this);
         getSignalScope().own(this::releaseHost);
+        getSignalScope().own(hostInputState::clear);
     }
 
     public static Window embedded() {
@@ -106,6 +110,8 @@ public final class Window extends Container {
     public WindowContext getContext() {
         return host.getContext();
     }
+
+    HostInputState hostInputState() { return hostInputState; }
 
     public Window open() {
         if (!isAlive()) throw new IllegalStateException("Cannot open a pending/freed window");
@@ -261,7 +267,21 @@ public final class Window extends Container {
             throw new IllegalStateException("Input must run on the client thread");
         if (dispatching != null) throw new IllegalStateException("Reentrant input dispatch");
         try (var lifecycleGuard = DispatchGuard.enter(); var ignored = getContext().enter(); var trace = SignalDiagnostics.suppress(!inspectable)) {
+            if (host instanceof EmbeddedWindowHost) WindowManager.synchronizeEmbedded(this);
+            if (!isAlive() || isSuspended()) return false;
             dispatching = event;
+            boolean orphanRepeat = event instanceof KeyEvent key && key.action() == KeyEvent.Action.REPEAT
+                    && !getContext().keyDown(key.keyCode());
+            if (orphanRepeat) discardRepeatedText = true;
+            else if (event instanceof KeyEvent key && key.action() != KeyEvent.Action.REPEAT
+                    || event instanceof PointerEvent pointer && pointer.action() == PointerEvent.Action.PRESS)
+                discardRepeatedText = false;
+            if (!(event instanceof CancelEvent) && (!hostInputState.isActive() || orphanRepeat
+                    || event instanceof TextInputEvent && discardRepeatedText)) {
+                event.begin(this);
+                event.accept();
+                return true;
+            }
             if (inspectable && event instanceof KeyEvent shortcut && shortcut.action() == KeyEvent.Action.PRESS
                     && DebugBridge.handleHostShortcut(shortcut.keyCode(), shortcut.scanCode())) {
                 event.begin(this);
@@ -468,9 +488,28 @@ public final class Window extends Container {
     }
 
     private void cancelPointer() {
+        cancelPointer(CancelEvent.Reason.LOST_FOCUS);
+    }
+
+    private void cancelPointer(CancelEvent.Reason reason) {
         var captured = List.copyOf(pointerCaptures.values());
         pointerCaptures.clear();
-        for (Control target : captured) cancelTarget(target, CancelEvent.Reason.LOST_FOCUS);
+        for (Control target : captured) cancelTarget(target, reason);
+    }
+
+    /** A new host coordinate space invalidates gestures without blurring or committing a field. */
+    void cancelHostGestures() {
+        try (var phase = DispatchGuard.enter()) {
+            Control focused = focusManager.getFocused();
+            boolean capturedFocus = pointerCaptures.containsValue(focused);
+            if (hostInputHandler != null) hostInputHandler.cancel();
+            cancelPointer(CancelEvent.Reason.HOST_GEOMETRY);
+            if (focused != null && focused.isAlive() && !capturedFocus)
+                cancelTarget(focused, CancelEvent.Reason.HOST_GEOMETRY);
+            focusManager.resetInput();
+            getContext().clearInput();
+            discardRepeatedText = false;
+        }
     }
 
     @Override
@@ -480,6 +519,7 @@ public final class Window extends Container {
         cancelPointer();
         focusManager.resetInput();
         getContext().clearInput();
+        discardRepeatedText = false;
     }
 
     public void layoutViewport(int width, int height, Font font) {
@@ -526,6 +566,7 @@ public final class Window extends Container {
     protected void drawContent(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         if (!getVisible()) return;
+        if (context.getViewport().width() < 1 || context.getViewport().height() < 1) return;
 
         this.getContext().setOrigin(screenX, screenY);
         if (host instanceof EmbeddedWindowHost embedded) {

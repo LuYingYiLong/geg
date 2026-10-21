@@ -60,6 +60,8 @@ public class Input extends TextFieldWidget implements SignalOwner {
     private int silentTextDepth;
     private int textMutationDepth;
     private boolean signalFocused;
+    private boolean hostFocusSuspending;
+    private boolean hostFocusSuspended;
     private String observedText = "";
     private InputControl layoutControl;
     private boolean routingInput;
@@ -260,6 +262,26 @@ public class Input extends TextFieldWidget implements SignalOwner {
         clearPreeditDisplay();
     }
 
+    final void suspendHostFocus() {
+        if (!isValid() || !isFocused()) return;
+        hostFocusSuspending = true;
+        hostFocusSuspended = true;
+        try {
+            cancelHostGesture();
+            getContext().removeFocus();
+        }
+        finally { hostFocusSuspending = false; }
+    }
+
+    protected final boolean isHostFocusSuspending() { return hostFocusSuspending; }
+
+    final void cancelHostGesture() {
+        pendingHighSurrogate = 0;
+        editingHandler().endEditGroup();
+        getScrollArea().mouseReleased(0, 0);
+        cancelPreedit();
+    }
+
     void clearPreeditDisplay() {
         ((OreTextFieldRenderer) renderer).preedit(InputPreedit.EMPTY);
     }
@@ -324,7 +346,8 @@ public class Input extends TextFieldWidget implements SignalOwner {
     @Override
     public void onUpdate() {
         if (layoutControl != null) layoutControl.syncWidgetArea();
-        super.onUpdate();
+        // An inactive MUI field otherwise reloads its last committed value over the draft.
+        if (!hostFocusSuspended) super.onUpdate();
     }
 
     public Input setTabNavigation(IntPredicate navigation) {
@@ -335,6 +358,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
 
     @Override
     public void onFocus(ModularGuiContext context) {
+        hostFocusSuspended = false;
         editingHandler().endEditGroup();
         super.onFocus(context);
         OreInputMethod.focus(this);
@@ -349,7 +373,8 @@ public class Input extends TextFieldWidget implements SignalOwner {
         pendingHighSurrogate = 0;
         editingHandler().endEditGroup();
         OreInputMethod.release(this);
-        removeNativeFocus(context);
+        if (hostFocusSuspending) renderer.setCursor(false);
+        else removeNativeFocus(context);
         if (signalFocused) {
             signalFocused = false;
             focusExited.emit();

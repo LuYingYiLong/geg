@@ -17,10 +17,6 @@ public final class WindowManager {
     private static boolean previousPause;
     private static long lastRender;
     private static java.lang.ref.WeakReference<io.github.luyingyilong.ore.window.Window> embedded = new java.lang.ref.WeakReference<>(null);
-    private static io.github.luyingyilong.ore.window.Window suspended;
-    private static io.github.luyingyilong.ore.control.base.Control embeddedFocus;
-    private static net.minecraft.client.gui.screens.Screen embeddedScreen;
-    private static boolean mainFocused = true;
 
     private WindowManager() {
     }
@@ -28,25 +24,39 @@ public final class WindowManager {
     public static void embedded(io.github.luyingyilong.ore.window.Window root) {
         io.github.luyingyilong.ore.window.screen.OreScreen.attachRoot(root);
         embedded = new java.lang.ref.WeakReference<>(root);
-        embeddedScreen = Minecraft.getInstance().screen;
+        synchronizeEmbedded(root);
     }
 
     private static void embeddedFocus() {
-        var mc = Minecraft.getInstance();
         var root = embedded.get();
-        boolean focused = org.lwjgl.glfw.GLFW.glfwGetWindowAttrib(mc.getWindow().getWindow(), org.lwjgl.glfw.GLFW.GLFW_FOCUSED) != 0;
-        if (!focused && root != null && (mainFocused || suspended != root) && root.getContext().getMui() != null) {
-            suspended = root;
-            embeddedFocus = root.getFocusManager().getFocused();
-            root.cancelInteractions();
-            if (root.getContext().getMui().isFocused()) root.getContext().getMui().removeFocus();
-            io.github.luyingyilong.ore.control.input.OreInputMethod.releaseWindow(root.getContext());
-        } else if (focused && !mainFocused && root != null && root == suspended && mc.screen == embeddedScreen && embeddedFocus != null) {
-            root.getFocusManager().requestFocus(embeddedFocus, root.getContext().getMui());
-            suspended = null;
-            embeddedFocus = null;
-        }
-        mainFocused = focused;
+        if (root != null) synchronizeEmbedded(root);
+    }
+
+    /** MUI's keyPressed callback loses GLFW's PRESS/REPEAT distinction. Reject stale repeats before that conversion. */
+    public static boolean rejectEmbeddedRepeat(long handle, int key, int scan, int action, int modifiers) {
+        var mc = Minecraft.getInstance();
+        if (action != org.lwjgl.glfw.GLFW.GLFW_REPEAT || mc == null || handle != mc.getWindow().getWindow()
+                || !(mc.screen instanceof io.github.luyingyilong.ore.window.screen.OreScreen screen)) return false;
+        var roots = screen.getWindows().stream().filter(root -> root.isAlive() && !root.isSuspended()).toList();
+        if (roots.isEmpty()) return false;
+        for (Window root : roots) synchronizeEmbedded(root);
+        if (roots.stream().anyMatch(root -> root.getContext().keyDown(key))) return false;
+        for (Window root : roots)
+            root.dispatchInput(new io.github.luyingyilong.ore.event.KeyEvent(root.getContext(),
+                    io.github.luyingyilong.ore.event.KeyEvent.Action.REPEAT, key, scan, modifiers));
+        return true;
+    }
+
+    static void synchronizeEmbedded(Window root) {
+        var mc = Minecraft.getInstance();
+        if (mc == null || !root.isAlive() || root.isSuspended()) return;
+        var main = mc.getWindow();
+        boolean focused = org.lwjgl.glfw.GLFW.glfwGetWindowAttrib(main.getWindow(), org.lwjgl.glfw.GLFW.GLFW_FOCUSED) != 0;
+        boolean drawable = main.getScreenWidth() > 0 && main.getScreenHeight() > 0 && main.getWidth() > 0 && main.getHeight() > 0
+                && Double.isFinite(main.getGuiScale()) && main.getGuiScale() > 0
+                && org.lwjgl.glfw.GLFW.glfwGetWindowAttrib(main.getWindow(), org.lwjgl.glfw.GLFW.GLFW_ICONIFIED) == 0;
+        root.hostInputState().update(focused, drawable, main.getScreenWidth(), main.getScreenHeight(), main.getWidth(), main.getHeight(),
+                main.getGuiScale(), main.isFullscreen());
     }
 
     static void add(NativeWindowHost host) {
@@ -115,8 +125,5 @@ public final class WindowManager {
         io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
         io.github.luyingyilong.ore.text.TextRenderer.clear();
         embedded.clear();
-        suspended = null;
-        embeddedFocus = null;
-        embeddedScreen = null;
     }
 }

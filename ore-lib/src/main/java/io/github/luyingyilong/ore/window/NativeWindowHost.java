@@ -8,7 +8,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexSorting;
 import io.github.luyingyilong.ore.control.input.InputControl;
 import io.github.luyingyilong.ore.control.input.OreInputMethod;
-import io.github.luyingyilong.ore.control.base.Control;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import org.joml.Matrix4f;
@@ -38,8 +37,7 @@ public final class NativeWindowHost implements WindowHost {
     private NativeImeContext ime;
     private TextureTarget target;
     private ModularScreen screen;
-    private Control retainedFocus;
-    private boolean closing, dirty = true;
+    private boolean closing, dirty = true, drawable = true;
     private double pointerX, pointerY;
 
     public NativeWindowHost(WindowOptions options) {
@@ -136,6 +134,7 @@ public final class NativeWindowHost implements WindowHost {
             installCallbacks();
             inputHost = new MuiInputHost(context, null, this::isOpen, root::close);
             screen = inputHost.getScreen();
+            root.hostInputState().setFocused(GLFW.glfwGetWindowAttrib(handle, GLFW.GLFW_FOCUSED) != 0);
             prepareInputs();
             WindowManager.add(this);
             GLFW.glfwShowWindow(handle);
@@ -197,7 +196,8 @@ public final class NativeWindowHost implements WindowHost {
     private void key(int key, int scan, int action, int mods) {
         if (!context.getFocused()) return;
         var mui = screen.getContext();
-        mui.updateKey(key, scan, mods, action != GLFW.GLFW_RELEASE);
+        if (action != GLFW.GLFW_REPEAT || context.keyDown(key))
+            mui.updateKey(key, scan, mods, action != GLFW.GLFW_RELEASE);
         io.github.luyingyilong.ore.event.WindowInputs.key(root,
                 action == GLFW.GLFW_RELEASE ? io.github.luyingyilong.ore.event.KeyEvent.Action.RELEASE :
                         action == GLFW.GLFW_REPEAT ? io.github.luyingyilong.ore.event.KeyEvent.Action.REPEAT : io.github.luyingyilong.ore.event.KeyEvent.Action.PRESS,
@@ -206,17 +206,7 @@ public final class NativeWindowHost implements WindowHost {
     }
 
     private void focusChanged(boolean focused) {
-        if (!focused) {
-            retainedFocus = root.getFocusManager().getFocused();
-            root.cancelInteractions();
-            if (screen.getContext().isFocused()) screen.getContext().removeFocus();
-            OreInputMethod.releaseWindow(context);
-            context.setFocused(false);
-        } else {
-            context.setFocused(true);
-            if (retainedFocus != null && retainedFocus.getVisible())
-                root.getFocusManager().requestFocus(retainedFocus, screen.getContext());
-        }
+        root.hostInputState().setFocused(focused);
         dirty = true;
     }
 
@@ -231,8 +221,10 @@ public final class NativeWindowHost implements WindowHost {
             GLFW.glfwGetWindowSize(handle, w, h);
             GLFW.glfwGetFramebufferSize(handle, fw, fh);
             GLFW.glfwGetWindowContentScale(handle, sx, sy);
-            if (w.get(0) < 1 || h.get(0) < 1 || fw.get(0) < 1 || fh.get(0) < 1) return;
-            context.setDimensions(w.get(0), h.get(0), fw.get(0), fh.get(0), WindowContext.nativePixelScale(options.guiScale(), sx.get(0)));
+            double scale = WindowContext.nativePixelScale(options.guiScale(), sx.get(0));
+            drawable = GLFW.glfwGetWindowAttrib(handle, GLFW.GLFW_ICONIFIED) == 0
+                    && context.trySetDimensions(w.get(0), h.get(0), fw.get(0), fh.get(0), scale);
+            root.hostInputState().updateViewport(drawable, w.get(0), h.get(0), fw.get(0), fh.get(0), scale, false);
         }
     }
 
@@ -252,7 +244,7 @@ public final class NativeWindowHost implements WindowHost {
             int count = 0;
             while (!events.isEmpty() && count++ < 512 && !closing) events.remove().run();
             if (closing) return;
-            if (GLFW.glfwGetWindowAttrib(handle, GLFW.GLFW_ICONIFIED) != 0) return;
+            if (!drawable) return;
             long now = System.nanoTime();
             boolean animate = root.getLayoutDirty() || root.getAnimationsActive() || root.getFocusManager().getNativeInputFocused();
             if (now - lastFrame < 33_333_333L || !dirty && !animate && now - lastFrame < 100_000_000L) return;

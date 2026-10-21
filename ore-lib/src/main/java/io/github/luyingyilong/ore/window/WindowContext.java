@@ -165,13 +165,24 @@ public final class WindowContext {
     }
 
     public void setDimensions(int width, int height, int framebufferWidth, int framebufferHeight, double scale) {
+        if (!trySetDimensions(width, height, framebufferWidth, framebufferHeight, scale))
+            throw new IllegalArgumentException("Invalid window dimensions: client=" + width + "x" + height
+                    + ", framebuffer=" + framebufferWidth + "x" + framebufferHeight + ", scale=" + scale);
+    }
+
+    /**
+     * Host callbacks can receive an undrawable size during minimization or a display transition.
+     * Leave the last valid geometry intact; the caller must skip the frame when this returns false.
+     */
+    public boolean trySetDimensions(int width, int height, int framebufferWidth, int framebufferHeight, double scale) {
         if (width < 1 || height < 1 || framebufferWidth < 1 || framebufferHeight < 1 || !Double.isFinite(scale) || scale <= 0)
-            throw new IllegalArgumentException("Invalid window dimensions");
+            return false;
         this.windowWidth = width;
         this.windowHeight = height;
         this.framebufferWidth = framebufferWidth;
         this.framebufferHeight = framebufferHeight;
         this.scale = scale;
+        return true;
     }
 
     public void setMouse(double clientX, double clientY) {

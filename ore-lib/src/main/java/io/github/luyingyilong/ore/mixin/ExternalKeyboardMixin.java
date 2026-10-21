@@ -11,6 +11,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ExternalKeyboardMixin {
     @Inject(method = {"keyPress", "m_90893_"}, at = @At("HEAD"), cancellable = true)
     private void ore$key(long window, int key, int scan, int action, int modifiers, CallbackInfo callback) {
+        if (io.github.luyingyilong.ore.window.WindowManager.rejectEmbeddedRepeat(window, key, scan, action, modifiers)) {
+            callback.cancel();
+            return;
+        }
         if (ScreenInputBridge.getEarlyRouting(window) && ScreenInputBridge.key(key, scan, action, modifiers, true)) callback.cancel();
     }
     @Inject(method = {"charTyped", "m_90889_"}, at = @At("HEAD"), cancellable = true)

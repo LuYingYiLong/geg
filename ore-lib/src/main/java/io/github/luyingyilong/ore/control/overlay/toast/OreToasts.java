@@ -42,7 +42,7 @@ public final class OreToasts {
     private static void draw(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         Minecraft minecraft = Minecraft.getInstance();
         var window = minecraft.getWindow();
-        CONTEXT.setDimensions(window.getScreenWidth(), window.getScreenHeight(), window.getWidth(), window.getHeight(), window.getGuiScale());
+        if (!CONTEXT.trySetDimensions(window.getScreenWidth(), window.getScreenHeight(), window.getWidth(), window.getHeight(), window.getGuiScale())) return;
         try (var phase = DispatchGuard.enter(); var scope = CONTEXT.enter();
              var context = new DrawContext(graphics, minecraft.font, CONTEXT,
                      new Rect(0, 0, window.getGuiScaledWidth(), window.getGuiScaledHeight()), mouseX, mouseY, partialTick)) {

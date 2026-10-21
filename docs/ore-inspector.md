@@ -106,6 +106,8 @@ public Label setFontSize(float value) {
 
 - `gradlew inspectorTest`：注解发现、真实 setter 预检、非法值、覆盖和历史回归。
 - `WindowLayoutTest`：窗口坐标／DPI、输入隔离、Splitter 拖动和 Tree 虚拟化。
+- `HostInputStateTest`：两类宿主的重复失焦、最小化恢复、全屏／尺寸变化取消捕获、重复键配对与窗口隔离。
+- `HostInputStateClientTest`：显式 `ore.host.input.smoke=true` 的隔离客户端测试，使用真实 GLFW 主窗口和 Inspector，检查 Input／TextArea／NumberInput 的草稿、选区、IME 清理与恢复，以及旧手势／重复键不能激活操作。IME 预编辑由测试连接注入，底层仍使用 Windows 输入法连接。
 - `NativeWindowClientTest`：显式 `geg.native.smoke=true` 的隔离客户端测试，覆盖双窗口、字符／多行输入、缩放、最小化、异常恢复和关闭。
 - `NativeInspectorClientTest`：显式 `geg.native.inspector.smoke=true` 的隔离客户端测试，覆盖原生前端、数百节点、属性编辑、拾取及四类业务目标。
 

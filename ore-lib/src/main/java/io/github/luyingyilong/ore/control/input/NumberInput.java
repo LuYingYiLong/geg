@@ -174,7 +174,7 @@ public final class NumberInput extends Input {
 
     @Override
     public void onRemoveFocus(ModularGuiContext context) {
-        commit();
+        if (!isHostFocusSuspending()) commit();
         super.onRemoveFocus(context);
     }
 

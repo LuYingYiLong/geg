@@ -95,7 +95,11 @@ public final class InputControl extends Control {
 
     @Override
     public void input(io.github.luyingyilong.ore.event.InputEvent event) {
-        if (event instanceof io.github.luyingyilong.ore.event.CancelEvent) {
+        if (event instanceof io.github.luyingyilong.ore.event.CancelEvent cancel) {
+            if (cancel.reason() == io.github.luyingyilong.ore.event.CancelEvent.Reason.HOST_GEOMETRY) {
+                widget.cancelHostGesture();
+                return;
+            }
             widget.cancelPreedit();
             super.input(event);
             return;
@@ -115,6 +119,11 @@ public final class InputControl extends Control {
         widget.cancelPreedit();
         if (widget.isValid() && widget.isFocused()) widget.getContext().removeFocus();
         OreInputMethod.release(widget);
+    }
+
+    /** Temporary host deactivation preserves the document and both selection endpoints. */
+    public void suspendHostFocus() {
+        widget.suspendHostFocus();
     }
 
     boolean layoutVisible() {

@@ -291,6 +291,76 @@
   "Segmented:selected_indicator_width_ratio": 0.33333334,
   "Segmented:selected_indicator_max_width": 16,
   "Segmented:selected_indicator_bottom_gap": 1,
+  "Tabs:normal": {
+    "style": "texture",
+    "location": "ore:gui/tabs/tab_normal",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 2,
+      "borderRight": 2,
+      "borderBottom": 4
+    }
+  },
+  "Tabs:hover": {
+    "style": "texture",
+    "location": "ore:gui/tabs/tab_hover",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 2,
+      "borderRight": 2,
+      "borderBottom": 4
+    }
+  },
+  "Tabs:pressed": {
+    "style": "texture",
+    "location": "ore:gui/tabs/tab_pressed",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 2,
+      "borderRight": 2,
+      "borderBottom": 2
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    },
+    "drawInset": {
+      "top": 2
+    },
+    "contentOffset": {
+      "x": 0,
+      "y": 2
+    }
+  },
+  "Tabs:selected": {
+    "style": "texture",
+    "location": "ore:gui/tabs/tab_selected",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 2,
+      "borderRight": 2,
+      "borderBottom": 2
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    },
+    "drawInset": {
+      "top": 2
+    },
+    "contentOffset": {
+      "x": 0,
+      "y": 2
+    }
+  },
+  "Tabs:selected_indicator": {
+    "style": "flat",
+    "color": "#FFFFFF"
+  },
   "Label:font_color": "#FFFFFFFF",
   "Label:font": "ore:ore",
   "Label:hero_font": "ore:ore_hero",

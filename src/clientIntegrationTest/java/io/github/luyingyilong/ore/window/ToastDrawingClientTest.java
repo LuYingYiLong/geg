@@ -153,8 +153,43 @@ public final class ToastDrawingClientTest {
         });
         Screen screen = new Screen(Component.literal("Toast test")) { };
         Matrix4f pose = new Matrix4f(graphics.pose().last().pose());
+        var main = Minecraft.getInstance().getWindow();
+        // Exercise the same logical-size callback that GLFW delivers while iconifying/resizing.
+        try {
+            var resize = com.mojang.blaze3d.platform.Window.class.getDeclaredMethod("onResize", long.class, int.class, int.class);
+            resize.setAccessible(true);
+            int width = main.getScreenWidth(), height = main.getScreenHeight();
+            try {
+                for (int[] size : new int[][]{{0, height}, {width, 0}, {0, 0}}) {
+                    resize.invoke(main, main.getWindow(), size[0], size[1]);
+                    OreToasts.screen(new ScreenEvent.Render.Post(screen, graphics, 0, 0, 0));
+                    check(paints.isEmpty() && borrowed[0] == null && toast.isAlive(),
+                            "GLFW zero client dimensions skip the Toast adapter and preserve its queued instance");
+                }
+            } finally { resize.invoke(main, main.getWindow(), width, height); }
+        } catch (ReflectiveOperationException failure) { throw new AssertionError("Window resize callback fixture changed", failure); }
+        int framebufferWidth = main.getWidth(), framebufferHeight = main.getHeight();
+        try {
+            for (int[] size : new int[][]{{0, framebufferHeight}, {framebufferWidth, 0}, {0, 0}}) {
+                main.setWidth(size[0]); main.setHeight(size[1]);
+                OreToasts.screen(new ScreenEvent.Render.Post(screen, graphics, 0, 0, 0));
+                check(paints.isEmpty() && borrowed[0] == null && toast.isAlive(),
+                        "Zero framebuffer dimensions skip the Toast adapter and preserve its queued instance");
+            }
+        } finally { main.setWidth(framebufferWidth); main.setHeight(framebufferHeight); }
+        double savedScale = main.getGuiScale();
+        try {
+            for (double scale : new double[]{0, Double.NaN, Double.POSITIVE_INFINITY}) {
+                main.setGuiScale(scale);
+                OreToasts.screen(new ScreenEvent.Render.Post(screen, graphics, 0, 0, 0));
+                check(paints.isEmpty() && borrowed[0] == null && toast.isAlive(),
+                        "An invalid host scale skips the real Toast adapter without changing its retained queue");
+                check(WindowContext.getCurrent() == outer && pose.equals(graphics.pose().last().pose()) && !DispatchGuard.active(),
+                        "Skipped Toast frames do not enter contexts or mutate drawing state");
+            }
+        } finally { main.setGuiScale(savedScale); }
         OreToasts.screen(new ScreenEvent.Render.Post(screen, graphics, 0, 0, 0));
-        check(paints.equals(List.of(toast, label)), "Global adapter draws the same retained tree exactly once");
+        check(paints.equals(List.of(toast, label)), "Restored global adapter draws the same retained tree exactly once");
         check(WindowContext.getCurrent() == outer && pose.equals(graphics.pose().last().pose()), "Global adapter restores host context and pose");
         closed(borrowed[0]);
         RuntimeException sentinel = new RuntimeException("expected global toast failure");

@@ -1,7 +1,6 @@
 package io.github.luyingyilong.ore.window;
 
 import io.github.luyingyilong.ore.debug.DebugBridge;
-import io.github.luyingyilong.ore.event.CancelEvent;
 import io.github.luyingyilong.ore.event.PointerEvent;
 import io.github.luyingyilong.ore.control.input.OreInputMethod;
 import io.github.luyingyilong.ore.control.base.Container;
@@ -29,10 +28,9 @@ public final class ScreenWindowHost implements WindowHost {
     private final Container regions = new Container();
     private final Map<Canvas, CanvasRegion> canvases = new IdentityHashMap<>();
     private MuiInputHost inputs;
-    private boolean closed, debugFrame, focused = true;
+    private boolean closed, debugFrame;
     private boolean prepared;
     private int layoutWidth = -1, layoutHeight = -1, fontRevision = -1;
-    private io.github.luyingyilong.ore.control.base.Control retainedFocus;
     private io.github.luyingyilong.ore.control.base.Control navigationFocus;
 
     private ScreenWindowHost(Screen screen) {
@@ -87,14 +85,18 @@ public final class ScreenWindowHost implements WindowHost {
 
     public void prepareInput() { if(isOpen()) prepare(); }
 
-    private void prepare() {
+    private boolean prepare() {
         var mc = Minecraft.getInstance();
         var screen = getScreen();
         if (screen == null) throw new IllegalStateException("Screen was released");
-        int revision = io.github.luyingyilong.ore.theme.OreFonts.revision();
-        if (prepared && !root.getLayoutDirty() && layoutWidth == screen.width && layoutHeight == screen.height && fontRevision == revision) return;
         var main = mc.getWindow();
-        context.setDimensions(main.getScreenWidth(), main.getScreenHeight(), main.getWidth(), main.getHeight(), main.getGuiScale());
+        boolean drawable = screen.width > 0 && screen.height > 0 && context.trySetDimensions(main.getScreenWidth(), main.getScreenHeight(),
+                main.getWidth(), main.getHeight(), main.getGuiScale());
+        root.hostInputState().updateViewport(drawable, main.getScreenWidth(), main.getScreenHeight(), main.getWidth(), main.getHeight(),
+                main.getGuiScale(), main.isFullscreen());
+        if (!drawable) return false;
+        int revision = io.github.luyingyilong.ore.theme.OreFonts.revision();
+        if (prepared && !root.getLayoutDirty() && layoutWidth == screen.width && layoutHeight == screen.height && fontRevision == revision) return true;
         if (inputs == null) inputs = new MuiInputHost(context, screen, () -> isOpen() && mc.screen == getScreen(), () -> { });
         inputs.resize(screen.width, screen.height);
         inputs.prepare(root);
@@ -105,6 +107,7 @@ public final class ScreenWindowHost implements WindowHost {
         inputs.update();
         prepared = true;
         layoutWidth = screen.width; layoutHeight = screen.height; fontRevision = revision;
+        return true;
     }
 
     public void beginFrame() { prepared = false; debugFrame = false; }
@@ -114,7 +117,7 @@ public final class ScreenWindowHost implements WindowHost {
         if (!isOpen() || canvases.get(canvas) != region || Minecraft.getInstance().screen != getScreen()) return;
         graphics.flush();
         try (var state = new WindowRenderState(false); var phase = DispatchGuard.enter(); var active = context.enter()) {
-            prepare();
+            if (!prepare()) return;
             graphics.flush();
             graphics.pose().pushPose();
             float depth = graphics.pose().last().pose().m32();
@@ -138,7 +141,7 @@ public final class ScreenWindowHost implements WindowHost {
         if (!isOpen() || canvases.isEmpty() || Minecraft.getInstance().screen != getScreen()) return;
         graphics.flush();
         try (var state = new WindowRenderState(false); var phase = DispatchGuard.enter(); var active = context.enter()) {
-            prepare();
+            if (!prepare()) return;
             try (var mui = inputs.begin(graphics, Minecraft.getInstance().font, mouseX, mouseY, partial);
                  var frame = io.github.luyingyilong.ore.window.MuiDrawing.begin(context.getMui(), context)) {
                 root.dispatchInput(new PointerEvent(context, PointerEvent.Action.MOVE, mouseX, mouseY, 0, context.getModifiers()));
@@ -164,16 +167,7 @@ public final class ScreenWindowHost implements WindowHost {
     }
 
     public void updateFocus(boolean active) {
-        if (active == focused) return;
-        focused = active;
-        if (!active) {
-            retainedFocus = root.getFocusManager().getFocused();
-            root.dispatchInput(new CancelEvent(context, CancelEvent.Reason.LOST_FOCUS));
-            OreInputMethod.releaseWindow(context);
-        } else if (retainedFocus != null) {
-            root.getFocusManager().restoreFocus(retainedFocus, context.getMui());
-            retainedFocus = null;
-        }
+        root.hostInputState().setFocused(active);
     }
 
     @Override public void close() {

@@ -14,5 +14,5 @@ public final class CancelEvent extends InputEvent {
         return reason;
     }
 
-    public enum Reason {LOST_FOCUS, DETACHED, BLOCKED, REBOUND, CLOSED, PICKING}
+    public enum Reason {LOST_FOCUS, HOST_GEOMETRY, DETACHED, BLOCKED, REBOUND, CLOSED, PICKING}
 }
