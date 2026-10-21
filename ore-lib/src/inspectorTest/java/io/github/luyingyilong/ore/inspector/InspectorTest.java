@@ -1,7 +1,16 @@
 package io.github.luyingyilong.ore.inspector;
 
-import io.github.luyingyilong.ore.debug.*;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.Size;
+import io.github.luyingyilong.ore.control.base.SizeFlags;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.layout.Padding;
+import io.github.luyingyilong.ore.control.layout.Panel;
+import io.github.luyingyilong.ore.debug.DebugBridge;
+import io.github.luyingyilong.ore.debug.DebugProperty;
+import io.github.luyingyilong.ore.window.Window;
+
 import java.util.*;
 
 /** Property discovery, overlay and layout tests, with no running game required. */

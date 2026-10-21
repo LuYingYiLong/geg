@@ -1,7 +1,7 @@
 package io.github.luyingyilong.ore.compat.recipeviewer.rei;
 
 import io.github.luyingyilong.ore.compat.recipeviewer.RecipeCanvasView;
-import io.github.luyingyilong.ore.layout.Control;
+import io.github.luyingyilong.ore.control.base.Control;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import net.minecraft.client.gui.GuiGraphics;

@@ -2,8 +2,8 @@ package io.github.luyingyilong.geg.chat.client;
 
 import io.github.luyingyilong.geg.GegMod;
 import io.github.luyingyilong.geg.chat.*;
-import io.github.luyingyilong.ore.Drawer;
-import io.github.luyingyilong.ore.layout.Window;
+import io.github.luyingyilong.ore.control.overlay.Drawer;
+import io.github.luyingyilong.ore.window.Window;
 import io.github.luyingyilong.geg.organization.*;
 import java.util.UUID;
 import net.minecraft.client.Minecraft;
@@ -85,7 +85,7 @@ public final class ChatClientSmokeTest {
                 var inputRenderer = field(canvas.composer().input(),
                         brachy.modularui.widgets.textfield.BaseTextFieldWidget.class, "renderer",
                         brachy.modularui.widgets.textfield.TextFieldRenderer.class);
-                check(inputRenderer.getFontHeight() == new io.github.luyingyilong.ore.Label().lineHeight(mc.font),
+                check(inputRenderer.getFontHeight() == new io.github.luyingyilong.ore.control.display.Label().lineHeight(mc.font),
                         "Editor and Label line heights differ");
                 Float caretTop = null;
                 for (String text : new String[]{"", "abc", "中文", "abc中文gjpq", "ÉÅ"}) {
@@ -143,7 +143,7 @@ public final class ChatClientSmokeTest {
                 mc.screen.keyPressed(GLFW.GLFW_KEY_ESCAPE, 0, 0); next();
             } else if (phase == 13 && waiting > 10) {
                 check(ClientChatScreen.isOpen(), "Returning from a link confirmation lost the chat session");
-                check(mc.screen instanceof io.github.luyingyilong.ore.screen.OreScreen,
+                check(mc.screen instanceof io.github.luyingyilong.ore.window.screen.OreScreen,
                         "Link confirmation did not return to the actual Ore screen");
                 ChatCanvasWidget canvas = canvas(); Drawer drawer = field(canvas, "drawer", Drawer.class);
                 Window window = field(canvas, "window", Window.class);

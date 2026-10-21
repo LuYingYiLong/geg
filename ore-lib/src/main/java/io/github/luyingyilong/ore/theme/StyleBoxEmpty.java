@@ -1,7 +1,7 @@
 package io.github.luyingyilong.ore.theme;
 import io.github.luyingyilong.ore.render.DrawContext;
-import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.layout.Offset;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.Offset;
 import java.util.Objects;
 public record StyleBoxEmpty(ThemeInsets getContentMargin, ThemeInsets getExpandMargin,
                             ThemeInsets getDrawInset, Offset getContentOffset) implements StyleBox {

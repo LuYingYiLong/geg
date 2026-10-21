@@ -1,18 +1,21 @@
 package io.github.luyingyilong.geg.market.client;
 
+import io.github.luyingyilong.ore.control.form.FieldKey;
+import io.github.luyingyilong.ore.control.form.FormFields;
+import io.github.luyingyilong.ore.control.form.FormValues;
+
 import io.github.luyingyilong.geg.client.GegInputs;
 
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
 import brachy.modularui.value.StringValue;
-import io.github.luyingyilong.ore.Button;
-import io.github.luyingyilong.ore.Form;
-import io.github.luyingyilong.ore.FormItem;
-import io.github.luyingyilong.ore.form.*;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.form.Form;
+import io.github.luyingyilong.ore.control.form.FormItem;
 import java.math.BigDecimal;
-import io.github.luyingyilong.ore.input.Input;
-import io.github.luyingyilong.ore.input.NumberInput;
-import io.github.luyingyilong.ore.screen.OreScreen;
+import io.github.luyingyilong.ore.control.input.Input;
+import io.github.luyingyilong.ore.control.input.NumberInput;
+import io.github.luyingyilong.ore.window.screen.OreScreen;
 import io.github.luyingyilong.ore.theme.OreTheme;
 import io.github.luyingyilong.geg.market.MarketActionPacket;
 import io.github.luyingyilong.geg.market.MarketNetwork;

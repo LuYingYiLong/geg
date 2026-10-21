@@ -1,8 +1,12 @@
 package io.github.luyingyilong.geg.chat.client;
 
+import io.github.luyingyilong.ore.text.FontMetricsPolicy;
+import io.github.luyingyilong.ore.text.OreText;
+import io.github.luyingyilong.ore.text.TextLayoutEngine;
+import io.github.luyingyilong.ore.text.TextRenderer;
+
 import io.github.luyingyilong.geg.GegMod;
 import io.github.luyingyilong.ore.theme.OreFonts;
-import io.github.luyingyilong.ore.text.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.InBedChatScreen;

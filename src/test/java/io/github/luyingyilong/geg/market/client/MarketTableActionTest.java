@@ -1,6 +1,6 @@
 package io.github.luyingyilong.geg.market.client;
 
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.base.Rect;
 
 /** The action rectangles used for drawing must also delimit clicks in both layouts. */
 public final class MarketTableActionTest {

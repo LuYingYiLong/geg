@@ -16,17 +16,17 @@ public final class WindowManager {
     private static final Set<NativeWindowHost> WINDOWS = new LinkedHashSet<>();
     private static boolean previousPause;
     private static long lastRender;
-    private static java.lang.ref.WeakReference<io.github.luyingyilong.ore.layout.Window> embedded = new java.lang.ref.WeakReference<>(null);
-    private static io.github.luyingyilong.ore.layout.Window suspended;
-    private static io.github.luyingyilong.ore.layout.Control embeddedFocus;
+    private static java.lang.ref.WeakReference<io.github.luyingyilong.ore.window.Window> embedded = new java.lang.ref.WeakReference<>(null);
+    private static io.github.luyingyilong.ore.window.Window suspended;
+    private static io.github.luyingyilong.ore.control.base.Control embeddedFocus;
     private static net.minecraft.client.gui.screens.Screen embeddedScreen;
     private static boolean mainFocused = true;
 
     private WindowManager() {
     }
 
-    public static void embedded(io.github.luyingyilong.ore.layout.Window root) {
-        io.github.luyingyilong.ore.screen.OreScreen.attachRoot(root);
+    public static void embedded(io.github.luyingyilong.ore.window.Window root) {
+        io.github.luyingyilong.ore.window.screen.OreScreen.attachRoot(root);
         embedded = new java.lang.ref.WeakReference<>(root);
         embeddedScreen = Minecraft.getInstance().screen;
     }
@@ -40,7 +40,7 @@ public final class WindowManager {
             embeddedFocus = root.getFocusManager().getFocused();
             root.cancelInteractions();
             if (root.getContext().getMui().isFocused()) root.getContext().getMui().removeFocus();
-            io.github.luyingyilong.ore.input.OreInputMethod.releaseWindow(root.getContext());
+            io.github.luyingyilong.ore.control.input.OreInputMethod.releaseWindow(root.getContext());
         } else if (focused && !mainFocused && root != null && root == suspended && mc.screen == embeddedScreen && embeddedFocus != null) {
             root.getFocusManager().requestFocus(embeddedFocus, root.getContext().getMui());
             suspended = null;
@@ -84,14 +84,14 @@ public final class WindowManager {
                 host.destroy();
             }
         }
-        io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
+        io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
     }
 
     @SubscribeEvent
     public static void fallback(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             embeddedFocus();
-            io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
+            io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
         }
         if (event.phase == TickEvent.Phase.END && !WINDOWS.isEmpty() && System.nanoTime() - lastRender > 100_000_000L)
             render(new TickEvent.RenderTickEvent(TickEvent.Phase.END, 0));
@@ -111,8 +111,8 @@ public final class WindowManager {
             host.getContext().getOwner().close();
             host.destroy();
         }
-        io.github.luyingyilong.ore.screen.OreScreen.disposeSessions();
-        io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
+        io.github.luyingyilong.ore.window.screen.OreScreen.disposeSessions();
+        io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
         io.github.luyingyilong.ore.text.TextRenderer.clear();
         embedded.clear();
         suspended = null;

@@ -1,7 +1,7 @@
 package io.github.luyingyilong.ore.window;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.base.Rect;
 import io.github.luyingyilong.ore.render.DrawContext;
 
 /** Converts the host's MUI callback once. No Control drawing API depends on ModularGuiContext. */

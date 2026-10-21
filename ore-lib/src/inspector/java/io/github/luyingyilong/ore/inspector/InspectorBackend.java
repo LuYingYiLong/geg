@@ -1,13 +1,23 @@
 package io.github.luyingyilong.ore.inspector;
 
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.LifecycleInfo;
+import io.github.luyingyilong.ore.control.base.LifecycleState;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.layout.Grid;
+import io.github.luyingyilong.ore.control.layout.Padding;
+import io.github.luyingyilong.ore.control.layout.Scroll;
+import io.github.luyingyilong.ore.control.overlay.Overlay;
+import io.github.luyingyilong.ore.window.Window;
+
 import io.github.luyingyilong.ore.render.DrawContext;
-import io.github.luyingyilong.ore.Button;
-import io.github.luyingyilong.ore.Drawer;
-import io.github.luyingyilong.ore.Table;
-import io.github.luyingyilong.ore.TextureRect;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.overlay.Drawer;
+import io.github.luyingyilong.ore.control.data.Table;
+import io.github.luyingyilong.ore.control.display.TextureRect;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.DebugProperty;
-import io.github.luyingyilong.ore.layout.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -468,7 +478,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
             readonly(props, "actualBounds", n.control.getLayoutBounds());
             if (n.control instanceof Drawer drawer) readonly(props, "panelBounds", drawer.getPanelBounds());
             if (n.control instanceof Scroll scroll) readonly(props, "viewport", scroll.getViewport());
-            if (n.control instanceof io.github.luyingyilong.ore.Slider slider) {
+            if (n.control instanceof io.github.luyingyilong.ore.control.input.Slider slider) {
                 readonly(props, "min", slider.getMin());
                 readonly(props, "max", slider.getMax());
                 readonly(props, "step", slider.getStep());
@@ -476,21 +486,21 @@ public final class InspectorBackend implements DebugBridge.Backend {
                 readonly(props, "sliderValue", slider.getRange() ? slider.getRangeValue() : slider.getValue());
                 readonly(props, "activeThumb", slider.getActiveThumb());
             }
-            if(n.control instanceof io.github.luyingyilong.ore.TextureProgressBar progress){
+            if(n.control instanceof io.github.luyingyilong.ore.control.progress.TextureProgressBar progress){
                 readonlyTexture(props,"under",progress.getUnderTexture(),progress.getResolvedUnderTexture());
                 readonlyTexture(props,"progress",progress.getProgressTexture(),progress.getResolvedProgressTexture());
                 readonlyTexture(props,"over",progress.getOverTexture(),progress.getResolvedOverTexture());
                 readonly(props,"fraction",progress.getFraction());
             }
-            if(n.control instanceof io.github.luyingyilong.ore.ProgressBar progress){
+            if(n.control instanceof io.github.luyingyilong.ore.control.progress.ProgressBar progress){
                 readonly(props,"min",progress.getMin());readonly(props,"max",progress.getMax());readonly(props,"value",progress.getValue());
                 readonly(props,"direction",progress.getDirection());readonly(props,"showPercentage",progress.getShowPercentage());
             }
-            if(n.control instanceof io.github.luyingyilong.ore.Inventory inventory){
+            if(n.control instanceof io.github.luyingyilong.ore.control.inventory.Inventory inventory){
                 readonly(props,"source",inventory.getSource()==null?"none":inventory.getSource().getClass().getSimpleName());
                 readonly(props,"mode",inventory.getMode());readonly(props,"selected",inventory.getSelected());readonly(props,"slotIndices",inventory.getSlotIndices());
             }
-            if(n.control instanceof io.github.luyingyilong.ore.Slot slot){
+            if(n.control instanceof io.github.luyingyilong.ore.control.inventory.Slot slot){
                 var binding=slot.getBinding();readonly(props,"bindingSlot",binding==null?"none":binding.slot());readonly(props,"mode",slot.getMode());
                 readonly(props,"source",binding==null?"none":binding.source().getClass().getSimpleName());
                 readonly(props,"sessionValid",slot.getMenuSession()!=null&&slot.getMenuSession().isValid());
@@ -506,7 +516,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
                 readonly(props, "disabled", button.getDisabled());
                 readonly(props, "buttonPressed", button.getButtonPressed());
             }
-            if (n.control instanceof io.github.luyingyilong.ore.input.InputControl input)
+            if (n.control instanceof io.github.luyingyilong.ore.control.input.InputControl input)
                 readonly(props, "inputValue", input.getWidget().getText());
             Binding binding = bindings.get(n.control);
             if (binding != null) {
@@ -553,7 +563,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
         Map<Long, String> names = new HashMap<>();
         for (Node node : nodes.values()) {
             names.put(io.github.luyingyilong.ore.signal.SignalDiagnostics.ownerId(node.control), node.name);
-            if (node.control instanceof io.github.luyingyilong.ore.input.InputControl input)
+            if (node.control instanceof io.github.luyingyilong.ore.control.input.InputControl input)
                 names.put(io.github.luyingyilong.ore.signal.SignalDiagnostics.ownerId(input.getWidget()), node.name + " / Input");
         }
         return signalInspector.snapshot(names, current != null);

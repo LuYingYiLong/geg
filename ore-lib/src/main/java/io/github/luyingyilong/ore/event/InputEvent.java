@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore.event;
 
-import io.github.luyingyilong.ore.layout.Control;
+import io.github.luyingyilong.ore.control.base.Control;
 import io.github.luyingyilong.ore.window.WindowContext;
 
 import java.util.Objects;

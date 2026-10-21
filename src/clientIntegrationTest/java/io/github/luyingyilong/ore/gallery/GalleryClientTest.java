@@ -1,9 +1,20 @@
 package io.github.luyingyilong.ore.gallery;
 
-import io.github.luyingyilong.ore.*;
-import io.github.luyingyilong.ore.form.*;
-import io.github.luyingyilong.ore.input.*;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.Size;
+import io.github.luyingyilong.ore.control.form.FieldKey;
+import io.github.luyingyilong.ore.control.form.Form;
+import io.github.luyingyilong.ore.control.form.FormFields;
+import io.github.luyingyilong.ore.control.form.FormValues;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.input.Input;
+import io.github.luyingyilong.ore.control.input.InputControl;
+import io.github.luyingyilong.ore.control.input.NumberInput;
+import io.github.luyingyilong.ore.control.input.Radio;
+import io.github.luyingyilong.ore.control.inventory.Slot;
+import io.github.luyingyilong.ore.control.layout.Collapse;
+
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;

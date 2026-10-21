@@ -1,7 +1,11 @@
 package io.github.luyingyilong.ore.inspector;
 
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.LifecycleInfo;
+import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
+import io.github.luyingyilong.ore.control.base.LifecycleState;
+
 import io.github.luyingyilong.ore.debug.DebugBridge;
-import io.github.luyingyilong.ore.layout.*;
 
 public final class InspectorLifecycleTest {
     public static void main(String[] args) {

@@ -3,10 +3,9 @@ package io.github.luyingyilong.ore.window;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.event.CancelEvent;
 import io.github.luyingyilong.ore.event.PointerEvent;
-import io.github.luyingyilong.ore.input.OreInputMethod;
-import io.github.luyingyilong.ore.layout.Container;
-import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.layout.Window;
+import io.github.luyingyilong.ore.control.input.OreInputMethod;
+import io.github.luyingyilong.ore.control.base.Container;
+import io.github.luyingyilong.ore.control.base.Rect;
 import io.github.luyingyilong.ore.render.Canvas;
 import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.signal.DispatchGuard;
@@ -33,8 +32,8 @@ public final class ScreenWindowHost implements WindowHost {
     private boolean closed, debugFrame, focused = true;
     private boolean prepared;
     private int layoutWidth = -1, layoutHeight = -1, fontRevision = -1;
-    private io.github.luyingyilong.ore.layout.Control retainedFocus;
-    private io.github.luyingyilong.ore.layout.Control navigationFocus;
+    private io.github.luyingyilong.ore.control.base.Control retainedFocus;
+    private io.github.luyingyilong.ore.control.base.Control navigationFocus;
 
     private ScreenWindowHost(Screen screen) {
         this.screen = new java.lang.ref.WeakReference<>(Objects.requireNonNull(screen));

@@ -1,6 +1,6 @@
 /**
- * Reusable Ore controls. Layout primitives live in {@code layout}, editable controls and IME
- * support in {@code input}, skin caching in {@code skin}, assets in {@code theme}, screen bridging
- * in {@code screen}, and shared algorithms/rendering helpers in {@code util}.
+ * Client bootstrap, host options and extension registration. Reusable controls are grouped by
+ * responsibility under {@code control}; rendering, text, themes, events, signals and window hosts
+ * remain shared infrastructure. No controls or internal algorithms belong directly in this package.
  */
 package io.github.luyingyilong.ore;

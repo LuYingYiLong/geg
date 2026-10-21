@@ -1,8 +1,15 @@
 package io.github.luyingyilong.ore.window;
 
-import io.github.luyingyilong.ore.*;
-import io.github.luyingyilong.ore.input.*;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.SizeFlags;
+import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.input.Input;
+import io.github.luyingyilong.ore.control.input.InputControl;
+import io.github.luyingyilong.ore.control.input.TextArea;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.layout.Scroll;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.network.chat.Component;

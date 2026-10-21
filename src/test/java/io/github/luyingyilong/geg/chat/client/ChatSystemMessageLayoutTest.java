@@ -2,9 +2,9 @@ package io.github.luyingyilong.geg.chat.client;
 
 import io.github.luyingyilong.geg.chat.ChatChannel;
 import io.github.luyingyilong.geg.chat.ChatMessage;
-import io.github.luyingyilong.ore.Label;
-import io.github.luyingyilong.ore.Avatar;
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.display.avatar.Avatar;
+import io.github.luyingyilong.ore.control.base.Rect;
 import net.minecraft.client.StringSplitter;
 import net.minecraft.client.gui.Font;
 import net.minecraft.locale.Language;
@@ -85,7 +85,7 @@ public final class ChatSystemMessageLayoutTest {
             Style ownLink = view.text.style(font, area.right() - 2, area.y() + 2, area);
             check(ownLink != null && ownLink.getClickEvent() != null, "Right-aligned own link retains its hit region");
             check(view.text.style(font, area.x() + 1, area.y() + 2, area) == null, "Own text's left whitespace is not clickable");
-            check(!io.github.luyingyilong.ore.EventFixture.press(view,avatar.getAbsoluteBounds().x() + 1, avatar.getAbsoluteBounds().y() + 1),
+            check(!io.github.luyingyilong.ore.support.EventFixture.press(view,avatar.getAbsoluteBounds().x() + 1, avatar.getAbsoluteBounds().y() + 1),
                     "Own portrait does not open a direct conversation");
 
             view.bind(incoming);

@@ -255,7 +255,7 @@
     }
   },
   "Segmented:selected": {
-    "location": "ore:gui/tab_selected",
+    "location": "ore:gui/segmented_option_selected",
     "imageWidth": 16,
     "imageHeight": 16,
     "x": 0,

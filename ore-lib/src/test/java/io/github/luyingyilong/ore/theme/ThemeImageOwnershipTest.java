@@ -1,9 +1,21 @@
 package io.github.luyingyilong.ore.theme;
 
-import io.github.luyingyilong.ore.*;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
+import io.github.luyingyilong.ore.control.data.Tree;
+import io.github.luyingyilong.ore.control.display.TextureRect;
+import io.github.luyingyilong.ore.control.input.Checkbox;
+import io.github.luyingyilong.ore.control.input.Dropdown;
+import io.github.luyingyilong.ore.control.input.Switch;
+import io.github.luyingyilong.ore.control.navigation.Navbar;
+import io.github.luyingyilong.ore.control.overlay.Dialog;
+import io.github.luyingyilong.ore.control.overlay.Drawer;
+import io.github.luyingyilong.ore.control.overlay.Modal;
+import io.github.luyingyilong.ore.control.progress.Spin;
+import io.github.luyingyilong.ore.render.TextureRegion;
+import io.github.luyingyilong.ore.render.TextureSource;
+
 import io.github.luyingyilong.ore.debug.DebugBridge;
-import io.github.luyingyilong.ore.layout.*;
-import io.github.luyingyilong.ore.render.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import java.util.List;
@@ -71,8 +83,8 @@ public final class ThemeImageOwnershipTest {
         check(symbol.getResolvedTextureRegion() == shared, "Resource namespaces cannot be shadowed by an unrelated Control type");
 
         Theme closes = db.getTheme(id("closes")).set(IconTheme.CLOSE, shared).set(Modal.CLOSE_ICON, local);
-        Modal modal = new Modal(Component.literal("Title")); modal.setTheme(closes);
-        Drawer drawer = new Drawer(Component.literal("Title")); drawer.setTheme(closes);
+        Modal modal = io.github.luyingyilong.ore.control.overlay.OverlayTestAccess.modal(Component.literal("Title")); modal.setTheme(closes);
+        Drawer drawer = io.github.luyingyilong.ore.control.overlay.OverlayTestAccess.drawer(Component.literal("Title")); drawer.setTheme(closes);
         check(findImage(modal, Modal.CLOSE_ICON).getResolvedTextureRegion() == local, "Modal owns its close icon item");
         check(findImage(drawer, Drawer.CLOSE_ICON).getResolvedTextureRegion() == shared, "Drawer independently falls back to the shared close icon");
         modal.setThemeOverride(Modal.CLOSE_ICON, shared);

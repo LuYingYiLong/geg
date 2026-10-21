@@ -1,7 +1,9 @@
 package io.github.luyingyilong.geg.organization.client;
 
+import io.github.luyingyilong.ore.control.display.TextureRect;
+import io.github.luyingyilong.ore.render.TextureSource;
+
 import io.github.luyingyilong.geg.client.theme.GegThemes;
-import io.github.luyingyilong.ore.render.*;
 
 import io.github.luyingyilong.ore.signal.Signals;
 
@@ -11,30 +13,28 @@ import brachy.modularui.api.widget.Interactable;
 import io.github.luyingyilong.ore.render.DrawContext;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
-import io.github.luyingyilong.ore.*;
-import io.github.luyingyilong.ore.Button;
-import io.github.luyingyilong.ore.Dialog;
-import io.github.luyingyilong.ore.Drawer;
-import io.github.luyingyilong.ore.Dropdown;
-import io.github.luyingyilong.ore.Form;
-import io.github.luyingyilong.ore.Navbar;
-import io.github.luyingyilong.ore.Label;
-import io.github.luyingyilong.ore.Modal;
-import io.github.luyingyilong.ore.PlayerIdentityCell;
-import io.github.luyingyilong.ore.Table;
-import io.github.luyingyilong.ore.input.Input;
-import io.github.luyingyilong.ore.layout.*;
-import io.github.luyingyilong.ore.layout.Box;
-import io.github.luyingyilong.ore.layout.Container;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Overlay;
-import io.github.luyingyilong.ore.layout.Padding;
-import io.github.luyingyilong.ore.layout.Panel;
-import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.layout.Scroll;
-import io.github.luyingyilong.ore.layout.Size;
-import io.github.luyingyilong.ore.layout.SizeFlags;
-import io.github.luyingyilong.ore.layout.Window;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.overlay.Dialog;
+import io.github.luyingyilong.ore.control.overlay.Drawer;
+import io.github.luyingyilong.ore.control.input.Dropdown;
+import io.github.luyingyilong.ore.control.form.Form;
+import io.github.luyingyilong.ore.control.navigation.Navbar;
+import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.overlay.Modal;
+import io.github.luyingyilong.ore.control.data.PlayerIdentityCell;
+import io.github.luyingyilong.ore.control.data.Table;
+import io.github.luyingyilong.ore.control.input.Input;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.base.Container;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.overlay.Overlay;
+import io.github.luyingyilong.ore.control.layout.Padding;
+import io.github.luyingyilong.ore.control.layout.Panel;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.layout.Scroll;
+import io.github.luyingyilong.ore.control.base.Size;
+import io.github.luyingyilong.ore.control.base.SizeFlags;
+import io.github.luyingyilong.ore.window.Window;
 import io.github.luyingyilong.ore.theme.OreTheme;
 import io.github.luyingyilong.geg.organization.Organization;
 import io.github.luyingyilong.geg.organization.OrganizationNetwork;
@@ -143,7 +143,7 @@ final class OrganizationCanvasWidget extends Widget<OrganizationCanvasWidget> im
     }
 
     private static Panel option(TextureSource icon, String label, Runnable action) {
-        io.github.luyingyilong.ore.TextureRect image=new io.github.luyingyilong.ore.TextureRect().setTexture(icon).setStretchMode(io.github.luyingyilong.ore.TextureRect.StretchMode.KEEP_CENTERED);
+        io.github.luyingyilong.ore.control.display.TextureRect image=new io.github.luyingyilong.ore.control.display.TextureRect().setTexture(icon).setStretchMode(io.github.luyingyilong.ore.control.display.TextureRect.StretchMode.KEEP_CENTERED);
         image.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
         Button button = Signals.configure(new Button(Component.translatable(label)), connected -> connected.pressed().connect(connected, action));
         button.setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);

@@ -6,10 +6,9 @@ import brachy.modularui.utils.Stencil;
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexSorting;
-import io.github.luyingyilong.ore.input.InputControl;
-import io.github.luyingyilong.ore.input.OreInputMethod;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Window;
+import io.github.luyingyilong.ore.control.input.InputControl;
+import io.github.luyingyilong.ore.control.input.OreInputMethod;
+import io.github.luyingyilong.ore.control.base.Control;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import org.joml.Matrix4f;
@@ -355,7 +354,7 @@ public final class NativeWindowHost implements WindowHost {
             root.hostClosed();
             root.queueFree("host ended");
         }
-        io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
+        io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
         OreInputMethod.releaseWindow(context);
         if (screen != null && screen.getContext().isFocused()) screen.getContext().removeFocus();
         if (inputHost != null) inputHost.close();

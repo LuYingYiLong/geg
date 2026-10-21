@@ -1,7 +1,14 @@
 package io.github.luyingyilong.geg.mail.client;
 
-import io.github.luyingyilong.ore.Label;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.control.base.Container;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.Size;
+import io.github.luyingyilong.ore.control.base.SizeFlags;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.layout.ScrollContent;
+
+import io.github.luyingyilong.ore.control.display.Label;
 import net.minecraft.client.gui.Font;
 
 /** Wrap at the viewport width; expand short bodies and scroll vertically for long bodies. */

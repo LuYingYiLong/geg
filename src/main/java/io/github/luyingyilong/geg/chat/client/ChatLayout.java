@@ -1,6 +1,6 @@
 package io.github.luyingyilong.geg.chat.client;
 
-import io.github.luyingyilong.ore.layout.Padding;
+import io.github.luyingyilong.ore.control.layout.Padding;
 
 /** GUI-pixel breakpoints, shared by the live tree and its headless layout tests. */
 public final class ChatLayout {

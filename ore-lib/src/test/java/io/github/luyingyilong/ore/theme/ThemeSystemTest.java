@@ -1,10 +1,17 @@
 package io.github.luyingyilong.ore.theme;
-import io.github.luyingyilong.ore.Button;
 
-import io.github.luyingyilong.ore.render.*;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.ControlNotification;
+import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
+import io.github.luyingyilong.ore.control.base.Offset;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.Size;
+import io.github.luyingyilong.ore.control.layout.Panel;
+import io.github.luyingyilong.ore.render.TextureRegion;
+import io.github.luyingyilong.ore.control.input.Button;
 
-import io.github.luyingyilong.ore.Label;
-import io.github.luyingyilong.ore.layout.*;
+
+import io.github.luyingyilong.ore.control.display.Label;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.signal.SignalScope;
 import net.minecraft.resources.ResourceLocation;
@@ -95,15 +102,15 @@ public final class ThemeSystemTest {
         Theme own=db.getTheme(id("own")).set(OreTheme.FONT_COLOR,0xFF333333);
         Control root=new Control().setTheme(distant), parent=new Control().setTheme(nearby); Label label=new Label();
         root.addChild(parent); parent.addChild(label);
-        check(label.getTheme()==null && label.getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR)==0xFF222222,"Nearest ancestor theme, getter stays local");
-        label.setTheme(own); check(label.getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR)==0xFF333333,"Own theme precedence");
-        label.setThemeOverride(OreTheme.FONT_COLOR,0xFF444444); check(label.getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR)==0xFF444444,"Local override");
+        check(label.getTheme()==null && label.getThemeItem(io.github.luyingyilong.ore.control.display.Label.FONT_COLOR)==0xFF222222,"Nearest ancestor theme, getter stays local");
+        label.setTheme(own); check(label.getThemeItem(io.github.luyingyilong.ore.control.display.Label.FONT_COLOR)==0xFF333333,"Own theme precedence");
+        label.setThemeOverride(OreTheme.FONT_COLOR,0xFF444444); check(label.getThemeItem(io.github.luyingyilong.ore.control.display.Label.FONT_COLOR)==0xFF444444,"Local override");
         label.setShadow(true);label.setThemeOverride(OreTheme.TEXT_SHADOW,false);
         check(label.getShadow(),"Explicit non-color property wins");
         label.clearShadow();check(!label.getShadow(),"Clear explicit property restores local override");
-        label.removeThemeOverride(OreTheme.FONT_COLOR); check(label.getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR)==0xFF333333,"Remove override restores theme");
+        label.removeThemeOverride(OreTheme.FONT_COLOR); check(label.getThemeItem(io.github.luyingyilong.ore.control.display.Label.FONT_COLOR)==0xFF333333,"Remove override restores theme");
         own.set(OreTheme.LABEL_DARK_FONT_COLOR,0xFF666666); label.setThemeTypeVariation("LabelDark");
-        check(label.getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR)==0xFF666666,"Variation before base type in each theme layer");
+        check(label.getThemeItem(io.github.luyingyilong.ore.control.display.Label.FONT_COLOR)==0xFF666666,"Variation before base type in each theme layer");
         Control part=parent.ownPart("internal",new Control());
         check(part.getThemeItem(OreTheme.FONT_COLOR)==0xFF222222,"Internal parts inherit lifecycle owner");
         parent.setThemeOverride(OreTheme.FONT_COLOR,0xFF777777);

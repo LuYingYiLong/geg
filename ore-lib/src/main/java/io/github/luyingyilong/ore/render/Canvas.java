@@ -1,7 +1,7 @@
 package io.github.luyingyilong.ore.render;
 
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
 import io.github.luyingyilong.ore.window.CanvasRegion;
 import io.github.luyingyilong.ore.window.ScreenWindowHost;
 import net.minecraft.client.gui.GuiGraphics;

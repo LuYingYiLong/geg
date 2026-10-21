@@ -1,7 +1,7 @@
 package io.github.luyingyilong.ore.theme;
 
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Padding;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.layout.Padding;
 
 /** Typed declarations and reads for four independent GUI-pixel padding values. */
 public record ThemePadding(ThemeKey<Integer> top, ThemeKey<Integer> right,

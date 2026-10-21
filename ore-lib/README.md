@@ -15,6 +15,8 @@ Ore 是嵌入宿主 Mod 的客户端 UI 库，依赖 Java 17、Forge 1.20.1、Mo
 
 Box 换行见 [布局说明](docs/layout.md)，类型化字段与校验见 [表单说明](docs/forms.md)，开发验证入口见 [组件展示](docs/gallery.md)。
 
+Java 包按控件职责组织，完整分类、包级封装和宿主迁移规则见 [包结构说明](docs/packages.md)。旧包不保留兼容转发类。
+
 ## 原生主题
 
 主题使用独立的 `Theme`、`ThemeDB` 与 `StyleBox`，支持类型化登记、继承、局部覆盖及资源重载。

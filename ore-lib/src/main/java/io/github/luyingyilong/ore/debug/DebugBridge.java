@@ -1,9 +1,9 @@
 package io.github.luyingyilong.ore.debug;
 
 import io.github.luyingyilong.ore.render.DrawContext;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.layout.Window;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.window.Window;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.List;
@@ -120,7 +120,7 @@ public final class DebugBridge {
     }
 
     public interface Backend {
-        default void lifecycle(Control node, io.github.luyingyilong.ore.layout.LifecycleInfo info) {
+        default void lifecycle(Control node, io.github.luyingyilong.ore.control.base.LifecycleInfo info) {
         }
 
         default Object value(Control node, String key, Object base) {

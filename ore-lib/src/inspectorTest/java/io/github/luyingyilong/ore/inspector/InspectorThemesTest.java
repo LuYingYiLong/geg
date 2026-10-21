@@ -1,8 +1,12 @@
 package io.github.luyingyilong.ore.inspector;
-import io.github.luyingyilong.ore.Label;
-import io.github.luyingyilong.ore.debug.*;
-import io.github.luyingyilong.ore.layout.*;
-import io.github.luyingyilong.ore.theme.*;
+
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
+import io.github.luyingyilong.ore.debug.DebugBridge;
+import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.Theme;
+import io.github.luyingyilong.ore.theme.ThemeDB;
+import io.github.luyingyilong.ore.control.display.Label;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -23,8 +27,8 @@ public final class InspectorThemesTest {
             var retained=panel.body().getChildren(); panel.update(effective);
             check(retained.equals(panel.body().getChildren()),"Ordinary snapshots reuse Labels");
             shared.set(OreTheme.FONT_COLOR,0xFF203040);
-            check(label.getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR)==0xFF445566,"Inspector override survives base updates");
-            DebugBridge.install(null); check(label.getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR)==0xFF203040,"Restoring reveals latest theme base");
+            check(label.getThemeItem(io.github.luyingyilong.ore.control.display.Label.FONT_COLOR)==0xFF445566,"Inspector override survives base updates");
+            DebugBridge.install(null); check(label.getThemeItem(io.github.luyingyilong.ore.control.display.Label.FONT_COLOR)==0xFF203040,"Restoring reveals latest theme base");
             panel.body().queueFree(); label.queueFree(); LifecycleScheduler.flush();
             check(DebugBridge.themes(label).items().isEmpty(),"Disposed selection has no editable/live theme data");
         } finally { DebugBridge.install(null); }

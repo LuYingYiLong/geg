@@ -1,14 +1,16 @@
 package io.github.luyingyilong.geg.organization.client;
 
+import io.github.luyingyilong.ore.control.form.FormFields;
+import io.github.luyingyilong.ore.control.form.validation.Validators;
+
 
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
-import io.github.luyingyilong.ore.Form;
-import io.github.luyingyilong.ore.FormItem;
-import io.github.luyingyilong.ore.form.*;
-import io.github.luyingyilong.ore.input.Input;
-import io.github.luyingyilong.ore.input.TextArea;
-import io.github.luyingyilong.ore.screen.OreScreen;
+import io.github.luyingyilong.ore.control.form.Form;
+import io.github.luyingyilong.ore.control.form.FormItem;
+import io.github.luyingyilong.ore.control.input.Input;
+import io.github.luyingyilong.ore.control.input.TextArea;
+import io.github.luyingyilong.ore.window.screen.OreScreen;
 import io.github.luyingyilong.geg.organization.OrganizationNetwork;
 import io.github.luyingyilong.geg.organization.OrganizationSyncPacket;
 import net.minecraft.network.chat.Component;

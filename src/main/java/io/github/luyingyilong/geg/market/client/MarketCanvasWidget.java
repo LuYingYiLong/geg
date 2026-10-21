@@ -1,6 +1,8 @@
 package io.github.luyingyilong.geg.market.client;
 
-import io.github.luyingyilong.ore.render.*;
+import io.github.luyingyilong.ore.control.inventory.Slot;
+import io.github.luyingyilong.ore.render.TextureSource;
+
 
 import io.github.luyingyilong.ore.signal.Signals;
 
@@ -10,31 +12,29 @@ import brachy.modularui.api.widget.Interactable;
 import io.github.luyingyilong.ore.render.DrawContext;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
-import io.github.luyingyilong.ore.*;
-import io.github.luyingyilong.ore.Button;
-import io.github.luyingyilong.ore.Dropdown;
-import io.github.luyingyilong.ore.Form;
-import io.github.luyingyilong.ore.Navbar;
-import io.github.luyingyilong.ore.Label;
-import io.github.luyingyilong.ore.Modal;
-import io.github.luyingyilong.ore.Segmented;
-import io.github.luyingyilong.ore.Spin;
-import io.github.luyingyilong.ore.Table;
-import io.github.luyingyilong.ore.input.Input;
-import io.github.luyingyilong.ore.input.InputControl;
-import io.github.luyingyilong.ore.layout.*;
-import io.github.luyingyilong.ore.layout.Box;
-import io.github.luyingyilong.ore.layout.Container;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Grid;
-import io.github.luyingyilong.ore.layout.Overlay;
-import io.github.luyingyilong.ore.layout.Padding;
-import io.github.luyingyilong.ore.layout.Panel;
-import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.layout.Scroll;
-import io.github.luyingyilong.ore.layout.Size;
-import io.github.luyingyilong.ore.layout.SizeFlags;
-import io.github.luyingyilong.ore.layout.Window;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.input.Dropdown;
+import io.github.luyingyilong.ore.control.form.Form;
+import io.github.luyingyilong.ore.control.navigation.Navbar;
+import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.overlay.Modal;
+import io.github.luyingyilong.ore.control.input.Segmented;
+import io.github.luyingyilong.ore.control.progress.Spin;
+import io.github.luyingyilong.ore.control.data.Table;
+import io.github.luyingyilong.ore.control.input.Input;
+import io.github.luyingyilong.ore.control.input.InputControl;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.base.Container;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.layout.Grid;
+import io.github.luyingyilong.ore.control.overlay.Overlay;
+import io.github.luyingyilong.ore.control.layout.Padding;
+import io.github.luyingyilong.ore.control.layout.Panel;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.layout.Scroll;
+import io.github.luyingyilong.ore.control.base.Size;
+import io.github.luyingyilong.ore.control.base.SizeFlags;
+import io.github.luyingyilong.ore.window.Window;
 import io.github.luyingyilong.ore.theme.OreTheme;
 import io.github.luyingyilong.ore.text.OreText;
 import io.github.luyingyilong.geg.market.*;
@@ -465,7 +465,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         return result;
     }
 
-    private void drawText(io.github.luyingyilong.ore.layout.Control owner, DrawContext context, Component text, int x, int y, int width, int height, io.github.luyingyilong.ore.theme.ThemeKey<Integer> color) {
+    private void drawText(io.github.luyingyilong.ore.control.base.Control owner, DrawContext context, Component text, int x, int y, int width, int height, io.github.luyingyilong.ore.theme.ThemeKey<Integer> color) {
         Label.draw(owner, context, text, new Rect(x, y, Math.max(0, width), Math.max(0, height)),
                 owner.getThemeItem(color), Label.Overflow.CLIP, Label.Horizontal.LEFT, Label.Vertical.TOP);
     }

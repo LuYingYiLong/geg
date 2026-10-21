@@ -1,9 +1,13 @@
 package io.github.luyingyilong.ore.theme;
 
-import io.github.luyingyilong.ore.render.*;
+import io.github.luyingyilong.ore.render.TextureRegion;
+import io.github.luyingyilong.ore.signal.Signal;
+import io.github.luyingyilong.ore.signal.SignalOwner;
+import io.github.luyingyilong.ore.signal.SignalScope;
+import io.github.luyingyilong.ore.signal.SignalSource;
+
 
 import com.google.gson.*;
-import io.github.luyingyilong.ore.signal.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import java.io.*;
@@ -248,12 +252,12 @@ public final class ThemeDB implements SignalOwner {
         for(String k:v.keySet()) if(!Arrays.asList(names).contains(k)) throw new IllegalArgumentException(name+"."+k+": unknown property");
         return new ThemeInsets(number(v,names[0],0),number(v,names[1],0),number(v,names[2],0),number(v,names[3],0));
     }
-    private static io.github.luyingyilong.ore.layout.Offset contentOffset(JsonObject o) {
-        if(!o.has("contentOffset")) return io.github.luyingyilong.ore.layout.Offset.ZERO;
+    private static io.github.luyingyilong.ore.control.base.Offset contentOffset(JsonObject o) {
+        if(!o.has("contentOffset")) return io.github.luyingyilong.ore.control.base.Offset.ZERO;
         JsonObject value=o.getAsJsonObject("contentOffset");
         for(String key:value.keySet()) if(!key.equals("x") && !key.equals("y"))
             throw new IllegalArgumentException("contentOffset."+key+": unknown property");
-        return new io.github.luyingyilong.ore.layout.Offset(number(value,"x",0),number(value,"y",0));
+        return new io.github.luyingyilong.ore.control.base.Offset(number(value,"x",0),number(value,"y",0));
     }
     private StyleBox readStyle(JsonObject o,Resources resources) throws IOException {
         if(!o.has("style")) throw new IllegalArgumentException("style: missing style kind");

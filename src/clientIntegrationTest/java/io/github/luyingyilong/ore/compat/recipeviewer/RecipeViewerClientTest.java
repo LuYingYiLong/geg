@@ -1,12 +1,12 @@
 package io.github.luyingyilong.ore.compat.recipeviewer;
 
-import io.github.luyingyilong.ore.Drawer;
-import io.github.luyingyilong.ore.layout.Box;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Overlay;
-import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.layout.Window;
-import io.github.luyingyilong.ore.screen.OreButtonWidget;
+import io.github.luyingyilong.ore.control.overlay.Drawer;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.overlay.Overlay;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.window.Window;
+import io.github.luyingyilong.ore.window.screen.OreButtonWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
@@ -99,7 +99,7 @@ public final class RecipeViewerClientTest {
         if ((boolean) base.getMethod("isEmpty").invoke(screen)) {
             // No viewer host is registered for this OreScreen. Its two native callbacks
             // were checked above; do not force-enable a sidebar just for the test.
-            check(Minecraft.getInstance().screen instanceof io.github.luyingyilong.ore.screen.OreScreen,
+            check(Minecraft.getInstance().screen instanceof io.github.luyingyilong.ore.window.screen.OreScreen,
                     "The inventory must have a real EMI host for the combined exclusion check");
             return;
         }

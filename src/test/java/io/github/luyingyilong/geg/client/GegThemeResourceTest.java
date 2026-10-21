@@ -1,12 +1,14 @@
 package io.github.luyingyilong.geg.client;
 
+import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.ThemeDB;
+
 import io.github.luyingyilong.geg.client.theme.GegThemes;
 import io.github.luyingyilong.ore.OreClientExtension;
-import io.github.luyingyilong.ore.TextureRect;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.LifecycleScheduler;
+import io.github.luyingyilong.ore.control.display.TextureRect;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
 import io.github.luyingyilong.ore.render.TextureSource;
-import io.github.luyingyilong.ore.theme.*;
 import net.minecraft.resources.ResourceLocation;
 import java.io.*;
 import java.nio.charset.StandardCharsets;

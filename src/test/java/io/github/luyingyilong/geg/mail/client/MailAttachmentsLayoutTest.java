@@ -1,7 +1,13 @@
 package io.github.luyingyilong.geg.mail.client;
 
-import io.github.luyingyilong.ore.Slot;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.Size;
+import io.github.luyingyilong.ore.control.base.SizeFlags;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.layout.Scroll;
+
+import io.github.luyingyilong.ore.control.inventory.Slot;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.FormattedText;
 
@@ -35,7 +41,7 @@ public final class MailAttachmentsLayoutTest {
             check(items.getChildren().get(0).getBounds().height()==Slot.SIZE);
             check(items.getChildren().get(99).getBounds().right() == 100 * Slot.SIZE + 99 * 2);
             scroll.setScroll(0, 0);
-            check(io.github.luyingyilong.ore.EventFixture.scroll(rewards,1, 1, -1, false) && scroll.getScrollX() > 0);
+            check(io.github.luyingyilong.ore.support.EventFixture.scroll(rewards,1, 1, -1, false) && scroll.getScrollX() > 0);
             scroll.setScroll(Integer.MAX_VALUE, 0);
             check(scroll.getScrollX() == scroll.getMaxScrollX());
         }
@@ -45,7 +51,7 @@ public final class MailAttachmentsLayoutTest {
         check(!rewards.claimButton().acceptsFocus());
         rewards.layout(new Rect(0, 0, 300, rowHeight), font);
         Rect button = rewards.claimButton().getAbsoluteBounds();
-        io.github.luyingyilong.ore.EventFixture.press(rewards,button.x()+1,button.y()+1);
+        io.github.luyingyilong.ore.support.EventFixture.press(rewards,button.x()+1,button.y()+1);
         check(!rewards.claimButton().activate() && claims[0] == 0);
         check(rewards.claimButton().getBounds().width() == 300);
         // Switching to an unclaimed or partially claimed mail re-enables the same button.

@@ -4,9 +4,8 @@ import brachy.modularui.api.widget.Interactable;
 import brachy.modularui.screen.viewport.ModularGuiContext;
 import brachy.modularui.theme.WidgetThemeEntry;
 import brachy.modularui.widget.Widget;
-import io.github.luyingyilong.ore.input.InputControl;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Window;
+import io.github.luyingyilong.ore.control.input.InputControl;
+import io.github.luyingyilong.ore.control.base.Control;
 
 import java.util.ArrayList;
 import java.util.List;

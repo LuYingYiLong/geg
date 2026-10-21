@@ -1,13 +1,13 @@
 package io.github.luyingyilong.ore.theme;
 
-import io.github.luyingyilong.ore.Button;
-import io.github.luyingyilong.ore.Label;
-import io.github.luyingyilong.ore.input.Input;
-import io.github.luyingyilong.ore.input.InputControl;
-import io.github.luyingyilong.ore.input.TextArea;
-import io.github.luyingyilong.ore.layout.Box;
-import io.github.luyingyilong.ore.layout.Padding;
-import io.github.luyingyilong.ore.layout.Window;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.input.Input;
+import io.github.luyingyilong.ore.control.input.InputControl;
+import io.github.luyingyilong.ore.control.input.TextArea;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.layout.Padding;
+import io.github.luyingyilong.ore.window.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.network.chat.Component;
@@ -49,7 +49,7 @@ public final class OreGlyphBearingClientTest {
                     var line = new Label(Component.literal("抗锯齿 Alpha / Smooth edges / é"));
                     line.setThemeOverride(Label.FONT_COLOR,color); alphaRows.addChild(line);
                 }
-                var background = new io.github.luyingyilong.ore.layout.Panel().setChild(alphaRows);
+                var background = new io.github.luyingyilong.ore.control.layout.Panel().setChild(alphaRows);
                 background.setThemeOverride(OreTheme.PANEL,new StyleBoxFlat(0xFFFFFFFF,ThemeInsets.ZERO,0,ThemeInsets.ZERO,ThemeInsets.ZERO));
                 content.addChild(background);
                 content.addChild(new Label(Component.literal("【中文】「中文」，。；：！？ABC + 123")));
@@ -63,7 +63,7 @@ public final class OreGlyphBearingClientTest {
                 content.addChild(new InputControl(area));
                 root = Window.embedded().setContent(new Padding(Padding.Insets.all(8)).setChild(content)).open();
             } else if (ticks >= 25) {
-                io.github.luyingyilong.ore.input.InputGeometryProbe.verifyUnicodeLayout(input, area, root);
+                io.github.luyingyilong.ore.control.input.InputGeometryProbe.verifyUnicodeLayout(input, area, root);
                 check(input.getText().equals("中文（English）中文") && area.getText().contains("（括号）"),
                         "Fullwidth characters are retained in the editor document");
                 var path = mc.gameDirectory.toPath().resolve("screenshots/ore-glyph-bearing.png");

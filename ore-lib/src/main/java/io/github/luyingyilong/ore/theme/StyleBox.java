@@ -1,8 +1,8 @@
 package io.github.luyingyilong.ore.theme;
 import io.github.luyingyilong.ore.render.DrawContext;
-import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.layout.Size;
-import io.github.luyingyilong.ore.layout.Offset;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.Size;
+import io.github.luyingyilong.ore.control.base.Offset;
 public sealed interface StyleBox permits StyleBoxEmpty, StyleBoxFlat, StyleBoxTexture {
     ThemeInsets getContentMargin();
     ThemeInsets getExpandMargin();

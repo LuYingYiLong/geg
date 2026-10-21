@@ -1,12 +1,12 @@
 package io.github.luyingyilong.ore.theme;
 
-import io.github.luyingyilong.ore.Button;
-import io.github.luyingyilong.ore.Collapse;
-import io.github.luyingyilong.ore.Dropdown;
-import io.github.luyingyilong.ore.Label;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.LifecycleScheduler;
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.layout.Collapse;
+import io.github.luyingyilong.ore.control.input.Dropdown;
+import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
+import io.github.luyingyilong.ore.control.base.Rect;
 import io.github.luyingyilong.ore.render.TextureRegion;
 import net.minecraft.resources.ResourceLocation;
 

@@ -1,6 +1,7 @@
 package io.github.luyingyilong.ore.inspector;
-import io.github.luyingyilong.ore.Label;
-import io.github.luyingyilong.ore.layout.*;
+
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.display.Label;
 import io.github.luyingyilong.ore.debug.DebugThemes;
 import net.minecraft.network.chat.Component;
 

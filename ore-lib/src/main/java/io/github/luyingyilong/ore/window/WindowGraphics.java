@@ -1,7 +1,7 @@
 package io.github.luyingyilong.ore.window;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.base.Rect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;

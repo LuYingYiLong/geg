@@ -1,6 +1,6 @@
 package io.github.luyingyilong.geg.client;
 
-import io.github.luyingyilong.ore.input.NumberInput;
+import io.github.luyingyilong.ore.control.input.NumberInput;
 import java.math.BigDecimal;
 
 /** Economic bounds belong to GEG; Ore only knows numeric precision and optional bounds. */

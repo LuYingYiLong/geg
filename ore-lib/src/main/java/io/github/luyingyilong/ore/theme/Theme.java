@@ -1,5 +1,10 @@
 package io.github.luyingyilong.ore.theme;
-import io.github.luyingyilong.ore.signal.*;
+
+import io.github.luyingyilong.ore.signal.Connection;
+import io.github.luyingyilong.ore.signal.Signal;
+import io.github.luyingyilong.ore.signal.SignalOwner;
+import io.github.luyingyilong.ore.signal.SignalScope;
+import io.github.luyingyilong.ore.signal.SignalSource;
 import net.minecraft.resources.ResourceLocation;
 import java.util.*;
 

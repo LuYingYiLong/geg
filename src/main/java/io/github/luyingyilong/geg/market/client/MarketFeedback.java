@@ -1,7 +1,7 @@
 package io.github.luyingyilong.geg.market.client;
 
-import io.github.luyingyilong.ore.Toast;
-import io.github.luyingyilong.ore.util.OreToasts;
+import io.github.luyingyilong.ore.control.overlay.Toast;
+import io.github.luyingyilong.ore.control.overlay.toast.OreToasts;
 import io.github.luyingyilong.geg.market.MarketResult;
 import net.minecraft.network.chat.Component;
 

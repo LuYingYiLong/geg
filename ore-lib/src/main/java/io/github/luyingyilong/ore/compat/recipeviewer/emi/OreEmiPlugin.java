@@ -15,7 +15,7 @@ public final class OreEmiPlugin implements EmiPlugin, EmiExclusionArea<Screen> {
     @Override public void register(EmiRegistry registry) {
         registry.addGenericExclusionArea(this);
         registry.addGenericStackProvider((screen,x,y)->{
-            if(screen instanceof io.github.luyingyilong.ore.menu.OreMenuScreen<?> menu&&menu.getMenuSession()!=null){
+            if(screen instanceof io.github.luyingyilong.ore.window.container.OreMenuScreen<?> menu&&menu.getMenuSession()!=null){
                 var slot=menu.getMenuSession().getNativeSlotAt(x,y);
                 if(slot!=null&&!slot.getItem().isEmpty())return new dev.emi.emi.api.stack.EmiStackInteraction(dev.emi.emi.api.stack.EmiStack.of(slot.getItem()),null,false);
             }

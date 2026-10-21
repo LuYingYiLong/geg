@@ -22,7 +22,7 @@ public final class OreJeiPlugin implements IModPlugin {
     @Override public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         registration.addGlobalGuiHandler(new IGlobalGuiHandler() {
             @Override public java.util.Optional<mezz.jei.api.runtime.IClickableIngredient<?>> getClickableIngredientUnderMouse(double x,double y){
-                if(runtime==null||!(Minecraft.getInstance().screen instanceof io.github.luyingyilong.ore.menu.OreMenuScreen<?> screen)
+                if(runtime==null||!(Minecraft.getInstance().screen instanceof io.github.luyingyilong.ore.window.container.OreMenuScreen<?> screen)
                         ||screen.getMenuSession()==null)return java.util.Optional.empty();
                 var view=screen.getMenuSession().getSlotAt((int)x,(int)y);
                 if(view==null||view.getItem().isEmpty())return java.util.Optional.empty();

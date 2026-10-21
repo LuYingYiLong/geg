@@ -1,7 +1,7 @@
 package io.github.luyingyilong.ore.compat.recipeviewer;
 
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
 import io.github.luyingyilong.ore.render.Canvas;
 import io.github.luyingyilong.ore.render.CanvasTransform;
 import io.github.luyingyilong.ore.window.RecipeCanvasFrames;

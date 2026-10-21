@@ -1,8 +1,8 @@
 package io.github.luyingyilong.ore.compat.recipeviewer.jei;
 
 import io.github.luyingyilong.ore.compat.recipeviewer.RecipeCanvasView;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.gui.widgets.IRecipeWidget;
 import net.minecraft.client.gui.GuiGraphics;

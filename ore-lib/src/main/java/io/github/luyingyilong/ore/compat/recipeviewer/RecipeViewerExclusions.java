@@ -1,15 +1,15 @@
 package io.github.luyingyilong.ore.compat.recipeviewer;
 
-import io.github.luyingyilong.ore.Dialog;
-import io.github.luyingyilong.ore.Drawer;
-import io.github.luyingyilong.ore.Modal;
+import io.github.luyingyilong.ore.control.overlay.Dialog;
+import io.github.luyingyilong.ore.control.overlay.Drawer;
+import io.github.luyingyilong.ore.control.overlay.Modal;
 import io.github.luyingyilong.ore.event.EventGeometry;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Overlay;
-import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.layout.Window;
-import io.github.luyingyilong.ore.screen.OreButtonWidget;
-import io.github.luyingyilong.ore.screen.OreScreen;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.overlay.Overlay;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.window.Window;
+import io.github.luyingyilong.ore.window.screen.OreButtonWidget;
+import io.github.luyingyilong.ore.window.screen.OreScreen;
 import io.github.luyingyilong.ore.window.WindowPopups;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -33,7 +33,7 @@ public final class RecipeViewerExclusions {
         List<Rect> areas = new ArrayList<>();
         var external = io.github.luyingyilong.ore.window.ScreenWindowHost.get(screen);
         if (external != null && external.isOpen()) {
-            if(screen instanceof io.github.luyingyilong.ore.menu.OreMenuScreen<?> menu && menu.getContent()!=null){
+            if(screen instanceof io.github.luyingyilong.ore.window.container.OreMenuScreen<?> menu && menu.getContent()!=null){
                 var content=menu.getContent();var bounds=EventGeometry.displayed(content);var clip=EventGeometry.clip(content);
                 areas.add(clip==null?bounds:EventGeometry.intersect(bounds,clip));
             }
@@ -68,7 +68,7 @@ public final class RecipeViewerExclusions {
     private static void collectControls(Control node, List<Rect> areas) {
         if (!available(node)) return;
         // Overlay and the bare, non-painting Control are routing/layout roots, not surfaces.
-        if (node instanceof Overlay || node.getClass() == Control.class || node.getClass() == io.github.luyingyilong.ore.layout.Container.class) {
+        if (node instanceof Overlay || node.getClass() == Control.class || node.getClass() == io.github.luyingyilong.ore.control.base.Container.class) {
             for (Control child : node.getChildren()) collectControls(child, areas);
             return;
         }

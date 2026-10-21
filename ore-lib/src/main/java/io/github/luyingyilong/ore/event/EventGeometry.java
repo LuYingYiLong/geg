@@ -1,10 +1,10 @@
 package io.github.luyingyilong.ore.event;
 
-import io.github.luyingyilong.ore.Table;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.layout.Scroll;
-import io.github.luyingyilong.ore.layout.Window;
+import io.github.luyingyilong.ore.control.data.Table;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.layout.Scroll;
+import io.github.luyingyilong.ore.window.Window;
 
 /**
  * The same content-branch transform is used for routing, native inputs, popups and focus.

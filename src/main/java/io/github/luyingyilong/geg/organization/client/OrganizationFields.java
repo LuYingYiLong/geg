@@ -1,10 +1,15 @@
 package io.github.luyingyilong.geg.organization.client;
 
-import io.github.luyingyilong.ore.Radio;
-import io.github.luyingyilong.ore.RadioGroup;
-import io.github.luyingyilong.ore.form.*;
-import io.github.luyingyilong.ore.layout.Box;
-import io.github.luyingyilong.ore.layout.SizeFlags;
+import io.github.luyingyilong.ore.control.form.FieldKey;
+import io.github.luyingyilong.ore.control.form.FormField;
+import io.github.luyingyilong.ore.control.form.FormFields;
+import io.github.luyingyilong.ore.control.form.validation.Validator;
+import io.github.luyingyilong.ore.control.form.validation.Validators;
+
+import io.github.luyingyilong.ore.control.input.Radio;
+import io.github.luyingyilong.ore.control.input.RadioGroup;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.base.SizeFlags;
 import io.github.luyingyilong.geg.organization.Organization;
 import io.github.luyingyilong.geg.organization.OrganizationSavedData;
 import net.minecraft.network.chat.Component;

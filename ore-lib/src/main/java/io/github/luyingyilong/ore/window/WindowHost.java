@@ -1,6 +1,5 @@
 package io.github.luyingyilong.ore.window;
 
-import io.github.luyingyilong.ore.layout.Window;
 
 public interface WindowHost {
     WindowContext getContext();

@@ -1,7 +1,19 @@
 package io.github.luyingyilong.ore.inspector;
 
-import io.github.luyingyilong.ore.*;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.SizeFlags;
+import io.github.luyingyilong.ore.control.data.Tree;
+import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.display.TextureRect;
+import io.github.luyingyilong.ore.control.form.FormItem;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.input.Segmented;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.layout.Scroll;
+import io.github.luyingyilong.ore.window.Window;
+
 import io.github.luyingyilong.geg.market.client.ClientMarketScreen;
 import io.github.luyingyilong.geg.organization.client.ClientOrganizationScreen;
 import io.github.luyingyilong.geg.mail.client.ClientMailScreen;
@@ -25,22 +37,22 @@ public final class NativeInspectorClientTest {
     private static Window previousWindow;
     private static InspectorBackend previousBackend;
     private static int reopenCount;
-    private static io.github.luyingyilong.ore.input.Input liveInput;
+    private static io.github.luyingyilong.ore.control.input.Input liveInput;
     private static int invalidAt;
     private static Button signalButton;
     private static Window originalRoot, marketRoot, organizationRoot, mailRoot;
     private static float retainedFontSize;
-    private static io.github.luyingyilong.ore.input.Input hintInput;
-    private static io.github.luyingyilong.ore.input.TextArea hintArea;
+    private static io.github.luyingyilong.ore.control.input.Input hintInput;
+    private static io.github.luyingyilong.ore.control.input.TextArea hintArea;
     private static java.util.List<Long> hintSignalIds;
-    private static io.github.luyingyilong.ore.input.Input currentHint;
+    private static io.github.luyingyilong.ore.control.input.Input currentHint;
     @SubscribeEvent public static void tick(TickEvent.ClientTickEvent event) {
         if (!Boolean.getBoolean("geg.native.inspector.smoke") || event.phase!=TickEvent.Phase.END || phase==99) return;
         Minecraft mc=Minecraft.getInstance(); if(mc.player==null)return;
         try {
             if(++ticks>2400)throw new AssertionError("Native Inspector timeout phase "+phase);
             if(phase==0) {
-                io.github.luyingyilong.ore.input.PlaceholderReuseTest.verify();
+                io.github.luyingyilong.ore.control.input.PlaceholderReuseTest.verify();
                 check(java.util.Arrays.asList(mc.options.keyMappings).contains(OreInspector.OPEN),
                         "Inspector service registers F8 without a GEG development bootstrap");
                 preview=new Label(Component.literal("Inspector preview / 中文基线")); preview.setDebugName("Native Inspector preview");
@@ -51,11 +63,11 @@ public final class NativeInspectorClientTest {
                 childContainer104.addChild(preview);
                 childContainer104.addChild(signalButton);
                 Box content=childContainer104;
-                hintInput = new io.github.luyingyilong.ore.input.Input().setPlaceholder(Component.literal("Stable single-line placeholder"));
-                hintArea = new io.github.luyingyilong.ore.input.TextArea(0);
+                hintInput = new io.github.luyingyilong.ore.control.input.Input().setPlaceholder(Component.literal("Stable single-line placeholder"));
+                hintArea = new io.github.luyingyilong.ore.control.input.TextArea(0);
                 hintArea.setRows(2).setPlaceholder(Component.literal("Stable multiline placeholder / 自动换行的占位文本 ".repeat(4)));
-                var inputNode = new io.github.luyingyilong.ore.input.InputControl(hintInput); inputNode.setDebugName("Retained input probe");
-                var areaNode = new io.github.luyingyilong.ore.input.InputControl(hintArea); areaNode.setDebugName("Retained area probe");
+                var inputNode = new io.github.luyingyilong.ore.control.input.InputControl(hintInput); inputNode.setDebugName("Retained input probe");
+                var areaNode = new io.github.luyingyilong.ore.control.input.InputControl(hintArea); areaNode.setDebugName("Retained area probe");
                 content.addChild(inputNode);
                 content.addChild(areaNode);
                 content.addChild(new Segmented(java.util.List.of(Component.literal("One"), Component.literal("Two"))));
@@ -136,7 +148,7 @@ public final class NativeInspectorClientTest {
                 var hostThemes = io.github.luyingyilong.ore.theme.ThemeDB.getDefault();
                 check(hostThemes.getDefaultTheme().getId().equals(io.github.luyingyilong.geg.client.theme.GegThemes.ID),
                         "GEG uses its own theme resource without replacing the library theme");
-                var mailImage = new io.github.luyingyilong.ore.TextureRect().setTexture(
+                var mailImage = new io.github.luyingyilong.ore.control.display.TextureRect().setTexture(
                         io.github.luyingyilong.ore.render.TextureSource.themed(io.github.luyingyilong.geg.client.theme.GegThemes.MAIL_UNREAD));
                 check(mailImage.getResolvedTextureRegion().getTexture().getNamespace().equals("geg")
                                 && mailImage.getMinimumWidth() == 16, "Business image is loaded from the host pack with inferred dimensions");
@@ -156,7 +168,7 @@ public final class NativeInspectorClientTest {
                 check(clicks == 0, "Inspecting signals does not activate business actions");
                 io.github.luyingyilong.ore.window.NativeWindowClientTest.capture(OreInspector.view().window(), mc.gameDirectory.toPath().resolve("screenshots/native-inspector-signals-active.png"));
                 signalButton.queueFree();
-                io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
+                io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
                 invalidAt = ticks;
                 phase = 21;
             } else if (phase == 21 && ticks > invalidAt + 6) {
@@ -202,22 +214,22 @@ public final class NativeInspectorClientTest {
             else if(phase==6&&target("Chat Window")) {
                 check(OreInspector.backend().snapshot().targets().size()>=4,"All business roots registered separately");
                 check(marketRoot.isSuspended() && organizationRoot.isSuspended() && mailRoot.isSuspended(), "Retained business roots are suspended, not detached");
-                io.github.luyingyilong.ore.screen.OreScreen.back(); phase = 30;
+                io.github.luyingyilong.ore.window.screen.OreScreen.back(); phase = 30;
             } else if (phase == 30 && target("Mail Window")) {
                 check(OreInspector.backend().inspectedRoot() == mailRoot && mailRoot.isReady() && !mailRoot.isSuspended(), "Return resumes the original mail tree");
-                io.github.luyingyilong.ore.screen.OreScreen.back(); phase = 31;
+                io.github.luyingyilong.ore.window.screen.OreScreen.back(); phase = 31;
             } else if (phase == 31 && target("Organization Window")) {
                 check(OreInspector.backend().inspectedRoot() == organizationRoot && !organizationRoot.isSuspended(), "Return resumes the original organization tree");
-                io.github.luyingyilong.ore.screen.OreScreen.back(); phase = 32;
+                io.github.luyingyilong.ore.window.screen.OreScreen.back(); phase = 32;
             } else if (phase == 32 && target("Market Window")) {
                 check(OreInspector.backend().inspectedRoot() == marketRoot && !marketRoot.isSuspended(), "Return resumes the original market tree");
-                io.github.luyingyilong.ore.screen.OreScreen.back(); phase = 33;
+                io.github.luyingyilong.ore.window.screen.OreScreen.back(); phase = 33;
             } else if (phase == 33 && target("Original Window")) {
                 check(OreInspector.backend().inspectedRoot() == originalRoot && !originalRoot.isSuspended() && hintInput.isValid(), "Retained native inputs attach again");
                 check(preview.getThemeItem(Label.FONT_SIZE) == retainedFontSize && !placeholder(hintArea).isDisposed(), "Return preserves effective properties and cached controls");
                 System.out.println("GEG_LIFECYCLE_RETURN_CHAIN_PASS");
                 originalRoot.queueFree();
-                io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
+                io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
                 check(placeholder(hintInput).isDisposed() && placeholder(hintArea).isDisposed(), "Permanent root disposal releases both cached hints");
                 System.out.println("GEG_PLACEHOLDER_LIFETIME_PASS");
                 closeNativeInspector();phase=7;
@@ -243,12 +255,12 @@ public final class NativeInspectorClientTest {
     private static void subscribeSignalButton() {
         signalButton.pressed().connect(preview, "test purchase", () -> clicks++);
     }
-    private static Label placeholder(io.github.luyingyilong.ore.input.Input input) throws ReflectiveOperationException {
-        var field = io.github.luyingyilong.ore.input.Input.class.getDeclaredField("placeholderLabel");
+    private static Label placeholder(io.github.luyingyilong.ore.control.input.Input input) throws ReflectiveOperationException {
+        var field = io.github.luyingyilong.ore.control.input.Input.class.getDeclaredField("placeholderLabel");
         field.setAccessible(true);
         return (Label)field.get(input);
     }
-    private static void startHintProbe(String name, io.github.luyingyilong.ore.input.Input input) throws ReflectiveOperationException {
+    private static void startHintProbe(String name, io.github.luyingyilong.ore.control.input.Input input) throws ReflectiveOperationException {
         var backend = OreInspector.backend();
         var parent = backend.snapshot().nodes().stream().filter(n -> n.name().equals(name)).findFirst().orElseThrow();
         var hint = backend.snapshot().nodes().stream().filter(n -> n.parent().equals(parent.id()) && n.name().equals("[internal] placeholder")).findFirst().orElseThrow();
@@ -306,7 +318,7 @@ public final class NativeInspectorClientTest {
             properties.stream().filter(p->p.target() instanceof Label).map(p->(Label)p.target()).distinct()
                     .filter(label->label.getText().getString().contains("Restore node")).forEach(label->{ check(label.getBounds().right() <= OreInspector.view().window().getContext().getGuiWidth(),"Property button stays within viewport"); });
         }
-        if(control instanceof io.github.luyingyilong.ore.input.InputControl input)
+        if(control instanceof io.github.luyingyilong.ore.control.input.InputControl input)
             System.out.println("NATIVE_EDITOR_VALUE "+input.getWidget().getText()+" "+input.getDisplayedBounds());
         control.getChildren().forEach(NativeInspectorClientTest::diagnose);
     }

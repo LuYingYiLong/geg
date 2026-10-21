@@ -35,11 +35,18 @@ tasks.register('verifyOrePortability', Exec) {
         def artifact = new File(portabilityDirectory.get().asFile, 'build/libs/ore-portability-host-1.0.jar')
         new java.util.zip.ZipFile(artifact).withCloseable { zip ->
             def names = zip.entries().collect { it.name }
-            ['io/github/luyingyilong/ore/OreClient.class', 'ore.mixins.json',
+            ['io/github/luyingyilong/ore/OreClient.class',
+             'io/github/luyingyilong/ore/control/base/Control.class',
+             'io/github/luyingyilong/ore/control/layout/Collapse.class',
+             'io/github/luyingyilong/ore/control/input/Input.class',
+             'io/github/luyingyilong/ore/window/Window.class', 'ore.mixins.json',
              'assets/ore/themes/ore.json', 'assets/ore/font/ore.json'].each {
                 if (!names.contains(it)) throw new GradleException("Missing portable library entry: $it")
             }
+            def legacyPrefixes = ['layout', 'input', 'inventory', 'menu', 'screen', 'skin', 'util', 'form']
+                    .collect { "io/github/luyingyilong/ore/${it}/" }
             def forbidden = names.findAll {
+                legacyPrefixes.any { prefix -> it.startsWith(prefix) } ||
                 it.startsWith('io/github/luyingyilong/geg/') || it.startsWith('assets/geg/') ||
                 it.startsWith('io/github/luyingyilong/ore/inspector/') || it.startsWith('assets/ore_inspector/') ||
                 it.startsWith('io/github/luyingyilong/ore/gallery/') || it.startsWith('assets/ore_gallery/') ||

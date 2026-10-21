@@ -4,7 +4,7 @@ import dev.emi.emi.api.widget.Bounds;
 import dev.emi.emi.api.widget.Widget;
 import dev.emi.emi.api.widget.WidgetHolder;
 import io.github.luyingyilong.ore.compat.recipeviewer.RecipeCanvasView;
-import io.github.luyingyilong.ore.layout.Control;
+import io.github.luyingyilong.ore.control.base.Control;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.function.Supplier;

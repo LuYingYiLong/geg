@@ -1,8 +1,8 @@
 package io.github.luyingyilong.ore.inspector;
 
-import io.github.luyingyilong.ore.Slider;
+import io.github.luyingyilong.ore.control.input.Slider;
 import io.github.luyingyilong.ore.debug.DebugBridge;
-import io.github.luyingyilong.ore.layout.LifecycleScheduler;
+import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
 
 public final class InspectorSliderTest {
     public static void main(String[] args) {
@@ -13,7 +13,7 @@ public final class InspectorSliderTest {
         check(properties.stream().anyMatch(property -> property.key().equals("reverse")), "annotation discovery");
         DebugOverrides overrides = new DebugOverrides();
         DebugBridge.install(new DebugBridge.Backend() {
-            @Override public Object value(io.github.luyingyilong.ore.layout.Control control, String key, Object base) {
+            @Override public Object value(io.github.luyingyilong.ore.control.base.Control control, String key, Object base) {
                 return overrides.value(control, key, base);
             }
         });

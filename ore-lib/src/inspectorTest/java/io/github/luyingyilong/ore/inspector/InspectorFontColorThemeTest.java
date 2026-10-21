@@ -1,9 +1,12 @@
 package io.github.luyingyilong.ore.inspector;
 
-import io.github.luyingyilong.ore.Button;
-import io.github.luyingyilong.ore.Label;
-import io.github.luyingyilong.ore.debug.*;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
+import io.github.luyingyilong.ore.debug.DebugBridge;
+import io.github.luyingyilong.ore.debug.DebugProperty;
+
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.display.Label;
 import net.minecraft.network.chat.Component;
 
 /** Hex color editing keeps alpha, session overrides and latest-base restore semantics. */

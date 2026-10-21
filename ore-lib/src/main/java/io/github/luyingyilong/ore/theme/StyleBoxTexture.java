@@ -1,7 +1,10 @@
 package io.github.luyingyilong.ore.theme;
-import io.github.luyingyilong.ore.render.*;
-import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.layout.Offset;
+
+import io.github.luyingyilong.ore.render.DrawContext;
+import io.github.luyingyilong.ore.render.TexturePainter;
+import io.github.luyingyilong.ore.render.TextureRegion;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.Offset;
 import java.util.*;
 
 /** Independent source borders. Destination borders shrink proportionally for tiny rectangles. */

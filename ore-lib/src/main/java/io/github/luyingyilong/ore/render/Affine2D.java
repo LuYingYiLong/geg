@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore.render;
 
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.base.Rect;
 import org.joml.Matrix4f;
 
 /** Immutable double precision geometry; multiply applies the right operand first. */

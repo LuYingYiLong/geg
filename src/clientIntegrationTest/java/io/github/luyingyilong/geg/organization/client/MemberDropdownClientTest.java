@@ -1,8 +1,12 @@
 package io.github.luyingyilong.geg.organization.client;
 
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.input.Dropdown;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.layout.Scroll;
+import io.github.luyingyilong.ore.window.Window;
+
 import io.github.luyingyilong.geg.organization.*;
-import io.github.luyingyilong.ore.*;
-import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.event.EventGeometry;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;

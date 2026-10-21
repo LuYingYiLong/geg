@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore.event;
 
-import io.github.luyingyilong.ore.input.InputPreedit;
+import io.github.luyingyilong.ore.control.input.InputPreedit;
 import io.github.luyingyilong.ore.window.WindowContext;
 
 /**

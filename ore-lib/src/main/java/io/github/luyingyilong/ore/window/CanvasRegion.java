@@ -1,9 +1,9 @@
 package io.github.luyingyilong.ore.window;
 
 import io.github.luyingyilong.ore.event.EventGeometry;
-import io.github.luyingyilong.ore.layout.Container;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.base.Container;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
 import io.github.luyingyilong.ore.render.CanvasTransform;
 import io.github.luyingyilong.ore.render.DrawContext;
 import net.minecraft.client.gui.Font;
@@ -33,7 +33,7 @@ public final class CanvasRegion extends Container {
         for (Control child : proposed) validateContent(child);
     }
     private static void validateContent(Control control) {
-        if (control instanceof io.github.luyingyilong.ore.layout.Window)
+        if (control instanceof io.github.luyingyilong.ore.window.Window)
             throw new IllegalArgumentException("Embed Window content in Canvas, not another Window host");
         for (Control child : control.getChildren()) validateContent(child);
     }

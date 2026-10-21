@@ -1,10 +1,11 @@
 package io.github.luyingyilong.geg.mail.client;
 
-import io.github.luyingyilong.geg.client.theme.GegThemes;
-import io.github.luyingyilong.ore.render.*;
+import io.github.luyingyilong.ore.render.TextureSource;
 
-import io.github.luyingyilong.ore.Button;
-import io.github.luyingyilong.ore.MenuItem;
+import io.github.luyingyilong.geg.client.theme.GegThemes;
+
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.navigation.MenuItem;
 import io.github.luyingyilong.geg.mail.MailState;
 import io.github.luyingyilong.geg.mail.MailSyncPacket;
 import net.minecraft.network.chat.Component;

@@ -92,7 +92,7 @@ public final class ScreenInputBridge {
         if (paired && !owner.equals(host.getContext().getId())) return true;
         host.updatePointer(x, y, 0);
         if(press&&!paired&&!host.getWindow().getPointerCaptured(button)
-                &&host.getScreen() instanceof io.github.luyingyilong.ore.menu.OreMenuScreen<?> menu
+                &&host.getScreen() instanceof io.github.luyingyilong.ore.window.container.OreMenuScreen<?> menu
                 &&!menu.getPointerInside(x,y)&&host.getWindow().getFocusManager().getInputScope()==null
                 &&!io.github.luyingyilong.ore.debug.DebugBridge.backend().picking(host.getWindow())
                 &&!host.getContext().getPopups().open()){
@@ -135,7 +135,7 @@ public final class ScreenInputBridge {
         if (handle != Minecraft.getInstance().getWindow().getWindow() || host() == null) return false;
         // Forge pointer callbacks omit GLFW modifiers and key callbacks omit repeat status.
         // Container hosts retain that original payload even when no viewer is installed.
-        if(host().getScreen() instanceof io.github.luyingyilong.ore.menu.OreMenuScreen<?>)return true;
+        if(host().getScreen() instanceof io.github.luyingyilong.ore.window.container.OreMenuScreen<?>)return true;
         var mods = net.minecraftforge.fml.ModList.get();
         return mods != null && (mods.isLoaded("emi") || mods.isLoaded("jei") || mods.isLoaded("roughlyenoughitems"));
     }

@@ -1,8 +1,12 @@
 package io.github.luyingyilong.ore.text;
 
-import io.github.luyingyilong.ore.Label;
-import io.github.luyingyilong.ore.layout.*;
-import io.github.luyingyilong.ore.theme.*;
+import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.ThemeDB;
+
+import io.github.luyingyilong.ore.control.display.Label;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.*;

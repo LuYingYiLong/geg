@@ -1,11 +1,16 @@
 package io.github.luyingyilong.ore.inspector;
 
-import io.github.luyingyilong.ore.Button;
-import io.github.luyingyilong.ore.Label;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.layout.Grid;
+import io.github.luyingyilong.ore.control.layout.Scroll;
+
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.display.Label;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.DebugProperty;
 import io.github.luyingyilong.ore.debug.Inspectable;
-import io.github.luyingyilong.ore.layout.*;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;

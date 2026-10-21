@@ -1,7 +1,7 @@
 package io.github.luyingyilong.ore.event;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
-import io.github.luyingyilong.ore.layout.Window;
+import io.github.luyingyilong.ore.window.Window;
 
 /**
  * Thin host conversion only; all routing and editing belongs to Window.

@@ -7,20 +7,20 @@ tasks.register('verifyOreRelease') {
             def names = zip.entries().collect { it.name }
             ['META-INF/mods.toml', 'pack.mcmeta', 'geg.mixins.json', 'ore.mixins.json',
              'io/github/luyingyilong/ore/OreClient.class', 'assets/ore/themes/ore.json',
-             'io/github/luyingyilong/ore/form/FieldKey.class',
-             'io/github/luyingyilong/ore/form/FormField.class',
-             'io/github/luyingyilong/ore/form/FormValues.class',
-             'io/github/luyingyilong/ore/form/FormValidation.class',
+             'io/github/luyingyilong/ore/control/form/FieldKey.class',
+             'io/github/luyingyilong/ore/control/form/FormField.class',
+             'io/github/luyingyilong/ore/control/form/FormValues.class',
+             'io/github/luyingyilong/ore/control/form/FormValidation.class',
              'io/github/luyingyilong/ore/theme/Theme.class',
              'io/github/luyingyilong/ore/theme/ThemeDB.class',
              'io/github/luyingyilong/ore/theme/StyleBox.class',
-             'io/github/luyingyilong/ore/TextureRect.class',
-             'io/github/luyingyilong/ore/TextureProgressBar.class',
+             'io/github/luyingyilong/ore/control/display/TextureRect.class',
+             'io/github/luyingyilong/ore/control/progress/TextureProgressBar.class',
              'io/github/luyingyilong/ore/render/TexturePainter$Triangle.class',
              'assets/ore/textures/icons/lit_progress.png', 'assets/ore/textures/icons/lit_progress_under.png',
              'assets/ore/textures/icons/burn_progress.png', 'assets/ore/textures/icons/burn_progress_under.png',
-             'io/github/luyingyilong/ore/Slider.class',
-             'io/github/luyingyilong/ore/Slider$RangeValue.class',
+             'io/github/luyingyilong/ore/control/input/Slider.class',
+             'io/github/luyingyilong/ore/control/input/Slider$RangeValue.class',
              'assets/ore/textures/gui/slider.png', 'assets/ore/textures/gui/slider_disabled.png',
              'assets/ore/textures/gui/grabber_area.png', 'assets/ore/textures/icons/grabber_normal.png',
              'assets/ore/textures/icons/tick.png',
@@ -30,11 +30,11 @@ tasks.register('verifyOreRelease') {
              'assets/ore/textures/gui/panel.png',
              'io/github/luyingyilong/ore/theme/IconTheme.class',
              'assets/geg/themes/ui.json', 'assets/geg/textures/icons/email.png',
-             'io/github/luyingyilong/ore/Inventory.class',
-             'io/github/luyingyilong/ore/ProgressBar.class',
-             'io/github/luyingyilong/ore/inventory/InventorySource.class',
-             'io/github/luyingyilong/ore/menu/OreMenuScreen.class',
-             'io/github/luyingyilong/ore/menu/MenuSession.class',
+             'io/github/luyingyilong/ore/control/inventory/Inventory.class',
+             'io/github/luyingyilong/ore/control/progress/ProgressBar.class',
+             'io/github/luyingyilong/ore/control/inventory/source/InventorySource.class',
+             'io/github/luyingyilong/ore/window/container/OreMenuScreen.class',
+             'io/github/luyingyilong/ore/window/container/MenuSession.class',
              'io/github/luyingyilong/ore/mixin/ContainerScreenMixin.class',
              'io/github/luyingyilong/ore/render/Canvas.class',
              'io/github/luyingyilong/ore/render/DrawContext.class',
@@ -59,11 +59,22 @@ tasks.register('verifyOreRelease') {
              'META-INF/licenses/noto-emoji/LICENSE', 'META-INF/licenses/noto-emoji/Apache-2.0.txt'].each {
                 if (!names.contains(it)) throw new GradleException("Missing release entry: $it")
             }
+            def oldPackagePrefixes = ['layout', 'input', 'inventory', 'menu', 'screen', 'skin', 'util', 'form']
+                    .collect { "io/github/luyingyilong/ore/${it}/" }
+            def oldClasses = names.findAll { entry ->
+                def prefix = 'io/github/luyingyilong/ore/'
+                def leaf = entry.startsWith(prefix) ? entry.substring(prefix.length()) : ''
+                oldPackagePrefixes.any { entry.startsWith(it) } ||
+                        (leaf.endsWith('.class') && !leaf.contains('/') &&
+                                !['OreClient', 'OreClientOptions', 'OreClientExtension', 'package-info']
+                                        .contains(leaf.substring(0, leaf.length() - 6).split('\\$')[0]))
+            }
+            if (!oldClasses.empty) throw new GradleException("Legacy Ore class locations in release: $oldClasses")
             def forbidden = names.findAll { it.startsWith('io/github/luyingyilong/ore/inspector/') ||
                 it.startsWith('io/github/luyingyilong/ore/compat/recipeviewer/canvas/') ||
                 it.startsWith('io/github/luyingyilong/geg/client/ui/') ||
                 it == 'assets/ore/themes.json' || it.startsWith('assets/ore/textures/modularui/') ||
-                it == 'io/github/luyingyilong/ore/Button$Icon.class' ||
+                it == 'io/github/luyingyilong/ore/control/input/Button$Icon.class' ||
                 it == 'io/github/luyingyilong/ore/theme/ThemeIcon.class' ||
                 it == 'io/github/luyingyilong/ore/theme/OreIcons.class' ||
                 it == 'io/github/luyingyilong/ore/theme/OreTrueTypeGlyphProvider.class' ||
@@ -78,8 +89,8 @@ tasks.register('verifyOreRelease') {
                 it.startsWith('assets/geg/font/') || it == 'assets/geg/themes.json' ||
                 it == 'assets/geg/sounds.json' || it == 'io/github/luyingyilong/geg/sound/GegSounds.class' ||
                 it == 'META-INF/services/io.github.luyingyilong.ore.OreClientExtension' ||
-                it.endsWith('Test.class') || it.startsWith('io/github/luyingyilong/ore/menu/ContainerGameTests') ||
-                it.startsWith('io/github/luyingyilong/ore/menu/MenuClientTest') || it.startsWith('data/ore_test/') ||
+                it.endsWith('Test.class') || it.startsWith('io/github/luyingyilong/ore/window/container/ContainerGameTests') ||
+                it.startsWith('io/github/luyingyilong/ore/window/container/MenuClientTest') || it.startsWith('data/ore_test/') ||
                 it.startsWith('io/github/luyingyilong/ore/window/TextureProgressBarClientTest') ||
                 it.startsWith('net/minecraftforge/fml/relauncher/') ||
                 it.startsWith('brachy/modularui/') || it.startsWith('mezz/jei/') ||

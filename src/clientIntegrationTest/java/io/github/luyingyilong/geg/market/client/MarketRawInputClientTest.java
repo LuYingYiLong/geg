@@ -1,10 +1,10 @@
 package io.github.luyingyilong.geg.market.client;
 
-import io.github.luyingyilong.ore.Form;
-import io.github.luyingyilong.ore.FormItem;
-import io.github.luyingyilong.ore.input.NumberInput;
-import io.github.luyingyilong.ore.input.InputGeometryProbe;
-import io.github.luyingyilong.ore.layout.Window;
+import io.github.luyingyilong.ore.control.form.Form;
+import io.github.luyingyilong.ore.control.form.FormItem;
+import io.github.luyingyilong.ore.control.input.NumberInput;
+import io.github.luyingyilong.ore.control.input.InputGeometryProbe;
+import io.github.luyingyilong.ore.window.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.*;
 import net.minecraftforge.api.distmarker.Dist;

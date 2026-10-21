@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore.inspector;
 
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.base.Rect;
 
 import java.util.List;
 import java.util.Map;
@@ -10,7 +10,7 @@ import io.github.luyingyilong.ore.signal.SignalDiagnostics;
  * Immutable view data, deliberately containing no live Control references.
  */
 public record InspectorSnapshot(long sequence, boolean waiting, String selected, boolean picking, String error,
-                                boolean canUndo, boolean canRedo, List<Target> targets, List<Node> nodes, SignalPanel signals, io.github.luyingyilong.ore.layout.LifecycleInfo lifecycle, List<io.github.luyingyilong.ore.layout.LifecycleInfo> lifecycleHistory, io.github.luyingyilong.ore.debug.DebugThemes.Snapshot themes) {
+                                boolean canUndo, boolean canRedo, List<Target> targets, List<Node> nodes, SignalPanel signals, io.github.luyingyilong.ore.control.base.LifecycleInfo lifecycle, List<io.github.luyingyilong.ore.control.base.LifecycleInfo> lifecycleHistory, io.github.luyingyilong.ore.debug.DebugThemes.Snapshot themes) {
     public static InspectorSnapshot empty() {
         return new InspectorSnapshot(0, true, "", false, "", false, false, List.of(), List.of(), SignalPanel.empty(), null, List.of(), io.github.luyingyilong.ore.debug.DebugThemes.Snapshot.empty());
     }

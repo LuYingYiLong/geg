@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore.render;
 
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.base.Rect;
 
 /** Presentation transform. Layout and Offset remain independent of this value. */
 public record Transform2D(double getTranslationX, double getTranslationY, double getRotationDegrees,

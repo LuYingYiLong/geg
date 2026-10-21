@@ -1,7 +1,7 @@
 package io.github.luyingyilong.ore.text;
 
 import io.github.luyingyilong.ore.OreClient;
-import io.github.luyingyilong.ore.layout.Control;
+import io.github.luyingyilong.ore.control.base.Control;
 import io.github.luyingyilong.ore.theme.OreTheme;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;

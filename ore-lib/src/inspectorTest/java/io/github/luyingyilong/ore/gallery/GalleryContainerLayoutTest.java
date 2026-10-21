@@ -1,8 +1,16 @@
 package io.github.luyingyilong.ore.gallery;
 
-import io.github.luyingyilong.ore.*;
-import io.github.luyingyilong.ore.inventory.InventorySource;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.Size;
+import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.display.TextureRect;
+import io.github.luyingyilong.ore.control.inventory.Inventory;
+import io.github.luyingyilong.ore.control.inventory.Slot;
+import io.github.luyingyilong.ore.control.progress.TextureProgressBar;
+
+import io.github.luyingyilong.ore.control.inventory.source.InventorySource;
 import io.github.luyingyilong.ore.render.TextureRegion;
 import io.github.luyingyilong.ore.theme.OreTheme;
 import net.minecraft.client.gui.Font;
@@ -29,7 +37,7 @@ public final class GalleryContainerLayoutTest {
             image(retained,"chestBackgroundBottom",new Rect(0,71,176,96),new Rect(0,126,176,96),"generic_54.png");
             image(retained,"furnaceBackground",new Rect(0,0,176,166),new Rect(0,0,176,166),"blast_furnace.png");
             Inventory storage=(Inventory)find(retained,"chestStorage"),chestPlayer=(Inventory)find(retained,"chestPlayer"),furnacePlayer=(Inventory)find(retained,"furnacePlayer");
-            title(chest,chestPlayer,8,71);title(furnace,furnacePlayer,8,69);
+            title(chest,chestPlayer,8,72);title(furnace,furnacePlayer,8,70);
             check(!storage.getShowTitle()&&find(retained,"chestInventoryTitle")==null&&find(retained,"furnaceInventoryTitle")==null,"no duplicate external inventory captions");
             item(chest,storage.getSlotControl(0),8,18);item(chest,storage.getSlotControl(26),152,54);
             item(chest,chestPlayer.getSlotControl(0),8,85);item(chest,chestPlayer.getSlotControl(26),152,121);
@@ -62,7 +70,7 @@ public final class GalleryContainerLayoutTest {
     private static void title(Control scene,Inventory inventory,int x,int y){
         Label title=inventory.getTitleControl();Rect a=title.getAbsoluteBounds(),b=scene.getAbsoluteBounds();
         check(inventory.getShowTitle()&&title.getVisible()&&title.getParent()==inventory,"player inventory owns its visible title");
-        check(a.x()-b.x()==x&&a.y()-b.y()==y,"built-in title receives its three-pixel visual lift");
+        check(a.x()-b.x()==x&&a.y()-b.y()==y,"built-in title receives its current two-pixel visual lift");
         check(title.getThemeItem(OreTheme.FONT_COLOR)==OreTheme.TEXT_DARK,"inventory title uses dark text without recoloring item counts");
         check(inventory.getSlotControl(0).getChild(0).getThemeItem(OreTheme.FONT_COLOR)!=OreTheme.TEXT_DARK,"item count keeps its normal text color");
         check(scene.getChildren().stream().filter(c->c instanceof Label).count()==1,"scene owns only its container caption");

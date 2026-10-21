@@ -1,8 +1,9 @@
 package io.github.luyingyilong.geg.market.client;
 
-import io.github.luyingyilong.ore.Form;
-import io.github.luyingyilong.ore.input.NumberInput;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.window.Window;
+
+import io.github.luyingyilong.ore.control.form.Form;
+import io.github.luyingyilong.ore.control.input.NumberInput;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.*;
 import net.minecraftforge.api.distmarker.Dist;
@@ -37,7 +38,7 @@ public final class MarketNumberInputClientTest {
                 number=(NumberInput)field(ClientMarketScreen.class,null,"quantity");phase=2;
             }else if(phase==2&&ticks>45){
                 var form=(Form)field(ClientMarketScreen.class,null,"detailForm");
-                var node=form.getChildren().stream().filter(io.github.luyingyilong.ore.FormItem.class::isInstance).map(io.github.luyingyilong.ore.FormItem.class::cast).filter(item -> item.getName().equals("quantity")).findFirst().orElseThrow().getInputNode();
+                var node=form.getChildren().stream().filter(io.github.luyingyilong.ore.control.form.FormItem.class::isInstance).map(io.github.luyingyilong.ore.control.form.FormItem.class::cast).filter(item -> item.getName().equals("quantity")).findFirst().orElseThrow().getInputNode();
                 var a=node.getWidgetBounds();x=a.x()+8;y=a.y()+a.height()/2;
                 window.getContext().getMui().updateState(x,y,0);
                 check(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.MouseButtonPressed.Pre(mc.screen,x,y,0)),"Number press accepted");
@@ -53,17 +54,17 @@ public final class MarketNumberInputClientTest {
                 check(number.getText().equals("5"),"Enter commits expression");
                 number.getStringValue().setStringValue("12+34");number.setText("12+34");phase=4;
             }else if(phase==4&&ticks>60){
-                io.github.luyingyilong.ore.input.InputGeometryProbe.verifyLineHit(number);
-                x=io.github.luyingyilong.ore.input.InputGeometryProbe.clickX(number,2);
+                io.github.luyingyilong.ore.control.input.InputGeometryProbe.verifyLineHit(number);
+                x=io.github.luyingyilong.ore.control.input.InputGeometryProbe.clickX(number,2);
                 var a=number.getArea();y=a.y+1;
                 window.getContext().getMui().updateState(x,y,0);
                 net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.MouseButtonPressed.Pre(mc.screen,x,y,0));
                 net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.MouseButtonReleased.Pre(mc.screen,x,y,0));
-                var cursor=io.github.luyingyilong.ore.input.InputGeometryProbe.cursor(number);
+                var cursor=io.github.luyingyilong.ore.control.input.InputGeometryProbe.cursor(number);
                 check(cursor.x==2,"Clicked column 2, got "+cursor.x+","+cursor.y);
                 var form=(Form)field(ClientMarketScreen.class,null,"detailForm");
-                var priceNode=form.getChildren().stream().filter(io.github.luyingyilong.ore.FormItem.class::isInstance)
-                        .map(io.github.luyingyilong.ore.FormItem.class::cast).filter(item -> item.getName().equals("price")).findFirst().orElseThrow().getInputNode();
+                var priceNode=form.getChildren().stream().filter(io.github.luyingyilong.ore.control.form.FormItem.class::isInstance)
+                        .map(io.github.luyingyilong.ore.control.form.FormItem.class::cast).filter(item -> item.getName().equals("price")).findFirst().orElseThrow().getInputNode();
                 verifyField(priceNode,(NumberInput)field(ClientMarketScreen.class,null,"price"));
                 Object canvas=field(ClientMarketScreen.class,null,"canvas");
                 var menu=MarketCanvasWidget.class.getDeclaredField("quantityMenu");menu.setAccessible(true);menu.setBoolean(canvas,true);
@@ -72,25 +73,25 @@ public final class MarketNumberInputClientTest {
                 phase=5;
             }else if(phase==5&&ticks>75){
                 var form=(Form)field(ClientMarketScreen.class,null,"tradeForm");
-                var node=((io.github.luyingyilong.ore.FormItem)form.getChildren().get(0)).getInputNode();
+                var node=((io.github.luyingyilong.ore.control.form.FormItem)form.getChildren().get(0)).getInputNode();
                 verifyField(node,(NumberInput)field(ClientMarketScreen.class,null,"tradeQuantity"));
                 phase=99;System.out.println("GEG_MARKET_NUMBER_CLIENT_PASS");mc.stop();
             }
         }catch(Throwable error){phase=99;error.printStackTrace();System.out.println("GEG_MARKET_NUMBER_CLIENT_FAIL");mc.stop();}
     }
-    private static void verifyField(io.github.luyingyilong.ore.input.InputControl node, NumberInput input)throws Exception {
+    private static void verifyField(io.github.luyingyilong.ore.control.input.InputControl node, NumberInput input)throws Exception {
         input.setAvailableMaximum(java.math.BigDecimal.valueOf(64));
         input.getStringValue().setStringValue("12+34");input.setText("12+34");
         // Move after the last paint: MUI's deferred resize must not leave stale local coordinates.
         node.setOffset(2,0);
-        int px=io.github.luyingyilong.ore.input.InputGeometryProbe.clickX(input,2);
+        int px=io.github.luyingyilong.ore.control.input.InputGeometryProbe.clickX(input,2);
         int py=node.getWidgetBounds().y()+node.getBounds().height()-1;
-        io.github.luyingyilong.ore.input.InputGeometryProbe.resetClickSequence(input);
+        io.github.luyingyilong.ore.control.input.InputGeometryProbe.resetClickSequence(input);
         var mc=Minecraft.getInstance();window.getContext().getMui().updateState(px,py,0);
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.MouseButtonPressed.Pre(mc.screen,px,py,0));
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.MouseButtonReleased.Pre(mc.screen,px,py,0));
         check(input.isFocused(),"Moved NumberInput focuses");
-        var point=io.github.luyingyilong.ore.input.InputGeometryProbe.cursor(input);
+        var point=io.github.luyingyilong.ore.control.input.InputGeometryProbe.cursor(input);
         check(point.x==2,"Moved NumberInput caret at column 2, got "+point.x);
         var expected=node.getWidgetBounds();var actual=input.getArea();
         check(actual.x==expected.x() && actual.y==expected.y() && actual.rx==actual.x-input.getParent().getArea().x && actual.ry==actual.y-input.getParent().getArea().y,"Native area and relative transform follow Ore immediately");

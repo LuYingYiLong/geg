@@ -2,7 +2,7 @@ package io.github.luyingyilong.ore.compat.recipeviewer.canvas;
 
 import io.github.luyingyilong.ore.compat.recipeviewer.RecipeCanvasView;
 import io.github.luyingyilong.ore.compat.recipeviewer.jei.OreJeiCanvasWidget;
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.base.Rect;
 import mezz.jei.api.*;
 import mezz.jei.api.recipe.*;
 import mezz.jei.api.recipe.category.IRecipeCategory;

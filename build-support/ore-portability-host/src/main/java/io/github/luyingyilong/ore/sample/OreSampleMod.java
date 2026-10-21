@@ -1,9 +1,15 @@
 package io.github.luyingyilong.ore.sample;
 
-import io.github.luyingyilong.ore.*;
-import io.github.luyingyilong.ore.input.Input;
-import io.github.luyingyilong.ore.input.InputControl;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.OreClient;
+import io.github.luyingyilong.ore.OreClientOptions;
+import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.input.Switch;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.window.Window;
+
+import io.github.luyingyilong.ore.control.input.Input;
+import io.github.luyingyilong.ore.control.input.InputControl;
 import io.github.luyingyilong.ore.window.WindowManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -26,7 +32,7 @@ public final class OreSampleMod {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Client.initialize(context.getModEventBus()));
     }
     private static final class Client {
-        private static int ticks, phase;
+        private static int ticks, phase, openedAt;
         private static Window root;
         private static Switch toggle;
         static void initialize(IEventBus bus) {
@@ -58,12 +64,14 @@ public final class OreSampleMod {
                     if (!OreClient.getOptions().hostModId().equals(ID)) throw new AssertionError("Wrong host identity");
                     var key = new ScreenEvent.KeyPressed.Pre(mc.screen, GLFW.GLFW_KEY_F8, 0, 0);
                     MinecraftForge.EVENT_BUS.post(key);
-                    if (!key.isCanceled() || WindowManager.nativeWindows() != 1) throw new AssertionError("Inspector F8 was not installed");
+                    if (!key.isCanceled()) throw new AssertionError("Inspector F8 was not installed");
                     if (!toggle.activate() || !toggle.getChecked()) throw new AssertionError("Switch did not activate");
                     phase = 2;
-                } else if (phase == 2 && ticks > 40) {
+                } else if (phase == 2 && WindowManager.nativeWindows() == 1) {
+                    openedAt = ticks; phase = 3;
+                } else if (phase == 3 && ticks > openedAt + 20) {
                     if (WindowManager.nativeWindows() != 1) throw new AssertionError("Inspector failed to render");
-                    for (String file : new String[]{"font/ore.json", "themes/ore.json", "textures/modularui/icons/arrow_down.png"})
+                    for (String file : new String[]{"font/ore.json", "themes/ore.json", "textures/icons/arrow_down.png"})
                         if (mc.getResourceManager().getResource(ResourceLocation.fromNamespaceAndPath("ore", file)).isEmpty())
                             throw new AssertionError("Missing library resource: " + file);
                     System.out.println("ORE_PORTABILITY_CLIENT_PASS host=" + ID);

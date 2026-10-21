@@ -1,9 +1,9 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.input.OreInputMethod;
-import io.github.luyingyilong.ore.skin.AvatarSkinEvents;
+import io.github.luyingyilong.ore.control.input.OreInputMethod;
+import io.github.luyingyilong.ore.control.display.avatar.skin.AvatarSkinEvents;
 import io.github.luyingyilong.ore.theme.OreFontResources;
-import io.github.luyingyilong.ore.util.OreToasts;
+import io.github.luyingyilong.ore.control.overlay.toast.OreToasts;
 import io.github.luyingyilong.ore.window.WindowManager;
 import net.minecraftforge.eventbus.api.IEventBus;
 
@@ -59,9 +59,9 @@ public final class OreClient {
     public static void initializeThemes() {
         if (themesInitialized) return;
         var themes = io.github.luyingyilong.ore.theme.ThemeDB.getDefault();
-        io.github.luyingyilong.ore.input.Input.registerTheme(themes);
-        io.github.luyingyilong.ore.input.NumberInput.registerTheme(themes);
-        io.github.luyingyilong.ore.input.TextArea.registerTheme(themes);
+        io.github.luyingyilong.ore.control.input.Input.registerTheme(themes);
+        io.github.luyingyilong.ore.control.input.NumberInput.registerTheme(themes);
+        io.github.luyingyilong.ore.control.input.TextArea.registerTheme(themes);
         extensions.forEach(extension -> extension.registerThemes(themes));
         themes.getTheme(io.github.luyingyilong.ore.theme.OreTheme.DEFAULT_ID)
                 .set(io.github.luyingyilong.ore.theme.OreTheme.TEXT_FONT, options.bodyFont())

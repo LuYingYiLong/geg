@@ -1,7 +1,7 @@
 package io.github.luyingyilong.ore.debug;
 
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.SizeFlags;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.SizeFlags;
 import io.github.luyingyilong.ore.theme.ThemeDB;
 import io.github.luyingyilong.ore.theme.ThemeKey;
 

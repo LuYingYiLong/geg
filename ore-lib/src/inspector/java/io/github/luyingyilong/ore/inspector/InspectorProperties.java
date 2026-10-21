@@ -3,7 +3,7 @@ package io.github.luyingyilong.ore.inspector;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.debug.DebugProperty;
 import io.github.luyingyilong.ore.debug.Inspectable;
-import io.github.luyingyilong.ore.layout.Control;
+import io.github.luyingyilong.ore.control.base.Control;
 import net.minecraft.network.chat.Component;
 
 import java.lang.reflect.InvocationTargetException;

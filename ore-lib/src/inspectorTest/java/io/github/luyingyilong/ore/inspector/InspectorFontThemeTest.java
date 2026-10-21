@@ -1,8 +1,12 @@
 package io.github.luyingyilong.ore.inspector;
 
-import io.github.luyingyilong.ore.*;
-import io.github.luyingyilong.ore.debug.*;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
+import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.debug.DebugBridge;
+import io.github.luyingyilong.ore.debug.DebugProperty;
+
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;

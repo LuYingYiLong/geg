@@ -1,11 +1,18 @@
 package io.github.luyingyilong.geg.chat.client;
 
+import io.github.luyingyilong.ore.control.base.Container;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.Size;
+import io.github.luyingyilong.ore.control.base.SizeFlags;
+import io.github.luyingyilong.ore.control.layout.Grid;
+import io.github.luyingyilong.ore.control.layout.Scroll;
+
 import io.github.luyingyilong.geg.chat.ChatChannel;
 import io.github.luyingyilong.geg.chat.ChatMessage;
-import io.github.luyingyilong.ore.Avatar;
-import io.github.luyingyilong.ore.Label;
+import io.github.luyingyilong.ore.control.display.avatar.Avatar;
+import io.github.luyingyilong.ore.control.display.Label;
 import io.github.luyingyilong.ore.debug.DebugBridge;
-import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.render.DrawContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

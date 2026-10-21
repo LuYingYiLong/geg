@@ -1,7 +1,7 @@
 package io.github.luyingyilong.geg.market.client;
 
-import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.Button;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.input.Button;
 
 /** Shared drawing and hit bounds for the two actions in an offer table cell. */
 final class OfferActionLayout {

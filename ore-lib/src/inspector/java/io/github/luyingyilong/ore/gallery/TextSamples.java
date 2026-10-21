@@ -1,10 +1,18 @@
 package io.github.luyingyilong.ore.gallery;
 
-import io.github.luyingyilong.ore.*;
-import io.github.luyingyilong.ore.input.*;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.control.base.Container;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.Size;
+import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.input.Checkbox;
+import io.github.luyingyilong.ore.control.input.Dropdown;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.layout.Padding;
+import io.github.luyingyilong.ore.theme.OreFonts;
+import io.github.luyingyilong.ore.theme.OreTheme;
+
 import io.github.luyingyilong.ore.render.DrawContext;
-import io.github.luyingyilong.ore.theme.*;
 import io.github.luyingyilong.ore.text.OreText;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

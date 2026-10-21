@@ -1,10 +1,10 @@
 package io.github.luyingyilong.ore.compat.recipeviewer.canvas;
 
-import io.github.luyingyilong.ore.Button;
+import io.github.luyingyilong.ore.control.input.Button;
 import io.github.luyingyilong.ore.compat.recipeviewer.RecipeViewerClientTest;
 import io.github.luyingyilong.ore.event.EventGeometry;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
 import io.github.luyingyilong.ore.render.Canvas;
 import io.github.luyingyilong.ore.render.CanvasTransform;
 import io.github.luyingyilong.ore.window.ScreenWindowHost;

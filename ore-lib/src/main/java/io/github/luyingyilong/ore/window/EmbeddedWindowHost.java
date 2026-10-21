@@ -2,8 +2,7 @@ package io.github.luyingyilong.ore.window;
 
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
-import io.github.luyingyilong.ore.layout.Window;
-import io.github.luyingyilong.ore.screen.OreScreen;
+import io.github.luyingyilong.ore.window.screen.OreScreen;
 
 /**
  * Existing screens attach lazily on paint; standalone Window.open uses a normal OreScreen.

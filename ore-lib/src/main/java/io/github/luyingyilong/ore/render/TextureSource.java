@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore.render;
 
-import io.github.luyingyilong.ore.layout.Control;
+import io.github.luyingyilong.ore.control.base.Control;
 import io.github.luyingyilong.ore.theme.ThemeKey;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,13 +1,13 @@
 package io.github.luyingyilong.geg.organization.client;
 
 import io.github.luyingyilong.geg.organization.Organization;
-import io.github.luyingyilong.ore.Form;
-import io.github.luyingyilong.ore.FormItem;
-import io.github.luyingyilong.ore.Radio;
+import io.github.luyingyilong.ore.control.form.Form;
+import io.github.luyingyilong.ore.control.form.FormItem;
+import io.github.luyingyilong.ore.control.input.Radio;
 import io.github.luyingyilong.ore.event.PointerEvent;
-import io.github.luyingyilong.ore.form.Validators;
-import io.github.luyingyilong.ore.layout.LifecycleScheduler;
-import io.github.luyingyilong.ore.layout.Window;
+import io.github.luyingyilong.ore.control.form.validation.Validators;
+import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
+import io.github.luyingyilong.ore.window.Window;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;

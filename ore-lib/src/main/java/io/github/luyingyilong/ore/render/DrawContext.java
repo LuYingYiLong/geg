@@ -1,6 +1,6 @@
 package io.github.luyingyilong.ore.render;
 
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.base.Rect;
 import io.github.luyingyilong.ore.window.WindowContext;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -103,7 +103,7 @@ public final class DrawContext implements AutoCloseable {
         clips--;
     }
 
-    public Scope pushControlTransform(io.github.luyingyilong.ore.layout.Control control,int x,int y) {
+    public Scope pushControlTransform(io.github.luyingyilong.ore.control.base.Control control,int x,int y) {
         if(control.getRenderTransform().equals(Transform2D.IDENTITY)) return () -> { };
         return pushTransform(control.getRenderTransform().toAffine(control.getScreenBounds(x,y)));
     }

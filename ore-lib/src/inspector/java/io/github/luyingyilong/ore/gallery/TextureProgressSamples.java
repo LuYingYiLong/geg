@@ -1,7 +1,15 @@
 package io.github.luyingyilong.ore.gallery;
 
-import io.github.luyingyilong.ore.*;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.control.base.Container;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Offset;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.display.TextureRect;
+import io.github.luyingyilong.ore.control.input.Slider;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.progress.TextureProgressBar;
+
 import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.render.TextureSource;
 import io.github.luyingyilong.ore.theme.IconTheme;

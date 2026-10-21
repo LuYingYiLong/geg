@@ -1,13 +1,17 @@
 package io.github.luyingyilong.geg.organization.client;
 
+import io.github.luyingyilong.ore.control.form.FormFields;
+import io.github.luyingyilong.ore.control.form.FormValidation;
+import io.github.luyingyilong.ore.control.form.FormValues;
+import io.github.luyingyilong.ore.control.form.validation.Validators;
 
-import io.github.luyingyilong.ore.Form;
-import io.github.luyingyilong.ore.FormItem;
-import io.github.luyingyilong.ore.form.*;
-import io.github.luyingyilong.ore.Label;
-import io.github.luyingyilong.ore.input.TextArea;
-import io.github.luyingyilong.ore.layout.Scroll;
-import io.github.luyingyilong.ore.layout.SizeFlags;
+
+import io.github.luyingyilong.ore.control.form.Form;
+import io.github.luyingyilong.ore.control.form.FormItem;
+import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.input.TextArea;
+import io.github.luyingyilong.ore.control.layout.Scroll;
+import io.github.luyingyilong.ore.control.base.SizeFlags;
 import io.github.luyingyilong.geg.organization.Organization;
 import io.github.luyingyilong.geg.organization.OrganizationSyncPacket;
 import net.minecraft.network.chat.Component;

@@ -1,9 +1,19 @@
 package io.github.luyingyilong.ore.compat.recipeviewer.canvas;
 
-import io.github.luyingyilong.ore.*;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.data.Table;
+import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.input.Dropdown;
+import io.github.luyingyilong.ore.control.input.Input;
+import io.github.luyingyilong.ore.control.input.InputControl;
+import io.github.luyingyilong.ore.control.input.NumberInput;
+import io.github.luyingyilong.ore.control.input.TextArea;
+import io.github.luyingyilong.ore.control.layout.Scroll;
+import io.github.luyingyilong.ore.control.overlay.Drawer;
+import io.github.luyingyilong.ore.control.overlay.Modal;
+
 import io.github.luyingyilong.ore.event.EventGeometry;
-import io.github.luyingyilong.ore.input.*;
-import io.github.luyingyilong.ore.layout.*;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;

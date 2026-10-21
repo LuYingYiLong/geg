@@ -1,9 +1,13 @@
 package io.github.luyingyilong.ore.inspector;
 
-import io.github.luyingyilong.ore.*;
-import io.github.luyingyilong.ore.debug.*;
-import io.github.luyingyilong.ore.layout.*;
-import io.github.luyingyilong.ore.render.*;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
+import io.github.luyingyilong.ore.control.display.TextureRect;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.debug.DebugBridge;
+import io.github.luyingyilong.ore.debug.DebugProperty;
+import io.github.luyingyilong.ore.render.TextureSource;
+
 import io.github.luyingyilong.ore.theme.OreTheme;
 
 public final class InspectorTextureRectTest {

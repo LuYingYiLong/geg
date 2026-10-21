@@ -1,16 +1,22 @@
 package io.github.luyingyilong.ore.compat.recipeviewer;
 
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.SizeFlags;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.overlay.Overlay;
+import io.github.luyingyilong.ore.window.Window;
+
 import brachy.modularui.integration.recipeviewer.handlers.RecipeViewerHandler;
-import io.github.luyingyilong.ore.Button;
-import io.github.luyingyilong.ore.Drawer;
-import io.github.luyingyilong.ore.Dropdown;
-import io.github.luyingyilong.ore.Modal;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.overlay.Drawer;
+import io.github.luyingyilong.ore.control.input.Dropdown;
+import io.github.luyingyilong.ore.control.overlay.Modal;
 import io.github.luyingyilong.ore.event.EventGeometry;
-import io.github.luyingyilong.ore.input.Input;
-import io.github.luyingyilong.ore.input.InputControl;
-import io.github.luyingyilong.ore.input.NumberInput;
-import io.github.luyingyilong.ore.input.TextArea;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.control.input.Input;
+import io.github.luyingyilong.ore.control.input.InputControl;
+import io.github.luyingyilong.ore.control.input.NumberInput;
+import io.github.luyingyilong.ore.control.input.TextArea;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;

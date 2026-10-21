@@ -1,6 +1,8 @@
 package io.github.luyingyilong.ore.mixin;
 
-import io.github.luyingyilong.ore.menu.*;
+import io.github.luyingyilong.ore.window.container.ContainerScreenAccess;
+import io.github.luyingyilong.ore.window.container.OreMenuScreen;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.Slot;

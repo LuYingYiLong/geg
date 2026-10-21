@@ -1,15 +1,15 @@
 package io.github.luyingyilong.geg.organization.client;
 
-import io.github.luyingyilong.ore.Button;
+import io.github.luyingyilong.ore.control.input.Button;
 
 import io.github.luyingyilong.ore.signal.Signals;
 
-import io.github.luyingyilong.ore.Drawer;
-import io.github.luyingyilong.ore.PlayerIdentityCell;
-import io.github.luyingyilong.ore.Table;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Overlay;
-import io.github.luyingyilong.ore.layout.Window;
+import io.github.luyingyilong.ore.control.overlay.Drawer;
+import io.github.luyingyilong.ore.control.data.PlayerIdentityCell;
+import io.github.luyingyilong.ore.control.data.Table;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.overlay.Overlay;
+import io.github.luyingyilong.ore.window.Window;
 import io.github.luyingyilong.geg.organization.Organization;
 import io.github.luyingyilong.geg.organization.OrganizationSyncPacket;
 import net.minecraft.client.gui.Font;

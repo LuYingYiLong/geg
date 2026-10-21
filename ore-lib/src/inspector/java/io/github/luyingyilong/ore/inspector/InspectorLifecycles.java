@@ -1,7 +1,7 @@
 package io.github.luyingyilong.ore.inspector;
 
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.LifecycleInfo;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.LifecycleInfo;
 import java.lang.ref.WeakReference;
 import java.util.*;
 

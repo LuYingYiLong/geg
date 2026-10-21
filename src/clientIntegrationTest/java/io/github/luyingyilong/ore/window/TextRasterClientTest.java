@@ -1,9 +1,14 @@
 package io.github.luyingyilong.ore.window;
 
+import io.github.luyingyilong.ore.text.FontMetricsPolicy;
+import io.github.luyingyilong.ore.text.OreText;
+import io.github.luyingyilong.ore.text.TextLayout;
+import io.github.luyingyilong.ore.text.TextLayoutEngine;
+import io.github.luyingyilong.ore.text.TextRenderer;
+
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexSorting;
-import io.github.luyingyilong.ore.text.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;

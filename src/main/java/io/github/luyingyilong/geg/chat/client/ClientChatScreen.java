@@ -2,7 +2,7 @@ package io.github.luyingyilong.geg.chat.client;
 
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
-import io.github.luyingyilong.ore.screen.OreScreen;
+import io.github.luyingyilong.ore.window.screen.OreScreen;
 import io.github.luyingyilong.ore.theme.OreTheme;
 
 public final class ClientChatScreen {

@@ -1,10 +1,10 @@
 package io.github.luyingyilong.ore.inspector;
 
-import io.github.luyingyilong.ore.Button;
-import io.github.luyingyilong.ore.layout.Box;
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.layout.Window;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.window.Window;
 import io.github.luyingyilong.ore.signal.SignalDiagnostics;
 import net.minecraft.network.chat.Component;
 
@@ -45,13 +45,13 @@ public final class InspectorSignalsTest {
         var detached = signals.snapshot(Map.of(), false);
         check(detached.state().equals("detached") && !detached.data().signals().stream().allMatch(SignalDiagnostics.SignalInfo::closed), "Detach is distinct from disposal");
         button.queueFree();
-        io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
+        io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
         var disposed = signals.snapshot(Map.of(), false);
         check(disposed.state().equals("disposed"), "Disposed selection is retained as diagnostic metadata");
         check(disposed.data().signals().stream().allMatch(s -> s.closed() && s.connections().isEmpty()), "Closed signals have zero live connections");
         check(disposed.data().history().stream().anyMatch(e -> e.kind() == SignalDiagnostics.Kind.SCOPE_CLOSED && e.remainingConnections() == 0), "Disposed selection retains cleanup proof");
         view.update(disposed);
-        io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
+        io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
         check(original.isDisposed(), "Rebuilt read-only view disposes discarded labels");
         check(actions[0] == 0, "Cleanup preview never fires slots");
 
@@ -70,18 +70,18 @@ public final class InspectorSignalsTest {
         diagnosticWindow.layoutViewport(300, 100, null);
         check(SignalDiagnostics.inspect(lazy[0]).history().isEmpty(), "Rows constructed during diagnostic layout do not enter history");
         lazy[0].queueFree();
-        io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
+        io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
         check(SignalDiagnostics.inspect(lazy[0]).history().isEmpty(), "Later disposal of lazy diagnostic rows remains excluded");
         diagnosticWindow.queueFree();
-        io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
+        io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
 
         signals.watch("receiver", "Order editor", receiver);
         check(signals.snapshot(names, true).data().history().stream().anyMatch(e -> e.kind() == SignalDiagnostics.Kind.DISCONNECTED), "Receiver can inspect source disposal too");
         signals.clear();
         check(signals.snapshot(Map.of(), false).state().equals("empty"), "Stop clears selection");
         root.queueFree();
-        io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
-        view.body().queueFree(); io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
+        io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
+        view.body().queueFree(); io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
         System.out.println("ORE_INSPECTOR_SIGNALS_TEST_PASS");
     }
 

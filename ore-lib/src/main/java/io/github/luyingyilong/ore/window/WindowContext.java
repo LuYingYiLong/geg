@@ -1,7 +1,6 @@
 package io.github.luyingyilong.ore.window;
 
 import brachy.modularui.screen.viewport.ModularGuiContext;
-import io.github.luyingyilong.ore.layout.Window;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 
@@ -18,7 +17,7 @@ public final class WindowContext {
     private final WindowPopups popups = new WindowPopups(this);
     private final boolean nativeWindow;
     private final Set<Integer> keys = new HashSet<>(), buttons = new HashSet<>();
-    private io.github.luyingyilong.ore.Label textPainter;
+    private io.github.luyingyilong.ore.control.display.Label textPainter;
     private Window owner;
     private ModularGuiContext mui;
     private long handle;
@@ -84,10 +83,10 @@ public final class WindowContext {
     /**
      * One bounded compatibility painter per host, released with the owning Window's lifetime.
      */
-    public io.github.luyingyilong.ore.Label getTextPainter() {
+    public io.github.luyingyilong.ore.control.display.Label getTextPainter() {
         if (textPainter == null) {
             if (owner != null && owner.isDisposed()) throw new IllegalStateException("Window has been disposed");
-            textPainter = new io.github.luyingyilong.ore.Label();
+            textPainter = new io.github.luyingyilong.ore.control.display.Label();
             if (owner != null) owner.ownPart("textPainter", textPainter);
         }
         return textPainter;

@@ -1,7 +1,10 @@
 package io.github.luyingyilong.ore.debug;
 
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.theme.*;
+import io.github.luyingyilong.ore.theme.StyleBoxTexture;
+import io.github.luyingyilong.ore.theme.ThemeDB;
+import io.github.luyingyilong.ore.theme.ThemeKey;
+
+import io.github.luyingyilong.ore.control.base.Control;
 import java.util.*;
 
 /** Immutable, read-only diagnostics. No snapshot retains a Control or mutable Theme. */
@@ -21,8 +24,8 @@ public final class DebugThemes {
             var result=control.getThemeResolution(key);
             Object effective=result.value();
             String property=switch(key.name()) {
-                case "font_color" -> control instanceof io.github.luyingyilong.ore.Label ? "theme:Label:font_color" : "theme:"+key.getId();
-                case "font_size" -> control instanceof io.github.luyingyilong.ore.Label ? "theme:Label:font_size" : "theme:"+key.getId();
+                case "font_color" -> control instanceof io.github.luyingyilong.ore.control.display.Label ? "theme:Label:font_color" : "theme:"+key.getId();
+                case "font_size" -> control instanceof io.github.luyingyilong.ore.control.display.Label ? "theme:Label:font_size" : "theme:"+key.getId();
                 case "icon_rotation_degrees" -> "iconRotationDegrees"; default -> "theme:"+key.getId(); };
             Object preview=DebugBridge.backend().value(control,property,effective);
             String source=result.sources().get(result.sources().size()-1).kind();

@@ -5,10 +5,10 @@ import io.github.luyingyilong.ore.signal.Signals;
 import io.github.luyingyilong.geg.organization.client.ClientOrganizationScreen;
 
 import io.github.luyingyilong.geg.GegMod;
-import io.github.luyingyilong.ore.Badge;
-import io.github.luyingyilong.ore.Button;
-import io.github.luyingyilong.ore.Tag;
-import io.github.luyingyilong.ore.screen.OreButtonWidget;
+import io.github.luyingyilong.ore.control.display.Badge;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.display.Tag;
+import io.github.luyingyilong.ore.window.screen.OreButtonWidget;
 import io.github.luyingyilong.geg.mail.client.ClientMailScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;

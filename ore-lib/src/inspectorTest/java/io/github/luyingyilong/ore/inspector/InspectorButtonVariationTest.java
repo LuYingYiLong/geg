@@ -1,9 +1,11 @@
 package io.github.luyingyilong.ore.inspector;
 
-import io.github.luyingyilong.ore.Button;
-import io.github.luyingyilong.ore.debug.*;
-import io.github.luyingyilong.ore.layout.*;
-import io.github.luyingyilong.ore.theme.*;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
+import io.github.luyingyilong.ore.debug.DebugBridge;
+import io.github.luyingyilong.ore.theme.StyleBoxFlat;
+
+import io.github.luyingyilong.ore.control.input.Button;
 
 public final class InspectorButtonVariationTest {
     public static void main(String[] args) {

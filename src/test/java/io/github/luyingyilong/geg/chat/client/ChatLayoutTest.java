@@ -1,7 +1,8 @@
 package io.github.luyingyilong.geg.chat.client;
 
+import io.github.luyingyilong.ore.control.base.Rect;
+
 import io.github.luyingyilong.geg.chat.*;
-import io.github.luyingyilong.ore.layout.*;
 import java.util.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.*;

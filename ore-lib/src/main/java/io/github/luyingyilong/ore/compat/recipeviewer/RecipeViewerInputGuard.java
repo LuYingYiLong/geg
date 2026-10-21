@@ -2,8 +2,8 @@ package io.github.luyingyilong.ore.compat.recipeviewer;
 
 import brachy.modularui.integration.recipeviewer.handlers.RecipeViewerHandler;
 import brachy.modularui.screen.ClientScreenHandler;
-import io.github.luyingyilong.ore.layout.Window;
-import io.github.luyingyilong.ore.screen.OreScreen;
+import io.github.luyingyilong.ore.window.Window;
+import io.github.luyingyilong.ore.window.screen.OreScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;

@@ -1,7 +1,7 @@
 package io.github.luyingyilong.ore.inspector;
 
-import io.github.luyingyilong.ore.input.InputControl;
-import io.github.luyingyilong.ore.layout.Control;
+import io.github.luyingyilong.ore.control.input.InputControl;
+import io.github.luyingyilong.ore.control.base.Control;
 import io.github.luyingyilong.ore.signal.SignalDiagnostics;
 import io.github.luyingyilong.ore.signal.SignalOwner;
 

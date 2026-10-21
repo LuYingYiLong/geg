@@ -1,13 +1,33 @@
 package io.github.luyingyilong.ore.inspector;
-import io.github.luyingyilong.ore.form.*;
+
+import io.github.luyingyilong.ore.control.base.Container;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.Size;
+import io.github.luyingyilong.ore.control.base.SizeFlags;
+import io.github.luyingyilong.ore.control.data.Tree;
+import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.form.FieldKey;
+import io.github.luyingyilong.ore.control.form.Form;
+import io.github.luyingyilong.ore.control.form.FormFields;
+import io.github.luyingyilong.ore.control.form.FormItem;
+import io.github.luyingyilong.ore.control.input.Button;
+import io.github.luyingyilong.ore.control.input.Checkbox;
+import io.github.luyingyilong.ore.control.input.Dropdown;
+import io.github.luyingyilong.ore.control.input.Segmented;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.layout.Padding;
+import io.github.luyingyilong.ore.control.layout.Panel;
+import io.github.luyingyilong.ore.control.layout.Scroll;
+import io.github.luyingyilong.ore.control.layout.ScrollContent;
+import io.github.luyingyilong.ore.control.layout.Splitter;
+import io.github.luyingyilong.ore.window.Window;
 
 import io.github.luyingyilong.ore.signal.Signals;
 
-import io.github.luyingyilong.ore.*;
-import io.github.luyingyilong.ore.input.Input;
-import io.github.luyingyilong.ore.input.InputControl;
-import io.github.luyingyilong.ore.input.NumberInput;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.control.input.Input;
+import io.github.luyingyilong.ore.control.input.InputControl;
+import io.github.luyingyilong.ore.control.input.NumberInput;
 import io.github.luyingyilong.ore.theme.OreTheme;
 import io.github.luyingyilong.ore.window.WindowOptions;
 import net.minecraft.network.chat.Component;
@@ -348,7 +368,7 @@ public final class InspectorView {
         }
 
         @Override
-        public io.github.luyingyilong.ore.layout.Size measureSize(net.minecraft.client.gui.Font font, io.github.luyingyilong.ore.layout.Size available) {
+        public io.github.luyingyilong.ore.control.base.Size measureSize(net.minecraft.client.gui.Font font, io.github.luyingyilong.ore.control.base.Size available) {
             return getMinimumSize();
         }
 
@@ -360,8 +380,8 @@ public final class InspectorView {
         }
 
         @Override
-        public io.github.luyingyilong.ore.layout.Size getContentExtent() {
-            return new io.github.luyingyilong.ore.layout.Size(getBounds().width(), height);
+        public io.github.luyingyilong.ore.control.base.Size getContentExtent() {
+            return new io.github.luyingyilong.ore.control.base.Size(getBounds().width(), height);
         }
 
         @Override

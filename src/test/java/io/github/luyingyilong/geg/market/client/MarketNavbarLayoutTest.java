@@ -1,11 +1,11 @@
 package io.github.luyingyilong.geg.market.client;
 
-import io.github.luyingyilong.ore.layout.Control;
-import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.layout.Size;
-import io.github.luyingyilong.ore.layout.SizeFlags;
-import io.github.luyingyilong.ore.layout.Box;
-import io.github.luyingyilong.ore.Navbar;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.Size;
+import io.github.luyingyilong.ore.control.base.SizeFlags;
+import io.github.luyingyilong.ore.control.layout.Box;
+import io.github.luyingyilong.ore.control.navigation.Navbar;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 

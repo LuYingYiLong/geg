@@ -1,7 +1,11 @@
 package io.github.luyingyilong.ore.window;
 
-import io.github.luyingyilong.ore.Tree;
-import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.layout.Scroll;
+import io.github.luyingyilong.ore.control.layout.Splitter;
+
+import io.github.luyingyilong.ore.control.data.Tree;
 import net.minecraft.network.chat.Component;
 import java.util.*;
 

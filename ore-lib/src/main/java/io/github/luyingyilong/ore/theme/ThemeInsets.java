@@ -1,5 +1,5 @@
 package io.github.luyingyilong.ore.theme;
-import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.control.base.Rect;
 /** GUI pixels for content/expansion; source pixels for texture borders. */
 public record ThemeInsets(int left, int top, int right, int bottom) {
     public static final ThemeInsets ZERO = new ThemeInsets(0,0,0,0);
