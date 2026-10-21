@@ -1,17 +1,11 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.theme.ThemeInsets;
-import io.github.luyingyilong.ore.theme.ThemePadding;
-import io.github.luyingyilong.ore.theme.IconTheme;
-import io.github.luyingyilong.ore.theme.ThemeDB;
-import io.github.luyingyilong.ore.theme.ThemeKey;
-
-import io.github.luyingyilong.ore.render.*;
-
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.render.DrawContext;
+import io.github.luyingyilong.ore.render.TextureRegion;
+import io.github.luyingyilong.ore.render.TextureSource;
 import io.github.luyingyilong.ore.screen.OreScreen;
-import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 
@@ -22,24 +16,13 @@ import java.util.List;
  * A centered navigation title, optional back action, and right-aligned actions that wrap.
  */
 public final class Navbar extends Container {
+    public static final ThemeKey<TextureRegion> BACK_ICON = IconTheme.item("Navbar", "back_icon", IconTheme.ARROW_LEFT);
+    public static final int ROW_HEIGHT = 24;
     private static final ThemePadding PADDING = ThemePadding.of("Navbar", "", 0, 0, 3, 0);
     public static final ThemeKey<Integer> PADDING_TOP = PADDING.top();
     public static final ThemeKey<Integer> PADDING_RIGHT = PADDING.right();
     public static final ThemeKey<Integer> PADDING_BOTTOM = PADDING.bottom();
     public static final ThemeKey<Integer> PADDING_LEFT = PADDING.left();
-
-
-    public static final ThemeKey<TextureRegion> BACK_ICON = IconTheme.item("Navbar", "back_icon", IconTheme.ARROW_LEFT);
-
-    public static void registerTheme(ThemeDB db) {
-        OreTheme.registerType(db, "Navbar");
-        PADDING.register(db);
-        IconTheme.registerTheme(db);
-        db.register(BACK_ICON);
-        db.registerFallback(BACK_ICON, IconTheme.ARROW_LEFT);
-    }
-
-    public static final int ROW_HEIGHT = 24;
     private static final int GAP = 6;
     private static final int BACK_BUTTON_SIZE = 22;
     private final Label title = new Label().setThemeTypeVariation("NavbarTitle").setOpticalCenter(true).setOverflow(Label.Overflow.ELLIPSIS)
@@ -57,6 +40,14 @@ public final class Navbar extends Container {
         back.setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         updateChildren(List.of(this.title, back));
         setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
+    }
+
+    public static void registerTheme(ThemeDB db) {
+        OreTheme.registerType(db, "Navbar");
+        PADDING.register(db);
+        IconTheme.registerTheme(db);
+        db.register(BACK_ICON);
+        db.registerFallback(BACK_ICON, IconTheme.ARROW_LEFT);
     }
 
     public Component getTitle() {

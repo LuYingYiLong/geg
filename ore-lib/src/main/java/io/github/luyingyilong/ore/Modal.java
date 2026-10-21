@@ -1,18 +1,13 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.theme.IconTheme;
-import io.github.luyingyilong.ore.theme.ThemeDB;
-import io.github.luyingyilong.ore.theme.ThemeKey;
-
-import io.github.luyingyilong.ore.render.*;
-
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.render.DrawContext;
+import io.github.luyingyilong.ore.render.TextureRegion;
+import io.github.luyingyilong.ore.render.TextureSource;
 import io.github.luyingyilong.ore.signal.Signal0;
 import io.github.luyingyilong.ore.signal.SignalSource0;
-import io.github.luyingyilong.ore.theme.OreSounds;
-import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -44,18 +39,6 @@ public final class Modal extends Container {
     public static final ThemeKey<Integer> FOOTER_PADDING_RIGHT = paddingKey("footer_padding_right", 8);
     public static final ThemeKey<Integer> FOOTER_PADDING_BOTTOM = paddingKey("footer_padding_bottom", 8);
     public static final ThemeKey<Integer> FOOTER_PADDING_LEFT = paddingKey("footer_padding_left", 8);
-
-    public static void registerTheme(ThemeDB db) {
-        OreTheme.registerType(db, "Modal");
-        IconTheme.registerTheme(db);
-        db.register(CLOSE_ICON);
-        for (var key : List.of(PADDING_TOP, PADDING_RIGHT, PADDING_BOTTOM, PADDING_LEFT,
-                HEADER_PADDING_TOP, HEADER_PADDING_RIGHT, HEADER_PADDING_BOTTOM, HEADER_PADDING_LEFT,
-                BODY_PADDING_TOP, BODY_PADDING_RIGHT, BODY_PADDING_BOTTOM, BODY_PADDING_LEFT,
-                FOOTER_PADDING_TOP, FOOTER_PADDING_RIGHT, FOOTER_PADDING_BOTTOM, FOOTER_PADDING_LEFT)) db.register(key);
-        db.registerFallback(CLOSE_ICON, IconTheme.CLOSE);
-    }
-
     public static final int HEADER_HEIGHT = 22;
     private static final int CLOSE_HIT_WIDTH = 20;
     private static final int CLOSE_ICON_SIZE = 7;
@@ -123,9 +106,41 @@ public final class Modal extends Container {
         updateChildren(List.of(background));
     }
 
+    public static void registerTheme(ThemeDB db) {
+        OreTheme.registerType(db, "Modal");
+        IconTheme.registerTheme(db);
+        db.register(CLOSE_ICON);
+        for (var key : List.of(PADDING_TOP, PADDING_RIGHT, PADDING_BOTTOM, PADDING_LEFT,
+                HEADER_PADDING_TOP, HEADER_PADDING_RIGHT, HEADER_PADDING_BOTTOM, HEADER_PADDING_LEFT,
+                BODY_PADDING_TOP, BODY_PADDING_RIGHT, BODY_PADDING_BOTTOM, BODY_PADDING_LEFT,
+                FOOTER_PADDING_TOP, FOOTER_PADDING_RIGHT, FOOTER_PADDING_BOTTOM, FOOTER_PADDING_LEFT))
+            db.register(key);
+        db.registerFallback(CLOSE_ICON, IconTheme.CLOSE);
+    }
+
     private static ThemeKey<Integer> paddingKey(String name, int value) {
         return new ThemeKey<>("Modal", name, Integer.class, ThemeKey.Kind.INTEGER, value, true,
                 padding -> padding >= 0 && padding <= Integer.MAX_VALUE / 2);
+    }
+
+    public static Rect centeredBounds(int width, int height, int viewportWidth, int viewportHeight) {
+        return fittedBounds(width, height, null, null, viewportWidth, viewportHeight);
+    }
+
+    public static Rect positionedBounds(int width, int height, int x, int y,
+                                        int viewportWidth, int viewportHeight) {
+        return fittedBounds(width, height, x, y, viewportWidth, viewportHeight);
+    }
+
+    private static Rect fittedBounds(int width, int height, Integer x, Integer y,
+                                     int viewportWidth, int viewportHeight) {
+        int fittedWidth = Math.max(1, Math.min(width, Math.max(1, viewportWidth)));
+        int fittedHeight = Math.max(1, Math.min(height, Math.max(1, viewportHeight)));
+        int left = x == null ? (viewportWidth - fittedWidth) / 2 : x;
+        int top = y == null ? (viewportHeight - fittedHeight) / 2 : y;
+        left = Math.max(0, Math.min(Math.max(0, viewportWidth - fittedWidth), left));
+        top = Math.max(0, Math.min(Math.max(0, viewportHeight - fittedHeight), top));
+        return new Rect(left, top, fittedWidth, fittedHeight);
     }
 
     private void syncPadding() {
@@ -154,26 +169,6 @@ public final class Modal extends Container {
             appliedFooterMinimum = minimum;
             footer.setMinimum(0, minimum);
         }
-    }
-
-    public static Rect centeredBounds(int width, int height, int viewportWidth, int viewportHeight) {
-        return fittedBounds(width, height, null, null, viewportWidth, viewportHeight);
-    }
-
-    public static Rect positionedBounds(int width, int height, int x, int y,
-                                        int viewportWidth, int viewportHeight) {
-        return fittedBounds(width, height, x, y, viewportWidth, viewportHeight);
-    }
-
-    private static Rect fittedBounds(int width, int height, Integer x, Integer y,
-                                     int viewportWidth, int viewportHeight) {
-        int fittedWidth = Math.max(1, Math.min(width, Math.max(1, viewportWidth)));
-        int fittedHeight = Math.max(1, Math.min(height, Math.max(1, viewportHeight)));
-        int left = x == null ? (viewportWidth - fittedWidth) / 2 : x;
-        int top = y == null ? (viewportHeight - fittedHeight) / 2 : y;
-        left = Math.max(0, Math.min(Math.max(0, viewportWidth - fittedWidth), left));
-        top = Math.max(0, Math.min(Math.max(0, viewportHeight - fittedHeight), top));
-        return new Rect(left, top, fittedWidth, fittedHeight);
     }
 
     @Override

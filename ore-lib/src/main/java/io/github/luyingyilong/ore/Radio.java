@@ -42,9 +42,11 @@ public final class Radio extends Container {
     private final SignalSource0 activated = new SignalSource0(this, "activated");
     RadioGroup<?> group;
     private boolean checked, disabled;
+
     public Radio() {
         this(Component.empty());
     }
+
     public Radio(Component text) {
         label.setText(Objects.requireNonNull(text));
         updateChildren(List.of(label));
