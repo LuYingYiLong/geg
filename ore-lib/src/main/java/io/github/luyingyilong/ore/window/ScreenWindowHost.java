@@ -86,6 +86,8 @@ public final class ScreenWindowHost implements WindowHost {
                 .map(CanvasRegion::getHostBounds).filter(area -> area.width() > 0 && area.height() > 0).toList();
     }
 
+    public void prepareInput() { if(isOpen()) prepare(); }
+
     private void prepare() {
         var mc = Minecraft.getInstance();
         var screen = getScreen();

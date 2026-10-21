@@ -15,6 +15,10 @@ tasks.register('verifyOreRelease') {
              'io/github/luyingyilong/ore/theme/ThemeDB.class',
              'io/github/luyingyilong/ore/theme/StyleBox.class',
              'io/github/luyingyilong/ore/TextureRect.class',
+             'io/github/luyingyilong/ore/TextureProgressBar.class',
+             'io/github/luyingyilong/ore/render/TexturePainter$Triangle.class',
+             'assets/ore/textures/icons/lit_progress.png', 'assets/ore/textures/icons/lit_progress_under.png',
+             'assets/ore/textures/icons/burn_progress.png', 'assets/ore/textures/icons/burn_progress_under.png',
              'io/github/luyingyilong/ore/Slider.class',
              'io/github/luyingyilong/ore/Slider$RangeValue.class',
              'assets/ore/textures/gui/slider.png', 'assets/ore/textures/gui/slider_disabled.png',
@@ -26,6 +30,12 @@ tasks.register('verifyOreRelease') {
              'assets/ore/textures/gui/panel.png',
              'io/github/luyingyilong/ore/theme/IconTheme.class',
              'assets/geg/themes/ui.json', 'assets/geg/textures/icons/email.png',
+             'io/github/luyingyilong/ore/Inventory.class',
+             'io/github/luyingyilong/ore/ProgressBar.class',
+             'io/github/luyingyilong/ore/inventory/InventorySource.class',
+             'io/github/luyingyilong/ore/menu/OreMenuScreen.class',
+             'io/github/luyingyilong/ore/menu/MenuSession.class',
+             'io/github/luyingyilong/ore/mixin/ContainerScreenMixin.class',
              'io/github/luyingyilong/ore/render/Canvas.class',
              'io/github/luyingyilong/ore/render/DrawContext.class',
              'io/github/luyingyilong/ore/window/ScreenWindowHost.class',
@@ -68,7 +78,10 @@ tasks.register('verifyOreRelease') {
                 it.startsWith('assets/geg/font/') || it == 'assets/geg/themes.json' ||
                 it == 'assets/geg/sounds.json' || it == 'io/github/luyingyilong/geg/sound/GegSounds.class' ||
                 it == 'META-INF/services/io.github.luyingyilong.ore.OreClientExtension' ||
-                it.endsWith('Test.class') || it.startsWith('net/minecraftforge/fml/relauncher/') ||
+                it.endsWith('Test.class') || it.startsWith('io/github/luyingyilong/ore/menu/ContainerGameTests') ||
+                it.startsWith('io/github/luyingyilong/ore/menu/MenuClientTest') || it.startsWith('data/ore_test/') ||
+                it.startsWith('io/github/luyingyilong/ore/window/TextureProgressBarClientTest') ||
+                it.startsWith('net/minecraftforge/fml/relauncher/') ||
                 it.startsWith('brachy/modularui/') || it.startsWith('mezz/jei/') ||
                 it.startsWith('dev/emi/') || it.startsWith('me/shedaniel/') ||
                 it.startsWith('net/fabricmc/') || it.startsWith('dev/architectury/') }

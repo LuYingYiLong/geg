@@ -64,6 +64,10 @@ final class GallerySamples {
     static Control create(String id, Window window) {
         Box root = column();
         switch (id) {
+            case "inventory" -> { return InventorySamples.inventory(); }
+            case "progress" -> { return InventorySamples.progress(); }
+            case "texture_progress" -> { return TextureProgressSamples.create(); }
+            case "containers" -> { return InventorySamples.containers(); }
             case "box" -> {
                 Box flow = row().setGap(4).setLineGap(8);
                 for (int i = 1; i <= 7; i++) {

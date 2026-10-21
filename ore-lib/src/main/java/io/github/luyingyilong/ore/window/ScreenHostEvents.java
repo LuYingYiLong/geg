@@ -34,8 +34,10 @@ public final class ScreenHostEvents {
         if (event.phase != TickEvent.Phase.END) return;
         RecipeCanvasFrames.collectStale();
         var mc = Minecraft.getInstance();
-        if (!mc.isWindowActive()) ScreenInputBridge.clear();
+        if (!mc.isWindowActive()||mc.screen==null) ScreenInputBridge.clear();
         for (var host : ScreenWindowHost.getHosts()) {
+            if(host.getScreen() instanceof io.github.luyingyilong.ore.menu.OreMenuScreen<?> menu
+                    &&menu.getMenuSession()!=null&&!menu.getMenuSession().isValid()){host.close();continue;}
             // Viewers can retain a container for Back even while Minecraft.screen is null.
             // Only explicit disposal, unreachable Screens, or session end are permanent.
             if (host.getScreen() == null) { host.close(); continue; }

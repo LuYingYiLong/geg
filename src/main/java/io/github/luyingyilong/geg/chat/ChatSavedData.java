@@ -54,8 +54,7 @@ public final class ChatSavedData extends SavedData {
         for (Tag raw : root.getList("scopes", Tag.TAG_COMPOUND))
             try {
                 CompoundTag t = (CompoundTag) raw;
-                data.scopes.computeIfAbsent(t.getUUID("organization"), ignored -> new HashMap<>())
-                        .put(t.getUUID("player"), new Scope(t.getUUID("epoch"), Math.max(1, t.getLong("first"))));
+                data.scopes.computeIfAbsent(t.getUUID("organization"), ignored -> new HashMap<>()).put(t.getUUID("player"), new Scope(t.getUUID("epoch"), Math.max(1, t.getLong("first"))));
             } catch (RuntimeException ignored) {
             }
         for (Tag raw : root.getList("requests", Tag.TAG_COMPOUND))
@@ -78,8 +77,7 @@ public final class ChatSavedData extends SavedData {
     }
 
     public List<ChatChannel> directChannels(UUID player) {
-        return messages.keySet().stream().filter(c -> c.includes(player))
-                .sorted(Comparator.comparingLong((ChatChannel c) -> latest(c)).reversed()).toList();
+        return messages.keySet().stream().filter(c -> c.includes(player)).sorted(Comparator.comparingLong((ChatChannel c) -> latest(c)).reversed()).toList();
     }
 
     public void openDirect(ChatChannel channel) {
@@ -116,8 +114,7 @@ public final class ChatSavedData extends SavedData {
     }
 
     public List<ChatMessage> history(ChatChannel channel, long firstSequence, long before) {
-        List<ChatMessage> all = messages.getOrDefault(channel, List.of()).stream()
-                .filter(m -> m.sequence() >= firstSequence && (before <= 0 || m.sequence() < before)).toList();
+        List<ChatMessage> all = messages.getOrDefault(channel, List.of()).stream().filter(m -> m.sequence() >= firstSequence && (before <= 0 || m.sequence() < before)).toList();
         return List.copyOf(all.subList(Math.max(0, all.size() - ChatPolicy.PAGE_SIZE), all.size()));
     }
 
@@ -127,8 +124,7 @@ public final class ChatSavedData extends SavedData {
 
     public int unread(UUID player, ChatChannel channel, long first) {
         long read = reads.getOrDefault(player, Map.of()).getOrDefault(channel, 0L);
-        return (int) messages.getOrDefault(channel, List.of()).stream()
-                .filter(m -> m.sequence() >= first && m.sequence() > read && !m.sender().equals(player)).count();
+        return (int) messages.getOrDefault(channel, List.of()).stream().filter(m -> m.sequence() >= first && m.sequence() > read && !m.sender().equals(player)).count();
     }
 
     public void markRead(UUID player, ChatChannel channel, long sequence) {
@@ -147,8 +143,8 @@ public final class ChatSavedData extends SavedData {
     public Append append(UUID player, UUID request, ChatChannel channel, String name, Component text, long time) {
         LinkedHashMap<UUID, Long> sent = requests.computeIfAbsent(player, ignored -> new LinkedHashMap<>());
         Long previous = sent.get(request);
-        if (previous != null) return new Append(messages.values().stream().flatMap(Collection::stream)
-                .filter(m -> m.sequence() == previous).findFirst().orElse(null), true);
+        if (previous != null)
+            return new Append(messages.values().stream().flatMap(Collection::stream).filter(m -> m.sequence() == previous).findFirst().orElse(null), true);
         if (nextSequence == Long.MAX_VALUE) throw new IllegalStateException("Chat sequence exhausted");
         ChatMessage message = new ChatMessage(UUID.randomUUID(), nextSequence++, time, player, name, text);
         List<ChatMessage> values = messages.computeIfAbsent(channel, ignored -> new ArrayList<>());

@@ -64,6 +64,15 @@ public final class GalleryLayoutTest {
             view.getWindow().layoutViewport(width, 240, font);
             check(countSliders(view.getSample()) == 7, "Slider gallery includes every mode and typed form fields");
         }
+        var boot=net.minecraft.server.Bootstrap.class.getDeclaredField("isBootstrapped");boot.setAccessible(true);boot.setBoolean(null,true);
+        net.minecraft.SharedConstants.tryDetectVersion();net.minecraft.core.registries.BuiltInRegistries.bootStrap();
+        for(String sample:List.of("inventory","progress","texture_progress","containers")){
+            view.select(sample);Control retained=view.getSample();
+            for(int width:new int[]{127,128,129,480}){
+                view.setPreviewWidth(width==480?0:width);view.getWindow().layoutViewport(width,240,font);
+                check(view.getSample()==retained,"Inventory/progress samples are retained across resizing");
+            }
+        }
         view.getWindow().queueFree();LifecycleScheduler.flush();
         check(view.getWindow().isDisposed(),"Gallery lifetime ends cleanly");
         System.out.println("ORE_GALLERY_LAYOUT_PASS");

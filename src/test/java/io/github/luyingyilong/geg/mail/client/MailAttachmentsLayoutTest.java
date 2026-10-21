@@ -22,14 +22,17 @@ public final class MailAttachmentsLayoutTest {
         for (int i = 0; i < 100; i++) { items.addChild(new Control().setMinimum(Slot.SIZE, Slot.SIZE).setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER)); }
         scroll.setVisible(true);
         rewards.claimButton().setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_END);
+        int rowHeight=Math.max(Slot.SIZE,rewards.claimButton().getMinimumHeight());
         for (int width : new int[]{120, 127, 128, 129, 300, 600}) {
-            rewards.layout(new Rect(0, 0, width, Slot.SIZE), font);
-            check(rewards.measureSize(font, new Size(width, 300)).equals(new Size(0, Slot.SIZE)));
+            rewards.layout(new Rect(0, 0, width, rowHeight), font);
+            check(rewards.measureSize(font, new Size(width, 300)).equals(new Size(0, rowHeight)));
             check(scroll.getMaxScrollX() > 0 && scroll.getMaxScrollY() == 0);
             check(!scroll.getHorizontalVisible() && !scroll.getVerticalVisible());
             check(scroll.getBounds().right() + 4 == rewards.claimButton().getBounds().x());
             check(rewards.claimButton().getBounds().right() == width);
-            check(scroll.getSize().height() == Slot.SIZE && items.getSize().height() == Slot.SIZE);
+            check(scroll.getSize().height() == rowHeight && items.getSize().height() == rowHeight);
+            check(rewards.claimButton().getBounds().height()<=rowHeight);
+            check(items.getChildren().get(0).getBounds().height()==Slot.SIZE);
             check(items.getChildren().get(99).getBounds().right() == 100 * Slot.SIZE + 99 * 2);
             scroll.setScroll(0, 0);
             check(io.github.luyingyilong.ore.EventFixture.scroll(rewards,1, 1, -1, false) && scroll.getScrollX() > 0);
@@ -40,7 +43,7 @@ public final class MailAttachmentsLayoutTest {
         rewards.attachments(List.of(), true, true);
         check(rewards.getVisible() && rewards.claimButton().getVisible() && rewards.claimButton().getDisabled());
         check(!rewards.claimButton().acceptsFocus());
-        rewards.layout(new Rect(0, 0, 300, Slot.SIZE), font);
+        rewards.layout(new Rect(0, 0, 300, rowHeight), font);
         Rect button = rewards.claimButton().getAbsoluteBounds();
         io.github.luyingyilong.ore.EventFixture.press(rewards,button.x()+1,button.y()+1);
         check(!rewards.claimButton().activate() && claims[0] == 0);

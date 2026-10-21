@@ -25,6 +25,7 @@ dependencies {
     recipeViewerApi(fg.deobf('dev.emi:emi-forge:1.1.24+1.20.1:api')) { transitive = false }
     recipeViewerApi(fg.deobf('me.shedaniel:RoughlyEnoughItems-api-forge:12.1.785')) { transitive = false }
     recipeViewerApi('me.shedaniel.cloth:basic-math:0.6.1') { transitive = false }
+    recipeViewerApi(fg.deobf('dev.architectury:architectury-forge:9.0.7')) { transitive = false }
     // EMI's cross-platform API carries @Environment annotations even in its Forge artifact.
     compileOnly('net.fabricmc:fabric-loader:0.15.11') { transitive = false }
     testCompileOnly('net.fabricmc:fabric-loader:0.15.11') { transitive = false }
@@ -32,6 +33,10 @@ dependencies {
 
 // One module, separate production and development outputs. The standard jar only includes main.
 sourceSets {
+    containerTest {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
     inspector {
         compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
         runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath

@@ -33,7 +33,11 @@ public final class RecipeViewerExclusions {
         List<Rect> areas = new ArrayList<>();
         var external = io.github.luyingyilong.ore.window.ScreenWindowHost.get(screen);
         if (external != null && external.isOpen()) {
-            areas.addAll(external.getExclusionAreas());
+            if(screen instanceof io.github.luyingyilong.ore.menu.OreMenuScreen<?> menu && menu.getContent()!=null){
+                var content=menu.getContent();var bounds=EventGeometry.displayed(content);var clip=EventGeometry.clip(content);
+                areas.add(clip==null?bounds:EventGeometry.intersect(bounds,clip));
+            }
+            else areas.addAll(external.getExclusionAreas());
             for (Control child : external.getWindow().getChildren())
                 if (child instanceof Overlay) collectControls(child, areas);
         }

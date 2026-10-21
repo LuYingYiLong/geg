@@ -151,7 +151,7 @@ public final class GalleryClientTest {
         Button small=new Button(net.minecraft.network.chat.Component.literal("Small")).setSize(Button.Size.SMALL);
         try {
             check(small.measureHeight(font,200)==Button.Size.SMALL.getHeight(),"Real font leading preserves small Button height");
-            check(slot.measureSize(font,new Size(200,100)).equals(new Size(26,26)),"Slot keeps its default footprint");
+            check(slot.measureSize(font,new Size(200,100)).equals(new Size(18,18)),"Slot keeps its default footprint");
             slot.setThemeOverride(Slot.PADDING_LEFT,10).setThemeOverride(Slot.PADDING_RIGHT,8)
                     .setThemeOverride(Slot.PADDING_TOP,6).setThemeOverride(Slot.PADDING_BOTTOM,9);
             check(slot.measureSize(font,new Size(200,100)).equals(new Size(34,31)),"Slot measures themed item padding");

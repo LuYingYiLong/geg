@@ -208,7 +208,7 @@ public final class ChatService {
         String online = server.getPlayerList().getPlayers().stream().map(p -> p.getUUID().toString()).sorted().toList().toString();
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             List<ChatSyncPacket.Conversation> channels = directory(server, player.getUUID());
-            String signature = channels.toString() + online;
+            String signature = channels + online;
             if (!signature.equals(session.signatures.put(player.getUUID(), signature))) syncDirectory(player);
         }
     }

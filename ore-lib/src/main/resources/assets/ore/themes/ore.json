@@ -1306,13 +1306,70 @@
   "Dropdown:padding_right": 1,
   "Dropdown:padding_bottom": 1,
   "Dropdown:padding_left": 1,
-  "Slot:padding_top": 3,
-  "Slot:padding_right": 5,
-  "Slot:padding_bottom": 7,
-  "Slot:padding_left": 5,
-  "Slot:count_padding_top": 12,
-  "Slot:count_padding_right": 1,
-  "Slot:count_padding_bottom": 2,
-  "Slot:count_padding_left": 1,
-  "Scroll:track_inset": 2
+  "Slot:padding_top": 1,
+  "Slot:padding_right": 1,
+  "Slot:padding_bottom": 1,
+  "Slot:padding_left": 1,
+  "Slot:count_padding_top": 0,
+  "Slot:count_padding_right": 0,
+  "Slot:count_padding_bottom": 0,
+  "Slot:count_padding_left": 0,
+  "Scroll:track_inset": 2,
+  "Inventory:gap": 0,
+  "Inventory:section_gap": 4,
+  "ProgressBar:background": {
+    "style": "flat",
+    "color": "#1e1e1f"
+  },
+  "ProgressBar:fill": {
+    "style": "flat",
+    "color": "#6cc349"
+  },
+  "ProgressBar:padding_top": 1,
+  "ProgressBar:padding_right": 1,
+  "ProgressBar:padding_bottom": 1,
+  "ProgressBar:padding_left": 1,
+  "ProgressBar:font_color": "#ffffff",
+  "ProgressBar:font_size": 8,
+  "Icons:lit_progress_under": {
+    "location": "ore:textures/icons/lit_progress_under.png",
+    "imageWidth": 14,
+    "imageHeight": 14,
+    "x": 0,
+    "y": 0,
+    "width": 14,
+    "height": 14
+  },
+  "Icons:lit_progress": {
+    "location": "ore:textures/icons/lit_progress.png",
+    "imageWidth": 14,
+    "imageHeight": 14,
+    "x": 0,
+    "y": 0,
+    "width": 14,
+    "height": 14
+  },
+  "Icons:burn_progress_under": {
+    "location": "ore:textures/icons/burn_progress_under.png",
+    "imageWidth": 24,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 24,
+    "height": 16
+  },
+  "Icons:burn_progress": {
+    "location": "ore:textures/icons/burn_progress.png",
+    "imageWidth": 24,
+    "imageHeight": 16,
+    "x": 0,
+    "y": 0,
+    "width": 24,
+    "height": 16
+  },
+  "TextureProgressBar:under_tint": "#ffffff",
+  "TextureProgressBar:progress_tint": "#ffffff",
+  "TextureProgressBar:over_tint": "#ffffff",
+  "TextureProgressBar:font_color": "#ffffff",
+  "TextureProgressBar:font_size": 8
 }

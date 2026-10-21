@@ -244,3 +244,7 @@ Grid／Table／Tree 只把活动缓冲实例加入普通 children，并按数据
 [Collapse 与按钮主题变体](docs/collapse-buttons.md)
 
 [Slider 单值与范围输入](docs/slider.md)
+
+背包、物品槽、进度条及真实容器 Screen 接入见 [Inventory 与容器宿主](docs/inventory.md)。
+
+火焰、箭头、三层纹理及环形进度见 [TextureProgressBar](docs/texture-progress.md)。

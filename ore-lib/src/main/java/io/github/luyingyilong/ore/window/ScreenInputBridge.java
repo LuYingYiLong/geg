@@ -27,7 +27,9 @@ public final class ScreenInputBridge {
         var mc = Minecraft.getInstance();
         if (mc.getOverlay() != null) return null;
         var host = ScreenWindowHost.get(mc.screen);
-        return host != null && host.isOpen() && !host.getWindow().isSuspended() ? host : null;
+        if(host==null||!host.isOpen()||host.getWindow().isSuspended())return null;
+        host.prepareInput();
+        return host;
     }
 
     private static boolean skipped(Stamp stamp, boolean early) {
@@ -50,6 +52,9 @@ public final class ScreenInputBridge {
         boolean paired = owner != null;
         if (release) KEYS.remove(key);
         if (host == null) return paired && release;
+        if(!release&&action==GLFW.GLFW_PRESS&&paired&&!owner.equals(host.getContext().getId())){
+            KEYS.remove(key);owner=null;paired=false;
+        }
         if (paired && !owner.equals(host.getContext().getId())) return true;
         var root = host.getWindow();
         boolean protectedKey = root.getFocusManager().getTextInputFocused() || root.getFocusManager().getInputScope() != null;
@@ -81,8 +86,21 @@ public final class ScreenInputBridge {
         if (!press) BUTTONS.remove(button);
         var host = host();
         if (host == null) return paired && !press;
+        if(press&&paired&&!owner.equals(host.getContext().getId())){
+            BUTTONS.remove(button);owner=null;paired=false;
+        }
         if (paired && !owner.equals(host.getContext().getId())) return true;
         host.updatePointer(x, y, 0);
+        if(press&&!paired&&!host.getWindow().getPointerCaptured(button)
+                &&host.getScreen() instanceof io.github.luyingyilong.ore.menu.OreMenuScreen<?> menu
+                &&!menu.getPointerInside(x,y)&&host.getWindow().getFocusManager().getInputScope()==null
+                &&!io.github.luyingyilong.ore.debug.DebugBridge.backend().picking(host.getWindow())
+                &&!host.getContext().getPopups().open()){
+            if(host.getWindow().getFocusManager().getTextInputFocused())
+                host.getWindow().getFocusManager().requestFocus(null,host.getContext().getMui());
+            host.getContext().setModifiers(modifiers);
+            return finish(stamp,early,false);
+        }
         boolean handled = host.getWindow().dispatchInput(new PointerEvent(host.getContext(), press ? PointerEvent.Action.PRESS
                 : PointerEvent.Action.RELEASE, x, y, button, modifiers));
         handled |= paired;
@@ -115,6 +133,9 @@ public final class ScreenInputBridge {
     /** Viewer/container callbacks can precede ScreenEvent; dispatch once before those callbacks. */
     public static boolean getEarlyRouting(long handle) {
         if (handle != Minecraft.getInstance().getWindow().getWindow() || host() == null) return false;
+        // Forge pointer callbacks omit GLFW modifiers and key callbacks omit repeat status.
+        // Container hosts retain that original payload even when no viewer is installed.
+        if(host().getScreen() instanceof io.github.luyingyilong.ore.menu.OreMenuScreen<?>)return true;
         var mods = net.minecraftforge.fml.ModList.get();
         return mods != null && (mods.isLoaded("emi") || mods.isLoaded("jei") || mods.isLoaded("roughlyenoughitems"));
     }

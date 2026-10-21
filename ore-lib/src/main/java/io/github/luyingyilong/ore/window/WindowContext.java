@@ -197,6 +197,12 @@ public final class WindowContext {
         return (int) mouseX;
     }
 
+    /** Host-normalized GUI coordinates, also used by synthetic/keyboard inventory hit queries. */
+    public void setGuiMouse(double x,double y) {
+        if(!Double.isFinite(x)||!Double.isFinite(y))throw new IllegalArgumentException("Invalid pointer coordinates");
+        mouseX=x;mouseY=y;
+    }
+
     public int getMouseY() {
         return (int) mouseY;
     }

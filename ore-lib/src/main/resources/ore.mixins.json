@@ -4,6 +4,7 @@
   "package": "io.github.luyingyilong.ore.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "ContainerScreenMixin",
     "ExternalKeyboardMixin",
     "ExternalMouseMixin",
     "FontRenderHelperMixin",

@@ -476,6 +476,26 @@ public final class InspectorBackend implements DebugBridge.Backend {
                 readonly(props, "sliderValue", slider.getRange() ? slider.getRangeValue() : slider.getValue());
                 readonly(props, "activeThumb", slider.getActiveThumb());
             }
+            if(n.control instanceof io.github.luyingyilong.ore.TextureProgressBar progress){
+                readonlyTexture(props,"under",progress.getUnderTexture(),progress.getResolvedUnderTexture());
+                readonlyTexture(props,"progress",progress.getProgressTexture(),progress.getResolvedProgressTexture());
+                readonlyTexture(props,"over",progress.getOverTexture(),progress.getResolvedOverTexture());
+                readonly(props,"fraction",progress.getFraction());
+            }
+            if(n.control instanceof io.github.luyingyilong.ore.ProgressBar progress){
+                readonly(props,"min",progress.getMin());readonly(props,"max",progress.getMax());readonly(props,"value",progress.getValue());
+                readonly(props,"direction",progress.getDirection());readonly(props,"showPercentage",progress.getShowPercentage());
+            }
+            if(n.control instanceof io.github.luyingyilong.ore.Inventory inventory){
+                readonly(props,"source",inventory.getSource()==null?"none":inventory.getSource().getClass().getSimpleName());
+                readonly(props,"mode",inventory.getMode());readonly(props,"selected",inventory.getSelected());readonly(props,"slotIndices",inventory.getSlotIndices());
+            }
+            if(n.control instanceof io.github.luyingyilong.ore.Slot slot){
+                var binding=slot.getBinding();readonly(props,"bindingSlot",binding==null?"none":binding.slot());readonly(props,"mode",slot.getMode());
+                readonly(props,"source",binding==null?"none":binding.source().getClass().getSimpleName());
+                readonly(props,"sessionValid",slot.getMenuSession()!=null&&slot.getMenuSession().isValid());
+                readonly(props,"menuId",slot.getMenuSession()==null?"none":slot.getMenuSession().getMenu().containerId);
+            }
             if (n.control instanceof TextureRect image) {
                 var source=image.getTexture();
                 readonly(props,"textureSource",source instanceof io.github.luyingyilong.ore.render.TextureSource.Themed themed
@@ -539,6 +559,12 @@ public final class InspectorBackend implements DebugBridge.Backend {
         return signalInspector.snapshot(names, current != null);
     }
 
+    private void readonlyTexture(List<InspectorSnapshot.Property> props,String name,
+                                 io.github.luyingyilong.ore.render.TextureSource source,io.github.luyingyilong.ore.render.TextureRegion region) {
+        readonly(props,name+"Source",source instanceof io.github.luyingyilong.ore.render.TextureSource.Themed themed
+                ?"Theme: "+themed.getKey().getId():source==null?"none":"Direct");
+        readonly(props,name+"Region",region);
+    }
     private void readonly(List<InspectorSnapshot.Property> props, String name, Object value) {
         props.add(new InspectorSnapshot.Property(-1, name, "State", "text", List.of(), display(value), display(value), false, true, ""));
     }

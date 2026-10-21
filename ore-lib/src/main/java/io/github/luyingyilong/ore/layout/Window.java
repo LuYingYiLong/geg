@@ -48,6 +48,15 @@ public final class Window extends Container {
     private boolean wasPicking;
     private int lastPointerX = Integer.MIN_VALUE, lastPointerY = Integer.MIN_VALUE;
     private Runnable onBack = OreScreen::back;
+    private HostInputHandler hostInputHandler;
+
+    public HostInputHandler getHostInputHandler(){return hostInputHandler;}
+
+    public void setHostInputHandler(HostInputHandler handler) {
+        if(hostInputHandler==handler)return;
+        if(hostInputHandler!=null)hostInputHandler.cancel();
+        hostInputHandler=handler;
+    }
 
     public Window(boolean fullscreen) {
         this.fullscreen = fullscreen;
@@ -292,6 +301,7 @@ public final class Window extends Container {
             }
             Control target;
             if (event instanceof PointerEvent pointer) {
+                getContext().setGuiMouse(pointer.windowX(),pointer.windowY());
                 lastPointerX = pointer.windowX();
                 lastPointerY = pointer.windowY();
                 if (pointer.action() != PointerEvent.Action.MOVE)
@@ -332,6 +342,11 @@ public final class Window extends Container {
                 }
             }
             if (!event.accepted()) unhandledInput(event);
+            if (!event.accepted() && hostInputHandler != null && hostInputHandler.input(event)) {
+                event.accept();
+                if(event instanceof PointerEvent pointer && pointer.action()==PointerEvent.Action.PRESS)
+                    pointerCaptures.put(pointer.button(),this);
+            }
             if (event instanceof PointerEvent pointer && pointer.action() == PointerEvent.Action.RELEASE)
                 pointerCaptures.remove(pointer.button());
             getContext().getPopups().synchronize();
@@ -449,6 +464,7 @@ public final class Window extends Container {
 
     @Override
     public void cancelInteraction() {
+        if(hostInputHandler!=null)hostInputHandler.cancel();
         getContext().getPopups().cancel();
         cancelPointer();
         focusManager.resetInput();
