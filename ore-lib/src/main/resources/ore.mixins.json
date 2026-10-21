@@ -7,8 +7,7 @@
     "ExternalKeyboardMixin",
     "ExternalMouseMixin",
     "FontRenderHelperMixin",
-    "ModularPanelInputMixin",
-    "TrueTypeGlyphProviderDefinitionMixin"
+    "ModularPanelInputMixin"
   ],
   "injectors": {
     "defaultRequire": 1

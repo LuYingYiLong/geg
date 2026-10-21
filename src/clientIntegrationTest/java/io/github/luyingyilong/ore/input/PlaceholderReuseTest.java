@@ -29,8 +29,8 @@ public final class PlaceholderReuseTest {
         input.placeholderLabel(mutable);
         mutable.append(" after");
         check(input.placeholderLabel(mutable).getText().getString().equals("Before after"), "Mutable hint content refreshes without replacing the Label");
-        input.hintColor(0xFF123456);
-        check(input.placeholderLabel(mutable).getColor() == 0xFF123456, "Hint styling remains live");
+        input.getThemeControl().setThemeOverride(io.github.luyingyilong.ore.theme.OreTheme.INPUT_PLACEHOLDER_FONT_COLOR, 0xFF123456);
+        check(input.placeholderLabel(mutable).getThemeItem(Label.FONT_COLOR) == 0xFF123456, "Hint styling remains live");
         input.dispose();
         check(!label.isDisposed() && !input.getSignalScope().isClosed(), "Temporary MUI disposal preserves the logical input and its hint");
         check(input.placeholderLabel(hint) == label, "Reattaching reuses the existing hint");

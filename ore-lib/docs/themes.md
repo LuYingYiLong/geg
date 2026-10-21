@@ -9,13 +9,13 @@
 每个控件使用静态 `registerTheme(ThemeDB)` 声明类型和项，初始化统一调用。第三方类型使用带命名空间的名称，并重写 `getThemeType()` 返回登记的名称。禁止在构造函数或逐帧绘制中注册。
 
 ```java
-public static final ThemeKey<Integer> TITLE_COLOR = ThemeKey.of(
-        "example:Status", "title_color", Integer.class,
+public static final ThemeKey<Integer> TITLE_FONT_COLOR = ThemeKey.of(
+        "example:Status", "title_font_color", Integer.class,
         ThemeKey.Kind.COLOR, 0xFFFFFFFF, false);
 
 public static void registerTheme(ThemeDB db) {
     db.registerType("example:Status", "Control");
-    db.register(TITLE_COLOR);
+    db.register(TITLE_FONT_COLOR);
 }
 ```
 
@@ -62,10 +62,10 @@ public static void registerTheme(ThemeDB db) {
 Theme theme = ThemeDB.getDefault().getTheme(ResourceLocation.parse("example:dark"));
 panel.setTheme(theme);
 label.setThemeTypeVariation("LabelSecondary");
-label.setThemeOverride(OreTheme.TEXT_COLOR, 0xFF8CB3FF);
-Integer localColor = label.getThemeOverride(OreTheme.TEXT_COLOR);
-int effectiveColor = label.getThemeItem(OreTheme.TEXT_COLOR);
-label.removeThemeOverride(OreTheme.TEXT_COLOR);
+label.setThemeOverride(Label.FONT_COLOR, 0xFF8CB3FF);
+Integer localColor = label.getThemeOverride(Label.FONT_COLOR);
+int effectiveColor = label.getThemeItem(Label.FONT_COLOR);
+label.removeThemeOverride(Label.FONT_COLOR);
 ```
 
 `getTheme()` 只返回控件自身设置的主题，未设置时为 null。解析顺序为显式属性、局部覆盖、自身主题、最近到最远祖先主题、宿主默认主题、登记的安全默认值。每个主题资源优先尝试类型变体、控件类型和基础类型，再查资源父主题；缺失项继续回退。
@@ -76,7 +76,57 @@ label.removeThemeOverride(OreTheme.TEXT_COLOR);
 
 共享 Theme 不随控件销毁。`theme.changed()` 通知有效值变化，控件收到合并的 `THEME_CHANGED`。颜色只使绘制缓存失效；字体、字号及 StyleBox 内距同时使测量与布局失效。控件订阅在 `queueFree()` 的最终清理阶段断开。回收节点保留所有权；相同所有权的重复登记不会重置滚动文字或布局。
 
-`Label.setColor/setFontSize/setFont/setHero/setShadow` 表示显式属性。使用 `clearColor/clearFontSize/clearFont/clearHero/clearShadow` 恢复继承。按钮与弹层的字体 setter 转发到内部 Label；它们也提供 `clearFontSize()`。Theme 和局部覆盖不会被资源重载或 Inspector 属性预览覆盖写回。
+`Label.setFont/setHero/setShadow` 表示显式属性，使用 `clearFont/clearHero/clearShadow` 恢复继承。字号和文字颜色只使用主题项，不提供独立的字号或文字颜色 setter/getter。Theme 和局部覆盖不会被资源重载或 Inspector 属性预览覆盖写回。
+
+### 文字颜色
+
+普通文字统一使用 `Label:font_color`（`Label.FONT_COLOR`／`OreTheme.FONT_COLOR`），颜色为 ARGB 整数。`LabelDark`、`LabelSecondary` 等文字变体也覆盖各自的 `font_color`。透明度为 0 的颜色仍是有效覆盖；Component 内显式指定的子文本颜色继续保留。
+
+组合控件通过文字角色区分不同区域，内部 Label 直接继承主题，不再逐个复制颜色：
+
+| 区域 | 主题项 | Java 常量 |
+| --- | --- | --- |
+| Dialog／Modal／Drawer 标题 | `LabelHero:font_color` | `OreTheme.TITLE_FONT_COLOR` |
+| Navbar 标题 | `NavbarTitle:font_color` | `OreTheme.NAVBAR_TITLE_FONT_COLOR` |
+| Descriptions 标题／字段名／内容 | `DescriptionsTitle/DescriptionsLabel/DescriptionsContent:font_color` | `Descriptions.TITLE_FONT_COLOR/LABEL_FONT_COLOR/CONTENT_FONT_COLOR` |
+| Table 表头及紧凑布局字段名 | `TableHeader:font_color` | `Table.HEADER_FONT_COLOR` |
+| Menu 整体及分组空提示 | `MenuEmpty:font_color` | `Menu.EMPTY_FONT_COLOR` |
+| Input 正文／占位文字 | `Input:font_color/font_placeholder_color` | `OreTheme.INPUT_FONT_COLOR/INPUT_PLACEHOLDER_FONT_COLOR` |
+
+```java
+drawer.setThemeOverride(OreTheme.TITLE_FONT_COLOR, 0xFFFFFFFF);
+table.setThemeOverride(Table.HEADER_FONT_COLOR, 0xFFD0D1D4);
+menu.setThemeOverride(Menu.EMPTY_FONT_COLOR, 0xFFFFFFFF);
+input.getThemeControl().setThemeOverride(OreTheme.INPUT_FONT_COLOR, 0xFFFFFFFF);
+input.getThemeControl().setThemeOverride(OreTheme.INPUT_PLACEHOLDER_FONT_COLOR, 0x80D0D1D4);
+```
+
+Input、NumberInput 和 TextArea 的 Ore 绘制以这些主题项为准，包括正文、光标及复用的 placeholder；不要使用 MUI 继承的颜色配置方法。选区背景继续由 `Input:selection_color` 控制。
+
+Button 的文字随交互状态解析 `font_color`、`font_hover_color`、`font_pressed_color`、`font_disabled_color`（`Button.FONT_COLOR/FONT_HOVER_COLOR/FONT_PRESSED_COLOR/FONT_DISABLED_COLOR`）；类型变体可覆盖同名项。Segmented 选中文字使用 `Segmented:font_selected_color`，Collapse 次要说明使用 `Collapse:secondary_font_color`。移除局部覆盖即可恢复最新继承值，不再提供重复的文字颜色方法或旧主题键别名。
+
+Inspector 的颜色编辑使用 `theme:Label:font_color` 等主题路径，接受 `#RRGGBB`、`#AARRGGBB` 或 ARGB 整数。无效输入保留上次有效预览；恢复读取最新基础值，预览不写入应用的局部覆盖。
+
+### 字号
+
+普通文字使用 `Label:font_size`（`Label.FONT_SIZE`／`OreTheme.FONT_SIZE`），默认 8 GUI 像素；`scale` 继续作为额外的相对缩放。标题可用 `LabelHero:font_size`（`OreTheme.TITLE_FONT_SIZE`）单独配置，未提供时继承普通文字字号。Dialog、Modal、Drawer 和 Navbar 的标题都使用该标题角色。Descriptions 的标题使用 `DescriptionsTitle:font_size`（`Descriptions.TITLE_FONT_SIZE`），Slot 数量文字使用 `SlotCount:font_size`（`Slot.COUNT_FONT_SIZE`，默认资源固定为 8）。
+
+```java
+Label label = new Label(title);
+label.setThemeOverride(Label.FONT_SIZE, 12.0F);
+float effective = label.getThemeItem(Label.FONT_SIZE);
+Float local = label.getThemeOverride(Label.FONT_SIZE);
+label.removeThemeOverride(Label.FONT_SIZE);
+
+button.setThemeOverride(Label.FONT_SIZE, 12.0F);
+modal.setThemeOverride(OreTheme.TITLE_FONT_SIZE, 12.0F);
+descriptions.setThemeOverride(Label.FONT_SIZE, 10.0F);
+descriptions.setThemeOverride(Descriptions.TITLE_FONT_SIZE, 14.0F);
+```
+
+字号必须为正的有限 float。修改和移除覆盖、祖先主题变化及资源重载均重新测量、换行并重置滚动文字计时；内部 Label 不再靠逐个复制字号同步，新加入的描述项也直接继承。对组合控件使用普通文字项会影响其继承该项的内部部件；只想调整弹层标题时使用标题项。
+
+Inspector 保留实时字号编辑，但属性路径改为 `theme:Label:font_size`。预览只在解析读取时覆盖有效值，不写入 Theme 或控件局部覆盖；无效输入保留上次有效值，撤销、重做和恢复继续生效。
 
 ### 弹层内距
 
@@ -158,7 +208,7 @@ button.setThemeOverride(Button.ICON_PADDING_LEFT, 6);
     "drawCenter": true,
     "opacity": 1.0
   },
-  "Label:color": "#FFFFFFFF",
+  "Label:font_color": "#FFFFFFFF",
   "Label:font": "ore:ore",
   "Label:font_size": 8,
   "Label:shadow": false
@@ -206,3 +256,38 @@ Slot 的默认背景直接引用依赖中已有的原版风格纹理，保留之
 ```
 
 主题测试覆盖登记、变体、继承、局部覆盖恢复、资源失败与循环、非对称九宫格、平铺、小目标、零内距、布局失效和订阅清理。客户端验证继续使用独立运行目录，不能对玩家世界运行测试。
+
+## 统一文本排版与字体度量
+
+Ore 的 `text` 包负责字体资源、ICU 字素／双向分析、整形、换行与绘制。`TextLayout` 是不可变的结果，文档位置为 UTF-16；命中、双向选区、软换行光标、输入法候选位置与绘制复用同一份几何。Input、NumberInput、TextArea 仍由 MUI 保存文档与撤销记录，预编辑不写入文档。普通字体为 Mojangles → Noto Sans → Minecraft 最终回退，hero 为 Minecraft Ten → Noto Sans → 最终回退。
+
+可以通过资源包替换字体 JSON 和 TTF／OTF；不需要在 Java 中添加字体名称分支。仓库解析 reference、bitmap、ttf、space、unihex 提供者及资源包叠加顺序。轮廓字体读取 em、ascent、descent、leading 和 cap-height，并缓存字面参考范围。AUTO 将不同字体族协调到共同视觉参考范围，行框按整个回退链稳定计算，不随输入字符改变基线。
+
+```json
+"Control:font_metrics": {
+  "match_mode": "AUTO",
+  "line_spacing": 1.0,
+  "optical_offset_y": 0,
+  "faces": {
+    "ore:minecraft_ten.ttf": { "scale": 1.0, "baseline_shift": 0.0 }
+  }
+}
+```
+
+- `match_mode` 可设为 `NATIVE` 保留原生比例；字号仍由现有 `font_size` 主题项控制。
+- `line_spacing` 是稳定行框的倍率，至少 1；`optical_offset_y` 为 GUI 像素，只修正启用光学居中的单行控件。
+- `faces` 的键是实际字体文件资源 ID，`scale` 必须为有限正数；`baseline_shift` 使用 em，正值向下。未配置时分别为 1 和 0。位图字体也可通过纹理资源 ID 配置。
+- 原先字体 JSON 中仅用于 Ore 视觉校准的 size／shift／oversample 已移除。Ore 的字号、缩放与基线由统一排版层解释，不依赖 Minecraft 的 TTF 渲染器。
+- 主题值沿用继承、类型变体及局部覆盖，例如 `label.setThemeOverride(OreTheme.FONT_METRICS, policy)`。清除覆盖后恢复继承值；资源重载更新字体版本，不清空输入内容或撤销记录。
+
+`OreText.setBackendMode(AUTO / BUILTIN / MODERN_UI)` 选择后端。AUTO 在公开 API 可用且文字引擎及抗锯齿启用时使用 Modern UI；否则记录原因并使用内置 Java 17 后端。已验证版本为 Modern UI 3.11.1.6。适配器只借用其公开整形及字形缓存，不修改 Modern UI 的全局配置。缺失对应字形时需要在字体资源的回退链中提供支持该脚本的字体；用不含该脚本的字体无法获得正确整形。
+
+每个布局绑定后端与字体资源版本。布局缓存最多 512 项，大于 8192 UTF-16 单元的文本不进入缓存；字形图集在帧边界执行容量回收，刷新或关闭客户端时释放 Ore 自有纹理，绝不释放 Modern UI 的纹理。缓存不持有 Control 或 Window。
+
+Ore 文字使用独立的 `ore:text` shader。轮廓字形保留 8 位灰度覆盖率，位图保持最近邻采样；字体颜色 Alpha、上下文 Alpha 和覆盖率只相乘一次，输出预乘 Alpha，使用 `ONE / ONE_MINUS_SRC_ALPHA` source-over。没有 0.1 的透明度截断。阴影独立绘制，状态在返回宿主前恢复。该管线不替换全局 Minecraft 字体或 shader。
+
+彩色 Emoji 来自固定 Noto Emoji v2.047，资源离线打包在 `assets/ore/text/emoji.zip`，序列索引在 `emoji.json`；原始资产和旗帜的许可证位于 `META-INF/licenses/noto-emoji`。资源包可覆盖单张 `assets/ore/text/emoji/<原文件名>.png`，也可替换完整索引与归档。来源：https://github.com/googlefonts/noto-emoji/tree/v2.047 。
+
+F8 文字辅助线显示实际 TextLayout 行框、基线、后端、字体文件与度量；主题面板可查看 `font_metrics` 的值和来源。F9 的 Label 示例提供字体／后端切换、复杂文字、Emoji、透明度、阴影及深浅／彩色／棋盘背景。“Noto Sans — 多语种”示例包含阿拉伯文、希伯来文、天城文及泰文轮廓字体，这些演示字体仅进入开发资源，不改变发布字体链。
+
+回归入口包括 `regressionTextAlphaTest`、`regressionTextLayoutRegressionTest`、`regressionComplexTextTest`、`regressionFontRepositoryTest`。复杂文字测试使用独立、带许可的 Noto 阿拉伯文、希伯来文、天城文及泰文字体，测试字体不打包发布。开发客户端的 `geg.glyph.smoke=true` 夹具额外验证真实 shader、图集上传、FBO 合成及 GL 状态恢复；必须使用隔离运行目录。

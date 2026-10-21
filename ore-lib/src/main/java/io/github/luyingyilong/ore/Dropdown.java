@@ -1,23 +1,16 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.theme.ThemePadding;
-import io.github.luyingyilong.ore.theme.IconTheme;
-import io.github.luyingyilong.ore.theme.ThemeDB;
-import io.github.luyingyilong.ore.theme.ThemeKey;
-
-import io.github.luyingyilong.ore.render.*;
-
-import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
+import io.github.luyingyilong.ore.render.DrawContext;
+import io.github.luyingyilong.ore.render.TextureRegion;
+import io.github.luyingyilong.ore.render.TextureSource;
 import io.github.luyingyilong.ore.signal.Signal;
 import io.github.luyingyilong.ore.signal.SignalSource;
-import io.github.luyingyilong.ore.theme.OreTheme;
-import io.github.luyingyilong.ore.theme.OreSounds;
+import io.github.luyingyilong.ore.theme.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 import java.util.Objects;
@@ -26,29 +19,14 @@ import java.util.Objects;
  * Retained trigger. The owning Window creates and routes its Overlay menu.
  */
 public final class Dropdown<T> extends Control {
+    public static final ThemeKey<TextureRegion> ARROW_ICON = IconTheme.item("Dropdown", "arrow", IconTheme.ARROW_DOWN);
+    public static final ThemeKey<TextureRegion> CHECKED_ICON = IconTheme.item("Dropdown", "checked", IconTheme.CHECKED);
+    public static final int ITEM_OVERLAP = 1;
     private static final ThemePadding PADDING = ThemePadding.of("Dropdown", "", 1, 1, 1, 1);
     public static final ThemeKey<Integer> PADDING_TOP = PADDING.top();
     public static final ThemeKey<Integer> PADDING_RIGHT = PADDING.right();
     public static final ThemeKey<Integer> PADDING_BOTTOM = PADDING.bottom();
     public static final ThemeKey<Integer> PADDING_LEFT = PADDING.left();
-
-
-    public static final ThemeKey<TextureRegion> ARROW_ICON = IconTheme.item("Dropdown", "arrow", IconTheme.ARROW_DOWN);
-    public static final ThemeKey<TextureRegion> CHECKED_ICON = IconTheme.item("Dropdown", "checked", IconTheme.CHECKED);
-
-    public static void registerTheme(ThemeDB db) {
-        OreTheme.registerType(db, "Dropdown");
-        PADDING.register(db);
-        IconTheme.registerTheme(db);
-        db.register(ARROW_ICON);
-        db.registerFallback(ARROW_ICON, IconTheme.ARROW_DOWN);
-        db.register(CHECKED_ICON);
-        db.registerFallback(CHECKED_ICON, IconTheme.CHECKED);
-    }
-
-
-    @Override public String getThemeState() { return "selected="+String.valueOf(selected)+", open="+open; }
-    public static final int ITEM_OVERLAP = 1;
     private static final TextureSource ARROW = TextureSource.themed(ARROW_ICON);
     private final Button triggerButton;
     private final Button.Size size;
@@ -60,11 +38,9 @@ public final class Dropdown<T> extends Control {
     private Component triggerLabel;
     private boolean checkable = true, showArrow = true, open, held;
     private int activationKey = -1;
-
     public Dropdown(T initialValue, int maxVisibleItems) {
         this(initialValue, maxVisibleItems, Button.Size.MEDIUM);
     }
-
     public Dropdown(T initialValue, int maxVisibleItems, Button.Size size) {
         selected = initialValue;
         this.maxVisibleItems = Math.max(1, maxVisibleItems);
@@ -73,6 +49,21 @@ public final class Dropdown<T> extends Control {
         setMinimum(0, size.getHeight());
         setFocusable(true);
 
+    }
+
+    public static void registerTheme(ThemeDB db) {
+        OreTheme.registerType(db, "Dropdown");
+        PADDING.register(db);
+        IconTheme.registerTheme(db);
+        db.register(ARROW_ICON);
+        db.registerFallback(ARROW_ICON, IconTheme.ARROW_DOWN);
+        db.register(CHECKED_ICON);
+        db.registerFallback(CHECKED_ICON, IconTheme.CHECKED);
+    }
+
+    @Override
+    public String getThemeState() {
+        return "selected=" + String.valueOf(selected) + ", open=" + open;
     }
 
     public Signal<T> selectionChanged() {
@@ -109,11 +100,20 @@ public final class Dropdown<T> extends Control {
         return this;
     }
 
-    public TextureRect getIconControl() { return triggerButton.getIconControl(); }
-    public TextureRect getArrowControl() { return triggerButton.getTrailingIconControl(); }
+    public TextureRect getIconControl() {
+        return triggerButton.getIconControl();
+    }
 
-    /** Presentation part; Dropdown retains activation and Overlay routing. */
-    public Button getTriggerButton() { return triggerButton; }
+    public TextureRect getArrowControl() {
+        return triggerButton.getTrailingIconControl();
+    }
+
+    /**
+     * Presentation part; Dropdown retains activation and Overlay routing.
+     */
+    public Button getTriggerButton() {
+        return triggerButton;
+    }
 
     public boolean getShowArrow() {
         return showArrow;

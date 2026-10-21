@@ -106,7 +106,7 @@ project(':ui-lib').projectDir = file('libraries/controls')
 普通图片与按钮图标的接入方式见 [TextureRect 与图片资源](docs/textures.md)。
 
 控件属性统一使用 `getXxx()`／`setXxx(value)`，setter 继续支持原有链式调用，例如
-`new Label().setText(title).setFontSize(12)`、`control.setVisible(true)`、`control.getSize()`。
+`label.setThemeOverride(Label.FONT_SIZE, 12.0F)`、`control.setVisible(true)`、`control.getSize()`。
 旧的同名 getter／setter 重载已移除，所有宿主调用方需要同步更新。
 `isAlive()` 等状态判断、Java record 的访问器、第三方 API、`addChild`／`queueFree` 等动作以及
 `pressed()`／`textChanged()` 等信号订阅入口保留各自命名，不转换成属性 setter。

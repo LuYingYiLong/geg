@@ -10,6 +10,12 @@ public final class TextAreaTest {
         check(TextLines.split("你好\r\nSecond line\n").equals(List.of("你好", "Second line", "")));
         check(TextLines.split("").equals(List.of("")));
         String committed = "A😀\n中B\nTail";
+        check(TextLines.position(committed, 3).equals(new TextLines.Position(3, 0)));
+        String clusters = "第一行\n👩🏽‍💻é中文";
+        for (int offset : io.github.luyingyilong.ore.text.TextBoundaries.graphemes(clusters)) {
+            var point = TextLines.position(clusters, offset);
+            check(TextLines.offset(TextLines.split(clusters), point.column(), point.line()) == offset);
+        }
         int start = TextLines.offset(TextLines.split(committed), 1, 1);
         check(start == 5 && TextLines.position(committed, start).equals(new TextLines.Position(1, 1)));
         var display = new InputPreedit("拼音", 1).present(committed, start, start + 1);

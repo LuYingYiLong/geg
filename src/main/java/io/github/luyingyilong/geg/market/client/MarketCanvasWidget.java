@@ -36,7 +36,7 @@ import io.github.luyingyilong.ore.layout.Size;
 import io.github.luyingyilong.ore.layout.SizeFlags;
 import io.github.luyingyilong.ore.layout.Window;
 import io.github.luyingyilong.ore.theme.OreTheme;
-import io.github.luyingyilong.ore.theme.OreTextMetrics;
+import io.github.luyingyilong.ore.text.OreText;
 import io.github.luyingyilong.geg.market.*;
 import io.github.luyingyilong.geg.market.MarketActionPacket;
 import io.github.luyingyilong.geg.market.MarketBuyOrder;
@@ -182,7 +182,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
                         boolean hasPrice = card.kind == Kind.GROUP || card.kind == Kind.OWN
                                 || card.kind == Kind.OWN_REQUEST || card.kind == Kind.FAVORITE
                                 || card.kind == Kind.HISTORY;
-                        int lineHeight = OreTextMetrics.body().lineHeight(1);
+                        int lineHeight = (int)OreText.bodyMetrics(1).lineHeight();
                         return (hasPrice ? 3 : 2) * (lineHeight + 1) + 9;
                     }
 

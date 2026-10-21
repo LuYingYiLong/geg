@@ -106,16 +106,17 @@ public final class LabelLayoutTest {
             }
         }
         label.setAlignment(Label.Horizontal.LEFT, Label.Vertical.TOP);
-        check(label.firstLineOrigin(10, 1) > 0); // Keep the TTF's slight negative top inside the row.
+        check(label.firstLineOrigin(10, 1) == 0); // The stable row owns its baseline inset.
     }
 
     private static void fontSizeLayout(Font font) {
         Label label = new Label(Component.literal("ABCDE"));
-        check(label.getFontSize() == 8.0F && label.measureWidth(font, 100) == 30);
+        check(label.getThemeItem(Label.FONT_SIZE) == 8.0F && label.measureWidth(font, 100) == 30);
         Box parent = new Box();
         parent.addChild(label);
         parent.layout(new Rect(0, 0, 100, 30), font);
-        label.setFontSize(16.0F).setWrap(Label.Wrap.CHARACTER);
+        label.setWrap(Label.Wrap.CHARACTER);
+        label.setThemeOverride(Label.FONT_SIZE, 16.0F);
         check(parent.getLayoutDirty());
         check(label.measureWidth(font, 100) == 60 && label.lineHeight(font) == 20);
         check(label.lines(font, 24).size() == 3);
@@ -125,19 +126,19 @@ public final class LabelLayoutTest {
         check(asString(label.displayedLines(font, 24, 40).get(1)).equals("C…"));
         label.setScale(0.5F);
         check(label.measureWidth(font, 100) == 30 && label.lineHeight(font) == 10);
-        Label marquee = new Label(Component.literal("ABCDE")).setFontSize(16.0F)
-                .setOverflow(Label.Overflow.MARQUEE).setScrollSpeed(12.0F);
+        Label marquee = new Label(Component.literal("ABCDE")).setOverflow(Label.Overflow.MARQUEE).setScrollSpeed(12.0F);
+        marquee.setThemeOverride(Label.FONT_SIZE, 16.0F);
         check(marquee.marqueeOffset(font, 24, 1000, true) == 0);
         check(marquee.marqueeOffset(font, 24, 2000, true) == 12);
-        marquee.setFontSize(8.0F);
+        marquee.setThemeOverride(Label.FONT_SIZE, 8.0F);
         check(marquee.marqueeOffset(font, 24, 3000, true) == 0);
         for (float invalid : new float[]{0.0F, -1.0F, Float.NaN, Float.POSITIVE_INFINITY}) {
             try {
-                label.setFontSize(invalid);
+                label.setThemeOverride(Label.FONT_SIZE, invalid);
                 throw new AssertionError("Invalid font size accepted");
             } catch (IllegalArgumentException expected) {
                 // The previous valid size remains usable after validation fails.
-                check(label.getFontSize() == 16.0F);
+                check(label.getThemeItem(Label.FONT_SIZE) == 16.0F);
             }
         }
     }

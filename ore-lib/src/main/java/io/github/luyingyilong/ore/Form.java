@@ -1,12 +1,15 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.form.*;
-import net.minecraft.network.chat.Component;
+import io.github.luyingyilong.ore.form.FieldKey;
+import io.github.luyingyilong.ore.form.FieldValue;
+import io.github.luyingyilong.ore.form.FormValidation;
+import io.github.luyingyilong.ore.form.FormValues;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.Size;
 import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.Component;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -18,6 +21,7 @@ import java.util.Objects;
 public final class Form extends Container {
     private final Map<String, FormItem<?>> items = new LinkedHashMap<>();
     private Layout layout = Layout.VERTICAL;
+
     public Form() {
         setVisible(false);
     }
@@ -30,7 +34,9 @@ public final class Form extends Container {
         return chosen == Layout.HORIZONTAL && viewportWidth <= 128 ? Layout.VERTICAL : chosen;
     }
 
-    public Layout getLayout() { return layout; }
+    public Layout getLayout() {
+        return layout;
+    }
 
     public Form setLayout(Layout layout) {
         this.layout = Objects.requireNonNull(layout);
@@ -66,26 +72,51 @@ public final class Form extends Container {
     @Override
     public void setVisible(boolean visible) {
         super.setVisible(visible);
-        for (FormItem<?> item : java.util.List.copyOf(items.values())) item.setInputVisible(visible && item.getActive());
+        for (FormItem<?> item : java.util.List.copyOf(items.values()))
+            item.setInputVisible(visible && item.getActive());
     }
 
     public <T> FormItem<T> getItem(FieldKey<T> key) {
         FormItem<?> item = items.get(key.name());
-        if (item == null || !item.getKey().equals(key)) throw new IllegalArgumentException("Unknown field or mismatched type: " + key.name());
+        if (item == null || !item.getKey().equals(key))
+            throw new IllegalArgumentException("Unknown field or mismatched type: " + key.name());
         @SuppressWarnings("unchecked") FormItem<T> typed = (FormItem<T>) item;
         return typed;
     }
-    public <T> T getValue(FieldKey<T> key) { return getItem(key).getValue(); }
-    public boolean getDirty() { return items.values().stream().anyMatch(FormItem::getDirty); }
-    public boolean getTouched() { return items.values().stream().anyMatch(FormItem::getTouched); }
-    public void captureInitialValues() { for (FormItem<?> item : java.util.List.copyOf(items.values())) item.captureInitialValue(); }
-    public void reset() { for (FormItem<?> item : java.util.List.copyOf(items.values())) item.reset(); }
-    public void setInitialValues(FormValues values) { setValuesNoSignal(values); captureInitialValues(); }
+
+    public <T> T getValue(FieldKey<T> key) {
+        return getItem(key).getValue();
+    }
+
+    public boolean getDirty() {
+        return items.values().stream().anyMatch(FormItem::getDirty);
+    }
+
+    public boolean getTouched() {
+        return items.values().stream().anyMatch(FormItem::getTouched);
+    }
+
+    public void captureInitialValues() {
+        for (FormItem<?> item : java.util.List.copyOf(items.values())) item.captureInitialValue();
+    }
+
+    public void reset() {
+        for (FormItem<?> item : java.util.List.copyOf(items.values())) item.reset();
+    }
+
+    public void setInitialValues(FormValues values) {
+        setValuesNoSignal(values);
+        captureInitialValues();
+    }
+
     public void setValuesNoSignal(FormValues values) {
         for (FieldKey<?> key : values.getKeys()) getItem(key);
         for (FieldKey<?> key : values.getKeys()) fill(values, key);
     }
-    private <T> void fill(FormValues values, FieldKey<T> key) { getItem(key).setValueNoSignal(values.getValue(key)); }
+
+    private <T> void fill(FormValues values, FieldKey<T> key) {
+        getItem(key).setValueNoSignal(values.getValue(key));
+    }
 
     /**
      * MUI widgets are siblings of the Ore canvas, so hide fields outside a scrolled viewport.
@@ -116,12 +147,17 @@ public final class Form extends Container {
         if (first != null) first.getField().focus();
         return new FormValidation(errors.isEmpty() ? values.build() : null, errors);
     }
+
     private boolean eligible(FormItem<?> item) {
         return item.getParent() == this && item.isAlive() && item.getActive() && item.getVisible();
     }
+
     private <T> boolean validateItem(FormItem<T> item, FormValues.Builder values, Map<String, Component> errors) {
         FieldValue<T> value = item.validate(true);
-        if (!value.getValid()) { errors.put(item.getName(), value.error()); return false; }
+        if (!value.getValid()) {
+            errors.put(item.getName(), value.error());
+            return false;
+        }
         values.setValue(item.getKey(), value.value());
         return true;
     }

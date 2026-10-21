@@ -15,8 +15,9 @@ public final class AccessorContractTest {
         control.setMinimum(12, 8).setPreferred(20, 10).setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL);
         control.setVisible(false);
         check(control.getMinimumWidth() == 12 && control.getMinimumHeight() == 8 && !control.getVisible(), "Control accessors");
-        Label label = new Label().setText(Component.literal("Text")).setFontSize(12).setHero(true);
-        check(label.getText().getString().equals("Text") && label.getFontSize() == 12 && label.getHero(), "Label accessors");
+        Label label = new Label().setText(Component.literal("Text")).setHero(true);
+        label.setThemeOverride(Label.FONT_SIZE, 12.0F);
+        check(label.getText().getString().equals("Text") && label.getThemeItem(Label.FONT_SIZE) == 12 && label.getHero(), "Label accessors");
         Button button = new Button().setThemeTypeVariation("PrimaryButton").setToggleButton(true).setButtonPressed(true);
         check(button.getThemeTypeVariation().equals("PrimaryButton") && button.getButtonPressed(), "Button accessors");
         Box box = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);

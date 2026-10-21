@@ -12,8 +12,8 @@ import java.util.Objects;
 public final class DescriptionItem extends Container {
     private final String key;
     private final Box box = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);
-    private final Label label = new Label().setWrap(Label.Wrap.CHARACTER).setThemeTypeVariation("LabelSecondary");
-    private final Label content = new Label().setWrap(Label.Wrap.CHARACTER);
+    private final Label label = new Label().setWrap(Label.Wrap.CHARACTER).setThemeTypeVariation("DescriptionsLabel");
+    private final Label content = new Label().setWrap(Label.Wrap.CHARACTER).setThemeTypeVariation("DescriptionsContent");
     private Component labelText;
     private Descriptions.Layout layout = Descriptions.Layout.HORIZONTAL;
     private boolean colon = true;
@@ -23,6 +23,8 @@ public final class DescriptionItem extends Container {
         if (Objects.requireNonNull(key).isBlank()) throw new IllegalArgumentException("Description key is blank");
         this.key = key;
         this.labelText = Objects.requireNonNull(label).copy();
+        this.label.setThemeParent(this);
+        this.content.setThemeParent(this);
         this.content.setText(Objects.requireNonNull(content));
         this.label.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         this.content.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);

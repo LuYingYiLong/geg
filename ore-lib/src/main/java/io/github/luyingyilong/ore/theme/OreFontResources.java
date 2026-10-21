@@ -13,7 +13,7 @@ public final class OreFontResources {
         event.registerReloadListener((ResourceManagerReloadListener) resources -> {
             io.github.luyingyilong.ore.OreClient.initializeThemes();
             ThemeDB.getDefault().reload(resources);
-            OreTextMetrics.reload(resources);
+            io.github.luyingyilong.ore.text.OreText.reload(resources);
             OreFonts.resourcesReloaded();
         });
     }

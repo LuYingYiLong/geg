@@ -109,9 +109,9 @@ public final class MenuLayoutTest {
         Box emptyGroup = (Box) sections.getChildren().get(0);
         Control emptyRow = emptyGroup.getChildren().get(2).getChildren().get(0).getChildren().get(0);
         Label emptyLabel = (Label) emptyRow.getChildren().get(0);
-        check(emptyLabel.getColor() == OreTheme.TEXT_WHITE && !emptyLabel.acceptsFocus(), "White informational label");
-        menu.setEmptyColor(0xFF12AB34);
-        check(emptyLabel.getColor() == 0xFF12AB34, "Empty row color can change after construction");
+        check(emptyLabel.getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR) == OreTheme.TEXT_WHITE && !emptyLabel.acceptsFocus(), "White informational label");
+        menu.setThemeOverride(Menu.EMPTY_FONT_COLOR, 0xFF12AB34);
+        check(emptyLabel.getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR) == 0xFF12AB34, "Empty row color can change after construction");
         Rect emptyArea = emptyLabel.getAbsoluteBounds();
         int previousActions = actions.size();
         io.github.luyingyilong.ore.event.WindowInputs.press(window,emptyArea.x() + 1, emptyArea.y() + 1, null);
@@ -119,7 +119,7 @@ public final class MenuLayoutTest {
         check(actions.size() == previousActions && menu.getSelectedKey() == null, "Empty rows have no action");
         menu.setItems(List.of());
         Label wholeEmpty = (Label) sections.getChildren().get(0);
-        check(wholeEmpty.getColor() == 0xFF12AB34, "Global and grouped empty states share color");
+        check(wholeEmpty.getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR) == 0xFF12AB34, "Global and grouped empty states share color");
     }
 
     private static void check(boolean condition, String message) {

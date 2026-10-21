@@ -3,7 +3,7 @@ package io.github.luyingyilong.ore;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.theme.OreSounds;
 import io.github.luyingyilong.ore.theme.OreTheme;
-import io.github.luyingyilong.ore.theme.OreTextMetrics;
+
 import io.github.luyingyilong.ore.util.ToastQueue;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
@@ -77,7 +77,7 @@ public final class ToastLayoutTest {
         for (Toast.Type type : Toast.Type.values()) {
             first.setType(type);
             check(type.getColor() == Tag.Type.valueOf(type.name()).getColor());
-            check(((Label) first.getChildren().get(0)).getColor() == Tag.Type.valueOf(type.name()).textColor());
+            check(((Label) first.getChildren().get(0)).getThemeItem(Label.FONT_COLOR) == Tag.Type.valueOf(type.name()).textColor());
         }
         textCentering(font);
         queue.clear(); check(queue.size() == 0);
@@ -97,7 +97,9 @@ public final class ToastLayoutTest {
                     check(label.getAbsoluteBounds().equals(textArea));
                     int lines = label.displayedLines(font, textArea.width(), textArea.height()).size();
                     float startY = textArea.y() + label.firstLineOrigin(textArea.height(), lines);
-                    float visibleHeight = OreTextMetrics.body().opticalHeight(lines, 1);
+                    var metrics = label.getTextLayout(font, textArea.width()).getMetrics();
+                    startY += metrics.ascent() + metrics.opticalTop();
+                    float visibleHeight = metrics.opticalBottom() - metrics.opticalTop() + (lines - 1) * metrics.lineHeight();
                     check(label.getOpticalCenter());
                     check(Math.abs(2 * startY + visibleHeight - (2 * face.y() + face.height())) <= 1);
                     check(startY >= face.y() + 1 && startY + visibleHeight <= face.bottom() - 1);

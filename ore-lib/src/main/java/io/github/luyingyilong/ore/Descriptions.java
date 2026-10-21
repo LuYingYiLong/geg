@@ -2,6 +2,7 @@ package io.github.luyingyilong.ore;
 
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.ThemeKey;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 
@@ -11,8 +12,17 @@ import java.util.*;
  * Responsive read-only descriptions, composed entirely of retained Boxes and Labels without a background.
  */
 public final class Descriptions extends Container {
+    public static final ThemeKey<Float> TITLE_FONT_SIZE = new ThemeKey<>(
+            "DescriptionsTitle", "font_size", Float.class, ThemeKey.Kind.FLOAT, 8.0F, true,
+            value -> Float.isFinite(value) && value > 0);
+    public static final ThemeKey<Integer> TITLE_FONT_COLOR = ThemeKey.of("DescriptionsTitle", "font_color", Integer.class,
+            ThemeKey.Kind.COLOR, OreTheme.TEXT_WHITE, false);
+    public static final ThemeKey<Integer> LABEL_FONT_COLOR = ThemeKey.of("DescriptionsLabel", "font_color", Integer.class,
+            ThemeKey.Kind.COLOR, OreTheme.TEXT_SECONDARY, false);
+    public static final ThemeKey<Integer> CONTENT_FONT_COLOR = ThemeKey.of("DescriptionsContent", "font_color", Integer.class,
+            ThemeKey.Kind.COLOR, OreTheme.TEXT_WHITE, false);
     private final Box box = new Box().setGap(6);
-    private final Label title = new Label().setWrap(Label.Wrap.CHARACTER);
+    private final Label title = new Label().setThemeTypeVariation("DescriptionsTitle").setWrap(Label.Wrap.CHARACTER);
     private final Map<String, DescriptionItem> items = new LinkedHashMap<>();
     private final List<Box> rows = new ArrayList<>();
     private Layout layout = Layout.HORIZONTAL;
@@ -22,13 +32,11 @@ public final class Descriptions extends Container {
     private int columnGap = 8;
     private int itemGap = 4;
     private boolean colon = true;
-    private Integer labelColor;
-    private Integer contentColor;
-    private Float fontSize;
     private List<DescriptionItem> arranged = List.of();
     private int arrangedColumns;
     private boolean arranging;
     public Descriptions() {
+        title.setThemeParent(this);
         title.setVisible(false);
         title.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
         box.addChild(title);
@@ -38,6 +46,13 @@ public final class Descriptions extends Container {
 
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
         io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Descriptions");
+        db.registerVariation("DescriptionsTitle", "Label");
+        db.registerVariation("DescriptionsLabel", "LabelSecondary");
+        db.registerVariation("DescriptionsContent", "Label");
+        db.register(TITLE_FONT_SIZE);
+        db.register(TITLE_FONT_COLOR);
+        db.register(LABEL_FONT_COLOR);
+        db.register(CONTENT_FONT_COLOR);
     }
 
     private static void collectItems(Control node, List<DescriptionItem> out) {
@@ -60,56 +75,6 @@ public final class Descriptions extends Container {
 
     public Label getTitleNode() {
         return title;
-    }
-
-    public Descriptions setTitleColor(int color) {
-        title.setColor(color);
-        return this;
-    }
-
-    public float getTitleFontSize() {
-        return title.getFontSize();
-    }
-
-    public Descriptions setTitleFontSize(float pixels) {
-        title.setFontSize(pixels);
-        return this;
-    }
-
-    public int getLabelColor() {
-        return labelColor == null ? getThemeItem(OreTheme.TEXT_SECONDARY_KEY) : labelColor;
-    }
-
-    public Descriptions setLabelColor(int color) {
-        labelColor = color;
-        for (DescriptionItem item : items.values()) item.getLabelNode().setColor(color);
-        return this;
-    }
-
-    public int getContentColor() {
-        return contentColor == null ? getThemeItem(OreTheme.TEXT_WHITE_KEY) : contentColor;
-    }
-
-    public Descriptions setContentColor(int color) {
-        contentColor = color;
-        for (DescriptionItem item : items.values()) item.getContentNode().setColor(color);
-        return this;
-    }
-
-    public float getFontSize() {
-        return fontSize == null ? getThemeItem(OreTheme.FONT_SIZE) : fontSize;
-    }
-
-    public Descriptions setFontSize(float pixels) {
-        if (!(pixels > 0.0F) || !Float.isFinite(pixels))
-            throw new IllegalArgumentException("Font size must be positive and finite");
-        fontSize = pixels;
-        for (DescriptionItem item : items.values()) {
-            item.getLabelNode().setFontSize(pixels);
-            item.getContentNode().setFontSize(pixels);
-        }
-        requestLayout();
-        return this;
     }
 
     public Layout getLayout() {
@@ -201,12 +166,7 @@ public final class Descriptions extends Container {
             throw new IllegalArgumentException("Duplicate description: " + item.getKey());
         if (item.getParent() != null) throw new IllegalStateException("Description already has a parent");
         item.configure(layout, colon, itemGap);
-        if (labelColor != null) item.getLabelNode().setColor(labelColor);
-        if (contentColor != null) item.getContentNode().setColor(contentColor);
-        if (fontSize != null) {
-            item.getLabelNode().setFontSize(fontSize);
-            item.getContentNode().setFontSize(fontSize);
-        }
+        item.setThemeParent(this);
         box.addChild(item);
         requestLayout();
         return this;

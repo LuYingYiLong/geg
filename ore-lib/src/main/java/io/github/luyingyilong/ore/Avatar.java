@@ -58,7 +58,7 @@ public final class Avatar extends Container {
     public Avatar setSize(int pixels) {
         if (pixels < 1) throw new IllegalArgumentException("Avatar size must be positive");
         setMinimum(pixels, pixels).setPreferred(pixels, pixels);
-        initial.setFontSize(Math.max(8.0F, pixels / 2.0F));
+        initial.setThemeOverride(Label.FONT_SIZE, Math.max(8.0F, pixels / 2.0F));
         return this;
     }
 

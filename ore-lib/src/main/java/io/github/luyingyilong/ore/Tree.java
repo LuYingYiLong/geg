@@ -40,6 +40,7 @@ public final class Tree<T> extends Container implements ScrollContent {
     private int rowHeight = 22, indent = 10;
     private boolean disabled, selectable = true, blockNode = true, showIcon, showSwitcher = true, defaultExpandAll = true;
     private BiFunction<Item<T>, Boolean, TextureSource> switcherIcon = (item, expanded) -> TextureSource.themed(expanded ? EXPANDED_ICON : COLLAPSED_ICON);
+
     public Tree() {
         getSignalScope().own(() -> {
             rows.clear();
@@ -558,7 +559,6 @@ public final class Tree<T> extends Container implements ScrollContent {
                 layoutChild(twist, new Rect(x, 0, offset, rowHeight), font);
                 int width = Math.max(0, bounds.width() - x - offset);
                 layoutChild(label, new Rect(x + offset, 0, blockNode ? width : Math.min(width, labelWidth(entry.item)), rowHeight), font);
-
             }
         }
     }

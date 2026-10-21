@@ -2,6 +2,7 @@ package io.github.luyingyilong.geg.chat.client;
 
 import io.github.luyingyilong.geg.GegMod;
 import io.github.luyingyilong.ore.theme.OreFonts;
+import io.github.luyingyilong.ore.text.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.InBedChatScreen;
@@ -58,12 +59,15 @@ public final class ChatClientEvents {
             long age = now - row.time();
             if (age >= 10000 || !row.system() && visibility != ChatVisiblity.FULL) continue;
             int alpha = age < 8000 ? 255 : Math.max(0, (int) ((10000 - age) * 255 / 2000));
-            var lines = mc.font.split(OreFonts.text(row.text()), width - 4);
+            var layout = OreText.layout(row.text(), OreFonts.BODY, 8, width - 4, TextLayoutEngine.Wrap.WORD,
+                    Integer.MAX_VALUE, false, FontMetricsPolicy.DEFAULT, mc.font);
+            var lines = layout.getLines();
+            int lineHeight = (int)Math.ceil(layout.getMetrics().lineHeight());
             for (int line = lines.size() - 1; line >= 0 && rendered < 9; line--) {
-                y -= 10;
+                y -= lineHeight;
                 if (y < 4) return;
-                graphics.fill(2, y, width + 2, y + 10, (alpha / 3) << 24);
-                OreFonts.draw(graphics, mc.font, lines.get(line), 4, y + 1, (alpha << 24) | 0xFFFFFF, false);
+                graphics.fill(2, y, width + 2, y + lineHeight, (alpha / 3) << 24);
+                TextRenderer.draw(graphics, layout.getLineLayout(line), 4, y, (alpha << 24) | 0xFFFFFF, false);
                 rendered++;
             }
         }

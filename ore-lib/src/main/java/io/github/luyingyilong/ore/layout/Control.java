@@ -291,11 +291,17 @@ public class Control implements SignalOwner {
         var types = new java.util.LinkedHashSet<>(ThemeDB.getDefault().getTypeChain(getThemeType()));
         if (!getThemeTypeVariation().isEmpty())
             types.addAll(ThemeDB.getDefault().getTypeChain(getThemeTypeVariation()));
-        return ThemeDB.getDefault().getKeys().stream().filter(key -> types.contains(key.type()) || themeCache.containsKey(key)).toList();
+        var explicit = new java.util.HashSet<String>();
+        themeOverrides.keySet().forEach(key -> explicit.add(key.getId()));
+        themeProperties.keySet().forEach(key -> explicit.add(key.getId()));
+        return ThemeDB.getDefault().getKeys().stream().filter(key -> types.contains(key.type()) || themeCache.containsKey(key)
+                || explicit.contains(key.getId())).toList();
     }
 
     public final <T> T getThemeItem(ThemeKey<T> key) {
-        return getThemeResolution(key).value();
+        T base = getThemeResolution(key).value();
+        // Preview is separate from the cached theme/base value, so restore sees the latest application changes.
+        return DebugBridge.active() ? DebugBridge.value(this, "theme:" + key.getId(), base) : base;
     }
 
     final void invalidateTheme(boolean layout) {

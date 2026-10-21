@@ -1,14 +1,14 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.theme.ThemeInsets;
-import io.github.luyingyilong.ore.theme.ThemeKey;
-import io.github.luyingyilong.ore.theme.ThemePadding;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.signal.Signal;
 import io.github.luyingyilong.ore.signal.SignalSource;
 import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.ThemeInsets;
+import io.github.luyingyilong.ore.theme.ThemeKey;
+import io.github.luyingyilong.ore.theme.ThemePadding;
 import io.github.luyingyilong.ore.util.ReleaseGesture;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -24,6 +24,8 @@ import java.util.function.Supplier;
  * Fixed-header table whose rows use the Ore bar theme and shared draw/hit geometry.
  */
 public final class Table<T> extends Container {
+    public static final ThemeKey<Integer> HEADER_FONT_COLOR = ThemeKey.of("TableHeader", "font_color", Integer.class,
+            ThemeKey.Kind.COLOR, OreTheme.TEXT_SECONDARY, false);
     private static final ThemePadding COMPACT_PADDING = ThemePadding.of("Table", "compact_", 4, 4, 4, 4);
     public static final ThemeKey<Integer> COMPACT_PADDING_TOP = COMPACT_PADDING.top();
     public static final ThemeKey<Integer> COMPACT_PADDING_RIGHT = COMPACT_PADDING.right();
@@ -44,9 +46,6 @@ public final class Table<T> extends Container {
     public static final ThemeKey<Integer> EMPTY_PADDING_RIGHT = EMPTY_PADDING.right();
     public static final ThemeKey<Integer> EMPTY_PADDING_BOTTOM = EMPTY_PADDING.bottom();
     public static final ThemeKey<Integer> EMPTY_PADDING_LEFT = EMPTY_PADDING.left();
-
-    @Override protected boolean requiresAxisAlignedClip() { return true; }
-
     private static final int HEADER_HEIGHT = 19;
     private static final int ROW_HEIGHT = 23;
     private static final int COMPACT_LABEL_HEIGHT = 10;
@@ -62,7 +61,6 @@ public final class Table<T> extends Container {
     private List<T> rows = List.of();
     private Function<T, Object> rowKey;
     private Component empty = Component.empty();
-    private Integer headerColor;
     private int[] columnWidths = new int[0];
     private int scroll;
     private int contentHeight;
@@ -89,7 +87,18 @@ public final class Table<T> extends Container {
     }
 
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
-        io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Table"); COMPACT_PADDING.register(db); CELL_PADDING.register(db); HEADER_PADDING.register(db); EMPTY_PADDING.register(db);
+        io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Table");
+        db.registerVariation("TableHeader", "LabelSecondary");
+        db.register(HEADER_FONT_COLOR);
+        COMPACT_PADDING.register(db);
+        CELL_PADDING.register(db);
+        HEADER_PADDING.register(db);
+        EMPTY_PADDING.register(db);
+    }
+
+    @Override
+    protected boolean requiresAxisAlignedClip() {
+        return true;
     }
 
     @Override
@@ -245,7 +254,7 @@ public final class Table<T> extends Container {
         if (columns.stream().anyMatch(existing -> existing.key.equals(column.key)))
             throw new IllegalArgumentException("Duplicate table column: " + column.key);
         columns.add(column);
-        headerLabels.put(column.key, ownPart("header_" + column.key, new Label(column.title)));
+        headerLabels.put(column.key, ownPart("header_" + column.key, new Label(column.title).setThemeTypeVariation("TableHeader")));
         dirty = true;
         return this;
     }
@@ -263,11 +272,6 @@ public final class Table<T> extends Container {
 
     public Table<T> setEmpty(Component empty) {
         this.empty = Objects.requireNonNull(empty);
-        return this;
-    }
-
-    public Table<T> setHeaderColor(int color) {
-        headerColor = color;
         return this;
     }
 
@@ -615,8 +619,7 @@ public final class Table<T> extends Container {
     }
 
     private void drawText(Control owner, String name, Label label, DrawContext context, Rect area) {
-        if (headerColor != null) label.setColor(headerColor);
-        else label.setThemeTypeVariation("LabelSecondary");
+        label.setThemeTypeVariation("TableHeader");
         label.setOverflow(Label.Overflow.CLIP).setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
         label.layout(area, context.getFont());
         DebugBridge.backend().internal(owner, name, label);
@@ -787,8 +790,8 @@ public final class Table<T> extends Container {
     }
 
     @Override
-    protected Control hitTestTree(int rootX,int rootY,int windowX,int windowY) {
-        return hitRow(rootX, rootY) == null ? null : super.hitTestTree(rootX,rootY,windowX,windowY);
+    protected Control hitTestTree(int rootX, int rootY, int windowX, int windowY) {
+        return hitRow(rootX, rootY) == null ? null : super.hitTestTree(rootX, rootY, windowX, windowY);
     }
 
     public interface Cell<T> {
@@ -871,7 +874,6 @@ public final class Table<T> extends Container {
      */
     public static final class TextCell<T> implements Cell<T> {
         private final Function<T, Component> text;
-        private final Integer color;
         private Label.Overflow overflow = Label.Overflow.ELLIPSIS;
         private Label.Wrap wrap = Label.Wrap.NONE;
         private Label.Horizontal horizontal = Label.Horizontal.LEFT;
@@ -880,12 +882,6 @@ public final class Table<T> extends Container {
 
         public TextCell(Function<T, Component> text) {
             this.text = Objects.requireNonNull(text);
-            this.color = null;
-        }
-
-        public TextCell(Function<T, Component> text, int color) {
-            this.text = Objects.requireNonNull(text);
-            this.color = color;
         }
 
         public TextCell<T> setOverflow(Label.Overflow overflow) {
@@ -925,7 +921,6 @@ public final class Table<T> extends Container {
         @Override
         public Control createControl() {
             Label label = new Label().setOverflow(overflow).setWrap(wrap).setMaxLines(maxLines).setAlignment(horizontal, vertical);
-            if (color != null) label.setColor(color);
             return new Padding(Padding.Insets.all(0)).setChild(label);
         }
 
@@ -935,7 +930,6 @@ public final class Table<T> extends Container {
             padding.setInsets(CELL_PADDING.getLayoutInsets(control));
             Label label = (Label) padding.getChild(0);
             label.setText(Objects.requireNonNull(text.apply(row))).setOverflow(overflow).setWrap(wrap).setMaxLines(maxLines).setAlignment(horizontal, vertical);
-            if (color != null) label.setColor(color);
         }
 
 
@@ -980,11 +974,14 @@ public final class Table<T> extends Container {
     }
 
     private final class RowView extends Container {
-        @Override protected boolean requiresAxisAlignedClip(){return true;}
-
         private final Map<String, Control> controls = new HashMap<>();
         private final Map<String, Label> captions = new HashMap<>();
         private Row<T> row;
+
+        @Override
+        protected boolean requiresAxisAlignedClip() {
+            return true;
+        }
 
         @Override
         protected void childrenChanged() {
@@ -1009,7 +1006,11 @@ public final class Table<T> extends Container {
             resetBindingScope();
             this.row = row;
             for (Column<T> column : columns) {
-                captions.computeIfAbsent(column.key, key -> ownPart("caption_" + key, new Label(column.title)));
+                captions.computeIfAbsent(column.key, key -> {
+                    Label caption = ownPart("caption_" + key, new Label(column.title).setThemeTypeVariation("TableHeader"));
+                    caption.setThemeParent(Table.this);
+                    return caption;
+                });
                 Control control = controls.get(column.key);
                 if (control != null && !control.isAlive()) {
                     controls.remove(column.key);
@@ -1023,7 +1024,10 @@ public final class Table<T> extends Container {
                         this.addChild(control);
                     }
                 }
-                if (control != null) { control.setThemeParent(Table.this); column.cell.bindControl(control, row.item()); }
+                if (control != null) {
+                    control.setThemeParent(Table.this);
+                    column.cell.bindControl(control, row.item());
+                }
             }
             int childIndex = 0;
             for (Column<T> column : columns) {

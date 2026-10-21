@@ -15,6 +15,8 @@ import net.minecraft.world.item.ItemStack;
  * Read-only item preview. It never moves items or participates in inventory clicks.
  */
 public final class Slot extends Control {
+    public static final ThemeKey<Float> COUNT_FONT_SIZE = new ThemeKey<>("SlotCount", "font_size", Float.class,
+            ThemeKey.Kind.FLOAT, 8.0F, true, value -> Float.isFinite(value) && value > 0);
     private static final ThemePadding PADDING = ThemePadding.of("Slot", "", 3, 5, 7, 5);
     public static final ThemeKey<Integer> PADDING_TOP = PADDING.top();
     public static final ThemeKey<Integer> PADDING_RIGHT = PADDING.right();
@@ -27,8 +29,8 @@ public final class Slot extends Control {
     public static final ThemeKey<Integer> COUNT_PADDING_LEFT = COUNT_PADDING.left();
 
     public static final int SIZE = 26;
-    private final Label count = ownPart("count", new Label().setShadow(true)
-            .setAlignment(Label.Horizontal.RIGHT, Label.Vertical.BOTTOM).setFontSize(8));
+    private final Label count = ownPart("count", new Label().setThemeTypeVariation("SlotCount").setShadow(true)
+            .setAlignment(Label.Horizontal.RIGHT, Label.Vertical.BOTTOM));
     private ItemStack item = ItemStack.EMPTY;
     private int quantity;
     private boolean backgroundVisible = true;
@@ -41,6 +43,8 @@ public final class Slot extends Control {
 
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
         io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Slot");
+        db.registerVariation("SlotCount", "Label");
+        db.register(COUNT_FONT_SIZE);
         PADDING.register(db); COUNT_PADDING.register(db);
     }
 

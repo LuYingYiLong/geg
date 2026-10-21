@@ -136,6 +136,7 @@ final class GallerySamples {
                 root.addChild(free);
             }
             case "label" -> {
+                root.addChild(TextSamples.create());
                 root.addChild(label("mixed_text"));
                 root.addChild(new Label(text("hero_title")).setHero(true));
                 root.addChild(new Label(text("marquee_text"))

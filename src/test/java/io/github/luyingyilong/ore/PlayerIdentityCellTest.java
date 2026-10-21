@@ -56,7 +56,7 @@ public final class PlayerIdentityCellTest {
                 .setRowKey(OrganizationSyncPacket.Member::id)
                 .addColumn(new Table.Column<>("member", Component.literal("Member"), 48, 110, 2, width -> 20, cell))
                 .addColumn(new Table.Column<>("role", Component.literal("Role"), 42, 64, 1, width -> 20,
-                        new Table.TextCell<>(member -> Component.literal("Member"), OreTheme.TEXT_WHITE)))
+                        new Table.TextCell<>(member -> Component.literal("Member"))))
                 .addColumn(new Table.Column<>("action", Component.literal("Action"), 70, 82, 1, width -> 20, new Table.Cell<>() {
                     @Override public void draw(io.github.luyingyilong.ore.render.DrawContext context,
                                                OrganizationSyncPacket.Member row, Rect area) { }

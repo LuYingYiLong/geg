@@ -90,30 +90,31 @@ public final class ThemeSystemTest {
     }
     private static void inheritance() {
         ThemeDB db=ThemeDB.getDefault();
-        Theme distant=db.getTheme(id("distant")).set(OreTheme.TEXT_COLOR,0xFF111111);
-        Theme nearby=db.getTheme(id("nearby")).set(OreTheme.TEXT_COLOR,0xFF222222);
-        Theme own=db.getTheme(id("own")).set(OreTheme.TEXT_COLOR,0xFF333333);
+        Theme distant=db.getTheme(id("distant")).set(OreTheme.FONT_COLOR,0xFF111111);
+        Theme nearby=db.getTheme(id("nearby")).set(OreTheme.FONT_COLOR,0xFF222222);
+        Theme own=db.getTheme(id("own")).set(OreTheme.FONT_COLOR,0xFF333333);
         Control root=new Control().setTheme(distant), parent=new Control().setTheme(nearby); Label label=new Label();
         root.addChild(parent); parent.addChild(label);
-        check(label.getTheme()==null && label.getColor()==0xFF222222,"Nearest ancestor theme, getter stays local");
-        label.setTheme(own); check(label.getColor()==0xFF333333,"Own theme precedence");
-        label.setThemeOverride(OreTheme.TEXT_COLOR,0xFF444444); check(label.getColor()==0xFF444444,"Local override");
-        label.setColor(0xFF555555); check(label.getColor()==0xFF555555,"Explicit setter wins");
-        label.clearColor(); check(label.getColor()==0xFF444444,"Clear explicit property restores local override");
-        label.removeThemeOverride(OreTheme.TEXT_COLOR); check(label.getColor()==0xFF333333,"Remove override restores theme");
-        own.set(OreTheme.LABEL_DARK_COLOR,0xFF666666); label.setThemeTypeVariation("LabelDark");
-        check(label.getColor()==0xFF666666,"Variation before base type in each theme layer");
+        check(label.getTheme()==null && label.getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR)==0xFF222222,"Nearest ancestor theme, getter stays local");
+        label.setTheme(own); check(label.getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR)==0xFF333333,"Own theme precedence");
+        label.setThemeOverride(OreTheme.FONT_COLOR,0xFF444444); check(label.getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR)==0xFF444444,"Local override");
+        label.setShadow(true);label.setThemeOverride(OreTheme.TEXT_SHADOW,false);
+        check(label.getShadow(),"Explicit non-color property wins");
+        label.clearShadow();check(!label.getShadow(),"Clear explicit property restores local override");
+        label.removeThemeOverride(OreTheme.FONT_COLOR); check(label.getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR)==0xFF333333,"Remove override restores theme");
+        own.set(OreTheme.LABEL_DARK_FONT_COLOR,0xFF666666); label.setThemeTypeVariation("LabelDark");
+        check(label.getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR)==0xFF666666,"Variation before base type in each theme layer");
         Control part=parent.ownPart("internal",new Control());
-        check(part.getThemeItem(OreTheme.TEXT_COLOR)==0xFF222222,"Internal parts inherit lifecycle owner");
-        parent.setThemeOverride(OreTheme.TEXT_COLOR,0xFF777777);
-        check(part.getThemeItem(OreTheme.TEXT_COLOR)==0xFF777777,"Owned internal parts inherit owner overrides");
-        parent.removeThemeOverride(OreTheme.TEXT_COLOR);
-        Control overlay=new Control().setThemeParent(label); check(overlay.getThemeItem(OreTheme.TEXT_COLOR)==0xFF333333,"Overlay inherits opener theme without drawing parent");
-        label.setThemeOverride(OreTheme.TEXT_COLOR,0xFF888888);
-        check(overlay.getThemeItem(OreTheme.TEXT_COLOR)==0xFF888888,"Popup style source includes local overrides");
-        label.removeThemeOverride(OreTheme.TEXT_COLOR);
+        check(part.getThemeItem(OreTheme.FONT_COLOR)==0xFF222222,"Internal parts inherit lifecycle owner");
+        parent.setThemeOverride(OreTheme.FONT_COLOR,0xFF777777);
+        check(part.getThemeItem(OreTheme.FONT_COLOR)==0xFF777777,"Owned internal parts inherit owner overrides");
+        parent.removeThemeOverride(OreTheme.FONT_COLOR);
+        Control overlay=new Control().setThemeParent(label); check(overlay.getThemeItem(OreTheme.FONT_COLOR)==0xFF333333,"Overlay inherits opener theme without drawing parent");
+        label.setThemeOverride(OreTheme.FONT_COLOR,0xFF888888);
+        check(overlay.getThemeItem(OreTheme.FONT_COLOR)==0xFF888888,"Popup style source includes local overrides");
+        label.removeThemeOverride(OreTheme.FONT_COLOR);
         rejects(()->parent.setThemeParent(part)); rejects(()->own.setParent(own));
-        check(DebugBridge.themes(label).items().stream().anyMatch(i->i.key().equals("Label:color") && i.chain().stream().anyMatch(t->t.kind().equals("own theme"))),"Read-only source trace");
+        check(DebugBridge.themes(label).items().stream().anyMatch(i->i.key().equals("Label:font_color") && i.chain().stream().anyMatch(t->t.kind().equals("own theme"))),"Read-only source trace");
         root.queueFree(); LifecycleScheduler.flush(); check(overlay.getThemeParent()==null,"Destroyed opener removes style relationship");
         overlay.queueFree(); LifecycleScheduler.flush();
         Label explicitFont=new Label().setHero(true).setFont(id("custom_font"));
@@ -150,18 +151,18 @@ public final class ThemeSystemTest {
         int[] inheritedChanges={0}; SignalScope observer=new SignalScope();
         descendant.changed().connect(observer, layout -> {
             inheritedChanges[0]++;
-            check(probe.getThemeItem(OreTheme.TEXT_COLOR).equals(shared.get(OreTheme.TEXT_COLOR)),"Signal observers read the latest cache");
+            check(probe.getThemeItem(OreTheme.FONT_COLOR).equals(shared.get(OreTheme.FONT_COLOR)),"Signal observers read the latest cache");
         });
-        probe.getThemeItem(OreTheme.TEXT_COLOR); check(db.changed().connectionCount()==baseline+1,"One lifetime-scoped database subscription");
-        shared.set(OreTheme.TEXT_COLOR,0xFF123456); shared.set(OreTheme.TEXT_COLOR,0xFF234567);
-        LifecycleScheduler.notifications(); check(probe.changes==1 && probe.getThemeItem(OreTheme.TEXT_COLOR)==0xFF234567,"Theme notifications coalesce, cache observes latest");
+        probe.getThemeItem(OreTheme.FONT_COLOR); check(db.changed().connectionCount()==baseline+1,"One lifetime-scoped database subscription");
+        shared.set(OreTheme.FONT_COLOR,0xFF123456); shared.set(OreTheme.FONT_COLOR,0xFF234567);
+        LifecycleScheduler.notifications(); check(probe.changes==1 && probe.getThemeItem(OreTheme.FONT_COLOR)==0xFF234567,"Theme notifications coalesce, cache observes latest");
         probe.layout(new Rect(0,0,20,20),null); shared.set(OreTheme.FONT_SIZE,12F);
         check(probe.getLayoutDirty(),"Font changes invalidate layout");
         Control parent=new Control(); parent.ownPooled(probe); parent.queueFree(); LifecycleScheduler.flush();
         check(probe.isDisposed() && db.changed().connectionCount()==baseline,"Pooled cleanup releases subscriptions");
         check(inheritedChanges[0]==3,"Derived themes receive parent changes"); observer.close();
-        shared.set(OreTheme.TEXT_COLOR,0xFF345678); check(shared.get(OreTheme.TEXT_COLOR)==0xFF345678,"Shared theme outlives controls");
-        Throwable[] error={null}; var worker=new Thread(()->{try{shared.set(OreTheme.TEXT_COLOR,0);}catch(Throwable e){error[0]=e;}});worker.start();worker.join();
+        shared.set(OreTheme.FONT_COLOR,0xFF345678); check(shared.get(OreTheme.FONT_COLOR)==0xFF345678,"Shared theme outlives controls");
+        Throwable[] error={null}; var worker=new Thread(()->{try{shared.set(OreTheme.FONT_COLOR,0);}catch(Throwable e){error[0]=e;}});worker.start();worker.join();
         check(error[0] instanceof IllegalStateException,"Cross-thread theme edit rejected");
     }
     private static final class Probe extends Control { int changes; protected void notification(ControlNotification n) { if(n.type()==ControlNotification.Type.THEME_CHANGED) changes++; } }

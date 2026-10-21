@@ -1,12 +1,12 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.theme.ThemeKey;
-import io.github.luyingyilong.ore.theme.ThemePadding;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.signal.Signal;
 import io.github.luyingyilong.ore.signal.SignalScope;
 import io.github.luyingyilong.ore.signal.SignalSource;
 import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.ThemeKey;
+import io.github.luyingyilong.ore.theme.ThemePadding;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 
@@ -17,6 +17,8 @@ import java.util.function.Supplier;
  * Box-based, single-selection menu without an outer background or inset. Wrap in Scroll for overflow.
  */
 public final class Menu extends Container implements ScrollContent {
+    public static final ThemeKey<Integer> EMPTY_FONT_COLOR = ThemeKey.of("MenuEmpty", "font_color", Integer.class,
+            ThemeKey.Kind.COLOR, OreTheme.TEXT_WHITE, false);
     private static final ThemePadding PADDING = ThemePadding.of("Menu", "", 0, 8, 0, 8);
     public static final ThemeKey<Integer> PADDING_TOP = PADDING.top();
     public static final ThemeKey<Integer> PADDING_RIGHT = PADDING.right();
@@ -24,22 +26,21 @@ public final class Menu extends Container implements ScrollContent {
     public static final ThemeKey<Integer> PADDING_LEFT = PADDING.left();
 
     private final Box sections = new Box().setGap(8);
-    private final Label empty = new Label().setWrap(Label.Wrap.WORD);
+    private final Label empty = new Label().setThemeTypeVariation("MenuEmpty").setWrap(Label.Wrap.WORD);
     private final ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> dividerTheme;
     private final Supplier<Button> buttonFactory;
     private final Map<String, Button> buttons = new LinkedHashMap<>();
-    private final List<Label> emptyLabels = new ArrayList<>();
     private final List<Padding> itemInsets = new ArrayList<>();
     private final SignalSource<MenuItem> itemActivated = new SignalSource<>(this, "itemActivated", "MenuItem");
     private final SignalSource<String> selectionChanged = new SignalSource<>(this, "selectionChanged", "String");
     private final Map<String, SignalScope> bindings = new HashMap<>();
-    private int emptyColor = OreTheme.TEXT_WHITE;
     private List<MenuItem> items = List.of();
     private String selectedKey;
     private Size extent = new Size(0, 0);
     private Rect visibleRegion = new Rect(0, 0, 0, 0);
     private Anchor anchor;
     private int restoredScrollY = -1;
+
     public Menu() {
         this(OreTheme.H_DIVIDER, Button::new);
     }
@@ -47,6 +48,7 @@ public final class Menu extends Container implements ScrollContent {
     Menu(ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> dividerTheme, Supplier<Button> buttonFactory) {
         this.dividerTheme = dividerTheme;
         ownPooled(empty);
+        empty.setThemeParent(this);
         getSignalScope().own(this::releaseBindings);
         this.buttonFactory = Objects.requireNonNull(buttonFactory);
         sections.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
@@ -57,6 +59,8 @@ public final class Menu extends Container implements ScrollContent {
 
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
         io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Menu");
+        db.registerVariation("MenuEmpty", "Label");
+        db.register(EMPTY_FONT_COLOR);
         PADDING.register(db);
     }
 
@@ -144,17 +148,6 @@ public final class Menu extends Container implements ScrollContent {
         return this;
     }
 
-    public int getEmptyColor() {
-        return emptyColor;
-    }
-
-    public Menu setEmptyColor(int color) {
-        emptyColor = color;
-        empty.setColor(color);
-        for (Label label : emptyLabels) label.setColor(color);
-        return this;
-    }
-
     private void rebuild() {
         Map<String, Button> previous = new HashMap<>(buttons);
         for (Button button : previous.values()) if (button.getParent() != null) button.getParent().removeChild(button);
@@ -166,7 +159,6 @@ public final class Menu extends Container implements ScrollContent {
             child.queueFree();
         }
         buttons.clear();
-        emptyLabels.clear();
         itemInsets.clear();
         append(sections, items, previous, false);
         if (buttons.isEmpty() && items.isEmpty()) {
@@ -202,10 +194,10 @@ public final class Menu extends Container implements ScrollContent {
                     run = verticalBox();
                     parent.addChild(run);
                 }
-                Label label = new Label(item.label()).setColor(emptyColor).setWrap(Label.Wrap.WORD)
+                Label label = new Label(item.label()).setThemeTypeVariation("MenuEmpty").setWrap(Label.Wrap.WORD)
                         .setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER);
+                label.setThemeParent(this);
                 label.setMinimum(0, Button.HEIGHT);
-                emptyLabels.add(label);
                 Padding inset = new Padding(PADDING.getLayoutInsets(this)).setChild(label);
                 itemInsets.add(inset);
                 inset.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);

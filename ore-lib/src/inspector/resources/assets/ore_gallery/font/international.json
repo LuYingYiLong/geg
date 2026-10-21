@@ -1,0 +1,24 @@
+{
+  "providers": [
+    {
+      "type": "ttf",
+      "file": "ore_gallery:notosansarabic.ttf"
+    },
+    {
+      "type": "ttf",
+      "file": "ore_gallery:notosansdevanagari.ttf"
+    },
+    {
+      "type": "ttf",
+      "file": "ore_gallery:notosanshebrew.ttf"
+    },
+    {
+      "type": "ttf",
+      "file": "ore_gallery:notosansthai.ttf"
+    },
+    {
+      "type": "reference",
+      "id": "ore:ore"
+    }
+  ]
+}

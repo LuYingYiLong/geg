@@ -6,7 +6,7 @@ import brachy.modularui.utils.PointF;
 import io.github.luyingyilong.ore.Label;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.layout.Rect;
-import io.github.luyingyilong.ore.theme.OreTextMetrics;
+
 import io.github.luyingyilong.ore.util.TextLines;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -144,7 +144,7 @@ public final class TextArea extends Input {
     @Override
     public int getPreferredInputHeight() {
         int count = minimumRows == 0 ? rows : Math.max(minimumRows, Math.min(maximumRows, automaticRows));
-        return getControlSize().getHeight() + (count - 1) * OreTextMetrics.body().lineHeight(getTextScale());
+        return getControlSize().getHeight() + (count - 1) * (int)Math.ceil(renderer.getFontHeight());
     }
 
     @Override

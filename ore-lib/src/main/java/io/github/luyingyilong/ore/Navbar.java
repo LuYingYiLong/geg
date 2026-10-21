@@ -50,6 +50,7 @@ public final class Navbar extends Container {
     private Runnable backAction = OreScreen::back;
     public Navbar(Component title) {
         this.title.setText(title);
+        this.title.setThemeParent(this);
         back.pressed().connect(this, () -> backAction.run());
         back.setMinimum(BACK_BUTTON_SIZE, BACK_BUTTON_SIZE);
         back.setThemeParent(this);
@@ -64,26 +65,6 @@ public final class Navbar extends Container {
 
     public Navbar setTitle(Component text) {
         title.setText(text);
-        return this;
-    }
-
-    public Navbar setTitleColor(int color) {
-        title.setColor(color);
-        return this;
-    }
-
-    public Navbar clearFontSize() {
-        title.clearFontSize();
-        requestLayout();
-        return this;
-    }
-
-    public float getFontSize() {
-        return title.getFontSize();
-    }
-
-    public Navbar setFontSize(float fontSize) {
-        title.setFontSize(fontSize);
         return this;
     }
 

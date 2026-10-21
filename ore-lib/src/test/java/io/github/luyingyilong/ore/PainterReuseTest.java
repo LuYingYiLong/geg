@@ -29,7 +29,7 @@ public final class PainterReuseTest {
                         "Allocation-free measurements match Label's styled wrapping and precision");
             }
 
-        Table.TextCell<Integer> cell = new Table.TextCell<Integer>(value -> text, 0xFFFFFFFF).setWrap(Label.Wrap.WORD).setMaxLines(3);
+        Table.TextCell<Integer> cell = new Table.TextCell<Integer>(value -> text).setWrap(Label.Wrap.WORD).setMaxLines(3);
         PlayerIdentityCell<Integer> identity = new PlayerIdentityCell<>(value -> new UUID(0, value), value -> "Player " + value);
         Table<Integer> table = new Table<Integer>().setRowKey(value -> value)
                 .addColumn(new Table.Column<>("body", Component.literal("Text"), 20, 160, 1, width -> 32, cell));

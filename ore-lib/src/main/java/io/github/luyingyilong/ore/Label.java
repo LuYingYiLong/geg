@@ -8,8 +8,9 @@ import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.Size;
 import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.theme.OreFonts;
-import io.github.luyingyilong.ore.theme.OreTextMetrics;
+import io.github.luyingyilong.ore.text.*;
 import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.ThemeKey;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -29,6 +30,8 @@ public final class Label extends Control {
      * GUI pixels: 8 preserves Minecraft's usual unscaled text size.
      */
     public static final float DEFAULT_FONT_SIZE = 8.0F;
+    public static final ThemeKey<Float> FONT_SIZE = OreTheme.FONT_SIZE;
+    public static final ThemeKey<Integer> FONT_COLOR = OreTheme.FONT_COLOR;
     private Component text;
     private Component styledText;
     private boolean hero;
@@ -38,7 +41,6 @@ public final class Label extends Control {
     private Horizontal horizontal = Horizontal.LEFT;
     private Vertical vertical = Vertical.TOP;
     private float scale = 1.0F;
-    private float fontSize = DEFAULT_FONT_SIZE;
     private int maximumWidth = Integer.MAX_VALUE;
     private int maxLines = Integer.MAX_VALUE;
     private ScrollTrigger scrollTrigger = ScrollTrigger.HOVER;
@@ -62,44 +64,20 @@ public final class Label extends Control {
      */
     public static int measureTextHeight(Control owner, Font font, Component text, int width, Wrap wrap, Overflow overflow, int maxLines) {
         if (maxLines < 1) throw new IllegalArgumentException("At least one line is required");
-        float scale = owner.getThemeItem(OreTheme.FONT_SIZE) / DEFAULT_FONT_SIZE;
-        return Math.min(maxLines, wrappedLines(font, OreFonts.text(Objects.requireNonNull(text), owner.getThemeItem(OreTheme.TEXT_FONT)), Math.max(1, (int) Math.floor(width / scale)),
-                Objects.requireNonNull(wrap), Objects.requireNonNull(overflow)).size()) * OreTextMetrics.body().lineHeight(scale);
-    }
-
-    private static List<FormattedCharSequence> wrappedLines(Font font, Component display, int logicalWidth, Wrap wrap, Overflow overflow) {
-        if (wrap == Wrap.NONE || overflow == Overflow.MARQUEE) return List.of(display.getVisualOrderText());
-        if (wrap == Wrap.WORD) return font.split(display, logicalWidth);
-        List<FormattedCharSequence> result = new ArrayList<>();
-        List<FormattedCharSequence> current = new ArrayList<>();
-        int[] currentWidth = {0};
-        display.getVisualOrderText().accept((position, style, codepoint) -> {
-            if (codepoint == '\n') {
-                result.add(FormattedCharSequence.composite(List.copyOf(current)));
-                current.clear();
-                currentWidth[0] = 0;
-                return true;
-            }
-            FormattedCharSequence glyph = FormattedCharSequence.codepoint(codepoint, style);
-            int glyphWidth = font.width(glyph);
-            if (!current.isEmpty() && currentWidth[0] + glyphWidth > logicalWidth) {
-                result.add(FormattedCharSequence.composite(List.copyOf(current)));
-                current.clear();
-                currentWidth[0] = 0;
-            }
-            current.add(glyph);
-            currentWidth[0] += glyphWidth;
-            return true;
-        });
-        result.add(FormattedCharSequence.composite(List.copyOf(current)));
-        return result;
+        var family = owner instanceof Label label ? label.getFont()
+                : owner.getThemeItem(owner.getThemeItem(OreTheme.HERO) ? OreTheme.HERO_FONT : OreTheme.TEXT_FONT);
+        var layout = OreText.layout(text, family, owner.getThemeItem(FONT_SIZE), width,
+                overflow == Overflow.MARQUEE ? TextLayoutEngine.Wrap.NONE : TextLayoutEngine.Wrap.valueOf(wrap.name()),
+                maxLines, false, owner.getThemeItem(OreTheme.FONT_METRICS), font);
+        return (int)Math.ceil(layout.getHeight());
     }
 
     public static void draw(Control owner, DrawContext context, Component text, Rect area, int color,
                             Overflow overflow, Horizontal horizontal, Vertical vertical) {
         Label painter = immediate(context, text);
         painter.setThemeParent(owner);
-        painter.setColor(color).setOverflow(overflow).setAlignment(horizontal, vertical)
+        painter.setThemeOverride(FONT_COLOR, color);
+        painter.setOverflow(overflow).setAlignment(horizontal, vertical)
                 .paint(context.getGraphics(), context.getFont(), area, context.getAbsMouseX(), context.getAbsMouseY(), owner);
     }
 
@@ -108,7 +86,7 @@ public final class Label extends Control {
      */
     static Label immediate(DrawContext context, Component text) {
         return context.getWindowContext().getTextPainter().setText(text)
-                .setHero(false).setFontSize(DEFAULT_FONT_SIZE).setScale(1.0F).setWrap(Wrap.NONE).setMaxLines(Integer.MAX_VALUE)
+                .setHero(false).setScale(1.0F).setWrap(Wrap.NONE).setMaxLines(Integer.MAX_VALUE)
                 .setShadow(false).setOpticalCenter(false);
     }
 
@@ -166,18 +144,6 @@ public final class Label extends Control {
         return this;
     }
 
-    @Inspectable(group = "Text", min = -2147483648.0, max = 4294967295.0)
-    public int getColor() {
-        int color = DebugBridge.value(this, "color", getThemeItem(OreTheme.TEXT_COLOR));
-        return color;
-    }
-
-    public Label setColor(int color) {
-        if (DebugBridge.previewWrite(this, "color", color)) return this;
-        setThemeProperty(OreTheme.TEXT_COLOR, color);
-        return this;
-    }
-
     @Override
     public Label setThemeTypeVariation(String variation) {
         super.setThemeTypeVariation(variation);
@@ -186,16 +152,6 @@ public final class Label extends Control {
 
     public Label clearHero() {
         clearThemeProperty(OreTheme.HERO);
-        return this;
-    }
-
-    public Label clearColor() {
-        clearThemeProperty(OreTheme.TEXT_COLOR);
-        return this;
-    }
-
-    public Label clearFontSize() {
-        clearThemeProperty(OreTheme.FONT_SIZE);
         return this;
     }
 
@@ -226,28 +182,6 @@ public final class Label extends Control {
 
     public Label setShadow(boolean shadow) {
         setThemeProperty(OreTheme.TEXT_SHADOW, shadow);
-        return this;
-    }
-
-    @Inspectable(group = "Text", min = 0.0001, max = 256)
-    public float getFontSize() {
-        float fontSize = DebugBridge.value(this, "fontSize", getThemeItem(OreTheme.FONT_SIZE));
-        return fontSize;
-    }
-
-    /**
-     * Sets the logical text size; scale remains an additional relative multiplier.
-     */
-    public Label setFontSize(float fontSize) {
-        if (!(fontSize > 0.0F) || !Float.isFinite(fontSize))
-            throw new IllegalArgumentException("Font size must be positive and finite");
-        if (DebugBridge.previewWrite(this, "fontSize", fontSize)) return this;
-        setThemeProperty(OreTheme.FONT_SIZE, fontSize);
-        if (this.fontSize != fontSize) {
-            this.fontSize = fontSize;
-            scrollStartMs = Long.MIN_VALUE;
-            requestLayout();
-        }
         return this;
     }
 
@@ -330,7 +264,7 @@ public final class Label extends Control {
 
     private float textScale() {
         float scale = DebugBridge.value(this, "scale", this.scale);
-        float fontSize = DebugBridge.value(this, "fontSize", getThemeItem(OreTheme.FONT_SIZE));
+        float fontSize = getThemeItem(FONT_SIZE);
         return scale * (fontSize / DEFAULT_FONT_SIZE);
     }
 
@@ -396,7 +330,7 @@ public final class Label extends Control {
     @Override
     public int measureWidth(Font font, int available) {
         if (!isAlive()) return 0;
-        return Math.max(getMinimumWidth(), Math.min(maximumWidth, (int) Math.ceil(font.width(getStyledText()) * textScale())));
+        return Math.max(getMinimumWidth(), Math.min(maximumWidth, (int) Math.ceil(getTextLayout(font, Integer.MAX_VALUE).getWidth())));
     }
 
     @Override
@@ -413,66 +347,45 @@ public final class Label extends Control {
                 measureHeight(font, available.width()));
     }
 
+    public TextLayout getTextLayout(Font font, int width) {
+        return layout(font, width, getMaxLines(), getOverflow() == Overflow.ELLIPSIS);
+    }
+
+    private TextLayout layout(Font font, int width, int count, boolean ellipsis) {
+        Wrap wrapping = getOverflow() == Overflow.MARQUEE ? Wrap.NONE : getWrap();
+        return OreText.layout(getStyledText(), getFont(), 8 * textScale(), Math.max(0, width),
+                TextLayoutEngine.Wrap.valueOf(wrapping.name()), count, ellipsis,
+                getThemeItem(OreTheme.FONT_METRICS), font);
+    }
+
     public int lineHeight(Font font) {
-        boolean hero = DebugBridge.value(this, "hero", getThemeItem(OreTheme.HERO));
-        return OreTextMetrics.family(hero).lineHeight(textScale());
+        return (int)getTextLayout(font, Integer.MAX_VALUE).getMetrics().lineHeight();
     }
 
     float firstLineOrigin(int height, int lines) {
-        boolean hero = DebugBridge.value(this, "hero", getThemeItem(OreTheme.HERO));
-        boolean opticalCenter = DebugBridge.value(this, "opticalCenter", this.opticalCenter);
-        Vertical vertical = DebugBridge.value(this, "vertical", this.vertical);
-        var metrics = OreTextMetrics.family(hero);
-        return switch (vertical) {
-            case TOP -> metrics.drawOrigin(textScale());
-            case CENTER -> metrics.centeredOrigin(height, lines, textScale(), opticalCenter);
-            case BOTTOM -> height - metrics.blockHeight(lines, textScale()) + metrics.drawOrigin(textScale());
+        return firstLineOrigin(height, lines, getTextLayout(null, Integer.MAX_VALUE).getMetrics());
+    }
+
+    private float firstLineOrigin(int height, int lines, io.github.luyingyilong.ore.text.FontRepository.Metrics metrics) {
+        Vertical align = DebugBridge.value(this, "vertical", vertical);
+        float block = lines * metrics.lineHeight();
+        return switch (align) {
+            case TOP -> 0;
+            case BOTTOM -> height - block;
+            case CENTER -> getOpticalCenter()
+                    ? Math.round(height / 2F - metrics.ascent() - (metrics.opticalTop() + metrics.opticalBottom()) / 2
+                        - (lines - 1) * metrics.lineHeight() / 2 + getThemeItem(OreTheme.FONT_METRICS).opticalOffsetY())
+                    : (float)Math.floor((height - block) / 2);
         };
     }
 
     public List<FormattedCharSequence> lines(Font font, int width) {
-        Overflow overflow = DebugBridge.value(this, "overflow", this.overflow);
-        Wrap wrap = DebugBridge.value(this, "wrap", this.wrap);
-        int logicalWidth = Math.max(1, (int) Math.floor(width / textScale()));
-        Component display = getStyledText();
-        return wrappedLines(font, display, logicalWidth, wrap, overflow);
-    }
-
-    private FormattedCharSequence ellipsize(Font font, FormattedCharSequence line, int width, boolean forced) {
-        if (!forced && font.width(line) * textScale() <= width) return line;
-        Component ellipsis = Component.literal("…").setStyle(getStyledText().getStyle());
-        int logicalWidth = Math.max(0, (int) Math.floor(width / textScale()) - font.width(ellipsis));
-        List<FormattedCharSequence> glyphs = new ArrayList<>();
-        int[] used = {0};
-        line.accept((index, style, codepoint) -> {
-            FormattedCharSequence glyph = FormattedCharSequence.codepoint(codepoint, style);
-            int glyphWidth = font.width(glyph);
-            if (used[0] + glyphWidth > logicalWidth) return false;
-            glyphs.add(glyph);
-            used[0] += glyphWidth;
-            return true;
-        });
-        glyphs.add(ellipsis.getVisualOrderText());
-        return FormattedCharSequence.composite(glyphs);
+        return layout(font, width, Integer.MAX_VALUE, false).getLines().stream().map(line -> line.text().sequence()).toList();
     }
 
     public List<FormattedCharSequence> displayedLines(Font font, int width, int height) {
-        Overflow overflow = DebugBridge.value(this, "overflow", this.overflow);
-        int maxLines = DebugBridge.value(this, "maxLines", this.maxLines);
-        List<FormattedCharSequence> source = lines(font, width);
-        int count = Math.min(maxLines, source.size());
-        if (overflow != Overflow.VISIBLE) count = Math.min(count,
-                Math.max(1, height / lineHeight(font)));
-        List<FormattedCharSequence> result = new ArrayList<>(count);
-        for (int index = 0; index < count; index++) {
-            FormattedCharSequence line = source.get(index);
-            boolean truncated = index == count - 1 && source.size() > count;
-            if (overflow == Overflow.ELLIPSIS && (truncated || font.width(line) * textScale() > width)) {
-                line = ellipsize(font, line, width, truncated);
-            }
-            result.add(line);
-        }
-        return List.copyOf(result);
+        int count = getOverflow() == Overflow.VISIBLE ? getMaxLines() : Math.min(getMaxLines(), Math.max(1, height / lineHeight(font)));
+        return layout(font, width, count, getOverflow() == Overflow.ELLIPSIS).getLines().stream().map(line -> line.text().sequence()).toList();
     }
 
     /**
@@ -482,7 +395,7 @@ public final class Label extends Control {
         ScrollTrigger scrollTrigger = DebugBridge.value(this, "scrollTrigger", this.scrollTrigger);
         float scrollSpeed = DebugBridge.value(this, "scrollSpeed", this.scrollSpeed);
         long scrollEndPauseMs = DebugBridge.value(this, "scrollEndPauseMs", this.scrollEndPauseMs);
-        int distance = Math.max(0, (int) Math.ceil(font.width(getStyledText()) * textScale()) - width);
+        int distance = Math.max(0, (int) Math.ceil(getTextLayout(font, Integer.MAX_VALUE).getWidth()) - width);
         if (distance == 0 || (scrollTrigger == ScrollTrigger.HOVER && !hovered)) {
             scrollStartMs = Long.MIN_VALUE;
             return 0;
@@ -518,61 +431,45 @@ public final class Label extends Control {
     private void paint(GuiGraphics graphics, Font font, Rect area, int mouseX, int mouseY, Control debugOwner) {
         Overflow overflow = DebugBridge.value(this, "overflow", this.overflow);
         Horizontal horizontal = DebugBridge.value(this, "horizontal", this.horizontal);
-        int color = DebugBridge.value(this, "color", getThemeItem(OreTheme.TEXT_COLOR));
+        int color = getThemeItem(FONT_COLOR);
         if (!getVisible() || area.width() <= 0 || area.height() <= 0) return;
-        float textScale = textScale();
-        List<FormattedCharSequence> lines = displayedLines(font, area.width(), area.height());
-        int lineHeight = lineHeight(font);
-        int visibleLines = lines.size();
-        float startY = area.y() + firstLineOrigin(area.height(), visibleLines);
+        int count = overflow == Overflow.VISIBLE ? getMaxLines() : Math.min(getMaxLines(), Math.max(1, area.height() / lineHeight(font)));
+        TextLayout layout = layout(font, area.width(), count, overflow == Overflow.ELLIPSIS);
+        float startY = area.y() + firstLineOrigin(area.height(), layout.getLines().size(), layout.getMetrics());
         int scrollOffset = overflow == Overflow.MARQUEE
                 ? marqueeOffset(font, area.width(), System.nanoTime() / 1_000_000L, area.contains(mouseX, mouseY)) : 0;
         if (overflow != Overflow.VISIBLE) {
             DrawContext.enableTransformedScissor(graphics, area.x(), area.y(), area.right(), area.bottom());
             DebugBridge.backend().clip(DrawContext.toScreenRect(graphics.pose().last().pose(), area));
         }
-        for (int index = 0; index < visibleLines; index++) {
-            FormattedCharSequence line = lines.get(index);
-            int lineWidth = (int) Math.ceil(font.width(line) * textScale);
-            int lineX = area.x() + switch (horizontal) {
-                case LEFT -> 0;
-                case CENTER -> (area.width() - lineWidth) / 2;
-                case RIGHT -> area.width() - lineWidth;
-            };
-            if (overflow == Overflow.MARQUEE && lineWidth > area.width()) {
-                lineX = area.x() - scrollOffset;
+        try {
+            for (int index = 0; index < layout.getLines().size(); index++) {
+                var line = layout.getLines().get(index);
+                float lineX = area.x() + switch (horizontal) {
+                    case LEFT -> 0;
+                    case CENTER -> (area.width() - line.width()) / 2;
+                    case RIGHT -> area.width() - line.width();
+                };
+                if (overflow == Overflow.MARQUEE && line.width() > area.width()) lineX = area.x() - scrollOffset;
+                float top = startY + index * layout.getMetrics().lineHeight();
+                if (DebugBridge.active() && debugOwner != null) {
+                    var m = layout.getMetrics();
+                    DebugBridge.backend().text(debugOwner, graphics, area, lineX, top, line.width(), m.lineHeight(),
+                            top, top + m.ascent(), top + m.ascent() + m.opticalTop(), top + m.ascent() + m.opticalBottom(),
+                            8 * textScale(), layout.getDiagnostics(), scrollOffset);
+                }
+                TextRenderer.draw(graphics, layout.getLineLayout(index), lineX, top, color, getThemeItem(OreTheme.TEXT_SHADOW));
             }
-            if (DebugBridge.active() && debugOwner != null) {
-                var metrics = OreTextMetrics.family(getHero());
-                java.util.Set<String> spanFonts = new java.util.LinkedHashSet<>();
-                line.accept((at, style, codepoint) -> {
-                    spanFonts.add(style.getFont().toString());
-                    return true;
-                });
-                String chain = getHero() ? "Minecraft Ten → Noto Sans → Minecraft default" : "Mojangles → Noto Sans → Minecraft default";
-                DebugBridge.backend().text(debugOwner, graphics, area,
-                        lineX, startY + index * lineHeight, lineWidth, lineHeight,
-                        startY + index * lineHeight - metrics.drawOrigin(textScale),
-                        startY + index * lineHeight + 7 * textScale,
-                        startY + index * lineHeight + metrics.inkTop() * textScale,
-                        startY + index * lineHeight + metrics.inkBottom() * textScale,
-                        8 * textScale, "Span font IDs: " + spanFonts + "; configured fallback: " + chain + "; not a per-glyph provider attribution", scrollOffset);
-            }
-            graphics.pose().pushPose();
-            graphics.pose().translate(lineX, startY + index * lineHeight, 0.0F);
-            graphics.pose().scale(textScale, textScale, 1.0F);
-            OreFonts.draw(graphics, font, line, 0, 0, color, getThemeItem(OreTheme.TEXT_SHADOW));
-            graphics.pose().popPose();
-        }
-        if (overflow != Overflow.VISIBLE) {
-            graphics.disableScissor();
-            DebugBridge.backend().unclip();
+        } finally {
+            if (overflow != Overflow.VISIBLE) { graphics.flush(); graphics.disableScissor(); DebugBridge.backend().unclip(); }
         }
     }
 
     @Override
     public void debugProperties(java.util.List<DebugProperty> out) {
         super.debugProperties(out);
+        out.add(DebugProperty.themeNumber(this, FONT_SIZE, "Text", 0.0001, 256));
+        out.add(DebugProperty.themeColor(this, FONT_COLOR, "Text"));
         out.add(DebugProperty.choice(this, "horizontal", "Text", () -> DebugBridge.value(this, "horizontal", this.horizontal)));
         out.add(DebugProperty.choice(this, "vertical", "Text", () -> DebugBridge.value(this, "vertical", this.vertical)));
     }

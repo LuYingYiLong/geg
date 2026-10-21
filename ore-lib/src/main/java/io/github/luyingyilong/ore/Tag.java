@@ -1,13 +1,13 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.theme.ThemeKey;
-import io.github.luyingyilong.ore.theme.ThemePadding;
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.Size;
 import io.github.luyingyilong.ore.layout.SizeFlags;
 import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.ThemeKey;
+import io.github.luyingyilong.ore.theme.ThemePadding;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 
@@ -27,6 +27,7 @@ public final class Tag extends Container {
             .setOverflow(Label.Overflow.ELLIPSIS));
     private boolean outlined;
     private Type type = Type.NEUTRAL;
+
     public Tag() {
         updateChildren(java.util.List.of(label));
         setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);

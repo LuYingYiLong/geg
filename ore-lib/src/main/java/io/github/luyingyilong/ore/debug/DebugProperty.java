@@ -2,6 +2,8 @@ package io.github.luyingyilong.ore.debug;
 
 import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.SizeFlags;
+import io.github.luyingyilong.ore.theme.ThemeDB;
+import io.github.luyingyilong.ore.theme.ThemeKey;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -21,6 +23,17 @@ public record DebugProperty(Control target, String key, String group, String kin
 
     public static DebugProperty number(Control c, String key, String group, Supplier<?> read, double min, double max) {
         return new DebugProperty(c, key, group, "number", List.of(), read, min, max);
+    }
+
+    public static <T extends Number> DebugProperty themeNumber(Control c, ThemeKey<T> key, String group, double min, double max) {
+        return new DebugProperty(c, "theme:" + key.getId(), group, "number", List.of(), () -> c.getThemeItem(key), min, max,
+                value -> ThemeDB.getDefault().validateValue(key, value));
+    }
+
+    public static DebugProperty themeColor(Control c, ThemeKey<Integer> key, String group) {
+        if (key.kind() != ThemeKey.Kind.COLOR) throw new IllegalArgumentException("Expected a color theme item");
+        return new DebugProperty(c, "theme:" + key.getId(), group, "color", List.of(), () -> c.getThemeItem(key),
+                Integer.MIN_VALUE, 0xFFFFFFFFL, value -> ThemeDB.getDefault().validateValue(key, value));
     }
 
     public static DebugProperty bool(Control c, String key, String group, Supplier<?> read) {
@@ -61,7 +74,7 @@ public record DebugProperty(Control target, String key, String group, String kin
         }
         java.math.BigDecimal value;
         if (input.startsWith("#")) {
-            if (!(key.equals("color") || key.equals("modulate")) || (input.length() != 7 && input.length() != 9))
+            if (!isPackedColor() || (input.length() != 7 && input.length() != 9))
                 throw new IllegalArgumentException("Expected #RRGGBB or #AARRGGBB");
             long argb = Long.parseUnsignedLong(input.substring(1), 16);
             if (input.length() == 7) argb |= 0xFF000000L;
@@ -82,7 +95,7 @@ public record DebugProperty(Control target, String key, String group, String kin
         try {
             if (base instanceof Long) return value.longValueExact();
             int result;
-            if ((key.equals("color") || key.equals("modulate")) && value.signum() >= 0 && value.compareTo(java.math.BigDecimal.valueOf(0xFFFFFFFFL)) <= 0)
+            if (isPackedColor() && value.signum() >= 0 && value.compareTo(java.math.BigDecimal.valueOf(0xFFFFFFFFL)) <= 0)
                 result = (int) value.longValueExact();
             else result = value.intValueExact();
             if (key.startsWith("sizeFlags") && !key.equals("sizeFlagsStretchRatio")) SizeFlags.validate(result);
@@ -90,5 +103,9 @@ public record DebugProperty(Control target, String key, String group, String kin
         } catch (ArithmeticException ex) {
             throw new IllegalArgumentException("Expected an integer within the property's numeric type", ex);
         }
+    }
+
+    private boolean isPackedColor() {
+        return kind.equals("color") || key.equals("modulate");
     }
 }

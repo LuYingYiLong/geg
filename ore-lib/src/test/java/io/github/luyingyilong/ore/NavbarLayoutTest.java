@@ -73,7 +73,7 @@ public final class NavbarLayoutTest {
         navbar.setShowBackButton(true);
         window.layoutViewport(200, 120, font);
         check(back.getVisible() && title.getBounds().x() > 0, "Showing back restores its reserved space");
-        navbar.setFontSize(40.0F);
+        navbar.setThemeOverride(OreTheme.TITLE_FONT_SIZE, 40.0F);
         window.layoutViewport(200, 120, font);
         check(title.getSize().height() > back.getSize().height() && back.getBounds().y() == 0,
                 "A taller title does not vertically center the top-aligned back button");

@@ -104,8 +104,8 @@ public final class ControlThemePaddingTest {
         free(button);
         Button small = new Button(cue -> { }).setSize(Button.Size.SMALL).setLabel(Component.literal("Small"));
         check(small.measureHeight(FONT, 200) == Button.Size.SMALL.getHeight(), "Default single-line leading does not enlarge small buttons");
-        small.setFontSize(16);
-        check(small.measureHeight(FONT, 200) == 24, "Larger optical text plus themed margin contributes to measured height");
+        small.setThemeOverride(Label.FONT_SIZE, 16.0F);
+        check(small.measureHeight(FONT, 200) == 22, "Larger optical text plus themed margin contributes to measured height");
         free(small);
     }
 

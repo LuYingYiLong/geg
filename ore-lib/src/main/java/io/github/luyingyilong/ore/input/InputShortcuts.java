@@ -45,9 +45,14 @@ final class InputShortcuts {
     }
 
     static boolean type(OreTextFieldHandler editor, char character) {
-        if (character < ' ' || character == '\u007f' || character == '\u00a7') return false;
+        return type(editor, String.valueOf(character));
+    }
+
+    static boolean type(OreTextFieldHandler editor, String text) {
+        if (text.isEmpty() || text.codePoints().anyMatch(cp -> cp < 32 || cp == 127 || cp == 167
+                || cp >= Character.MIN_SURROGATE && cp <= Character.MAX_SURROGATE)) return false;
         // Replace the selection in one validated edit, without MUI's preliminary deletion.
-        editor.type(character);
+        editor.type(text);
         return true;
     }
 

@@ -36,4 +36,50 @@ public final class InputGeometryProbe {
             }
         }
     }
+
+    public static void verifyUnicodeLayout(Input input, TextArea area, io.github.luyingyilong.ore.layout.Window root) throws Exception {
+        String oldInput = input.getText(), oldArea = area.getText();
+        var bounds = input.inputMethodBounds();
+        int x = bounds.x() + 8, y = bounds.y() + bounds.height() / 2;
+        io.github.luyingyilong.ore.event.WindowInputs.press(root, x, y, root.getContext().getMui());
+        io.github.luyingyilong.ore.event.WindowInputs.release(root, x, y);
+        if (!input.isFocused()) throw new AssertionError("Unicode probe uses actual Window focus");
+        try (var scope = new io.github.luyingyilong.ore.signal.SignalScope()) {
+            int[] changes = {0};
+            input.textChanged().connect(scope, text -> changes[0]++);
+            input.setTextNoSignal("");
+            io.github.luyingyilong.ore.event.WindowInputs.text(root, "👩🏽‍💻", 0, root.getContext().getMui());
+            if (!input.getText().equals("👩🏽‍💻") || changes[0] != 1)
+                throw new AssertionError("A Unicode string commits once: " + input.getText() + " / " + changes[0]);
+            input.setTextNoSignal(""); changes[0] = 0;
+            io.github.luyingyilong.ore.event.WindowInputs.text(root, "\uD83D", 0, root.getContext().getMui());
+            if (!input.getText().isEmpty() || changes[0] != 0) throw new AssertionError("No half-surrogate document");
+            io.github.luyingyilong.ore.event.WindowInputs.text(root, "\uDE00", 0, root.getContext().getMui());
+            if (!input.getText().equals("😀") || changes[0] != 1) throw new AssertionError("Legacy char adapter combines surrogate pair");
+        }
+        area.setTextNoSignal("中文（English）é 👩🏽‍💻 ".repeat(12));
+        var renderer = renderer(area);
+        var lines = renderer.measureStringLines(area.editingHandler().getText());
+        if (lines.size() < 2) throw new AssertionError("Probe text must soft-wrap");
+        for (int offset : io.github.luyingyilong.ore.text.TextBoundaries.graphemes(area.getText())) {
+            var position = renderer.getPosOf(lines, new Point(offset, 0));
+            var hit = renderer.getCursorPos(area.editingHandler().getText(), Math.round(position.x),
+                    (int)(position.y + renderer.getFontHeight() / 2));
+            if (hit.x != offset || hit.y != 0)
+                throw new AssertionError("Soft-wrap caret/hit mismatch " + offset + " -> " + hit.x + "," + hit.y
+                        + " at " + position.x + "," + position.y);
+        }
+        input.setTextNoSignal("重载");
+        input.editingHandler().setCursor(new Point(2, 0), false);
+        input.editingHandler().insert("保留", true);
+        long generation = io.github.luyingyilong.ore.text.OreText.getEngine().getFonts().getGeneration();
+        io.github.luyingyilong.ore.text.OreText.reload(net.minecraft.client.Minecraft.getInstance().getResourceManager());
+        io.github.luyingyilong.ore.theme.OreFonts.resourcesReloaded();
+        if (io.github.luyingyilong.ore.text.OreText.getEngine().getFonts().getGeneration() <= generation
+                || !input.getText().equals("重载保留") || !input.editingHandler().undo() || !input.getText().equals("重载"))
+            throw new AssertionError("Font generation replacement preserves document and undo history");
+        input.setTextNoSignal(oldInput); area.setTextNoSignal(oldArea);
+        root.getContext().getMui().removeFocus();
+        System.out.println("ORE_UNICODE_INPUT_LAYOUT_CLIENT_PASS");
+    }
 }

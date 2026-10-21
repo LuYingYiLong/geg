@@ -37,8 +37,11 @@ tasks.register('verifyOreRelease') {
              'io/github/luyingyilong/ore/compat/recipeviewer/jei/OreJeiPlugin.class',
              'io/github/luyingyilong/ore/compat/recipeviewer/emi/OreEmiPlugin.class',
              'io/github/luyingyilong/ore/compat/recipeviewer/rei/OreReiPlugin.class',
-             'io/github/luyingyilong/ore/theme/OreTrueTypeGlyphProvider.class',
-             'io/github/luyingyilong/ore/mixin/TrueTypeGlyphProviderDefinitionMixin.class'].each {
+             'io/github/luyingyilong/ore/text/TextLayout.class',
+             'io/github/luyingyilong/ore/text/FontRepository.class',
+             'io/github/luyingyilong/ore/text/TextRenderer.class',
+             'assets/ore/shaders/core/text.fsh', 'assets/ore/text/emoji.zip',
+             'META-INF/licenses/noto-emoji/LICENSE', 'META-INF/licenses/noto-emoji/Apache-2.0.txt'].each {
                 if (!names.contains(it)) throw new GradleException("Missing release entry: $it")
             }
             def forbidden = names.findAll { it.startsWith('io/github/luyingyilong/ore/inspector/') ||
@@ -48,6 +51,9 @@ tasks.register('verifyOreRelease') {
                 it == 'io/github/luyingyilong/ore/Button$Icon.class' ||
                 it == 'io/github/luyingyilong/ore/theme/ThemeIcon.class' ||
                 it == 'io/github/luyingyilong/ore/theme/OreIcons.class' ||
+                it == 'io/github/luyingyilong/ore/theme/OreTrueTypeGlyphProvider.class' ||
+                it == 'io/github/luyingyilong/ore/mixin/TrueTypeGlyphProviderDefinitionMixin.class' ||
+                it.startsWith('text-fonts/') || it.startsWith('icyllis/modernui/') ||
                 it ==~ /assets\/ore\/textures\/icons\/(email|email_readed|gift|gift_opened|flag|org)\.(png|aseprite)/ ||
                 it.startsWith('assets/ore_inspector/') || it.startsWith('assets/ore_gallery/') ||
                 it.startsWith('io/github/luyingyilong/ore/gallery/') ||

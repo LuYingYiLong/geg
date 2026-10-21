@@ -225,6 +225,7 @@ public final class ThemeDB implements SignalOwner {
             case STYLE -> readStyle(value.getAsJsonObject(),resources);
             case COLOR -> parseColor(string(value));
             case FONT -> ResourceLocation.parse(string(value));
+            case FONT_METRICS -> io.github.luyingyilong.ore.text.FontMetricsPolicy.parse(value.getAsJsonObject());
             case BOOLEAN -> { if(!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isBoolean()) throw new IllegalArgumentException("Expected boolean"); yield value.getAsBoolean(); }
             case INTEGER -> integer(value);
             case FLOAT -> { if(!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isNumber()) throw new IllegalArgumentException("Expected number"); float f=value.getAsFloat(); if(!Float.isFinite(f)) throw new IllegalArgumentException("Non-finite number"); yield f; }

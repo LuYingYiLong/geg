@@ -55,7 +55,7 @@ public final class CanvasDemo {
             }
             var table = new Table<Integer>().setRowKey(value -> value);
             table.addColumn(new Table.Column<>("value", Component.literal("Value"), 100, 100, 1,
-                    width -> 23, new Table.TextCell<Integer>(row -> Component.literal("Row " + row), io.github.luyingyilong.ore.theme.OreTheme.TEXT_WHITE)));
+                    width -> 23, new Table.TextCell<Integer>(row -> Component.literal("Row " + row))));
             table.setRows(List.of(1, 2, 3, 4, 5, 6));
             lastModal = new Modal(Component.literal("Canvas Modal")).setSize(220, 130).setContent(new Scroll().setContent(table));
             lastModal.closeRequested().connect(lastModal, () -> lastModal.queueFree());

@@ -1,10 +1,10 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.theme.ThemeKey;
-import io.github.luyingyilong.ore.theme.ThemePadding;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.ThemeKey;
+import io.github.luyingyilong.ore.theme.ThemePadding;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 
@@ -14,15 +14,14 @@ import java.util.Objects;
  * Non-interactive right-side indicator: null count is a dot, including zero displays a number.
  */
 public final class Badge extends Container {
+    public static final int DOT_SIZE = 3;
+    public static final int MIN_COUNT_SIZE = 12;
+    public static final int SHADOW_HEIGHT = 1;
     private static final ThemePadding PADDING = ThemePadding.of("Badge", "", 1, 2, 1, 2);
     public static final ThemeKey<Integer> PADDING_TOP = PADDING.top();
     public static final ThemeKey<Integer> PADDING_RIGHT = PADDING.right();
     public static final ThemeKey<Integer> PADDING_BOTTOM = PADDING.bottom();
     public static final ThemeKey<Integer> PADDING_LEFT = PADDING.left();
-
-    public static final int DOT_SIZE = 3;
-    public static final int MIN_COUNT_SIZE = 12;
-    public static final int SHADOW_HEIGHT = 1;
     // Mojangles digits are seven pixels high; their advance includes one trailing spacing pixel.
     private static final int TRAILING_SPACING = 1;
     private final Label label = ownPart("label", new Label().setOpticalCenter(true).setAlignment(Label.Horizontal.LEFT, Label.Vertical.CENTER));
@@ -172,7 +171,7 @@ public final class Badge extends Container {
      * Decoration never steals pointer or keyboard input from the owning button.
      */
     @Override
-    protected Control hitTestTree(int rootX,int rootY,int windowX,int windowY) {
+    protected Control hitTestTree(int rootX, int rootY, int windowX, int windowY) {
         return null;
     }
 

@@ -48,6 +48,32 @@ public final class SegmentedLayoutTest {
         window.layoutViewport(40, 20, font);
         check(options.getScrollX() == 24);
         check(io.github.luyingyilong.ore.EventFixture.press(options,39,10));
+        labelAlignment();
+    }
+
+    private static void labelAlignment() {
+        for (Button.Size size : Button.Size.values()) {
+            Segmented options = new Segmented(List.of(Component.literal("玩家"), Component.literal("World")), size);
+            for (int width : new int[]{24, 127, 128, 129, 300}) {
+                Rect area = new Rect(10, 30, width, size.getHeight());
+                for (var style : List.of(options.getOptionStyle(0, false), options.getOptionStyle(1, false),
+                        options.getOptionStyle(1, true), options.getThemeItem(Segmented.PRESSED))) {
+                    Rect label = Segmented.getOptionLabelBounds(area, style);
+                    Rect buttonLabel = Button.contentLayout(area, style, 24, true, null, null,
+                            Button.TextAlignment.CENTER).label();
+                    Rect content = style.getContentDrawRect(area);
+                    check(label.equals(buttonLabel));
+                    check(label.y() == content.y() - 2 && label.height() == content.height());
+                }
+                Rect normal = Segmented.getOptionLabelBounds(area, options.getThemeItem(Segmented.NORMAL));
+                Rect pressed = Segmented.getOptionLabelBounds(area, options.getThemeItem(Segmented.PRESSED));
+                Rect selected = Segmented.getOptionLabelBounds(area, options.getOptionStyle(0, false));
+                check(pressed.equals(normal.translated(0, 2)));
+                check(selected.equals(normal.translated(0, 2)));
+            }
+            options.queueFree();
+        }
+        LifecycleScheduler.flush();
     }
 
     private static void check(boolean condition) { if (!condition) throw new AssertionError("Segmented sizing regression"); }

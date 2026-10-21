@@ -39,7 +39,7 @@ public final class TagLayoutTest {
         for (Tag.Type type : Tag.Type.values()) {
             tag.setType(type);
             check(tag.getType() == type && type.getColor() == colors[type.ordinal()]);
-            check(label.getColor() == (type == Tag.Type.NEUTRAL || type == Tag.Type.SECONDARY
+            check(label.getThemeItem(Label.FONT_COLOR) == (type == Tag.Type.NEUTRAL || type == Tag.Type.SECONDARY
                     ? OreTheme.TEXT_WHITE : OreTheme.TEXT_DARK));
         }
         check(OreTheme.TAG_OUTLINE == 0xFF1E1E1F);

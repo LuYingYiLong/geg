@@ -35,15 +35,16 @@ public final class Button extends Control {
 
     public static final java.util.List<String> BUILTIN_VARIATIONS = java.util.List.of("SecondaryButton","PrimaryButton","DestructiveButton","TextButton","MenuButton","DarkButton");
     public static final ThemeKey<StyleBox> NORMAL = ThemeKey.of("Button","normal",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_secondary_normal.png"),16,16,0,0,16,16),new ThemeInsets(2,4,2,4),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true);
-    public static final ThemeKey<Integer> NORMAL_COLOR = ThemeKey.of("Button","normal_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false);
+    public static final ThemeKey<Integer> FONT_COLOR = ThemeKey.of("Button","font_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false);
     public static final ThemeKey<StyleBox> HOVER = ThemeKey.of("Button","hover",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_secondary_hover.png"),16,16,0,0,16,16),new ThemeInsets(2,4,2,4),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true);
-    public static final ThemeKey<Integer> HOVER_COLOR = ThemeKey.of("Button","hover_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false);
+    public static final ThemeKey<Integer> FONT_HOVER_COLOR = ThemeKey.of("Button","font_hover_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false);
     public static final ThemeKey<StyleBox> PRESSED = ThemeKey.of("Button","pressed",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_secondary_pressed.png"),16,16,0,0,16,16),new ThemeInsets(2,2,2,2),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,2,0,0),new io.github.luyingyilong.ore.layout.Offset(0,2)),true);
-    public static final ThemeKey<Integer> PRESSED_COLOR = ThemeKey.of("Button","pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false);
+    public static final ThemeKey<Integer> FONT_PRESSED_COLOR = ThemeKey.of("Button","font_pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false);
     public static final ThemeKey<StyleBox> DISABLED = ThemeKey.of("Button","disabled",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_disabled.png"),16,16,0,0,16,16),new ThemeInsets(2,4,2,4),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true);
-    public static final ThemeKey<Integer> DISABLED_COLOR = ThemeKey.of("Button","disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false);
+    public static final ThemeKey<Integer> FONT_DISABLED_COLOR = ThemeKey.of("Button","font_disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false);
     public static final int HEIGHT = Size.MEDIUM.getHeight();
     private static final int ICON_GAP = 4;
+    private static final int LABEL_OFFSET_Y = -2;
     private final Label label = ownPart("label", new Label().setOverflow(Label.Overflow.ELLIPSIS));
     private final TextureRect iconControl = ownPart("icon", new TextureRect().setStretchMode(TextureRect.StretchMode.KEEP_CENTERED));
     private final TextureRect trailingIconControl = ownPart("trailing_icon", new TextureRect().setStretchMode(TextureRect.StretchMode.KEEP_CENTERED));
@@ -80,61 +81,61 @@ public final class Button extends Control {
     public static void registerTheme(ThemeDB db) {
         OreTheme.registerType(db,"Button");
         ICON_PADDING.register(db); BADGE_PADDING.register(db);
-        for(var key:java.util.List.of(NORMAL,HOVER,PRESSED,DISABLED,NORMAL_COLOR,HOVER_COLOR,PRESSED_COLOR,DISABLED_COLOR))db.register(key);
+        for(var key:java.util.List.of(NORMAL,HOVER,PRESSED,DISABLED,FONT_COLOR,FONT_HOVER_COLOR,FONT_PRESSED_COLOR,FONT_DISABLED_COLOR))db.register(key);
         db.registerVariation("SecondaryButton","Button");
         db.register(ThemeKey.of("SecondaryButton","normal",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_secondary_normal.png"),16,16,0,0,16,16),new ThemeInsets(2,4,2,4),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("SecondaryButton","normal_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false));
+        db.register(ThemeKey.of("SecondaryButton","font_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false));
         db.register(ThemeKey.of("SecondaryButton","hover",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_secondary_hover.png"),16,16,0,0,16,16),new ThemeInsets(2,4,2,4),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("SecondaryButton","hover_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false));
+        db.register(ThemeKey.of("SecondaryButton","font_hover_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false));
         db.register(ThemeKey.of("SecondaryButton","pressed",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_secondary_pressed.png"),16,16,0,0,16,16),new ThemeInsets(2,2,2,2),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,2,0,0),new io.github.luyingyilong.ore.layout.Offset(0,2)),true));
-        db.register(ThemeKey.of("SecondaryButton","pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false));
+        db.register(ThemeKey.of("SecondaryButton","font_pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFF1E1E1F,false));
         db.register(ThemeKey.of("SecondaryButton","disabled",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_disabled.png"),16,16,0,0,16,16),new ThemeInsets(2,4,2,4),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("SecondaryButton","disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false));
+        db.register(ThemeKey.of("SecondaryButton","font_disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false));
         db.registerVariation("PrimaryButton","Button");
         db.register(ThemeKey.of("PrimaryButton","normal",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_primary_normal.png"),16,16,0,0,16,16),new ThemeInsets(2,4,2,4),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("PrimaryButton","normal_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
+        db.register(ThemeKey.of("PrimaryButton","font_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
         db.register(ThemeKey.of("PrimaryButton","hover",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_primary_hover.png"),16,16,0,0,16,16),new ThemeInsets(2,4,2,4),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("PrimaryButton","hover_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
+        db.register(ThemeKey.of("PrimaryButton","font_hover_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
         db.register(ThemeKey.of("PrimaryButton","pressed",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_primary_pressed.png"),16,16,0,0,16,16),new ThemeInsets(2,2,2,2),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,2,0,0),new io.github.luyingyilong.ore.layout.Offset(0,2)),true));
-        db.register(ThemeKey.of("PrimaryButton","pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
+        db.register(ThemeKey.of("PrimaryButton","font_pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
         db.register(ThemeKey.of("PrimaryButton","disabled",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_disabled.png"),16,16,0,0,16,16),new ThemeInsets(2,4,2,4),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("PrimaryButton","disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false));
+        db.register(ThemeKey.of("PrimaryButton","font_disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false));
         db.registerVariation("DestructiveButton","Button");
         db.register(ThemeKey.of("DestructiveButton","normal",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_destructive_normal.png"),16,16,0,0,16,16),new ThemeInsets(2,4,2,4),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("DestructiveButton","normal_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
+        db.register(ThemeKey.of("DestructiveButton","font_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
         db.register(ThemeKey.of("DestructiveButton","hover",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_destructive_hover.png"),16,16,0,0,16,16),new ThemeInsets(2,4,2,4),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("DestructiveButton","hover_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
+        db.register(ThemeKey.of("DestructiveButton","font_hover_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
         db.register(ThemeKey.of("DestructiveButton","pressed",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_destructive_pressed.png"),16,16,0,0,16,16),new ThemeInsets(2,2,2,2),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,2,0,0),new io.github.luyingyilong.ore.layout.Offset(0,2)),true));
-        db.register(ThemeKey.of("DestructiveButton","pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
+        db.register(ThemeKey.of("DestructiveButton","font_pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
         db.register(ThemeKey.of("DestructiveButton","disabled",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_disabled.png"),16,16,0,0,16,16),new ThemeInsets(2,4,2,4),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("DestructiveButton","disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false));
+        db.register(ThemeKey.of("DestructiveButton","font_disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false));
         db.registerVariation("TextButton","Button");
         db.register(ThemeKey.of("TextButton","normal",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxFlat(0x00000000,ThemeInsets.ZERO,0,new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("TextButton","normal_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
+        db.register(ThemeKey.of("TextButton","font_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
         db.register(ThemeKey.of("TextButton","hover",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxFlat(0x16FFFFFF,ThemeInsets.ZERO,0,new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("TextButton","hover_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
+        db.register(ThemeKey.of("TextButton","font_hover_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
         db.register(ThemeKey.of("TextButton","pressed",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxFlat(0x1A000000,ThemeInsets.ZERO,0,new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("TextButton","pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
+        db.register(ThemeKey.of("TextButton","font_pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
         db.register(ThemeKey.of("TextButton","disabled",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxFlat(0x00000000,ThemeInsets.ZERO,0,new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("TextButton","disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false));
+        db.register(ThemeKey.of("TextButton","font_disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false));
         db.registerVariation("MenuButton","Button");
         db.register(ThemeKey.of("MenuButton","normal",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxFlat(0x00000000,ThemeInsets.ZERO,0,new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("MenuButton","normal_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
+        db.register(ThemeKey.of("MenuButton","font_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
         db.register(ThemeKey.of("MenuButton","hover",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/menu_item_hover.png"),1,3,0,0,1,3),new ThemeInsets(0,1,0,1),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("MenuButton","hover_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
+        db.register(ThemeKey.of("MenuButton","font_hover_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
         db.register(ThemeKey.of("MenuButton","pressed",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/menu_item_pressed.png"),1,3,0,0,1,3),new ThemeInsets(0,1,0,1),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("MenuButton","pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
+        db.register(ThemeKey.of("MenuButton","font_pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
         db.register(ThemeKey.of("MenuButton","disabled",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxFlat(0x00000000,ThemeInsets.ZERO,0,new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("MenuButton","disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false));
+        db.register(ThemeKey.of("MenuButton","font_disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false));
         db.registerVariation("DarkButton","Button");
         db.register(ThemeKey.of("DarkButton","normal",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_dark_normal.png"),5,5,0,0,5,5),new ThemeInsets(2,2,2,2),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("DarkButton","normal_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
+        db.register(ThemeKey.of("DarkButton","font_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
         db.register(ThemeKey.of("DarkButton","hover",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_dark_hover.png"),5,5,0,0,5,5),new ThemeInsets(2,2,2,2),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("DarkButton","hover_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
+        db.register(ThemeKey.of("DarkButton","font_hover_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
         db.register(ThemeKey.of("DarkButton","pressed",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_dark_pressed.png"),5,5,0,0,5,5),new ThemeInsets(2,2,2,2),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("DarkButton","pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
+        db.register(ThemeKey.of("DarkButton","font_pressed_color",Integer.class,ThemeKey.Kind.COLOR,0xFFFFFFFF,false));
         db.register(ThemeKey.of("DarkButton","disabled",StyleBox.class,ThemeKey.Kind.STYLE,new StyleBoxTexture(new io.github.luyingyilong.ore.render.TextureRegion(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ore","textures/gui/button_dark_disabled.png"),3,3,0,0,3,3),new ThemeInsets(1,1,1,1),new ThemeInsets(8,4,8,4),new ThemeInsets(0,0,0,0),StyleBoxTexture.AxisMode.STRETCH,StyleBoxTexture.AxisMode.STRETCH,true,1F,new ThemeInsets(0,0,0,0),new io.github.luyingyilong.ore.layout.Offset(0,0)),true));
-        db.register(ThemeKey.of("DarkButton","disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false));
+        db.register(ThemeKey.of("DarkButton","font_disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false));
     }
 
     @Override public Button setThemeTypeVariation(String variation) {
@@ -165,7 +166,7 @@ public final class Button extends Control {
                 hasLabel ? label.measureWidth(context.getFont(), background.getContentRect(contentArea).width()) : 0,
                 hasLabel, icon, trailingIcon, alignment);
         if (hasLabel) {
-            label.setThemeOverride(OreTheme.TEXT_COLOR, owner.getThemeItem(getTextKey(hovered, pressed, disabled)));
+            label.setThemeOverride(OreTheme.FONT_COLOR, owner.getThemeItem(getTextKey(hovered, pressed, disabled)));
             label.setOpticalCenter(true).setOverflow(Label.Overflow.ELLIPSIS).setAlignment(switch (alignment) {
                 case LEFT -> Label.Horizontal.LEFT;
                 case CENTER -> Label.Horizontal.CENTER;
@@ -182,15 +183,22 @@ public final class Button extends Control {
         return disabled?DISABLED:pressed?PRESSED:hovered?HOVER:NORMAL;
     }
     static ThemeKey<Integer> getTextKey(boolean hovered, boolean pressed, boolean disabled) {
-        return disabled?DISABLED_COLOR:pressed?PRESSED_COLOR:hovered?HOVER_COLOR:NORMAL_COLOR;
+        return disabled?FONT_DISABLED_COLOR:pressed?FONT_PRESSED_COLOR:hovered?FONT_HOVER_COLOR:FONT_COLOR;
     }
 
     static ContentLayout contentLayout(Rect area, StyleBox style, int textWidth, boolean hasLabel,
                                        io.github.luyingyilong.ore.layout.Size icon, io.github.luyingyilong.ore.layout.Size trailingIcon, TextAlignment alignment) {
         // Translate the original content box, independently of the inset background.
         Rect inner = style.getContentDrawRect(area);
-        return layoutContent(inner,
+        ContentLayout content = layoutContent(inner,
                 textWidth, hasLabel, icon, trailingIcon, alignment);
+        // Align captions above the shared optical center without shifting icons or state offsets.
+        return hasLabel ? new ContentLayout(getLabelBounds(content.label()),
+                content.icon(), content.trailingIcon()) : content;
+    }
+
+    static Rect getLabelBounds(Rect contentArea) {
+        return contentArea.translated(0, LABEL_OFFSET_Y);
     }
 
     private static ContentLayout layoutContent(Rect area, int textWidth, boolean hasLabel,
@@ -248,22 +256,6 @@ public final class Button extends Control {
 
     public Button setHero(boolean hero) {
         label.setHero(hero);
-        requestLayout();
-        return this;
-    }
-
-    public Button clearFontSize() {
-        label.clearFontSize();
-        requestLayout();
-        return this;
-    }
-
-    public float getFontSize() {
-        return label.getFontSize();
-    }
-
-    public Button setFontSize(float fontSize) {
-        label.setFontSize(fontSize);
         requestLayout();
         return this;
     }
@@ -430,8 +422,8 @@ public final class Button extends Control {
         int iconHeight = Math.max(icon == null ? 0 : icon.height(), trailingIcon == null ? 0 : trailingIcon.height());
         var margin = getThemeItem(getStyleKey(false, false, disabled)).getContentMargin();
         // Single-line button text is optically centered; line leading must not enlarge SMALL buttons after a font reload.
-        float textScale = label.getScale() * label.getFontSize() / Label.DEFAULT_FONT_SIZE;
-        int textHeight = hasLabel() && font != null ? (int) Math.ceil(OreTextMetrics.family(label.getHero()).opticalHeight(1, textScale))
+        float textScale = label.getScale() * label.getThemeItem(Label.FONT_SIZE) / Label.DEFAULT_FONT_SIZE;
+        int textHeight = hasLabel() && font != null ? (int) Math.ceil((label.getTextLayout(font, Integer.MAX_VALUE).getMetrics().opticalBottom() - label.getTextLayout(font, Integer.MAX_VALUE).getMetrics().opticalTop()))
                 + margin.getVertical() : 0;
         int iconPadding = icon != null && !hasLabel() && trailingIcon == null ? ICON_PADDING.getInsets(this).getVertical() : margin.getVertical();
         int height = Math.max(Math.max(super.measureHeight(font, available), textHeight), iconHeight == 0 ? 0 : iconHeight + iconPadding);
@@ -576,7 +568,8 @@ public final class Button extends Control {
     public void debugProperties(java.util.List<DebugProperty> out) {
         super.debugProperties(out);
         out.add(DebugProperty.bool(label, "hero", "Text", label::getHero));
-        out.add(DebugProperty.number(label, "fontSize", "Text", label::getFontSize, 0.0001, 256));
+        out.add(DebugProperty.themeNumber(label, Label.FONT_SIZE, "Text", 0.0001, 256));
+        out.add(DebugProperty.themeColor(this, FONT_COLOR, "Text"));
     }
 
     public enum TextAlignment {

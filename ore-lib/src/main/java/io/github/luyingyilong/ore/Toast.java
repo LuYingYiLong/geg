@@ -1,12 +1,12 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.theme.ThemeKey;
-import io.github.luyingyilong.ore.theme.ThemePadding;
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.theme.OreSounds;
 import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.ThemeKey;
+import io.github.luyingyilong.ore.theme.ThemePadding;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -19,15 +19,14 @@ import java.util.function.LongSupplier;
  * A non-interactive transient message, usable in Ore trees or through OreToasts.show.
  */
 public final class Toast extends Container {
+    public static final long DEFAULT_DURATION = 3000L;
+    public static final long ENTER_DURATION = 180L;
+    public static final long EXIT_DURATION = 160L;
     private static final ThemePadding PADDING = ThemePadding.of("Toast", "", 2, 4, 2, 4);
     public static final ThemeKey<Integer> PADDING_TOP = PADDING.top();
     public static final ThemeKey<Integer> PADDING_RIGHT = PADDING.right();
     public static final ThemeKey<Integer> PADDING_BOTTOM = PADDING.bottom();
     public static final ThemeKey<Integer> PADDING_LEFT = PADDING.left();
-
-    public static final long DEFAULT_DURATION = 3000L;
-    public static final long ENTER_DURATION = 180L;
-    public static final long EXIT_DURATION = 160L;
     private final Label label = ownPart("label", new Label().setWrap(Label.Wrap.WORD).setMaxLines(3).setOverflow(Label.Overflow.ELLIPSIS)
             .setOpticalCenter(true).setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER));
     private final LongSupplier clock;
@@ -39,6 +38,7 @@ public final class Toast extends Container {
     private double closingFrom;
     private boolean started;
     private boolean closing;
+
     public Toast() {
         this(() -> System.nanoTime() / 1_000_000L, OreSounds::play);
     }
@@ -203,7 +203,7 @@ public final class Toast extends Container {
     }
 
     @Override
-    protected Control hitTestTree(int rootX,int rootY,int windowX,int windowY) {
+    protected Control hitTestTree(int rootX, int rootY, int windowX, int windowY) {
         return null;
     }
 

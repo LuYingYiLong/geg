@@ -247,7 +247,8 @@ public final class UndoGroupingTest {
     }
 
     private static void type(Editor input, String text) {
-        for (char character : text.toCharArray()) check(InputShortcuts.type(input, character));
+        // GLFW commits Unicode codepoints; the legacy char adapter joins surrogate pairs first.
+        text.codePoints().forEach(codepoint -> check(InputShortcuts.type(input, new String(Character.toChars(codepoint)))));
     }
 
     private static void key(Editor input, int key, Clipboard clipboard) {

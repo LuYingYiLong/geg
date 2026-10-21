@@ -41,6 +41,7 @@ public final class OreClient {
                 .forEach(extension -> registered.putIfAbsent(extension.getClass(), extension));
         extensions = java.util.List.copyOf(registered.values());
         modBus.addListener(OreFontResources::registerReloadListeners);
+        modBus.addListener(io.github.luyingyilong.ore.text.TextRenderer::registerShaders);
         forgeBus.register(OreInputMethod.class);
         forgeBus.register(io.github.luyingyilong.ore.compat.recipeviewer.RecipeViewerInputGuard.class);
         forgeBus.register(AvatarSkinEvents.class);

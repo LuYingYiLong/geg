@@ -244,18 +244,16 @@ public final class ChatMessageList extends Container {
 
         Style style(Font font, int x, int y, Rect area) {
             if (!area.contains(x, y)) return null;
-            var lines = label.lines(font, area.width());
-            int row = (y - area.y()) / label.lineHeight(font);
-            if (row >= lines.size()) return null;
-            float scale = label.getScale() * (label.getFontSize() / Label.DEFAULT_FONT_SIZE);
-            int lineWidth = (int) Math.ceil(font.width(lines.get(row)) * scale);
-            int left = area.x() + switch (alignment) {
+            var layout = label.getTextLayout(font, area.width());
+            int row = (int)((y - area.y()) / layout.getMetrics().lineHeight());
+            if (row < 0 || row >= layout.getLines().size()) return null;
+            float lineWidth = layout.getLines().get(row).width();
+            float left = area.x() + switch (alignment) {
                 case LEFT -> 0;
                 case CENTER -> (area.width() - lineWidth) / 2;
                 case RIGHT -> area.width() - lineWidth;
             };
-            if (x < left || x >= left + lineWidth) return null;
-            return font.getSplitter().componentStyleAtWidth(lines.get(row), (int) ((x - left) / scale));
+            return layout.getStyleAt(x - left, y - area.y());
         }
 
         @Override

@@ -83,32 +83,43 @@ public final class NativeInspectorClientTest {
                 backend.execute(InspectorCommand.edit(imageNode.id(),opacity.index(),"0.25"));
                 check(!backend.lastError().isEmpty() && signalButton.getIconControl().getOpacity()==1F,"Rebinding invalidates stale internal image edit requests");
                 System.out.println("GEG_NATIVE_INSPECTOR_IMAGE_PASS");
-                nodeId=node.id();property=node.properties().stream().filter(p->p.name().equals("fontSize")).findFirst().orElseThrow().index();
+                var colorProperty=node.properties().stream().filter(p->p.name().equals("theme:Label:font_color")).findFirst().orElseThrow();
+                check(colorProperty.kind().equals("color"),"Font color editor accepts hex text");
+                backend.execute(InspectorCommand.edit(node.id(),colorProperty.index(),"#80123456"));
+                check(preview.getThemeItem(Label.FONT_COLOR)==0x80123456,"Theme color edit preserves alpha");
+                preview.setThemeOverride(Label.FONT_COLOR,0xFF445566);
+                backend.execute(InspectorCommand.edit(node.id(),colorProperty.index(),"#invalid"));
+                check(preview.getThemeItem(Label.FONT_COLOR)==0x80123456&&!backend.lastError().isEmpty(),"Invalid color keeps latest valid preview");
+                backend.execute(new InspectorCommand(InspectorCommand.Operation.RESET,node.id(),colorProperty.index(),"","",false));
+                check(preview.getThemeItem(Label.FONT_COLOR)==0xFF445566,"Color restore exposes latest base");
+                preview.removeThemeOverride(Label.FONT_COLOR);
+                System.out.println("GEG_NATIVE_INSPECTOR_FONT_COLOR_PASS");
+                nodeId=node.id();property=node.properties().stream().filter(p->p.name().equals("theme:Label:font_size")).findFirst().orElseThrow().index();
                 backend.execute(InspectorCommand.select(nodeId));backend.execute(InspectorCommand.edit(nodeId,property,"17"));
-                check(preview.getFontSize()==17,"Real reflective edit: " + backend.snapshot().error() + " / " + originalRoot.getLifecycleInfo());preview.setFontSize(13);check(preview.getFontSize()==17,"Application refresh preserves override");
-                backend.execute(new InspectorCommand(InspectorCommand.Operation.RESET,nodeId,property,"","",false));check(preview.getFontSize()==13,"Latest base restored");
-                backend.execute(InspectorCommand.action(InspectorCommand.Operation.UNDO));check(preview.getFontSize()==17,"Undo");
-                backend.execute(InspectorCommand.action(InspectorCommand.Operation.REDO));check(preview.getFontSize()==13,"Redo");
-                backend.execute(InspectorCommand.edit(nodeId,property,"NaN"));check(preview.getFontSize()==13&&!backend.lastError().isEmpty(),"Invalid edit rejected");
+                check(preview.getThemeItem(Label.FONT_SIZE)==17,"Real theme edit: " + backend.snapshot().error() + " / " + originalRoot.getLifecycleInfo());preview.setThemeOverride(Label.FONT_SIZE, 13.0F);check(preview.getThemeItem(Label.FONT_SIZE)==17,"Application refresh preserves override");
+                backend.execute(new InspectorCommand(InspectorCommand.Operation.RESET,nodeId,property,"","",false));check(preview.getThemeItem(Label.FONT_SIZE)==13,"Latest base restored");
+                backend.execute(InspectorCommand.action(InspectorCommand.Operation.UNDO));check(preview.getThemeItem(Label.FONT_SIZE)==17,"Undo");
+                backend.execute(InspectorCommand.action(InspectorCommand.Operation.REDO));check(preview.getThemeItem(Label.FONT_SIZE)==13,"Redo");
+                backend.execute(InspectorCommand.edit(nodeId,property,"NaN"));check(preview.getThemeItem(Label.FONT_SIZE)==13&&!backend.lastError().isEmpty(),"Invalid edit rejected");
                 backend.execute(InspectorCommand.select(nodeId)); phase=2;
             } else if(phase==2&&ticks>35) {
                 check(OreInspector.view().window().getHost().isOpen(),"Native frontend remains open after editor rebuild");
-                FormItem field=(FormItem)find(OreInspector.view().window(),c->c instanceof FormItem item&&item.getName().equals("fontSize"));
+                FormItem field=(FormItem)find(OreInspector.view().window(),c->c instanceof FormItem item&&item.getName().equals("theme:Label:font_size"));
                 liveInput=field.getInput();
-                editDraft("18");check(preview.getFontSize()==18,"Typing applies without Enter or Apply");
-                editDraft("NaN");check(preview.getFontSize()==18&&!OreInspector.backend().lastError().isEmpty(),"Invalid draft retains previous effective value");
+                editDraft("18");check(preview.getThemeItem(Label.FONT_SIZE)==18,"Typing applies without Enter or Apply");
+                editDraft("NaN");check(preview.getThemeItem(Label.FONT_SIZE)==18&&!OreInspector.backend().lastError().isEmpty(),"Invalid draft retains previous effective value");
                 String error=OreInspector.backend().lastError();
                 check(find(OreInspector.view().window(),c->c instanceof Label label&&label.getVisible()&&label.getText().getString().equals(error))!=null,"Inline validation is visible");
                 invalidAt=ticks;phase=10;
             } else if(phase==10&&ticks>invalidAt+8) {
-                check(liveInput.getText().equals("NaN")&&preview.getFontSize()==18,"Snapshots preserve invalid draft and last valid value");
-                editDraft("19");check(preview.getFontSize()==19&&OreInspector.backend().lastError().isEmpty(),"Correcting draft applies and clears error");
+                check(liveInput.getText().equals("NaN")&&preview.getThemeItem(Label.FONT_SIZE)==18,"Snapshots preserve invalid draft and last valid value");
+                editDraft("19");check(preview.getThemeItem(Label.FONT_SIZE)==19&&OreInspector.backend().lastError().isEmpty(),"Correcting draft applies and clears error");
                 OreInspector.backend().execute(InspectorCommand.action(InspectorCommand.Operation.UNDO));OreInspector.view().update();
-                check(preview.getFontSize()==18&&liveInput.getText().equals("18.0"),"Live edit undo refreshes input");
+                check(preview.getThemeItem(Label.FONT_SIZE)==18&&liveInput.getText().equals("18.0"),"Live edit undo refreshes input");
                 OreInspector.backend().execute(InspectorCommand.action(InspectorCommand.Operation.REDO));OreInspector.view().update();
-                check(preview.getFontSize()==19,"Live edit redo");
+                check(preview.getThemeItem(Label.FONT_SIZE)==19,"Live edit redo");
                 OreInspector.backend().execute(new InspectorCommand(InspectorCommand.Operation.RESET,nodeId,property,"","",false));OreInspector.view().update();
-                check(preview.getFontSize()==13,"Live edits still restore latest base");
+                check(preview.getThemeItem(Label.FONT_SIZE)==13,"Live edits still restore latest base");
                 Tree<?> nativeTree=(Tree<?>)find(OreInspector.view().window(),c->c instanceof Tree<?>);
                 Scroll treeScroll=(Scroll)nativeTree.getParent();
                 check(treeScroll.getHorizontalVisible()&&treeScroll.getMaxScrollX()>0,"Native tree exposes horizontal overflow");
@@ -150,8 +161,12 @@ public final class NativeInspectorClientTest {
                 phase = 21;
             } else if (phase == 21 && ticks > invalidAt + 6) {
                 var signals = OreInspector.backend().snapshot().signals();
+                // Catch-up client ticks can run before the next 10 Hz Inspector snapshot.
+                if (!signals.state().equals("disposed") && ticks < invalidAt + 80) return;
                 check(signals.state().equals("disposed") && signals.data().signals().stream().allMatch(s -> s.connections().isEmpty()),
-                        "Removed selection shows disposed signals with zero live connections");
+                        "Removed selection shows disposed signals with zero live connections; snapshot=" + signals.state()
+                                + ", selected=" + OreInspector.backend().snapshot().selected()
+                                + ", control=" + signalButton.getLifecycleState() + ", signals=" + signals.data().signals());
                 check(signals.data().history().stream().anyMatch(e -> e.kind() == io.github.luyingyilong.ore.signal.SignalDiagnostics.Kind.SCOPE_CLOSED
                         && e.remainingConnections() == 0), "Native signal view retains cleanup evidence");
                 io.github.luyingyilong.ore.window.NativeWindowClientTest.capture(OreInspector.view().window(), mc.gameDirectory.toPath().resolve("screenshots/native-inspector-signals.png"));
@@ -175,7 +190,7 @@ public final class NativeInspectorClientTest {
                 var press=new ScreenEvent.MouseButtonPressed.Pre(mc.screen,10,32,0);MinecraftForge.EVENT_BUS.post(press);
                 var release=new ScreenEvent.MouseButtonReleased.Pre(mc.screen,10,32,0);MinecraftForge.EVENT_BUS.post(release);
                 check(press.isCanceled()&&release.isCanceled()&&clicks==0,"Picker consumes business press/release");
-                retainedFontSize = preview.getFontSize();
+                retainedFontSize = preview.getThemeItem(Label.FONT_SIZE);
                 ClientMarketScreen.open(); phase=3;
             } else if(phase==3&&target("Market Window")) {
                 check(!placeholder(hintInput).isDisposed() && !placeholder(hintArea).isDisposed(), "Temporary MUI detach keeps both cached hints alive");
@@ -199,7 +214,7 @@ public final class NativeInspectorClientTest {
                 io.github.luyingyilong.ore.screen.OreScreen.back(); phase = 33;
             } else if (phase == 33 && target("Original Window")) {
                 check(OreInspector.backend().inspectedRoot() == originalRoot && !originalRoot.isSuspended() && hintInput.isValid(), "Retained native inputs attach again");
-                check(preview.getFontSize() == retainedFontSize && !placeholder(hintArea).isDisposed(), "Return preserves effective properties and cached controls");
+                check(preview.getThemeItem(Label.FONT_SIZE) == retainedFontSize && !placeholder(hintArea).isDisposed(), "Return preserves effective properties and cached controls");
                 System.out.println("GEG_LIFECYCLE_RETURN_CHAIN_PASS");
                 originalRoot.queueFree();
                 io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();

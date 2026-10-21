@@ -140,5 +140,8 @@
   "gallery.ore.sample.collapse_body": "A collapsible content region that preserves its controls and editing state.",
   "gallery.ore.sample.collapse_long_title": "A longer title demonstrating ellipsis in a narrow view",
   "gallery.ore.sample.collapse_nested": "Nested sections",
-  "gallery.ore.description.collapse": "Shows or hides a retained content region with a height transition."
+  "gallery.ore.description.collapse": "Shows or hides a retained content region with a height transition.",
+  "gallery.ore.sample.text_shadow": "Text shadow",
+  "gallery.ore.sample.text_shaping": "Minecraft 中文（English）é / العربية / עברית / नमस्ते / ภาษาไทย / 👩🏽‍💻 🇨🇳",
+  "gallery.ore.sample.text_multilingual": "Noto Sans — Multilingual"
 }

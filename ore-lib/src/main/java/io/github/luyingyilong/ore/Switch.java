@@ -1,21 +1,16 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.theme.IconTheme;
-import io.github.luyingyilong.ore.theme.ThemeDB;
-
 import io.github.luyingyilong.ore.layout.Container;
 import io.github.luyingyilong.ore.layout.Rect;
 import io.github.luyingyilong.ore.layout.SizeFlags;
 import io.github.luyingyilong.ore.render.DrawContext;
+import io.github.luyingyilong.ore.render.TextureRegion;
+import io.github.luyingyilong.ore.render.TextureSource;
 import io.github.luyingyilong.ore.signal.Signal;
 import io.github.luyingyilong.ore.signal.SignalSource;
-import io.github.luyingyilong.ore.theme.OreTheme;
-import io.github.luyingyilong.ore.theme.OreSounds;
+import io.github.luyingyilong.ore.theme.*;
 import io.github.luyingyilong.ore.util.ReleaseGesture;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import io.github.luyingyilong.ore.render.*;
-import io.github.luyingyilong.ore.theme.ThemeKey;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
@@ -33,17 +28,6 @@ public final class Switch extends Container {
     public static final ThemeKey<TextureRegion> BUTTON_HOVERED = IconTheme.texture("Switch", "button_hovered", "switch_button_hover", 14, 15);
     public static final ThemeKey<TextureRegion> BUTTON_PRESSED = IconTheme.texture("Switch", "button_pressed", "switch_button_pressed", 14, 15);
     public static final ThemeKey<TextureRegion> BUTTON_DISABLED = IconTheme.texture("Switch", "button_disabled", "switch_button_disabled", 14, 15);
-
-    public static void registerTheme(ThemeDB db) {
-        OreTheme.registerType(db, "Switch");
-        db.register(BASE);
-        db.register(BASE_DISABLED);
-        db.register(BUTTON_NORMAL);
-        db.register(BUTTON_HOVERED);
-        db.register(BUTTON_PRESSED);
-        db.register(BUTTON_DISABLED);
-    }
-
     public static final int WIDTH = 28;
     public static final int HEIGHT = 15;
     private static final int BASE_WIDTH = 27;
@@ -53,8 +37,8 @@ public final class Switch extends Container {
     private final ReleaseGesture<Boolean> gesture = new ReleaseGesture<>();
     private final LongSupplier clock;
     private final Consumer<OreSounds.Cue> soundPlayer;
-    private final TextureRect baseImage=ownPart("base",new TextureRect().setStretchMode(TextureRect.StretchMode.SCALE).setExpandMode(TextureRect.ExpandMode.IGNORE_SIZE));
-    private final TextureRect thumbImage=ownPart("thumb",new TextureRect().setStretchMode(TextureRect.StretchMode.SCALE).setExpandMode(TextureRect.ExpandMode.IGNORE_SIZE));
+    private final TextureRect baseImage = ownPart("base", new TextureRect().setStretchMode(TextureRect.StretchMode.SCALE).setExpandMode(TextureRect.ExpandMode.IGNORE_SIZE));
+    private final TextureRect thumbImage = ownPart("thumb", new TextureRect().setStretchMode(TextureRect.StretchMode.SCALE).setExpandMode(TextureRect.ExpandMode.IGNORE_SIZE));
     private final Spin spinner = ownPart("spinner", new Spin());
     private final SignalSource<Boolean> toggled = new SignalSource<>(this, "toggled", "Boolean");
     private final SignalSource<Boolean> activated = new SignalSource<>(this, "activated", "Boolean");
@@ -67,6 +51,7 @@ public final class Switch extends Container {
     public Switch() {
         this(false);
     }
+
     /**
      * Initial checked state is placed immediately, without an entrance animation.
      */
@@ -88,6 +73,16 @@ public final class Switch extends Container {
 
         spinner.setVisible(false);
         updateChildren(java.util.List.of(spinner));
+    }
+
+    public static void registerTheme(ThemeDB db) {
+        OreTheme.registerType(db, "Switch");
+        db.register(BASE);
+        db.register(BASE_DISABLED);
+        db.register(BUTTON_NORMAL);
+        db.register(BUTTON_HOVERED);
+        db.register(BUTTON_PRESSED);
+        db.register(BUTTON_DISABLED);
     }
 
     /**
@@ -254,10 +249,12 @@ public final class Switch extends Container {
         thumb = thumb.translated(screenX, screenY);
         boolean hovered = artworkBounds().translated(screenX, screenY)
                 .contains(context.getAbsMouseX(), context.getAbsMouseY());
-        baseImage.setTexture(TextureSource.themed(disabled?BASE_DISABLED:BASE));
-        baseImage.layout(base,context.getFont()); baseImage.draw(context,0,0);
+        baseImage.setTexture(TextureSource.themed(disabled ? BASE_DISABLED : BASE));
+        baseImage.layout(base, context.getFont());
+        baseImage.draw(context, 0, 0);
         thumbImage.setTexture(TextureSource.themed(getButtonTextureKey(hovered)));
-        thumbImage.layout(thumb,context.getFont()); thumbImage.draw(context,0,0);
+        thumbImage.layout(thumb, context.getFont());
+        thumbImage.draw(context, 0, 0);
     }
 
     private void layoutSpinner(Rect thumb, Font font) {

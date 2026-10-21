@@ -45,17 +45,18 @@ public final class ThemeOverrideQueryTest {
     }
 
     private static void propertiesAndFallbacks() {
-        Label label = new Label().setColor(0xFF123456);
+        Label label = new Label().setShadow(true);
         Button button = new Button().setThemeTypeVariation("PrimaryButton");
         Dropdown<String> dropdown = new Dropdown<>("all", 5);
         try {
-            label.setThemeOverride(OreTheme.TEXT_COLOR, 0xFF654321);
+            label.setThemeOverride(OreTheme.FONT_COLOR, 0xFF654321);
             label.setThemeOverride(OreTheme.TEXT_SHADOW, false);
-            check(label.getThemeOverride(OreTheme.TEXT_COLOR) == 0xFF654321 && label.getColor() == 0xFF123456,
-                    "getter reports the stored override even when an explicit property wins");
+            check(label.getThemeOverride(OreTheme.FONT_COLOR) == 0xFF654321 && label.getThemeItem(Label.FONT_COLOR) == 0xFF654321,
+                    "font color is resolved directly from its theme override");
             check(Boolean.FALSE.equals(label.getThemeOverride(OreTheme.TEXT_SHADOW)), "false is distinct from absence");
-            label.clearColor();
-            check(label.getColor() == 0xFF654321, "clearing explicit property reveals the already stored override");
+            check(label.getShadow(), "explicit non-color property can still win over its stored override");
+            label.clearShadow();
+            check(!label.getShadow(), "clearing explicit property reveals the already stored override");
             var variant = ThemeDB.getDefault().getKey("PrimaryButton", "normal", StyleBox.class);
             button.setThemeOverride(variant, StyleBoxEmpty.INSTANCE);
             check(button.getThemeOverride(variant) == StyleBoxEmpty.INSTANCE, "exact variant item is queryable");

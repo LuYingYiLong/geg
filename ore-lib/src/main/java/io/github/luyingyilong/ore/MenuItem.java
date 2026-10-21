@@ -1,7 +1,6 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.render.*;
-
+import io.github.luyingyilong.ore.render.TextureSource;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;

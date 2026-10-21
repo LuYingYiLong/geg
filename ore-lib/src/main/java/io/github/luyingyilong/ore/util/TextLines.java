@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * UTF-16 editor offsets and code-point renderer columns must agree across line breaks.
+ * Both the editor and TextLayout use UTF-16 coordinates across line breaks.
  */
 public final class TextLines {
     private TextLines() {
@@ -23,7 +23,7 @@ public final class TextLines {
     public static Position position(String text, int cursor) {
         int start = text.lastIndexOf('\n', Math.max(-1, cursor - 1)) + 1;
         int line = (int) text.substring(0, start).chars().filter(c -> c == '\n').count();
-        return new Position(text.codePointCount(start, cursor), line);
+        return new Position(cursor - start, line);
     }
 
     public record Position(int column, int line) {

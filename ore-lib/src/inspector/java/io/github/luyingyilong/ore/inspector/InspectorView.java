@@ -170,7 +170,7 @@ public final class InspectorView {
         redo.setDisabled(!next.canRedo());
         pick.setThemeTypeVariation(next.picking() ? "PrimaryButton" : "SecondaryButton");
         message.setText(next.error().isEmpty() ? tr(next.waiting() ? "waiting" : "session_only") : Component.literal(next.error()))
-                .setColor(next.error().isEmpty() ? OreTheme.TEXT_SECONDARY : 0xFFF46D6D);
+                .setThemeOverride(OreTheme.FONT_COLOR, next.error().isEmpty() ? OreTheme.TEXT_SECONDARY : 0xFFF46D6D);
         var node = next.nodes().stream().filter(n -> n.id().equals(next.selected())).findFirst().orElse(null);
         String schema = node == null ? "" : node.properties().stream().map(p -> p.name() + p.kind() + p.readonly()).toList().toString();
         if (!selected.equals(next.selected()) || !signature.equals(schema)) {
@@ -266,7 +266,7 @@ public final class InspectorView {
                 });
                 form.addItem(new FormItem<>(new FieldKey<>(property.name(), String.class), Component.literal(property.name()), FormFields.dropdown(String.class, choices)));
             } else {
-                boolean integer = property.kind().equals("number") && !property.name().equals("color") && !property.name().equals("modulate")
+                boolean integer = property.kind().equals("number") && !property.name().equals("modulate")
                         && property.effective() instanceof Integer;
                 input = integer ? new NumberInput(0).setMinimumValue(Integer.MIN_VALUE).setMaximumValue(Integer.MAX_VALUE) : new Input();
                 Signals.configure(input, connected -> { connected.setSubmitOnEnter(true); connected.submitted().connect(connected, submittedText48 -> {

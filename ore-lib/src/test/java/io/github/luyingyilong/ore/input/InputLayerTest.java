@@ -5,7 +5,7 @@ import io.github.luyingyilong.ore.layout.Control;
 import io.github.luyingyilong.ore.layout.Scroll;
 import io.github.luyingyilong.ore.layout.Window;
 import io.github.luyingyilong.ore.util.OreLayers;
-import io.github.luyingyilong.ore.theme.OreTextMetrics;
+import io.github.luyingyilong.ore.text.OreText;
 
 public final class InputLayerTest {
     public static void main(String[] args) {
@@ -26,12 +26,12 @@ public final class InputLayerTest {
         check(InputGeometry.centeredLineTop(4, 5, 10) == 4);
         check(InputGeometry.centeredLineTop(3, 31, 9.0F) == 14);
         for (float scale : new float[]{0.75F, 1.0F, 1.5F, 2.0F}) {
-            InputGeometry.Caret normal = InputGeometry.caret(10, 20, scale, false);
-            InputGeometry.Caret empty = InputGeometry.caret(10, 20, scale, true);
-            check(Math.abs(normal.width() - 0.6F * scale) < 0.0001F);
-            check(normal.width() == empty.width() && normal.height() == OreTextMetrics.body().lineHeight(scale));
+            InputGeometry.Caret normal = InputGeometry.caret(10, 20, scale, OreText.bodyMetrics(scale).lineHeight());
+            InputGeometry.Caret empty = InputGeometry.caret(10, 20, scale, OreText.bodyMetrics(scale).lineHeight());
+            check(Math.abs(normal.width() - Math.max(0.6F, 0.6F * scale)) < 0.0001F);
+            check(normal.width() == empty.width() && normal.height() == OreText.bodyMetrics(scale).lineHeight());
             check(normal.y() == empty.y() && normal.y() == 20);
-            check(Math.abs(empty.x() - normal.x() - 0.7F) < 0.0001F);
+            check(Math.abs(empty.x() - normal.x()) < 0.0001F);
         }
 
         Control field = new Control().setPreferred(80, 200);

@@ -44,9 +44,9 @@ public final class InspectorPropertiesTest {
         Component source = label.getText();
         Object preview = property(label, "text").parse("Temporary text");
         check(preview instanceof Component && label.getText() == source, "Text preview preserves original translated Component");
-        check(property(label, "color").parse("#ffffff").equals(0xFFFFFFFF), "RGB keeps opaque alpha");
-        check(property(label, "color").parse("#80000000").equals(0x80000000), "ARGB keeps transparency");
-        rejects(() -> property(label, "fontSize").parse("0"));
+        check(property(label, "theme:Label:font_color").parse("#ffffff").equals(0xFFFFFFFF), "RGB keeps opaque alpha");
+        check(property(label, "theme:Label:font_color").parse("#80000000").equals(0x80000000), "ARGB keeps transparency");
+        rejects(() -> property(label, "theme:Label:font_size").parse("0"));
         property(label, "hero").parse("true");
         property(label, "scale").parse("1.5");
         property(label, "scrollEndPauseMs").parse("900");

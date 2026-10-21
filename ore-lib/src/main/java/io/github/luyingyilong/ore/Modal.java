@@ -98,6 +98,7 @@ public final class Modal extends Container {
         header.setThemeParent(this);
         footer.setThemeParent(this);
         setTitle(title);
+        titleLabel.setThemeParent(this);
         titleLabel.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
         headerSpacer.setMinimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
         close.setMinimum(CLOSE_HIT_WIDTH, CLOSE_HIT_WIDTH);
@@ -225,21 +226,6 @@ public final class Modal extends Container {
 
     public Modal setTitle(Component title) {
         titleLabel.setText(Objects.requireNonNull(title));
-        return this;
-    }
-
-    public Modal clearFontSize() {
-        titleLabel.clearFontSize();
-        requestLayout();
-        return this;
-    }
-
-    public float getFontSize() {
-        return titleLabel.getFontSize();
-    }
-
-    public Modal setFontSize(float fontSize) {
-        titleLabel.setFontSize(fontSize);
         return this;
     }
 

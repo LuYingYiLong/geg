@@ -20,9 +20,9 @@ import java.util.List;
  * Content-sized single-choice options; FILL/EXPAND distributes any additional width.
  */
 public final class Segmented extends Control {
-    public static final io.github.luyingyilong.ore.theme.ThemeKey<StyleBox> NORMAL = io.github.luyingyilong.ore.theme.ThemeKey.of("Segmented","normal",StyleBox.class,io.github.luyingyilong.ore.theme.ThemeKey.Kind.STYLE,Button.NORMAL.defaultValue(),true);
-    public static final io.github.luyingyilong.ore.theme.ThemeKey<StyleBox> HOVER = io.github.luyingyilong.ore.theme.ThemeKey.of("Segmented","hover",StyleBox.class,io.github.luyingyilong.ore.theme.ThemeKey.Kind.STYLE,Button.HOVER.defaultValue(),true);
-    public static final io.github.luyingyilong.ore.theme.ThemeKey<StyleBox> PRESSED = io.github.luyingyilong.ore.theme.ThemeKey.of("Segmented","pressed",StyleBox.class,io.github.luyingyilong.ore.theme.ThemeKey.Kind.STYLE,Button.PRESSED.defaultValue(),true);
+    public static final io.github.luyingyilong.ore.theme.ThemeKey<StyleBox> NORMAL = io.github.luyingyilong.ore.theme.ThemeKey.of("Segmented", "normal", StyleBox.class, io.github.luyingyilong.ore.theme.ThemeKey.Kind.STYLE, Button.NORMAL.defaultValue(), true);
+    public static final io.github.luyingyilong.ore.theme.ThemeKey<StyleBox> HOVER = io.github.luyingyilong.ore.theme.ThemeKey.of("Segmented", "hover", StyleBox.class, io.github.luyingyilong.ore.theme.ThemeKey.Kind.STYLE, Button.HOVER.defaultValue(), true);
+    public static final io.github.luyingyilong.ore.theme.ThemeKey<StyleBox> PRESSED = io.github.luyingyilong.ore.theme.ThemeKey.of("Segmented", "pressed", StyleBox.class, io.github.luyingyilong.ore.theme.ThemeKey.Kind.STYLE, Button.PRESSED.defaultValue(), true);
     private final List<Component> options;
     private final List<Label> optionLabels;
     private final Button.Size size;
@@ -36,9 +36,11 @@ public final class Segmented extends Control {
     private int lastViewportWidth = -1;
     private Font layoutFont;
     private int hoveredIndex = -1;
+
     public Segmented(List<Component> options) {
         this(options, Button.Size.MEDIUM);
     }
+
     public Segmented(List<Component> options, Button.Size size) {
         if (options.isEmpty()) {
             throw new IllegalArgumentException("Segmented requires at least one option");
@@ -55,8 +57,12 @@ public final class Segmented extends Control {
 
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
         io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Segmented");
-        db.register(NORMAL);db.register(HOVER);db.register(PRESSED);
-        db.registerFallback(NORMAL,Button.NORMAL);db.registerFallback(HOVER,Button.HOVER);db.registerFallback(PRESSED,Button.PRESSED);
+        db.register(NORMAL);
+        db.register(HOVER);
+        db.register(PRESSED);
+        db.registerFallback(NORMAL, Button.NORMAL);
+        db.registerFallback(HOVER, Button.HOVER);
+        db.registerFallback(PRESSED, Button.PRESSED);
     }
 
     @Override
@@ -318,8 +324,8 @@ public final class Segmented extends Control {
             Rect area = new Rect(optionX, y, optionWidth, height);
             style.draw(context, area);
             Label text = optionLabels.get(index);
-            text.setThemeOverride(OreTheme.TEXT_COLOR, getThemeItem(selected ? OreTheme.SEGMENTED_BUTTON_SELECTED_TEXT : Button.NORMAL_COLOR));
-            text.layout(style.getContentDrawRect(area), context.getFont());
+            text.setThemeOverride(OreTheme.FONT_COLOR, getThemeItem(selected ? OreTheme.SEGMENTED_SELECTED_FONT_COLOR : Button.FONT_COLOR));
+            text.layout(getOptionLabelBounds(area, style), context.getFont());
             DebugBridge.backend().internal(this, "option_" + index, text);
             text.draw(context, 0, 0);
 
@@ -329,6 +335,10 @@ public final class Segmented extends Control {
                     getThemeItem(OreTheme.SEGMENTED_INDICATOR).draw(context, indicator);
             }
         }
+    }
+
+    static Rect getOptionLabelBounds(Rect area, StyleBox style) {
+        return Button.getLabelBounds(style.getContentDrawRect(area));
     }
 
     /**

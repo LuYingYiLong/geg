@@ -55,7 +55,7 @@ public final class ChatSystemMessageLayoutTest {
         Component link = Component.literal("Run").withStyle(style -> style.withClickEvent(
                 new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/help")));
         view.bind(message(ChatChannel.NONE, "", link));
-        view.text.label.setFontSize(Label.DEFAULT_FONT_SIZE);
+        view.text.label.setThemeOverride(Label.FONT_SIZE, Label.DEFAULT_FONT_SIZE);
         int height = view.text.label.lineHeight(font);
         view.layout(new Rect(0, 0, 120, height), font);
         Style center = view.text.style(font, 52, 2, new Rect(0, 0, 120, height));
@@ -75,7 +75,7 @@ public final class ChatSystemMessageLayoutTest {
         ChatMessage incoming = message(UUID.randomUUID(), "Alice", link);
         ChatMessage command = message(ChatChannel.NONE, "", link);
         ChatMessageList.MessageView view = new ChatMessageList.MessageView(() -> self);
-        view.text.label.setFontSize(Label.DEFAULT_FONT_SIZE);
+        view.text.label.setThemeOverride(Label.FONT_SIZE, Label.DEFAULT_FONT_SIZE);
         for (int width : new int[]{127, 128, 129, 320}) {
             view.bind(outgoing);
             view.layout(new Rect(0, 0, width, 40), font);

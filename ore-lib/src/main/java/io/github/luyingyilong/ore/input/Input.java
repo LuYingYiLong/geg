@@ -57,6 +57,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
     private String observedText = "";
     private InputControl layoutControl;
     private boolean routingInput;
+    private char pendingHighSurrogate;
 
     public Input() {
         this(0.0F);
@@ -168,7 +169,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
 
     public int getPreferredInputHeight() {
         var margin=resolveTheme(OreTheme.INPUT_BOX).getContentMargin();
-        return Math.max(controlSize.getHeight(),io.github.luyingyilong.ore.theme.OreTextMetrics.body().lineHeight(getTextScale())+margin.getVertical());
+        return Math.max(controlSize.getHeight(),(int)Math.ceil(renderer.getFontHeight())+margin.getVertical());
     }
 
     public Button.Size getControlSize() {
@@ -204,6 +205,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
     }
 
     public final void releaseSession() {
+        pendingHighSurrogate = 0;
         signalScope.checkThread();
         OreInputMethod.release(this);
         setInputVisible(false);
@@ -277,7 +279,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
         Rect area = inputMethodBounds();
         var cursor = ((OreTextFieldRenderer) renderer).caretPosition();
         Rect caret = toHost(new Rect(
-                area.x() + Math.max(0, Math.min(area.width() - 2, (int) cursor.x)),
+                area.x() + Math.max(0, Math.min(area.width() - 2, (int) cursor.x - (getComposing() ? 0 : getScrollX()))),
                 area.y() + Math.max(0, Math.min(area.height(), (int) cursor.y - getScrollY() + inputMethodFontHeight())), 0, 0));
         return new Caret(caret.x(), caret.y());
     }
@@ -338,6 +340,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
 
     @Override
     public void onRemoveFocus(ModularGuiContext context) {
+        pendingHighSurrogate = 0;
         editingHandler().endEditGroup();
         OreInputMethod.release(this);
         removeNativeFocus(context);
@@ -410,7 +413,11 @@ public class Input extends TextFieldWidget implements SignalOwner {
                         ? onKeyReleased(key.keyCode(), key.scanCode(), key.modifiers())
                         : onKeyPressed(key.keyCode(), key.scanCode(), key.modifiers()) != Interactable.Result.IGNORE;
             } else if (event instanceof io.github.luyingyilong.ore.event.TextInputEvent text) {
-                for (char character : text.text().toCharArray()) onCharTyped(character, text.modifiers());
+                if (text.text().length() == 1) onCharTyped(text.text().charAt(0), text.modifiers());
+                else if (layoutInteractive() && isFocused()) {
+                    pendingHighSurrogate = 0;
+                    InputShortcuts.type(editingHandler(), text.text());
+                }
                 handled = true;
             } else if (event instanceof io.github.luyingyilong.ore.event.ScrollEvent scroll)
                 handled = onMouseScrolled(scroll.delta());
@@ -491,6 +498,16 @@ public class Input extends TextFieldWidget implements SignalOwner {
         }
         if (keyCode == GLFW.GLFW_KEY_TAB && isFocused() && tabNavigation.test(modifiers))
             return Interactable.Result.STOP;
+        if (isFocused() && (modifiers & (GLFW.GLFW_MOD_CONTROL | GLFW.GLFW_MOD_ALT)) == 0
+                && (keyCode == GLFW.GLFW_KEY_LEFT || keyCode == GLFW.GLFW_KEY_RIGHT)) {
+            boolean right = keyCode == GLFW.GLFW_KEY_RIGHT;
+            var position = handler.hasTextMarked() && (modifiers & GLFW.GLFW_MOD_SHIFT) == 0
+                    ? (right ? handler.getEndCursor() : handler.getStartCursor())
+                    : ((OreTextFieldRenderer) renderer).moveHorizontal(right);
+            handler.setCursor(position.y, position.x, (modifiers & GLFW.GLFW_MOD_SHIFT) == 0, false);
+            renderer.setCursor(true);
+            return Interactable.Result.SUCCESS;
+        }
         return super.onKeyPressed(keyCode, scanCode, modifiers);
     }
 
@@ -501,6 +518,15 @@ public class Input extends TextFieldWidget implements SignalOwner {
         // IMBlocker probes custom screens with NUL to discover their real text field focus.
         if (character == 0 && isFocused()) OreInputMethod.locateFocus(this);
         if (!isFocused()) return Interactable.Result.IGNORE;
+        if (Character.isHighSurrogate(character)) {
+            pendingHighSurrogate = character;
+            return Interactable.Result.STOP;
+        }
+        char high = pendingHighSurrogate;
+        pendingHighSurrogate = 0;
+        if (Character.isLowSurrogate(character))
+            return high != 0 && InputShortcuts.type(editingHandler(), new String(new char[]{high, character}))
+                    ? Interactable.Result.SUCCESS : Interactable.Result.STOP;
         return InputShortcuts.type(editingHandler(), character) ? Interactable.Result.SUCCESS : Interactable.Result.STOP;
     }
 
@@ -566,9 +592,9 @@ public class Input extends TextFieldWidget implements SignalOwner {
         syncTheme();
         super.setupDrawText(context, theme);
         renderer.setScale(getTextScale());
-        int color=textColor==null?resolveTheme(OreTheme.INPUT_TEXT):textColor;
+        int color=resolveTheme(OreTheme.INPUT_FONT_COLOR);
         renderer.setColor(color); renderer.setCursorColor(color);
-        renderer.setMarkedColor(markedColor==null?resolveTheme(OreTheme.INPUT_MARKED):markedColor);
+        renderer.setMarkedColor(resolveTheme(OreTheme.INPUT_MARKED));
         renderer.setPos(getArea().getPadding().left(), firstLineTop());
     }
 
@@ -592,10 +618,13 @@ public class Input extends TextFieldWidget implements SignalOwner {
     }
 
     protected Label placeholderLabel(Component placeholder) {
-        int color = hintTextColor == null ? resolveTheme(OreTheme.INPUT_HINT) : hintTextColor;
+        int color = resolveTheme(OreTheme.INPUT_PLACEHOLDER_FONT_COLOR);
         // Keep a snapshot so in-place edits to a MutableComponent also invalidate styled text.
         if (!placeholderLabel.getText().equals(placeholder)) placeholderLabel.setText(placeholder.copy());
-        return placeholderLabel.setColor(color).setFont(resolveTheme(OreTheme.INPUT_FONT)).setFontSize(resolveTheme(OreTheme.INPUT_FONT_SIZE)).setScale(scale);
+        placeholderLabel.setThemeOverride(Label.FONT_SIZE, resolveTheme(OreTheme.INPUT_FONT_SIZE));
+        placeholderLabel.setThemeOverride(Label.FONT_COLOR, color);
+        placeholderLabel.setThemeOverride(OreTheme.FONT_METRICS, resolveTheme(OreTheme.FONT_METRICS));
+        return placeholderLabel.setFont(resolveTheme(OreTheme.INPUT_FONT)).setScale(scale);
     }
 
     protected void drawPlaceholder(ModularGuiContext context, Component placeholder) {

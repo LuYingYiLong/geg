@@ -1,8 +1,8 @@
 package io.github.luyingyilong.ore;
 
-import io.github.luyingyilong.ore.theme.ThemeInsets;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.render.DrawContext;
+import io.github.luyingyilong.ore.theme.ThemeInsets;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 
@@ -81,7 +81,6 @@ public final class PlayerIdentityCell<T> implements Table.Cell<T> {
                 content.setInsets(new Padding.Insets(insets.top(), insets.right(), insets.bottom(), insets.left()));
                 super.layout(bounds, font);
                 fitChild(content, new Rect(0, 0, bounds.width(), bounds.height()), font);
-
             }
         }
     }

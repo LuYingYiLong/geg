@@ -74,6 +74,7 @@ public final class WindowManager {
     public static void render(TickEvent.RenderTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         lastRender = System.nanoTime();
+        io.github.luyingyilong.ore.text.TextRenderer.endFrame();
         for (NativeWindowHost host : List.copyOf(WINDOWS)) {
             try {
                 host.frame();
@@ -112,6 +113,7 @@ public final class WindowManager {
         }
         io.github.luyingyilong.ore.screen.OreScreen.disposeSessions();
         io.github.luyingyilong.ore.layout.LifecycleScheduler.flush();
+        io.github.luyingyilong.ore.text.TextRenderer.clear();
         embedded.clear();
         suspended = null;
         embeddedFocus = null;

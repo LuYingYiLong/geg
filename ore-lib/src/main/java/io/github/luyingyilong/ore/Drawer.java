@@ -30,7 +30,7 @@ import java.util.function.LongSupplier;
  * The panel slides in from and returns to its selected edge; the mask fades with it.
  * The closed signal runs after the exit animation, so the owner can safely remove the layer.
  * <pre>{@code
- * Drawer drawer = new Drawer(title).setFontSize(12).setWidth(240).setContent(form);
+ * Drawer drawer = new Drawer(title).setWidth(240).setContent(form);
  * overlay.addChild(drawer);
  * drawer.open();
  * }</pre>
@@ -76,7 +76,6 @@ public final class Drawer extends Container {
     private final SignalSource0 closed = new SignalSource0(this, "closed");
     private Panel background;
     private Rect panelBounds=new Rect(0,0,0,0);
-    private Integer titleColor;
     private int requestedWidth;
     private Placement placement = Placement.RIGHT;
     private boolean closable = true;
@@ -101,6 +100,7 @@ public final class Drawer extends Container {
     Drawer(Component title, LongSupplier clock, Consumer<OreSounds.Cue> soundPlayer) {
         this.clock = Objects.requireNonNull(clock);
         this.soundPlayer = Objects.requireNonNull(soundPlayer);
+        this.title.setThemeParent(this);
         this.title.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
         closeButton = Signals.configure(new Button().setThemeTypeVariation("TextButton")
                 .setIcon(TextureSource.themed(CLOSE_ICON)), connected -> connected.pressed().connect(connected, this::close));
@@ -157,26 +157,6 @@ public final class Drawer extends Container {
         closeButton.setVisible(closable);
         header.setVisible(closable || !title.getText().getString().isBlank());
         requestLayout();
-    }
-
-    public int getTitleColor() {
-        return titleColor==null?title.getColor():titleColor;
-    }
-
-    public Drawer setTitleColor(int color) {
-        titleColor = color;
-        title.setColor(color);
-        return this;
-    }
-
-    public Drawer clearFontSize() { title.clearFontSize(); requestLayout(); return this; }
-    public float getFontSize() {
-        return title.getFontSize();
-    }
-
-    public Drawer setFontSize(float fontSize) {
-        title.setFontSize(fontSize);
-        return this;
     }
 
     private void syncPadding() {
@@ -427,7 +407,8 @@ public final class Drawer extends Container {
     @Override
     public void debugProperties(java.util.List<DebugProperty> out) {
         super.debugProperties(out);
-        out.add(DebugProperty.number(title, "fontSize", "Text", title::getFontSize, 0.0001, 256));
+        out.add(DebugProperty.themeNumber(title, Label.FONT_SIZE, "Text", 0.0001, 256));
+        out.add(DebugProperty.themeColor(title, Label.FONT_COLOR, "Text"));
         java.util.List<DebugProperty> paddingProperties = new java.util.ArrayList<>();
         frame.debugProperties(paddingProperties);
         paddingProperties.stream().filter(p -> java.util.Set.of("top", "right", "bottom", "left").contains(p.key())).forEach(out::add);

@@ -140,5 +140,8 @@
   "gallery.ore.sample.collapse_body": "可展开和折叠的内容区域，保留其中控件和编辑状态。",
   "gallery.ore.sample.collapse_long_title": "这是一段用于展示窄视口省略效果的较长标题",
   "gallery.ore.sample.collapse_nested": "嵌套面板",
-  "gallery.ore.description.collapse": "折叠和展开一组内容，保留其中控件的状态。"
+  "gallery.ore.description.collapse": "折叠和展开一组内容，保留其中控件的状态。",
+  "gallery.ore.sample.text_shadow": "文字阴影",
+  "gallery.ore.sample.text_shaping": "Minecraft 中文（English）é / العربية / עברית / नमस्ते / ภาษาไทย / 👩🏽‍💻 🇨🇳",
+  "gallery.ore.sample.text_multilingual": "Noto Sans — 多语种"
 }

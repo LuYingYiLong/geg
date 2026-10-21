@@ -5,6 +5,7 @@ import brachy.modularui.widgets.textfield.BaseTextFieldWidget;
 import brachy.modularui.widgets.textfield.TextFieldHandler;
 import brachy.modularui.widgets.textfield.TextFieldRenderer;
 import io.github.luyingyilong.ore.util.TextLines;
+import io.github.luyingyilong.ore.text.TextBoundaries;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -67,7 +68,11 @@ class OreTextFieldHandler extends TextFieldHandler {
     }
 
     void type(char character) {
-        insert(List.of(String.valueOf(character)), true, true);
+        type(String.valueOf(character));
+    }
+
+    void type(String text) {
+        insert(List.of(text), true, true);
     }
 
     private void insert(List<String> insertedLines, boolean canScroll, boolean typing) {
@@ -147,8 +152,8 @@ class OreTextFieldHandler extends TextFieldHandler {
         int start = offset(text, getStartCursor());
         int end = offset(text, getEndCursor());
         if (start == end) {
-            if (forward && end < text.length()) end = text.offsetByCodePoints(end, 1);
-            else if (!forward && start > 0) start = text.offsetByCodePoints(start, -1);
+            if (forward && end < text.length()) end = TextBoundaries.next(text, end);
+            else if (!forward && start > 0) start = TextBoundaries.previous(text, start);
             else return;
         }
         apply(text.substring(0, start) + text.substring(end), start, kind);
@@ -189,6 +194,7 @@ class OreTextFieldHandler extends TextFieldHandler {
 
     @Override
     public final void setMainCursor(int line, int column, boolean animate) {
+        if (line >= 0 && line < getText().size()) column = TextBoundaries.floor(getText().get(line), column);
         Point current = getMainCursor();
         if (!changingDocument && (current.x != column || current.y != line)) endEditGroup();
         moveMainCursor(line, column, animate);
@@ -203,6 +209,7 @@ class OreTextFieldHandler extends TextFieldHandler {
 
     @Override
     public void setOffsetCursor(int line, int column) {
+        if (line >= 0 && line < getText().size()) column = TextBoundaries.floor(getText().get(line), column);
         Point current = getOffsetCursor();
         if (!changingDocument && (current.x != column || current.y != line)) endEditGroup();
         super.setOffsetCursor(line, column);
@@ -243,9 +250,7 @@ class OreTextFieldHandler extends TextFieldHandler {
 
     private int offset(String text, Point cursor) {
         int offset = Math.max(0, Math.min(text.length(), TextLines.offset(getText(), cursor.x, cursor.y)));
-        if (offset > 0 && offset < text.length() && Character.isHighSurrogate(text.charAt(offset - 1))
-                && Character.isLowSurrogate(text.charAt(offset))) offset--;
-        return offset;
+        return TextBoundaries.floor(text, offset);
     }
 
     private enum EditKind {TYPING, BACKSPACE, DELETE, DISCRETE}

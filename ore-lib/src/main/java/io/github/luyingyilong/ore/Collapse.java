@@ -29,7 +29,7 @@ public final class Collapse extends Container {
     public static final ThemeKey<Integer> PADDING_RIGHT = paddingKey("padding_right", 8);
     public static final ThemeKey<Integer> PADDING_BOTTOM = paddingKey("padding_bottom", 4);
     public static final ThemeKey<Integer> PADDING_LEFT = paddingKey("padding_left", 8);
-    public static final ThemeKey<Integer> SECONDARY_COLOR = ThemeKey.of("Collapse", "secondary_color", Integer.class, ThemeKey.Kind.COLOR, OreTheme.TEXT_SECONDARY, false);
+    public static final ThemeKey<Integer> SECONDARY_FONT_COLOR = ThemeKey.of("Collapse", "secondary_font_color", Integer.class, ThemeKey.Kind.COLOR, OreTheme.TEXT_SECONDARY, false);
     public static final ThemeKey<TextureRegion> COLLAPSED_ARROW = IconTheme.item("Collapse", "collapsed_arrow", IconTheme.ARROW_DOWN_LIGHT);
     public static final ThemeKey<TextureRegion> DISABLED_COLLAPSED_ARROW = IconTheme.item("Collapse", "disabled_collapsed_arrow", IconTheme.ARROW_DOWN);
     public static final ThemeKey<TextureRegion> EXPANDED_ARROW = IconTheme.item("Collapse", "expanded_arrow", IconTheme.ARROW_UP_LIGHT);
@@ -73,7 +73,7 @@ public final class Collapse extends Container {
 
     public static void registerTheme(ThemeDB db) {
         OreTheme.registerType(db, "Collapse");
-        for (var key : List.of(PANEL, PADDING_TOP, PADDING_RIGHT, PADDING_BOTTOM, PADDING_LEFT, SECONDARY_COLOR,
+        for (var key : List.of(PANEL, PADDING_TOP, PADDING_RIGHT, PADDING_BOTTOM, PADDING_LEFT, SECONDARY_FONT_COLOR,
                 COLLAPSED_ARROW, DISABLED_COLLAPSED_ARROW, EXPANDED_ARROW, DISABLED_EXPANDED_ARROW, ANIMATION_DURATION))
             db.register(key);
         db.registerFallback(COLLAPSED_ARROW, IconTheme.ARROW_DOWN_LIGHT);
@@ -277,7 +277,7 @@ public final class Collapse extends Container {
     }
 
     private void updateHeader() {
-        int color = disabled ? header.getThemeItem(Button.DISABLED_COLOR) : getThemeItem(SECONDARY_COLOR);
+        int color = disabled ? header.getThemeItem(Button.FONT_DISABLED_COLOR) : getThemeItem(SECONDARY_FONT_COLOR);
         if (displayedText == null || displayedSecondaryColor != color) {
             var label = text.copy();
             if (!secondaryText.getString().isEmpty())

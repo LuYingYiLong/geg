@@ -12,11 +12,32 @@ public final class InputEditingTest {
     private static final int CTRL = GLFW.GLFW_MOD_CONTROL;
 
     public static void main(String[] args) {
+        graphemeEdits();
         textClipboard();
         atomicTypingAndLimits();
         numberExpressions();
         rejectedNumberInput();
         historyResetAndBranch();
+    }
+
+    private static void graphemeEdits() {
+        Editor committed = new Editor("");
+        check(InputShortcuts.type(committed, "👩🏽‍💻") && committed.text().equals("👩🏽‍💻") && committed.changes == 1);
+        check(committed.undo() && committed.text().isEmpty());
+        check(!InputShortcuts.type(committed, "\uD83D") && committed.text().isEmpty());
+        for (String cluster : List.of("e\u0301", "👩🏽‍💻", "🇨🇳")) {
+            Editor input = new Editor("a" + cluster + "b");
+            input.setCursor(new Point(1 + cluster.length(), 0), false);
+            input.delete(false);
+            check(input.text().equals("ab"));
+            check(input.undo() && input.text().equals("a" + cluster + "b"));
+            input.setCursor(new Point(1, 0), false);
+            input.delete(true);
+            check(input.text().equals("ab"));
+            check(input.undo());
+            input.setCursor(new Point(2, 0), false);
+            check(input.getMainCursor().x == 1);
+        }
     }
 
     private static void textClipboard() {
@@ -159,6 +180,7 @@ public final class InputEditingTest {
     }
 
     private static final class Editor extends OreTextFieldHandler {
+        private int changes;
         private Editor(String text) {
             super(null);
             setMaxCharacters(80);
@@ -168,7 +190,7 @@ public final class InputEditingTest {
             });
         }
         @Override protected void moveMainCursor(int line, int column, boolean animate) { getMainCursor().set(column, line); }
-        @Override public void onChanged() { }
+        @Override public void onChanged() { changes++; }
         private String text() { return String.join("\n", getText()); }
     }
 

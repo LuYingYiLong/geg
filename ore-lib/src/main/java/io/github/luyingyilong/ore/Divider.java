@@ -14,6 +14,7 @@ public final class Divider extends Control {
     private final boolean defaultTheme;
     private Panel horizontalPainter, verticalPainter;
     private Layout layout = Layout.HORIZONTAL;
+
     public Divider() {
         this(null, true);
     }

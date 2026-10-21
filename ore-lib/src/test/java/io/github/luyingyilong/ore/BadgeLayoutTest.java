@@ -37,9 +37,11 @@ public final class BadgeLayoutTest {
                 int visibleWidth = font.width(digits.getStyledText()) - 1;
                 // Pixel rounding may differ by half a pixel, never by a full pixel.
                 check(Math.abs(2 * text.x() + visibleWidth - (2 * face.x() + face.width())) <= 1);
-                float drawTop = text.y() + digits.firstLineOrigin(text.height(), 1);
-                check(Math.abs(2 * drawTop + 8 - (2 * face.y() + face.height())) <= 1);
-                check(drawTop + 8 <= badge.shadowBounds(badge.getAbsoluteBounds()).y());
+                var metrics = digits.getTextLayout(font, text.width()).getMetrics();
+                float drawTop = text.y() + digits.firstLineOrigin(text.height(), 1) + metrics.ascent() + metrics.opticalTop();
+                float visibleHeight = metrics.opticalBottom() - metrics.opticalTop();
+                check(Math.abs(2 * drawTop + visibleHeight - (2 * face.y() + face.height())) <= 1);
+                check(drawTop + visibleHeight <= badge.shadowBounds(badge.getAbsoluteBounds()).y());
             }
         }
         badge.setCount(100);
@@ -50,7 +52,7 @@ public final class BadgeLayoutTest {
         check(badge.getDisplayText().equals(Long.toString(Long.MAX_VALUE)) && badge.measureWidth(font, 10) == 118);
         for (Tag.Type type : Tag.Type.values()) {
             badge.setType(type);
-            check(badge.getType().getColor() == type.getColor() && digits.getColor() == type.textColor());
+            check(badge.getType().getColor() == type.getColor() && digits.getThemeItem(Label.FONT_COLOR) == type.textColor());
         }
 
         int[] actions = {0};

@@ -8,7 +8,7 @@ action.setThemeTypeVariation("PrimaryButton");
 dropdown.getTriggerButton().setThemeTypeVariation("TextButton");
 ```
 
-按钮解析 `normal`、`hover`、`pressed`、`disabled` StyleBox，以及对应的 `normal_color` 等文字颜色。按下偏移由 StyleBox 的 drawInset 和 contentOffset 决定。第三方可通过 ThemeDB 注册继承 Button 或现有变体的新类型，无须修改 Button 绘制逻辑。
+按钮解析 `normal`、`hover`、`pressed`、`disabled` StyleBox，以及 `font_color`、`font_hover_color`、`font_pressed_color`、`font_disabled_color` 文字颜色。按下偏移由 StyleBox 的 drawInset 和 contentOffset 决定。第三方可通过 ThemeDB 注册继承 Button 或现有变体的新类型，无须修改 Button 绘制逻辑。
 
 ```java
 Collapse section = new Collapse(Component.literal("Options"));

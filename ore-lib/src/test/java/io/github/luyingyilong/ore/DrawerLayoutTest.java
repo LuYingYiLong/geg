@@ -372,15 +372,16 @@ public final class DrawerLayoutTest {
         Control parent = new Control();
         parent.addChild(button);
         parent.layout(new Rect(0, 0, 200, 100), font);
-        button.setFontSize(16.0F);
-        check(button.getFontSize() == 16.0F && parent.getLayoutDirty());
+        button.setThemeOverride(Label.FONT_SIZE, 16.0F);
+        check(button.getThemeItem(Label.FONT_SIZE) == 16.0F && parent.getLayoutDirty());
         check(button.measureWidth(font, 200) == 2 * originalWidth - 2 * Button.NORMAL.defaultValue().getContentMargin().left());
-        Navbar header = new Navbar(Component.literal("Font")).setFontSize(40.0F);
-        check(header.getFontSize() == 40.0F);
+        Navbar header = new Navbar(Component.literal("Font"));
+        header.setThemeOverride(OreTheme.TITLE_FONT_SIZE, 40.0F);
+        check(header.getThemeItem(OreTheme.TITLE_FONT_SIZE) == 40.0F);
         int height = header.measureSize(font, new Size(200, 100)).height();
         header.layout(new Rect(0, 0, 200, height), font);
         Label title = (Label) header.getChildren().get(0);
-        check(title.getFontSize() == 40.0F && title.getBounds().height() >= title.lineHeight(font));
+        check(title.getThemeItem(Label.FONT_SIZE) == 40.0F && title.getBounds().height() >= title.lineHeight(font));
     }
 
     private static void check(boolean condition) {

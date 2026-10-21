@@ -128,9 +128,39 @@ public final class ButtonInteractionTest {
         check(((io.github.luyingyilong.ore.theme.StyleBoxFlat)button.getPresentationStyle(true,true)).color() == 0x1A000000);
         scrolledCapture();
         iconLayout();
+        labelPosition();
         pressedLayout();
         pressedFocus();
         controlledState();
+    }
+
+    private static void labelPosition() {
+        var icon = new io.github.luyingyilong.ore.layout.Size(8, 8);
+        for (String variation : Button.BUILTIN_VARIATIONS) {
+            Button button = new Button(cue -> { }).setThemeTypeVariation(variation);
+            for (int height : new int[]{18, 20, 22, 32}) {
+                Rect area = new Rect(10, 30, 120, height);
+                for (boolean disabled : new boolean[]{false, true}) {
+                    button.setDisabled(disabled);
+                    for (boolean pressed : new boolean[]{false, true}) {
+                        for (boolean hovered : new boolean[]{false, true}) {
+                            var style = button.getPresentationStyle(hovered, pressed);
+                            Rect inner = style.getContentDrawRect(area);
+                            for (Button.TextAlignment alignment : Button.TextAlignment.values()) {
+                                var plain = Button.contentLayout(area, style, 24, true, null, null, alignment);
+                                var mixed = Button.contentLayout(area, style, 24, true, icon, icon, alignment);
+                                check(plain.label().y() == inner.y() - 2);
+                                check(mixed.label().y() == plain.label().y());
+                                check(plain.label().height() == inner.height());
+                                check(mixed.label().height() == inner.height());
+                                check(mixed.icon().y() == inner.y() + (inner.height() - icon.height()) / 2);
+                                check(mixed.trailingIcon().y() == mixed.icon().y());
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static void pressedLayout() {
@@ -269,7 +299,7 @@ public final class ButtonInteractionTest {
         Button.ContentLayout mixed = Button.contentLayout(new Rect(0, 0, 60, 20),
                 Button.NORMAL.defaultValue(), 12, true, iconSize, null, Button.TextAlignment.CENTER);
         check(mixed.icon().equals(new Rect(18, 6, 8, 8)));
-        check(mixed.label().equals(new Rect(30, 4, 12, 12)));
+        check(mixed.label().equals(new Rect(30, 2, 12, 12)));
         Button.ContentLayout narrow = Button.contentLayout(new Rect(0, 0, 40, 20),
                 Button.NORMAL.defaultValue(), 100, true, iconSize, null, Button.TextAlignment.RIGHT);
         check(narrow.label().right() == 32 && narrow.label().width() == 12);

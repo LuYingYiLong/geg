@@ -35,6 +35,7 @@ public final class Checkbox extends Container {
     private final ReleaseGesture<Boolean> gesture = new ReleaseGesture<>();
     private boolean checked;
     private boolean enabled = true;
+
     public Checkbox(Component text) {
         label = ownPart("label", new Label(Objects.requireNonNull(text)).setOpticalCenter(true)
                 .setOverflow(Label.Overflow.ELLIPSIS)

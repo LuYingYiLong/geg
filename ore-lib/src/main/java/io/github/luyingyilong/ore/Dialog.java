@@ -70,6 +70,7 @@ public final class Dialog extends Container {
         preferredHeight = Math.max(0, height);
         this.verticalOffset = verticalOffset;
         setTitle(title);
+        titleLabel.setThemeParent(this);
         titleLabel.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_FILL);
         close.setMinimum(CLOSE_SIZE, CLOSE_SIZE);
         close.setThemeParent(this);
@@ -159,21 +160,6 @@ public final class Dialog extends Container {
 
     public Dialog setTitle(Component title) {
         titleLabel.setText(Objects.requireNonNull(title));
-        return this;
-    }
-
-    public Dialog clearFontSize() {
-        titleLabel.clearFontSize();
-        requestLayout();
-        return this;
-    }
-
-    public float getFontSize() {
-        return titleLabel.getFontSize();
-    }
-
-    public Dialog setFontSize(float fontSize) {
-        titleLabel.setFontSize(fontSize);
         return this;
     }
 

@@ -1,5 +1,11 @@
 {
   "parent": "ore:default",
+  "Control:font_metrics": {
+    "match_mode": "AUTO",
+    "line_spacing": 1.0,
+    "optical_offset_y": 0,
+    "faces": {}
+  },
   "Panel:panel": {
     "location": "ore:gui/panel",
     "imageWidth": 3,
@@ -285,15 +291,16 @@
   "Segmented:selected_indicator_width_ratio": 0.33333334,
   "Segmented:selected_indicator_max_width": 16,
   "Segmented:selected_indicator_bottom_gap": 1,
-  "Label:color": "#FFFFFFFF",
+  "Label:font_color": "#FFFFFFFF",
   "Label:font": "ore:ore",
   "Label:hero_font": "ore:ore_hero",
   "Label:font_size": 8,
+  "SlotCount:font_size": 8,
   "Label:shadow": false,
   "Control:overlay": "#80000000",
   "Scroll:track_color": "#FF58585A",
-  "Input:color": "#FFFFFFFF",
-  "Input:placeholder_color": "#FFD0D1D4",
+  "Input:font_color": "#FFFFFFFF",
+  "Input:font_placeholder_color": "#FFD0D1D4",
   "Input:selection_color": "#FFA9AAAC",
   "Input:font": "ore:ore",
   "Input:font_size": 8,
@@ -309,12 +316,12 @@
       "borderBottom": 1
     }
   },
-  "LabelDark:color": "#FF1E1E1F",
-  "LabelSecondary:color": "#FFD0D1D4",
-  "LabelError:color": "#FFFF7777",
-  "LabelAccent:color": "#FF52BEA8",
-  "LabelDisabled:color": "#80D0D1D4",
-  "Segmented:selected_color": "#FFFFFFFF",
+  "LabelDark:font_color": "#FF1E1E1F",
+  "LabelSecondary:font_color": "#FFD0D1D4",
+  "LabelError:font_color": "#FFFF7777",
+  "LabelAccent:font_color": "#FF52BEA8",
+  "LabelDisabled:font_color": "#80D0D1D4",
+  "Segmented:font_selected_color": "#FFFFFFFF",
   "Control:text_dark": "#FF1E1E1F",
   "Control:text_white": "#FFFFFFFF",
   "Control:text_secondary": "#FFD0D1D4",
@@ -332,7 +339,7 @@
   "Toast:toast_shadow": "#4D000000",
   "Label:hero": false,
   "LabelHero:hero": true,
-  "NavbarTitle:color": "#FF1E1E1F",
+  "NavbarTitle:font_color": "#FF1E1E1F",
   "Segmented:minimum_item_width": 24,
   "Avatar:background_color": "#FF58585A",
   "Modal:panel": {
@@ -677,7 +684,7 @@
       "bottom": 4
     }
   },
-  "SecondaryButton:normal_color": "#FF1E1E1F",
+  "SecondaryButton:font_color": "#FF1E1E1F",
   "SecondaryButton:hover": {
     "location": "ore:gui/button_secondary_hover",
     "imageWidth": 16,
@@ -700,7 +707,7 @@
       "bottom": 4
     }
   },
-  "SecondaryButton:hover_color": "#FF1E1E1F",
+  "SecondaryButton:font_hover_color": "#FF1E1E1F",
   "SecondaryButton:pressed": {
     "location": "ore:gui/button_secondary_pressed",
     "imageWidth": 16,
@@ -730,7 +737,7 @@
       "y": 2
     }
   },
-  "SecondaryButton:pressed_color": "#FF1E1E1F",
+  "SecondaryButton:font_pressed_color": "#FF1E1E1F",
   "SecondaryButton:disabled": {
     "location": "ore:gui/button_disabled",
     "imageWidth": 16,
@@ -753,7 +760,7 @@
       "bottom": 4
     }
   },
-  "SecondaryButton:disabled_color": "#801E1E1F",
+  "SecondaryButton:font_disabled_color": "#801E1E1F",
   "PrimaryButton:normal": {
     "location": "ore:gui/button_primary_normal",
     "imageWidth": 16,
@@ -776,7 +783,7 @@
       "bottom": 4
     }
   },
-  "PrimaryButton:normal_color": "#FFFFFFFF",
+  "PrimaryButton:font_color": "#FFFFFFFF",
   "PrimaryButton:hover": {
     "location": "ore:gui/button_primary_hover",
     "imageWidth": 16,
@@ -799,7 +806,7 @@
       "bottom": 4
     }
   },
-  "PrimaryButton:hover_color": "#FFFFFFFF",
+  "PrimaryButton:font_hover_color": "#FFFFFFFF",
   "PrimaryButton:pressed": {
     "location": "ore:gui/button_primary_pressed",
     "imageWidth": 16,
@@ -829,7 +836,7 @@
       "y": 2
     }
   },
-  "PrimaryButton:pressed_color": "#FFFFFFFF",
+  "PrimaryButton:font_pressed_color": "#FFFFFFFF",
   "PrimaryButton:disabled": {
     "location": "ore:gui/button_disabled",
     "imageWidth": 16,
@@ -852,7 +859,7 @@
       "bottom": 4
     }
   },
-  "PrimaryButton:disabled_color": "#801E1E1F",
+  "PrimaryButton:font_disabled_color": "#801E1E1F",
   "DestructiveButton:normal": {
     "location": "ore:gui/button_destructive_normal",
     "imageWidth": 16,
@@ -875,7 +882,7 @@
       "bottom": 4
     }
   },
-  "DestructiveButton:normal_color": "#FFFFFFFF",
+  "DestructiveButton:font_color": "#FFFFFFFF",
   "DestructiveButton:hover": {
     "location": "ore:gui/button_destructive_hover",
     "imageWidth": 16,
@@ -898,7 +905,7 @@
       "bottom": 4
     }
   },
-  "DestructiveButton:hover_color": "#FFFFFFFF",
+  "DestructiveButton:font_hover_color": "#FFFFFFFF",
   "DestructiveButton:pressed": {
     "location": "ore:gui/button_destructive_pressed",
     "imageWidth": 16,
@@ -928,7 +935,7 @@
       "y": 2
     }
   },
-  "DestructiveButton:pressed_color": "#FFFFFFFF",
+  "DestructiveButton:font_pressed_color": "#FFFFFFFF",
   "DestructiveButton:disabled": {
     "location": "ore:gui/button_disabled",
     "imageWidth": 16,
@@ -951,7 +958,7 @@
       "bottom": 4
     }
   },
-  "DestructiveButton:disabled_color": "#801E1E1F",
+  "DestructiveButton:font_disabled_color": "#801E1E1F",
   "TextButton:normal": {
     "style": "flat",
     "color": "#00000000",
@@ -962,7 +969,7 @@
       "bottom": 4
     }
   },
-  "TextButton:normal_color": "#FFFFFFFF",
+  "TextButton:font_color": "#FFFFFFFF",
   "TextButton:hover": {
     "style": "flat",
     "color": "#16FFFFFF",
@@ -973,7 +980,7 @@
       "bottom": 4
     }
   },
-  "TextButton:hover_color": "#FFFFFFFF",
+  "TextButton:font_hover_color": "#FFFFFFFF",
   "TextButton:pressed": {
     "style": "flat",
     "color": "#1A000000",
@@ -984,7 +991,7 @@
       "bottom": 4
     }
   },
-  "TextButton:pressed_color": "#FFFFFFFF",
+  "TextButton:font_pressed_color": "#FFFFFFFF",
   "TextButton:disabled": {
     "style": "flat",
     "color": "#00000000",
@@ -995,7 +1002,7 @@
       "bottom": 4
     }
   },
-  "TextButton:disabled_color": "#801E1E1F",
+  "TextButton:font_disabled_color": "#801E1E1F",
   "MenuButton:normal": {
     "style": "flat",
     "color": "#00000000",
@@ -1006,7 +1013,7 @@
       "bottom": 4
     }
   },
-  "MenuButton:normal_color": "#FFFFFFFF",
+  "MenuButton:font_color": "#FFFFFFFF",
   "MenuButton:hover": {
     "location": "ore:gui/menu_item_hover",
     "imageWidth": 1,
@@ -1029,7 +1036,7 @@
       "bottom": 4
     }
   },
-  "MenuButton:hover_color": "#FFFFFFFF",
+  "MenuButton:font_hover_color": "#FFFFFFFF",
   "MenuButton:pressed": {
     "location": "ore:gui/menu_item_pressed",
     "imageWidth": 1,
@@ -1052,7 +1059,7 @@
       "bottom": 4
     }
   },
-  "MenuButton:pressed_color": "#FFFFFFFF",
+  "MenuButton:font_pressed_color": "#FFFFFFFF",
   "MenuButton:disabled": {
     "style": "flat",
     "color": "#00000000",
@@ -1063,11 +1070,11 @@
       "bottom": 4
     }
   },
-  "MenuButton:disabled_color": "#801E1E1F",
-  "DarkButton:normal_color": "#FFFFFFFF",
-  "DarkButton:hover_color": "#FFFFFFFF",
-  "DarkButton:pressed_color": "#FFFFFFFF",
-  "DarkButton:disabled_color": "#801E1E1F",
+  "MenuButton:font_disabled_color": "#801E1E1F",
+  "DarkButton:font_color": "#FFFFFFFF",
+  "DarkButton:font_hover_color": "#FFFFFFFF",
+  "DarkButton:font_pressed_color": "#FFFFFFFF",
+  "DarkButton:font_disabled_color": "#801E1E1F",
   "Button:normal": {
     "location": "ore:gui/button_secondary_normal",
     "imageWidth": 16,
@@ -1090,7 +1097,7 @@
       "bottom": 4
     }
   },
-  "Button:normal_color": "#FF1E1E1F",
+  "Button:font_color": "#FF1E1E1F",
   "Button:hover": {
     "location": "ore:gui/button_secondary_hover",
     "imageWidth": 16,
@@ -1113,7 +1120,7 @@
       "bottom": 4
     }
   },
-  "Button:hover_color": "#FF1E1E1F",
+  "Button:font_hover_color": "#FF1E1E1F",
   "Button:pressed": {
     "location": "ore:gui/button_secondary_pressed",
     "imageWidth": 16,
@@ -1143,7 +1150,7 @@
       "y": 2
     }
   },
-  "Button:pressed_color": "#FF1E1E1F",
+  "Button:font_pressed_color": "#FF1E1E1F",
   "Button:disabled": {
     "location": "ore:gui/button_disabled",
     "imageWidth": 16,
@@ -1166,8 +1173,8 @@
       "bottom": 4
     }
   },
-  "Button:disabled_color": "#801E1E1F",
-  "Collapse:secondary_color": "#FFD0D1D4",
+  "Button:font_disabled_color": "#801E1E1F",
+  "Collapse:secondary_font_color": "#FFD0D1D4",
   "Collapse:collapsed_arrow": {
     "location": "ore:icons/arrow_down_light"
   },

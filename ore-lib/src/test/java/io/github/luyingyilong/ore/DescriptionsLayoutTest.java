@@ -65,11 +65,12 @@ public final class DescriptionsLayoutTest {
         check(name.getContentNode().getAbsoluteBounds().y() == name.getLabelNode().getAbsoluteBounds().bottom() + details.getItemGap(), "Vertical label/value order");
         check(name.getContentNode().getSize().width() == name.getSize().width(), "Vertical text uses full column width");
 
-        details.setLabelColor(OreTheme.TEXT_DARK).setContentColor(OreTheme.TEXT_SECONDARY).setFontSize(12).setTitleFontSize(16);
+        details.setThemeOverride(Descriptions.LABEL_FONT_COLOR, OreTheme.TEXT_DARK).setThemeOverride(Descriptions.CONTENT_FONT_COLOR, OreTheme.TEXT_SECONDARY)
+                .setThemeOverride(Label.FONT_SIZE, 12.0F).setThemeOverride(Descriptions.TITLE_FONT_SIZE, 16.0F);
         details.addItem("new", Component.literal("时间"), Component.literal("2026-10-17"));
-        check(details.getItem("new").getLabelNode().getFontSize() == 12 && name.getContentNode().getFontSize() == 12, "Shared fonts apply to current and future items");
-        check(name.getLabelNode().getColor() == OreTheme.TEXT_DARK && details.getItem("new").getContentNode().getColor() == OreTheme.TEXT_SECONDARY, "Ore color defaults are configurable");
-        check(details.getTitleFontSize() == 16, "Independent title font size");
+        check(details.getItem("new").getLabelNode().getThemeItem(Label.FONT_SIZE) == 12 && name.getContentNode().getThemeItem(Label.FONT_SIZE) == 12, "Shared fonts apply to current and future items");
+        check(name.getLabelNode().getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR) == OreTheme.TEXT_DARK && details.getItem("new").getContentNode().getThemeItem(io.github.luyingyilong.ore.Label.FONT_COLOR) == OreTheme.TEXT_SECONDARY, "Ore color defaults are configurable");
+        check(details.getThemeItem(Descriptions.TITLE_FONT_SIZE) == 16, "Independent title font size");
         name.setContent(Component.literal("更新后的内容"));
         check(details.getLayoutDirty() && details.getItem("name") == name, "Updating values invalidates layout without replacing stable nodes");
 
@@ -89,7 +90,7 @@ public final class DescriptionsLayoutTest {
         rejects(() -> new Descriptions().addItem(extra));
         rejects(() -> details.setColumns(0));
         rejects(() -> details.setMinimumColumnWidth(0));
-        rejects(() -> details.setFontSize(Float.NaN));
+        rejects(() -> details.setThemeOverride(Label.FONT_SIZE, Float.NaN));
         rejects(() -> details.setRowGap(-1));
 
         Box parent = new Box();
