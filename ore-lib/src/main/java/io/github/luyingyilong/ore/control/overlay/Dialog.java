@@ -16,7 +16,6 @@ import io.github.luyingyilong.ore.theme.OreTheme;
 import io.github.luyingyilong.ore.theme.ThemeDB;
 import io.github.luyingyilong.ore.theme.ThemeKey;
 
-import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.render.TextureRegion;
 import io.github.luyingyilong.ore.render.TextureSource;
@@ -69,7 +68,7 @@ public final class Dialog extends Container {
             .setIcon(TextureSource.themed(CLOSE_ICON));
     private final Box footer = new Box().setOrientation(Box.Orientation.VERTICAL).setGap(BUTTON_GAP);
     private final Padding footerInset = new Padding(Padding.Insets.all(0)).setChild(footer);
-    private final Padding bodyInset = new Padding(Padding.Insets.all(0));
+    private final Padding bodyInset = ownPart("body", new Padding(Padding.Insets.all(0)));
     private final List<Button> actions = new ArrayList<>();
     private final SignalSource0 closeRequested = new SignalSource0(this, "closeRequested");
     private Control content;
@@ -274,8 +273,6 @@ public final class Dialog extends Container {
     protected void drawContent(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
-            if (!isAlive()) return;
-            DebugBridge.backend().paint(this, context, screenX, screenY);
             if (!getVisible()) return;
             GuiGraphics graphics = context.getGraphics();
             graphics.flush();

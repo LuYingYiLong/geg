@@ -31,6 +31,7 @@ public final class Descriptions extends Container {
     private final Label title = new Label().setThemeTypeVariation("DescriptionsTitle").setWrap(Label.Wrap.CHARACTER);
     private final Map<String, DescriptionItem> items = new LinkedHashMap<>();
     private final List<Box> rows = new ArrayList<>();
+    private final ArrayDeque<Control> spareCells = new ArrayDeque<>();
     private Layout layout = Layout.HORIZONTAL;
     private int columns = 3;
     private int minimumColumnWidth = 96;
@@ -243,24 +244,34 @@ public final class Descriptions extends Container {
         try {
             for (DescriptionItem item : List.copyOf(items.values()))
                 if (item.getParent() != null) item.getParent().removeChild(item);
-            for (Box row : rows) {
-                if (row.getParent() != null) row.getParent().removeChild(row);
-                row.queueFree();
+            // Keep row identities across responsive layouts; unused cells retain pool ownership.
+            for (Box row : rows) for (Control child : row.getChildren()) {
+                row.removeChild(child);
+                if (child.isAlive()) spareCells.addLast(child);
             }
-            rows.clear();
+            int rowIndex = 0;
             for (int index = 0; index < visible.size(); index += count) {
-                Box row = new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(columnGap);
-                row.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+                if (rowIndex == rows.size()) {
+                    Box row = ownPooled(new Box().setOrientation(Box.Orientation.HORIZONTAL));
+                    row.setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+                    rows.add(row);
+                    box.addChild(row);
+                }
+                Box row = rows.get(rowIndex++);
+                row.setGap(columnGap).setVisible(true);
                 for (int column = 0; column < count; column++) {
                     if (index + column < visible.size()) {
                         row.addChild(visible.get(index + column));
                     } else {
-                        row.addChild(new Control().setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL));
+                        spareCells.removeIf(cell -> !cell.isAlive());
+                        Control cell = spareCells.isEmpty()
+                                ? ownPooled(new Control().setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL))
+                                : spareCells.removeFirst();
+                        row.addChild(cell);
                     }
                 }
-                rows.add(row);
-                box.addChild(row);
             }
+            for (int index = rowIndex; index < rows.size(); index++) rows.get(index).setVisible(false);
             // Hidden items remain owned by this descriptions tree and can be shown again later.
             for (DescriptionItem item : items.values())
                 if (!item.getVisible()) {
@@ -276,15 +287,16 @@ public final class Descriptions extends Container {
     private Size measure(Font font, int offeredWidth) {
         int width = Math.max(getMinimumWidth(), items.values().stream().anyMatch(Control::getVisible)
                 ? Math.max(columnMinimum(), offeredWidth) : offeredWidth);
-        arrange(width);
+        // Scroll may probe several widths before choosing a viewport. Measurement must not
+        // reparent items or create rendering controls for those provisional widths.
+        List<DescriptionItem> visible = items.values().stream().filter(c -> c.isAlive() && c.getVisible()).toList();
+        int count = effectiveColumns(width);
         int height = title.getVisible() ? title.measureHeight(font, width) : 0;
-        int columnWidth = Math.max(1, (width - Math.max(0, arrangedColumns - 1) * columnGap) / Math.max(1, arrangedColumns));
-        for (Box row : rows) {
+        int columnWidth = Math.max(1, (width - Math.max(0, count - 1) * columnGap) / count);
+        for (int index = 0; index < visible.size(); index += count) {
             int rowHeight = 0;
-            for (Control child : row.getChildren())
-                if (child instanceof DescriptionItem item) {
-                    rowHeight = Math.max(rowHeight, item.measureSize(font, new Size(columnWidth, Integer.MAX_VALUE)).height());
-                }
+            for (int column = index; column < Math.min(visible.size(), index + count); column++)
+                rowHeight = Math.max(rowHeight, visible.get(column).measureSize(font, new Size(columnWidth, Integer.MAX_VALUE)).height());
             if (height > 0) height += rowGap;
             height += rowHeight;
         }
@@ -314,10 +326,12 @@ public final class Descriptions extends Container {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             Size measured = measure(font, bounds.width());
+            arrange(measured.width());
             super.layout(bounds, font);
             // Boxes receive explicit measured row heights; each item still lays out its own label/value Box.
             int columnWidth = Math.max(1, (measured.width() - Math.max(0, arrangedColumns - 1) * columnGap) / Math.max(1, arrangedColumns));
             for (Box row : rows) {
+                if (!row.getVisible()) continue;
                 int height = row.getChildren().stream().filter(DescriptionItem.class::isInstance)
                         .mapToInt(child -> child.measureSize(font, new Size(columnWidth, Integer.MAX_VALUE)).height()).max().orElse(0);
                 if (row.getMinimumHeight() != height) row.setMinimum(0, height);

@@ -17,7 +17,6 @@ import io.github.luyingyilong.ore.theme.StyleBox;
 import io.github.luyingyilong.ore.theme.ThemeDB;
 import io.github.luyingyilong.ore.theme.ThemeKey;
 
-import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.render.TextureRegion;
 import io.github.luyingyilong.ore.render.TextureSource;
@@ -330,7 +329,6 @@ public final class Modal extends Container {
     protected void drawContent(DrawContext context, int screenX, int screenY) {
         if (!isAlive()) return;
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
-            DebugBridge.backend().paint(this, context, screenX, screenY);
             if (!getVisible()) return;
             GuiGraphics graphics = context.getGraphics();
             graphics.flush();
