@@ -31,6 +31,8 @@ picker.setSelectedNoSignal(4);
 
 `showTitle` 默认 `true`，左上角显示原版 `container.inventory` 翻译（中文为“物品栏”）。标题使用 Label 的主题字体与颜色，并按实际行高为下方槽位留出空间；`Inventory:title_gap` 默认 2px。通过 `setShowTitle(false)` 隐藏时同时收起标题和间距，适合已有标题或固定坐标的整张容器背景；`getShowTitle()` 查询当前设置。
 
+`getTitleControl()` 返回 Inventory 持有的同一个 Label，可通过主题覆盖设置标题颜色，或使用 Offset 微调标题位置，不影响槽位和物品数量文字。`Inventory:title_height` 默认为 0，跟随字体度量；正数指定固定标题行高，不缩放字体。Gallery 的原版箱子与高炉示例将其覆盖为 10px，并分别设置 `title_gap` 为 0／1px，在实际字体资源加载后仍保持原版背包槽位坐标。
+
 ## 注册容器 Screen
 
 服务端继续使用 Forge 的标准 MenuType、MenuProvider 和打开流程。UI 不注册物品存储，不处理配方，不决定可放入物品、取出条件、距离校验或 Shift 移动范围。

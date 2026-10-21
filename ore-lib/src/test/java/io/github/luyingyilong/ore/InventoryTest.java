@@ -46,11 +46,11 @@ public final class InventoryTest {
         Inventory inventory=new Inventory().setSource(data).setPlayerSlots(IntStream.range(0,27).boxed().toList(),IntStream.range(27,36).boxed().toList());
         Window window=new Window(true).setContent(inventory).setOverlay(new Overlay());
         window.layoutViewport(129,150,FONT);
-        Label title=(Label)inventory.getChild(0);Slot first=inventory.getSlotControl(0),hotbar=inventory.getSlotControl(27);
+        Label title=inventory.getTitleControl();Slot first=inventory.getSlotControl(0),hotbar=inventory.getSlotControl(27);
         int heading=title.lineHeight(FONT),offset=heading+inventory.getThemeItem(Inventory.TITLE_GAP);
         check(inventory.getShowTitle()&&title.getVisible(),"title is enabled by default");
         check(title.getText().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents contents&&contents.getKey().equals("container.inventory"),"title uses vanilla inventory translation");
-        check(title.getBounds().x()==0&&title.getBounds().y()==0&&title.getBounds().height()==heading,"top-left title uses measured line height");
+        check(title.getBounds().x()==0&&title.getBounds().y()==-2&&title.getBounds().height()==heading,"title is lifted three pixels and retains its measured height");
         check(first.getBounds().y()==offset&&hotbar.getBounds().y()==offset+58&&inventory.getMinimumHeight()==76+offset,"title reserves space without changing slot geometry");
         int[] activations={0};inventory.setMode(Inventory.Mode.SELECT);inventory.slotActivated().connect(inventory,i->activations[0]++);
         click(window,3,3);check(activations[0]==0,"title does not activate a slot");
@@ -63,6 +63,10 @@ public final class InventoryTest {
         inventory.setThemeOverride(io.github.luyingyilong.ore.theme.OreTheme.FONT_SIZE,16.0F);
         window.layoutViewport(129,160,FONT);
         check(title.lineHeight(FONT)>heading&&first.getBounds().y()==title.lineHeight(FONT)+7,"font theme changes reserve the new title height");
+        inventory.setThemeOverride(Inventory.TITLE_HEIGHT,10);window.layoutViewport(129,160,FONT);
+        check(title.getBounds().height()==10&&first.getBounds().y()==17&&inventory.getMinimumHeight()==93,"fixed title height preserves textured slot anchors despite font metrics");
+        inventory.removeThemeOverride(Inventory.TITLE_HEIGHT);window.layoutViewport(129,160,FONT);
+        check(first.getBounds().y()==title.lineHeight(FONT)+7,"clearing fixed height restores automatic metrics");
         inventory.setSlotIndices(List.of(0));window.layoutViewport(18,150,FONT);
         check(inventory.getMinimumWidth()==18&&title.getBounds().width()==18,"title ellipsis does not impose its full text width as a hard minimum");
         inventory.setSource(null);window.layoutViewport(128,150,FONT);

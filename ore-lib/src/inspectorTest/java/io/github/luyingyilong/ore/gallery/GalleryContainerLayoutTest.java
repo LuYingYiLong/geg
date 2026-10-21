@@ -29,6 +29,8 @@ public final class GalleryContainerLayoutTest {
             image(retained,"chestBackgroundBottom",new Rect(0,71,176,96),new Rect(0,126,176,96),"generic_54.png");
             image(retained,"furnaceBackground",new Rect(0,0,176,166),new Rect(0,0,176,166),"blast_furnace.png");
             Inventory storage=(Inventory)find(retained,"chestStorage"),chestPlayer=(Inventory)find(retained,"chestPlayer"),furnacePlayer=(Inventory)find(retained,"furnacePlayer");
+            title(chest,chestPlayer,8,71);title(furnace,furnacePlayer,8,69);
+            check(!storage.getShowTitle()&&find(retained,"chestInventoryTitle")==null&&find(retained,"furnaceInventoryTitle")==null,"no duplicate external inventory captions");
             item(chest,storage.getSlotControl(0),8,18);item(chest,storage.getSlotControl(26),152,54);
             item(chest,chestPlayer.getSlotControl(0),8,85);item(chest,chestPlayer.getSlotControl(26),152,121);
             item(chest,chestPlayer.getSlotControl(27),8,143);item(chest,chestPlayer.getSlotControl(35),152,143);
@@ -57,6 +59,14 @@ public final class GalleryContainerLayoutTest {
                 &&new Rect(image.getX(),image.getY(),image.getWidth(),image.getHeight()).equals(source),"reuse vanilla atlas region");
     }
     private static void item(Control scene,Slot slot,int x,int y){Rect a=slot.getAbsoluteBounds(),b=scene.getAbsoluteBounds();check(a.x()-b.x()+1==x&&a.y()-b.y()+1==y,"item aligns with native slot: "+slot.getDebugName());}
+    private static void title(Control scene,Inventory inventory,int x,int y){
+        Label title=inventory.getTitleControl();Rect a=title.getAbsoluteBounds(),b=scene.getAbsoluteBounds();
+        check(inventory.getShowTitle()&&title.getVisible()&&title.getParent()==inventory,"player inventory owns its visible title");
+        check(a.x()-b.x()==x&&a.y()-b.y()==y,"built-in title receives its three-pixel visual lift");
+        check(title.getThemeItem(OreTheme.FONT_COLOR)==OreTheme.TEXT_DARK,"inventory title uses dark text without recoloring item counts");
+        check(inventory.getSlotControl(0).getChild(0).getThemeItem(OreTheme.FONT_COLOR)!=OreTheme.TEXT_DARK,"item count keeps its normal text color");
+        check(scene.getChildren().stream().filter(c->c instanceof Label).count()==1,"scene owns only its container caption");
+    }
     private static Control find(Control root,String name){if(root.getDebugName().equals(name))return root;for(Control c:root.getChildren()){Control match=find(c,name);if(match!=null)return match;}return null;}
     private static void slots(Control root,List<Slot> out){if(root instanceof Slot slot)out.add(slot);for(Control c:root.getChildren())slots(c,out);}
     private static void check(boolean value,String message){if(!value)throw new AssertionError(message);}

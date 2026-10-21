@@ -61,9 +61,8 @@ final class InventorySamples {
         skin.place(image(atlas,0,126,176,96),"chestBackgroundBottom",0,71,176,96);
         Inventory storage=transparent(new Inventory().setSource(source(skin,27)));
         skin.place(storage,"chestStorage",7,17,162,54);
-        skin.place(player(skin),"chestPlayer",7,84,162,76);
+        skin.place(player(skin,0),"chestPlayer",7,74,162,86);
         skin.place(caption("container.chest",false),"chestTitle",8,6,160,10);
-        skin.place(caption("container.inventory",false),"chestInventoryTitle",8,74,160,10);
         return skin;
     }
 
@@ -76,23 +75,26 @@ final class InventorySamples {
         skin.place(transparent(new Slot().setBinding(items.getBinding(1))),"furnaceFuel",55,52,18,18);
         // Vanilla draws the output item at (116,35); an 18px transparent slot starts 1px earlier.
         skin.place(transparent(new Slot().setBinding(items.getBinding(2))),"furnaceOutput",115,34,18,18);
-        skin.place(player(skin),"furnacePlayer",7,83,162,76);
+        skin.place(player(skin,1),"furnacePlayer",7,72,162,87);
         TextureProgressBar flame=new TextureProgressBar().setProgressTexture(region(atlas,176,0,14,14))
                 .setFillMode(TextureProgressBar.FillMode.BOTTOM_TO_TOP).setValueNoSignal(80);
         TextureProgressBar arrow=new TextureProgressBar().setProgressTexture(region(atlas,176,14,24,16)).setValueNoSignal(45);
         skin.place(flame,"furnaceFlame",56,36,14,14);
         skin.place(arrow,"furnaceArrow",79,34,24,16);
         skin.place(caption("container.blast_furnace",true),"furnaceTitle",8,6,160,10);
-        skin.place(caption("container.inventory",false),"furnaceInventoryTitle",8,72,160,10);
         return skin;
     }
 
-    private static Inventory player(Control owner){
-        return transparent(new Inventory().setSource(source(owner,36)).setPlayerSlots(
-                IntStream.range(0,27).boxed().toList(),IntStream.range(27,36).boxed().toList()));
+    private static Inventory player(Control owner,int titleGap){
+        Inventory inventory=transparent(new Inventory().setSource(source(owner,36)).setPlayerSlots(
+                IntStream.range(0,27).boxed().toList(),IntStream.range(27,36).boxed().toList())).setShowTitle(true);
+        inventory.setThemeOverride(Inventory.TITLE_GAP,titleGap).setThemeOverride(Inventory.TITLE_HEIGHT,10);
+        // Vanilla's text starts one pixel to the right of the 18px slot frames.
+        inventory.getTitleControl().setOffset(1,0).setThemeOverride(OreTheme.FONT_COLOR,OreTheme.TEXT_DARK);
+        return inventory;
     }
     private static Inventory transparent(Inventory inventory){
-        // These fixed vanilla backgrounds already have their own positioned captions.
+        // Storage grids have no inventory caption; player() enables their built-in title.
         inventory.setShowTitle(false);
         inventory.setThemeOverride(Inventory.GAP,0).setThemeOverride(Inventory.SECTION_GAP,4);
         for(Control child:inventory.getChildren())if(child instanceof Slot slot)transparent(slot);
