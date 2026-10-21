@@ -17,7 +17,6 @@ public final class WindowContext {
     private final WindowPopups popups = new WindowPopups(this);
     private final boolean nativeWindow;
     private final Set<Integer> keys = new HashSet<>(), buttons = new HashSet<>();
-    private io.github.luyingyilong.ore.control.display.Label textPainter;
     private Window owner;
     private ModularGuiContext mui;
     private long handle;
@@ -78,18 +77,6 @@ public final class WindowContext {
     public void setOrigin(int x, int y) {
         originX = x;
         originY = y;
-    }
-
-    /**
-     * One bounded compatibility painter per host, released with the owning Window's lifetime.
-     */
-    public io.github.luyingyilong.ore.control.display.Label getTextPainter() {
-        if (textPainter == null) {
-            if (owner != null && owner.isDisposed()) throw new IllegalStateException("Window has been disposed");
-            textPainter = new io.github.luyingyilong.ore.control.display.Label();
-            if (owner != null) owner.ownPart("textPainter", textPainter);
-        }
-        return textPainter;
     }
 
     public Scope enter() {

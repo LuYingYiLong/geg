@@ -58,11 +58,12 @@ public final class PainterReuseTest {
         check(rowLabels.stream().allMatch(Control::isDisposed), "Table disposes retained text cells");
 
         Window first = Window.embedded(), second = Window.embedded();
-        Label firstPainter = first.getContext().getTextPainter();
-        check(firstPainter == first.getContext().getTextPainter() && firstPainter != second.getContext().getTextPainter(), "Compatibility painters are reused and isolated per Window");
+        Label firstPainter = first.ownPart("caption", new Label());
+        Label secondPainter = second.ownPart("caption", new Label());
+        check(firstPainter == first.getOwnedParts().get("caption") && firstPainter != secondPainter, "Retained Labels are isolated per Window");
         first.queueFree();
         io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
-        check(firstPainter.isDisposed(), "Compatibility painter ends with its Window");
+        check(firstPainter.isDisposed() && secondPainter.isAlive(), "Retained Label ends only with its owning Window");
         second.queueFree(); reference.queueFree(); marker0.queueFree(); marker1.queueFree(); marker2.queueFree();
         io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
         System.out.println("ORE_PAINTER_REUSE_PASS");

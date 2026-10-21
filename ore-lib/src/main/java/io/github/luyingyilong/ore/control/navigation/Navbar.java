@@ -7,7 +7,6 @@ import io.github.luyingyilong.ore.control.base.Size;
 import io.github.luyingyilong.ore.control.base.SizeFlags;
 import io.github.luyingyilong.ore.control.display.Label;
 import io.github.luyingyilong.ore.control.input.Button;
-import io.github.luyingyilong.ore.control.layout.Panel;
 import io.github.luyingyilong.ore.theme.IconTheme;
 import io.github.luyingyilong.ore.theme.OreTheme;
 import io.github.luyingyilong.ore.theme.ThemeDB;
@@ -42,7 +41,6 @@ public final class Navbar extends Container {
             .setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER);
     private final Button back = new Button().setThemeTypeVariation("TextButton").setIcon(TextureSource.themed(BACK_ICON));
     private final List<Control> extra = new ArrayList<>();
-    private Panel background;
     private Runnable backAction = OreScreen::back;
     public Navbar(Component title) {
         this.title.setText(title);
@@ -228,9 +226,8 @@ public final class Navbar extends Container {
 
     @Override
     protected void render(DrawContext context, int screenX, int screenY) {
-        if (background == null) background = ownPart("background", new Panel(OreTheme.HEADER_PANEL));
         Rect area = getScreenBounds(screenX, screenY);
-        background.drawAt(context, new Rect(area.x(), area.y(), area.width(), Math.max(0, area.height() - getThemeItem(PADDING_BOTTOM))));
+        getThemeItem(OreTheme.HEADER_PANEL).draw(context, new Rect(area.x(), area.y(), area.width(), Math.max(0, area.height() - getThemeItem(PADDING_BOTTOM))));
     }
 
     private ThemeInsets contentInsets() {

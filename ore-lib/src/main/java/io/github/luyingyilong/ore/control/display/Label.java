@@ -77,24 +77,6 @@ public final class Label extends Control {
         return (int)Math.ceil(layout.getHeight());
     }
 
-    public static void draw(Control owner, DrawContext context, Component text, Rect area, int color,
-                            Overflow overflow, Horizontal horizontal, Vertical vertical) {
-        Label painter = immediate(context, text);
-        painter.setThemeParent(owner);
-        painter.setThemeOverride(FONT_COLOR, color);
-        painter.setOverflow(overflow).setAlignment(horizontal, vertical)
-                .paint(context.getGraphics(), context.getFont(), area, context.getAbsMouseX(), context.getAbsMouseY(), owner);
-    }
-
-    /**
-     * Compatibility painters borrow one window-owned scratch label; retained UI should own its Labels.
-     */
-    static Label immediate(DrawContext context, Component text) {
-        return context.getWindowContext().getTextPainter().setText(text)
-                .setHero(false).setScale(1.0F).setWrap(Wrap.NONE).setMaxLines(Integer.MAX_VALUE)
-                .setShadow(false).setOpticalCenter(false);
-    }
-
     @Inspectable(group = "Text")
     public boolean getHero() {
         boolean hero = DebugBridge.value(this, "hero", getThemeItem(OreTheme.HERO));
@@ -419,18 +401,10 @@ public final class Label extends Control {
 
     @Override
     protected void render(DrawContext context, int screenX, int screenY) {
-        drawAt(context, getScreenBounds(screenX, screenY));
-    }
-
-    private void drawAt(DrawContext context, Rect area) {
-        paint(context.getGraphics(), context.getFont(), area, context.getAbsMouseX(), context.getAbsMouseY());
+        paint(context.getGraphics(), context.getFont(), getScreenBounds(screenX, screenY), context.getAbsMouseX(), context.getAbsMouseY());
     }
 
     private void paint(GuiGraphics graphics, Font font, Rect area, int mouseX, int mouseY) {
-        paint(graphics, font, area, mouseX, mouseY, this);
-    }
-
-    private void paint(GuiGraphics graphics, Font font, Rect area, int mouseX, int mouseY, Control debugOwner) {
         Overflow overflow = DebugBridge.value(this, "overflow", this.overflow);
         Horizontal horizontal = DebugBridge.value(this, "horizontal", this.horizontal);
         int color = getThemeItem(FONT_COLOR);
@@ -454,9 +428,9 @@ public final class Label extends Control {
                 };
                 if (overflow == Overflow.MARQUEE && line.width() > area.width()) lineX = area.x() - scrollOffset;
                 float top = startY + index * layout.getMetrics().lineHeight();
-                if (DebugBridge.active() && debugOwner != null) {
+                if (DebugBridge.active()) {
                     var m = layout.getMetrics();
-                    DebugBridge.backend().text(debugOwner, graphics, area, lineX, top, line.width(), m.lineHeight(),
+                    DebugBridge.backend().text(this, graphics, area, lineX, top, line.width(), m.lineHeight(),
                             top, top + m.ascent(), top + m.ascent() + m.opticalTop(), top + m.ascent() + m.opticalBottom(),
                             8 * textScale(), layout.getDiagnostics(), scrollOffset);
                 }

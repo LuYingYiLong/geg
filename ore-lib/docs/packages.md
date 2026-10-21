@@ -31,6 +31,8 @@ Window 与 FocusManager 同包。Window 通过 Control 的三个 `protected fina
 
 跨职责组合使用明确的绘制／样式入口：Divider 的主题键构造器、Tag.Type.getTextColor()，以及 DrawContext 和 Control.draw() 的统一绘制管线。Toast 的全局宿主同样使用这条管线，不公开 Label 的原始绘制旁路，也不公开编辑器、几何算法或树实现类。
 
+文字由各自所属行／控件持有的 Label 绘制，不再提供静态 Label.draw 或窗口共享文字画笔。Panel 只通过 Control.draw 绘制自身和子节点；Navbar、Drawer、Table 行和 Divider 等纯装饰背景直接解析所属控件的 StyleBox，在正常 render 阶段绘制，不创建背景画笔控件。
+
 ## 测试与接入
 
 白盒测试随所观察的实现迁移。跨控件夹具放在测试源码中，包括同包的 ButtonTestAccess、OverlayTestAccess、LabelTestAccess、WindowTestAccess，以及 `support` 中的事件、注册表、字体和主题资源夹具；这些类型不进入生产输出。

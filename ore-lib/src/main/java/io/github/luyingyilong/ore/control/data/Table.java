@@ -5,7 +5,6 @@ import io.github.luyingyilong.ore.control.base.Control;
 import io.github.luyingyilong.ore.control.base.Rect;
 import io.github.luyingyilong.ore.control.display.Label;
 import io.github.luyingyilong.ore.control.layout.Padding;
-import io.github.luyingyilong.ore.control.layout.Panel;
 import io.github.luyingyilong.ore.window.FocusManager;
 import io.github.luyingyilong.ore.window.Window;
 
@@ -65,7 +64,6 @@ public final class Table<T> extends Container {
     private final ArrayDeque<RowView> recycledViews = new ArrayDeque<>();
     private final SignalSource<T> rowActivated = new SignalSource<>(this, "rowActivated", "T");
     private final ReleaseGesture<PressTarget> gesture = new ReleaseGesture<>();
-    private Panel rowBackground;
     private List<T> rows = List.of();
     private Function<T, Object> rowKey;
     private Component empty = Component.empty();
@@ -592,7 +590,6 @@ public final class Table<T> extends Container {
         try (var lifecyclePhase = io.github.luyingyilong.ore.signal.DispatchGuard.enter()) {
             DebugBridge.backend().paint(this, context, screenX, screenY);
             if (getBounds().width() <= 0 || getBounds().height() <= 0) return;
-            if (rowBackground == null) rowBackground = ownPart("rowBackground", new Panel(OreTheme.BAR));
             updateVisible(context.getFont());
             Rect area = getScreenBounds(screenX, screenY);
             if (headerVisible && !compact) drawHeader(context, area);
@@ -1091,7 +1088,7 @@ public final class Table<T> extends Container {
         @Override
         protected void render(DrawContext context, int screenX, int screenY) {
             Rect area = getScreenBounds(screenX, screenY);
-            rowBackground.drawAt(context, area);
+            Table.this.getThemeItem(OreTheme.BAR).draw(context, area);
             if (compact) drawCompactRow(context, row.item(), area, this);
             else drawRegularRow(context, row.item(), area);
         }

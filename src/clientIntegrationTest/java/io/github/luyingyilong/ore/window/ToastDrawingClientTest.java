@@ -8,6 +8,7 @@ import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
 import io.github.luyingyilong.ore.control.base.Offset;
 import io.github.luyingyilong.ore.control.base.Rect;
 import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.layout.Panel;
 import io.github.luyingyilong.ore.control.overlay.Toast;
 import io.github.luyingyilong.ore.control.overlay.toast.OreToasts;
 import io.github.luyingyilong.ore.debug.DebugBridge;
@@ -113,6 +114,7 @@ public final class ToastDrawingClientTest {
                     catch (RuntimeException failure) { check(failure == sentinel, "Drawing preserves the original failure"); }
                     check(pose.equals(graphics.pose().last().pose()) && !DispatchGuard.active(), "Failed child drawing restores transforms and guards");
                     verifyGlobalAdapter(graphics, window);
+                    verifyPanelTree(context, graphics, target, mc);
 
                     painted.clear();
                     DebugBridge.install(new DebugBridge.Backend() {
@@ -174,6 +176,45 @@ public final class ToastDrawingClientTest {
         check(context != null, "Global adapter provided a DrawContext");
         try { context.getFont(); throw new AssertionError("Global DrawContext escaped its frame"); }
         catch (IllegalStateException expected) { }
+    }
+
+    private static void verifyPanelTree(DrawContext context, GuiGraphics graphics, TextureTarget target, Minecraft mc) {
+        Label text = new Label(Component.literal("Panel"));
+        text.setThemeOverride(Label.FONT_COLOR, 0xFFFFFFFF);
+        text.setThemeOverride(OreTheme.TEXT_SHADOW, false);
+        Panel panel = new Panel().setChild(text);
+        panel.setThemeOverride(OreTheme.PANEL, new io.github.luyingyilong.ore.theme.StyleBoxFlat(0xFF336699,
+                io.github.luyingyilong.ore.theme.ThemeInsets.ZERO, 0,
+                io.github.luyingyilong.ore.theme.ThemeInsets.ZERO, io.github.luyingyilong.ore.theme.ThemeInsets.ZERO));
+        panel.layout(new Rect(10, 10, 70, 24), mc.font);
+        panel.setRenderTransform(new Transform2D(5, 3, 0, 1, .5, .5));
+        text.setRenderTransform(new Transform2D(2, 1, 0, 1, .5, .5));
+        List<Control> paints = new ArrayList<>();
+        DebugBridge.install(new DebugBridge.Backend() {
+            @Override public void paint(Control node, DrawContext frame, int x, int y) {
+                paints.add(node);
+                if (node == text) check(frame.toScreenRect(text.getScreenBounds(x, y)).equals(text.getAbsoluteBounds().translated(7, 4)),
+                        "Retained Panel and Label transforms compose once");
+            }
+        });
+        try {
+            target.clear(Minecraft.ON_OSX); target.bindWrite(true);
+            panel.draw(context, 0, 0); graphics.flush();
+            check(paints.equals(List.of(panel, text)), "Real Panel and Label each draw once");
+            near(pixel(15, 35), 51, 102, 153, "Panel face follows its transform");
+            boolean ink = false;
+            for (int y = 14; y < 30; y++) for (int x = 17; x < 60; x++) {
+                int[] color = pixel(x, y); ink |= color[0] > 180 && color[1] > 180 && color[2] > 180;
+            }
+            check(ink, "The retained Label paints real text through the Panel tree");
+            paints.clear(); panel.setVisible(false);
+            target.clear(Minecraft.ON_OSX); target.bindWrite(true);
+            panel.draw(context, 0, 0); graphics.flush();
+            check(paints.isEmpty() && pixel(20, 20)[3] == 0, "Hidden Panel emits neither its face nor text");
+            panel.setVisible(true); panel.queueFree();
+            panel.draw(context, 0, 0); text.draw(context, 0, 0); graphics.flush();
+            check(paints.isEmpty() && pixel(20, 20)[3] == 0, "Pending Panel and Label emit no pixels");
+        } finally { panel.queueFree(); }
     }
 
     private static int[] pixel(int x, int y) {

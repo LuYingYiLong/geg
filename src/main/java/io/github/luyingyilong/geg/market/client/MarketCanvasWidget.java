@@ -29,7 +29,6 @@ import io.github.luyingyilong.ore.control.base.Control;
 import io.github.luyingyilong.ore.control.layout.Grid;
 import io.github.luyingyilong.ore.control.overlay.Overlay;
 import io.github.luyingyilong.ore.control.layout.Padding;
-import io.github.luyingyilong.ore.control.layout.Panel;
 import io.github.luyingyilong.ore.control.base.Rect;
 import io.github.luyingyilong.ore.control.layout.Scroll;
 import io.github.luyingyilong.ore.control.base.Size;
@@ -465,42 +464,68 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
         return result;
     }
 
-    private void drawText(io.github.luyingyilong.ore.control.base.Control owner, DrawContext context, Component text, int x, int y, int width, int height, io.github.luyingyilong.ore.theme.ThemeKey<Integer> color) {
-        Label.draw(owner, context, text, new Rect(x, y, Math.max(0, width), Math.max(0, height)),
-                owner.getThemeItem(color), Label.Overflow.CLIP, Label.Horizontal.LEFT, Label.Vertical.TOP);
-    }
-
     private Table<MarketDetail> createOfferTable() {
         Table<MarketDetail> table = new Table<>();
         Signals.configure(table.setRowKey(offer -> offer.id()), connected -> connected.rowActivated().connect(connected, offer -> selectedDetailId = offer.id()));
         table.addColumn(new Table.Column<>("status", Component.translatable("market.geg.status"),
-                110, 110, 1, width -> 20, new Table.Cell<>() {
-            @Override
-            public void draw(DrawContext context, MarketDetail offer, Rect area) {
-                int top = area.y() + (area.height() >= 23 ? 3 : 0);
-                Component status = Component.translatable(offer.buyOrder()
-                                ? "market.geg.buying" : "market.geg.selling")
-                        .copy().append(Component.literal(" x" + offer.quantity()));
-                drawText(table, context, status, area.x() + 4, top, area.width() - 8, 10,
-                        offer.buyOrder() ? OreTheme.TEXT_ACCENT_KEY : OreTheme.TEXT_WHITE_KEY);
-                drawText(table, context, Component.literal(offer.ownerName()), area.x() + 4, top + 10,
-                        area.width() - 8, 10, OreTheme.TEXT_SECONDARY_KEY);
-            }
-        }));
+                110, 110, 1, width -> 20, new Table.ControlCell<>(OfferStatusCell::new, OfferStatusCell::bind)));
         table.addColumn(new Table.Column<>("price", Component.translatable("market.geg.unit_price"),
-                96, 96, 0, width -> 10, new Table.Cell<>() {
-            @Override
-            public void draw(DrawContext context, MarketDetail offer, Rect area) {
-                drawText(table, context, Component.literal(MoneyCurrency.COIN.format(offer.unitPrice())),
-                        area.x() + 4, area.y() + Math.max(0, (area.height() - 10) / 2),
-                        area.width() - 8, 10, OreTheme.TEXT_WHITE_KEY);
-            }
-        }));
+                96, 96, 0, width -> 10, new Table.ControlCell<>(OfferPriceCell::new, OfferPriceCell::bind)));
         table.addColumn(new Table.Column<>("action", Component.translatable("market.geg.operation"),
                 104, 104, 0, width -> width >= 104 ? Button.Size.SMALL.getHeight()
                         : Button.Size.SMALL.getHeight() * 2 + 2, new Table.ControlCell<>(OfferActions::new, OfferActions::bind)));
 
         return table;
+    }
+
+    static final class OfferStatusCell extends Container {
+        private final Label status = offerLabel();
+        private final Label ownerName = offerLabel();
+        private boolean buyOrder;
+
+        private static Label offerLabel() {
+            return new Label().setHero(false).setShadow(false).setOverflow(Label.Overflow.CLIP)
+                    .setAlignment(Label.Horizontal.LEFT, Label.Vertical.TOP);
+        }
+
+        OfferStatusCell() {
+            addChild(status);
+            addChild(ownerName);
+        }
+
+        void bind(MarketDetail offer) {
+            buyOrder = offer.buyOrder();
+            status.setText(Component.translatable(buyOrder ? "market.geg.buying" : "market.geg.selling")
+                    .append(Component.literal(" x" + offer.quantity())));
+            ownerName.setText(Component.literal(offer.ownerName()));
+        }
+
+        @Override public void layout(Rect bounds, Font font) {
+            if (!isAlive()) return;
+            super.layout(bounds, font);
+            status.setThemeOverride(Label.FONT_COLOR, getThemeItem(buyOrder ? OreTheme.TEXT_ACCENT_KEY : OreTheme.TEXT_WHITE_KEY));
+            ownerName.setThemeOverride(Label.FONT_COLOR, getThemeItem(OreTheme.TEXT_SECONDARY_KEY));
+            int top = bounds.height() >= 23 ? 3 : 0;
+            fitChild(status, new Rect(4, top, Math.max(0, bounds.width() - 8), 10), font);
+            fitChild(ownerName, new Rect(4, top + 10, Math.max(0, bounds.width() - 8), 10), font);
+        }
+    }
+
+    static final class OfferPriceCell extends Container {
+        private final Label price = OfferStatusCell.offerLabel();
+
+        OfferPriceCell() { addChild(price); }
+
+        void bind(MarketDetail offer) {
+            price.setText(Component.literal(MoneyCurrency.COIN.format(offer.unitPrice())));
+        }
+
+        @Override public void layout(Rect bounds, Font font) {
+            if (!isAlive()) return;
+            super.layout(bounds, font);
+            price.setThemeOverride(Label.FONT_COLOR, getThemeItem(OreTheme.TEXT_WHITE_KEY));
+            fitChild(price, new Rect(4, Math.max(0, (bounds.height() - 10) / 2), Math.max(0, bounds.width() - 8), 10), font);
+        }
     }
 
     private void toggleOfferFavorite(MarketDetail offer) {
@@ -1051,7 +1076,6 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
     }
 
     private final class CardView extends Container implements Grid.View<Card> {
-        private final Panel background = new Panel(null);
         private final Label name = scrollingCardLabel("");
         private final Label count = scrollingCardLabel("LabelSecondary");
         private final Label price = scrollingCardLabel("LabelAccent");
@@ -1112,7 +1136,7 @@ final class MarketCanvasWidget extends Widget<MarketCanvasWidget> implements Int
 
         @Override protected void render(DrawContext context, int screenX, int screenY) {
             Rect area = getScreenBounds(screenX, screenY);
-            background.drawAt(context, area);
+            getThemeItem(OreTheme.PANEL).draw(context, area);
             boolean ended = card.kind == Kind.FAVORITE && card.favorite != null && card.favorite.ended();
             if (ended) context.getGraphics().fill(area.x(), area.y(), area.right(), area.bottom(), 0xA032383D);
             else if (area.contains(context.getAbsMouseX(), context.getAbsMouseY()))

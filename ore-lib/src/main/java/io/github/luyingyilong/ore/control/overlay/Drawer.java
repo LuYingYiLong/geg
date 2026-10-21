@@ -8,7 +8,6 @@ import io.github.luyingyilong.ore.control.display.Label;
 import io.github.luyingyilong.ore.control.input.Button;
 import io.github.luyingyilong.ore.control.layout.Box;
 import io.github.luyingyilong.ore.control.layout.Padding;
-import io.github.luyingyilong.ore.control.layout.Panel;
 import io.github.luyingyilong.ore.control.layout.Scroll;
 import io.github.luyingyilong.ore.render.TextureRegion;
 import io.github.luyingyilong.ore.render.TextureSource;
@@ -85,7 +84,6 @@ public final class Drawer extends Container {
     private final Box column = new Box().setGap(4);
     private final Padding frame = new Padding(Padding.Insets.all(0)).setChild(column);
     private final SignalSource0 closed = new SignalSource0(this, "closed");
-    private Panel background;
     private Rect panelBounds=new Rect(0,0,0,0);
     private int requestedWidth;
     private Placement placement = Placement.RIGHT;
@@ -375,9 +373,7 @@ public final class Drawer extends Container {
             DebugBridge.backend().clip(context.toScreenRect(viewport));
             try {
                 graphics.fill(viewport.x(), viewport.y(), viewport.right(), viewport.bottom(), maskColor());
-                if (background == null) background = ownPart("background", new Panel(OreTheme.FLOATING_BACKGROUND));
-
-                background.drawAt(context,getPanelBounds().translated(screenX,screenY));
+                getThemeItem(OreTheme.FLOATING_BACKGROUND).draw(context,getPanelBounds().translated(screenX,screenY));
                 frame.draw(context, screenX, screenY);
                 graphics.flush();
             } finally {

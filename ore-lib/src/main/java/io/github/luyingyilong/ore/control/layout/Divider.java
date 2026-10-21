@@ -10,21 +10,14 @@ import io.github.luyingyilong.ore.theme.OreTheme;
  */
 public final class Divider extends Control {
     private final io.github.luyingyilong.ore.theme.ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> horizontalTheme;
-    private final boolean defaultTheme;
-    private Panel horizontalPainter, verticalPainter;
     private Layout layout = Layout.HORIZONTAL;
 
     public Divider() {
-        this(null, true);
+        this(OreTheme.H_DIVIDER);
     }
 
     public Divider(io.github.luyingyilong.ore.theme.ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> theme) {
-        this(theme, false);
-    }
-
-    private Divider(io.github.luyingyilong.ore.theme.ThemeKey<io.github.luyingyilong.ore.theme.StyleBox> theme, boolean defaultTheme) {
-        this.horizontalTheme = theme;
-        this.defaultTheme = defaultTheme;
+        this.horizontalTheme = theme == null ? OreTheme.PANEL : theme;
         setMinimum(0, 2);
         setSizeFlagsHorizontal(SizeFlags.SIZE_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
     }
@@ -60,15 +53,12 @@ public final class Divider extends Control {
     protected void render(DrawContext context, int screenX, int screenY) {
         var area = getScreenBounds(screenX, screenY);
         if (layout == Layout.VERTICAL) {
-            if (verticalPainter == null) verticalPainter = ownPart("verticalPainter", new Panel(OreTheme.V_DIVIDER));
             int width = Math.min(1, area.width());
-            verticalPainter.drawAt(context, new io.github.luyingyilong.ore.control.base.Rect(
+            getThemeItem(OreTheme.V_DIVIDER).draw(context, new io.github.luyingyilong.ore.control.base.Rect(
                     area.x() + (area.width() - width) / 2, area.y(), width, area.height()));
         } else {
-            if (horizontalPainter == null)
-                horizontalPainter = ownPart("horizontalPainter", new Panel(defaultTheme ? OreTheme.H_DIVIDER : horizontalTheme));
             int height = Math.min(2, area.height());
-            horizontalPainter.drawAt(context, new io.github.luyingyilong.ore.control.base.Rect(
+            getThemeItem(horizontalTheme).draw(context, new io.github.luyingyilong.ore.control.base.Rect(
                     area.x(), area.y() + (area.height() - height) / 2, area.width(), height));
         }
     }

@@ -5,7 +5,6 @@ import io.github.luyingyilong.ore.control.base.Control;
 import io.github.luyingyilong.ore.control.base.Rect;
 import io.github.luyingyilong.ore.control.input.Button;
 import io.github.luyingyilong.ore.control.input.Dropdown;
-import io.github.luyingyilong.ore.control.layout.Panel;
 import io.github.luyingyilong.ore.control.layout.Scroll;
 import io.github.luyingyilong.ore.control.overlay.Dialog;
 import io.github.luyingyilong.ore.control.overlay.Drawer;
@@ -75,10 +74,8 @@ public final class WindowPopups {
         private final Dropdown<?> trigger;
         private final List<? extends Dropdown.Option<?>> options;
         private final Container panel=new Container() {
-            private Panel background;
             @Override protected void render(DrawContext mui,int x,int y) {
-                if (background == null) background = ownPart("background", new Panel(OreTheme.DROPDOWN_PANEL));
-                background.drawAt(mui,getScreenBounds(x,y));
+                getThemeItem(OreTheme.DROPDOWN_PANEL).draw(mui,getScreenBounds(x,y));
             }
 
         };
