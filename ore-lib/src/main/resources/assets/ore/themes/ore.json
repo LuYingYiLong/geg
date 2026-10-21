@@ -1317,6 +1317,7 @@
   "Scroll:track_inset": 2,
   "Inventory:gap": 0,
   "Inventory:section_gap": 4,
+  "Inventory:title_gap": 2,
   "ProgressBar:background": {
     "style": "flat",
     "color": "#1e1e1f"

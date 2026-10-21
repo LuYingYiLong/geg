@@ -29,6 +29,8 @@ picker.setSelectedNoSignal(4);
 
 默认 9 列，空槽仍占位置。Inventory 不带滚动；放入 `Scroll` 后，窄视口保留槽位原尺寸，支持双轴滚动。`Inventory:gap` 默认 0，`Inventory:section_gap` 默认 4，均通过主题覆盖设置。
 
+`showTitle` 默认 `true`，左上角显示原版 `container.inventory` 翻译（中文为“物品栏”）。标题使用 Label 的主题字体与颜色，并按实际行高为下方槽位留出空间；`Inventory:title_gap` 默认 2px。通过 `setShowTitle(false)` 隐藏时同时收起标题和间距，适合已有标题或固定坐标的整张容器背景；`getShowTitle()` 查询当前设置。
+
 ## 注册容器 Screen
 
 服务端继续使用 Forge 的标准 MenuType、MenuProvider 和打开流程。UI 不注册物品存储，不处理配方，不决定可放入物品、取出条件、距离校验或 Shift 移动范围。
@@ -46,7 +48,7 @@ public final class MyChestScreen extends OreMenuScreen<MyChestMenu> {
 
     @Override
     protected Control createContent(MenuSession session) {
-        Inventory chest = new Inventory().setSource(session.getSource())
+        Inventory chest = new Inventory().setShowTitle(false).setSource(session.getSource())
                 .setSlotIndices(IntStream.range(0, 27).boxed().toList())
                 .setMode(Inventory.Mode.CONTAINER);
         Inventory player = new Inventory().setSource(session.getSource())

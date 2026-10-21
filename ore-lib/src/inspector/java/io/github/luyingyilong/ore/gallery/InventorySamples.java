@@ -3,7 +3,13 @@ package io.github.luyingyilong.ore.gallery;
 import io.github.luyingyilong.ore.*;
 import io.github.luyingyilong.ore.inventory.MemoryInventorySource;
 import io.github.luyingyilong.ore.layout.*;
+import io.github.luyingyilong.ore.render.TextureRegion;
+import io.github.luyingyilong.ore.render.TextureSource;
+import io.github.luyingyilong.ore.theme.OreTheme;
+import io.github.luyingyilong.ore.theme.StyleBoxEmpty;
+import io.github.luyingyilong.ore.theme.ThemeInsets;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import java.util.stream.IntStream;
 
@@ -42,30 +48,85 @@ final class InventorySamples {
     static Control containers(){
         Box root=new Box().setGap(8);
         root.addChild(text("container_demo"));
-        Box chest=new Box().setGap(4);
-        chest.addChild(text("chest_title"));
-        chest.addChild(new Inventory().setSource(source(root,27)));
-        chest.addChild(new Divider());
-        chest.addChild(new Inventory().setSource(source(root,36)).setPlayerSlots(
-                IntStream.range(0,27).boxed().toList(),IntStream.range(27,36).boxed().toList()));
-        root.addChild(new Scroll().setContent(new Panel().setChild(chest)));
-
-        Box furnace=new Box().setGap(4);
-        furnace.addChild(text("furnace_title"));
-        var items=source(root,3);
-        Box machine=new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(8);
-        Box inputs=new Box().setGap(4);
-        inputs.addChild(new Slot().setBinding(items.getBinding(0)));
-        TextureProgressBar burning=TextureProgressSamples.flame(80);
-        inputs.addChild(burning);
-        inputs.addChild(new Slot().setBinding(items.getBinding(1)));
-        machine.addChild(inputs);
-        machine.addChild(TextureProgressSamples.arrow(45));
-        machine.addChild(new Slot().setBinding(items.getBinding(2)));
-        furnace.addChild(machine);
-        furnace.addChild(new Inventory().setSource(source(root,36)).setPlayerSlots(
-                IntStream.range(0,27).boxed().toList(),IntStream.range(27,36).boxed().toList()));
-        root.addChild(new Scroll().setContent(new Panel().setChild(furnace)));
+        root.addChild(chest());
+        root.addChild(furnace());
         return root;
+    }
+
+    /** Vanilla's three-row chest reuses two regions of the six-row atlas. */
+    private static Control chest(){
+        Preview skin=new Preview("Gallery vanilla chest",168);
+        ResourceLocation atlas=ResourceLocation.fromNamespaceAndPath("minecraft","textures/gui/container/generic_54.png");
+        skin.place(image(atlas,0,0,176,71),"chestBackgroundTop",0,0,176,71);
+        skin.place(image(atlas,0,126,176,96),"chestBackgroundBottom",0,71,176,96);
+        Inventory storage=transparent(new Inventory().setSource(source(skin,27)));
+        skin.place(storage,"chestStorage",7,17,162,54);
+        skin.place(player(skin),"chestPlayer",7,84,162,76);
+        skin.place(caption("container.chest",false),"chestTitle",8,6,160,10);
+        skin.place(caption("container.inventory",false),"chestInventoryTitle",8,74,160,10);
+        return skin;
+    }
+
+    private static Control furnace(){
+        Preview skin=new Preview("Gallery vanilla blast furnace",166);
+        ResourceLocation atlas=ResourceLocation.fromNamespaceAndPath("minecraft","textures/gui/container/blast_furnace.png");
+        skin.place(image(atlas,0,0,176,166),"furnaceBackground",0,0,176,166);
+        var items=source(skin,3);
+        skin.place(transparent(new Slot().setBinding(items.getBinding(0))),"furnaceInput",55,16,18,18);
+        skin.place(transparent(new Slot().setBinding(items.getBinding(1))),"furnaceFuel",55,52,18,18);
+        // Vanilla draws the output item at (116,35); an 18px transparent slot starts 1px earlier.
+        skin.place(transparent(new Slot().setBinding(items.getBinding(2))),"furnaceOutput",115,34,18,18);
+        skin.place(player(skin),"furnacePlayer",7,83,162,76);
+        TextureProgressBar flame=new TextureProgressBar().setProgressTexture(region(atlas,176,0,14,14))
+                .setFillMode(TextureProgressBar.FillMode.BOTTOM_TO_TOP).setValueNoSignal(80);
+        TextureProgressBar arrow=new TextureProgressBar().setProgressTexture(region(atlas,176,14,24,16)).setValueNoSignal(45);
+        skin.place(flame,"furnaceFlame",56,36,14,14);
+        skin.place(arrow,"furnaceArrow",79,34,24,16);
+        skin.place(caption("container.blast_furnace",true),"furnaceTitle",8,6,160,10);
+        skin.place(caption("container.inventory",false),"furnaceInventoryTitle",8,72,160,10);
+        return skin;
+    }
+
+    private static Inventory player(Control owner){
+        return transparent(new Inventory().setSource(source(owner,36)).setPlayerSlots(
+                IntStream.range(0,27).boxed().toList(),IntStream.range(27,36).boxed().toList()));
+    }
+    private static Inventory transparent(Inventory inventory){
+        // These fixed vanilla backgrounds already have their own positioned captions.
+        inventory.setShowTitle(false);
+        inventory.setThemeOverride(Inventory.GAP,0).setThemeOverride(Inventory.SECTION_GAP,4);
+        for(Control child:inventory.getChildren())if(child instanceof Slot slot)transparent(slot);
+        return inventory;
+    }
+    private static Slot transparent(Slot slot){
+        slot.setBackgroundVisible(false);
+        slot.setThemeOverride(OreTheme.SLOT_PANEL,new StyleBoxEmpty(ThemeInsets.ZERO,ThemeInsets.ZERO));
+        slot.setThemeOverride(Slot.PADDING_TOP,1).setThemeOverride(Slot.PADDING_RIGHT,1)
+                .setThemeOverride(Slot.PADDING_BOTTOM,1).setThemeOverride(Slot.PADDING_LEFT,1);
+        slot.setThemeOverride(Slot.COUNT_PADDING_TOP,0).setThemeOverride(Slot.COUNT_PADDING_RIGHT,0)
+                .setThemeOverride(Slot.COUNT_PADDING_BOTTOM,0).setThemeOverride(Slot.COUNT_PADDING_LEFT,0);
+        return slot;
+    }
+    private static Label caption(String key,boolean centered){
+        Label label=new Label(Component.translatable(key)).setShadow(false).setOverflow(Label.Overflow.ELLIPSIS)
+                .setAlignment(centered?Label.Horizontal.CENTER:Label.Horizontal.LEFT,Label.Vertical.TOP);
+        label.setThemeOverride(OreTheme.FONT_COLOR,OreTheme.TEXT_DARK);
+        return label;
+    }
+    private static TextureSource region(ResourceLocation atlas,int x,int y,int width,int height){
+        return TextureSource.region(new TextureRegion(atlas,256,256,x,y,width,height));
+    }
+    private static TextureRect image(ResourceLocation atlas,int x,int y,int width,int height){
+        return new TextureRect().setTexture(region(atlas,x,y,width,height)).setStretchMode(TextureRect.StretchMode.KEEP);
+    }
+    /** A retained fixed-pixel scene; Gallery's existing Scroll handles narrow previews. */
+    private static final class Preview extends Control {
+        Preview(String name,int height){
+            setDebugName(name);setMinimum(176,height);setPreferred(176,height);
+            setSizeFlagsHorizontal(SizeFlags.SIZE_SHRINK_BEGIN).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
+        }
+        void place(Control control,String name,int x,int y,int width,int height){
+            control.setDebugName(name);control.setPosition(x,y).setRequestedSize(width,height);addChild(control);
+        }
     }
 }

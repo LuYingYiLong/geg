@@ -17,7 +17,7 @@ public final class InventoryTest {
         source.setItem(8,original);original.setCount(2);
         var copy=source.getItem(8);copy.setCount(1);
         check(source.getItem(8).getCount()==12,"source copies both incoming and outgoing stacks");
-        Inventory inventory=new Inventory().setSource(source).setSlotIndices(List.of(8,2,5)).setColumns(2).setMode(Inventory.Mode.SELECT);
+        Inventory inventory=new Inventory().setShowTitle(false).setSource(source).setSlotIndices(List.of(8,2,5)).setColumns(2).setMode(Inventory.Mode.SELECT);
         Slot retained=inventory.getSlotControl(8);int[] activated={0},changed={0};
         inventory.slotActivated().connect(inventory,i->activated[0]++);inventory.selectionChanged().connect(inventory,i->changed[0]++);
         Window root=new Window(true).setContent(inventory).setOverlay(new Overlay());root.layoutViewport(129,100,FONT);
@@ -38,7 +38,38 @@ public final class InventoryTest {
         check(inventory.getSlotControl(27).getBounds().y()==58,"hotbar separated without changing IDs");
         root.queueFree();LifecycleScheduler.flush();check(source.slotChanged().connectionCount()==0,"all slot binding scopes end with tree");
         check(!source.isClosed(),"view does not own shared storage");source.close();
+        titleLayout();
         System.out.println("ORE_INVENTORY_PASS");
+    }
+    private static void titleLayout(){
+        MemoryInventorySource data=new MemoryInventorySource(36);
+        Inventory inventory=new Inventory().setSource(data).setPlayerSlots(IntStream.range(0,27).boxed().toList(),IntStream.range(27,36).boxed().toList());
+        Window window=new Window(true).setContent(inventory).setOverlay(new Overlay());
+        window.layoutViewport(129,150,FONT);
+        Label title=(Label)inventory.getChild(0);Slot first=inventory.getSlotControl(0),hotbar=inventory.getSlotControl(27);
+        int heading=title.lineHeight(FONT),offset=heading+inventory.getThemeItem(Inventory.TITLE_GAP);
+        check(inventory.getShowTitle()&&title.getVisible(),"title is enabled by default");
+        check(title.getText().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents contents&&contents.getKey().equals("container.inventory"),"title uses vanilla inventory translation");
+        check(title.getBounds().x()==0&&title.getBounds().y()==0&&title.getBounds().height()==heading,"top-left title uses measured line height");
+        check(first.getBounds().y()==offset&&hotbar.getBounds().y()==offset+58&&inventory.getMinimumHeight()==76+offset,"title reserves space without changing slot geometry");
+        int[] activations={0};inventory.setMode(Inventory.Mode.SELECT);inventory.slotActivated().connect(inventory,i->activations[0]++);
+        click(window,3,3);check(activations[0]==0,"title does not activate a slot");
+        click(window,3,offset+3);check(activations[0]==1&&inventory.getSelected()==0,"slot hit testing follows title offset");
+        inventory.setShowTitle(false);check(window.getLayoutDirty(),"title visibility invalidates ancestors");window.layoutViewport(128,150,FONT);
+        check(!title.getVisible()&&first.getBounds().y()==0&&hotbar.getBounds().y()==58&&inventory.getMinimumHeight()==76,"hidden title removes all title spacing");
+        inventory.setShowTitle(true).setThemeOverride(Inventory.TITLE_GAP,7);
+        window.layoutViewport(127,150,FONT);
+        check(first.getBounds().y()==heading+7&&inventory.getSlotControl(0)==first&&inventory.getChild(0)==title,"toggle reuses title and slot instances");
+        inventory.setThemeOverride(io.github.luyingyilong.ore.theme.OreTheme.FONT_SIZE,16.0F);
+        window.layoutViewport(129,160,FONT);
+        check(title.lineHeight(FONT)>heading&&first.getBounds().y()==title.lineHeight(FONT)+7,"font theme changes reserve the new title height");
+        inventory.setSlotIndices(List.of(0));window.layoutViewport(18,150,FONT);
+        check(inventory.getMinimumWidth()==18&&title.getBounds().width()==18,"title ellipsis does not impose its full text width as a hard minimum");
+        inventory.setSource(null);window.layoutViewport(128,150,FONT);
+        check(inventory.getChildCount()==1&&inventory.getChild(0)==title,"source replacement preserves only one title");
+        inventory.setSource(data);window.layoutViewport(128,180,FONT);LifecycleScheduler.flush();
+        check(data.slotChanged().connectionCount()==36,"source replacement does not accumulate subscriptions");
+        window.queueFree();LifecycleScheduler.flush();check(title.isDisposed()&&data.slotChanged().connectionCount()==0,"title and slots are cleaned with inventory");data.close();
     }
     static void click(Window root,int x,int y){WindowInputs.press(root,x,y,null);WindowInputs.release(root,x,y);}
     static void reject(Runnable action){try{action.run();throw new AssertionError("Expected rejection");}catch(IllegalArgumentException expected){}}

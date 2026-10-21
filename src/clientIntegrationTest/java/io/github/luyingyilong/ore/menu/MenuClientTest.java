@@ -153,7 +153,7 @@ public final class MenuClientTest {
         Inventory top,player;
         TestScreen(ChestMenu menu,net.minecraft.world.entity.player.Inventory inventory,Component title){super(menu,inventory,title);}
         @Override protected Control createContent(MenuSession session){
-            top=new Inventory().setSource(session.getSource()).setSlotIndices(IntStream.range(0,27).boxed().toList()).setMode(Inventory.Mode.CONTAINER);
+            top=new Inventory().setShowTitle(false).setSource(session.getSource()).setSlotIndices(IntStream.range(0,27).boxed().toList()).setMode(Inventory.Mode.CONTAINER);
             player=new Inventory().setSource(session.getSource()).setSlotIndices(IntStream.range(27,63).boxed().toList()).setMode(Inventory.Mode.CONTAINER)
                     .setPlayerSlots(IntStream.range(27,54).boxed().toList(),IntStream.range(54,63).boxed().toList());
             Box content=new Box().setGap(4);content.addChild(new Label(title));content.addChild(top);content.addChild(new Divider());content.addChild(player);

@@ -36,8 +36,8 @@ public final class MenuSessionTest {
         MenuSession session=new MenuSession(root,new TestMenu(),interaction,()->valid[0]);interaction.session=session;
         try{new MenuSession(root,new TestMenu(),interaction,()->true);throw new AssertionError("Duplicate session accepted");}
         catch(IllegalStateException expected){ }
-        Inventory a=new Inventory().setSource(session.getSource()).setSlotIndices(List.of(0,1,2,3)).setColumns(2).setMode(Inventory.Mode.CONTAINER);
-        Inventory b=new Inventory().setSource(session.getSource()).setSlotIndices(List.of(4,5,6,7)).setColumns(2).setMode(Inventory.Mode.CONTAINER);
+        Inventory a=new Inventory().setShowTitle(false).setSource(session.getSource()).setSlotIndices(List.of(0,1,2,3)).setColumns(2).setMode(Inventory.Mode.CONTAINER);
+        Inventory b=new Inventory().setShowTitle(false).setSource(session.getSource()).setSlotIndices(List.of(4,5,6,7)).setColumns(2).setMode(Inventory.Mode.CONTAINER);
         Box content=new Box().setOrientation(Box.Orientation.HORIZONTAL).setGap(4);content.addChild(a);content.addChild(b);
         Scroll scroll=new Scroll().setHorizontal(Scroll.BarMode.NEVER).setVertical(Scroll.BarMode.NEVER).setContent(content);
         root.setContent(scroll).setOverlay(new Overlay());root.layoutViewport(52,70,InventoryTest.FONT);

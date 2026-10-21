@@ -4,7 +4,10 @@ import io.github.luyingyilong.ore.inventory.*;
 import io.github.luyingyilong.ore.layout.*;
 import io.github.luyingyilong.ore.signal.*;
 import io.github.luyingyilong.ore.theme.*;
+import io.github.luyingyilong.ore.debug.DebugBridge;
+import io.github.luyingyilong.ore.debug.Inspectable;
 import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.Component;
 import java.util.*;
 
 /** A fixed-column slot view. Scrolling is deliberately supplied by an enclosing Scroll. */
@@ -12,6 +15,9 @@ public final class Inventory extends Container {
     public enum Mode { READ_ONLY, SELECT, CONTAINER }
     public static final ThemeKey<Integer> GAP = new ThemeKey<>("Inventory","gap",Integer.class,ThemeKey.Kind.INTEGER,0,true,v->v>=0&&v<=1024);
     public static final ThemeKey<Integer> SECTION_GAP = new ThemeKey<>("Inventory","section_gap",Integer.class,ThemeKey.Kind.INTEGER,4,true,v->v>=0&&v<=1024);
+    public static final ThemeKey<Integer> TITLE_GAP = new ThemeKey<>("Inventory","title_gap",Integer.class,ThemeKey.Kind.INTEGER,2,true,v->v>=0&&v<=1024);
+    private final Label title=ownPart("title",new Label(Component.translatable("container.inventory"))
+            .setShadow(false).setAlignment(Label.Horizontal.LEFT,Label.Vertical.TOP).setOverflow(Label.Overflow.ELLIPSIS));
     private final SignalSource<Integer> selectionChanged=new SignalSource<>(this,"selectionChanged","Integer");
     private final SignalSource<Integer> slotActivated=new SignalSource<>(this,"slotActivated","Integer");
     private final Map<Integer,Slot> slots=new LinkedHashMap<>();
@@ -19,8 +25,16 @@ public final class Inventory extends Container {
     private List<Integer> indices=List.of();
     private Mode mode=Mode.READ_ONLY;
     private int columns=9, selected=-1, sectionStart=-1;
+    private boolean showTitle=true;
 
-    public static void registerTheme(ThemeDB db){OreTheme.registerType(db,"Inventory");db.register(GAP);db.register(SECTION_GAP);}
+    public Inventory(){updateChildren(List.of(title));}
+    public static void registerTheme(ThemeDB db){OreTheme.registerType(db,"Inventory");db.register(GAP);db.register(SECTION_GAP);db.register(TITLE_GAP);}
+    @Inspectable(group="Appearance")
+    public boolean getShowTitle(){return DebugBridge.value(this,"showTitle",showTitle);}
+    public Inventory setShowTitle(boolean value){
+        if(DebugBridge.previewWrite(this,"showTitle",value))return this;
+        if(showTitle!=value){showTitle=value;title.setVisible(value);requestLayout();}return this;
+    }
     @Override protected void validateChildren(List<Control> proposed){
         if(!isUpdatingChildren())throw new IllegalStateException("Inventory owns its slots; use setSource/setSlotIndices");
     }
@@ -41,7 +55,7 @@ public final class Inventory extends Container {
             if(session.getSource()!=next)throw new IllegalArgumentException("Use the session's Menu source");
             for(int i=0;i<next.getSlotCount();i++)session.validateView(slots.get(i),i);}
         cancelInteractions();
-        var old=List.copyOf(slots.values());updateChildren(List.of());slots.clear();old.forEach(Control::queueFree);
+        var old=List.copyOf(slots.values());updateChildren(List.of(title));slots.clear();old.forEach(Control::queueFree);
         source=next;selected=-1;sectionStart=-1;
         indices=next==null?List.of():java.util.stream.IntStream.range(0,next.getSlotCount()).boxed().toList();
         rebuild();return this;
@@ -80,7 +94,7 @@ public final class Inventory extends Container {
     public Signal<Integer> slotActivated(){return slotActivated.signal();}
     private void rebuild(){
         Map<Integer,Slot> previous=new LinkedHashMap<>(slots);
-        var next=new ArrayList<Control>();slots.clear();
+        var next=new ArrayList<Control>();next.add(title);slots.clear();
         for(int index:indices){
             Slot slot=previous.remove(index);
             if(slot==null||!slot.isAlive()){
@@ -95,14 +109,18 @@ public final class Inventory extends Container {
     private int cellWidth(){return slots.values().stream().filter(Control::isAlive).mapToInt(Control::getMinimumWidth).max().orElse(Slot.SIZE);}
     private int cellHeight(){return slots.values().stream().filter(Control::isAlive).mapToInt(Control::getMinimumHeight).max().orElse(Slot.SIZE);}
     private int rows(){return(indices.size()+columns-1)/columns;}
+    private int titleHeight(Font font){return getShowTitle()?title.lineHeight(font):0;}
+    private int slotsTop(Font font){return titleHeight(font)+(getShowTitle()&&!indices.isEmpty()?getThemeItem(TITLE_GAP):0);}
     @Override public int getMinimumWidth(){return Math.max(super.getMinimumWidth(),indices.isEmpty()?0:Math.min(columns,indices.size())*cellWidth()+Math.max(0,Math.min(columns,indices.size())-1)*getThemeItem(GAP));}
-    @Override public int getMinimumHeight(){return Math.max(super.getMinimumHeight(),rows()*cellHeight()+Math.max(0,rows()-1)*getThemeItem(GAP)+(sectionStart>0?getThemeItem(SECTION_GAP):0));}
-    @Override public int measureWidth(Font font,int available){return getMinimumWidth();}
+    @Override public int getMinimumHeight(){return Math.max(super.getMinimumHeight(),slotsTop(getLayoutFont())+rows()*cellHeight()+Math.max(0,rows()-1)*getThemeItem(GAP)+(sectionStart>0?getThemeItem(SECTION_GAP):0));}
+    @Override public int measureWidth(Font font,int available){return Math.max(getMinimumWidth(),getShowTitle()?title.measureWidth(font,available):0);}
     @Override public int measureHeight(Font font,int available){return getMinimumHeight();}
     @Override public void layout(Rect bounds,Font font){
-        super.layout(bounds,font);int w=cellWidth(),h=cellHeight(),gap=getThemeItem(GAP),i=0;
-        for(Control child:getChildren())if(child.isAlive()){
-            layoutChild(child,new Rect((i%columns)*(w+gap),(i/columns)*(h+gap)+(sectionStart>0&&i>=sectionStart?getThemeItem(SECTION_GAP):0),w,h),font);i++;
+        super.layout(bounds,font);title.setVisible(getShowTitle());
+        layoutChild(title,new Rect(0,0,bounds.width(),titleHeight(font)),font);
+        int w=cellWidth(),h=cellHeight(),gap=getThemeItem(GAP),top=slotsTop(font),i=0;
+        for(Slot child:List.copyOf(slots.values()))if(child.isAlive()&&child.getParent()==this){
+            layoutChild(child,new Rect((i%columns)*(w+gap),top+(i/columns)*(h+gap)+(sectionStart>0&&i>=sectionStart?getThemeItem(SECTION_GAP):0),w,h),font);i++;
         }
     }
 }
