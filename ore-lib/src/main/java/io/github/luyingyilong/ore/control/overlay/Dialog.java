@@ -171,11 +171,24 @@ public final class Dialog extends Container {
         footerInset.setVisible(!actions.isEmpty());
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
+    public Component getTitle() { return titleLabel.getText(); }
+
+    public Control getContent() { return bodyInset.getChildCount()==0 ? null : bodyInset.getChild(0); }
+
+    public java.util.List<Button> getActions() {
+        return footer.getChildren().stream().filter(Button.class::isInstance).map(Button.class::cast).toList();
+    }
+
+    @io.github.luyingyilong.ore.gui.UiProperty(setter = "setDepth")
+    public float getDepth() { return depth; }
+
     public Dialog setTitle(Component title) {
         titleLabel.setText(Objects.requireNonNull(title));
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal0 closeRequested() {
         return closeRequested.signal();
     }

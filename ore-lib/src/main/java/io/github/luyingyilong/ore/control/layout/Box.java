@@ -22,6 +22,7 @@ public final class Box extends Container {
     private Integer lineGap;
 
     @Inspectable
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getWrap() { return DebugBridge.value(this, "wrap", wrap); }
 
     public Box setWrap(boolean value) {
@@ -32,6 +33,7 @@ public final class Box extends Container {
     }
 
     @Inspectable(min = 0, max = 10000)
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getLineGap() { return DebugBridge.value(this, "lineGap", lineGap == null ? getGap() : lineGap); }
 
     public Box setLineGap(int value) {
@@ -42,9 +44,13 @@ public final class Box extends Container {
         return this;
     }
 
+    /** Null means that line spacing still follows gap. */
+    public Integer getLineGapOverride() { return lineGap; }
+
     public Box clearLineGap() { lineGap = null; requestLayout(); return this; }
 
     @Inspectable
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Orientation getOrientation() {
         return DebugBridge.value(this, "orientation", orientation);
     }
@@ -58,6 +64,7 @@ public final class Box extends Container {
     }
 
     @Inspectable(min = 0, max = 10000)
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getGap() {
         return DebugBridge.value(this, "gap", gap);
     }

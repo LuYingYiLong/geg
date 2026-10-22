@@ -88,6 +88,9 @@ public final class TextArea extends Input {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
+    public int getRows() { return rows; }
+
     public TextArea setRows(int rows) {
         if (rows < 1 || rows > 20) throw new IllegalArgumentException("Rows must be between 1 and 20");
         this.rows = rows;

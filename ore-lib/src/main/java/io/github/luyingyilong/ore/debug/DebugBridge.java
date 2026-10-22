@@ -15,7 +15,9 @@ public final class DebugBridge {
     private static final Backend NONE = new Backend() {
     };
     private static Backend backend = NONE;
-    private static volatile SetterPreview setterPreview;
+    public static <T> T readBase(java.util.function.Supplier<T> reader) {
+        return io.github.luyingyilong.ore.property.PropertyAccess.readBase(reader);
+    }
     private static HostShortcut hostShortcut = (key, scan) -> false;
 
     @FunctionalInterface public interface HostShortcut { boolean handle(int key, int scan); }
@@ -34,50 +36,35 @@ public final class DebugBridge {
      * Annotated setters call this after validation/normalization, before any mutation.
      */
     public static boolean previewWrite(Control target, String key, Object value) {
-        SetterPreview preview = setterPreview;
-        if (preview == null || preview.thread != Thread.currentThread()) return false;
-        if (preview.target != target || !preview.key.equals(key))
-            throw new IllegalStateException("Unexpected setter in Inspector validation: " + key);
-        if (!java.util.Objects.equals(preview.expected, value))
-            throw new IllegalArgumentException("Setter would normalize the proposed value: " + key);
-        preview.captured = true;
-        return true;
+        return io.github.luyingyilong.ore.property.PropertyAccess.previewWrite(target, key, value);
     }
 
     // Normal application setters avoid boxing when no Inspector validation is running.
     public static boolean previewWrite(Control target, String key, int value) {
-        return setterPreview != null && previewWrite(target, key, (Object) value);
+        return io.github.luyingyilong.ore.property.PropertyAccess.isPreviewing() && previewWrite(target, key, (Object) value);
     }
 
     public static boolean previewWrite(Control target, String key, long value) {
-        return setterPreview != null && previewWrite(target, key, (Object) value);
+        return io.github.luyingyilong.ore.property.PropertyAccess.isPreviewing() && previewWrite(target, key, (Object) value);
     }
 
     public static boolean previewWrite(Control target, String key, float value) {
-        return setterPreview != null && previewWrite(target, key, (Object) value);
+        return io.github.luyingyilong.ore.property.PropertyAccess.isPreviewing() && previewWrite(target, key, (Object) value);
     }
 
     public static boolean previewWrite(Control target, String key, double value) {
-        return setterPreview != null && previewWrite(target, key, (Object) value);
+        return io.github.luyingyilong.ore.property.PropertyAccess.isPreviewing() && previewWrite(target, key, (Object) value);
     }
 
     public static boolean previewWrite(Control target, String key, boolean value) {
-        return setterPreview != null && previewWrite(target, key, (Object) value);
+        return io.github.luyingyilong.ore.property.PropertyAccess.isPreviewing() && previewWrite(target, key, (Object) value);
     }
 
     /**
      * Validate via the real setter without changing base values, caches or layout state.
      */
     public static void validateSetter(Control target, String key, Object value, Runnable setter) {
-        if (setterPreview != null) throw new IllegalStateException("Nested Inspector setter validation");
-        SetterPreview preview = new SetterPreview(target, key, value);
-        setterPreview = preview;
-        try {
-            setter.run();
-            if (!preview.captured) throw new IllegalStateException("Setter lacks previewWrite: " + key);
-        } finally {
-            setterPreview = null;
-        }
+        io.github.luyingyilong.ore.property.PropertyAccess.validateSetter(target, key, value, setter);
     }
 
     public static DebugThemes.Snapshot themes(Control node) { return DebugThemes.snapshot(node); }
@@ -96,30 +83,36 @@ public final class DebugBridge {
 
     @SuppressWarnings("unchecked")
     public static <T> T value(Control node, String key, T base) {
-        return backend == NONE ? base : (T) backend.value(node, key, base);
+        return backend == NONE || io.github.luyingyilong.ore.property.PropertyAccess.isReadingBase() ? base : (T) backend.value(node, key, base);
     }
 
     public static int value(Control node, String key, int base) {
-        return backend == NONE ? base : (Integer) backend.value(node, key, base);
+        return backend == NONE || io.github.luyingyilong.ore.property.PropertyAccess.isReadingBase() ? base : (Integer) backend.value(node, key, base);
     }
 
     public static float value(Control node, String key, float base) {
-        return backend == NONE ? base : (Float) backend.value(node, key, base);
+        return backend == NONE || io.github.luyingyilong.ore.property.PropertyAccess.isReadingBase() ? base : (Float) backend.value(node, key, base);
     }
 
     public static long value(Control node, String key, long base) {
-        return backend == NONE ? base : (Long) backend.value(node, key, base);
+        return backend == NONE || io.github.luyingyilong.ore.property.PropertyAccess.isReadingBase() ? base : (Long) backend.value(node, key, base);
     }
 
     public static boolean value(Control node, String key, boolean base) {
-        return backend == NONE ? base : (Boolean) backend.value(node, key, base);
+        return backend == NONE || io.github.luyingyilong.ore.property.PropertyAccess.isReadingBase() ? base : (Boolean) backend.value(node, key, base);
     }
 
     public static void properties(Control node, List<DebugProperty> result) {
         backend.properties(node, result);
     }
 
+    public static io.github.luyingyilong.ore.gui.UiSources.Info xml(Control node) {
+        return io.github.luyingyilong.ore.gui.UiSources.get(node);
+    }
+
     public interface Backend {
+        default void xml(Control node, io.github.luyingyilong.ore.gui.UiSources.Info info) { }
+
         default void lifecycle(Control node, io.github.luyingyilong.ore.control.base.LifecycleInfo info) {
         }
 
@@ -186,17 +179,4 @@ public final class DebugBridge {
         }
     }
 
-    private static final class SetterPreview {
-        final Thread thread = Thread.currentThread();
-        final Control target;
-        final String key;
-        final Object expected;
-        boolean captured;
-
-        SetterPreview(Control target, String key, Object expected) {
-            this.target = target;
-            this.key = key;
-            this.expected = expected;
-        }
-    }
 }

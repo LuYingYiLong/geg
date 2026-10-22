@@ -99,7 +99,9 @@ public final class Slot extends Control {
         count.setVisible(quantity > 1 && !item.isEmpty() && mode!=Inventory.Mode.CONTAINER);
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public SlotBinding getBinding(){return binding;}
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Inventory.Mode getMode(){return mode;}
     public Slot setBinding(SlotBinding next){
         if(binding==next||binding!=null&&next!=null&&binding.source()==next.source()&&binding.slot()==next.slot())return this;
@@ -131,10 +133,13 @@ public final class Slot extends Control {
         return this;
     }
     public io.github.luyingyilong.ore.window.container.MenuSession getMenuSession(){return binding!=null&&binding.source() instanceof MenuInventorySource source?source.getSession():null;}
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true)
     public boolean getSelected(){return selected;}
     public Slot setSelected(boolean value){selected=value;return this;}
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Integer> slotActivated(){return activated.signal();}
     public Slot setEmptyIcon(TextureSource value){emptyIcon.setTexture(value);return this;}
+    @io.github.luyingyilong.ore.gui.UiProperty
     public TextureSource getEmptyIcon(){return emptyIcon.getTexture();}
 
     @Override public void input(InputEvent event){
@@ -163,6 +168,7 @@ public final class Slot extends Control {
         return binding==null?quantity:binding.source().getItem(binding.slot()).getCount();
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getBackgroundVisible() {
         return backgroundVisible;
     }

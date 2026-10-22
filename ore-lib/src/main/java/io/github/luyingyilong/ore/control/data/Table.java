@@ -272,14 +272,21 @@ public final class Table<T> extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<T> rowActivated() {
         return rowActivated.signal();
     }
+
+    @io.github.luyingyilong.ore.gui.UiProperty
+    public Component getEmpty() { return empty; }
 
     public Table<T> setEmpty(Component empty) {
         this.empty = Objects.requireNonNull(empty);
         return this;
     }
+
+    @io.github.luyingyilong.ore.gui.UiProperty
+    public boolean getHeaderVisible() { return headerVisible; }
 
     public Table<T> setHeaderVisible(boolean visible) {
         if (headerVisible != visible) {
@@ -289,6 +296,8 @@ public final class Table<T> extends Container {
         }
         return this;
     }
+
+    public java.util.List<T> getRows() { return java.util.List.copyOf(rows); }
 
     public void setRows(List<T> rows) {
         List<T> next = List.copyOf(rows);

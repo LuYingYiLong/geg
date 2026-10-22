@@ -49,6 +49,7 @@ public final class Tag extends Container {
             throw new IllegalStateException("Tag has a fixed skeleton; configure its properties");
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Component getText() {
         return label.getText();
     }
@@ -58,6 +59,7 @@ public final class Tag extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getOutlined() {
         return outlined;
     }
@@ -70,6 +72,7 @@ public final class Tag extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Type getType() {
         return type;
     }

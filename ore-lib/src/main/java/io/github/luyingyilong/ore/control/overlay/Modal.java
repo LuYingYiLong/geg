@@ -201,6 +201,11 @@ public final class Modal extends Container {
         footer.setVisible(!actions.isEmpty());
     }
 
+    public Size getRequestedSize() { return new Size(requestedWidth,requestedHeight); }
+    public io.github.luyingyilong.ore.control.base.Offset getRequestedPosition() {
+        return customX == null ? null : new io.github.luyingyilong.ore.control.base.Offset(customX,customY);
+    }
+
     public Modal setSize(int width, int height) {
         int nextWidth = Math.max(0, width);
         int nextHeight = Math.max(0, height);
@@ -233,11 +238,24 @@ public final class Modal extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
+    public Component getTitle() { return titleLabel.getText(); }
+
+    public Control getContent() { return bodyInset.getChildCount()==0 ? null : bodyInset.getChild(0); }
+
+    public java.util.List<Button> getActions() {
+        return footerButtons.getChildren().stream().filter(Button.class::isInstance).map(Button.class::cast).toList();
+    }
+
+    @io.github.luyingyilong.ore.gui.UiProperty(setter = "setDepth")
+    public float getDepth() { return depth; }
+
     public Modal setTitle(Component title) {
         titleLabel.setText(Objects.requireNonNull(title));
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal0 closeRequested() {
         return closeRequested.signal();
     }

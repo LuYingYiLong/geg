@@ -56,6 +56,7 @@ import java.util.Set;
  */
 public final class GalleryCatalog {
     private static final List<Entry> ENTRIES = List.of(
+            entry("xml", "layout", "XML UI"),
             entry("box", "layout", "Box", Box.class), entry("padding", "layout", "Padding", Padding.class),
             entry("panel", "layout", "Panel", Panel.class), entry("scroll", "layout", "Scroll", Scroll.class),
             entry("grid", "layout", "Grid", Grid.class), entry("splitter", "layout", "Splitter", Splitter.class),
@@ -70,7 +71,7 @@ public final class GalleryCatalog {
             entry("spin", "display", "Spin", Spin.class), entry("divider", "display", "Divider", Divider.class),
             entry("descriptions", "display", "Descriptions", Descriptions.class, DescriptionItem.class),
             entry("button", "actions", "Button", Button.class), entry("checkbox", "actions", "Checkbox", Checkbox.class),
-            entry("radio", "actions", "Radio / RadioGroup", Radio.class), entry("switch", "actions", "Switch", Switch.class), entry("segmented", "actions", "Segmented", Segmented.class),
+            entry("radio", "actions", "Radio / RadioGroup", Radio.class, io.github.luyingyilong.ore.gui.UiRadioGroup.class), entry("switch", "actions", "Switch", Switch.class), entry("segmented", "actions", "Segmented", Segmented.class),
             entry("slider", "input", "Slider", Slider.class),
             entry("dropdown", "actions", "Dropdown", Dropdown.class), entry("menu", "actions", "Menu", Menu.class),
             entry("navbar", "actions", "Navbar", Navbar.class), entry("collapse", "actions", "Collapse", Collapse.class),

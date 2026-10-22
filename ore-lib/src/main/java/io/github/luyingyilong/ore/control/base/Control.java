@@ -63,6 +63,11 @@ public class Control implements SignalOwner {
     private boolean signalFocused;
     private SignalScope bindingScope;
     private String debugName = "";
+    String id = "";
+    boolean idScopeRoot;
+    boolean idChildrenScopeRoot;
+    java.util.Map<String, Control> nestedIdIndex = java.util.Map.of();
+    java.util.Map<String, Control> idIndex = java.util.Map.of();
     private Rect bounds = new Rect(0, 0, 0, 0);
     private Rect requestedBounds = new Rect(0, 0, 0, 0);
     private Offset offset = Offset.ZERO;
@@ -78,6 +83,8 @@ public class Control implements SignalOwner {
     private Font layoutFont;
     private Transform2D renderTransform = Transform2D.IDENTITY;
     private float sizeFlagsStretchRatio = 1.0F;
+
+    public Control() { ControlTree.created(this); }
 
     public static void registerTheme(ThemeDB db) {
         db.registerType("Control", null);
@@ -95,6 +102,7 @@ public class Control implements SignalOwner {
     /**
      * Only the explicitly assigned Theme, never the inherited result.
      */
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Theme getTheme() {
         return theme;
     }
@@ -112,6 +120,7 @@ public class Control implements SignalOwner {
     }
 
     @Inspectable(group = "Appearance")
+    @io.github.luyingyilong.ore.gui.UiProperty
     public String getThemeTypeVariation() {
         String effective = DebugBridge.value(this, "themeTypeVariation", themeTypeVariation);
         if (!resolvedThemeVariation.equals(effective)) {
@@ -336,14 +345,17 @@ public class Control implements SignalOwner {
         return signalScope;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public final Signal0 focusEntered() {
         return focusEntered.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public final Signal0 focusExited() {
         return focusExited.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public final Signal<Boolean> visibilityChanged() {
         return visibilityChanged.signal();
     }
@@ -363,6 +375,8 @@ public class Control implements SignalOwner {
     }
 
     public final void resetBindingScope() {
+        signalScope.checkThread();
+        if (!id.isEmpty() && isAlive()) setId("");
         if (bindingScope != null) {
             bindingScope.close(SignalDiagnostics.Reason.BINDING_RESET);
             bindingScope = null;
@@ -410,11 +424,13 @@ public class Control implements SignalOwner {
         signalScope.checkThread();
         if (!isAlive()) return;
         Objects.requireNonNull(reason);
+        if (ControlTree.deferFree(this, reason)) return;
         String source = DebugBridge.active() ? StackWalker.getInstance().walk(frames -> frames
                 .filter(f -> !f.getClassName().equals(Control.class.getName()))
                 .limit(8).map(f -> f.getClassName().substring(f.getClassName().lastIndexOf('.') + 1)
                         + "." + f.getMethodName() + "(" + f.getFileName() + ":" + f.getLineNumber() + ")").collect(java.util.stream.Collectors.joining("\n"))) : "";
         markForFree(reason, source);
+        ControlIds.refresh(this);
         for (Control node = parent; node != null; node = node.parent) node.syncChildrenChanged();
         LifecycleScheduler.enqueue(this);
         Window window = getWindowContext().getOwner();
@@ -460,6 +476,7 @@ public class Control implements SignalOwner {
         if (previous != null && previous != part) throw new IllegalStateException("Part name already in use: " + name);
         parts.put(name, part);
         ((Control) part).lifecycleOwner = this;
+        ControlIds.refresh(this);
         ((Control) part).invalidateTheme(true);
         if (insideTree) {
             part.enterTree(treeContext, suspended, effectiveVisible);
@@ -706,6 +723,8 @@ public class Control implements SignalOwner {
         return setMinimum(size.width(), size.height());
     }
 
+    public Size getPreferredSize() { return new Size(preferredWidth, preferredHeight); }
+
     public Control setPreferred(int width, int height) {
         preferredWidth = Math.max(0, width);
         preferredHeight = Math.max(0, height);
@@ -714,6 +733,7 @@ public class Control implements SignalOwner {
     }
 
     @Inspectable(min = 0, max = 15)
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getSizeFlagsHorizontal() {
         int sizeFlagsHorizontal = DebugBridge.value(this, "sizeFlagsHorizontal", this.sizeFlagsHorizontal);
         return sizeFlagsHorizontal;
@@ -730,6 +750,7 @@ public class Control implements SignalOwner {
     }
 
     @Inspectable(min = 0, max = 15)
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getSizeFlagsVertical() {
         int sizeFlagsVertical = DebugBridge.value(this, "sizeFlagsVertical", this.sizeFlagsVertical);
         return sizeFlagsVertical;
@@ -746,6 +767,7 @@ public class Control implements SignalOwner {
     }
 
     @Inspectable(min = 0.0001, max = 100000)
+    @io.github.luyingyilong.ore.gui.UiProperty
     public float getSizeFlagsStretchRatio() {
         float sizeFlagsStretchRatio = DebugBridge.value(this, "sizeFlagsStretchRatio", this.sizeFlagsStretchRatio);
         return sizeFlagsStretchRatio;
@@ -762,6 +784,7 @@ public class Control implements SignalOwner {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getFocusable() {
         return focusable;
     }
@@ -771,6 +794,7 @@ public class Control implements SignalOwner {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Transform2D getRenderTransform() {
         if (!DebugBridge.active()) return renderTransform;
         return new Transform2D(DebugBridge.value(this, "renderTranslationX", renderTransform.getTranslationX()),
@@ -1095,6 +1119,16 @@ public class Control implements SignalOwner {
     /**
      * Atomic framework operation for named slots and fixed composite skeletons.
      */
+    /** Framework composition transaction: callbacks and permanent frees wait for the final tree. */
+    protected Object captureTreeState() { return null; }
+
+    protected void restoreTreeState(Object state) { }
+
+    protected final void transactChildren(Runnable action) {
+        signalScope.checkThread();
+        ControlTree.transact(this, action);
+    }
+
     protected final void updateChildren(List<Control> proposedChildren) {
         ControlTree.update(this, proposedChildren);
     }
@@ -1195,6 +1229,7 @@ public class Control implements SignalOwner {
         return new Size(getMinimumWidth(), getMinimumHeight());
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getVisible() {
         return visible;
     }
@@ -1217,6 +1252,7 @@ public class Control implements SignalOwner {
         return setOffset(new Offset(x, y));
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Offset getOffset() {
         if (!DebugBridge.active()) return offset;
         return new Offset(debugValue("offsetX", offset.x()), debugValue("offsetY", offset.y()));
@@ -1242,8 +1278,56 @@ public class Control implements SignalOwner {
         return DebugBridge.value(this, key, base);
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public String getDebugName() {
         return debugName;
+    }
+
+    /** Identity within the nearest document or ordinary tree scope. */
+    public final Control setId(String value) {
+        signalScope.checkThread();
+        if (!isAlive()) throw new IllegalStateException("Cannot rename a pending/freed control");
+        Objects.requireNonNull(value, "id");
+        if (value.codePoints().anyMatch(codepoint -> Character.isWhitespace(codepoint) || Character.isSpaceChar(codepoint)))
+            throw new IllegalArgumentException("Control ID cannot contain whitespace");
+        if (!id.equals(value)) {
+            ControlIds.validateRename(this, value);
+            id = value;
+            ControlIds.refresh(this);
+        }
+        return this;
+    }
+
+    public final String getId() { return id; }
+
+    public final Control findControlFromId(String value) {
+        signalScope.checkThread();
+        Objects.requireNonNull(value, "id");
+        if (value.isEmpty() || !isAlive()) return null;
+        Control match = ControlIds.find(this, value);
+        if (match == null || !match.isAlive()) return null;
+        for (Control node = match; node != null; node = node.parent) {
+            if (node == this) return match;
+            if (node.idScopeRoot) break;
+        }
+        return null;
+    }
+
+    public final <T extends Control> T findControlFromId(String value, Class<T> type) {
+        Control match = findControlFromId(value);
+        if (match == null) return null;
+        if (!Objects.requireNonNull(type).isInstance(match))
+            throw new IllegalArgumentException("Control " + value + " is " + match.getClass().getName()
+                    + ", expected " + type.getName());
+        return type.cast(match);
+    }
+
+    /** For document/factory mount nodes; does not change ownership or parentage. */
+    protected final void establishIdScope() {
+        signalScope.checkThread();
+        if (parent != null || !isAlive()) throw new IllegalStateException("Establish scope before mounting");
+        idScopeRoot = true;
+        ControlIds.refresh(this);
     }
 
     public Control setDebugName(String name) {

@@ -61,6 +61,7 @@ public final class Navbar extends Container {
         db.registerFallback(BACK_ICON, IconTheme.ARROW_LEFT);
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Component getTitle() {
         return title.getText();
     }
@@ -70,6 +71,7 @@ public final class Navbar extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getShowBackButton() {
         return back.getVisible();
     }
@@ -102,6 +104,8 @@ public final class Navbar extends Container {
     /**
      * Replaces right-side actions atomically, preserving retained controls.
      */
+    public List<Control> getExtra() { return List.copyOf(extra); }
+
     public Navbar setExtra(Control... controls) {
         List<Control> next = new ArrayList<>();
         next.add(title);

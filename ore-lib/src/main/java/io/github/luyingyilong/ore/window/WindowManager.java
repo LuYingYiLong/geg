@@ -94,6 +94,7 @@ public final class WindowManager {
                 host.destroy();
             }
         }
+        io.github.luyingyilong.ore.gui.UiRuntime.flush();
         io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
     }
 
@@ -101,6 +102,7 @@ public final class WindowManager {
     public static void fallback(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             embeddedFocus();
+            io.github.luyingyilong.ore.gui.UiRuntime.flush();
             io.github.luyingyilong.ore.control.base.LifecycleScheduler.flush();
         }
         if (event.phase == TickEvent.Phase.END && !WINDOWS.isEmpty() && System.nanoTime() - lastRender > 100_000_000L)
@@ -114,6 +116,7 @@ public final class WindowManager {
 
     @SubscribeEvent
     public static void shutdown(GameShuttingDownEvent event) {
+        io.github.luyingyilong.ore.gui.UiRuntime.closeAll();
         ScreenInputBridge.clear();
         RecipeCanvasFrames.clear();
         for (ScreenWindowHost host : ScreenWindowHost.getHosts()) host.close();

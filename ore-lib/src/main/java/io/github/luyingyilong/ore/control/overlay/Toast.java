@@ -81,6 +81,7 @@ public final class Toast extends Container {
             throw new IllegalStateException("Toast has a fixed skeleton; configure its properties");
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Component getText() {
         return label.getText();
     }
@@ -90,6 +91,7 @@ public final class Toast extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public long getDuration() {
         return duration;
     }
@@ -103,6 +105,7 @@ public final class Toast extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Type getType() {
         return type;
     }
@@ -113,13 +116,18 @@ public final class Toast extends Container {
         return this;
     }
 
-    public Toast open() {
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setOpenQuietly")
+    public boolean getOpen() { return started && !closing && !getFinished(); }
+    public Toast setOpen(boolean value) { return value ? open() : close(); }
+    public Toast setOpenQuietly(boolean value) { return value ? start(false) : close(); }
+    public Toast open() { return start(true); }
+    private Toast start(boolean playSound) {
         if (started && !getFinished()) return this;
         started = true;
         closing = false;
         openedAt = clock.getAsLong();
         setVisible(true);
-        sound.accept(OreSounds.Cue.TOAST);
+        if (playSound) sound.accept(OreSounds.Cue.TOAST);
         return this;
     }
 

@@ -15,6 +15,7 @@ public final class OreFontResources {
             ThemeDB.getDefault().reload(resources);
             io.github.luyingyilong.ore.text.OreText.reload(resources);
             OreFonts.resourcesReloaded();
+            io.github.luyingyilong.ore.gui.UiLoader.resourcesReloaded(resources);
         });
     }
 }

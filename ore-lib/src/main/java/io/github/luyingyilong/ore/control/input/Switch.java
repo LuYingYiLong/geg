@@ -120,6 +120,7 @@ public final class Switch extends Container {
             throw new IllegalStateException("Switch has a fixed skeleton; configure its properties");
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setCheckedNoSignal")
     public boolean getChecked() {
         return checked;
     }
@@ -131,10 +132,12 @@ public final class Switch extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Boolean> toggled() {
         return toggled.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Boolean> activated() {
         return activated.signal();
     }
@@ -152,6 +155,7 @@ public final class Switch extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getDisabled() {
         return disabled;
     }
@@ -162,6 +166,7 @@ public final class Switch extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getLoading() {
         return loading;
     }
@@ -176,6 +181,7 @@ public final class Switch extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public long getAnimationDuration() {
         return animationDuration;
     }

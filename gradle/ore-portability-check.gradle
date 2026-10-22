@@ -37,6 +37,10 @@ tasks.register('verifyOrePortability', Exec) {
             def names = zip.entries().collect { it.name }
             ['io/github/luyingyilong/ore/OreClient.class',
              'io/github/luyingyilong/ore/control/base/Control.class',
+             'io/github/luyingyilong/ore/gui/UiLoader.class',
+             'io/github/luyingyilong/ore/gui/UiDocument.class',
+             'io/github/luyingyilong/ore/gui/UiRadioGroup.class', 'io/github/luyingyilong/ore/gui/UiTableRow.class',
+             'io/github/luyingyilong/ore/gui/UiValidator.class', 'io/github/luyingyilong/ore/gui/UiTableCell.class',
              'io/github/luyingyilong/ore/control/layout/Collapse.class',
              'io/github/luyingyilong/ore/control/input/Input.class',
              'io/github/luyingyilong/ore/window/Window.class', 'ore.mixins.json',
@@ -50,7 +54,7 @@ tasks.register('verifyOrePortability', Exec) {
                 it.startsWith('io/github/luyingyilong/geg/') || it.startsWith('assets/geg/') ||
                 it.startsWith('io/github/luyingyilong/ore/inspector/') || it.startsWith('assets/ore_inspector/') ||
                 it.startsWith('io/github/luyingyilong/ore/gallery/') || it.startsWith('assets/ore_gallery/') ||
-                it.startsWith('io/github/luyingyilong/ore/development/') ||
+                it.startsWith('io/github/luyingyilong/ore/gui/dev/') || it.startsWith('io/github/luyingyilong/ore/development/') ||
                 it == 'META-INF/services/io.github.luyingyilong.ore.OreClientExtension' ||
                 it.startsWith('net/minecraftforge/fml/relauncher/') || it.startsWith('brachy/modularui/') ||
                 it.startsWith('top/theillusivec4/curios/') || it.startsWith('mezz/jei/') ||

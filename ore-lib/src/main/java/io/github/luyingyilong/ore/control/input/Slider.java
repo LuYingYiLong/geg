@@ -100,12 +100,19 @@ public final class Slider extends Control {
     /** A completed user gesture; scalar mode represents [min, value]. */
     public record Change(boolean range, double lower, double upper) { }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Double> valueChanged() { return valueChanged.signal(); }
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<RangeValue> rangeChanged() { return rangeChanged.signal(); }
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Change> changeCompleted() { return changeCompleted.signal(); }
+    @io.github.luyingyilong.ore.gui.UiProperty(silentSetter = "setMinNoSignal")
     public double getMin() { return min; }
+    @io.github.luyingyilong.ore.gui.UiProperty(silentSetter = "setMaxNoSignal")
     public double getMax() { return max; }
+    @io.github.luyingyilong.ore.gui.UiProperty(silentSetter = "setStepNoSignal")
     public double getStep() { return step; }
+    @io.github.luyingyilong.ore.gui.UiProperty(silentSetter = "setRangeNoSignal")
     public boolean getRange() { return range; }
 
     public Slider setMin(double value) { return setLimits(value, max, true); }
@@ -143,6 +150,7 @@ public final class Slider extends Control {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setValueNoSignal")
     public double getValue() {
         requireMode(false);
         return second;
@@ -161,6 +169,7 @@ public final class Slider extends Control {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setRangeValueNoSignal")
     public RangeValue getRangeValue() {
         requireMode(true);
         return new RangeValue(Math.min(first, second), Math.max(first, second));
@@ -215,6 +224,7 @@ public final class Slider extends Control {
     }
 
     @Inspectable(group = "Slider")
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getDisabled() { return DebugBridge.value(this, "disabled", disabled); }
     public Slider setDisabled(boolean value) {
         if (DebugBridge.previewWrite(this, "disabled", value)) return this;
@@ -224,6 +234,7 @@ public final class Slider extends Control {
     }
 
     @Inspectable(group = "Slider")
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getKeyboard() { return DebugBridge.value(this, "keyboard", keyboard); }
     public Slider setKeyboard(boolean value) {
         if (DebugBridge.previewWrite(this, "keyboard", value)) return this;
@@ -233,6 +244,7 @@ public final class Slider extends Control {
     }
 
     @Inspectable(group = "Slider")
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getReverse() { return DebugBridge.value(this, "reverse", reverse); }
     public Slider setReverse(boolean value) {
         if (DebugBridge.previewWrite(this, "reverse", value)) return this;
@@ -242,6 +254,7 @@ public final class Slider extends Control {
     }
 
     @Inspectable(group = "Slider")
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getShowTicks() { return DebugBridge.value(this, "showTicks", showTicks); }
     public Slider setShowTicks(boolean value) {
         if (DebugBridge.previewWrite(this, "showTicks", value)) return this;

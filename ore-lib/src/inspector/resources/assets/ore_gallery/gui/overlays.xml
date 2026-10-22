@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Overlay>
+    <Modal id="xmlModal" title="@gallery.ore.sample.xml_modal" width="240" visible="false">
+        <slot name="content"><TextArea id="xmlModalDraft" rows="3" placeholder="@gallery.ore.sample.xml_draft"/></slot>
+        <slot name="actions"><Button text="@gallery.ore.sample.xml_close"><connect signal="pressed" handler="closeModal"/></Button></slot>
+        <connect signal="closeRequested" handler="closeModal"/>
+    </Modal>
+    <Dialog id="xmlDialog" title="@gallery.ore.sample.xml_dialog" width="220" visible="false">
+        <slot name="content"><Label text="@gallery.ore.sample.xml_caption" wrap="WORD"/></slot>
+        <slot name="actions"><Button text="@gallery.ore.sample.xml_close"><connect signal="pressed" handler="closeDialog"/></Button></slot>
+        <connect signal="closeRequested" handler="closeDialog"/>
+    </Dialog>
+    <Drawer id="xmlDrawer" title="@gallery.ore.sample.xml_drawer" placement="LEFT" width="240" open="false">
+        <slot name="content"><Input id="xmlDrawerDraft" placeholder="@gallery.ore.sample.xml_name"/></slot>
+    </Drawer>
+</Overlay>

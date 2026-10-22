@@ -26,6 +26,10 @@ dependencies {
 minecraft.runs.client {
     source sourceSets.clientDevelopment
     ideaModule "${project.name}.clientDevelopment"
+    // Read XML from source, not processResources output; also survives genIntellijRuns.
+    property 'ore.gui.sourceRoots', [project(':ore-lib').file('src/main/resources'),
+                                    project(':ore-lib').file('src/inspector/resources')]
+            .collect { it.absolutePath }.join(File.pathSeparator)
 }
 
 tasks.register('verifyClientDevelopment') {
@@ -40,7 +44,12 @@ tasks.register('verifyClientDevelopment') {
             def sources = minecraft.runs.getByName(name).allSources
             if (sources.contains(sourceSets.clientDevelopment))
                 throw new GradleException("Client tool classpath leaked into $name")
+            if (minecraft.runs.getByName(name).properties.containsKey('ore.gui.sourceRoots'))
+                throw new GradleException("XML source watcher leaked into $name")
         }
+        def xmlRoots = minecraft.runs.client.properties['ore.gui.sourceRoots'].split(java.util.regex.Pattern.quote(File.pathSeparator))
+        if (xmlRoots.size() != 2 || xmlRoots.any { !new File(it, 'assets').isDirectory() })
+            throw new GradleException("Invalid development XML source roots: $xmlRoots")
         if (!sourceSets.clientDevelopment.runtimeClasspath.files.containsAll(tools))
             throw new GradleException('Client launcher is missing the JEI runtime')
         logger.lifecycle('Client JEI configured; shared/server and published dependencies remain unchanged')

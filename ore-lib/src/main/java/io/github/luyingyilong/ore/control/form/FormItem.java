@@ -32,7 +32,7 @@ public final class FormItem<T> extends Container {
 
     private static final int GAP = 3;
     private final FieldKey<T> key;
-    private final Component label;
+    private Component label;
     private final FormField<T> field;
     private final Label labelNode;
     private final Label errorNode;
@@ -74,8 +74,20 @@ public final class FormItem<T> extends Container {
         return key.name();
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Component getLabel() {
         return label;
+    }
+
+    public FormItem<T> setLabel(Component value) {
+        label=Objects.requireNonNull(value);labelNode.setText(value);requestLayout();return this;
+    }
+    public List<Validator<? super T>> getValidators() { return List.copyOf(validators); }
+    public FormItem<T> setValidators(List<Validator<? super T>> rules) {
+        List<Validator<? super T>> next=List.copyOf(rules);
+        validators.clear();validators.addAll(next);
+        if(touched)validate(false);
+        return this;
     }
 
     public FormField<T> getField() {
@@ -90,6 +102,7 @@ public final class FormItem<T> extends Container {
         return getInputNode() == null ? null : getInputNode().getWidget();
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getActive() {
         return active;
     }

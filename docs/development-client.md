@@ -3,6 +3,25 @@
 执行 `gradlew genIntellijRuns` 后在 IDEA 刷新 Gradle 项目，使用标准 `runClient`。
 其类路径模块为 `geg.clientDevelopment`，包含主工程、Ore 和开发 Inspector。
 
+## XML 源码热重载
+
+标准 `runClient` 已由 Gradle 自动配置 `ore.gui.sourceRoots`，包含 Ore 的
+`src/main/resources` 和 `src/inspector/resources`。IDEA 和 Gradle 客户端使用同一配置，
+重新生成运行配置不会丢失监听参数；服务端、GameTest 和数据生成不启用监听。
+
+更新工程后执行一次 `gradlew prepareRunClientCompile genIntellijRuns`，刷新 IDEA 的 Gradle 项目并重启客户端。
+按 F9 选择 **XML UI**，直接修改并保存
+`ore-lib/src/inspector/resources/assets/ore_gallery/gui/components.xml`。
+修改标题、gap、placeholder 或主题覆盖后，当前界面自动更新，无需构建、重新选择示例或按 F3+T。
+
+示例顶部显示源码路径、监听状态、文档版本和重载错误。正常保存防抖约 300ms；
+文件事件遗漏时通过每秒一次的内容校验兜底。相同内容不重复重载，IDEA 替换式保存和目录重建也支持。
+XML 错误保留上次有效界面，修正保存后自动恢复。IME 预编辑期间延后提交。
+
+相同 ID 和类型的输入框保留草稿、选区、撤销记录，Scroll 保留可用偏移；
+修改 XML 的初始 text 或 scrollY 不会覆盖当前状态。验证热重载时应修改配置属性，保持示例打开。
+重新切换示例会创建新文档，不属于同一文档的状态保留。
+
 JEI 固定使用 Forge 1.20.1 的 `15.20.0.105`，与 Ore 当前测试的 API 版本一致。
 这份 JAR 的必需依赖只有 Minecraft 和 Forge，工程已经提供；不需要另外安装
 Architectury 或 Cloth Config。Gradle 负责下载和重映射，无需放入 `run/mods`。

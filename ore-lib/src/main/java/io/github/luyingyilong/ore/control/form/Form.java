@@ -30,6 +30,7 @@ public final class Form extends Container {
         return chosen == Layout.HORIZONTAL && viewportWidth <= 128 ? Layout.VERTICAL : chosen;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Layout getLayout() {
         return layout;
     }

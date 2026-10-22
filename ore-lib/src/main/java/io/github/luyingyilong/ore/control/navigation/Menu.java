@@ -109,6 +109,33 @@ public final class Menu extends Container implements ScrollContent {
         return false;
     }
 
+    private record ButtonState(Component label, io.github.luyingyilong.ore.render.TextureSource icon, boolean disabled, boolean selected) { }
+    private record TreeState(List<MenuItem> items, Map<String, Button> buttons, List<Padding> insets,
+                             Map<Button, ButtonState> states, String selected) { }
+    @Override protected Object captureTreeState() {
+        Map<Button, ButtonState> states = new IdentityHashMap<>();
+        buttons.values().forEach(button -> states.put(button, new ButtonState(button.getLabel(), button.getIcon(), button.getDisabled(), button.getButtonPressed())));
+        return new TreeState(items, new LinkedHashMap<>(buttons), List.copyOf(itemInsets), states, selectedKey);
+    }
+    @Override protected void restoreTreeState(Object state) {
+        if (!(state instanceof TreeState saved)) return;
+        releaseBindings(); items = saved.items(); buttons.clear(); buttons.putAll(saved.buttons());
+        itemInsets.clear(); itemInsets.addAll(saved.insets()); selectedKey = saved.selected();
+        saved.states().forEach((button, value) -> button.setLabel(value.label()).setIcon(value.icon()).setDisabled(value.disabled()).setButtonPressedNoSignal(value.selected()));
+        restoreItemBindings(items);
+    }
+    private void restoreItemBindings(List<MenuItem> values) {
+        for (MenuItem item : values) {
+            Button button = buttons.get(item.key());
+            if (button != null && item.type() == MenuItem.Type.ITEM) bindItem(button, item);
+            restoreItemBindings(item.children());
+        }
+    }
+    private void bindItem(Button button, MenuItem item) {
+        SignalScope binding = new SignalScope(); bindings.put(item.key(), binding);
+        button.pressed().connect(binding, () -> { setSelectedKey(item.key()); itemActivated.emit(item); });
+    }
+
     public List<MenuItem> getItems() {
         return items;
     }
@@ -122,14 +149,17 @@ public final class Menu extends Container implements ScrollContent {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<MenuItem> itemActivated() {
         return itemActivated.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<String> selectionChanged() {
         return selectionChanged.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setSelectedNoSignal")
     public String getSelectedKey() {
         return selectedKey;
     }
@@ -223,12 +253,7 @@ public final class Menu extends Container implements ScrollContent {
                 button.setLabel(item.label()).setIcon(item.icon()).setThemeTypeVariation("MenuButton")
                         .setAlignment(Button.TextAlignment.LEFT).setToggleButton(true).setDisabled(disabled || item.disabled())
                 ;
-                SignalScope binding = new SignalScope();
-                bindings.put(item.key(), binding);
-                button.pressed().connect(binding, () -> {
-                    setSelectedKey(item.key());
-                    itemActivated.emit(item);
-                });
+                bindItem(button, item);
                 button.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_CENTER);
                 buttons.put(item.key(), button);
                 run.addChild(button);

@@ -59,6 +59,13 @@ public final class Splitter extends Container {
             throw new IllegalStateException("Splitter has fixed panes; configure getFirst/getSecond");
     }
 
+    /** Atomically configure both pane limits, including disjoint old/new ranges. */
+    public Splitter setLimits(int firstMin, int firstMax, int secondMin, int secondMax) {
+        range(firstMin,firstMax); range(secondMin,secondMax);
+        firstMinimum=firstMin; firstMaximum=firstMax; secondMinimum=secondMin; secondMaximum=secondMax;
+        requestLayout(); return this;
+    }
+
     public Control getFirst() {
         return first;
     }
@@ -67,6 +74,7 @@ public final class Splitter extends Container {
         return second;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Orientation getOrientation() {
         return orientation;
     }
@@ -81,6 +89,7 @@ public final class Splitter extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setRatioNoSignal")
     public double getRatio() {
         return ratio;
     }
@@ -132,6 +141,7 @@ public final class Splitter extends Container {
         return sizes;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getGap() {
         return gap;
     }
@@ -145,6 +155,7 @@ public final class Splitter extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getDragSize() {
         return dragSize;
     }
@@ -155,6 +166,7 @@ public final class Splitter extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getShowDivider() {
         return showDivider;
     }
@@ -165,6 +177,7 @@ public final class Splitter extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getResizable() {
         return resizable;
     }
@@ -175,6 +188,7 @@ public final class Splitter extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getLazy() {
         return lazy;
     }
@@ -191,6 +205,7 @@ public final class Splitter extends Container {
         return dragging;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getFirstMinimum() {
         return firstMinimum;
     }
@@ -202,6 +217,7 @@ public final class Splitter extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getSecondMinimum() {
         return secondMinimum;
     }
@@ -213,6 +229,7 @@ public final class Splitter extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getFirstMaximum() {
         return firstMaximum;
     }
@@ -224,6 +241,7 @@ public final class Splitter extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getSecondMaximum() {
         return secondMaximum;
     }
@@ -235,14 +253,17 @@ public final class Splitter extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Sizes> resizeStarted() {
         return resizeStarted.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Sizes> resized() {
         return resized.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Sizes> resizeEnded() {
         return resizeEnded.signal();
     }

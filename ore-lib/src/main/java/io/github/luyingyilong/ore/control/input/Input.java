@@ -93,26 +93,32 @@ public class Input extends TextFieldWidget implements SignalOwner {
         return signalScope;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public final Signal<String> textChanged() {
         return textChanged.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public final Signal<String> submitted() {
         return submitted.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public final Signal0 pointerPressed() {
         return pointerPressed.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public final Signal0 focusEntered() {
         return focusEntered.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public final Signal0 focusExited() {
         return focusExited.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getSubmitOnEnter() {
         return submitOnEnter;
     }
@@ -180,6 +186,7 @@ public class Input extends TextFieldWidget implements SignalOwner {
         return Math.max(controlSize.getHeight(),(int)Math.ceil(renderer.getFontHeight())+margin.getVertical());
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Button.Size getControlSize() {
         return controlSize;
     }
@@ -189,6 +196,13 @@ public class Input extends TextFieldWidget implements SignalOwner {
         height(size.getHeight());
         return this;
     }
+
+    @Override
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setTextNoSignal")
+    public String getText() { return super.getText(); }
+
+    @io.github.luyingyilong.ore.gui.UiProperty
+    public Component getPlaceholder() { return hintText == null ? Component.empty() : hintText.copy(); }
 
     public Input setPlaceholder(Component placeholder) {
         hintText(java.util.Objects.requireNonNull(placeholder));

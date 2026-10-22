@@ -42,6 +42,12 @@ public final class DescriptionItem extends Container {
         setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL).setSizeFlagsVertical(SizeFlags.SIZE_SHRINK_BEGIN);
     }
 
+    private record TreeState(Component label, Component content, Descriptions.Layout layout, boolean colon, int gap) { }
+    @Override protected Object captureTreeState() { return new TreeState(getLabel(), getContent(), layout, colon, gap); }
+    @Override protected void restoreTreeState(Object state) {
+        if (state instanceof TreeState saved) { setLabel(saved.label()); setContent(saved.content()); configure(saved.layout(), saved.colon(), saved.gap()); }
+    }
+
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
         io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "DescriptionItem");
     }
@@ -55,6 +61,7 @@ public final class DescriptionItem extends Container {
         return key;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Component getLabel() {
         return labelText.copy();
     }
@@ -65,6 +72,7 @@ public final class DescriptionItem extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Component getContent() {
         return content.getText();
     }

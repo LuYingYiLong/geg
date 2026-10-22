@@ -1,22 +1,13 @@
 package io.github.luyingyilong.ore.gallery;
 
-import io.github.luyingyilong.ore.control.base.Container;
-import io.github.luyingyilong.ore.control.base.Control;
-import io.github.luyingyilong.ore.control.base.Rect;
-import io.github.luyingyilong.ore.control.base.Size;
-import io.github.luyingyilong.ore.control.base.SizeFlags;
+import io.github.luyingyilong.ore.control.base.*;
 import io.github.luyingyilong.ore.control.display.Label;
 import io.github.luyingyilong.ore.control.input.Dropdown;
-import io.github.luyingyilong.ore.control.layout.Box;
-import io.github.luyingyilong.ore.control.layout.Padding;
-import io.github.luyingyilong.ore.control.layout.Panel;
-import io.github.luyingyilong.ore.control.layout.Scroll;
-import io.github.luyingyilong.ore.control.layout.ScrollContent;
+import io.github.luyingyilong.ore.control.layout.*;
 import io.github.luyingyilong.ore.control.navigation.Menu;
 import io.github.luyingyilong.ore.control.navigation.MenuItem;
 import io.github.luyingyilong.ore.control.navigation.Navbar;
 import io.github.luyingyilong.ore.window.Window;
-
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 
@@ -33,6 +24,7 @@ public final class GalleryView {
     private final Dropdown<Integer> widths = new Dropdown<>(0, 4);
     private final Label heading = new Label().setHero(true).setWrap(Label.Wrap.WORD);
     private final Label description = new Label().setThemeTypeVariation("LabelSecondary").setWrap(Label.Wrap.WORD);
+    private final Box statusArea = new Box();
     private final Scroll content;
     private String selected = "";
 
@@ -59,11 +51,15 @@ public final class GalleryView {
         Box examples = new Box().setGap(6);
         examples.addChild(heading);
         examples.addChild(description);
-        examples.addChild(preview);
+        statusArea.setVisible(false);
+        examples.addChild(statusArea);
         preview.setMinimum(96, 24);
         preview.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
-        content = new Scroll().setContent(examples);
-        Padding panel = new Padding(new Padding.Insets(4, 4, 4, 4)).setChild(content);
+        content = new Scroll().setContent(preview);
+        content.setMinimum(96, 24);
+        content.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+        examples.addChild(content);
+        Padding panel = new Padding(new Padding.Insets(4, 4, 4, 4)).setChild(examples);
         panel.setMinimum(108, 32);
         panel.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL);
         panel.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
@@ -100,9 +96,16 @@ public final class GalleryView {
     public void select(String id) {
         if (selected.equals(id)) return;
         GalleryCatalog.Entry entry = GalleryCatalog.getEntries().stream().filter(e -> e.id().equals(id)).findFirst().orElseThrow();
-        Control next = GallerySamples.create(id, window);
+        GallerySamples.Example example = GallerySamples.create(id, window);
+        Control next = example.content();
         next.setDebugName("Gallery " + entry.title());
         preview.replace(next);
+        for (Control previous : statusArea.getChildren()) {
+            statusArea.removeChild(previous);
+            previous.queueFree("Gallery example status replaced");
+        }
+        if (example.status() != null) statusArea.addChild(example.status());
+        statusArea.setVisible(example.status() != null);
         selected = id;
         navigation.setSelectedNoSignal(id);
         heading.setText(Component.literal(entry.title()));

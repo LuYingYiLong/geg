@@ -67,6 +67,7 @@ public final class ProgressBar extends Control {
         if (!isUpdatingChildren()) throw new IllegalStateException("ProgressBar has a fixed skeleton");
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public double getMin() {
         return values.getMin();
     }
@@ -75,6 +76,7 @@ public final class ProgressBar extends Control {
         return setLimits(v, getMax());
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public double getMax() {
         return values.getMax();
     }
@@ -83,6 +85,7 @@ public final class ProgressBar extends Control {
         return setLimits(getMin(), v);
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setValueNoSignal")
     public double getValue() {
         return values.getValue();
     }
@@ -98,6 +101,7 @@ public final class ProgressBar extends Control {
         return values.getFraction();
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Double> valueChanged() {
         return changed.signal();
     }
@@ -133,6 +137,7 @@ public final class ProgressBar extends Control {
         percentage.setText(Component.literal(Math.round(getFraction() * 100) + "%"));
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Direction getDirection() {
         return direction;
     }
@@ -155,6 +160,7 @@ public final class ProgressBar extends Control {
         return direction == Direction.TOP_TO_BOTTOM || direction == Direction.BOTTOM_TO_TOP;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getShowPercentage() {
         return showPercentage;
     }

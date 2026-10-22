@@ -131,6 +131,7 @@ public final class Grid<T> extends Container implements ScrollContent {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<T> itemActivated() { return itemActivated.signal(); }
 
     @Override protected void validateChildren(List<Control> proposed) {
@@ -145,6 +146,7 @@ public final class Grid<T> extends Container implements ScrollContent {
     }
 
     @Inspectable
+    @io.github.luyingyilong.ore.gui.UiProperty
     public LayoutMode getMode() { return DebugBridge.value(this, "mode", mode); }
 
     public Grid<T> setMode(LayoutMode mode) {
@@ -154,6 +156,10 @@ public final class Grid<T> extends Container implements ScrollContent {
         invalidate();
         return this;
     }
+
+    public int getMinCardWidth() { return DebugBridge.value(this, "minCardWidth", minCardWidth); }
+    public int getMaxColumns() { return DebugBridge.value(this, "maxColumns", maxColumns); }
+    public int getGap() { return DebugBridge.value(this, "gap", gap); }
 
     public Grid<T> setColumns(int minCardWidth, int maxColumns, int gap) {
         this.minCardWidth = Math.max(1, minCardWidth);

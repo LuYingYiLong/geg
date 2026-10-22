@@ -1,18 +1,16 @@
 package io.github.luyingyilong.ore.control.display;
 
-import io.github.luyingyilong.ore.text.FontRepository;
+import io.github.luyingyilong.ore.control.base.Control;
+import io.github.luyingyilong.ore.control.base.Rect;
+import io.github.luyingyilong.ore.control.base.Size;
+import io.github.luyingyilong.ore.debug.DebugBridge;
+import io.github.luyingyilong.ore.debug.DebugProperty;
+import io.github.luyingyilong.ore.debug.Inspectable;
+import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.text.OreText;
 import io.github.luyingyilong.ore.text.TextLayout;
 import io.github.luyingyilong.ore.text.TextLayoutEngine;
 import io.github.luyingyilong.ore.text.TextRenderer;
-
-import io.github.luyingyilong.ore.debug.DebugBridge;
-import io.github.luyingyilong.ore.debug.DebugProperty;
-import io.github.luyingyilong.ore.debug.Inspectable;
-import io.github.luyingyilong.ore.control.base.Control;
-import io.github.luyingyilong.ore.control.base.Rect;
-import io.github.luyingyilong.ore.control.base.Size;
-import io.github.luyingyilong.ore.render.DrawContext;
 import io.github.luyingyilong.ore.theme.OreFonts;
 import io.github.luyingyilong.ore.theme.OreTheme;
 import io.github.luyingyilong.ore.theme.ThemeKey;
@@ -21,7 +19,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,8 +26,6 @@ import java.util.Objects;
  * Shared Ore text measurement and rendering, including styled Minecraft Components.
  */
 public final class Label extends Control {
-    @Override protected boolean requiresAxisAlignedClip() { return getOverflow() != Overflow.VISIBLE; }
-
     /**
      * GUI pixels: 8 preserves Minecraft's usual unscaled text size.
      */
@@ -74,7 +69,12 @@ public final class Label extends Control {
         var layout = OreText.layout(text, family, owner.getThemeItem(FONT_SIZE), width,
                 overflow == Overflow.MARQUEE ? TextLayoutEngine.Wrap.NONE : TextLayoutEngine.Wrap.valueOf(wrap.name()),
                 maxLines, false, owner.getThemeItem(OreTheme.FONT_METRICS), font);
-        return (int)Math.ceil(layout.getHeight());
+        return (int) Math.ceil(layout.getHeight());
+    }
+
+    @Override
+    protected boolean requiresAxisAlignedClip() {
+        return getOverflow() != Overflow.VISIBLE;
     }
 
     @Inspectable(group = "Text")
@@ -96,6 +96,7 @@ public final class Label extends Control {
     }
 
     @Inspectable(group = "Text")
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getOpticalCenter() {
         boolean opticalCenter = DebugBridge.value(this, "opticalCenter", this.opticalCenter);
         return opticalCenter;
@@ -124,6 +125,13 @@ public final class Label extends Control {
         scrollStartMs = Long.MIN_VALUE;
         super.invalidateTextLayout();
     }
+
+    public record Alignment(Horizontal horizontal, Vertical vertical) {
+        public Alignment { java.util.Objects.requireNonNull(horizontal); java.util.Objects.requireNonNull(vertical); }
+    }
+    @io.github.luyingyilong.ore.gui.UiProperty
+    public Alignment getAlignment() { return new Alignment(horizontal, vertical); }
+    public Label setAlignment(Alignment value) { return setAlignment(value.horizontal(), value.vertical()); }
 
     public Label setAlignment(Horizontal horizontal, Vertical vertical) {
         this.horizontal = Objects.requireNonNull(horizontal);
@@ -173,6 +181,7 @@ public final class Label extends Control {
     }
 
     @Inspectable(group = "Text", min = 0.0001, max = 64)
+    @io.github.luyingyilong.ore.gui.UiProperty
     public float getScale() {
         return DebugBridge.value(this, "scale", scale);
     }
@@ -189,6 +198,7 @@ public final class Label extends Control {
     }
 
     @Inspectable(group = "Text", min = 1, max = Integer.MAX_VALUE)
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getMaxLines() {
         return DebugBridge.value(this, "maxLines", maxLines);
     }
@@ -204,6 +214,7 @@ public final class Label extends Control {
     }
 
     @Inspectable(group = "Text")
+    @io.github.luyingyilong.ore.gui.UiProperty
     public ScrollTrigger getScrollTrigger() {
         return DebugBridge.value(this, "scrollTrigger", scrollTrigger);
     }
@@ -219,6 +230,7 @@ public final class Label extends Control {
     }
 
     @Inspectable(group = "Text", min = 0.0001, max = 100000)
+    @io.github.luyingyilong.ore.gui.UiProperty
     public float getScrollSpeed() {
         return DebugBridge.value(this, "scrollSpeed", scrollSpeed);
     }
@@ -235,6 +247,7 @@ public final class Label extends Control {
     }
 
     @Inspectable(group = "Text", setter = "setScrollEndPauseMs", min = 0, max = 100000)
+    @io.github.luyingyilong.ore.gui.UiProperty
     public long getScrollEndPauseMs() {
         return DebugBridge.value(this, "scrollEndPauseMs", scrollEndPauseMs);
     }
@@ -263,6 +276,7 @@ public final class Label extends Control {
     }
 
     @Inspectable(group = "Text", max = 2048)
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Component getText() {
         Component text = DebugBridge.value(this, "text", this.text);
         return text;
@@ -281,13 +295,14 @@ public final class Label extends Control {
     }
 
     @Inspectable(group = "Text")
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Overflow getOverflow() {
         Overflow overflow = DebugBridge.value(this, "overflow", this.overflow);
         return overflow;
     }
 
     public Label setOverflow(Overflow overflow) {
-        validateGeometryRequirement(overflow != Overflow.VISIBLE,false);
+        validateGeometryRequirement(overflow != Overflow.VISIBLE, false);
         Overflow next = Objects.requireNonNull(overflow);
         if (DebugBridge.previewWrite(this, "overflow", next)) return this;
         if (this.overflow != next) {
@@ -299,6 +314,7 @@ public final class Label extends Control {
     }
 
     @Inspectable(group = "Text")
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Wrap getWrap() {
         Wrap wrap = DebugBridge.value(this, "wrap", this.wrap);
         return wrap;
@@ -346,7 +362,7 @@ public final class Label extends Control {
     }
 
     public int lineHeight(Font font) {
-        return (int)getTextLayout(font, Integer.MAX_VALUE).getMetrics().lineHeight();
+        return (int) getTextLayout(font, Integer.MAX_VALUE).getMetrics().lineHeight();
     }
 
     float firstLineOrigin(int height, int lines) {
@@ -361,8 +377,8 @@ public final class Label extends Control {
             case BOTTOM -> height - block;
             case CENTER -> getOpticalCenter()
                     ? Math.round(height / 2F - metrics.ascent() - (metrics.opticalTop() + metrics.opticalBottom()) / 2
-                        - (lines - 1) * metrics.lineHeight() / 2 + getThemeItem(OreTheme.FONT_METRICS).opticalOffsetY())
-                    : (float)Math.floor((height - block) / 2);
+                    - (lines - 1) * metrics.lineHeight() / 2 + getThemeItem(OreTheme.FONT_METRICS).opticalOffsetY())
+                    : (float) Math.floor((height - block) / 2);
         };
     }
 
@@ -437,7 +453,11 @@ public final class Label extends Control {
                 TextRenderer.draw(graphics, layout.getLineLayout(index), lineX, top, color, getThemeItem(OreTheme.TEXT_SHADOW));
             }
         } finally {
-            if (overflow != Overflow.VISIBLE) { graphics.flush(); graphics.disableScissor(); DebugBridge.backend().unclip(); }
+            if (overflow != Overflow.VISIBLE) {
+                graphics.flush();
+                graphics.disableScissor();
+                DebugBridge.backend().unclip();
+            }
         }
     }
 

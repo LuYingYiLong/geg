@@ -83,6 +83,7 @@ public final class Radio extends Container {
         if (!isUpdatingChildren()) throw new IllegalStateException("Radio has a fixed skeleton; configure its text");
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Component getText() {
         return label.getText();
     }
@@ -92,6 +93,7 @@ public final class Radio extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setCheckedNoSignal")
     public boolean getChecked() {
         return checked;
     }
@@ -123,14 +125,17 @@ public final class Radio extends Container {
         if (isAlive()) toggled.emit(value);
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Boolean> toggled() {
         return toggled.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal0 activated() {
         return activated.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getDisabled() {
         return disabled;
     }

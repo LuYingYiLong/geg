@@ -114,3 +114,12 @@ public Label setFontSize(float value) {
 客户端夹具只有显式加入 `clientIntegrationTest` 输出时才运行，不应在普通游戏世界开启。发布 JAR 不包含 Inspector、测试或调试语言资源。
 
 Inspector 通过 `META-INF/services/io.github.luyingyilong.ore.OreClientExtension` 自动接入开发客户端，注册 F8 和事件监听；不需要 GEG 开发启动桥。正常 IDEA runClient 使用 clientDevelopment 模块，运行前会构建 Inspector。该模块额外提供 JEI 测试运行时，详见 [开发客户端说明](development-client.md)。该服务描述和 inspector 源码集输出均不进入发布 JAR、服务端或数据生成。
+
+
+## XML 来源
+
+XML 内容节点及内部部件可以显示其来源资源、行列、文档作用域、已提交版本和最近一次重载错误。
+公共状态区显示所选节点的资源位置；属性行区分 XML 基础配置、之后的 Java 修改和 Inspector 临时覆盖。
+ID 与文档信息只读。修改仍使用原有覆盖、撤销和恢复，不修改 XML 文件。
+信号连接标签含 XML 位置及 Java 注册的处理器名称；文档重载替换连接作用域，清理记录沿用信号面板。
+同 ID 复用保留检查身份；替换或销毁的节点不会把覆盖转给另一个实例。

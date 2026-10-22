@@ -56,5 +56,7 @@
   "inspector.ore.lifecycle_status": "Lifecycle: %s | in tree: %s | ready: %s | suspended: %s\nFree reason: %s\nFirst request: %s",
   "inspector.ore.themes": "Theme",
   "inspector.ore.theme.context": "Type: %s; variation: %s; state: %s",
-  "inspector.ore.theme.source": "Source: %s"
+  "inspector.ore.theme.source": "Source: %s",
+  "inspector.ore.xml_source": "XML source: %s:%s",
+  "inspector.ore.property_origin": "Source: %s"
 }

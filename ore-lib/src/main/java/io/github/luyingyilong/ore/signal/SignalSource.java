@@ -80,7 +80,7 @@ public final class SignalSource<T> implements AutoCloseable {
 
     public void emit(T value) {
         lifetime.checkThread();
-        if (closed || lifetime.isClosed()) return;
+        if (closed || lifetime.isClosed() || lifetime.isSilent()) return;
         try (var guard = DispatchGuard.enter()) {
             for (Subscription<T> subscription : new ArrayList<>(subscriptions)) {
                 if (!subscription.isConnected()) continue;

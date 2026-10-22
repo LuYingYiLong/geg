@@ -469,7 +469,18 @@ public final class InspectorBackend implements DebugBridge.Backend {
                 }
                 Object effective = p.read().get();
                 props.add(new InspectorSnapshot.Property(index++, p.key(), p.group(), p.kind(), p.options(), display(base), display(effective),
-                        overrides.contains(p.target(), p.key()), n.internal && !(n.control instanceof TextureRect), base instanceof Component component ? Component.Serializer.toJson(component) : ""));
+                        overrides.contains(p.target(), p.key()), n.internal && !(n.control instanceof TextureRect), base instanceof Component component ? Component.Serializer.toJson(component) : "",
+                        (overrides.contains(p.target(), p.key()) ? "Inspector → " : "") + io.github.luyingyilong.ore.gui.UiSources.getPropertyOrigin(n.control, p.key(), base)));
+            }
+            readonly(props, "id", n.control.getId());
+            var xml = DebugBridge.xml(n.control);
+            if (xml != null) {
+                readonly(props, "xmlResource", xml.resource());
+                readonly(props, "xmlLocation", xml.line() + ":" + xml.column());
+                readonly(props, "xmlScope", xml.scope());
+                readonly(props, "xmlVersion", xml.version());
+                readonly(props, "xmlConfiguration", xml.configuration());
+                readonly(props, "xmlReloadError", xml.reloadError());
             }
             readonly(props, "visible", n.visible);
             readonly(props, "focusable", n.control.getFocusable());
@@ -582,7 +593,7 @@ public final class InspectorBackend implements DebugBridge.Backend {
         readonly(props,name+"Region",region);
     }
     private void readonly(List<InspectorSnapshot.Property> props, String name, Object value) {
-        props.add(new InspectorSnapshot.Property(-1, name, "State", "text", List.of(), display(value), display(value), false, true, ""));
+        props.add(new InspectorSnapshot.Property(-1, name, "State", "text", List.of(), display(value), display(value), false, true, "", ""));
     }
 
     private Object display(Object value) {

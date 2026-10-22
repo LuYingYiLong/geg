@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Panel id="xmlPanel">
+    <slot name="child">
+        <Padding insets="4,8,4,8">
+            <slot name="child">
+                <Box id="xmlContent" gap="6">
+                    <Navbar title="@gallery.ore.sample.xml_title" showBackButton="false"/>
+                    <Label text="hello!" />
+                    <Segmented id="xmlSegments" selected="0">
+                        <item text="@gallery.ore.sample.xml_first" icon='{&quot;location&quot;:&quot;ore:textures/icons/logo.png&quot;,&quot;imageWidth&quot;:128,&quot;imageHeight&quot;:128}'/>
+                        <item text="@gallery.ore.sample.xml_second"/>
+                    </Segmented>
+                    <Tabs id="xmlTabs" maxTabWidth="96" preferred="240,190">
+                        <connect signal="selectionChanged" handler="selection"/>
+                        <item key="edit" text="@gallery.ore.sample.xml_editor">
+                            <Box id="editorPage" gap="4">
+                                <Label text="@gallery.ore.sample.xml_caption" wrap="WORD">
+                                    <theme key="Label:font_color" value="#8cb3ff"/>
+                                </Label>
+                                <Input id="xmlName" placeholder="@gallery.ore.sample.xml_name"/>
+                                <NumberInput id="xmlAmount" decimalPlaces="2" minimumValue="0.01" maximumValue="100.00" boundaryStrategy="CLAMP" text="12.50"/>
+                                <TextArea id="xmlDraft" rows="3" placeholder="@gallery.ore.sample.xml_draft"/>
+                                <Button id="xmlSubmit" text="@gallery.ore.sample.xml_submit" themeTypeVariation="PrimaryButton">
+                                    <connect signal="pressed" handler="submit"/>
+                                </Button>
+                            </Box>
+                        </item>
+                        <item key="details" text="@gallery.ore.sample.xml_second">
+                            <Scroll id="xmlScroll" vertical="AUTO" horizontal="NEVER" minimum="100,80">
+                                <slot name="content">
+                                    <Box gap="4">
+                                        <Descriptions columns="1">
+                                            <item key="resource" label="@gallery.ore.sample.xml_resource" text="ore_gallery:gui/components.xml"/>
+                                            <item key="layout" label="@gallery.ore.sample.xml_title" text="@gallery.ore.sample.xml_caption"/>
+                                        </Descriptions>
+                                        <Menu id="xmlMenu">
+                                            <item key="one" text="@gallery.ore.sample.xml_first"/>
+                                            <item key="two" text="@gallery.ore.sample.xml_second"/>
+                                        </Menu>
+                                    </Box>
+                                </slot>
+                            </Scroll>
+                        </item>
+                        <item key="controls" text="@gallery.ore.sample.xml_controls">
+                            <Scroll id="xmlControlsScroll" preferred="240,180">
+                                <slot name="content">
+                                    <Box gap="6">
+                                        <Collapse id="xmlCollapse" text="@gallery.ore.sample.xml_collapse" secondaryText="@gallery.ore.sample.xml_caption" expanded="true">
+                                            <slot name="content">
+                                                <Box orientation="HORIZONTAL" gap="4">
+                                                    <Avatar initials="Ore" size="18"/>
+                                                    <Slot item="minecraft:diamond" count="8" backgroundVisible="false"/>
+                                                    <Label text="@gallery.ore.sample.xml_identity"/>
+                                                </Box>
+                                            </slot>
+                                        </Collapse>
+                                        <Splitter id="xmlSplitter" preferred="220,60" ratio="0.5" firstMinimum="32" secondMinimum="32">
+                                            <slot name="first"><Label text="@gallery.ore.sample.xml_first"/></slot>
+                                            <slot name="second"><Label text="@gallery.ore.sample.xml_second"/></slot>
+                                        </Splitter>
+                                        <Form id="xmlForm">
+                                            <FormItem id="xmlFormName" name="name" label="@gallery.ore.sample.xml_name">
+                                                <Input id="xmlFormInput" placeholder="@gallery.ore.sample.xml_name"/>
+                                                <validate rule="required"/>
+                                                <validate rule="length" min="2" max="32"/>
+                                            </FormItem>
+                                            <FormItem id="xmlFormChoice" name="choice" label="@gallery.ore.sample.xml_choice">
+                                                <RadioGroup id="xmlRadioGroup" orientation="HORIZONTAL" wrap="true" gap="4" selected="yes">
+                                                    <item value="yes"><Radio id="xmlRadioYes" text="@gallery.ore.sample.xml_yes"/></item>
+                                                    <item value="no"><Radio id="xmlRadioNo" text="@gallery.ore.sample.xml_no"/></item>
+                                                </RadioGroup>
+                                                <validate rule="required"/>
+                                            </FormItem>
+                                        </Form>
+                                        <Box orientation="HORIZONTAL" wrap="true" gap="4">
+                                            <Button text="@gallery.ore.sample.xml_validate"><connect signal="pressed" handler="validateForm"/></Button>
+                                            <Button text="@gallery.ore.sample.xml_reset"><connect signal="pressed" handler="resetForm"/></Button>
+                                        </Box>
+                                        <Inventory id="xmlInventory" slotCount="9" columns="9" mode="SELECT" showTitle="false">
+                                            <item index="0" item="minecraft:stone" count="32"/>
+                                            <item index="1" item="minecraft:iron_ingot" count="8"/>
+                                        </Inventory>
+                                        <Scroll preferred="220,70"><slot name="content">
+                                            <Tree id="xmlTree" defaultExpandAll="true">
+                                                <item key="root" text="@gallery.ore.sample.xml_tree_root">
+                                                    <item key="child" text="@gallery.ore.sample.xml_tree_child"/>
+                                                </item>
+                                            </Tree>
+                                        </slot></Scroll>
+                                        <Scroll preferred="220,90"><slot name="content">
+                                            <Table id="xmlTable">
+                                                <column key="name" text="@gallery.ore.sample.xml_name" minWidth="60" width="120"/>
+                                                <column key="state" text="@gallery.ore.sample.xml_choice" minWidth="40" width="80"/>
+                                                <row key="one"><cell column="name" text="Ore"/><cell column="state" text="@gallery.ore.sample.xml_yes"/></row>
+                                                <row key="two"><cell column="name" text="XML"/><cell column="state" text="@gallery.ore.sample.xml_no"/></row>
+                                            </Table>
+                                        </slot></Scroll>
+                                        <DescriptionItem key="xml" label="@gallery.ore.sample.xml_resource" content="ore_gallery:gui/components.xml"/>
+                                        <Box orientation="HORIZONTAL" wrap="true" gap="4">
+                                            <Button id="xmlOpenModal" text="Modal"><connect signal="pressed" handler="openModal"/></Button>
+                                            <Button id="xmlOpenDialog" text="Dialog"><connect signal="pressed" handler="openDialog"/></Button>
+                                            <Button id="xmlOpenDrawer" text="Drawer"><connect signal="pressed" handler="openDrawer"/></Button>
+                                            <Button text="Toast"><connect signal="pressed" handler="showToast"/></Button>
+                                        </Box>
+                                        <Toast id="xmlToast" text="@gallery.ore.sample.xml_toast" type="PRIMARY" duration="1500"/>
+                                    </Box>
+                                </slot>
+                            </Scroll>
+                        </item>
+                    </Tabs>
+                </Box>
+            </slot>
+        </Padding>
+    </slot>
+</Panel>

@@ -224,6 +224,12 @@ public final class ThemeDB implements SignalOwner {
         }
         staged.put(id,new Staged(parent,values,file.toString())); pending.remove(id);
     }
+    public <T> T decodeValue(ThemeKey<T> key, JsonElement value, Resources resources) throws IOException {
+        scope.checkThread();
+        requireKey(key);
+        return validateValue(key, read(key, value, resources));
+    }
+
     private Object read(ThemeKey<?> key,JsonElement value,Resources resources) throws IOException {
         return switch(key.kind()) {
             case STYLE -> readStyle(value.getAsJsonObject(),resources);

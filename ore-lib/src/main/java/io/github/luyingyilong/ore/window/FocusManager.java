@@ -107,20 +107,7 @@ public final class FocusManager {
     }
 
     public boolean allowsPopupOwner(Control target) {
-        Overlay layer = window.overlayLayer();
-        Control blocking = null;
-        if (layer != null) {
-            var nodes = layer.getChildren();
-            for (int i = nodes.size() - 1; i >= 0; i--) {
-                Control node = nodes.get(i);
-                if (node instanceof io.github.luyingyilong.ore.window.WindowPopups.Popup) continue;
-                if ((node.isAlive() && node.getVisible()) && node.getFocusScope()) {
-                    blocking = node;
-                    break;
-                }
-            }
-        }
-        return inside(target, blocking);
+        return inside(target, topScope(true));
     }
 
     void pointerPressed(Control hit, ModularGuiContext context) {
@@ -369,14 +356,21 @@ public final class FocusManager {
     }
 
     private Control topScope() {
-        Overlay overlay = window.overlayLayer();
-        if (overlay == null) return null;
-        List<Control> layers = overlay.getChildren();
-        for (int index = layers.size() - 1; index >= 0; index--) {
-            Control layer = layers.get(index);
-            if ((layer.isAlive() && layer.getVisible()) && layer.getFocusScope()) return layer;
+        return topScope(false);
+    }
+    private Control topScope(boolean ignoreMenus) {
+        Control result=findScope(window.overlayLayer(),ignoreMenus);
+        return result==null?findScope(window.contentNode(),ignoreMenus):result;
+    }
+    private static Control findScope(Control node, boolean ignoreMenus) {
+        if(node==null || !node.isInputAccessible())return null;
+        if(ignoreMenus && node instanceof WindowPopups.Popup)return null;
+        List<Control> children=node.getChildren();
+        for(int i=children.size()-1;i>=0;i--){
+            Control found=findScope(children.get(i),ignoreMenus);
+            if(found!=null)return found;
         }
-        return null;
+        return node.getFocusScope()?node:null;
     }
 
     private Control scopeRoot() {

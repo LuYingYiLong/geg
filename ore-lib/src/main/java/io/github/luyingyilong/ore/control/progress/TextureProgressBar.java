@@ -74,6 +74,7 @@ public final class TextureProgressBar extends Control {
     }
     @Override public boolean hit(int x, int y) { return false; }
     @Override protected Control hitTestTree(int x, int y, int windowX, int windowY) { return null; }
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Double> valueChanged() { return changed.signal(); }
 
     private double effectiveLimit(boolean upper) {
@@ -82,7 +83,9 @@ public final class TextureProgressBar extends Control {
             return upper ? values.getMax() : values.getMin();
         return upper ? max : min;
     }
+    @io.github.luyingyilong.ore.gui.UiProperty
     public double getMin() { return effectiveLimit(false); }
+    @io.github.luyingyilong.ore.gui.UiProperty
     public double getMax() { return effectiveLimit(true); }
     @Inspectable(group = "Progress") public double getValue() {
         return Math.max(getMin(), Math.min(getMax(), DebugBridge.value(this, "value", values.getValue())));
@@ -117,8 +120,11 @@ public final class TextureProgressBar extends Control {
         refreshText(); return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public TextureSource getUnderTexture() { return underTexture; }
+    @io.github.luyingyilong.ore.gui.UiProperty
     public TextureSource getProgressTexture() { return progressTexture; }
+    @io.github.luyingyilong.ore.gui.UiProperty
     public TextureSource getOverTexture() { return overTexture; }
     public TextureProgressBar setUnderTexture(TextureSource source) { checkTexture(source); if (!Objects.equals(underTexture, source)) { underTexture = source; imageChanged(); } return this; }
     public TextureProgressBar setProgressTexture(TextureSource source) { checkTexture(source); if (!Objects.equals(progressTexture, source)) { progressTexture = source; imageChanged(); } return this; }
@@ -132,6 +138,7 @@ public final class TextureProgressBar extends Control {
     public TextureRegion getResolvedProgressTexture() { return resolve(progressTexture); }
     public TextureRegion getResolvedOverTexture() { return resolve(overTexture); }
     private TextureRegion resolve(TextureSource source) { return source == null ? null : source.resolve(this); }
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Offset getProgressOffset() {
         return new Offset(DebugBridge.value(this, "progressOffsetX", progressOffset.x()), DebugBridge.value(this, "progressOffsetY", progressOffset.y()));
     }
@@ -169,6 +176,7 @@ public final class TextureProgressBar extends Control {
         if (!Double.isFinite(degrees) || degrees < 0 || degrees > 360) throw new IllegalArgumentException("Radial fill must be between 0 and 360 degrees");
         if (!DebugBridge.previewWrite(this, "radialFillDegrees", degrees)) { radialFillDegrees = degrees; clearGeometry(); } return this;
     }
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Offset getRadialCenterOffset() {
         return new Offset(DebugBridge.value(this, "radialCenterOffsetX", radialCenterOffset.x()), DebugBridge.value(this, "radialCenterOffsetY", radialCenterOffset.y()));
     }

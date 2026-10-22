@@ -46,6 +46,7 @@ public final class InspectorView {
     private final InspectorThemePanel themePanel = new InspectorThemePanel();
     private final Segmented views = new Segmented(List.of(tr("properties"), tr("signals"), tr("themes")));
     private final Label title = new Label().setHero(true), crumbs = new Label().setWrap(Label.Wrap.CHARACTER);
+    private final Label xmlStatus = new Label().setWrap(Label.Wrap.CHARACTER).setThemeTypeVariation("LabelSecondary");
     private final Label lifecycleStatus = new Label().setWrap(Label.Wrap.CHARACTER).setThemeTypeVariation("LabelSecondary");
     private final Label message = new Label().setWrap(Label.Wrap.CHARACTER);
     private final Input search = new Input();
@@ -108,6 +109,7 @@ public final class InspectorView {
         Box right = new Box().setGap(4);
         right.addChild(views);
         right.addChild(lifecycleStatus);
+        right.addChild(xmlStatus);
         right.addChild(propertyScroll);
         right.addChild(signalScroll);
         right.addChild(themeScroll);
@@ -179,6 +181,13 @@ public final class InspectorView {
         lifecycleStatus.setText(info == null ? Component.empty() : tr("lifecycle_status", info.state().name(),
                 info.insideTree(), info.ready(), info.suspended(), info.reason(), info.requestSource().lines().findFirst().orElse("—")));
         lifecycleStatus.setVisible(info != null);
+        var selectedNode = next.nodes().stream().filter(node -> node.id().equals(next.selected())).findFirst().orElse(null);
+        String xmlResource = selectedNode == null ? "" : selectedNode.properties().stream().filter(property -> property.name().equals("xmlResource"))
+                .map(property -> String.valueOf(property.effective())).findFirst().orElse("");
+        String xmlLocation = selectedNode == null ? "" : selectedNode.properties().stream().filter(property -> property.name().equals("xmlLocation"))
+                .map(property -> String.valueOf(property.effective())).findFirst().orElse("");
+        xmlStatus.setText(xmlResource.isEmpty() ? Component.empty() : tr("xml_source", xmlResource, xmlLocation));
+        xmlStatus.setVisible(!xmlResource.isEmpty());
         if (views.getSelected() == 1) signalPanel.update(next.signals());
         if (views.getSelected() == 2) themePanel.update(next.themes());
         sequence = next.sequence();
@@ -335,7 +344,8 @@ public final class InspectorView {
             boolean changed = !Objects.equals(effectiveValue, property.effective());
             this.property = property;
             effectiveValue = property.effective();
-            base.setText(tr("base", property.base(), property.overridden() ? " *" : ""));
+            base.setText(tr("base", property.base(), property.overridden() ? " *" : "").copy()
+                    .append("\n").append(tr("property_origin", property.origin())));
             refreshing = true;
             try {
                 if (checkbox != null) checkbox.setCheckedNoSignal(Boolean.TRUE.equals(property.effective()));

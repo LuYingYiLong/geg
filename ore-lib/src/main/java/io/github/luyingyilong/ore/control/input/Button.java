@@ -250,6 +250,9 @@ public final class Button extends Control {
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty(value = "text", setter = "setLabel")
+    public Component getLabel() { return label.getText(); }
+
     public Button setLabel(Component label) {
         if (!this.label.getText().equals(label)) {
             this.label.setText(label);
@@ -267,6 +270,9 @@ public final class Button extends Control {
         requestLayout();
         return this;
     }
+
+    @io.github.luyingyilong.ore.gui.UiProperty(value = "size", setter = "setSize")
+    public Size getButtonSize() { return buttonSize; }
 
     public Button setSize(Size size) {
         this.buttonSize = java.util.Objects.requireNonNull(size);
@@ -298,6 +304,7 @@ public final class Button extends Control {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public TextureSource getIcon() {
         return iconControl.getTexture();
     }
@@ -314,6 +321,7 @@ public final class Button extends Control {
         return iconControl;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public TextureSource getTrailingIcon() {
         return trailingIconControl.getTexture();
     }
@@ -354,10 +362,12 @@ public final class Button extends Control {
         badge = getChildren().stream().filter(Badge.class::isInstance).map(Badge.class::cast).findFirst().orElse(null);
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal0 pressed() {
         return pressed.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Boolean> toggled() {
         return toggled.signal();
     }
@@ -391,6 +401,7 @@ public final class Button extends Control {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getDisabled() {
         return disabled;
     }

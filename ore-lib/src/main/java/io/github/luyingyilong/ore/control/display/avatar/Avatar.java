@@ -57,6 +57,9 @@ public final class Avatar extends Container {
             throw new IllegalStateException("Avatar has a fixed skeleton; configure its properties");
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty(value = "size", setter = "setSize")
+    public int getAvatarSize() { return getMinimumWidth(); }
+
     public Avatar setSize(int pixels) {
         if (pixels < 1) throw new IllegalArgumentException("Avatar size must be positive");
         setMinimum(pixels, pixels).setPreferred(pixels, pixels);
@@ -67,6 +70,13 @@ public final class Avatar extends Container {
     public Avatar setPlayer(UUID id, String name) {
         String display = Objects.requireNonNullElse(name, "");
         return id == null && display.isBlank() ? setInitials(display) : setPlayer(new GameProfile(id, display));
+    }
+
+    public GameProfile getPlayer() {
+        if (profile == null) return null;
+        GameProfile copy = new GameProfile(profile.getId(),profile.getName());
+        copy.getProperties().putAll(profile.getProperties());
+        return copy;
     }
 
     public Avatar setPlayer(GameProfile player) {
@@ -103,6 +113,7 @@ public final class Avatar extends Container {
         return profile == null ? null : profile.getId();
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getHatLayer() {
         return hatLayer;
     }
@@ -112,6 +123,7 @@ public final class Avatar extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getBackgroundColor() {
         return getThemeItem(io.github.luyingyilong.ore.theme.OreTheme.AVATAR_COLOR);
     }

@@ -26,6 +26,7 @@ public final class Divider extends Control {
         io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Divider");
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Layout getLayout() {
         return layout;
     }

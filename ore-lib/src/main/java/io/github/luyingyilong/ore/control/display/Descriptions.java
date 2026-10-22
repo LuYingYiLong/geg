@@ -70,6 +70,13 @@ public final class Descriptions extends Container {
         for (Control child : node.getChildren()) collectItems(child, out);
     }
 
+    private record TreeState(Map<String, DescriptionItem> items, List<DescriptionItem> arranged, int columns) { }
+    @Override protected Object captureTreeState() { return new TreeState(new LinkedHashMap<>(items), arranged, arrangedColumns); }
+    @Override protected void restoreTreeState(Object state) {
+        if (state instanceof TreeState saved) { items.clear(); items.putAll(saved.items()); arranged = saved.arranged(); arrangedColumns = saved.columns(); }
+    }
+
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Component getTitle() {
         return title.getText();
     }
@@ -84,6 +91,7 @@ public final class Descriptions extends Container {
         return title;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Layout getLayout() {
         return layout;
     }
@@ -94,6 +102,7 @@ public final class Descriptions extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getColon() {
         return colon;
     }
@@ -104,6 +113,7 @@ public final class Descriptions extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getColumns() {
         return columns;
     }
@@ -115,6 +125,7 @@ public final class Descriptions extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getMinimumColumnWidth() {
         return minimumColumnWidth;
     }
@@ -126,6 +137,7 @@ public final class Descriptions extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getRowGap() {
         return rowGap;
     }
@@ -137,6 +149,7 @@ public final class Descriptions extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getColumnGap() {
         return columnGap;
     }
@@ -149,6 +162,7 @@ public final class Descriptions extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getItemGap() {
         return itemGap;
     }

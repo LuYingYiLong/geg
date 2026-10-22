@@ -102,7 +102,13 @@ final class GallerySamples {
         return new Box().setOrientation(Box.Orientation.HORIZONTAL).setWrap(true).setGap(4);
     }
 
-    static Control create(String id, Window window) {
+    record Example(Control content, Control status) { }
+
+    static Example create(String id, Window window) {
+        return id.equals("xml") ? XmlSamples.create(window) : new Example(createContent(id, window), null);
+    }
+
+    private static Control createContent(String id, Window window) {
         Box root = column();
         switch (id) {
             case "inventory" -> { return InventorySamples.inventory(); }

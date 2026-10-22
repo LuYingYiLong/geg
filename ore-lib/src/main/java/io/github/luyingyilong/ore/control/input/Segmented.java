@@ -70,6 +70,15 @@ public final class Segmented extends Control {
 
     }
 
+    private record TreeState(List<TextureSource> icons, int selected, int focused, int scroll) { }
+    @Override protected Object captureTreeState() { return new TreeState(optionIcons.stream().map(TextureRect::getTexture).toList(), selectedIndex, focusedIndex, scrollX); }
+    @Override protected void restoreTreeState(Object state) {
+        if (state instanceof TreeState saved) {
+            for (int i = 0; i < saved.icons().size(); i++) optionIcons.get(i).setTexture(saved.icons().get(i));
+            selectedIndex = saved.selected(); focusedIndex = saved.focused(); scrollX = saved.scroll();
+        }
+    }
+
     public static void registerTheme(io.github.luyingyilong.ore.theme.ThemeDB db) {
         io.github.luyingyilong.ore.theme.OreTheme.registerType(db, "Segmented");
         db.register(NORMAL);
@@ -87,6 +96,7 @@ public final class Segmented extends Control {
         return "selected=" + selectedIndex + ", focused=" + focused;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Integer> selectionChanged() {
         return selectionChanged.signal();
     }
@@ -117,6 +127,7 @@ public final class Segmented extends Control {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setSelectedNoSignal")
     public int getSelected() {
         return selectedIndex;
     }

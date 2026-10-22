@@ -44,6 +44,7 @@ public final class TextureRect extends Control {
         out.add(new TexturePainter.Quad(x, y, width, height, image.getX() + u0, image.getY() + v0, image.getX() + u1, image.getY() + v1));
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public TextureSource getTexture() {
         return texture;
     }
@@ -68,6 +69,7 @@ public final class TextureRect extends Control {
     }
 
     @Inspectable(group = "Image")
+    @io.github.luyingyilong.ore.gui.UiProperty
     public StretchMode getStretchMode() {
         return DebugBridge.value(this, "stretchMode", stretchMode);
     }
@@ -83,6 +85,7 @@ public final class TextureRect extends Control {
     }
 
     @Inspectable(group = "Image")
+    @io.github.luyingyilong.ore.gui.UiProperty
     public ExpandMode getExpandMode() {
         return DebugBridge.value(this, "expandMode", expandMode);
     }
@@ -98,6 +101,7 @@ public final class TextureRect extends Control {
     }
 
     @Inspectable(group = "Image")
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getFlipHorizontal() {
         return DebugBridge.value(this, "flipHorizontal", flipHorizontal);
     }
@@ -112,6 +116,7 @@ public final class TextureRect extends Control {
     }
 
     @Inspectable(group = "Image")
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getFlipVertical() {
         return DebugBridge.value(this, "flipVertical", flipVertical);
     }
@@ -126,6 +131,7 @@ public final class TextureRect extends Control {
     }
 
     @Inspectable(group = "Image", min = 0, max = 1)
+    @io.github.luyingyilong.ore.gui.UiProperty
     public float getOpacity() {
         return DebugBridge.value(this, "opacity", opacity);
     }
@@ -139,6 +145,7 @@ public final class TextureRect extends Control {
     }
 
     @Inspectable(group = "Image")
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getModulate() {
         return DebugBridge.value(this, "modulate", modulate);
     }

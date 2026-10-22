@@ -29,6 +29,6 @@ public record InspectorSnapshot(long sequence, boolean waiting, String selected,
     }
 
     public record Property(int index, String name, String group, String kind, List<String> options,
-                           Object base, Object effective, boolean overridden, boolean readonly, String source) {
+                           Object base, Object effective, boolean overridden, boolean readonly, String source, String origin) {
     }
 }

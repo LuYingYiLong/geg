@@ -143,12 +143,25 @@ public final class Drawer extends Container {
         footer.setVisible(count != 0);
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
+    public Component getTitle() { return title.getText(); }
+
+    public Control getContent() { return body.getContent(); }
+
+    public java.util.List<Button> getActions() {
+        return footer.getChildren().stream().filter(Button.class::isInstance).map(Button.class::cast).toList();
+    }
+
+    @io.github.luyingyilong.ore.gui.UiProperty
+    public long getAnimationDuration() { return durationMs; }
+
     public Drawer setTitle(Component text) {
         title.setText(Objects.requireNonNull(text));
         updateHeader();
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getClosable() {
         return closable;
     }
@@ -174,6 +187,7 @@ public final class Drawer extends Container {
     }
 
     @Inspectable
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Placement getPlacement() {
         Placement placement = DebugBridge.value(this, "placement", this.placement);
         return placement;
@@ -191,6 +205,7 @@ public final class Drawer extends Container {
      * Zero (the default) uses half the GUI viewport; explicit widths are viewport-limited.
      */
     @Inspectable(setter = "setWidth", min = 0, max = 100000)
+    @io.github.luyingyilong.ore.gui.UiProperty(value = "width", setter = "setWidth")
     public int getRequestedWidth() {
         return DebugBridge.value(this, "requestedWidth", requestedWidth);
     }
@@ -232,6 +247,7 @@ public final class Drawer extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal0 closed() {
         return closed.signal();
     }
@@ -241,6 +257,7 @@ public final class Drawer extends Container {
         return depth;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public float getDepth() {
         return depth;
     }
@@ -267,12 +284,18 @@ public final class Drawer extends Container {
         return open(false);
     }
 
-    public Drawer open(boolean open) {
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setOpenQuietly")
+    public boolean getOpen() { return targetOpen; }
+    public Drawer setOpen(boolean value) { return open(value); }
+    /** Configure opening state without replaying an opening/closing sound. */
+    public Drawer setOpenQuietly(boolean value) { return changeOpen(value,false); }
+    public Drawer open(boolean open) { return changeOpen(open,true); }
+    private Drawer changeOpen(boolean open, boolean playSound) {
         advanceAnimation();
         if (targetOpen == open) return this;
         targetOpen = open;
         if (!open) frame.cancelInteractions();
-        soundPlayer.accept(open ? OreSounds.Cue.DRAWER_OPEN : OreSounds.Cue.DRAWER_CLOSE);
+        if (playSound) soundPlayer.accept(open ? OreSounds.Cue.DRAWER_OPEN : OreSounds.Cue.DRAWER_CLOSE);
         transitionFrom = progress;
         transitionStart = clock.getAsLong();
         animating = true;

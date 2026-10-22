@@ -114,6 +114,7 @@ public final class Tree<T> extends Container implements ScrollContent {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getRowHeight() {
         return rowHeight;
     }
@@ -128,6 +129,7 @@ public final class Tree<T> extends Container implements ScrollContent {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getIndent() {
         return indent;
     }
@@ -139,6 +141,7 @@ public final class Tree<T> extends Container implements ScrollContent {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getDisabled() {
         return disabled;
     }
@@ -155,6 +158,7 @@ public final class Tree<T> extends Container implements ScrollContent {
         return !disabled && super.acceptsFocus();
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getSelectable() {
         return selectable;
     }
@@ -165,6 +169,7 @@ public final class Tree<T> extends Container implements ScrollContent {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getBlockNode() {
         return blockNode;
     }
@@ -175,6 +180,7 @@ public final class Tree<T> extends Container implements ScrollContent {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getShowIcon() {
         return showIcon;
     }
@@ -185,6 +191,7 @@ public final class Tree<T> extends Container implements ScrollContent {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getShowSwitcher() {
         return showSwitcher;
     }
@@ -205,6 +212,7 @@ public final class Tree<T> extends Container implements ScrollContent {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true)
     public boolean getDefaultExpandAll() {
         return defaultExpandAll;
     }
@@ -248,6 +256,7 @@ public final class Tree<T> extends Container implements ScrollContent {
         return setExpandedKeys(expand ? Set.copyOf(branches) : Set.of());
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Expansion<T>> expansionChanged() {
         return expansionChanged.signal();
     }
@@ -261,6 +270,7 @@ public final class Tree<T> extends Container implements ScrollContent {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<T> selectionChanged() {
         return selectionChanged.signal();
     }
@@ -289,6 +299,7 @@ public final class Tree<T> extends Container implements ScrollContent {
         return getAbsoluteBounds();
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setSelectedNoSignal")
     public String getSelected() {
         return selected;
     }

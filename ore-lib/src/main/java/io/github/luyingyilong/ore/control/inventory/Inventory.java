@@ -60,6 +60,7 @@ public final class Inventory extends Container {
     }
 
     @Inspectable(group = "Appearance")
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getShowTitle() {
         return DebugBridge.value(this, "showTitle", showTitle);
     }
@@ -119,6 +120,7 @@ public final class Inventory extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Mode getMode() {
         return mode;
     }
@@ -135,6 +137,7 @@ public final class Inventory extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getColumns() {
         return columns;
     }
@@ -192,6 +195,7 @@ public final class Inventory extends Container {
         return slots.get(sourceIndex);
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setSelectedNoSignal")
     public int getSelected() {
         return selected;
     }
@@ -210,10 +214,12 @@ public final class Inventory extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Integer> selectionChanged() {
         return selectionChanged.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Integer> slotActivated() {
         return slotActivated.signal();
     }

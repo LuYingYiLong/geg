@@ -83,11 +83,13 @@ public final class Tabs extends Container {
 
     public List<TabItem> getItems() { return entries.stream().map(e -> e.item).toList(); }
     public TabItem getItem(String key) { Entry entry = entry(key); return entry == null ? null : entry.item; }
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setSelectedKeyNoSignal")
     public String getSelectedKey() { return selectedKey; }
     public int getHeaderScrollX() { return header.getScrollX(); }
 
     /** Zero leaves each tab at its natural width; positive values cap its complete rectangle. */
     @io.github.luyingyilong.ore.debug.Inspectable(min = 0, max = Integer.MAX_VALUE)
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getMaxTabWidth() { return io.github.luyingyilong.ore.debug.DebugBridge.value(this, "maxTabWidth", maxTabWidth); }
 
     public Tabs setMaxTabWidth(int width) {
@@ -103,8 +105,20 @@ public final class Tabs extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<String> selectionChanged() { return selectionChanged.signal(); }
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<String> tabActivated() { return tabActivated.signal(); }
+
+    private record TreeState(List<Entry> entries, String selectedKey) { }
+    @Override protected Object captureTreeState() { return new TreeState(List.copyOf(entries), selectedKey); }
+    @Override protected void restoreTreeState(Object state) {
+        if (state instanceof TreeState saved) {
+            entries.clear(); entries.addAll(saved.entries()); selectedKey = saved.selectedKey();
+            entries.forEach(entry -> entry.page.setVisible(Objects.equals(entry.item.getKey(), selectedKey)));
+            bar.synchronizeFocus();
+        }
+    }
 
     public Tabs addItem(TabItem item) {
         checkAlive(); Objects.requireNonNull(item);

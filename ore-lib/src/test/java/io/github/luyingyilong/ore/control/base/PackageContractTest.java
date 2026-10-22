@@ -12,7 +12,7 @@ public final class PackageContractTest {
     private static final String ROOT = "io.github.luyingyilong.ore";
     public static void main(String[] args) throws Exception {
         Map<String,String> groups = Map.ofEntries(
-                Map.entry("control.base", "Control Container SizeFlags Rect Size Offset ControlNotification ControlTree LifecycleInfo LifecycleScheduler LifecycleState"),
+                Map.entry("control.base", "Control Container SizeFlags Rect Size Offset ControlNotification ControlTree ControlIds ControlIdScope LifecycleInfo LifecycleScheduler LifecycleState"),
                 Map.entry("control.layout", "Box Grid Panel Padding Scroll ScrollContent Splitter Divider Collapse"),
                 Map.entry("control.display", "Label TextureRect Badge Tag Descriptions DescriptionItem"),
                 Map.entry("control.display.avatar", "Avatar"),
@@ -38,9 +38,9 @@ public final class PackageContractTest {
             if(!group.getKey().equals("text"))
                 check(loader.getResource(ROOT.replace('.','/')+"/"+name+".class")==null, "old root alias: "+name);
         }
-        for(String name:new String[]{"ControlTree","LifecycleScheduler"}) {
+        for(String name:new String[]{"ControlTree","ControlIds","LifecycleScheduler"}) {
             Class<?> type=Class.forName(ROOT+".control.base."+name,false,loader);
-            if(name.equals("ControlTree"))check(!Modifier.isPublic(type.getModifiers()),"tree implementation became public");
+            if(!name.equals("LifecycleScheduler"))check(!Modifier.isPublic(type.getModifiers()),"tree implementation became public");
         }
         for(String name:new String[]{"ProgressValueModel","TextureProgressGeometry"})
             check(!Modifier.isPublic(Class.forName(ROOT+".control.progress."+name,false,loader).getModifiers()),"progress helper became public");

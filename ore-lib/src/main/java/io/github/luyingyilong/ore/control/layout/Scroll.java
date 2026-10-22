@@ -78,8 +78,10 @@ public final class Scroll extends Container {
     }
 
     public Control getContent() { return content; }
-    private BarMode getVerticalMode() { return verticalBar == null ? BarMode.DISABLED : verticalBar.getMode(); }
-    private BarMode getHorizontalMode() { return horizontalBar == null ? BarMode.DISABLED : horizontalBar.getMode(); }
+    @io.github.luyingyilong.ore.gui.UiProperty(value = "vertical", setter = "setVertical")
+    public BarMode getVerticalMode() { return verticalBar == null ? BarMode.DISABLED : verticalBar.getMode(); }
+    @io.github.luyingyilong.ore.gui.UiProperty(value = "horizontal", setter = "setHorizontal")
+    public BarMode getHorizontalMode() { return horizontalBar == null ? BarMode.DISABLED : horizontalBar.getMode(); }
 
     public Scroll setWheelStep(int pixels) {
         if (pixels < 1) throw new IllegalArgumentException("Wheel step must be positive");
@@ -108,6 +110,7 @@ public final class Scroll extends Container {
     }
 
     @Inspectable
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getEmbedded() {
         return debugValue("embedded", embedded);
     }

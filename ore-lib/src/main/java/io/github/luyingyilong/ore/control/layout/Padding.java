@@ -47,6 +47,7 @@ public final class Padding extends Container {
         child = getChildCount() == 0 ? null : getChild(0);
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Insets getInsets() { if (!DebugBridge.active()) return insets; return new Insets(debugValue("top", insets.top()), debugValue("right", insets.right()),
                 debugValue("bottom", insets.bottom()), debugValue("left", insets.left())); }
 

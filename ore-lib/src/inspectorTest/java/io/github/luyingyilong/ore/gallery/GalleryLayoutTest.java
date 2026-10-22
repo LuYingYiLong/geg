@@ -3,6 +3,7 @@ package io.github.luyingyilong.ore.gallery;
 import io.github.luyingyilong.ore.control.base.Control;
 import io.github.luyingyilong.ore.control.base.LifecycleScheduler;
 import io.github.luyingyilong.ore.control.layout.Panel;
+import io.github.luyingyilong.ore.control.display.Label;
 
 import io.github.luyingyilong.ore.control.navigation.Navbar;
 import net.minecraft.client.gui.Font;
@@ -53,6 +54,23 @@ public final class GalleryLayoutTest {
                 check(view.getSample().isAlive(),"Preview width does not replace content");
             }
         }
+        Control right = view.getContentScroll().getParent();
+        Label description = (Label) right.getChild(1);
+        check(right.getChild(3) == view.getContentScroll() && !right.getChild(2).getVisible(),
+                "Preview Scroll follows the description and an inactive status slot takes no space");
+        description.setText(Component.literal("Describe the component using a long sentence that wraps within the right column without widening the preview."));
+        for (int width : new int[]{127, 128, 129, 480}) {
+            view.getWindow().layoutViewport(width, 240, font);
+            var bounds = description.getBounds();
+            int lines = description.lines(font, bounds.width()).size();
+            check(lines > 1 && bounds.height() >= lines * description.lineHeight(font),
+                    "Description receives its full wrapped height at width " + width);
+            check(view.getContentScroll().getBounds().y() >= bounds.bottom(), "Preview Scroll starts below all description lines");
+            var fixed = description.getAbsoluteBounds();
+            view.getContentScroll().setScroll(0, 40);
+            check(description.getAbsoluteBounds().equals(fixed), "Scrolling the preview leaves the description fixed");
+        }
+        view.select("label"); view.select("box"); // Restore the sample's normal description before short viewport checks.
         view.setPreviewWidth(127);
         view.getWindow().layoutViewport(480,120,font);
         check(view.getContentScroll().getMaxScrollY()>0 && view.getContentScroll().getViewport().height()<120,

@@ -58,6 +58,7 @@ public final class Badge extends Container {
             throw new IllegalStateException("Badge has a fixed skeleton; configure its properties");
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Long getCount() {
         return count;
     }
@@ -79,6 +80,7 @@ public final class Badge extends Container {
         return setCount(Long.valueOf(count));
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public long getOverflowCount() {
         return overflowCount;
     }
@@ -93,6 +95,7 @@ public final class Badge extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Tag.Type getType() {
         return type;
     }

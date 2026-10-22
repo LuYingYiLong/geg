@@ -58,6 +58,12 @@ public final class Dropdown<T> extends Control {
 
     }
 
+    private record TreeState<T>(List<Option<T>> options, T selected) { }
+    @Override protected Object captureTreeState() { return new TreeState<>(options, selected); }
+    @Override @SuppressWarnings("unchecked") protected void restoreTreeState(Object state) {
+        if (state instanceof TreeState<?> saved) { options = (List<Option<T>>) (List<?>) saved.options(); selected = (T) saved.selected(); requestLayout(); }
+    }
+
     public static void registerTheme(ThemeDB db) {
         OreTheme.registerType(db, "Dropdown");
         PADDING.register(db);
@@ -73,10 +79,12 @@ public final class Dropdown<T> extends Control {
         return "selected=" + String.valueOf(selected) + ", open=" + open;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<T> selectionChanged() {
         return selectionChanged.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<T> itemActivated() {
         return itemActivated.signal();
     }
@@ -97,6 +105,7 @@ public final class Dropdown<T> extends Control {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public TextureSource getIcon() {
         return triggerButton.getIcon();
     }
@@ -122,6 +131,7 @@ public final class Dropdown<T> extends Control {
         return triggerButton;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getShowArrow() {
         return showArrow;
     }
@@ -133,6 +143,7 @@ public final class Dropdown<T> extends Control {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getCheckable() {
         return checkable;
     }
@@ -165,6 +176,7 @@ public final class Dropdown<T> extends Control {
             setSelected(options.isEmpty() ? null : options.get(0).value());
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setSelectedNoSignal")
     public T getSelected() {
         return selected;
     }

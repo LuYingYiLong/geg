@@ -75,11 +75,18 @@ public final class Checkbox extends Container {
             throw new IllegalStateException("Checkbox has a fixed skeleton; configure its properties");
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
+    public Component getText() { return label.getText(); }
+
+    @io.github.luyingyilong.ore.gui.UiProperty
+    public boolean getEnabled() { return enabled; }
+
     public Checkbox setText(Component text) {
         label.setText(Objects.requireNonNull(text));
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty(initialState = true, silentSetter = "setCheckedNoSignal")
     public boolean getChecked() {
         return checked;
     }
@@ -101,6 +108,7 @@ public final class Checkbox extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Boolean> toggled() {
         return toggled.signal();
     }

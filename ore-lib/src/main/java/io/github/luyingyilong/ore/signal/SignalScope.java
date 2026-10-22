@@ -17,11 +17,30 @@ public final class SignalScope implements SignalOwner, AutoCloseable {
     private String diagnosticPurpose = "lifetime";
     private boolean diagnosticExcluded = SignalDiagnostics.suppressed();
     private boolean closed;
+    private int silenceDepth;
     private SignalScope parent;
 
     @Override
     public SignalScope getSignalScope() {
         return this;
+    }
+
+    /** Scoped configuration updates suppress new emissions, never an emission already in progress. */
+    public Silence silence() {
+        requireOpen();
+        silenceDepth++;
+        return new Silence();
+    }
+
+    boolean isSilent() { return silenceDepth != 0; }
+
+    public final class Silence implements AutoCloseable {
+        private boolean ended;
+        private Silence() { }
+        @Override public void close() {
+            checkThread();
+            if (!ended) { ended = true; silenceDepth--; }
+        }
     }
 
     public boolean isClosed() {

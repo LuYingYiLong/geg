@@ -21,13 +21,20 @@ public final class FormFields {
     private FormFields() { }
     public static FormField<String> text(Input input) {
         if (input instanceof NumberInput) throw new IllegalArgumentException("Use number() for NumberInput");
-        InputControl control = inputControl(input);
+        return text(inputControl(input));
+    }
+    public static FormField<String> text(InputControl control) {
+        Input input = control.getWidget();
+        if (input instanceof NumberInput) throw new IllegalArgumentException("Use number() for NumberInput");
         return new FormField<>(String.class, control, () -> FieldValue.valid(input.getText()), input::setTextNoSignal,
                 () -> true, input::getText, (owner, run) -> input.textChanged().connect(owner, value -> run.run()),
                 (owner, run) -> input.focusExited().connect(owner, run));
     }
     public static FormField<BigDecimal> number(NumberInput input) {
-        InputControl control = inputControl(input);
+        return number(inputControl(input));
+    }
+    public static FormField<BigDecimal> number(InputControl control) {
+        if (!(control.getWidget() instanceof NumberInput input)) throw new IllegalArgumentException("Expected NumberInput");
         return new FormField<>(BigDecimal.class, control, () -> {
             try { return FieldValue.valid(input.getPreviewValue()); }
             catch (IllegalArgumentException | ArithmeticException invalid) {

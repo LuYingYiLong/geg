@@ -111,7 +111,7 @@ public final class InspectorProperties {
         DebugProperty bind(Control target) {
             return new DebugProperty(target, key, metadata.group(), kind, options,
                     () -> invoke(getter, target), metadata.min(), metadata.max(),
-                    value -> DebugBridge.validateSetter(target, key, value,
+                    value -> io.github.luyingyilong.ore.property.PropertyAccess.validateSetter(target, key, value,
                             () -> invoke(setter, target, value)));
         }
     }

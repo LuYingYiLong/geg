@@ -7,6 +7,11 @@ tasks.register('verifyOreRelease') {
             def names = zip.entries().collect { it.name }
             ['META-INF/mods.toml', 'pack.mcmeta', 'geg.mixins.json', 'ore.mixins.json',
              'io/github/luyingyilong/ore/OreClient.class', 'assets/ore/themes/ore.json',
+             'io/github/luyingyilong/ore/gui/UiLoader.class', 'io/github/luyingyilong/ore/gui/UiDocument.class',
+             'io/github/luyingyilong/ore/gui/UiRadioGroup.class', 'io/github/luyingyilong/ore/gui/UiTableRow.class',
+             'io/github/luyingyilong/ore/gui/UiValidator.class', 'io/github/luyingyilong/ore/gui/UiTableCell.class',
+             'io/github/luyingyilong/ore/gui/UiProperty.class', 'io/github/luyingyilong/ore/gui/UiSignal.class',
+             'io/github/luyingyilong/ore/control/base/ControlIdScope.class',
              'io/github/luyingyilong/ore/control/form/FieldKey.class',
              'io/github/luyingyilong/ore/control/form/FormField.class',
              'io/github/luyingyilong/ore/control/form/FormValues.class',
@@ -90,7 +95,7 @@ tasks.register('verifyOreRelease') {
                 it ==~ /assets\/ore\/textures\/icons\/(email|email_readed|gift|gift_opened|flag|org)\.(png|aseprite)/ ||
                 it.startsWith('assets/ore_inspector/') || it.startsWith('assets/ore_gallery/') ||
                 it.startsWith('io/github/luyingyilong/ore/gallery/') ||
-                it.startsWith('io/github/luyingyilong/ore/development/') || it.contains('InspectorBootstrap') ||
+                it.startsWith('io/github/luyingyilong/ore/gui/dev/') || it.startsWith('io/github/luyingyilong/ore/development/') || it.contains('InspectorBootstrap') ||
                 it.startsWith('assets/geg/font/') || it == 'assets/geg/themes.json' ||
                 it == 'assets/geg/sounds.json' || it == 'io/github/luyingyilong/geg/sound/GegSounds.class' ||
                 it == 'META-INF/services/io.github.luyingyilong.ore.OreClientExtension' ||

@@ -104,6 +104,7 @@ public final class Collapse extends Container {
         if (!isUpdatingChildren()) throw new IllegalStateException("Collapse has a fixed skeleton; use setContent");
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Component getText() {
         return text;
     }
@@ -117,6 +118,7 @@ public final class Collapse extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public Component getSecondaryText() {
         return secondaryText;
     }
@@ -150,6 +152,7 @@ public final class Collapse extends Container {
         return header;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getExpanded() {
         return expanded;
     }
@@ -162,10 +165,12 @@ public final class Collapse extends Container {
         return changeExpanded(value, false);
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<Boolean> expandedChanged() {
         return expandedChanged.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getDisabled() {
         return disabled;
     }
@@ -179,6 +184,7 @@ public final class Collapse extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public boolean getShowArrow() {
         return showArrow;
     }
@@ -191,6 +197,7 @@ public final class Collapse extends Container {
         return this;
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getAnimationDuration() {
         return duration == null ? getThemeItem(ANIMATION_DURATION) : duration;
     }

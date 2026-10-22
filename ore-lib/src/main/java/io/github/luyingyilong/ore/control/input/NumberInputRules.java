@@ -43,6 +43,22 @@ final class NumberInputRules {
         this.strategy = Objects.requireNonNull(strategy);
     }
 
+    void configure(int places, BigDecimal min, BigDecimal max) {
+        if (places < 0 || places > 18) throw new IllegalArgumentException("Precision must be between 0 and 18");
+        BigDecimal low = min == null ? null : min.setScale(places, RoundingMode.UNNECESSARY);
+        BigDecimal high = max == null ? null : max.setScale(places, RoundingMode.UNNECESSARY);
+        if (low != null && high != null && low.compareTo(high) > 0) throw new IllegalArgumentException("Minimum exceeds maximum");
+        decimalPlaces = places; minimum = low; maximum = high;
+    }
+
+    void limits(BigDecimal min, BigDecimal max) {
+        BigDecimal low = min == null ? null : exact(min), high = max == null ? null : exact(max);
+        if (low != null && high != null && low.compareTo(high) > 0)
+            throw new IllegalArgumentException("Minimum exceeds maximum");
+        minimum = low;
+        maximum = high;
+    }
+
     void minimum(BigDecimal value) {
         BigDecimal exact = value == null ? null : exact(value);
         if (exact != null && maximum != null && exact.compareTo(maximum) > 0)

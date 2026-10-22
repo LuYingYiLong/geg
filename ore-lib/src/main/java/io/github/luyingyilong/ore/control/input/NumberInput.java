@@ -30,16 +30,32 @@ public final class NumberInput extends Input {
         this(0);
     }
 
+    @io.github.luyingyilong.ore.gui.UiSignal
     public Signal<BigDecimal> valueCommitted() {
         return valueCommitted.signal();
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public int getDecimalPlaces() {
         return rules.decimalPlaces();
     }
 
     public NumberInput setDecimalPlaces(int places) {
         rules.decimalPlaces(places);
+        refreshRangeWarning();
+        return this;
+    }
+
+    /** Precision and optional bounds are validated together before changing the editor. */
+    public NumberInput setLimits(int decimalPlaces, BigDecimal minimum, BigDecimal maximum) {
+        rules.configure(decimalPlaces, minimum, maximum);
+        refreshRangeWarning();
+        return this;
+    }
+
+    /** Atomic configuration, including clearing either optional bound. */
+    public NumberInput setLimits(BigDecimal minimum, BigDecimal maximum) {
+        rules.limits(minimum, maximum);
         refreshRangeWarning();
         return this;
     }
@@ -82,6 +98,7 @@ public final class NumberInput extends Input {
         return setMaximumValue(new BigDecimal(maximum));
     }
 
+    @io.github.luyingyilong.ore.gui.UiProperty
     public BoundaryStrategy getBoundaryStrategy() {
         return rules.strategy();
     }
