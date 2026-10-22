@@ -179,5 +179,20 @@
   "gallery.ore.sample.texture_progress_center_vertical": "垂直中心展开",
   "gallery.ore.sample.texture_progress_clockwise": "顺时针",
   "gallery.ore.sample.texture_progress_counter_clockwise": "逆时针",
-  "gallery.ore.sample.texture_progress_bidirectional_radial": "双向环形"
+  "gallery.ore.sample.texture_progress_bidirectional_radial": "双向环形",
+  "gallery.ore.description.tabs": "通过页签切换平级内容，并保留各页的输入和滚动状态",
+  "gallery.ore.sample.tabs_overview": "概览",
+  "gallery.ore.sample.tabs_overview_body": "页签用于收纳平级内容，各页独立保留状态。",
+  "gallery.ore.sample.tabs_draft": "编辑",
+  "gallery.ore.sample.tabs_scroll": "滚动内容",
+  "gallery.ore.sample.tabs_disabled": "不可用",
+  "gallery.ore.sample.tabs_input_hint": "输入单行内容",
+  "gallery.ore.sample.tabs_draft_text": "保留的草稿",
+  "gallery.ore.sample.tabs_area_hint": "多行内容",
+  "gallery.ore.sample.tabs_row": "第 %s 行内容",
+  "gallery.ore.sample.tabs_add": "新增页签",
+  "gallery.ore.sample.tabs_remove": "移除最近新增页",
+  "gallery.ore.sample.tabs_move": "当前页移至首位",
+  "gallery.ore.sample.tabs_dynamic": "新页面 %s",
+  "gallery.ore.sample.tabs_long_title": "较长的页签标题 %s"
 }

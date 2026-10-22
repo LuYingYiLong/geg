@@ -74,6 +74,8 @@ public final class GalleryCatalog {
             entry("slider", "input", "Slider", Slider.class),
             entry("dropdown", "actions", "Dropdown", Dropdown.class), entry("menu", "actions", "Menu", Menu.class),
             entry("navbar", "actions", "Navbar", Navbar.class), entry("collapse", "actions", "Collapse", Collapse.class),
+            entry("tabs", "actions", "Tabs", io.github.luyingyilong.ore.control.navigation.Tabs.class,
+                    io.github.luyingyilong.ore.control.navigation.TabItem.class),
             entry("input", "input", "Input", Input.class, InputControl.class), entry("number", "input", "NumberInput", NumberInput.class),
             entry("textarea", "input", "TextArea", TextArea.class), entry("form", "input", "Form", Form.class, FormItem.class),
             entry("table", "data", "Table / PlayerIdentityCell", Table.class, PlayerIdentityCell.class),

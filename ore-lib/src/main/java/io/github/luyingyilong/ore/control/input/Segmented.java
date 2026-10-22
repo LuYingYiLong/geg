@@ -1,6 +1,11 @@
 package io.github.luyingyilong.ore.control.input;
 
 import io.github.luyingyilong.ore.control.display.Label;
+import io.github.luyingyilong.ore.control.display.TextureRect;
+import io.github.luyingyilong.ore.control.base.Size;
+import io.github.luyingyilong.ore.render.TextureSource;
+import io.github.luyingyilong.ore.text.CaptionGeometry;
+import io.github.luyingyilong.ore.theme.ThemeKey;
 
 import io.github.luyingyilong.ore.debug.DebugBridge;
 import io.github.luyingyilong.ore.control.base.Control;
@@ -25,8 +30,13 @@ public final class Segmented extends Control {
     public static final io.github.luyingyilong.ore.theme.ThemeKey<StyleBox> NORMAL = io.github.luyingyilong.ore.theme.ThemeKey.of("Segmented", "normal", StyleBox.class, io.github.luyingyilong.ore.theme.ThemeKey.Kind.STYLE, Button.NORMAL.defaultValue(), true);
     public static final io.github.luyingyilong.ore.theme.ThemeKey<StyleBox> HOVER = io.github.luyingyilong.ore.theme.ThemeKey.of("Segmented", "hover", StyleBox.class, io.github.luyingyilong.ore.theme.ThemeKey.Kind.STYLE, Button.HOVER.defaultValue(), true);
     public static final io.github.luyingyilong.ore.theme.ThemeKey<StyleBox> PRESSED = io.github.luyingyilong.ore.theme.ThemeKey.of("Segmented", "pressed", StyleBox.class, io.github.luyingyilong.ore.theme.ThemeKey.Kind.STYLE, Button.PRESSED.defaultValue(), true);
+    public static final ThemeKey<Integer> ICON_SIZE = new ThemeKey<>("Segmented", "icon_size", Integer.class,
+            ThemeKey.Kind.INTEGER, 8, true, v -> v >= 0 && v <= 1_000_000);
+    public static final ThemeKey<Integer> ICON_GAP = new ThemeKey<>("Segmented", "icon_gap", Integer.class,
+            ThemeKey.Kind.INTEGER, 4, true, v -> v >= 0 && v <= 1_000_000);
     private final List<Component> options;
     private final List<Label> optionLabels;
+    private final List<TextureRect> optionIcons;
     private final Button.Size size;
     private final SignalSource<Integer> selectionChanged = new SignalSource<>(this, "selectionChanged", "Integer");
     private final ReleaseGesture<Integer> gesture = new ReleaseGesture<>();
@@ -51,6 +61,9 @@ public final class Segmented extends Control {
         optionLabels = options.stream().map(option -> new Label(option).setOpticalCenter(true)
                 .setOverflow(Label.Overflow.CLIP).setAlignment(Label.Horizontal.CENTER, Label.Vertical.CENTER)).toList();
         for (int i = 0; i < optionLabels.size(); i++) ownPart("option_" + i, optionLabels.get(i));
+        optionIcons = options.stream().map(option -> new TextureRect().setExpandMode(TextureRect.ExpandMode.IGNORE_SIZE)
+                .setStretchMode(TextureRect.StretchMode.KEEP_ASPECT_CENTERED)).toList();
+        for (int i = 0; i < optionIcons.size(); i++) ownPart("option_icon_" + i, optionIcons.get(i));
         this.size = java.util.Objects.requireNonNull(size);
         setMinimum(0, size.getHeight());
         setFocusable(true);
@@ -62,6 +75,8 @@ public final class Segmented extends Control {
         db.register(NORMAL);
         db.register(HOVER);
         db.register(PRESSED);
+        db.register(ICON_SIZE);
+        db.register(ICON_GAP);
         db.registerFallback(NORMAL, Button.NORMAL);
         db.registerFallback(HOVER, Button.HOVER);
         db.registerFallback(PRESSED, Button.PRESSED);
@@ -74,6 +89,21 @@ public final class Segmented extends Control {
 
     public Signal<Integer> selectionChanged() {
         return selectionChanged.signal();
+    }
+
+    public TextureSource getIcon(int index) { return optionIcons.get(index).getTexture(); }
+
+    public Segmented setIcon(int index, TextureSource source) {
+        getSignalScope().checkThread();
+        if (!isAlive()) throw new IllegalStateException("Cannot update pending/freed Segmented");
+        TextureRect icon = optionIcons.get(index);
+        if (!java.util.Objects.equals(icon.getTexture(), source)) {
+            icon.setTexture(source);
+            cancelInteraction();
+            revealSelected = true;
+            requestLayout();
+        }
+        return this;
     }
 
     public Segmented setSelectedNoSignal(int index) {
@@ -172,7 +202,18 @@ public final class Segmented extends Control {
 
     private int optionWidth(int index, Font font) {
         int textWidth = font == null ? 0 : optionLabels.get(index).measureWidth(font, Integer.MAX_VALUE);
-        return Math.max(getThemeItem(OreTheme.SEGMENTED_MIN_WIDTH), textWidth + getThemeItem(NORMAL).getContentMargin().getHorizontal());
+        Size image = imageSize(index);
+        int gap = image.width() > 0 && textWidth > 0 ? getThemeItem(ICON_GAP) : 0;
+        return Math.max(getThemeItem(OreTheme.SEGMENTED_MIN_WIDTH), textWidth + image.width() + gap
+                + getThemeItem(NORMAL).getContentMargin().getHorizontal());
+    }
+
+    private Size imageSize(int index) {
+        var region = optionIcons.get(index).getResolvedTextureRegion();
+        int maximum = getThemeItem(ICON_SIZE);
+        if (region == null || maximum == 0) return new Size(0, 0);
+        double ratio = Math.min(1, Math.min(maximum / (double) region.getWidth(), maximum / (double) region.getHeight()));
+        return new Size(Math.max(1, (int) Math.round(region.getWidth() * ratio)), Math.max(1, (int) Math.round(region.getHeight() * ratio)));
     }
 
     /**
@@ -327,9 +368,14 @@ public final class Segmented extends Control {
             style.draw(context, area);
             Label text = optionLabels.get(index);
             text.setThemeOverride(OreTheme.FONT_COLOR, getThemeItem(selected ? OreTheme.SEGMENTED_SELECTED_FONT_COLOR : Button.FONT_COLOR));
-            text.layout(getOptionLabelBounds(area, style), context.getFont());
+            layoutOption(index, area, style, context.getFont());
             DebugBridge.backend().internal(this, "option_" + index, text);
             text.draw(context, 0, 0);
+            TextureRect icon = optionIcons.get(index);
+            if (icon.getBounds().width() > 0 && icon.getBounds().height() > 0) {
+                DebugBridge.backend().internal(this, "option_icon_" + index, icon);
+                icon.draw(context, 0, 0);
+            }
 
             if (selected) {
                 Rect indicator = getSelectedIndicatorRect(area);
@@ -341,6 +387,23 @@ public final class Segmented extends Control {
 
     static Rect getOptionLabelBounds(Rect area, StyleBox style) {
         return Button.getLabelBounds(style.getContentDrawRect(area));
+    }
+
+    void layoutOption(int index, Rect area, StyleBox style, Font font) {
+        Rect content = style.getContentDrawRect(area);
+        Size image = imageSize(index);
+        Label label = optionLabels.get(index);
+        if (image.width() == 0) {
+            label.layout(getOptionLabelBounds(area, style), font);
+            optionIcons.get(index).layout(new Rect(content.x(), content.y(), 0, 0), font);
+            return;
+        }
+        int textWidth = label.measureWidth(font, Integer.MAX_VALUE);
+        int gap = textWidth > 0 ? getThemeItem(ICON_GAP) : 0;
+        int labelWidth = Math.min(textWidth, Math.max(0, content.width() - image.width() - gap));
+        int left = content.x() + Math.max(0, (content.width() - image.width() - gap - labelWidth) / 2);
+        label.layout(CaptionGeometry.getLabelBounds(new Rect(left + image.width() + gap, content.y(), labelWidth, content.height())), font);
+        optionIcons.get(index).layout(CaptionGeometry.getIconBounds(new Rect(left, content.y(), image.width(), content.height()), image.width(), image.height()), font);
     }
 
     /**

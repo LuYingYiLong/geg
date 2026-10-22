@@ -1443,5 +1443,54 @@
   "TextureProgressBar:progress_tint": "#ffffff",
   "TextureProgressBar:over_tint": "#ffffff",
   "TextureProgressBar:font_color": "#ffffff",
-  "TextureProgressBar:font_size": 8
+  "TextureProgressBar:font_size": 8,
+  "Tabs:disabled": {
+    "style": "texture",
+    "location": "ore:gui/tabs/tab_disabled",
+    "textureBorders": {
+      "borderLeft": 2,
+      "borderTop": 2,
+      "borderRight": 2,
+      "borderBottom": 4
+    },
+    "contentMargin": {
+      "left": 8,
+      "top": 4,
+      "right": 8,
+      "bottom": 4
+    }
+  },
+  "Tabs:font_color": "#FFFFFFFF",
+  "Tabs:font_hover_color": "#FFFFFFFF",
+  "Tabs:font_pressed_color": "#FFFFFFFF",
+  "Tabs:font_selected_color": "#FFFFFFFF",
+  "Tabs:font_disabled_color": "#80FFFFFF",
+  "Tabs:header_height": 22,
+  "Tabs:minimum_item_width": 24,
+  "Tabs:icon_gap": 4,
+  "Tabs:item_gap": 0,
+  "Tabs:selected_indicator_height": 1,
+  "Tabs:selected_indicator_width_ratio": 0.33333334,
+  "Tabs:selected_indicator_max_width": 16,
+  "Tabs:selected_indicator_bottom_gap": 1,
+  "Tabs:focus": {
+    "style": "flat",
+    "color": "#00000000",
+    "borderColor": "#FFFFFFFF",
+    "expandMargin": {
+      "left": 1,
+      "top": 1,
+      "right": 1,
+      "bottom": 1
+    },
+    "borders": {
+      "borderLeft": 1,
+      "borderTop": 1,
+      "borderRight": 1,
+      "borderBottom": 1
+    }
+  },
+  "Tabs:icon_size": 8,
+  "Segmented:icon_size": 8,
+  "Segmented:icon_gap": 4
 }

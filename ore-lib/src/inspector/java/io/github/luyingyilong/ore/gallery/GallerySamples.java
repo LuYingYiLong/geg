@@ -109,6 +109,7 @@ final class GallerySamples {
             case "progress" -> { return InventorySamples.progress(); }
             case "texture_progress" -> { return TextureProgressSamples.create(); }
             case "containers" -> { return InventorySamples.containers(); }
+            case "tabs" -> { return TabsSamples.create(); }
             case "box" -> {
                 Box flow = row().setGap(4).setLineGap(8);
                 for (int i = 1; i <= 7; i++) {
@@ -319,6 +320,8 @@ final class GallerySamples {
             case "segmented" -> {
                 Segmented segmented = new Segmented(List.of(text("option_one"), text("option_two"), text("option_three")));
                 root.addChild(segmented);
+                root.addChild(new Segmented(List.of(text("option_one"), text("option_two"), text("option_three")))
+                        .setIcon(0, LOGO).setIcon(1, LOGO).setIcon(2, LOGO));
             }
             case "dropdown" -> {
                 Dropdown<Integer> dropdown = new Dropdown<>(0, 5);

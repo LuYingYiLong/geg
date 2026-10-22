@@ -1099,6 +1099,11 @@ public class Control implements SignalOwner {
         ControlTree.update(this, proposedChildren);
     }
 
+    /** Preflight content before constructing composite wrappers; does not change the tree. */
+    protected final void validateChildAttachment(Control child) {
+        ControlTree.validateAttachment(this, Objects.requireNonNull(child));
+    }
+
     protected final boolean isUpdatingChildren() {
         return updatingChildren;
     }

@@ -32,6 +32,28 @@ ModularUI 3.3.1 开发模式会加载 Curios 测试物品，开发 runtimeOnly �
 
 ## 验证入口
 
+Tabs 管理页签和内容，Segmented 只表示单个选项值。两者均保留，Tabs 不会替换业务界面的 Segmented。
+
+```java
+Tabs tabs = new Tabs();
+tabs.addItem(new TabItem("summary", Component.translatable("example.summary"), summary));
+tabs.addItem(new TabItem("editor", Component.translatable("example.editor"), editor));
+tabs.setSizeFlagsHorizontal(SizeFlags.SIZE_EXPAND_FILL);
+tabs.setSizeFlagsVertical(SizeFlags.SIZE_EXPAND_FILL);
+tabs.selectionChanged().connect(window, key -> rememberSelectedPage(key));
+tabs.setSelectedKeyNoSignal("editor");
+```
+
+`TabItem` 为不可变描述，完整构造参数依次是 key、标题、内容、可选 TextureSource、disabled。`setItem` 按 key 更新描述，同一内容实例不会重新挂载；`moveItem(key, index)` 调整顺序。`getItems()` 返回不可变快照，`getItem` 和 `removeItem` 在 key 不存在时返回 null。选中不存在或禁用的 key 抛出异常；有可用页面时不能主动清空选择。
+
+`Tabs.setMaxTabWidth(px)` 限制每个页签的总宽度，默认 0 不限宽；长标题使用 ELLIPSIS，图标保留在标题前。`Segmented.setIcon(index, TextureSource)`／`getIcon(index)` 配置逐项图标，传入 null 清除。两种控件的图标与文字共享光学偏移。
+
+标题栏靠左，超宽时内部水平滚动；左右／Home／End 只移动焦点，Enter／Space 在释放时切页。页签切换保留草稿、选区、撤销及滚动，不触发 NumberInput 的失焦计算。只有选中页参与显示和布局，隐藏页面仍保留在宿主的输入生命周期中。`selectionChanged` 表示实际变化，`tabActivated` 表示用户激活，包括再次激活当前页。
+
+移除或替换只卸载调用方内容，旧内容可复用；永久废弃时显式调用返回条目的 `getContent().queueFree()`。Tabs 最终销毁时递归清理仍挂载的所有页面。样式通过 `Tabs:*` 主题项和 `setThemeOverride` 配置；F9 展示、F8 可检查页签、页面、内部图片／文字及主题来源。
+
+`TabsTest` 覆盖选择、树契约、布局和 Window 输入；`InspectorTabsTest`、`GalleryTabsTest` 检查开发工具。`TabsClientTest` 仅在显式挂载 clientIntegrationTest 并设置 `ore.tabs.smoke=true` 时执行，覆盖实际 GLFW、原生窗口、缩放 Canvas、编辑历史与 IME 清理，不能在玩家存档中启用。
+
 ```powershell
 .\gradlew.bat :ore-lib:compileJava :ore-lib:inspectorClasses
 .\gradlew.bat oreTest inspectorTest

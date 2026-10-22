@@ -53,7 +53,6 @@ public final class Button extends Control {
     public static final ThemeKey<Integer> FONT_DISABLED_COLOR = ThemeKey.of("Button","font_disabled_color",Integer.class,ThemeKey.Kind.COLOR,0x801E1E1F,false);
     public static final int HEIGHT = Size.MEDIUM.getHeight();
     private static final int ICON_GAP = 4;
-    private static final int LABEL_OFFSET_Y = -2;
     private final Label label = ownPart("label", new Label().setOverflow(Label.Overflow.ELLIPSIS));
     private final TextureRect iconControl = ownPart("icon", new TextureRect().setStretchMode(TextureRect.StretchMode.KEEP_CENTERED));
     private final TextureRect trailingIconControl = ownPart("trailing_icon", new TextureRect().setStretchMode(TextureRect.StretchMode.KEEP_CENTERED));
@@ -207,7 +206,7 @@ public final class Button extends Control {
     }
 
     static Rect getLabelBounds(Rect contentArea) {
-        return contentArea.translated(0, LABEL_OFFSET_Y);
+        return io.github.luyingyilong.ore.text.CaptionGeometry.getLabelBounds(contentArea);
     }
 
     private static ContentLayout layoutContent(Rect area, int textWidth, boolean hasLabel,

@@ -23,7 +23,7 @@ public final class PackageContractTest {
                 Map.entry("control.inventory.source", "InventorySource MemoryInventorySource MenuInventorySource SlotBinding"),
                 Map.entry("control.form", "Form FormItem FieldKey FieldValue FormField FormFields FormValues FormValidation"),
                 Map.entry("control.form.validation", "Validator Validators"),
-                Map.entry("control.navigation", "Menu MenuItem Navbar"),
+                Map.entry("control.navigation", "Menu MenuItem Navbar Tabs TabItem TabsBar"),
                 Map.entry("control.overlay", "Overlay Drawer Dialog Modal Toast"),
                 Map.entry("window", "Window FocusManager FocusGeometry"),
                 Map.entry("window.container", "MenuSession MenuInteraction ContainerScreenAccess OreMenuScreen"),
@@ -44,6 +44,7 @@ public final class PackageContractTest {
         }
         for(String name:new String[]{"ProgressValueModel","TextureProgressGeometry"})
             check(!Modifier.isPublic(Class.forName(ROOT+".control.progress."+name,false,loader).getModifiers()),"progress helper became public");
+        check(!Modifier.isPublic(Class.forName(ROOT+".control.navigation.TabsBar", false, loader).getModifiers()), "tab bar helper became public");
         for(String name:new String[]{"InputShortcuts","OreTextFieldHandler","OreTextFieldRenderer","NumberInputRules","InputMethodSession","WindowsInputMethod","ImBlockerInputMethod"})
             check(!Modifier.isPublic(Class.forName(ROOT+".control.input."+name,false,loader).getModifiers()),"editor/IME helper became public");
         for(String field:new String[]{"children","parent","lifecycleOwner"}) {

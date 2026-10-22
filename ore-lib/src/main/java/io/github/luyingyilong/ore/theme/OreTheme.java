@@ -184,6 +184,7 @@ public final class OreTheme {
         io.github.luyingyilong.ore.control.progress.ProgressBar.registerTheme(db);
         io.github.luyingyilong.ore.control.progress.TextureProgressBar.registerTheme(db);
         io.github.luyingyilong.ore.control.input.Segmented.registerTheme(db);
+        io.github.luyingyilong.ore.control.navigation.Tabs.registerTheme(db);
         io.github.luyingyilong.ore.control.overlay.Dialog.registerTheme(db);
         io.github.luyingyilong.ore.control.overlay.Modal.registerTheme(db);
         io.github.luyingyilong.ore.control.overlay.Drawer.registerTheme(db);

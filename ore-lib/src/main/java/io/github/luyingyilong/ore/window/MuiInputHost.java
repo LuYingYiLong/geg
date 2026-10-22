@@ -25,7 +25,7 @@ public final class MuiInputHost implements AutoCloseable {
     private boolean closed;
 
     public MuiInputHost(WindowContext context, Screen wrapped, BooleanSupplier active, Runnable close) {
-        var panel = new ModularPanel<>("ore_host_inputs").full().disableThemeBackground(true);
+        var panel = new InputPanel().full().disableThemeBackground(true);
         screen = new ModularScreen(OreClient.getOptions().hostModId(), panel) {
             private boolean fieldFocused;
             @Override public boolean isFocused() { return fieldFocused; }
@@ -90,6 +90,13 @@ public final class MuiInputHost implements AutoCloseable {
         fields.forEach(field -> field.getWidget().dispose());
         fields.clear();
         screen.onClose();
+    }
+
+    /** Editing/focus only: Ore owns all visible animation and opacity, including the open transition. */
+    private static final class InputPanel extends ModularPanel<InputPanel> {
+        InputPanel() { super("ore_host_inputs"); }
+        @Override public boolean shouldAnimate() { return false; }
+        @Override public float getAlpha() { return 1; }
     }
 
     public interface DrawScope extends AutoCloseable { @Override void close(); }

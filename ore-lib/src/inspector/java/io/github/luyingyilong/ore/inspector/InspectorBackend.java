@@ -478,6 +478,12 @@ public final class InspectorBackend implements DebugBridge.Backend {
             readonly(props, "actualBounds", n.control.getLayoutBounds());
             if (n.control instanceof Drawer drawer) readonly(props, "panelBounds", drawer.getPanelBounds());
             if (n.control instanceof Scroll scroll) readonly(props, "viewport", scroll.getViewport());
+            if (n.control instanceof io.github.luyingyilong.ore.control.navigation.Tabs tabs) {
+                readonly(props, "selectedKey", tabs.getSelectedKey());
+                readonly(props, "itemCount", tabs.getItems().size());
+                readonly(props, "headerScrollX", tabs.getHeaderScrollX());
+                readonly(props, "items", tabs.getItems().stream().map(item -> item.getKey() + (item.getDisabled() ? " [disabled]" : "")).toList());
+            }
             if (n.control instanceof io.github.luyingyilong.ore.control.input.Slider slider) {
                 readonly(props, "min", slider.getMin());
                 readonly(props, "max", slider.getMax());

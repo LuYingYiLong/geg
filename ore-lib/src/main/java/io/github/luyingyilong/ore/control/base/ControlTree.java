@@ -79,6 +79,22 @@ final class ControlTree {
         }
     }
 
+    static void validateAttachment(Control parent, Control child) {
+        parent.getSignalScope().checkThread();
+        child.getSignalScope().checkThread();
+        if (!parent.isAlive() || !child.isAlive()) throw new IllegalStateException("Cannot attach a pending/freed control");
+        if (child.parent != null) throw new IllegalStateException("Control already has a parent");
+        requireAcyclic(parent, child);
+        child.validateThemeAttachment(parent);
+        child.validateTransformAttachment(parent);
+        if (child.lifecycleOwner != null) {
+            boolean allowed = false;
+            for (Control node = parent; node != null; node = node.parent)
+                if (node == child.lifecycleOwner) allowed = true;
+            if (!allowed) throw new IllegalStateException("Control belongs to another lifecycle owner");
+        }
+    }
+
     private static void commit(Control parent, List<Control> proposed, boolean internal, boolean freeing) {
         parent.getSignalScope().checkThread();
         if (parent.validatingChildren) throw new IllegalStateException("Cannot modify the tree during validation");
@@ -91,17 +107,7 @@ final class ControlTree {
             child.getSignalScope().checkThread();
             if (!seen.add(child)) throw new IllegalArgumentException("Duplicate child");
             if (child.parent == parent) continue;
-            if (child.parent != null) throw new IllegalStateException("Control already has a parent");
-            if (!child.isAlive()) throw new IllegalStateException("Cannot attach a pending/freed control");
-            requireAcyclic(parent, child);
-            child.validateThemeAttachment(parent);
-            child.validateTransformAttachment(parent);
-            if (child.lifecycleOwner != null) {
-                boolean allowed = false;
-                for (Control node = parent; node != null; node = node.parent)
-                    if (node == child.lifecycleOwner) allowed = true;
-                if (!allowed) throw new IllegalStateException("Control belongs to another lifecycle owner");
-            }
+            validateAttachment(parent, child);
         }
         if (!freeing) {
             parent.validatingChildren = true;

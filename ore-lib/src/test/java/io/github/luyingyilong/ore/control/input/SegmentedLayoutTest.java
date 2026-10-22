@@ -52,6 +52,48 @@ public final class SegmentedLayoutTest {
         check(options.getScrollX() == 24);
         check(io.github.luyingyilong.ore.support.EventFixture.press(options,39,10));
         labelAlignment();
+        icons(font);
+    }
+
+    private static void icons(Font font) {
+        Segmented options = new Segmented(List.of(Component.literal("First"), Component.literal("Second")));
+        Window root = Window.embedded().setContent(options);
+        var source = io.github.luyingyilong.ore.render.TextureSource.region(io.github.luyingyilong.ore.render.TextureRegion.full(
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("test", "icons/wide.png"), 16, 8));
+        var parts = options.getOwnedParts();
+        int[] changes = {0}; options.selectionChanged().connect(options, value -> changes[0]++);
+        try {
+            int natural = options.minimumRowWidth(font);
+            check(options.getIcon(0) == null);
+            options.setIcon(0, source);
+            check(options.getIcon(0) == source && options.minimumRowWidth(font) == natural + 12);
+            for (var style : List.of(options.getOptionStyle(0, false), options.getOptionStyle(1, false),
+                    options.getOptionStyle(1, true), options.getThemeItem(Segmented.PRESSED))) {
+                Rect area = new Rect(10, 20, 80, 20), content = style.getContentDrawRect(area);
+                options.layoutOption(0, area, style, font);
+                Rect icon = parts.get("option_icon_0").getBounds(), label = parts.get("option_0").getBounds();
+                check(icon.width() == 8 && icon.height() == 4 && icon.y() == content.y() + (content.height() - 4) / 2 - 2);
+                check(label.y() == content.y() - 2 && label.x() == icon.right() + 4);
+            }
+            root.layoutViewport(128, 30, font);
+            io.github.luyingyilong.ore.event.WindowInputs.press(root, 5, 5, null);
+            options.setIcon(0, null);
+            io.github.luyingyilong.ore.event.WindowInputs.release(root, 5, 5);
+            check(changes[0] == 0 && options.minimumRowWidth(font) == natural);
+            options.layoutOption(0, new Rect(0, 0, 80, 20), options.getOptionStyle(0, false), font);
+            check(parts.get("option_icon_0").getBounds().width() == 0);
+            for (int i = 0; i < 10; i++) options.setIcon(0, source).setIcon(0, null);
+            check(options.getOwnedParts().equals(parts) && changes[0] == 0);
+            try { options.setIcon(2, source); throw new AssertionError("Expected invalid option index"); }
+            catch (IndexOutOfBoundsException expected) { check(options.getIcon(0) == null); }
+            options.setIcon(1, source); root.layoutViewport(128, 30, font);
+            io.github.luyingyilong.ore.event.WindowInputs.press(root, 120, 5, null);
+            io.github.luyingyilong.ore.event.WindowInputs.release(root, 120, 5);
+            check(options.getSelected() == 1 && changes[0] == 1);
+        } finally { root.queueFree(); LifecycleScheduler.flush(); }
+        check(parts.values().stream().allMatch(Control::isDisposed));
+        try { options.setIcon(0, source); throw new AssertionError("Expected freed control rejection"); }
+        catch (IllegalStateException expected) { }
     }
 
     private static void labelAlignment() {

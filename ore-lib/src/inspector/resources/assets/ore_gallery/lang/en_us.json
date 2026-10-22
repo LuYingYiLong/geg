@@ -179,5 +179,20 @@
   "gallery.ore.sample.texture_progress_center_vertical": "Vertical center out",
   "gallery.ore.sample.texture_progress_clockwise": "Clockwise",
   "gallery.ore.sample.texture_progress_counter_clockwise": "Counterclockwise",
-  "gallery.ore.sample.texture_progress_bidirectional_radial": "Bidirectional radial"
+  "gallery.ore.sample.texture_progress_bidirectional_radial": "Bidirectional radial",
+  "gallery.ore.description.tabs": "Switch between peer content panels while retaining each page’s input and scroll state",
+  "gallery.ore.sample.tabs_overview": "Overview",
+  "gallery.ore.sample.tabs_overview_body": "Tabs organize peer content and retain independent page state.",
+  "gallery.ore.sample.tabs_draft": "Editor",
+  "gallery.ore.sample.tabs_scroll": "Scrollable content",
+  "gallery.ore.sample.tabs_disabled": "Unavailable",
+  "gallery.ore.sample.tabs_input_hint": "Single-line text",
+  "gallery.ore.sample.tabs_draft_text": "Retained draft",
+  "gallery.ore.sample.tabs_area_hint": "Multiline text",
+  "gallery.ore.sample.tabs_row": "Content row %s",
+  "gallery.ore.sample.tabs_add": "Add tab",
+  "gallery.ore.sample.tabs_remove": "Remove latest added tab",
+  "gallery.ore.sample.tabs_move": "Move current tab first",
+  "gallery.ore.sample.tabs_dynamic": "New page %s",
+  "gallery.ore.sample.tabs_long_title": "A longer tab title %s"
 }
